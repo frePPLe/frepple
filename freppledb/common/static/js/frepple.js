@@ -2252,94 +2252,25 @@ var ERPconnection = {
     }
     if (data == [])
       return;
-    console.log(2255, data);
+
     // Send to the server for upload to the ERP
     hideModal('timebuckets');
     $.jgrid.hideModal("#searchmodfbox_grid");
-    // let htmlcode = ['<div class="modal-dialog">',
-    //   '<div class="modal-content">',
-    //   '<div class="modal-header">',
-    //   '<h5 class="modal-title text-capitalize">', gettext("Export"), '</h5>',
-    //   '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>',
-    //   '</div>',
-    //   '<div class="modal-body pb-0">',
-    //   '<p>', gettext("Export selected records?"),
-    //   '</p>',
-    //   '<table class="table table-sm table-hover table-borderless modal-body">',
-    //   '<thead style="display: table-header-group;"><tr>',
-    //   '<td><b class="text-capitalize">',
-    //   gettext("reference"),
-    //   '</b></td><td><b class="text-capitalize">',
-    //   gettext("item"),
-    //   '</b></td><td><b class="text-capitalize">',
-    //   gettext("location"),
-    //   '</b></td><td><b class="text-capitalize">',
-    //   gettext("quantity"),
-    //   '</b></td><td><b class="text-capitalize">',
-    //   gettext("onhand"),
-    //   '</b></td>',
-    //   '</tr></thead>',
-    //   '<tbody><tr class="border-top">'];
-
-    // htmlcode.push([
-    //   '<td>reference</td><td><span>chair leg</span></td><td>factory</td><td>-40</td><td>396</td>',
-    //   '</tr><tr>',
-    //   '<td>reference</td><td><span>chair leg</span></td><td>factory</td><td>40</td><td>320</td>'])
-
-    // htmlcode.push([
-    //   '</tr></tbody>',
-    //   '</table>',
-    //   '</div>',
-    //   '<div class="modal-footer justify-content-between">',
-    //   '<input type="submit" id="cancelbutton" role="button" class="btn btn-gray text-capitalize" data-bs-dismiss="modal" value="', gettext('Cancel'), '">',
-    //   '<input type="submit" id="button_export" role="button" class="btn btn-primary text-capitalize" value="', gettext('Confirm'), '">',
-    //   '</div>',
-    //   '</div>',
-    //   '</div>'
-    // ])
-
-    let htmlcode = ['<div class="modal-dialog">',
-      '<div class="modal-content">',
-      '<div class="modal-header">',
-      '<h5 class="modal-title text-capitalize">', gettext("Export"), '</h5>',
-      '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>',
-      '</div>',
-      '<div class="modal-body pb-0">',
-      '<p>', gettext("Export selected records?"),
-      '</p>',
-      '<table class="table table-sm table-hover table-borderless modal-body">',
-      '<thead style="display: table-header-group;"><tr>',
-      '<td><b class="text-capitalize">',
-      gettext("reference"),
-      '</b></td><td><b class="text-capitalize">',
-      gettext("item"),
-      '</b></td><td><b class="text-capitalize">',
-      gettext("location"),
-      '</b></td><td><b class="text-capitalize">',
-      gettext("quantity"),
-      '</b></td>',
-      '</tr></thead>',
-      '<tbody><tr class="border-top">'];
-
-    for (let row of data) {
-      htmlcode.push('<tr><td>',row.reference,'</td><td><span>', row.item,'</span></td><td>', row.location,'</td><td>', '<input type="number" onInput="" value="', row.quantity,'"/></td></tr>');
-    }
-
-    htmlcode.push(
-      '</tbody>',
-      '</table>',
-      '</div>',
-      '<div class="modal-footer justify-content-between">',
-      '<input type="submit" id="cancelbutton" role="button" class="btn btn-gray text-capitalize" data-bs-dismiss="modal" value="', gettext('Cancel'), '">',
-      '<input type="submit" id="button_export" role="button" class="btn btn-primary text-capitalize" value="', gettext('Confirm'), '">',
-      '</div>',
-      '</div>',
-      '</div>'
-    )
-
-    console.log(2343, htmlcode);
-
-    $('#popup').html(htmlcode.join(''));
+    $('#popup').html('<div class="modal-dialog">' +
+      '<div class="modal-content">' +
+      '<div class="modal-header">' +
+      '<h5 class="modal-title text-capitalize">' + gettext("Export") + '</h5>' +
+      '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
+      '</div>' +
+      '<div class="modal-body pb-0">' +
+      '<p>' + gettext("Export selected records?") + '</p>' +
+      '</div>' +
+      '<div class="modal-footer justify-content-between">' +
+      '<input type="submit" id="cancelbutton" role="button" class="btn btn-gray text-capitalize" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+      '<input type="submit" id="button_export" role="button" class="btn btn-primary text-capitalize" value="' + gettext('Confirm') + '">' +
+      '</div>' +
+      '</div>' +
+      '</div>');
     showModal('popup');
     document.getElementById('popup').addEventListener('hidden.bs.modal', event => {
       $("#noactionselected").prop("selected", true);
@@ -2348,7 +2279,7 @@ var ERPconnection = {
     $('#button_export').on('click', function () {
       if ($('#button_export').val() === gettext('Close')) {
         hideModal('popup');
-        return;
+        return; 
       }
       var tmp = gettext('connecting');
       $('#popup .modal-body p').html(String(tmp).charAt(0).toUpperCase() + String(tmp).slice(1) + '...');
@@ -2378,7 +2309,7 @@ var ERPconnection = {
             if (cur === 'proposed' && !['STCK', 'DLVR'].includes(tp)) {
               grid.jqGrid('setCell', sel[i], 'operationplan__status', 'approved');
               rowdata = grid.jqGrid('getRowData', sel[i]);
-              rowdata.operationplan__status = 'approved';
+              rowdata.operationplan__status = 'approved';            
             }
             else if (!cur) {
               cur = grid.jqGrid('getCell', sel[i], 'operationplan__status');
@@ -2663,7 +2594,7 @@ var ERPconnection = {
 //----------------------------------------------------------------------------
 
 var widget = {
-  init: function (callback) {
+  init: function (callback) { 
     $(".widget-list").each(function () {
       Sortable.create($(this)[0], {
         group: "widgets",
@@ -2689,7 +2620,7 @@ var widget = {
             "collapsed": $(this).find(".collapse.show").length == 0
           }
         ]);
-      });
+      });      
       rows.push(row);
     });
     return rows;

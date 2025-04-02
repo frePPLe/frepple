@@ -2478,7 +2478,7 @@ var ERPconnection = {
 
             td.append($('<input/>').attr({
               'id': "cb_modaltable_" + dataType + "-" + i,
-              'class': "cbox",
+              'class': "cbox align-middle",
               'type': "checkbox",
               'aria-checked': "true",
               'checked': "true"
@@ -2486,7 +2486,15 @@ var ERPconnection = {
             row.append(td);
 
             for (let j = 0; j < labels.length; j++) {
-              if (!data[dataType][i][j][2]) row.append($('<td/>').text(formatValue(data[dataType][i][j])));
+              if (!data[dataType][i][j][2]) {
+                if (data[dataType][i][j][0] == 'quantity') {
+                  row.append($('<td class="align-middle"/><input type="number" value="' + data[dataType][i][j][1] + '" id="quantity' + i + '"/>'));
+                } else if (data[dataType][i][j][0] == 'receipt date') {
+                  row.append($('<td class="align-middle"/><input type="datetime-local" value="' + data[dataType][i][j][1] + '" title="Due date" required="" id="due' + i + '"></input>'));
+                } else {
+                  row.append($('<td class="align-middle"/>').text(formatValue(data[dataType][i][j])));
+                }
+              }
             };
             tablebodycontent.append(row);
           }
@@ -2526,11 +2534,17 @@ var ERPconnection = {
           const cellsData = {};
           const rows = $('#popup .modal-body tbody input[type=checkbox]:checked').parent().parent();
 
+          index = 0;
           for (const row of rows) {
+            let date = '.modal-body #due' + index;
+            let quantity = '.modal-body #quantity' + index;
             exportData.push({
               'reference': row.attributes.orderreference.value,
-              'type': row.attributes.ordertype.value,
+              'type': row.getAttribute('ordertype'),
+              'quantity': Number($(quantity).val()),
+              'enddate':  $(date).val()
             });
+            index++
           }
 
           $('#popup .modal-body').html(gettext('connecting') + '...');

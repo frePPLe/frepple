@@ -1834,6 +1834,7 @@ var grid = {
   },
 
   markSelectedRow: function (sel) {
+    console.log(1837, sel);
     if (typeof sel !== 'undefined' && sel > 0) {
       $("#delete_selected, #copy_selected, #edit_selected").prop('disabled', false);
       if ($("#actions").length) $("#actions1").prop('disabled', false);
@@ -2490,7 +2491,9 @@ var ERPconnection = {
                 if (data[dataType][i][j][0] == 'quantity') {
                   row.append($('<td class="align-middle"/><input type="number" value="' + data[dataType][i][j][1] + '" id="quantity' + i + '"/>'));
                 } else if (data[dataType][i][j][0] == 'receipt date') {
-                  row.append($('<td class="align-middle"/><input type="datetime-local" value="' + data[dataType][i][j][1] + '" title="Due date" required="" id="due' + i + '"></input>'));
+                  row.append($('<td class="align-middle"/><input type="datetime-local" value="' + data[dataType][i][j][1] + '" title="due date" required="" id="due' + i + '"></input>'));
+                } else if (data[dataType][i][j][0] == 'supplier') {
+                  row.append($('<td class="align-middle"/><input type="text" value="' + data[dataType][i][j][1] + '" title="supplier" required="" id="supplier' + i + '"></input>'));
                 } else {
                   row.append($('<td class="align-middle"/>').text(formatValue(data[dataType][i][j])));
                 }
@@ -2538,11 +2541,13 @@ var ERPconnection = {
           for (const row of rows) {
             let date = '.modal-body #due' + index;
             let quantity = '.modal-body #quantity' + index;
+            let supplier = '.modal-body #supplier' + index;
             exportData.push({
               'reference': row.attributes.orderreference.value,
               'type': row.getAttribute('ordertype'),
               'quantity': Number($(quantity).val()),
-              'enddate':  $(date).val()
+              'enddate':  $(date).val(),
+              'supplier': $(supplier).val()
             });
             index++
           }

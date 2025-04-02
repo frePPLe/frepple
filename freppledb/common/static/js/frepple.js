@@ -2279,7 +2279,7 @@ var ERPconnection = {
     $('#button_export').on('click', function () {
       if ($('#button_export').val() === gettext('Close')) {
         hideModal('popup');
-        return; 
+        return;
       }
       var tmp = gettext('connecting');
       $('#popup .modal-body p').html(String(tmp).charAt(0).toUpperCase() + String(tmp).slice(1) + '...');
@@ -2309,7 +2309,7 @@ var ERPconnection = {
             if (cur === 'proposed' && !['STCK', 'DLVR'].includes(tp)) {
               grid.jqGrid('setCell', sel[i], 'operationplan__status', 'approved');
               rowdata = grid.jqGrid('getRowData', sel[i]);
-              rowdata.operationplan__status = 'approved';            
+              rowdata.operationplan__status = 'approved';
             }
             else if (!cur) {
               cur = grid.jqGrid('getCell', sel[i], 'operationplan__status');
@@ -2594,7 +2594,7 @@ var ERPconnection = {
 //----------------------------------------------------------------------------
 
 var widget = {
-  init: function (callback) { 
+  init: function (callback) {
     $(".widget-list").each(function () {
       Sortable.create($(this)[0], {
         group: "widgets",
@@ -2620,7 +2620,7 @@ var widget = {
             "collapsed": $(this).find(".collapse.show").length == 0
           }
         ]);
-      });      
+      });
       rows.push(row);
     });
     return rows;

@@ -613,9 +613,7 @@ def OperationPlans(request):
             and operationplan.type in ('PO','DO','MO')
             and operationplan.status in ('proposed', 'approved')
             and operationplan.owner_id is null
-            and case when operationplan.type = 'PO'
-			then exists (select 1 from supplier where operationplan.supplier_id = supplier.name and supplier.source is not null)
-			when operationplan.type = 'MO'
+            and case when operationplan.type = 'MO'
 			then exists (select 1 from operation where operationplan.operation_id = operation.name and operation.source is not null)
 			when operationplan.type = 'DO'
 			then exists (select 1 from location where operationplan.origin_id = location.name and location.source is not null)

@@ -513,9 +513,12 @@ class User(AbstractUser):
                     if self.databases and tmp in self.databases and not self.is_active:
                         self.databases.remove(tmp)
                         is_active_modified = True
+                    elif not self.databases and self.is_active:
+                        self.databases = [tmp]
+                        is_active_modified = True
                     elif (
-                        not self.databases or tmp not in self.databases
-                    ) and self.is_active:
+                        self.databases and tmp not in self.databases and self.is_active
+                    ):
                         self.databases.append(tmp)
                         is_active_modified = True
 

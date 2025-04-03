@@ -1,0 +1,7 @@
+packages:
+  - freppledb/common
+  - freppledb/forecast
+  - freppledb/input
+  - freppledb/planingboard
+  - freppledb/operationplan
+  - freppledb/quoting

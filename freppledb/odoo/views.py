@@ -36,7 +36,12 @@ from django.http import HttpResponse, HttpResponseServerError, HttpResponseNotAl
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 
-from freppledb.input.models import PurchaseOrder, DistributionOrder, OperationPlan
+from freppledb.input.models import (
+    PurchaseOrder,
+    DistributionOrder,
+    OperationPlan,
+    Supplier,
+)
 from freppledb.common.models import Parameter
 
 import logging
@@ -155,6 +160,31 @@ def Upload(request):
                         or po.item.type == "make to order"
                     ):
                         continue
+
+                    try:
+                        enddate = datetime.strptime(rec["enddate"], "%Y-%m-%dT%H:%M")
+                    except:
+                        enddate = datetime.strptime(rec["enddate"], "%Y-%m-%dT%H:%M:%S")
+
+                    if po.enddate != enddate:
+                        po.enddate = enddate
+                        po.dirty = True
+
+                    if po.supplier.name != rec["supplier"]:
+                        # get the new supplier
+                        s = Supplier.objects.using(request.database).get(
+                            name=rec["supplier"]
+                        )
+                        po.supplier = s
+                        po.dirty = True
+
+                    if po.quantity != rec["quantity"]:
+                        po.quantity = rec["quantity"]
+                        po.dirty = True
+
+                    if not po.quantity:
+                        continue
+
                     obj.append(po)
                     data_odoo.append(
                         '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s status=%s remark=%s/>'
@@ -187,6 +217,23 @@ def Upload(request):
                         or do.item.type == "make to order"
                     ):
                         continue
+
+                    if do.quantity != rec["quantity"]:
+                        do.quantity = rec["quantity"]
+                        do.dirty = True
+
+                    if not do.quantity:
+                        continue
+
+                    try:
+                        enddate = datetime.strptime(rec["enddate"], "%Y-%m-%dT%H:%M")
+                    except:
+                        enddate = datetime.strptime(rec["enddate"], "%Y-%m-%dT%H:%M:%S")
+
+                    if do.enddate != enddate:
+                        do.enddate = enddate
+                        do.dirty = True
+
                     obj.append(do)
                     data_odoo.append(
                         '<operationplan status="%s" reference="%s" ordertype="DO" item=%s origin=%s destination=%s start="%s" end="%s" quantity="%s" origin_id=%s destination_id=%s item_id=%s criticality="%d" batch=%s remark=%s/>'
@@ -235,6 +282,14 @@ def Upload(request):
                         or not op.operation
                     ):
                         continue
+
+                    if op.quantity != rec["quantity"]:
+                        op.quantity = rec["quantity"]
+                        op.dirty = True
+
+                    if not op.quantity:
+                        continue
+
                     obj.append(op)
                     if op.operation.category == "subcontractor":
                         data_odoo.append(
@@ -362,6 +417,8 @@ def Upload(request):
             if i.status == "proposed":
                 i.status = "approved"
                 i.source = "odoo_1"
+                i.save(using=request.database)
+            elif hasattr(i, "dirty"):
                 i.save(using=request.database)
         return HttpResponse("OK")
 

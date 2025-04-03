@@ -24,7 +24,7 @@
 import os
 
 import django.contrib.postgres.fields
-from django.db import migrations, transaction, models
+from django.db import migrations, transaction, models, connection
 
 from ..models import defaultdatabase
 
@@ -32,7 +32,7 @@ from ..models import defaultdatabase
 def updateScenarioInfo(apps, schema_editor):
     from ...execute.models import ScheduledTask
 
-    if "FREPPLE_TEST" not in os.environ:
+    if not connection.settings_dict.get("TEST", False):
         try:
             with transaction.atomic():
                 ScheduledTask.updateScenario(schema_editor.connection.alias)

@@ -30,29 +30,26 @@ Proceed with the following steps to compile a custom theme:
 
       pnpm install
 
-#. | **Design the LESS files**:
-   | The styles are defined in the following files. Check out http://lesscss.org/
-     to learn more about the Less syntax used in these files.
+#. | **Design the SASS files**:
+   | The styles are defined in the following files. Check out
+     https://getbootstrap.com/docs/5.2/customize/overview/ to learn more about 
+     customizing the bootstrap CSS styles.
 
-       - | *freppledb/common/static/css/frepple.less*:
+       - | *freppledb/common/static/css/frepple.scss*:
          | Defines the frePPLe specific CSS styles.
 
-       - | *freppledb/common/static/css/THEME/variables.less*:
-         | Defines the configuration of bootstrap for each of the themes.
-           The value of the variables is what a theme unique.
-
-       - | *freppledb/common/static/css/THEME/frepple.less*:
+       - | *freppledb/common/static/css/THEME/theme.scss*:
          | Optionally, you can create files with theme-specific styles that can't
            be expressed as variable values.
 
-#. | **Compile the LESS files**:
+#. | **Compile the SASS files**:
    | The less files need to be compiled into a CSS stylesheet for each theme.
      Edit the gruntfile.js file to include your theme in the list of themes, and
      then run the following command:
 
    ::
 
-       grunt less
+       grunt sass
 
    In each of the theme folders the file bootstrap.min.css and bootstrap.min.css.map
    will be generated.

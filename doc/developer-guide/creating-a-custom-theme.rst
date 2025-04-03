@@ -20,7 +20,7 @@ Proceed with the following steps to compile a custom theme:
 
    ::
 
-      npm install grunt-cli -g
+      npm install grunt-cli pnpm -g
 
 #. | **Install the javascript dependencies**:
    | Compiling the frePPLe and bootstrap styles requires a number of
@@ -28,7 +28,7 @@ Proceed with the following steps to compile a custom theme:
 
    ::
 
-      npm install
+      pnpm install
 
 #. | **Design the LESS files**:
    | The styles are defined in the following files. Check out http://lesscss.org/

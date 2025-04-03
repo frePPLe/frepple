@@ -21,6 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+import os
+
 import django.contrib.postgres.fields
 from django.db import migrations, transaction, models
 
@@ -30,13 +32,14 @@ from ..models import defaultdatabase
 def updateScenarioInfo(apps, schema_editor):
     from ...execute.models import ScheduledTask
 
-    try:
-        with transaction.atomic():
-            ScheduledTask.updateScenario(schema_editor.connection.alias)
-    except Exception as e:
-        # On a new schema, the execute app may not be installed yet.
-        # This is not a problem as it won't have any scheduled tasks then.
-        pass
+    if "FREPPLE_TEST" not in os.environ:
+        try:
+            with transaction.atomic():
+                ScheduledTask.updateScenario(schema_editor.connection.alias)
+        except Exception as e:
+            # On a new schema, the execute app may not be installed yet.
+            # This is not a problem as it won't have any scheduled tasks then.
+            pass
 
 
 class Migration(migrations.Migration):

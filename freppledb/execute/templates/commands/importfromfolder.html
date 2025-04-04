@@ -10,7 +10,7 @@
     <p>{% trans "Import CSV or Excel files. The file names must match the names of data objects and the first line in the file must contain the field names." %}</p>
   </div>
 </div>
-<div class="row mb-2">
+<div class="row mb-2 drophere">
     <div class="col flex-grow-1 offset-2"><strong>{% trans 'file name'|capfirst %}</strong></div>
     <div class="col-1 text-nowrap text-center"><strong>{% trans 'size'|capfirst %}</strong></div>
     <div class="col-2 text-nowrap text-center"><strong>{% trans 'changed'|capfirst %}</strong></div>
@@ -26,9 +26,9 @@
     </div>
 </div>
     {% for j in filestoupload %}
-    <div class="row mb-2" data-file="{{j.0}}">
+    <div class="row mb-2 drophere" data-file="{{j.0}}">
       <div class="col flex-grow-1 offset-2 text-nowrap">{{j.0}}</div>
-      <div class="col-1 text-nowrap text-center">{{j.2}}</div>
+      <div class="col-1 text-nowrap text-center ">{{j.2}}</div>
       <div class="col-2 text-nowrap text-center">{{j.1}}</div>
       <div class="col-auto text-center">
         <div class="btn btn-sm btn-primary downloadfile" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Download file" %}" onClick="downloadImportFile(0, '{{j.0}}')">
@@ -40,7 +40,7 @@
       </div>
     </div>
     {% endfor %}
-    <div class="row mb-2">
+    <div class="row mb-2 drophere">
     <div class="col-10 offset-2">
       <div id="addfiles2import" style="outline: 2px dashed black; outline-offset: -1em">
       <div class="text-center box__input" style="text-align: center; padding: 20px;">
@@ -70,7 +70,7 @@
 var filesdropped = null;
 var filesselected = null;
 
-$('#addfiles2import')
+$('.drophere')
   .on('drag dragstart dragend dragover dragenter dragleave drop', function (e) {
     e.preventDefault();
     e.stopPropagation();

@@ -11,11 +11,16 @@
   </div>
 </div>
 <div class="row mb-2 drophere">
-    <div class="col flex-grow-1 offset-2"><strong>{% trans 'file name'|capfirst %}</strong></div>
-    <div class="col-1 text-nowrap text-center"><strong>{% trans 'size'|capfirst %}</strong></div>
-    <div class="col-2 text-nowrap text-center"><strong>{% trans 'changed'|capfirst %}</strong></div>
-    <div class="col-auto text-center">
-        <div class="btn btn-sm btn-primary" style="margin-bottom:5px" data-bs-toggle="tooltip"
+  <div class="col-10 offset-2">
+    <div class="table-responsive">
+    <table class="table table-sm border-0">
+    <thead>
+      <tr class="border-0">
+          <th class="w-100 text-nowrap border-0 align-middle px-2"><strong>{% trans 'file name'|capfirst %}</strong></th>
+          <th class="text-center text-nowrap border-0 align-middle px-2"><strong>{% trans 'size'|capfirst %}</strong></th>
+          <th class="text-center text-nowrap border-0 align-middle px-2"><strong><strong>{% trans 'changed'|capfirst %}</strong></strong></th>
+          <th class="text-center text-nowrap border-0 align-middle px-2">
+             <div class="btn btn-sm btn-primary" style="margin-bottom:5px" data-bs-toggle="tooltip"
            data-bs-placement="top" data-bs-title="{% trans "Download all files" %}"
            onClick="downloadImportFile(0)">
           <span class="fa fa-arrow-down"></span>
@@ -23,23 +28,29 @@
         <div class="btn btn-sm btn-danger deletefile" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Delete all files' %}" onClick="deleteImportFile(0, {{filestoupload}})">
           <span class="fa fa-close"></span>
         </div>
-    </div>
-</div>
+          </th>
+      </tr>
+    </thead>
+    <tbody>
     {% for j in filestoupload %}
-    <div class="row mb-2 drophere" data-file="{{j.0}}">
-      <div class="col flex-grow-1 offset-2 text-nowrap">{{j.0}}</div>
-      <div class="col-1 text-nowrap text-center ">{{j.2}}</div>
-      <div class="col-2 text-nowrap text-center">{{j.1}}</div>
-      <div class="col-auto text-center">
+    <tr class="border-0" data-file="{{j.0}}">
+      <td class="text-nowrap border-0 align-middle px-1">{{j.0}}</td>
+      <td class="text-center text-nowrap border-0 align-middle px-2">{{j.2}}</td>
+      <td class="text-nowrap text-center border-0 align-middle px-2">{{j.1}}</td>
+      <td class="text-nowrap text-center border-0 align-middle px-2">
         <div class="btn btn-sm btn-primary downloadfile" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Download file" %}" onClick="downloadImportFile(0, '{{j.0}}')">
           <span class="fa fa-arrow-down"></span>
         </div>
         <div class="btn btn-sm btn-danger deletefile" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Delete file" %}" onClick="deleteImportFile(0, '{{j.0}}')">
           <span class="fa fa-close"></span>
         </div>
-      </div>
-    </div>
-    {% endfor %}
+      </td>
+    </tr>
+    {% endfor %}    
+  </table>
+  </div>
+  </div>
+</div>
     <div class="row mb-2 drophere">
     <div class="col-10 offset-2">
       <div id="addfiles2import" style="outline: 2px dashed black; outline-offset: -1em">

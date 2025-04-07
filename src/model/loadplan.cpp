@@ -268,7 +268,8 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
       if (subopplan == getOperationPlan()) continue;
       auto subldplniter = subopplan->getLoadPlans();
       while (auto subldpln = subldplniter.next()) {
-        if (subldpln->getLoad()->getResource() == getLoad()->getResource() &&
+        if (subldpln->getLoad() &&
+            subldpln->getLoad()->getResource() == getLoad()->getResource() &&
             subldpln->getLoad()->getSkill() == getLoad()->getSkill() &&
             subldpln->getResource() != getResource()) {
           // Switch another step to this resource

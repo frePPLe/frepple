@@ -7,6 +7,9 @@
 		<location>
 			<name>Loc</name>
 		</location>
+		<location>
+			<name>factory</name>
+		</location>
 	</locations>
 	<suppliers>
 		<supplier>
@@ -14,6 +17,63 @@
 		</supplier>
 	</suppliers>
 	<resources>
+		<resource>
+			<name>Creepy resource 1</name>
+		</resource>
+		<resource>
+			<name>Creepy resource 2</name>
+			<owner>
+				<name>Creepy resource pool</name>
+			</owner>
+		</resource>
+		<resource>
+			<name>Creepy resource 3</name>
+			<owner>
+				<name>Creepy resource pool</name>
+			</owner>
+		</resource>
+		<resource>
+			<name>Creepy resource pool</name>
+		</resource>
+		<resource>
+			<name>Creepy secondary pool</name>
+			<toolperpiece>true</toolperpiece>
+		</resource>
+		<resource>
+			<name>Creepy secondary pool 1</name>
+			<owner>
+				<name>Creepy secondary pool</name>
+			</owner>
+			<toolperpiece>true</toolperpiece>
+		</resource>
+		<resource>
+			<name>Creepy secondary pool 2</name>
+			<owner>
+				<name>Creepy secondary pool</name>
+			</owner>
+			<toolperpiece>true</toolperpiece>
+		</resource>
+		<resource>
+			<name>Creepy secondary pool 3</name>
+			<owner>
+				<name>Creepy secondary pool</name>
+			</owner>
+			<toolperpiece>true</toolperpiece>
+		</resource>
+		<resource>
+			<name>Creepy secondary pool 4</name>
+			<owner>
+				<name>Creepy secondary pool</name>
+			</owner>
+			<toolperpiece>true</toolperpiece>
+		</resource>
+		<resource>
+			<name>Creepy secondary pool 5</name>
+			<owner>
+				<name>Creepy secondary pool</name>
+			</owner>
+			<toolperpiece>true</toolperpiece>
+		</resource>
 		<resource>
 			<name>Res1</name>
 			<location>
@@ -226,6 +286,21 @@
 		</item>
 		<item>
 			<name>Out6</name>
+		</item>
+		<item>
+			<name>creepy component 1</name>
+		</item>
+		<item>
+			<name>creepy component 2</name>
+		</item>
+		<item>
+			<name>creepy component 3</name>
+		</item>
+		<item>
+			<name>creepy component 4</name>
+		</item>
+		<item>
+			<name>creepy item</name>
 		</item>
 		<item>
 			<name>small item</name>
@@ -483,8 +558,156 @@
 				<name>Loc</name>
 			</location>
 		</buffer>
+		<buffer xsi:type="buffer_infinite">
+			<name>creepy component 1 @ factory</name>
+			<item>
+				<name>creepy component 1</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<detectproblems>false</detectproblems>
+		</buffer>
+		<buffer xsi:type="buffer_infinite">
+			<name>creepy component 2 @ factory</name>
+			<item>
+				<name>creepy component 2</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<detectproblems>false</detectproblems>
+		</buffer>
+		<buffer xsi:type="buffer_infinite">
+			<name>creepy component 3 @ factory</name>
+			<item>
+				<name>creepy component 3</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<detectproblems>false</detectproblems>
+		</buffer>
+		<buffer xsi:type="buffer_infinite">
+			<name>creepy component 4 @ factory</name>
+			<item>
+				<name>creepy component 4</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<detectproblems>false</detectproblems>
+		</buffer>
+		<buffer>
+			<name>creepy item @ factory</name>
+			<producing>
+				<name>MO/0001 - 2</name>
+			</producing>
+			<item>
+				<name>creepy item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
 	</buffers>
 	<operations>
+		<operation xsi:type="operation_routing">
+			<name>MO/0001</name>
+			<item>
+				<name>creepy item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<priority>0</priority>
+			<suboperations>
+				<suboperation>
+					<operation>
+						<name>MO/0001 - 1</name>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation>
+						<name>MO/0001 - 2</name>
+					</operation>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation>
+			<name>MO/0001 - 1</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<priority>10</priority>
+			<loads>
+				<load>
+					<resource>
+						<name>Creepy resource 1</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Creepy secondary pool</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>creepy component 1</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow>
+					<item>
+						<name>creepy component 2</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>PT1H</duration>
+		</operation>
+		<operation>
+			<name>MO/0001 - 2</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<priority>20</priority>
+			<loads>
+				<load>
+					<resource>
+						<name>Creepy resource pool</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Creepy secondary pool</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>creepy component 3</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow>
+					<item>
+						<name>creepy component 4</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>creepy item</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>PT1H</duration>
+		</operation>
 		<operation>
 			<name>Oper1</name>
 			<item>
@@ -828,6 +1051,48 @@
 		</operation>
 	</operations>
 	<operationplans>
+		<operationplan>
+			<reference>MO/0001</reference>
+			<operation xsi:type="operation_routing">
+				<name>MO/0001</name>
+			</operation>
+			<start>2025-03-24T23:00:00</start>
+			<end>2025-03-25T01:00:00</end>
+			<quantity>2</quantity>
+			<batch>SO/01</batch>
+			<status>approved</status>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>MO/0001 - 1</reference>
+			<operation>
+				<name>MO/0001 - 1</name>
+			</operation>
+			<start>2025-03-24T23:00:00</start>
+			<end>2025-03-25T00:00:00</end>
+			<quantity>2</quantity>
+			<batch>SO/01</batch>
+			<status>approved</status>
+			<feasible>false</feasible>
+			<owner>
+				<reference>MO/0001</reference>
+			</owner>
+		</operationplan>
+		<operationplan>
+			<reference>MO/0001 - 2</reference>
+			<operation>
+				<name>MO/0001 - 2</name>
+			</operation>
+			<start>2025-03-25T00:00:00</start>
+			<end>2025-03-25T01:00:00</end>
+			<quantity>2</quantity>
+			<batch>SO/01</batch>
+			<status>approved</status>
+			<feasible>false</feasible>
+			<owner>
+				<reference>MO/0001</reference>
+			</owner>
+		</operationplan>
 		<operationplan>
 			<reference>1001</reference>
 			<operation>

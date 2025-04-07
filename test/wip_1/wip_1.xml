@@ -1,529 +1,649 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <name>Test model for handling work in progress</name>
-  <current>2014-01-01T00:00:00</current>
-  <items>
-    <item name="In1">
-      <itemsuppliers>
-        <itemsupplier>
-          <supplier name="Component supplier"/>
-        </itemsupplier>
-      </itemsuppliers>
-    </item>
-    <item name="In2">
-      <itemsuppliers>
-        <itemsupplier>
-          <supplier name="Component supplier"/>
-        </itemsupplier>
-      </itemsuppliers>
-    </item>
-    <item name="In3">
-      <itemsuppliers>
-        <itemsupplier>
-          <supplier name="Component supplier"/>
-        </itemsupplier>
-      </itemsuppliers>
-    </item>
-    <item name="In3A">
-      <itemsuppliers>
-        <itemsupplier>
-          <supplier name="Component supplier"/>
-        </itemsupplier>
-      </itemsuppliers>
-    </item>
-    <item name="In3B">
-      <itemsuppliers>
-        <itemsupplier>
-          <supplier name="Component supplier"/>
-        </itemsupplier>
-      </itemsuppliers>
-    </item>
-    <item name="In3C">
-      <itemsuppliers>
-        <itemsupplier>
-          <supplier name="Component supplier"/>
-        </itemsupplier>
-      </itemsuppliers>
-    </item>
-    <item name="In4">
-      <itemsuppliers>
-        <itemsupplier>
-          <supplier name="Component supplier"/>
-        </itemsupplier>
-      </itemsuppliers>
-    </item>
-    <item name="In4A">
-      <itemsuppliers>
-        <itemsupplier>
-          <supplier name="Component supplier"/>
-        </itemsupplier>
-      </itemsuppliers>
-    </item>
-    <item name="In4B">
-      <itemsuppliers>
-        <itemsupplier>
-          <supplier name="Component supplier"/>
-        </itemsupplier>
-      </itemsuppliers>
-    </item>
-  </items>    
-  <buffers>
-    <buffer name="Little inventory @ Loc">
-      <item name="small item" />
-      <location name="Loc"/>
-      <onhand>0.1</onhand>
-    </buffer>
-    <buffer name="Negative inventory @ Loc">
-      <item name="Negative inventory" />
-      <location name="Loc"/>
-      <onhand>-0.1</onhand>
-    </buffer>
-  </buffers>
-  <resources>
-    <resource name="Res1">
-       <location name="Loc"/>
-    </resource>
-    <resource name="Res2">
-       <location name="Loc"/>
-    </resource>
-    <resource name="Res3">
-       <location name="Loc"/>
-    </resource>
-    <resource name="Res3A">
-       <location name="Loc"/>
-    </resource>
-    <resource name="Res3B">
-       <location name="Loc"/>
-    </resource>
-    <resource name="Res3C">
-       <location name="Loc"/>
-    </resource>
-    <resource name="Res4">
-       <location name="Loc"/>
-    </resource>
-    <resource name="Res4A">
-       <location name="Loc"/>
-    </resource>
-    <resource name="Res4B">
-       <location name="Loc"/>
-    </resource>
-  </resources>
-  <operations>
-    <operation name="Strange WIP sizes" xsi:type="operation_fixed_time">
-      <location name="Loc"/>
-      <size_minimum>100</size_minimum>
-      <size_minimum>1000</size_minimum>
-      <size_multiple>50</size_multiple>
-      <duration>P1D</duration>
-    </operation>
-    <operation name="Oper1" xsi:type="operation_fixed_time">    
-      <item name="Out2" />
-      <location name="Loc"/>
-      <loads>
-        <load>
-          <resource name="Res1" />
-        </load>
-        <load>
-          <resource name="Res2" />
-        </load>
-      </loads>
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="Out1" />
-          <quantity>1</quantity>
-        </flow>
-        <flow xsi:type="flow_end">
-          <item name="Out2" />
-          <quantity>2</quantity>
-        </flow>
-        <flow xsi:type="flow_start">
-          <item name="In1" />
-          <quantity>-1</quantity>
-        </flow>
-        <flow xsi:type="flow_start">
-          <item name="In2" />
-          <quantity>-2</quantity>
-        </flow>
-      </flows>
-      <duration>P10D</duration>
-    </operation>
-    <operation name="Oper3" xsi:type="operation_routing">
-      <location name="Loc"/>
-      <suboperations>
-        <suboperation>
-        <priority>1</priority>
-        <operation name="Oper3A" xsi:type="operation_fixed_time" duration="P1D" posttime="P1D">
-          <location name="Loc"/>
-          <flows>
-            <flow xsi:type="flow_end">
-              <item name="Out3A" />
-              <quantity>1</quantity>
-            </flow>
-            <flow xsi:type="flow_start">
-              <item name="In3A" />
-              <quantity>-1</quantity>
-            </flow>             
-            <flow xsi:type="flow_start">
-              <item name="In3" />
-              <quantity>-1</quantity>
-          </flow>
-          </flows>
-          <loads>
-            <load>
-              <resource name="Res3A" />
-            </load>
-          </loads>
-        </operation>
-        </suboperation>
-        <suboperation>
-        <priority>2</priority>
-        <operation name="Oper3B" xsi:type="operation_fixed_time" duration="P1D" posttime="P1D">
-          <location name="Loc"/>
-          <flows>
-            <flow xsi:type="flow_end">
-              <item name="Out3B" />
-              <quantity>1</quantity>
-            </flow>
-            <flow xsi:type="flow_start">
-              <item name="In3B" />
-              <quantity>-1</quantity>
-            </flow>
-          </flows>
-          <loads>
-            <load>
-              <resource name="Res3B" />
-            </load>
-          </loads>
-        </operation>
-        </suboperation>
-        <suboperation>
-        <priority>3</priority>
-        <operation name="Oper3C" xsi:type="operation_fixed_time" duration="P1D" posttime="P1D">
-          <location name="Loc"/>
-          <flows>
-            <flow xsi:type="flow_end">
-              <item name="Out3C" />
-              <quantity>1</quantity>
-            </flow>
-            <flow xsi:type="flow_start">
-              <item name="In3C" />
-              <quantity>-1</quantity>
-            </flow>
-            <flow xsi:type="flow_end">
-              <item name="Out3" />
-              <quantity>1</quantity>
-            </flow>
-          </flows>
-          <loads>
-            <load>
-              <resource name="Res3C" />
-            </load>
-          </loads>
-        </operation>
-        </suboperation>
-      </suboperations>
-    </operation>
-    <operation name="Oper4" xsi:type="operation_alternate">
-      <location name="Loc"/>
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="Out4" />
-          <quantity>1</quantity>
-        </flow>
-        <flow xsi:type="flow_start">
-          <item name="In4" />
-          <quantity>-1</quantity>
-        </flow>
-      </flows>
-      <loads>
-        <load>
-          <resource name="Res4" />
-        </load>
-      </loads>
-      <suboperations>
-        <suboperation>
-          <operation name="Oper4A" xsi:type="operation_fixed_time" duration="P1D">
-            <location name="Loc"/>
-            <flows>
-              <flow xsi:type="flow_end">
-                <item name="Out4A" />
-                <quantity>1</quantity>
-              </flow>
-              <flow xsi:type="flow_start">
-                <item name="In4A" />
-                <quantity>-1</quantity>
-              </flow>
-            </flows>
-            <loads>
-              <load>
-                <resource name="Res4A" />
-              </load>
-            </loads>
-          </operation>
-          <priority>1</priority>
-        </suboperation>
-        <suboperation>
-          <operation name="Oper4B" xsi:type="operation_fixed_time" duration="P1D">
-            <location name="Loc"/>
-            <flows>
-              <flow xsi:type="flow_end">
-                <item name="Out4B" />
-                <quantity>1</quantity>
-              </flow>
-              <flow xsi:type="flow_start">
-                <item name="In4B" />
-                <quantity>-1</quantity>
-              </flow>
-            </flows>
-            <loads>
-              <load>
-                <resource name="Res4B" />
-              </load>
-            </loads>
-          </operation>
-          <priority>2</priority>
-        </suboperation>
-      </suboperations>
-    </operation>
-    <operation name="Oper5" xsi:type="operation_fixed_time">
-      <location name="Loc"/>
-      <duration>P1D</duration>
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="Out5" />
-          <quantity>1</quantity>
-        </flow>
-        <flow xsi:type="flow_start">
-          <item name="In5" />
-          <quantity>-1</quantity>
-        </flow>
-      </flows>      
-      <loads>
-         <load>
-           <resource name="Res5" />
-         </load>
-       </loads>
-    </operation>
-    <operation name="Oper6" xsi:type="operation_time_per">
-      <location name="Loc"/>
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="Out6" />
-          <quantity>1</quantity>
-        </flow>
-        <flow xsi:type="flow_start">
-          <item name="In6" />
-          <quantity>-1</quantity>
-        </flow>
-      </flows>      
-      <loads>
-         <load>
-           <resource name="Res6">
-		      <members>
-			     <resource name="Res6a"/>
-				 <resource name="Res6b"/>
-				 <resource name="Res6c" efficiency="50"/>
-			  </members>
-		   </resource>
-         </load>
-       </loads>
-      <duration>P1D</duration>
-	  <duration_per>P1D</duration_per>
-    </operation>	
-  </operations>
-  <operationplans>
-    <!-- WIP with funky quantities and duration -->
-    <operationplan reference="MO1" quantity="1" status="confirmed" start="2014-02-01T00:00:00" end="2015-02-05T00:00:00">
-       <operation name="Strange WIP sizes"/>
-    </operationplan>
-    <operationplan reference="MO2" quantity="123" status="confirmed" start="2015-02-01T00:00:00">
-       <operation name="Strange WIP sizes"/>
-    </operationplan>
-    <operationplan reference="MO3" quantity="1234" status="confirmed" end="2015-02-05T00:00:00">
-       <operation name="Strange WIP sizes"/>
-    </operationplan>
-    <!-- WIP on fixed_time operation -->
-    <operationplan reference="1001" quantity="10" start="2013-12-31T00:00:00" end="2014-01-05T00:00:00" status="confirmed">
-      <operation name="Oper1"/>
-      <flowplans>
-        <flowplan>
-          <item name="In1"/>
-          <status>confirmed</status>
-          <quantity>-5</quantity>
-          <date>2013-12-31T00:00:00</date>
-        </flowplan>
-        <flowplan>
-          <item name="In2"/>
-          <status>confirmed</status>
-          <quantity>-8</quantity>
-          <date>2013-12-31T00:00:00</date>
-        </flowplan>
-      </flowplans>
-    </operationplan>
-    <operationplan reference="1002" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
-      <operation name="Oper1"/>
-      <flowplans>
-        <flowplan>
-          <item name="In1"/>
-          <status>confirmed</status>
-          <quantity>-5</quantity>
-          <date>2014-02-02T00:00:00</date>
-        </flowplan>
-        <flowplan>
-          <item name="In2"/>
-          <status>confirmed</status>
-          <quantity>-2</quantity>
-          <date>2014-02-05T00:00:00</date>
-        </flowplan>
-      </flowplans>
-    </operationplan>
-    <operationplan reference="1003" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
-      <operation name="Oper1"/>
-      <flowplans>
-        <flowplan>
-          <item name="In1"/>
-          <status>confirmed</status>
-          <quantity>-10</quantity>
-          <date>2014-02-28T00:00:00</date>
-        </flowplan>
-        <flowplan>
-          <item name="In2"/>
-          <status>confirmed</status>
-          <quantity>-20</quantity>
-          <date>2014-02-28T00:00:00</date>
-        </flowplan>
-      </flowplans>
-    </operationplan>
-    <operationplan reference="1004" quantity="10" start="2014-04-01T00:00:00" end="2014-04-05T00:00:00" status="confirmed">
-      <operation name="Oper1"/>
-    </operationplan>
-    <!-- WIP on routing operation -->
-    <operationplan reference="3005" quantity="10" end="2014-02-05T00:00:00" status="confirmed">
-      <operation name="Oper3"/>
-    </operationplan>
-    <operationplan reference="3006" quantity="2" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
-      <owner reference="3005"/>
-      <operation name="Oper3B"/>
-      <flowplans>
-        <flowplan>
-          <item name="In3B"/>
-          <status>confirmed</status>
-          <quantity>-2</quantity>
-          <date>2014-02-05T00:00:00</date>
-        </flowplan>
-      </flowplans>
-    </operationplan>
-    <operationplan reference="3007" quantity="10" end="2014-04-05T00:00:00" status="approved">
-      <operation name="Oper3"/>
-    </operationplan>
-    <operationplan reference="3008" quantity="10" start="2014-03-30T00:00:00" status="approved">
-      <owner reference="3007"/>
-      <operation name="Oper3B"/>
-    </operationplan>
-    <operationplan reference="3009" quantity="10" start="2014-06-05T00:00:00" status="approved">
-      <operation name="Oper3"/>
-    </operationplan>
-    <operationplan reference="3010" quantity="10" start="2014-06-10T00:00:00" status="approved">
-      <owner reference="3009"/>
-      <operation name="Oper3B"/>
-    </operationplan>   
-    <!-- WIP on alternate operation -->
-    <operationplan reference="4005" quantity="10" start="2014-01-01T00:00:00" end="2014-01-05T00:00:00" status="confirmed">
-      <operation name="Oper4"/>
-      <flowplans>
-        <flowplan>
-          <item name="In4"/>
-          <status>confirmed</status>
-          <quantity>-8</quantity>
-          <date>2014-01-01T00:00:00</date>
-        </flowplan>
-      </flowplans>
-    </operationplan>
-    <operationplan reference="4006" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
-      <operation name="Oper4"/>
-      <flowplans>
-        <flowplan>
-          <item name="In4"/>
-          <status>confirmed</status>
-          <quantity>-10</quantity>
-          <date>2014-02-01T00:00:00</date>
-        </flowplan>
-      </flowplans>
-    </operationplan>
-    <operationplan reference="4007" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
-      <owner reference="4006"><operation name="Oper4"/></owner>
-      <operation name="Oper4B"/>
-      <flowplans>
-        <flowplan>
-          <item name="In4B"/>
-          <status>confirmed</status>
-          <quantity>-10</quantity>
-          <date>2014-01-31T00:00:00</date>
-        </flowplan>
-      </flowplans>
-    </operationplan>
-    <operationplan reference="4008" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
-      <operation name="Oper4"/>
-      <flowplans>
-        <flowplan>
-          <item name="In4"/>
-          <status>confirmed</status>
-          <quantity>-10</quantity>
-          <date>2014-03-02T00:00:00</date>
-        </flowplan>
-      </flowplans>
-    </operationplan>
-    <operationplan reference="4009" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
-      <owner reference="4008"/>
-      <operation name="Oper4B"/>
-      <flowplans>
-        <flowplan>
-          <item name="In4B"/>
-          <status>confirmed</status>
-          <quantity>-10</quantity>
-          <date>2014-03-01T00:00:00</date>
-        </flowplan>
-      </flowplans>
-    </operationplan>
-    <operationplan reference="4010" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
-      <owner reference="4008"/>
-      <operation name="Oper4A"/>
-      <flowplans>
-        <flowplan>
-          <item name="In4"/>
-          <status>confirmed</status>
-          <quantity>-10</quantity>
-          <date>2014-03-02T00:00:00</date>
-        </flowplan>
-      </flowplans>
-    </operationplan>
-    <!-- WIP with material and capacity flags -->
-    <operationplan reference="5001" quantity="10" start="2019-01-01T00:00:00" status="confirmed">
-      <operation name="Oper5"/>
-    </operationplan>
-    <operationplan reference="5002" quantity="10" start="2019-02-01T00:00:00" status="confirmed" consume_material="false">
-      <operation name="Oper5"/>
-    </operationplan>
-    <operationplan reference="5003" quantity="10" start="2019-03-01T00:00:00" status="confirmed" produce_material="false">
-      <operation name="Oper5"/>
-    </operationplan>
-    <operationplan reference="5004" quantity="10" start="2019-04-01T00:00:00" status="confirmed" consume_capacity="false">
-      <operation name="Oper5"/>
-    </operationplan>
-    <operationplan reference="5005" quantity="10" start="2019-05-01T00:00:00" status="confirmed" 
-      consume_material="false" produce_material="false" consume_capacity="false">
-      <operation name="Oper5"/>
-    </operationplan>
-	<!-- Corner case -->
-	<operationplan reference="6001" quantity="3" status="confirmed" start="2020-02-05T00:00:00" end="2020-03-05T00:00:00">
-       <operation name="Oper6"/>
-       <loadplans>
-         <loadplan>
-           <resource name="Res6b"/>
-         </loadplan>
-       </loadplans>	   
-    </operationplan>
-  </operationplans>
+	<name>Test model for handling work in progress</name>
+	<current>2014-01-01T00:00:00</current>
+	<items>
+		<item name="In1">
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier name="Component supplier"/>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item name="In2">
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier name="Component supplier"/>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item name="In3">
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier name="Component supplier"/>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item name="In3A">
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier name="Component supplier"/>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item name="In3B">
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier name="Component supplier"/>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item name="In3C">
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier name="Component supplier"/>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item name="In4">
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier name="Component supplier"/>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item name="In4A">
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier name="Component supplier"/>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item name="In4B">
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier name="Component supplier"/>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+	</items>
+	<buffers>
+		<buffer name="Little inventory @ Loc">
+			<item name="small item"/>
+			<location name="Loc"/>
+			<onhand>0.1</onhand>
+		</buffer>
+		<buffer name="Negative inventory @ Loc">
+			<item name="Negative inventory"/>
+			<location name="Loc"/>
+			<onhand>-0.1</onhand>
+		</buffer>
+	</buffers>
+	<resources>
+		<resource name="Res1">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res2">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res3">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res3A">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res3B">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res3C">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res4">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res4A">
+			<location name="Loc"/>
+		</resource>
+		<resource name="Res4B">
+			<location name="Loc"/>
+		</resource>
+	</resources>
+	<operations>
+		<operation name="Strange WIP sizes" xsi:type="operation_fixed_time">
+			<location name="Loc"/>
+			<size_minimum>100</size_minimum>
+			<size_minimum>1000</size_minimum>
+			<size_multiple>50</size_multiple>
+			<duration>P1D</duration>
+		</operation>
+		<operation name="Oper1" xsi:type="operation_fixed_time">
+			<item name="Out2"/>
+			<location name="Loc"/>
+			<loads>
+				<load>
+					<resource name="Res1"/>
+				</load>
+				<load>
+					<resource name="Res2"/>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="Out1"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item name="Out2"/>
+					<quantity>2</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="In1"/>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="In2"/>
+					<quantity>-2</quantity>
+				</flow>
+			</flows>
+			<duration>P10D</duration>
+		</operation>
+		<operation name="Oper3" xsi:type="operation_routing">
+			<location name="Loc"/>
+			<suboperations>
+				<suboperation>
+					<priority>1</priority>
+					<operation name="Oper3A" xsi:type="operation_fixed_time" duration="P1D" posttime="P1D">
+						<location name="Loc"/>
+						<flows>
+							<flow xsi:type="flow_end">
+								<item name="Out3A"/>
+								<quantity>1</quantity>
+							</flow>
+							<flow xsi:type="flow_start">
+								<item name="In3A"/>
+								<quantity>-1</quantity>
+							</flow>
+							<flow xsi:type="flow_start">
+								<item name="In3"/>
+								<quantity>-1</quantity>
+							</flow>
+						</flows>
+						<loads>
+							<load>
+								<resource name="Res3A"/>
+							</load>
+						</loads>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<priority>2</priority>
+					<operation name="Oper3B" xsi:type="operation_fixed_time" duration="P1D" posttime="P1D">
+						<location name="Loc"/>
+						<flows>
+							<flow xsi:type="flow_end">
+								<item name="Out3B"/>
+								<quantity>1</quantity>
+							</flow>
+							<flow xsi:type="flow_start">
+								<item name="In3B"/>
+								<quantity>-1</quantity>
+							</flow>
+						</flows>
+						<loads>
+							<load>
+								<resource name="Res3B"/>
+							</load>
+						</loads>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<priority>3</priority>
+					<operation name="Oper3C" xsi:type="operation_fixed_time" duration="P1D" posttime="P1D">
+						<location name="Loc"/>
+						<flows>
+							<flow xsi:type="flow_end">
+								<item name="Out3C"/>
+								<quantity>1</quantity>
+							</flow>
+							<flow xsi:type="flow_start">
+								<item name="In3C"/>
+								<quantity>-1</quantity>
+							</flow>
+							<flow xsi:type="flow_end">
+								<item name="Out3"/>
+								<quantity>1</quantity>
+							</flow>
+						</flows>
+						<loads>
+							<load>
+								<resource name="Res3C"/>
+							</load>
+						</loads>
+					</operation>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation name="Oper4" xsi:type="operation_alternate">
+			<location name="Loc"/>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="Out4"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="In4"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="Res4"/>
+				</load>
+			</loads>
+			<suboperations>
+				<suboperation>
+					<operation name="Oper4A" xsi:type="operation_fixed_time" duration="P1D">
+						<location name="Loc"/>
+						<flows>
+							<flow xsi:type="flow_end">
+								<item name="Out4A"/>
+								<quantity>1</quantity>
+							</flow>
+							<flow xsi:type="flow_start">
+								<item name="In4A"/>
+								<quantity>-1</quantity>
+							</flow>
+						</flows>
+						<loads>
+							<load>
+								<resource name="Res4A"/>
+							</load>
+						</loads>
+					</operation>
+					<priority>1</priority>
+				</suboperation>
+				<suboperation>
+					<operation name="Oper4B" xsi:type="operation_fixed_time" duration="P1D">
+						<location name="Loc"/>
+						<flows>
+							<flow xsi:type="flow_end">
+								<item name="Out4B"/>
+								<quantity>1</quantity>
+							</flow>
+							<flow xsi:type="flow_start">
+								<item name="In4B"/>
+								<quantity>-1</quantity>
+							</flow>
+						</flows>
+						<loads>
+							<load>
+								<resource name="Res4B"/>
+							</load>
+						</loads>
+					</operation>
+					<priority>2</priority>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation name="Oper5" xsi:type="operation_fixed_time">
+			<location name="Loc"/>
+			<duration>P1D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="Out5"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="In5"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="Res5"/>
+				</load>
+			</loads>
+		</operation>
+		<operation name="Oper6" xsi:type="operation_time_per">
+			<location name="Loc"/>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="Out6"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="In6"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="Res6">
+						<members>
+							<resource name="Res6a"/>
+							<resource name="Res6b"/>
+							<resource name="Res6c" efficiency="50"/>
+						</members>
+					</resource>
+				</load>
+			</loads>
+			<duration>P1D</duration>
+			<duration_per>P1D</duration_per>
+		</operation>
+	</operations>
+	<operationplans>
+		<!-- WIP with funky quantities and duration -->
+		<operationplan reference="MO1" quantity="1" status="confirmed" start="2014-02-01T00:00:00" end="2015-02-05T00:00:00">
+			<operation name="Strange WIP sizes"/>
+		</operationplan>
+		<operationplan reference="MO2" quantity="123" status="confirmed" start="2015-02-01T00:00:00">
+			<operation name="Strange WIP sizes"/>
+		</operationplan>
+		<operationplan reference="MO3" quantity="1234" status="confirmed" end="2015-02-05T00:00:00">
+			<operation name="Strange WIP sizes"/>
+		</operationplan>
+		<!-- WIP on fixed_time operation -->
+		<operationplan reference="1001" quantity="10" start="2013-12-31T00:00:00" end="2014-01-05T00:00:00" status="confirmed">
+			<operation name="Oper1"/>
+			<flowplans>
+				<flowplan>
+					<item name="In1"/>
+					<status>confirmed</status>
+					<quantity>-5</quantity>
+					<date>2013-12-31T00:00:00</date>
+				</flowplan>
+				<flowplan>
+					<item name="In2"/>
+					<status>confirmed</status>
+					<quantity>-8</quantity>
+					<date>2013-12-31T00:00:00</date>
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan reference="1002" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
+			<operation name="Oper1"/>
+			<flowplans>
+				<flowplan>
+					<item name="In1"/>
+					<status>confirmed</status>
+					<quantity>-5</quantity>
+					<date>2014-02-02T00:00:00</date>
+				</flowplan>
+				<flowplan>
+					<item name="In2"/>
+					<status>confirmed</status>
+					<quantity>-2</quantity>
+					<date>2014-02-05T00:00:00</date>
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan reference="1003" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
+			<operation name="Oper1"/>
+			<flowplans>
+				<flowplan>
+					<item name="In1"/>
+					<status>confirmed</status>
+					<quantity>-10</quantity>
+					<date>2014-02-28T00:00:00</date>
+				</flowplan>
+				<flowplan>
+					<item name="In2"/>
+					<status>confirmed</status>
+					<quantity>-20</quantity>
+					<date>2014-02-28T00:00:00</date>
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan reference="1004" quantity="10" start="2014-04-01T00:00:00" end="2014-04-05T00:00:00" status="confirmed">
+			<operation name="Oper1"/>
+		</operationplan>
+		<!-- WIP on routing operation -->
+		<operationplan reference="3005" quantity="10" end="2014-02-05T00:00:00" status="confirmed">
+			<operation name="Oper3"/>
+		</operationplan>
+		<operationplan reference="3006" quantity="2" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
+			<owner reference="3005"/>
+			<operation name="Oper3B"/>
+			<flowplans>
+				<flowplan>
+					<item name="In3B"/>
+					<status>confirmed</status>
+					<quantity>-2</quantity>
+					<date>2014-02-05T00:00:00</date>
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan reference="3007" quantity="10" end="2014-04-05T00:00:00" status="approved">
+			<operation name="Oper3"/>
+		</operationplan>
+		<operationplan reference="3008" quantity="10" start="2014-03-30T00:00:00" status="approved">
+			<owner reference="3007"/>
+			<operation name="Oper3B"/>
+		</operationplan>
+		<operationplan reference="3009" quantity="10" start="2014-06-05T00:00:00" status="approved">
+			<operation name="Oper3"/>
+		</operationplan>
+		<operationplan reference="3010" quantity="10" start="2014-06-10T00:00:00" status="approved">
+			<owner reference="3009"/>
+			<operation name="Oper3B"/>
+		</operationplan>
+		<!-- WIP on alternate operation -->
+		<operationplan reference="4005" quantity="10" start="2014-01-01T00:00:00" end="2014-01-05T00:00:00" status="confirmed">
+			<operation name="Oper4"/>
+			<flowplans>
+				<flowplan>
+					<item name="In4"/>
+					<status>confirmed</status>
+					<quantity>-8</quantity>
+					<date>2014-01-01T00:00:00</date>
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan reference="4006" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
+			<operation name="Oper4"/>
+			<flowplans>
+				<flowplan>
+					<item name="In4"/>
+					<status>confirmed</status>
+					<quantity>-10</quantity>
+					<date>2014-02-01T00:00:00</date>
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan reference="4007" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
+			<owner reference="4006">
+				<operation name="Oper4"/>
+			</owner>
+			<operation name="Oper4B"/>
+			<flowplans>
+				<flowplan>
+					<item name="In4B"/>
+					<status>confirmed</status>
+					<quantity>-10</quantity>
+					<date>2014-01-31T00:00:00</date>
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan reference="4008" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
+			<operation name="Oper4"/>
+			<flowplans>
+				<flowplan>
+					<item name="In4"/>
+					<status>confirmed</status>
+					<quantity>-10</quantity>
+					<date>2014-03-02T00:00:00</date>
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan reference="4009" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
+			<owner reference="4008"/>
+			<operation name="Oper4B"/>
+			<flowplans>
+				<flowplan>
+					<item name="In4B"/>
+					<status>confirmed</status>
+					<quantity>-10</quantity>
+					<date>2014-03-01T00:00:00</date>
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan reference="4010" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
+			<owner reference="4008"/>
+			<operation name="Oper4A"/>
+			<flowplans>
+				<flowplan>
+					<item name="In4"/>
+					<status>confirmed</status>
+					<quantity>-10</quantity>
+					<date>2014-03-02T00:00:00</date>
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<!-- WIP with material and capacity flags -->
+		<operationplan reference="5001" quantity="10" start="2019-01-01T00:00:00" status="confirmed">
+			<operation name="Oper5"/>
+		</operationplan>
+		<operationplan reference="5002" quantity="10" start="2019-02-01T00:00:00" status="confirmed" consume_material="false">
+			<operation name="Oper5"/>
+		</operationplan>
+		<operationplan reference="5003" quantity="10" start="2019-03-01T00:00:00" status="confirmed" produce_material="false">
+			<operation name="Oper5"/>
+		</operationplan>
+		<operationplan reference="5004" quantity="10" start="2019-04-01T00:00:00" status="confirmed" consume_capacity="false">
+			<operation name="Oper5"/>
+		</operationplan>
+		<operationplan reference="5005" quantity="10" start="2019-05-01T00:00:00" status="confirmed" consume_material="false" produce_material="false" consume_capacity="false">
+			<operation name="Oper5"/>
+		</operationplan>
+		<!-- Corner case -->
+		<operationplan reference="6001" quantity="3" status="confirmed" start="2020-02-05T00:00:00" end="2020-03-05T00:00:00">
+			<operation name="Oper6"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Res6b"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+	</operationplans>
+	<!-- Another corner case -->
+	<buffers>
+		<buffer name="creepy component 1 @ factory" xsi:type="buffer_infinite">
+			<item name="creepy component 1"/>
+			<location name="factory"/>
+		</buffer>
+		<buffer name="creepy component 2 @ factory" xsi:type="buffer_infinite">
+			<item name="creepy component 2"/>
+			<location name="factory"/>
+		</buffer>
+		<buffer name="creepy component 3 @ factory" xsi:type="buffer_infinite">
+			<item name="creepy component 3"/>
+			<location name="factory"/>
+		</buffer>
+		<buffer name="creepy component 4 @ factory" xsi:type="buffer_infinite">
+			<item name="creepy component 4"/>
+			<location name="factory"/>
+		</buffer>
+	</buffers>
+	<resources>
+		<resource name="Creepy resource 1">
+		</resource>
+		<resource name="Creepy resource 2">
+			<owner name="Creepy resource pool"/>
+		</resource>
+		<resource name="Creepy resource 3">
+			<owner name="Creepy resource pool"/>
+		</resource>
+		<resource name="Creepy secondary pool" toolperpiece="true">
+		</resource>
+		<resource name="Creepy secondary pool 1" toolperpiece="true">
+			<owner name="Creepy secondary pool"/>
+		</resource>
+		<resource name="Creepy secondary pool 2" toolperpiece="true">
+			<owner name="Creepy secondary pool"/>
+		</resource>
+		<resource name="Creepy secondary pool 3" toolperpiece="true">
+			<owner name="Creepy secondary pool"/>
+		</resource>
+		<resource name="Creepy secondary pool 4" toolperpiece="true">
+			<owner name="Creepy secondary pool"/>
+		</resource>
+		<resource name="Creepy secondary pool 5" toolperpiece="true">
+			<owner name="Creepy secondary pool"/>
+		</resource>
+	</resources>
+	<operationplans>
+		<operationplan reference="MO/0001" batch="SO/01" end="2025-03-25T01:00:00" quantity="2" status="approved">
+			<operation name="MO/0001" xsi:type="operation_routing" priority="0">
+				<item name="creepy item"/>
+				<location name="factory"/>
+				<suboperations>
+					<suboperation>
+						<operation name="MO/0001 - 1" priority="10" xsi:type="operation_fixed_time" duration="P0DT1H0M0S">
+							<location name="factory"/>
+							<flows>
+								<flow quantity="-1">
+									<item name="creepy component 1"/>
+								</flow>
+								<flow quantity="-1">
+									<item name="creepy component 2"/>
+								</flow>
+							</flows>
+							<loads>
+								<load>
+									<resource name="Creepy resource 1"/>
+								</load>
+								<load>
+									<resource name="Creepy secondary pool"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="MO/0001 - 2" priority="20" xsi:type="operation_fixed_time" duration="P0DT1H0M0S">
+							<location name="factory"/>
+							<flows>
+								<flow quantity="-1">
+									<item name="creepy component 3"/>
+								</flow>
+								<flow quantity="-1">
+									<item name="creepy component 4"/>
+								</flow>
+							</flows>
+							<loads>
+								<load>
+									<resource name="Creepy resource pool"/>
+								</load>
+								<load>
+									<resource name="Creepy secondary pool"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+				</suboperations>
+			</operation>
+		</operationplan>
+		<operationplan reference="MO/0001 - 2" end="2025-03-25T01:00:00" quantity="2" status="approved">
+			<operation name="MO/0001 - 2"/>
+			<owner reference="MO/0001"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Creepy resource 2"/>
+				</loadplan>
+				<!--loadplan>
+					<resource name="Creepy secondary pool 4"/>
+				</loadplan-->
+			</loadplans>
+		</operationplan>
+		<operationplan reference="MO/0001 - 1" end="2025-03-25T00:00:00" quantity="2.0" status="approved">
+			<operation name="MO/0001 - 1"/>
+			<owner reference="MO/0001"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Creepy secondary pool 4"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+	</operationplans>
 
 <?python
 from datetime import date
@@ -549,5 +669,4 @@ frepple.saveplan("output.2.xml")
 print("SAVING TO XML FILE")
 frepple.saveXMLfile("output.3.xml")
 ?>
-
 </plan>

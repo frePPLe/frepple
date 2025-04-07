@@ -90,6 +90,19 @@ BUFFER	Out5 @ Loc	2019-02-02T00:00:00	10	20
 BUFFER	Out5 @ Loc	2019-04-02T00:00:00	10	30
 BUFFER	Out6 @ Loc	2020-03-05T00:00:00	3	3
 BUFFER	Out6 @ Loc	2020-03-05T00:00:00	2	5
+BUFFER	creepy component 1 @ factory	2025-03-24T23:00:00	-2	-2
+BUFFER	creepy component 2 @ factory	2025-03-24T23:00:00	-2	-2
+BUFFER	creepy component 3 @ factory	2025-03-25T00:00:00	-2	-2
+BUFFER	creepy component 4 @ factory	2025-03-25T00:00:00	-2	-2
+BUFFER	creepy item @ factory	2025-03-25T01:00:00	2	2
+RESOURCE	Creepy resource 1	2025-03-24T23:00:00	1	1
+RESOURCE	Creepy resource 1	2025-03-25T00:00:00	-1	0
+RESOURCE	Creepy resource 2	2025-03-25T00:00:00	1	1
+RESOURCE	Creepy resource 2	2025-03-25T01:00:00	-1	0
+RESOURCE	Creepy secondary pool 4	2025-03-24T23:00:00	2	2
+RESOURCE	Creepy secondary pool 4	2025-03-25T00:00:00	2	4
+RESOURCE	Creepy secondary pool 4	2025-03-25T00:00:00	-2	2
+RESOURCE	Creepy secondary pool 4	2025-03-25T01:00:00	-2	0
 RESOURCE	Res1	2013-12-31T00:00:00	1	1
 RESOURCE	Res1	2014-01-05T00:00:00	-1	0
 RESOURCE	Res1	2014-02-01T00:00:00	1	1
@@ -146,6 +159,9 @@ RESOURCE	Res6b	2020-02-05T00:00:00	1	1
 RESOURCE	Res6b	2020-03-05T00:00:00	-1	0
 RESOURCE	Res6c	2020-02-05T00:00:00	1	1
 RESOURCE	Res6c	2020-03-05T00:00:00	-1	0
+OPERATION	MO/0001	2025-03-24T23:00:00	2025-03-25T01:00:00	2	SO/01	approved
+OPERATION	MO/0001 - 1	2025-03-24T23:00:00	2025-03-25T00:00:00	2	SO/01	approved
+OPERATION	MO/0001 - 2	2025-03-25T00:00:00	2025-03-25T01:00:00	2	SO/01	approved
 OPERATION	Oper1	2013-12-31T00:00:00	2014-01-05T00:00:00	10	confirmed
 OPERATION	Oper1	2014-02-01T00:00:00	2014-02-05T00:00:00	10	confirmed
 OPERATION	Oper1	2014-03-01T00:00:00	2014-03-05T00:00:00	10	confirmed
@@ -212,5 +228,6 @@ PROBLEM	material shortage	Buffer 'In6 @ Loc' has material shortage of 5	2020-02-
 PROBLEM	invalid data	No replenishment defined for 'Little inventory @ Loc'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'Negative inventory @ Loc'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'Negative inventory @ Loc' has material shortage of 0.1	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	overload	Resource 'Creepy secondary pool 4' has capacity shortage of 1	2025-03-24T23:00:00 / 2025-03-25T01:00:00
 PROBLEM	before current	Operation 'Purchase In1 @ Loc from Component supplier' planned in the past	2013-12-31T00:00:00 / 2013-12-31T00:00:00
 PROBLEM	before current	Operation 'Purchase In2 @ Loc from Component supplier' planned in the past	2013-12-31T00:00:00 / 2013-12-31T00:00:00

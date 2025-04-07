@@ -17,6 +17,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | The distribution solver has been enhanced to handle the batch window field defined
   | in the `itemsupplier <model-reference/item-suppliers.html>`_  and
   | `itemdistribution <model-reference/item-distributions.html>`_ tables.
+  | This applies to Enterprise and Cloud Editions only.
 
 .. rubric:: Production planning
 

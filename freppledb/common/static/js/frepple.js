@@ -1613,6 +1613,7 @@ var grid = {
   handlerinstalled: false,
 
   addFilter: function (event) {
+    console.log('Add filter');
     if (event) {
       event.stopPropagation();
       event.preventDefault();
@@ -1673,6 +1674,15 @@ var grid = {
     }
   },
 
+  clickFilterOperators: function (event) {
+    if ($(event.target).attr('id') != "addsearch") {
+      $(document).off("click", grid.clickFilterOperators);
+      grid.handlerinstalled = false;
+      // $("#addsearch").val("");
+      $("#filterfieldOperators").remove();
+    }
+  },
+
   showFilterList: function (el) {
     $.jgrid.hideModal("#searchmodfbox_grid");
     event.stopPropagation();
@@ -1681,8 +1691,9 @@ var grid = {
       var l = $('<span id="filterfield" class="list-group dropdown-menu">');
       var cnt = 15;  // Limits the number fields to choose from
       for (var col of $("#grid").jqGrid('getGridParam', 'colModel')) {
+        console.log(1685);
         var searchoptions = col.searchoptions;
-        if (searchoptions && searchoptions.sopt && searchoptions.sopt.includes("cn")) {
+        if (searchoptions && searchoptions.sopt) {
           var n = $('<a class="dropdown-item" onclick="grid.addFilter(event)" />');
           n.attr("data-filterfield", col.name);
           n.html(gettext("Search") + ' ' + col.label);
@@ -1690,6 +1701,29 @@ var grid = {
           if (--cnt <= 0) break;
         }
       }
+      $(el).before(l);
+      grid.handlerinstalled = true;
+    }
+  },
+
+  showFilterOperatorsList: function (event) {
+    let el = event.target;
+    $.jgrid.hideModal("#searchmodfbox_grid");
+    event.stopPropagation();
+    if (!grid.handlerinstalled) {
+      $(document).on("click", grid.clickFilterOperators);
+      var l = $('<span id="filterOperatorfield" class="list-group dropdown-menu">');
+      let col = $("#grid").jqGrid('getGridParam', 'colModel').filter((col)=> (col.name == "name"))[0];
+      var searchoptions = col.searchoptions;
+      if (searchoptions && searchoptions.sopt) {
+        for (let sopt of searchoptions.sopt) {
+          var n = $('<a class="dropdown-item" onclick="grid.addFilter(event)" />');
+          n.attr("data-filteroperatorfield", sopt);
+          n.html(sopt + ' ' + gettext(sopt+"-label"));
+          l.append(n);
+        }
+      }
+
       $(el).before(l);
       grid.handlerinstalled = true;
     }
@@ -1756,18 +1790,22 @@ var grid = {
     else {
       for (var firstKey in $.jgrid.locales)
         var operands = $.jgrid.locales[firstKey].search.odata;
-      for (i = 0; i < operands.length; i++)
+      for (i = 0; i < operands.length; i++){
+        console.log('1760: ', operands[i].oper);
         if (operands[i].oper == rule.op) {
           oper = operands[i].text;
           break;
-        }
+        }}
       if (oper == undefined)
         oper = rule.op;
     }
 
     // Final result
-    var newexpression = $('<span class="badge">' + col.label + '&nbsp;' + oper + '&nbsp;</span>');
-    var newelement = $('<input class="form-control" size="10">');
+    var newspan = $('<span collabel=' + col.label + ' style="cursor: pointer;"><i class="fa fa-filter"></i>' + '&nbsp;&nbsp;' + col.label + '&nbsp;' + oper + '&nbsp;</span>');
+    newspan.on('click', (event) => grid.showFilterOperatorsList(event));
+    var newexpression = $('<span class="badge"></span>');
+    newexpression.append(newspan);
+    var newelement = $('<input class="form-control" onInput="this.style.width = (this.value.length + 4) + \'ch\';">');
     rule["filtercount"] = grid.countFilters++;  // Mark position in the expression
     newelement.val(rule.data);
     newelement.on('change', function (event) {
@@ -1785,19 +1823,20 @@ var grid = {
     if (rule.op == "win")
       // Special case for the "within N days" operator
       newexpression.append(gettext("days") + '&nbsp;');
-    var deleteelement = $('<span class="fa fa-times"/>');
-    deleteelement.on('click', function (event) {
-      grid.removeFilter(fullfilter, rule["filtercount"]);
-      grid.getFilterGroup(thegrid, fullfilter, true, thefilter, fullfilter);
-      thegrid.setGridParam({
-        postData: { filters: JSON.stringify(fullfilter) },
-        search: true
-      }).trigger('reloadGrid');
-      if (typeof extraSearchUpdate == 'function')
-        extraSearchUpdate(fullfilter);
-      grid.saveColumnConfiguration();
-    });
-    newexpression.append(deleteelement);
+    // var deleteelement = $('<span class="fa fa-times"/>');
+    // deleteelement.on('click', function (event) {
+    //   grid.removeFilter(fullfilter, rule["filtercount"]);
+    //   grid.getFilterGroup(thegrid, fullfilter, true, thefilter, fullfilter);
+    //   thegrid.setGridParam({
+    //     postData: { filters: JSON.stringify(fullfilter) },
+    //     search: true
+    //   }).trigger('reloadGrid');
+    //   if (typeof extraSearchUpdate == 'function')
+    //     extraSearchUpdate(fullfilter);
+    //   grid.saveColumnConfiguration();
+    // });
+    // newexpression.append(deleteelement);
+    console.log(1837, newexpression, newexpression.children());
     thefilter.append(newexpression);
   },
 
@@ -2417,6 +2456,58 @@ var ERPconnection = {
         // data = {PO: [row0, row1, ...], MO: [row0, ...], DO: [row0, ...]};
         // row = [[label0, value0, hidden], [label1, value1, hidden], ...];
 
+        data = {
+          "PO": [
+            [
+              ["reference", "2", 0, "text"],
+              ["item", "FURN_6666", 0, "text"],
+              ["location", "WH", 0, "text"],
+              ["supplier", "Ready Mat 12", 0],
+              ["ordering date", "2025-04-04T12:12:27", 0, "date"],
+              ["receipt date", "2025-04-04T12:12:27", 0, "date"],
+              ["quantity", "6.00000000", 0, "number"],
+              ["value", "1770.0000000000000000", 0, "number"],
+              ["status", "approved", 0, "text"]
+            ]
+          ],
+          "DO": [
+              [
+                ["reference", "2", 0, "text"],
+                ["item", "FURN_6666", 0, "text"],
+                ["location", "WH", 0, "text"],
+                ["supplier", "Ready Mat 12", 0],
+                ["ordering date", "2025-04-04T12:12:27", 0, "date"],
+                ["receipt date", "2025-04-04T12:12:27", 0, "date"],
+                ["quantity", "6.00000000", 0, "number"],
+                ["value", "1770.0000000000000000", 0, "number"],
+                ["status", "approved", 0, "text"]
+              ]
+            ], "MO": [
+              [
+                ["reference", "2", 0, "text"],
+                ["item", "FURN_6666", 0, "text"],
+                ["location", "WH", 0, "text"],
+                ["supplier", "Ready Mat 12", 0],
+                ["ordering date", "2025-04-04T12:12:27", 0, "date"],
+                ["end date", "2025-04-04T12:12:27", 0, "date"],
+                ["quantity", "6.00000000", 0, "number"],
+                ["value", "1770.0000000000000000", 0, "number"],
+                ["status", "approved", 0, "text"]
+              ],
+              [
+                ["reference", "3", 0, "text"],
+                ["item", "FURN_9999", 0, "text"],
+                ["location", "WW", 0, "text"],
+                ["supplier", "Ready Mat 22", 0],
+                ["ordering date", "2025-04-04T12:12:27", 0, "date"],
+                ["end date", "2025-04-04T12:12:27", 0, "date"],
+                ["quantity", "6.00000000", 0, "number"],
+                ["value", "1770.0000000000000000", 0, "number"],
+                ["status", "approved", 0, "text"]
+              ]
+            ]
+        };
+
         if (data.PO.length === 0 && data.MO.length === 0 && data.DO.length === 0) {
           $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' +
             gettext('There are no purchase, distribution or manufacturing orders for export that are linked to this sales order') +
@@ -2449,6 +2540,7 @@ var ERPconnection = {
         );
 
         let labels = [];
+        let modal_table_row_index = 0;
 
         for (const dataType of ['PO', 'DO', 'MO']) {
           if (data[dataType].length === 0) {
@@ -2471,7 +2563,6 @@ var ERPconnection = {
               tableheadercontent.append($('<th/>').addClass('text-capitalize').text(labels[labelIndex]));
           }
           const tablebodycontent = $('<tbody/>');
-
           for (let i = 0; i < data[dataType].length; i++) {
             const row = $('<tr/>').attr('orderreference', data[dataType][i][0][1]).attr('ordertype', dataType);
             const td = $('<td/>');
@@ -2487,18 +2578,20 @@ var ERPconnection = {
 
             for (let j = 0; j < labels.length; j++) {
               if (!data[dataType][i][j][2]) {
+                console.log(2570, data[dataType][i][j][0]);
                 if (data[dataType][i][j][0] == 'quantity') {
-                  row.append($('<td class="align-middle"/><input type="number" value="' + data[dataType][i][j][1] + '" id="quantity' + i + '"/>'));
-                } else if (data[dataType][i][j][0] == 'receipt date') {
-                  row.append($('<td class="align-middle"/><input type="datetime-local" value="' + data[dataType][i][j][1] + '" title="due date" required="" id="due' + i + '"></input>'));
+                  row.append($('<td class="align-middle"/><input type="number" value="' + parseFloat(data[dataType][i][j][1]) + '" id="quantity' + modal_table_row_index + '"/>'));
+                } else if (data[dataType][i][j][0] === 'receipt date' || data[dataType][i][j][0] === 'end date') {
+                  row.append($('<td class="align-middle"/><input type="datetime-local" value="' + data[dataType][i][j][1] + '" title="due date" required="" id="due' + modal_table_row_index + '"></modal_table_row_indexnput>'));
                 } else if (data[dataType][i][j][0] == 'supplier') {
-                  row.append($('<td class="align-middle"/><input type="text" value="' + data[dataType][i][j][1] + '" title="supplier" required="" id="supplier' + i + '"></input>'));
+                  row.append($('<td class="align-middle"/><input type="text" value="' + data[dataType][i][j][1] + '" title="supplier" required="" id="supplier' + modal_table_row_index + '"></input>'));
                 } else {
                   row.append($('<td class="align-middle"/>').text(formatValue(data[dataType][i][j])));
                 }
               }
             };
             tablebodycontent.append(row);
+            modal_table_row_index++;
           }
 
           $('#popup #exporttable_' + dataType).append(tablebodycontent);
@@ -2541,14 +2634,18 @@ var ERPconnection = {
             let date = '.modal-body #due' + index;
             let quantity = '.modal-body #quantity' + index;
             let supplier = '.modal-body #supplier' + index;
+
+            // Always send seconds even if they are 0
+            newDate = ($(date).val().length === 16) ? $(date).val() + ":00" : $(date).val();
+
             exportData.push({
               'reference': row.attributes.orderreference.value,
               'type': row.getAttribute('ordertype'),
               'quantity': Number($(quantity).val()),
-              'enddate':  $(date).val(),
+              'enddate':  newDate,
               'supplier': $(supplier).val()
             });
-            index++
+            index++;
           }
 
           $('#popup .modal-body').html(gettext('connecting') + '...');

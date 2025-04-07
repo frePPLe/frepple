@@ -264,8 +264,6 @@ class SolverCreate : public Solver {
 
   void solveUnconstrained(const Resource*, void* = nullptr);
 
-  void createsBatches(Operation*, void* = nullptr);
-
   /* Behavior of this solver method:
    *  - Always return OK.
    */
@@ -582,9 +580,6 @@ class SolverCreate : public Solver {
 
   /* Python method for undoing the plan changes. */
   static PyObject* rollback(PyObject*, PyObject*);
-
-  /* Python method for grouping operationplans. */
-  static PyObject* createsBatches(PyObject*, PyObject*);
 
   /* Python method for grouping operationplans. */
   static PyObject* markAutofence(PyObject*, PyObject*);

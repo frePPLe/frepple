@@ -773,7 +773,7 @@ class HasProblems {
 class Problem::List {
  public:
   /* Constructor. */
-  List(){};
+  List() {};
 
   /* Destructor. */
   ~List() { clear(); }
@@ -973,6 +973,12 @@ class Solver : public Object {
 
   /* Update whether or not we automatically commit the changes. */
   void setAutocommit(const bool b) { autocommit = b; }
+
+  /* Group operationplans together when within the same batch window*/
+  void createsBatches(Operation*, void* = nullptr);
+
+  /* Python method for grouping operationplans. */
+  static PyObject* createsBatches(PyObject*, PyObject*);
 
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaCategory* metadata;
@@ -1918,7 +1924,7 @@ class OperationPlan : public Object,
   void setRemark(const string& s) { remark = s; }
 
   void setRemark(const PooledString& s) { remark = s; }
-  
+
   /* Shortcut method to the cluster. */
   int getCluster() const;
 
@@ -9944,17 +9950,17 @@ class PeggingIterator : public NonCopyable, public Object {
     short level;
     Duration gap;
 
-    state(){};
+    state() {};
 
     state(const OperationPlan* op, double q, double o, short l, Duration g)
-        : opplan(op), quantity(q), offset(o), level(l), gap(g){};
+        : opplan(op), quantity(q), offset(o), level(l), gap(g) {};
 
     state(const state& other)
         : opplan(other.opplan),
           quantity(other.quantity),
           offset(other.offset),
           level(other.level),
-          gap(other.gap){};
+          gap(other.gap) {};
 
     // Comparison operator
     bool operator<(const state& other) const {

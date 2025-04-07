@@ -895,22 +895,6 @@ PyObject* SolverCreate::rollback(PyObject* self, PyObject* args) {
   return Py_BuildValue("");
 }
 
-PyObject* SolverCreate::createsBatches(PyObject* self, PyObject* args) {
-  // Free Python interpreter for other threads
-  Py_BEGIN_ALLOW_THREADS;
-  try {
-    SolverCreate* me = static_cast<SolverCreate*>(self);
-    for (auto& o : Operation::all()) me->createsBatches(&o, &me->getCommands());
-  } catch (...) {
-    Py_BLOCK_THREADS;
-    PythonType::evalException();
-    return nullptr;
-  }
-  // Reclaim Python interpreter
-  Py_END_ALLOW_THREADS;
-  return Py_BuildValue("");
-}
-
 PyObject* SolverCreate::markAutofence(PyObject* self, PyObject* args) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;

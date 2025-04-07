@@ -2100,7 +2100,23 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
   }
 }
 
-void SolverCreate::createsBatches(Operation* oper, void* v) {
+PyObject* Solver::createsBatches(PyObject* self, PyObject* args) {
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS;
+  try {
+    SolverCreate* me = static_cast<SolverCreate*>(self);
+    for (auto& o : Operation::all()) me->createsBatches(&o, &me->getCommands());
+  } catch (...) {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return nullptr;
+  }
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
+}
+
+void Solver::createsBatches(Operation* oper, void* v) {
   // Filter applicable operations:
   //  - batch window is positive
   //  - not loading any constrained resources
@@ -2117,15 +2133,15 @@ void SolverCreate::createsBatches(Operation* oper, void* v) {
         ld->getResource()->getConstrained())
       return;
 
-  SolverData* data = static_cast<SolverData*>(v);
-  auto loglevel = data->getSolver()->getLogLevel();
+  Solver* solver = static_cast<Solver*>(v);
+  auto loglevel = solver->getLogLevel();
 
   // Loop over all operationplans of the operation
   //   Scan for others that are within batching window and have same batch.
   //   If found:
   //      - delete them
   //      - increase quantity of the first one
-  if (loglevel > 1) logger << indentlevel << "Batch grouping " << oper << endl;
+  if (loglevel > 1) logger << "Batch grouping " << oper << endl;
   auto opplan = oper->getOperationPlans();
   while (opplan != OperationPlan::end()) {
     if (opplan->getProposed()) {
@@ -2166,8 +2182,7 @@ void SolverCreate::createsBatches(Operation* oper, void* v) {
         if (!ok) continue;
 
         if (loglevel > 1)
-          logger << indentlevel << "  Grouping " << tmp << " with " << &*opplan
-                 << endl;
+          logger << "  Grouping " << tmp << " with " << &*opplan << endl;
         added += tmp->getQuantity();
         delete tmp;
       }

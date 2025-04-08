@@ -40,6 +40,12 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     from the time zone of the server. In some situations this can result have a continuous
     execution of the task.
 
+.. rubric:: Odoo integration
+
+- | All Odoo versions. When exporting POs, MOs or DOs from the sales order table of frePPLe to Odoo,
+  | the supplier, end date and quantity can be updated in the export dialog before sending the records
+  | to Odoo.
+
 9.7.0 (2025-03-21)
 ==================
 

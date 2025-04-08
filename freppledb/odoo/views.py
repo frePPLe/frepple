@@ -140,124 +140,131 @@ def Upload(request):
                     "reference", rec.get("operationplan__reference", None)
                 )
                 type = rec.get("operationplan__type", rec.get("type", None))
-                if not reference:
+                if not reference or not rec["quantity"]:
                     continue
-                elif type == "PO":
-                    po = PurchaseOrder.objects.using(request.database).get(
-                        reference=reference
+
+                # check if some records were updated by the user
+                op = OperationPlan.objects.using(request.database).get(
+                    reference=reference
+                )
+
+                # date format can be "%Y-%m-%dT%H:%M:%S" if coming from sales orders
+                # otherwise settings.DATETIME_INPUT_FORMATS[0]
+                if rec.get("enddate"):
+                    try:
+                        # SO table
+                        enddate = datetime.strptime(
+                            rec.get("enddate"), "%Y-%m-%dT%H:%M:%S"
+                        )
+                    except:
+                        # PO/MO/DO table
+                        enddate = datetime.strptime(
+                            rec.get("enddate"),
+                            (
+                                settings.DATETIME_INPUT_FORMATS[0]
+                                if settings.DATE_STYLE_WITH_HOURS
+                                else settings.DATE_INPUT_FORMATS[0]
+                            ),
+                        )
+                else:
+                    # inventory/resource detail table
+                    enddate = datetime.strptime(
+                        rec.get("operationplan__enddate"),
+                        (
+                            settings.DATETIME_INPUT_FORMATS[0]
+                            if settings.DATE_STYLE_WITH_HOURS
+                            else settings.DATE_INPUT_FORMATS[0]
+                        ),
                     )
+
+                if op.enddate != enddate:
+                    op.enddate = enddate
+                    op.dirty = True
+                if (
+                    op.supplier
+                    and rec.get("supplier")
+                    and op.supplier.name != rec.get("supplier")
+                ):
+                    s = Supplier.objects.using(request.database).get(
+                        name=rec["supplier"]
+                    )
+                    op.supplier = s
+                    op.dirty = True
+                if op.quantity != rec["quantity"]:
+                    op.quantity = rec["quantity"]
+                    op.dirty = True
+
+                if type == "PO":
                     if (
-                        not po.supplier.source
+                        not op.supplier.source
                         or not (
-                            po.status == "proposed"
+                            op.status == "proposed"
                             or (
-                                po.status in ("approved", "confirmed")
-                                and po.source == "odoo_1"
+                                op.status in ("approved", "confirmed")
+                                and op.source == "odoo_1"
                             )
                         )
-                        or not po.item
-                        or not po.item.source
-                        or po.item.type == "make to order"
+                        or not op.item
+                        or not op.item.source
+                        or op.item.type == "make to order"
                     ):
                         continue
 
-                    try:
-                        enddate = datetime.strptime(rec["enddate"], "%Y-%m-%dT%H:%M")
-                    except:
-                        enddate = datetime.strptime(rec["enddate"], "%Y-%m-%dT%H:%M:%S")
-
-                    if po.enddate != enddate:
-                        po.enddate = enddate
-                        po.dirty = True
-
-                    if po.supplier.name != rec["supplier"]:
-                        # get the new supplier
-                        s = Supplier.objects.using(request.database).get(
-                            name=rec["supplier"]
-                        )
-                        po.supplier = s
-                        po.dirty = True
-
-                    if po.quantity != rec["quantity"]:
-                        po.quantity = rec["quantity"]
-                        po.dirty = True
-
-                    if not po.quantity:
-                        continue
-
-                    obj.append(po)
+                    obj.append(op)
                     data_odoo.append(
                         '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s status=%s remark=%s/>'
                         % (
-                            po.reference,
-                            quoteattr(po.item.name),
-                            quoteattr(po.location.name),
-                            quoteattr(po.supplier.name),
-                            po.startdate,
-                            po.enddate,
-                            po.quantity,
-                            quoteattr(po.location.subcategory or ""),
-                            quoteattr(po.item.subcategory or ""),
-                            int(po.criticality or 0),
-                            quoteattr(po.batch or ""),
-                            quoteattr(po.status),
-                            quoteattr(getattr(po, "remark", None) or ""),
+                            op.reference,
+                            quoteattr(op.item.name),
+                            quoteattr(op.location.name),
+                            quoteattr(op.supplier.name),
+                            op.startdate,
+                            op.enddate,
+                            op.quantity,
+                            quoteattr(op.location.subcategory or ""),
+                            quoteattr(op.item.subcategory or ""),
+                            int(op.criticality or 0),
+                            quoteattr(op.batch or ""),
+                            quoteattr(op.status),
+                            quoteattr(getattr(op, "remark", None) or ""),
                         )
                     )
                 elif type == "DO":
-                    do = DistributionOrder.objects.using(request.database).get(
+                    op = DistributionOrder.objects.using(request.database).get(
                         reference=reference
                     )
                     if (
-                        not do.origin.source
-                        or not do.destination.source
-                        or do.status != "proposed"
-                        or not do.item
-                        or not do.item.source
-                        or do.item.type == "make to order"
+                        not op.origin.source
+                        or not op.destination.source
+                        or op.status != "proposed"
+                        or not op.item
+                        or not op.item.source
+                        or op.item.type == "make to order"
                     ):
                         continue
 
-                    if do.quantity != rec["quantity"]:
-                        do.quantity = rec["quantity"]
-                        do.dirty = True
-
-                    if not do.quantity:
-                        continue
-
-                    try:
-                        enddate = datetime.strptime(rec["enddate"], "%Y-%m-%dT%H:%M")
-                    except:
-                        enddate = datetime.strptime(rec["enddate"], "%Y-%m-%dT%H:%M:%S")
-
-                    if do.enddate != enddate:
-                        do.enddate = enddate
-                        do.dirty = True
-
-                    obj.append(do)
+                    obj.append(op)
                     data_odoo.append(
                         '<operationplan status="%s" reference="%s" ordertype="DO" item=%s origin=%s destination=%s start="%s" end="%s" quantity="%s" origin_id=%s destination_id=%s item_id=%s criticality="%d" batch=%s remark=%s/>'
                         % (
-                            do.status,
-                            do.reference,
-                            quoteattr(do.item.name),
-                            quoteattr(do.origin.name),
-                            quoteattr(do.destination.name),
-                            do.startdate,
-                            do.enddate,
-                            do.quantity,
-                            quoteattr(do.origin.subcategory or ""),
-                            quoteattr(do.destination.subcategory or ""),
-                            quoteattr(do.item.subcategory or ""),
-                            int(do.criticality or 0),
-                            quoteattr(do.batch or ""),
-                            quoteattr(getattr(do, "remark", None) or ""),
+                            op.status,
+                            op.reference,
+                            quoteattr(op.item.name),
+                            quoteattr(op.origin.name),
+                            quoteattr(op.destination.name),
+                            op.startdate,
+                            op.enddate,
+                            op.quantity,
+                            quoteattr(op.origin.subcategory or ""),
+                            quoteattr(op.destination.subcategory or ""),
+                            quoteattr(op.item.subcategory or ""),
+                            int(op.criticality or 0),
+                            quoteattr(op.batch or ""),
+                            quoteattr(getattr(op, "remark", None) or ""),
                         )
                     )
                 elif type not in ("DLVR", "STCK"):
-                    op = OperationPlan.objects.using(request.database).get(
-                        reference=reference
-                    )
+
                     if op.owner and op.owner.status in (
                         "proposed",
                         "approved",
@@ -281,13 +288,6 @@ def Upload(request):
                         or not op.location
                         or not op.operation
                     ):
-                        continue
-
-                    if op.quantity != rec["quantity"]:
-                        op.quantity = rec["quantity"]
-                        op.dirty = True
-
-                    if not op.quantity:
                         continue
 
                     obj.append(op)

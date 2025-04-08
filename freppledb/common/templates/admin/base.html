@@ -32,7 +32,7 @@
 {% if title %}
 <div class="row mt-3">
   <div class="col">
-    <h1>{{title|capfirst|force_escape}}{% if post_title %}: {{post_title|capfirst}}{% endif %}<small>{% block filter %}{% endblock %}&nbsp;&nbsp;<span id="curerror"></span></small></h1>
+    <h1 style="position: relative;">{{title|capfirst|force_escape}}{% if post_title %}: {{post_title|capfirst}}{% endif %}<small>{% block filter %}{% endblock %}&nbsp;&nbsp;<span id="curerror"></span></small></h1>
   </div>
   <div class="col-auto d-flex ms-auto align-items-top">
     {% block tools %}{% endblock %}

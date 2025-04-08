@@ -1613,7 +1613,6 @@ var grid = {
   handlerinstalled: false,
 
   addFilter: function (event) {
-    console.log('Add filter');
     if (event) {
       event.stopPropagation();
       event.preventDefault();
@@ -1691,7 +1690,6 @@ var grid = {
       var l = $('<span id="filterfield" class="list-group dropdown-menu">');
       var cnt = 15;  // Limits the number fields to choose from
       for (var col of $("#grid").jqGrid('getGridParam', 'colModel')) {
-        console.log(1685);
         var searchoptions = col.searchoptions;
         if (searchoptions && searchoptions.sopt) {
           var n = $('<a class="dropdown-item" onclick="grid.addFilter(event)" />');
@@ -1791,7 +1789,6 @@ var grid = {
       for (var firstKey in $.jgrid.locales)
         var operands = $.jgrid.locales[firstKey].search.odata;
       for (i = 0; i < operands.length; i++){
-        console.log('1760: ', operands[i].oper);
         if (operands[i].oper == rule.op) {
           oper = operands[i].text;
           break;
@@ -1836,7 +1833,6 @@ var grid = {
     //   grid.saveColumnConfiguration();
     // });
     // newexpression.append(deleteelement);
-    console.log(1837, newexpression, newexpression.children());
     thefilter.append(newexpression);
   },
 
@@ -2456,58 +2452,6 @@ var ERPconnection = {
         // data = {PO: [row0, row1, ...], MO: [row0, ...], DO: [row0, ...]};
         // row = [[label0, value0, hidden], [label1, value1, hidden], ...];
 
-        data = {
-          "PO": [
-            [
-              ["reference", "2", 0, "text"],
-              ["item", "FURN_6666", 0, "text"],
-              ["location", "WH", 0, "text"],
-              ["supplier", "Ready Mat 12", 0],
-              ["ordering date", "2025-04-04T12:12:27", 0, "date"],
-              ["receipt date", "2025-04-04T12:12:27", 0, "date"],
-              ["quantity", "6.00000000", 0, "number"],
-              ["value", "1770.0000000000000000", 0, "number"],
-              ["status", "approved", 0, "text"]
-            ]
-          ],
-          "DO": [
-              [
-                ["reference", "2", 0, "text"],
-                ["item", "FURN_6666", 0, "text"],
-                ["location", "WH", 0, "text"],
-                ["supplier", "Ready Mat 12", 0],
-                ["ordering date", "2025-04-04T12:12:27", 0, "date"],
-                ["receipt date", "2025-04-04T12:12:27", 0, "date"],
-                ["quantity", "6.00000000", 0, "number"],
-                ["value", "1770.0000000000000000", 0, "number"],
-                ["status", "approved", 0, "text"]
-              ]
-            ], "MO": [
-              [
-                ["reference", "2", 0, "text"],
-                ["item", "FURN_6666", 0, "text"],
-                ["location", "WH", 0, "text"],
-                ["supplier", "Ready Mat 12", 0],
-                ["ordering date", "2025-04-04T12:12:27", 0, "date"],
-                ["end date", "2025-04-04T12:12:27", 0, "date"],
-                ["quantity", "6.00000000", 0, "number"],
-                ["value", "1770.0000000000000000", 0, "number"],
-                ["status", "approved", 0, "text"]
-              ],
-              [
-                ["reference", "3", 0, "text"],
-                ["item", "FURN_9999", 0, "text"],
-                ["location", "WW", 0, "text"],
-                ["supplier", "Ready Mat 22", 0],
-                ["ordering date", "2025-04-04T12:12:27", 0, "date"],
-                ["end date", "2025-04-04T12:12:27", 0, "date"],
-                ["quantity", "6.00000000", 0, "number"],
-                ["value", "1770.0000000000000000", 0, "number"],
-                ["status", "approved", 0, "text"]
-              ]
-            ]
-        };
-
         if (data.PO.length === 0 && data.MO.length === 0 && data.DO.length === 0) {
           $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' +
             gettext('There are no purchase, distribution or manufacturing orders for export that are linked to this sales order') +
@@ -2578,7 +2522,6 @@ var ERPconnection = {
 
             for (let j = 0; j < labels.length; j++) {
               if (!data[dataType][i][j][2]) {
-                console.log(2570, data[dataType][i][j][0]);
                 if (data[dataType][i][j][0] == 'quantity') {
                   row.append($('<td class="align-middle"/><input type="number" value="' + parseFloat(data[dataType][i][j][1]) + '" id="quantity' + modal_table_row_index + '"/>'));
                 } else if (data[dataType][i][j][0] === 'receipt date' || data[dataType][i][j][0] === 'end date') {

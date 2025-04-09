@@ -21,10 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import os
-
 import django.contrib.postgres.fields
-from django.db import migrations, transaction, models, connection
+from django.db import migrations, transaction, models
 
 from ..models import defaultdatabase
 
@@ -32,14 +30,20 @@ from ..models import defaultdatabase
 def updateScenarioInfo(apps, schema_editor):
     from ...execute.models import ScheduledTask
 
-    if not connection.settings_dict.get("TEST", False):
-        try:
+    try:
+        if not schema_editor.connection.settings_dict.get(
+            "TEST"
+        ) or schema_editor.connection.settings_dict.get("TEST").get(
+            "NAME"
+        ) != schema_editor.connection.settings_dict.get(
+            "NAME"
+        ):
             with transaction.atomic():
                 ScheduledTask.updateScenario(schema_editor.connection.alias)
-        except Exception as e:
-            # On a new schema, the execute app may not be installed yet.
-            # This is not a problem as it won't have any scheduled tasks then.
-            pass
+    except Exception as e:
+        # On a new schema, the execute app may not be installed yet.
+        # This is not a problem as it won't have any scheduled tasks then.
+        pass
 
 
 class Migration(migrations.Migration):

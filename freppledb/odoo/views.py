@@ -180,16 +180,13 @@ def Upload(request):
                 if op.enddate != enddate:
                     op.enddate = enddate
                     op.dirty = True
-                if (
-                    op.supplier
-                    and rec.get("supplier")
-                    and op.supplier.name != rec.get("supplier")
-                ):
-                    s = Supplier.objects.using(request.database).get(
-                        name=rec["supplier"]
-                    )
+
+                supplier = rec.get("supplier", rec.get("operationplan__supplier__name"))
+                if op.supplier and supplier and op.supplier.name != supplier:
+                    s = Supplier.objects.using(request.database).get(name=supplier)
                     op.supplier = s
                     op.dirty = True
+
                 if op.quantity != rec["quantity"]:
                     op.quantity = rec["quantity"]
                     op.dirty = True

@@ -396,6 +396,11 @@ def Upload(request):
             ("%s:%s" % (odoo_user, odoo_password)).encode("utf-8")
         )
         logger.debug("Uploading %d bytes of planning results to Odoo" % size)
+
+        for i in obj:
+            if hasattr(i, "dirty"):
+                i.save(using=request.database)
+
         req = Request(
             "%sfrepple/xml/" % odoo_url,
             data=body,
@@ -414,8 +419,6 @@ def Upload(request):
             if i.status == "proposed":
                 i.status = "approved"
                 i.source = "odoo_1"
-                i.save(using=request.database)
-            elif hasattr(i, "dirty"):
                 i.save(using=request.database)
         return HttpResponse("OK")
 

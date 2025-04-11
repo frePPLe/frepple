@@ -12,13 +12,6 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Bug Fix: A forecast report file with the forecast column and without the item, location
     and customer columns was loaded against the root forecast combination.
 
-.. rubric:: Distribution planning
-
-- | The distribution solver has been enhanced to handle the batch window field defined
-  | in the `itemsupplier <model-reference/item-suppliers.html>`_  and
-  | `itemdistribution <model-reference/item-distributions.html>`_ tables.
-  | This applies to Enterprise and Cloud Editions only.
-
 .. rubric:: Production planning
 
 - | Bug fix: Situations where the sales order devlivery exceeds the requested quantity were not handled correctly.

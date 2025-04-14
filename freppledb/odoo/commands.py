@@ -205,6 +205,7 @@ class OdooReadData(PlanTask):
                 args["database"] = odoo_db
             url = "%sfrepple/xml?%s" % (odoo_url, urlencode(args))
             response = None
+            print(f"Connecting to odoo at {url}")
             try:
                 request = Request(url)
                 encoded = base64.encodebytes(
@@ -237,7 +238,7 @@ class OdooReadData(PlanTask):
                         )
 
             except HTTPError as e:
-                print("Error connecting to odoo at %s" % url)
+                print("Error during connection with odoo")
                 if not response:
                     raise e
                 if response.info().get("Content-Encoding") == "gzip":

@@ -521,7 +521,6 @@ class Command(BaseCommand):
             ],
             capture_output=True,
             text=True,
-            shell=True,
         ).stdout
         if container:
             if options["verbosity"]:

@@ -39,6 +39,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | the supplier, end date and quantity can be updated in the export dialog before sending the records
   | to Odoo.
 
+- | 17, 18: Improved support for kit (aka phantom) bill of materials.
+
 9.7.0 (2025-03-21)
 ==================
 

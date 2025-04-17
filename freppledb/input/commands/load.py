@@ -676,7 +676,7 @@ class loadCalendarBuckets(LoadTask):
         import frepple
 
         if cls.filter:
-            filter_where = "where %s " % cls.filter
+            filter_where = "and %s " % cls.filter
         else:
             filter_where = ""
 
@@ -702,7 +702,8 @@ class loadCalendarBuckets(LoadTask):
                         calendar_id, startdate, enddate, priority, value,
                         sunday, monday, tuesday, wednesday, thursday, friday, saturday,
                         starttime, endtime, source, null
-                        FROM calendarbucket %s
+                        FROM calendarbucket
+                        WHERE (startdate < enddate or startdate is null or enddate is null) %s
                         UNION
                         SELECT
                         bucket_id calendar_id, startdate, enddate, 10 priority , 0 as value,

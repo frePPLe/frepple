@@ -4,7 +4,7 @@ Release notes
 9.8.0 (Upcoming release)
 ========================
 
-This release is scheduled for end of April.
+This release is scheduled for mid May.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: User interface

@@ -432,6 +432,7 @@
 			<end>2022-01-10T00:00:00</end>
 			<quantity>2</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 			<owner>
 				<reference>MO#1</reference>
 			</owner>

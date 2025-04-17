@@ -159,25 +159,14 @@ void Plan::setSuppressFlowplanCreation(bool b) {
         else if (f->getQuantity() > 0)
           productionexists = true;
       };
-      if ((!productionexists || !consumptionexists) && opplan->getOwner()) {
-        auto subopplans = opplan->getOwner()->getSubOperationPlans();
-        while (auto subopplan = subopplans.next()) {
-          auto subflplniter = subopplan->beginFlowPlans();
-          while (auto f = subflplniter.next()) {
-            if (f->getQuantity() < 0)
-              consumptionexists = true;
-            else if (f->getQuantity() > 0)
-              productionexists = true;
-          };
-          if (productionexists && consumptionexists) break;
+      if (!productionexists || !consumptionexists) {
+        for (auto& h : opplan->getOperation()->getFlows()) {
+          if (!h.getAlternate() && ((!consumptionexists && h.isConsumer() &&
+                                     opplan->getConsumeMaterial()) ||
+                                    (!productionexists && h.isProducer() &&
+                                     opplan->getProduceMaterial())))
+            new FlowPlan(&*opplan, &h);
         }
-      }
-      for (auto& h : opplan->getOperation()->getFlows()) {
-        if (!h.getAlternate() && ((!consumptionexists && h.isConsumer() &&
-                                   opplan->getConsumeMaterial()) ||
-                                  (!productionexists && h.isProducer() &&
-                                   opplan->getProduceMaterial())))
-          new FlowPlan(&*opplan, &h);
       }
       opplan->updateFeasible();
     }

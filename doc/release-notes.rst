@@ -41,6 +41,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | 17, 18: Improved support for kit (aka phantom) bill of materials.
 
+- | All odoo versions: The material consumption of work orders wasn't correctly
+    processed if they weren't consumed on the first step.
+
 9.7.0 (2025-03-21)
 ==================
 

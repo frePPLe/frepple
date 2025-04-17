@@ -1,5 +1,6 @@
 BUFFER	comp A @ prod2	2022-01-01T00:00:00	-3	-3
 BUFFER	comp B @ prod2	2022-01-04T00:00:00	-4	-4
+BUFFER	comp C @ prod2	2022-01-07T00:00:00	-2	-2
 BUFFER	complex product @ prod2	2022-01-10T00:00:00	2	2
 BUFFER	consumed item @ prod	2019-01-01T00:00:01	-777	-777
 BUFFER	consumed item @ prod	2019-03-05T00:00:00	777	0
@@ -35,5 +36,6 @@ PROBLEM	material shortage	Buffer 'comp A @ prod2' has material shortage of 3	202
 PROBLEM	invalid data	No replenishment defined for 'comp B @ prod2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'comp B @ prod2' has material shortage of 4	2022-01-04T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'comp C @ prod2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'comp C @ prod2' has material shortage of 2	2022-01-07T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'consumed item @ prod' has material shortage of 777	2019-01-01T00:00:01 / 2019-03-05T00:00:00
 PROBLEM	before current	Operation 'prod' planned in the past	2017-12-08T00:00:00 / 2019-01-01T00:00:00

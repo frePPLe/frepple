@@ -525,6 +525,7 @@
 			</loadplans>
 		</operationplan>
 	</operationplans>
+	
 	<!-- Another corner case -->
 	<buffers>
 		<buffer name="creepy component 1 @ factory" xsi:type="buffer_infinite">
@@ -644,6 +645,513 @@
 			</loadplans>
 		</operationplan>
 	</operationplans>
+	
+	<!-- Corner case: start and end date on the top routing operationplan are not feasible. -->
+	<suppressFlowplanCreation>true</suppressFlowplanCreation>
+	<operationplans>
+		<operationplan reference="MO/DE/2025-00321" start="2025-07-30T19:16:07" quantity="5.0" status="confirmed">
+			<operation name="MO/DE/2025-00321" xsi:type="operation_routing" priority="0">
+				<item name="produced by MO/DE/2025-00321"/>
+				<location name="manufacturing plant"/>
+				<suboperations>
+					<suboperation>
+						<operation name="1 - MO/DE/2025-00321" priority="10" xsi:type="operation_fixed_time" duration="P0DT1H20M0S">
+							<location name="manufacturing plant"/>
+							<flows>
+								<flow quantity="-1.6">
+									<item name="consumed by 1 - MO/DE/2025-00321"/>
+								</flow>
+							</flows>
+							<loads>
+								<load>
+									<resource name="Resource Q"/>
+								</load>
+								<load>
+									<resource name="Resource P"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="2 - MO/DE/2025-00321" priority="20" xsi:type="operation_fixed_time" duration="P0DT8H0M0S">
+							<location name="manufacturing plant"/>
+							<flows/>
+							<loads>
+								<load>
+									<resource name="Resource I"/>
+								</load>
+								<load>
+									<resource name="Resource J"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="3 - MO/DE/2025-00321" priority="30" xsi:type="operation_fixed_time" duration="P1DT16H32M0S">
+							<location name="manufacturing plant"/>
+							<flows/>
+							<loads>
+								<load>
+									<resource name="Resource I"/>
+								</load>
+								<load quantity="0.037007">
+									<resource name="Resource A"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="4 - MO/DE/2025-00321" priority="40" xsi:type="operation_fixed_time" duration="P0DT7H51M0S">
+							<location name="manufacturing plant"/>
+							<flows/>
+							<loads>
+								<load>
+									<resource name="Resource W"/>
+								</load>
+								<load>
+									<resource name="Resource I"/>
+								</load>
+								<load quantity="0.318471">
+									<resource name="Resource A"/>
+								</load>
+								<load quantity="0.244161">
+									<resource name="Resource S"/>
+								</load>
+								<load>
+									<resource name="Resource U"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="5 - MO/DE/2025-00321" priority="50" xsi:type="operation_fixed_time" duration="P0DT11H24M0S">
+							<location name="manufacturing plant"/>
+							<flows/>
+							<loads>
+								<load>
+									<resource name="Resource V"/>
+								</load>
+								<load>
+									<resource name="Resource U"/>
+								</load>
+								<load>
+									<resource name="Resource I"/>
+								</load>
+								<load quantity="0.190058">
+									<resource name="Resource A"/>
+								</load>
+								<load quantity="0.146199">
+									<resource name="Resource S"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="6 - MO/DE/2025-00321" priority="60" xsi:type="operation_fixed_time" duration="P2DT12H12M0S">
+							<location name="manufacturing plant"/>
+							<flows/>
+							<loads>
+								<load>
+									<resource name="Resource I"/>
+								</load>
+								<load quantity="0.069214">
+									<resource name="Resource A"/>
+								</load>
+								<load quantity="0.019380">
+									<resource name="Resource S"/>
+								</load>
+								<load>
+									<resource name="Resource T"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="7 - MO/DE/2025-00321" priority="70" xsi:type="operation_fixed_time" duration="P0DT0H50M0S">
+							<location name="manufacturing plant"/>
+							<flows/>
+							<loads>
+								<load>
+									<resource name="Resource K"/>
+								</load>
+								<load>
+									<resource name="Resource I"/>
+								</load>
+								<load>
+									<resource name="Resource J"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="8 - MO/DE/2025-00321" priority="80" xsi:type="operation_fixed_time" duration="P0DT1H30M0S">
+							<location name="manufacturing plant"/>
+							<flows/>
+							<loads>
+								<load>
+									<resource name="Resource G"/>
+								</load>
+								<load>
+									<resource name="Resource H"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="9 - MO/DE/2025-00321" priority="90" xsi:type="operation_fixed_time" duration="P0DT0H50M0S">
+							<location name="manufacturing plant"/>
+							<flows/>
+							<loads>
+								<load>
+									<resource name="Resource R"/>
+								</load>
+								<load>
+									<resource name="Resource F"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="10 - MO/DE/2025-00321" priority="100" xsi:type="operation_fixed_time" duration="P0DT1H40M0S">
+							<location name="manufacturing plant"/>
+							<flows/>
+							<loads>
+								<load>
+									<resource name="Resource Q"/>
+								</load>
+								<load>
+									<resource name="Resource P"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="11 - MO/DE/2025-00321" priority="110" xsi:type="operation_fixed_time" duration="P0DT5H0M0S">
+							<location name="manufacturing plant"/>
+							<flows/>
+							<loads>
+								<load>
+									<resource name="Resource I"/>
+								</load>
+								<load>
+									<resource name="Resource J"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="12 - MO/DE/2025-00321" priority="120" xsi:type="operation_fixed_time" duration="P0DT6H9M0S">
+							<location name="manufacturing plant"/>
+							<flows/>
+							<loads>
+								<load>
+									<resource name="Resource O"/>
+								</load>
+								<load>
+									<resource name="Resource I"/>
+								</load>
+								<load>
+									<resource name="Resource N"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="13 - MO/DE/2025-00321" priority="130" xsi:type="operation_fixed_time" duration="P0DT0H40M0S">
+							<location name="manufacturing plant"/>
+							<flows/>
+							<loads>
+								<load>
+									<resource name="Resource L"/>
+								</load>
+								<load>
+									<resource name="Resource I"/>
+								</load>
+								<load>
+									<resource name="Resource M"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="14 - MO/DE/2025-00321" priority="140" xsi:type="operation_fixed_time" duration="P0DT0H50M0S">
+							<location name="manufacturing plant"/>
+							<flows/>
+							<loads>
+								<load>
+									<resource name="Resource K"/>
+								</load>
+								<load>
+									<resource name="Resource I"/>
+								</load>
+								<load>
+									<resource name="Resource J"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="15 - MO/DE/2025-00321" priority="150" xsi:type="operation_fixed_time" duration="P0DT1H30M0S">
+							<location name="manufacturing plant"/>
+							<flows/>
+							<loads>
+								<load>
+									<resource name="Resource G"/>
+								</load>
+								<load>
+									<resource name="Resource H"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="16 - MO/DE/2025-00321" priority="160" xsi:type="operation_fixed_time" duration="P0DT3H10M0S">
+							<location name="manufacturing plant"/>
+							<flows>
+								<flow quantity="-1.0">
+									<item name="first consumed by 16 - MO/DE/2025-00321"/>
+								</flow>
+								<flow quantity="-1.0">
+									<item name="second consumed by 16 - MO/DE/2025-00321"/>
+								</flow>							
+							</flows>
+							<loads>
+								<load quantity="0.842105">
+									<resource name="Resource A"/>
+								</load>
+								<load>
+									<resource name="Resource B"/>
+								</load>
+								<load quantity="0.552632">
+									<resource name="Resource C"/>
+								</load>
+								<load quantity="0.552632">
+									<resource name="Resource D"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+					<suboperation>
+						<operation name="17 - MO/DE/2025-00321" priority="170" xsi:type="operation_fixed_time" duration="P0DT1H0M0S">
+							<location name="manufacturing plant"/>
+							<flows>
+								<flow quantity="-1.0">
+									<item name="consumed by 17 - MO/DE/2025-00321"/>
+								</flow>
+							</flows>
+							<loads>
+								<load>
+									<resource name="Resource E"/>
+								</load>
+								<load>
+									<resource name="Resource F"/>
+								</load>
+							</loads>
+						</operation>
+					</suboperation>
+				</suboperations>
+			</operation>
+		</operationplan>
+		<operationplan reference="17 - MO/DE/2025-00321" start="2025-08-20T11:05:07" quantity="5.0" status="approved">
+			<operation name="17 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource E"/>
+				</loadplan>
+			</loadplans>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource F"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="16 - MO/DE/2025-00321" start="2025-08-20T07:15:07" quantity="5.0" status="approved">
+			<operation name="16 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource X"/>
+				</loadplan>
+				<loadplan>
+					<resource name="Resource Y"/>
+				</loadplan>
+				<loadplan>
+					<resource name="Resource Z"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="15 - MO/DE/2025-00321" start="2025-08-19T21:45:07" quantity="5.0" status="approved">
+			<operation name="15 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource G"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="14 - MO/DE/2025-00321" start="2025-08-19T20:55:07" quantity="5.0" status="approved">
+			<operation name="14 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource K"/>
+				</loadplan>
+			</loadplans>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource J"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="13 - MO/DE/2025-00321" start="2025-08-19T20:15:07" quantity="5.0" status="approved">
+			<operation name="13 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource L"/>
+				</loadplan>
+				<loadplan>
+					<resource name="Resource M"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="12 - MO/DE/2025-00321" start="2025-08-19T14:06:07" quantity="5.0" status="approved">
+			<operation name="12 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource O"/>
+				</loadplan>
+				<loadplan>
+					<resource name="Resource X"/>
+				</loadplan>
+				<loadplan>
+					<resource name="Resource Y"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="11 - MO/DE/2025-00321" start="2025-08-19T09:06:07" quantity="5.0" status="approved">
+			<operation name="11 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource Z"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="10 - MO/DE/2025-00321" start="2025-08-19T07:26:07" quantity="5.0" status="approved">
+			<operation name="10 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource Q"/>
+				</loadplan>
+			</loadplans>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource P"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="9 - MO/DE/2025-00321" start="2025-08-19T06:36:07" quantity="5.0" status="approved">
+			<operation name="9 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource R"/>
+				</loadplan>
+			</loadplans>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource F"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="8 - MO/DE/2025-00321" start="2025-08-18T21:06:07" quantity="5.0" status="approved">
+			<operation name="8 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource G"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="7 - MO/DE/2025-00321" start="2025-08-18T20:16:07" quantity="5.0" status="approved">
+			<operation name="7 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource K"/>
+				</loadplan>
+			</loadplans>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource J"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="6 - MO/DE/2025-00321" start="2025-08-12T12:24:07" quantity="5.0" status="approved">
+			<operation name="6 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource W"/>
+				</loadplan>		
+			</loadplans>
+		</operationplan>
+		<operationplan reference="5 - MO/DE/2025-00321" start="2025-08-06T07:19:07" quantity="5.0" status="approved">
+			<operation name="5 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource V"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="4 - MO/DE/2025-00321" start="2025-08-05T14:48:07" quantity="5.0" status="approved">
+			<operation name="4 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource W"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="3 - MO/DE/2025-00321" start="2025-07-31T12:36:07" quantity="5.0" status="approved">
+			<operation name="3 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource X"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="2 - MO/DE/2025-00321" start="2025-07-30T20:36:07" quantity="5.0" status="approved">
+			<operation name="2 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource A"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+		<operationplan reference="1 - MO/DE/2025-00321" start="2025-07-30T19:16:07" quantity="5.0" status="approved">
+			<operation name="1 - MO/DE/2025-00321"/>
+			<owner reference="MO/DE/2025-00321"/>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource Q"/>
+				</loadplan>
+			</loadplans>
+			<loadplans>
+				<loadplan>
+					<resource name="Resource P"/>
+				</loadplan>
+			</loadplans>
+		</operationplan>
+	</operationplans>
+	<suppressFlowplanCreation>false</suppressFlowplanCreation>
 
 <?python
 from datetime import date

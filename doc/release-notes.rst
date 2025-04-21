@@ -41,6 +41,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | 17, 18: Improved support for kit (aka phantom) bill of materials.
 
+- | 17, 18: New field "post operation time" on odoo BOM operations.
+  | This field maps into the post-operation time field in frePPLe, which defines a time
+    gap frepple tries to leave between the operations.
+
 - | All odoo versions: The material consumption of work orders wasn't correctly
     processed if they weren't consumed on the first step.
 

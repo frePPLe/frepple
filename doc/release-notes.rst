@@ -45,6 +45,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | This field maps into the post-operation time field in frePPLe, which defines a time
     gap frepple tries to leave between the operations.
 
+- | 17, 18: New field "workcenter quantity" on odoo BOM operations.
+  | With this field you specify multiple work centers are used in parallel on the operation.
+
 - | All odoo versions: The material consumption of work orders wasn't correctly
     processed if they weren't consumed on the first step.
 

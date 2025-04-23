@@ -48,6 +48,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 17, 18: New field "workcenter quantity" on odoo BOM operations.
   | With this field you specify multiple work centers are used in parallel on the operation.
 
+- | 17, 18: New field "constrained" on odoo work centers.
+  | The fields specifies whether that work center should be planned in finite capacity mode or not.
+
 - | All odoo versions: The material consumption of work orders wasn't correctly
     processed if they weren't consumed on the first step.
 

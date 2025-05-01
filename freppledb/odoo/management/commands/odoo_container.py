@@ -121,6 +121,11 @@ class Command(BaseCommand):
             default=os.path.join(os.path.dirname(__file__), "..", "..", "odoo_addon"),
             help="Location of the odoo connectors to install.",
         )
+        parser.add_argument(
+            "--docker-arg",
+            action="append",
+            help="Extra arguments to pass to the 'docker run' command. Can be used multiple times.",
+        )
 
     def handle(self, **options):
         dockerfile = os.path.join(options["odoo_addon_path"], "dockerfile")
@@ -545,6 +550,7 @@ class Command(BaseCommand):
                 "--restart",
                 "always",
             ]
+            + ([i for i in options["docker_arg"]] if options["docker_arg"] else [])
             + (
                 ["--add-host", "host.docker.internal:host-gateway"]
                 if os.name != "nt"

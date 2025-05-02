@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block title %}{% if title %}{{title|capfirst}} - {% endif %}{% setting 'BRANDING' %}{% endblock %}
-{% block branding %}<img class="img-fluid" src="{{STATIC_URL}}img/frepple.svg" alt="frePPLe&nbsp;{% version %}">{% endblock %}
+{% block branding %}<img class="img-fluid" style="max-width: 12em" src="{{STATIC_URL}}img/frepple.svg" alt="frePPLe&nbsp;{% version %}">{% endblock %}
 {% block extrastyle %}{{block.super}}
 <link rel="stylesheet" href="{{STATIC_URL}}css/font-awesome.min.css" />
 <link rel="stylesheet" href="{{STATIC_URL}}css/{{request.theme}}/fonts.css" />

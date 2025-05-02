@@ -534,7 +534,7 @@ class GridFieldDuration(GridField):
     formatter = "duration"
     width = 80
     searchoptions = (
-        '{sopt:["eq","ne","in","ni","lt","le","gt","ge"],"searchhidden":true}'
+        '{sopt:["eq","ne","in","ni","lt","le","gt","ge","isnull"],"searchhidden":true}'
     )
 
 

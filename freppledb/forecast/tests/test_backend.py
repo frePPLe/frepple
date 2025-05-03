@@ -33,7 +33,7 @@ from django.db import transaction
 from django.test import TransactionTestCase
 from django.db import DEFAULT_DB_ALIAS, connections
 
-from freppledb.common.models import Parameter, User
+from freppledb.common.models import Parameter, User, Notification
 from freppledb.common.tests import checkResponse
 from freppledb.execute.models import Task
 from freppledb.input.models import Item, Location, Customer
@@ -667,3 +667,34 @@ class HierarchyTest(TransactionTestCase):
                 "Corrected 0 parent forecast buckets" in content
                 and "reads and 0 writes" in content
             )
+
+
+@unittest.skipUnless(
+    "freppledb.forecast" in settings.INSTALLED_APPS, "App not activated"
+)
+class APITest(APITransactionTestCase):
+    fixtures = ["demo"]
+
+    # Default request format is multipart
+    factory = APIRequestFactory(enforce_csrf_checks=True)
+
+    def setUp(self):
+        # Login
+        self.client = APIClient()
+        self.client.login(username="admin", password="admin")
+        os.environ["FREPPLE_TEST"] = "YES"
+        super().setUp()
+
+    def tearDown(self):
+        Notification.wait()
+        del os.environ["FREPPLE_TEST"]
+        super().tearDown()
+
+    def test_api_forecast(self):
+        management.call_command("runplan", env="fcst,supply")
+
+        response = self.client.get("/api/forecast/forecast/")
+        checkResponse(self, response)
+
+        response = self.client.get("/api/forecast/forecastplan/")
+        checkResponse(self, response)

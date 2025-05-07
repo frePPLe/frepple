@@ -7,9 +7,9 @@
 &nbsp;
 <div class="input-group d-inline-flex w-auto">
 <input id="addsearch" class="form-control ps-2 pe-2" placeholder="{% trans 'Filter' %}" role="searchbox"
-  type="text" size="15" oninput="grid.showFilterConfig(event)" onkeydown="grid.keyDownSearch(event)">
+  type="text" size="15" oninput="grid.showFilterList(this)" onkeydown="grid.keyDownSearch(event)">
 <button class="input-group-text" onclick="event.stopPropagation(); grid.showFilter()" data-bs-offset="0,5"
-  type="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Filter editor" %}">
+  type="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Filter editor' %}">
   <i class="fa fa-search"></i>
 </button>
 	{% if reportclass.filterable %}{% include "common/snippet_favorites.html" with search=True %}{% endif %}
@@ -66,7 +66,7 @@ function displayGrid(load) {
         // After selecting all rows, select the header checkbox
         $("#grid").closest('div.ui-jqgrid').find('input[type="checkbox"]').prop('checked', true);
     }
-});
+  });
   jQuery("#grid").jqGrid({
    	url: (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href)
    	  + (location.search.length > 0 ? "&format=json" : "?format=json"),

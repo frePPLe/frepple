@@ -27,23 +27,27 @@ do
   fi
 done
 
+# check if item table exists on the default schema
+# This is needed to figure out if we load the demo datasets
+RAW_OUTPUT=$(frepplectl dbshell <<EOF
+SELECT EXISTS (
+  SELECT 1 FROM information_schema.tables
+  WHERE table_name = 'item'
+);
+EOF
+)
+# Extract just 't' or 'f'
+TABLE_EXISTS=$(echo "$RAW_OUTPUT" | sed -n '3p' | xargs)
+
 # Create and migrate the databases
 frepplectl createdatabase --skip-if-exists
 frepplectl migrate --noinput
 
 # populate the database with initial data
-should_run_populate=false
-
-# Loop through all command line arguments to see if populate is set
-for arg in "$@"; do
-    if [ "$arg" = "populate" ]; then
-        should_run_populate=true
-        break
-    fi
-done
-
-if [ "$should_run_populate" = true ]; then
-    echo "Populating initial data"
+if [ "$TABLE_EXISTS" = "t" ]; then
+	echo "Schema alredy created. Skipping initial data population."
+else
+	echo "Populating initial data"
     frepplectl scenario_copy default scenario1 --description="distribution demo"
     frepplectl scenario_copy default scenario2 --description="manufacturing demo"
     frepplectl loaddata --database=scenario1 distribution_demo --verbosity=0

@@ -1946,9 +1946,6 @@ var grid = {
         if (typeof extraSearchUpdate == 'function')
           extraSearchUpdate(fullfilter);
         grid.saveColumnConfiguration();
-      },
-      click: function(){
-        $(this).css("background-color", "yellow");
       }
     });
     newexpression.append(newelement);

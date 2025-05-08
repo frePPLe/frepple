@@ -1822,7 +1822,7 @@ var grid = {
     if (!grid.handlerinstalled) {
       htmlString = [
         '<div id="filterconfig" class="dropdown-menu mt-2" style="display: block">',
-        '<div id="fieldconfig" fieldname="' + fieldname + '" style="width: 40%; cursor: pointer;" class="d-inline p-2" onclick="grid.showFilterList(this)">' + fieldlabel + '</div>',
+        '<div id="fieldconfig" fieldname="' + fieldname + '"fieldlabel="' + fieldlabel + '" style="width: 40%; cursor: pointer;" class="d-inline p-2" onclick="grid.showFilterList(this)">' + fieldlabel + '</div>',
         '<div id="operandconfig" operandname="' + operand + '" style="width: 40%; cursor: pointer;" class="d-inline p-2" onclick="grid.showFilterOperandsList(event)">' + grid.findOperandLabel(operand) + '</div>',
         '<div class="d-inline"><i class="fa fa-trash p-10 d-inline"></i><div>',
         '</div>'

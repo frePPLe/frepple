@@ -1701,21 +1701,36 @@ var grid = {
   },
 
   setFilterField: function (event) {
-    const targetParent = $("#filterconfig").parent();
-    const target = $("#fieldconfig");
-    target.attr("fieldname", $(event.target).attr("data-filterfield"));
-    target.attr("fieldlabel", $(event.target).attr("data-filterlabel"));
-    target.text($(event.target).attr("data-filterlabel"));
-    // console.log("1709 setFilterField", target.attr("fieldname"), target.attr("fieldlabel"));
-    if (targetParent.hasClass("badge")) {
-      // console.log(1711, targetParent.children()[2]);
-      const target1 = targetParent.children()[2];
-      target1.dataset.colname = $(event.target).attr("data-filterfield");
-      target1.dataset.collabel = $(event.target).attr("data-filterlabel");
-      target1.dataset.operandname = $(event.target).attr("data-filteroperand");
+    const el_parent = $("#filterconfig").parent();
+    const el_fieldconfig = $("#fieldconfig");
+    const el_operandconfig = $("#operandconfig");
 
-      const collabel = $(event.target).attr("data-filterlabel");
-      const operandlabel = grid.findOperandLabel($(event.target).attr("operandname"));
+    const colname = $(event.target).attr("data-filterfield");
+    const collabel = $(event.target).attr("data-filterlabel");
+    let oper = el_operandconfig.attr("operandname");
+    let operandlabel = grid.findOperandLabel(oper);
+
+    const col = $("#grid").jqGrid('getGridParam', 'colModel').filter((col)=> (col.name == colname))[0];
+    const searchoptions = col.searchoptions;
+
+    if (searchoptions.sopt.indexOf(oper) == -1) {
+      oper = searchoptions.sopt[0];
+      operandlabel = grid.findOperandLabel(oper);
+      el_operandconfig.attr("operandname", oper).attr("operandlabel", operandlabel);
+      el_operandconfig.text(operandlabel);
+    }
+
+    el_fieldconfig.attr("fieldname", colname);
+    el_fieldconfig.attr("fieldlabel", collabel);
+    el_fieldconfig.text(collabel);
+
+    if (el_parent.hasClass("badge")) {
+      // console.log(1711, el_parent.children()[2]);
+      const target1 = el_parent.children()[2];
+      target1.dataset.colname = colname;
+      target1.dataset.collabel = collabel;
+      target1.dataset.operandname = oper;
+
       $(target1).html("&nbsp;&nbsp;" + collabel + "&nbsp;" + operandlabel + "&nbsp;");
       $("#filterfield").remove();
     }

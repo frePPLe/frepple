@@ -3320,7 +3320,7 @@ function about_show() {
         content += i + '<br>';
       content += '</div></div></div></div></div>';
       $('#popup').html(content);
-      showModal('popup', false);
+      showModal('popup');
     },
     error: ajaxerror
   });
@@ -3413,7 +3413,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
     '</div>' +
     '</div>';
   $('#popup').html(modalcontent);
-  showModal('popup', true, { backdrop: "static", keyboard: false });
+  showModal('popup');
 
   if (title !== '') {
     $("#modal_title").text(title);

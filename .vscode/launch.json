@@ -65,15 +65,15 @@
                     "value": "freppledb.settings"
                 },
                 {
-                    "name": "supply",
+                    "name": "odoo_read_1",
                     "value": "1"
                 },
                 {
-                    "name": "fcst",
+                    "name": "dfcst",
                     "value": "1"
                 },
                 {
-                    "name": "invplan",
+                    "name": "sinvplan",
                     "value": "1"
                 },
                 {

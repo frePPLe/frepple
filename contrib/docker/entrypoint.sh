@@ -45,15 +45,15 @@ frepplectl migrate --noinput
 
 # populate the database with initial data
 if [ "$TABLE_EXISTS" = "t" ]; then
-	echo "Schema alredy created. Skipping initial data population."
+	echo "Schema already created. Skipping initial data population."
 else
 	echo "Populating initial data"
-    frepplectl scenario_copy default scenario1 --description="distribution demo"
-    frepplectl scenario_copy default scenario2 --description="manufacturing demo"
-    frepplectl loaddata --database=scenario1 distribution_demo --verbosity=0
-    frepplectl runplan --database=scenario1 --env=fcst,invplan,balancing,supply --background
-    frepplectl loaddata --database=scenario2 manufacturing_demo --verbosity=0
-    frepplectl runplan --database=scenario2 --env=fcst,invplan,balancing,supply --background
+  frepplectl scenario_copy default scenario1 --description="distribution demo"
+  frepplectl scenario_copy default scenario2 --description="manufacturing demo"
+  frepplectl loaddata --database=scenario1 distribution_demo --verbosity=0
+  frepplectl runplan --database=scenario1 --env=fcst,supply --background
+  frepplectl loaddata --database=scenario2 manufacturing_demo --verbosity=0
+  frepplectl runplan --database=scenario2 --env=fcst,supply --background
 fi
 
 # Configure Apache

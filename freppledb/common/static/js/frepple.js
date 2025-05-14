@@ -1561,7 +1561,7 @@ var grid = {
   // Display filter dialog
   showFilter: function (gridid, curfilterid, filterid) {
     $("#addsearch").val("");
-    $("#filterOperandfield").remove();
+    $("#filteroperand, #filterfield").remove();
     grid.handlerinstalled = false;
     hideModal('popup');
     hideModal('timebuckets');
@@ -1613,32 +1613,28 @@ var grid = {
   handlerinstalled: false,
 
   addFilter: function (event) {
-    var field = $("#fieldconfig").attr("fieldname");
-    var operand = $("#operandconfig").attr("operandname");
     if (event) {
       event.stopPropagation();
       event.preventDefault();
-      field = $(event.target).attr("data-filterfield");
+      var field = $(event.target).attr("data-filterfield");
     }
-    $("#filterconfig").remove();
-
-    let hasContains = $("#grid").jqGrid('getGridParam', 'colModel').filter((col)=> (col.name == 'name'))[0].searchoptions.sopt.indexOf('cn') > -1;
+    else
+      var field = $("#filterfield [data-filterfield]").first().attr("data-filterfield");
     var n = {
       "field": field,
-      "op": operand ? operand : (hasContains ? "cn" : "eq"),
+      "op": "cn",
       "data": $("#addsearch").val(),
       "filtercount": ++grid.filtercount
     };
-
     var c = $('#grid').getGridParam("postData");
     c = (c !== undefined) ? c.filters : initialfilter;
     if (c && c !== "") {
       c = JSON.parse(c);
       if ((c["rules"] !== undefined && c["rules"].length > 0) || (c["groups"] !== undefined && c["groups"].length > 0))
-        // Add condition to the existing filter
+        // Add condition to existing filter
         c["rules"].push(n);
       else
-        // Wrap the existing filter in a new and-filter
+        // Wrap existing filter in a new and-filter
         c = {
           "groupOp": "AND",
           "rules": [n],
@@ -1664,8 +1660,7 @@ var grid = {
     $(document).off("click", grid.clickFilter);
     grid.handlerinstalled = false;
     $("#addsearch").val("");
-    $("#filterOperandfield").remove();
-    $('#filterfield').remove();
+    $("#filteroperand, #filterfield").remove();
     $("#tooltip").css("display", "none");
   },
 
@@ -1673,164 +1668,116 @@ var grid = {
     if ($(event.target).attr('id') != "addsearch") {
       $(document).off("click", grid.clickFilter);
       grid.handlerinstalled = false;
-      // $("#addsearch").val("");
-      // $('#filterfield').remove();
+      $("#addsearch").val("");
+      $("#filteroperand, #filterfield").remove();
     }
   },
 
-  clickFilterOperands: function (event) {
-    if ($(event.target).attr('id') != "addsearch") {
-      $(document).off("click", grid.clickFilterOperands);
-      grid.handlerinstalled = false;
-      // $("#addsearch").val("");
-      $("#filterOperandfield").remove();
-    }
-  },
-
-  setFilterField: function (event) {
-    const el_parent = $("#filterconfig").parent();
-    const el_fieldconfig = $("#fieldconfig");
-    const el_operandconfig = $("#operandconfig");
-
+  setFilterField: function (event, rule, thefilter, fullfilter) {
+    const el = $(event.target);
+    const el_badge = el.closest(".badge");
     const colname = $(event.target).attr("data-filterfield");
     const collabel = $(event.target).attr("data-filterlabel");
-    let oper = el_operandconfig.attr("operandname");
+    let oper = el_badge.find("span[data-operandname]").attr("data-operandname");
     let operandlabel = grid.findOperandLabel(oper);
 
     const col = $("#grid").jqGrid('getGridParam', 'colModel').filter((col)=> (col.name == colname))[0];
     const searchoptions = col.searchoptions;
 
+    if (rule.field == colname) return;
+
+    // Set field name and label
+    el_badge.find("span[data-colname]")
+      .attr("data-fieldname", colname)
+      .attr("data-collabel", collabel)
+      .text(collabel);
+    rule.field = colname;
+
+    // Set operand label
     if (searchoptions.sopt.indexOf(oper) == -1) {
       oper = searchoptions.sopt[0];
       operandlabel = grid.findOperandLabel(oper);
-      el_operandconfig.attr("operandname", oper).attr("operandlabel", operandlabel);
-      el_operandconfig.text(operandlabel);
+      el_badge.find("span[data-operandname]").attr("data-operandname", oper).text(operandlabel);
+      rule.op = oper;
     }
 
-    el_fieldconfig.attr("fieldname", colname);
-    el_fieldconfig.attr("fieldlabel", collabel);
-    el_fieldconfig.text(collabel);
+    // Close the dropdown
+    $("#filteroperand, #filterfield").remove();
 
-    if (el_parent.hasClass("badge")) {
-      const target1 = el_parent.children()[2];
-      target1.dataset.colname = colname;
-      target1.dataset.collabel = collabel;
-      target1.dataset.operandname = oper;
-
-      $(target1).html("&nbsp;&nbsp;" + collabel + "&nbsp;" + operandlabel + "&nbsp;");
-      $("#filterfield").remove();
-    }
+    // Refilter the grid    
+    $("#grid").setGridParam({
+      postData: { filters: JSON.stringify(fullfilter) },
+      search: true
+    }).trigger('reloadGrid');
+    grid.saveColumnConfiguration();
   },
 
-  setFilterOperand: function (event) {
-    const targetParent = $("#filterconfig").parent();
-    const operand = $(event.target).attr("data-filteroperandfield");
-    const target = $("#operandconfig");
-    target.attr("operandname", operand);
-    target.text(grid.findOperandLabel(operand));
+  setFilterOperand: function (event, rule, thefilter, fullfilter) {
+    const el = $(event.target);
+    const el_badge = el.closest(".badge");
+    let oper = $(event.target).attr("data-operandname");
+    let operandlabel = grid.findOperandLabel(oper);
+    if (oper == rule.oper) return;
+    
+    // Set new operand label
+    el_badge.find("span[data-operandname]").attr("data-operandname", oper).text(operandlabel);
+    rule.op = oper;
 
-    if (targetParent.hasClass("badge")) {
-      const target1 = targetParent.children()[2];
-      target1.dataset.colname = $("#fieldconfig").attr("fieldname");
-      target1.dataset.operandname = $(event.target).attr("data-filteroperandfield");
-      const collabel = $("#fieldconfig").attr("fieldlabel");
-      const operandlabel = grid.findOperandLabel($(event.target).attr("operandname"));
-      $(target1).html("&nbsp;&nbsp;" + collabel + "&nbsp;" + operandlabel + "&nbsp;");
-    }
+    // Close the dropdown
+    $("#filteroperand, #filterfield").remove();
+
+    // Refilter the grid
+    $("#grid").setGridParam({
+      postData: { filters: JSON.stringify(fullfilter) },
+      search: true
+    }).trigger('reloadGrid');
+    grid.saveColumnConfiguration();    
   },
 
-  showFilterList: function (el) {
+  showFieldList: function (el, rule, thefilter, fullfilter) {
     $.jgrid.hideModal("#searchmodfbox_grid");
-    $('#filterOperandfield').remove();
+    $("#filteroperand, #filterfield").remove();
     event.stopPropagation();
-    if (!grid.handlerinstalled) {
-      $(document).on("click", grid.clickFilter);
-      var l = $('<span id="filterfield" class="list-group dropdown-menu">');
-      var cnt = 15;  // Limits the number fields to choose from
-      for (var col of $("#grid").jqGrid('getGridParam', 'colModel')) {
-        var searchoptions = col.searchoptions;
-        if (searchoptions && searchoptions.sopt) {
+    $(document).on("click", grid.clickFilter);
+    let l = $('<span id="filterfield" class="list-group dropdown-menu">');
+    let cnt = 15;  // Limits the number fields to choose from
+    for (var col of $("#grid").jqGrid('getGridParam', 'colModel')) {
+      var searchoptions = col.searchoptions;      
+      if (searchoptions && searchoptions.sopt) {
+        if (el.id == "addsearch")
           var n = $('<a class="dropdown-item" onclick="grid.addFilter(event)" />');
-          if (el.id == "fieldconfig") {
-            n = $('<a class="dropdown-item" onclick="grid.setFilterField(event)" />');
-          }
-          n.attr("data-filterfield", col.name);
-          n.attr("data-filterlabel", col.label);
-          n.html(gettext("Search") + ' ' + col.label);
-          l.append(n);
-          if (--cnt <= 0) break;
-        }
-      }
-      $(el).before(l);
-      grid.handlerinstalled = true;
-    }
-  },
-
-  showFilterOperandsList: function (event) {
-    let el = $(event.target);
-    $('#filterOperandfield').remove();
-    $('#filterfield').remove();
-    $.jgrid.hideModal("#searchmodfbox_grid");
-    let colname = $("#fieldconfig").attr("fieldname") ? $("#fieldconfig").attr("fieldname") : "name";
-    event.stopPropagation();
-    $(document).on("click", grid.clickFilterOperands);
-    let l = $('<span id="filterOperandfield" class="list-group dropdown-menu">');
-    let col = $("#grid").jqGrid('getGridParam', 'colModel').filter((col)=> (col.name == colname))[0];
-    let searchoptions = col.searchoptions;
-    if (searchoptions && searchoptions.sopt) {
-      for (let sopt of searchoptions.sopt) {
-        let n = $('<a class="dropdown-item" onclick="grid.setFilterOperand(event)"/>');
-        n.attr("data-filteroperandfield", sopt);
-        n.html(grid.findOperandLabel(sopt));
+        else {
+          var n = $('<a class="dropdown-item" />');
+          n.on("click", (event) => grid.setFilterField(event, rule, thefilter, fullfilter));
+        };
+        n.attr("data-filterfield", col.name);
+        n.attr("data-filterlabel", col.label);
+        n.html(gettext("Search") + ' ' + col.label);
         l.append(n);
+        if (--cnt <= 0) break;
       }
     }
     $(el).before(l);
-    grid.handlerinstalled = false;
   },
 
-  showFilterConfig: function (event, thegrid, rule, thefilter, fullfilter) {
-    let el = event.target;
-    $('#filterconfig').remove();
+  showOperandsList: function (el, rule, thefilter, fullfilter) {
     $.jgrid.hideModal("#searchmodfbox_grid");
+    $("#filteroperand, #filterfield").remove();
     event.stopPropagation();
-    let field = $("#grid").jqGrid('getGridParam', 'colModel')[1];
-    let fieldname = field.name;
-    let fieldlabel = field.label;
-    let operand = 'eq';
-    if ($(event.target).parent().hasClass("badge")) {
-      const target1 = $(event.target).parent().children()[1];
-      fieldname = target1.dataset.colname;
-      fieldlabel = target1.dataset.collabel;
-      operand = target1.dataset.operandname;
-    }
-    if (!grid.handlerinstalled) {
-      htmlString = [
-        '<div id="filterconfig" class="dropdown-menu mt-2" style="display: block">',
-        '<div id="fieldconfig" fieldname="' + fieldname + '"fieldlabel="' + fieldlabel + '" style="width: 40%; cursor: pointer;" class="d-inline p-2" onclick="grid.showFilterList(this)">' + fieldlabel + '</div>',
-        '<div id="operandconfig" operandname="' + operand + '" style="width: 40%; cursor: pointer;" class="d-inline p-2" onclick="grid.showFilterOperandsList(event)">' + grid.findOperandLabel(operand) + '</div>',
-        '<div class="d-inline"><i class="fa fa-trash p-10 d-inline"></i><div>',
-        '</div>'
-      ].join("");
-      var configbox = $(htmlString);
-
-      $(el).before(configbox);
-
-      configbox.find('.fa-trash').on('click', function () {
-        // Deleting the filter
-        $('#filterconfig').remove();
-        grid.removeFilter(fullfilter, rule["filtercount"]);
-        grid.getFilterGroup(thegrid, fullfilter, true, thefilter, fullfilter);
-        thegrid.setGridParam({
-          postData: { filters: JSON.stringify(fullfilter) },
-          search: true
-        }).trigger('reloadGrid');
-        if (typeof extraSearchUpdate == 'function')
-          extraSearchUpdate(fullfilter);
-        grid.saveColumnConfiguration();
-      });
-
-      // grid.handlerinstalled = true;
+    $(document).on("click", grid.clickFilter);
+    let colname = $(el).closest(".badge").find("span[data-colname]").attr("data-colname");
+    let col = $("#grid").jqGrid('getGridParam', 'colModel').filter((col)=> (col.name == colname))[0];
+    let l = $('<span id="filteroperand" class="list-group dropdown-menu">');    
+    let searchoptions = col.searchoptions;
+    if (searchoptions && searchoptions.sopt) {
+      for (let sopt of searchoptions.sopt) {
+        let n = $('<a class="dropdown-item"/>');
+        n.on("click", (event) => grid.setFilterOperand(event, rule, thefilter, fullfilter));
+        n.attr("data-operandname", sopt);
+        n.html(grid.findOperandLabel(sopt));
+        l.append(n);
+      }
+      $(el).before(l);
     }
   },
 
@@ -1908,20 +1855,15 @@ var grid = {
       return;
 
     // Final result
-    // this click event is to simulate the bootstrap dropdown behaviour
-    $(document).click(function(event) {
-      if (!$(event.target).closest('#filterconfig').length) {
-        $('#filterlist').remove();
-        $('#operandlist').remove();
-        if ($(event.target).parent().attr('id') != 'filterfield' && $(event.target).parent().attr('id') != 'filterOperandfield')
-          $('#filterconfig').remove();
-        grid.handlerinstalled = false;
-      }
-    });
-    var newspan = $('<i class="fa fa-filter"></i><span data-colname=' + col.name + ' data-collabel=' + col.label + ' data-operandname=' + rule.op + ' style="cursor: pointer;">' + '&nbsp;&nbsp;' + col.label + '&nbsp;' + grid.findOperandLabel(rule.op) + '&nbsp;</span>');
-    newspan.on('click', (event) => grid.showFilterConfig(event, thegrid, rule, thefilter, fullfilter));
+    var fieldspan = $('<span data-colname=' + col.name + ' data-collabel=' + col.label + ' style="cursor: pointer;">' + col.label + '</span>');
+    fieldspan.on('click', (event) => grid.showFieldList(event.target, rule, thefilter, fullfilter));
+    var operatorspan = $('<span data-operandname=' + rule.op + ' style="cursor: pointer;">' + grid.findOperandLabel(rule.op) + '</span>');
+    operatorspan.on('click', (event) => grid.showOperandsList(event.target, rule, thefilter, fullfilter));    
     var newexpression = $('<span class="badge"></span>');
-    newexpression.append(newspan);
+    newexpression.append(fieldspan);
+    newexpression.append('&nbsp;');
+    newexpression.append(operatorspan);
+    newexpression.append('&nbsp;');
     var newelement = $('<input class="form-control" style="width: 4ch;">');
     rule["filtercount"] = grid.countFilters++;  // Mark position in the expression
     newelement.val(rule.data);
@@ -1946,6 +1888,19 @@ var grid = {
     if (rule.op == "win")
       // Special case for the "within N days" operator
       newexpression.append(gettext("days") + '&nbsp;');
+    var deleteelement = $('<span class="fa fa-times"/>');
+    deleteelement.on('click', function (event) {
+      grid.removeFilter(fullfilter, rule["filtercount"]);
+      grid.getFilterGroup(thegrid, fullfilter, true, thefilter, fullfilter);
+      thegrid.setGridParam({
+        postData: { filters: JSON.stringify(fullfilter) },
+        search: true
+      }).trigger('reloadGrid');
+      if (typeof extraSearchUpdate == 'function')
+        extraSearchUpdate(fullfilter);
+      grid.saveColumnConfiguration();
+    });
+    newexpression.append(deleteelement);
     thefilter.append(newexpression);
   },
 

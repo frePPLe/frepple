@@ -680,9 +680,9 @@ class APITest(APITransactionTestCase):
 
     def setUp(self):
         # Login
-        self.client = APIClient()
-        self.client.login(username="admin", password="admin")
         os.environ["FREPPLE_TEST"] = "YES"
+        if not User.objects.filter(username="admin").count():
+            User.objects.create_superuser("admin", "your@company.com", "admin")
         super().setUp()
 
     def tearDown(self):
@@ -692,6 +692,9 @@ class APITest(APITransactionTestCase):
 
     def test_api_forecast(self):
         management.call_command("runplan", env="fcst,supply")
+
+        self.client = APIClient()
+        self.client.login(username="admin", password="admin")
 
         response = self.client.get("/api/forecast/forecast/")
         checkResponse(self, response)

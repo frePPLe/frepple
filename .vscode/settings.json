@@ -4,18 +4,5 @@
         "editor.formatOnPaste": false,
         "editor.formatOnSaveMode": "file"
     },
-    "esbonio.sphinx.confDir": "",
-    "files.associations": {
-        "array": "cpp",
-        "deque": "cpp",
-        "forward_list": "cpp",
-        "list": "cpp",
-        "string": "cpp",
-        "unordered_map": "cpp",
-        "unordered_set": "cpp",
-        "vector": "cpp",
-        "string_view": "cpp",
-        "initializer_list": "cpp",
-        "regex": "cpp"
-    }
+    "esbonio.sphinx.confDir": ""
 }

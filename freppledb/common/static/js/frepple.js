@@ -1688,7 +1688,7 @@ var grid = {
 
     // Set field name and label
     el_badge.find("span[data-colname]")
-      .attr("data-fieldname", colname)
+      .attr("data-colname", colname)
       .attr("data-collabel", collabel)
       .text(collabel);
     rule.field = colname;
@@ -1767,8 +1767,10 @@ var grid = {
     $(document).on("click", grid.clickFilter);
     let colname = $(el).closest(".badge").find("span[data-colname]").attr("data-colname");
     let col = $("#grid").jqGrid('getGridParam', 'colModel').filter((col)=> (col.name == colname))[0];
+
     let l = $('<span id="filteroperand" class="list-group dropdown-menu">');    
     let searchoptions = col.searchoptions;
+    console.log(colname, col, searchoptions);
     if (searchoptions && searchoptions.sopt) {
       for (let sopt of searchoptions.sopt) {
         let n = $('<a class="dropdown-item"/>');
@@ -1864,13 +1866,13 @@ var grid = {
     newexpression.append('&nbsp;');
     newexpression.append(operatorspan);
     newexpression.append('&nbsp;');
-    var newelement = $('<input class="form-control" style="width: 4ch;">');
+    var newelement = $('<input class="form-control" style="width: 2.4em">');
     rule["filtercount"] = grid.countFilters++;  // Mark position in the expression
     newelement.val(rule.data);
-    newelement.attr("style", "width: " + (rule.data.length + 4) + "ch;");
+    newelement.attr("style", "width: " + Math.min((rule.data.length + 4)*0.5, 20) + "em");
     newelement.on({
       input: function(event){
-        this.style.width = (this.value.length + 4) + 'ch';
+        this.style.width = Math.min(($(event.target).val().length + 4)*0.5, 20) + "em";
       },
       change: function(event){
         grid.updateFilter(fullfilter, rule["filtercount"], $(event.target).val());
@@ -1885,9 +1887,6 @@ var grid = {
     });
     newexpression.append(newelement);
     newexpression.append('&nbsp;');
-    if (rule.op == "win")
-      // Special case for the "within N days" operator
-      newexpression.append(gettext("days") + '&nbsp;');
     var deleteelement = $('<span class="fa fa-times"/>');
     deleteelement.on('click', function (event) {
       grid.removeFilter(fullfilter, rule["filtercount"]);

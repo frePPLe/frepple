@@ -60,7 +60,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | All odoo versions: The material consumption of work orders wasn't correctly
     processed if they weren't consumed on the first step.
 
-.. rubric:: Odoo integration
+.. rubric:: Installation
 
 - | A new installation will now automatically populate demo datasets in two scenarios.
   | Hopefully this can inspire new users and shorten the learning curve.

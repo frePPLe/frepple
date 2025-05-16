@@ -1,11 +1,14 @@
 Release notes
 -------------
 
-9.8.0 (Upcoming release)
+9.9.0 (Upcoming release)
 ========================
 
-This release is scheduled for mid May.
+This release is scheduled for end of June.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+9.8.0 (2025-05-16)
+==================
 
 .. rubric:: User interface
 
@@ -17,8 +20,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Production planning
 
-- | Bug fix: Situations where the sales order devlivery exceeds the requested quantity were not handled correctly.
-  | This can happen for instance when we need to round up the delivery to certain multiple.
+- | Bug fix: Situations where the sales order delivery exceeds the requested quantity were not handled correctly.
+  | This can happen for instance when we need to round up the delivery to a multiple.
 
 - | Bug fix: More robust handling of situation where the size minimum of an operation
     is greater than the size maximum.

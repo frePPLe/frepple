@@ -485,20 +485,32 @@ class ReportByDemand(GridReport):
                                     "quantity": str(rec[7]),
                                     "x": round(
                                         (
-                                            rec[5] - request.report_startdate
-                                        ).total_seconds()
-                                        / horizon,
+                                            (
+                                                (
+                                                    (rec[5] or rec[6])
+                                                    - request.report_startdate
+                                                ).total_seconds()
+                                                / horizon
+                                            )
+                                            if rec[5] or rec[6]
+                                            else 0
+                                        ),
                                         3,
                                     ),
                                     "w": max(
                                         50,
-                                        round(
-                                            (rec[6] - rec[5]).total_seconds() / horizon,
-                                            3,
+                                        (
+                                            round(
+                                                (rec[6] - rec[5]).total_seconds()
+                                                / horizon,
+                                                3,
+                                            )
+                                            if rec[6] and rec[5]
+                                            else 0
                                         ),
                                     ),
-                                    "startdate": str(rec[5]),
-                                    "enddate": str(rec[6]),
+                                    "startdate": str(rec[5]) if rec[5] else "",
+                                    "enddate": str(rec[6]) if rec[6] else "",
                                     "status": rec[8],
                                     "reference": rec[13],
                                     "color": (

@@ -25,7 +25,7 @@
 # STAGE 1: Compile and build the application
 #
 
-FROM ubuntu:24.04 as builder
+FROM ubuntu:24.04 AS builder
 
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
@@ -48,7 +48,7 @@ RUN src=`basename --suffix=.tar.gz frepple-*` && \
   cmake -B /build -DCMAKE_BUILD_TYPE=Release && \
   cmake --build /build --config Release --target package -- -j 2
 
-FROM scratch as package
+FROM scratch AS package
 COPY --from=builder /build/*.deb .
 
 #

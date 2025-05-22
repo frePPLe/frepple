@@ -72,7 +72,7 @@ COPY --from=builder /build/*.deb .
 
 RUN apt-get -y -q update && \
   DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt install --no-install-recommends -f -y -q ./*.deb && \
-  DEBIAN_FRONTEND=noninteractive apt install ca-certificates && \
+  DEBIAN_FRONTEND=noninteractive apt -y install ca-certificates && \
   apt-get -y purge --autoremove && \
   apt-get clean && \
   rm -rf *.deb /var/lib/apt/lists/* /etc/apt/sources.list.d/pgdg.list && \

@@ -1770,7 +1770,6 @@ var grid = {
 
     let l = $('<span id="filteroperand" class="list-group dropdown-menu">');    
     let searchoptions = col.searchoptions;
-    console.log(colname, col, searchoptions);
     if (searchoptions && searchoptions.sopt) {
       for (let sopt of searchoptions.sopt) {
         let n = $('<a class="dropdown-item"/>');

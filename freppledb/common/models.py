@@ -26,6 +26,7 @@ import inspect
 import json
 import logging
 from multiprocessing import Process
+import os
 from psycopg2.extras import execute_batch
 import sys
 import time
@@ -54,7 +55,7 @@ from django.utils.text import capfirst
 
 from freppledb import runFunction
 from freppledb.boot import addAttributesFromDatabase
-from freppledb.common.utils import forceWsgiReload
+from freppledb.common.utils import forceWsgiReload, update_variable_in_file
 
 logger = logging.getLogger(__name__)
 
@@ -320,6 +321,65 @@ class Parameter(AuditModel):
             return Parameter.objects.using(database).only("value").get(pk=key).value
         except Exception:
             return default
+
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        restart_webserver = False
+        if self.name in ["display_time", "date_format"]:
+            # a bit of security to prevent python injection in djangosettings
+            if self.name == "display_time" and self.value not in ["true", "false"]:
+                raise Exception("Allowed values for display_time are: true or false ")
+            if self.name == "date_format" and self.value not in [
+                "month-day-year",
+                "day-month-year",
+                "year-month-day",
+            ]:
+                raise Exception(
+                    'Allowed values for display_time are: "month-day-year", "day-month-year" or "year-month-day"'
+                )
+
+            # update djangosettings
+            if self.name == "display_time":
+                update_variable_in_file(
+                    os.path.join(settings.FREPPLE_CONFIGDIR, "djangosettings.py"),
+                    "DATE_STYLE_WITH_HOURS",
+                    True if (self.value == "true") else False,
+                )
+            elif self.name == "date_format":
+                update_variable_in_file(
+                    os.path.join(settings.FREPPLE_CONFIGDIR, "djangosettings.py"),
+                    "DATE_STYLE",
+                    f'"{self.value}"',
+                )
+            restart_webserver = True
+            # update the parameter value in all scenarios
+            for sc in Scenario.objects.using(DEFAULT_DB_ALIAS).exclude(status="Free"):
+                # The current scenario is saved by this method
+                if sc.name == self._state.db:
+                    continue
+                with connections[sc.name].cursor() as cursor:
+                    cursor.execute(
+                        """
+                            insert into common_parameter (name, value, description)
+                            select %s, %s, %s
+                            on conflict(name)
+                            do update set value = excluded.value;
+                            """,
+                        (self.name, self.value, self.description),
+                    )
+
+        ret = super().save(
+            force_insert=force_insert,
+            force_update=force_update,
+            using=using,
+            update_fields=update_fields,
+        )
+
+        if restart_webserver:
+            forceWsgiReload()
+
+        return ret
 
 
 class Scenario(models.Model):

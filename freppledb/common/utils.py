@@ -21,10 +21,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import os
 from importlib.util import find_spec
+from io import StringIO
 import os
 from pathlib import Path
+import tokenize
+
 
 from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
@@ -73,3 +75,63 @@ def getStorageUsage():
         if len(dbsizevalue) > 0:
             total_size += dbsizevalue[0]
     return total_size
+
+
+def update_variable_in_file(file_path, var_name, new_value_code):
+    with open(file_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    code = "".join(lines)
+    tokens = list(tokenize.generate_tokens(StringIO(code).readline))
+
+    new_lines = []
+    i = 0
+    while i < len(tokens):
+        token = tokens[i]
+        if token.type == tokenize.NAME and token.string == var_name:
+            # Peek ahead to find '='
+            j = i + 1
+            while j < len(tokens) and tokens[j].string != "=":
+                j += 1
+            if j >= len(tokens):
+                break
+
+            # Find the start of the assignment
+            start_line = tokens[i].start[0] - 1
+
+            # Now find the end of the assignment
+            bracket_stack = []
+            end_line = start_line
+            k = j + 1
+            while k < len(tokens):
+                tok = tokens[k]
+                if tok.string in "([{":
+                    bracket_stack.append(tok.string)
+                elif tok.string in ")]}":
+                    if bracket_stack:
+                        bracket_stack.pop()
+                if not bracket_stack and tok.type in {tokenize.NEWLINE, tokenize.NL}:
+                    end_line = tok.end[0] - 1
+                    break
+                end_line = tok.end[0] - 1
+                k += 1
+
+            # Replace lines from start_line to end_line with new assignment
+            indent = lines[start_line][
+                : len(lines[start_line]) - len(lines[start_line].lstrip())
+            ]
+            new_assignment = f"{indent}{var_name} = {new_value_code}\n"
+
+            new_lines.extend(lines[:start_line])
+            new_lines.append(new_assignment)
+            new_lines.extend(lines[end_line + 1 :])
+            break
+        i += 1
+    else:
+        # Variable not found, append it at the end
+        new_assignment = f"{var_name} = {new_value_code}\n"
+        new_lines = lines + [new_assignment]
+
+    # Write the updated lines back to the file
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.writelines(new_lines)

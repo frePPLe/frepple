@@ -14,5 +14,7 @@
 {"pk": "WIP.consume_material", "model": "common.parameter", "fields": {"value":"true", "description":"Determines whether confirmed manufacturing orders consume material or not. Default is true."}},
 {"pk": "WIP.consume_capacity", "model": "common.parameter", "fields": {"value":"true", "description":"Determines whether confirmed manufacturing orders, purchase orders and distribution orders consume capacity or not. Default is true."}},
 {"pk": "COMPLETED.consume_material", "model":"common.parameter", "fields": {"value":"true", "description":"Determines whether completed manufacturing orders and distribution orders consume material or not. Default is true."}},
-{"pk": "excel_duration_in_days", "model":"common.parameter", "fields": {"value":"true", "description":"Determines whether numbers in duration fields in spreadsheets are considered as days or seconds. Default is true (for days)."}}
+{"pk": "excel_duration_in_days", "model":"common.parameter", "fields": {"value":"true", "description":"Determines whether numbers in duration fields in spreadsheets are considered as days or seconds. Default is true (for days)."}},
+{"model": "common.parameter", "fields": {"name":"display_time", "value":"default", "description":"This parameter applies to ALL scenarios and controls if date time fields should display the time. Accepted values: true or false."}},
+{"model": "common.parameter", "fields": {"name":"date_format", "value":"default", "description":"This parameter applies to ALL scenarios. Accepted values: month-day-year, day-month-year, year-month-day."}}
 ]

@@ -7,11 +7,18 @@ Release notes
 This release is scheduled for end of June.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: User interface
+
+- | Addition of parameters display_time and date_format.
+  | display_time parameter controls if the time should be displayed in the date time fields.
+  | date_format is used to display the dates day-month-year, year-month-day or month-day-year formats.
+  | These parameters are applied to all users across all scenarios.
+
 .. rubric:: Production planning
 
 - | Bug fix: Corner cases with alternate operations or resources that use bucketized
     resources could result in unplanned demands.
-  | On bucketized resources it's possible you see now a bit more smaller manufacturing orders. 
+  | On bucketized resources it's possible you see now a bit more smaller manufacturing orders.
 
 9.8.0 (2025-05-16)
 ==================

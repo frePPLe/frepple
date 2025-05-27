@@ -24,6 +24,10 @@ currentdate                          | Current date of the plan, preferred forma
                                      | If the parameter is missing, empty or has an uncognized format, the system
                                        time is also used as current date.
 currency                             | Currency symbol.
+display_time                         | This parameter applies to ALL scenarios and controls if date time fields
+                                       should display the time. Accepted values: true or false
+date_format                          | This parameter applies to ALL scenarios.
+                                       Accepted values: month-day-year, day-month-year, year-month-day.
                                      | This parameter may be only set on the default database and will be
                                        globally applied, including in all the scenarios.
                                      | If the parameter is missing or empty the currency symbol will be the $.
@@ -248,7 +252,7 @@ report_download_limit                                | The maximum number of row
 
 **Plan archiving parameters**
 
-Frepple keeps a history of the key metrics of your plan. These metrics are used to display overall trends in your plan, and can 
+Frepple keeps a history of the key metrics of your plan. These metrics are used to display overall trends in your plan, and can
 also be useful to debug the evolution of certain data elements over time.
 
 ==================================================== ===========================================================================

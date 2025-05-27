@@ -328,35 +328,43 @@ class Parameter(AuditModel):
         restart_webserver = False
         if self.name in ["display_time", "date_format"]:
             # a bit of security to prevent python injection in djangosettings
-            if self.name == "display_time" and self.value not in ["true", "false"]:
+            if self.name == "display_time" and self.value not in [
+                "true",
+                "false",
+                "default",
+            ]:
                 raise Exception("Allowed values for display_time are: true or false ")
             if self.name == "date_format" and self.value not in [
                 "month-day-year",
                 "day-month-year",
                 "year-month-day",
+                "default",
             ]:
                 raise Exception(
                     'Allowed values for display_time are: "month-day-year", "day-month-year" or "year-month-day"'
                 )
 
             # update djangosettings
-            if self.name == "display_time":
+            if self.name == "display_time" and self.value != "default":
                 update_variable_in_file(
                     os.path.join(settings.FREPPLE_CONFIGDIR, "djangosettings.py"),
                     "DATE_STYLE_WITH_HOURS",
                     True if (self.value == "true") else False,
                 )
-            elif self.name == "date_format":
+                restart_webserver = True
+            elif self.name == "date_format" and self.value != "default":
                 update_variable_in_file(
                     os.path.join(settings.FREPPLE_CONFIGDIR, "djangosettings.py"),
                     "DATE_STYLE",
                     f'"{self.value}"',
                 )
-            restart_webserver = True
+                restart_webserver = True
+
             # update the parameter value in all scenarios
             for sc in Scenario.objects.using(DEFAULT_DB_ALIAS).exclude(status="Free"):
                 # The current scenario is saved by this method
-                if sc.name == self._state.db:
+
+                if sc.name == (self._state.db or DEFAULT_DB_ALIAS):
                     continue
                 with connections[sc.name].cursor() as cursor:
                     cursor.execute(

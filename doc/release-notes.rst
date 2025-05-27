@@ -7,6 +7,12 @@ Release notes
 This release is scheduled for end of June.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Production planning
+
+- | Bug fix: Corner cases with alternate operations or resources that use bucketized
+    resources could result in unplanned demands.
+  | On bucketized resources it's possible you see now a bit more smaller manufacturing orders. 
+
 9.8.0 (2025-05-16)
 ==================
 

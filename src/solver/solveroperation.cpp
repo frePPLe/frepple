@@ -1347,6 +1347,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   bool originalLogConstraints = data->logConstraints;
   Problem* topConstraint =
       data->constraints ? data->constraints->top() : nullptr;
+  bool originalAcceptPartialReply = data->accept_partial_reply;
 
   // Try all alternates:
   // - First, all alternates that are a) fully effective and b) fit within the
@@ -1365,6 +1366,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
     // Evaluate all alternates
     double bestAlternateValue = DBL_MAX;
     double bestAlternateQuantity = 0;
+    bool bestAcceptPartialReply = false;
     Operation* bestAlternateSelection = nullptr;
     Flow* bestFlow = nullptr;
     Date bestQDate;
@@ -1550,9 +1552,12 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
                  << endl;
         auto tmp_askQ = data->state->q_qty;
         auto tmp_askD = data->state->q_date;
+        auto tmp_accept_partial_reply = data->accept_partial_reply;
+        data->accept_partial_reply = false;
         (*altIter)->getOperation()->solve(*this, v);
         if (data->state->a_qty > ROUNDING_ERROR &&
-            data->state->a_qty <= tmp_askQ - ROUNDING_ERROR) {
+            data->state->a_qty <= tmp_askQ - ROUNDING_ERROR &&
+            !data->accept_partial_reply) {
           // Reject a partial reply
           auto maxq = (*altIter)->getOperation()->getSizeMaximum();
           auto multq = (*altIter)->getOperation()->getSizeMultiple();
@@ -1568,16 +1573,20 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
             data->state->a_date = tmp_askD + getLazyDelay();
           }
         }
+        if (tmp_accept_partial_reply) data->accept_partial_reply = true;
       } else {
         setLogLevel(0);
         data->incostevaluation = true;
+        auto original_accept_partial_reply = data->accept_partial_reply;
         try {
+          data->accept_partial_reply = false;
           (*altIter)->getOperation()->solve(*this, v);
         } catch (...) {
           setLogLevel(loglevel);
           // Restore the planning mode
           data->constrainedPlanning = originalPlanningMode;
           data->logConstraints = originalLogConstraints;
+          data->accept_partial_reply = original_accept_partial_reply;
           throw;
         }
         setLogLevel(loglevel);
@@ -1676,6 +1685,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
           bestAlternateValue = val;
           bestAlternateSelection = (*altIter)->getOperation();
           bestAlternateQuantity = data->state->a_qty;
+          bestAcceptPartialReply = data->accept_partial_reply;
           bestFlow = sub_flow;
           bestQDate = ask_date;
         }
@@ -1731,6 +1741,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
 
       // Create a sub operationplan and solve constraints
       bestAlternateSelection->solve(*this, v);
+      data->accept_partial_reply =
+          originalAcceptPartialReply || bestAcceptPartialReply;
 
       // Now solve for loads and flows of the top operationplan.
       // Only now we know how long that top-operation lasts in total.

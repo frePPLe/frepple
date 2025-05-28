@@ -1860,7 +1860,7 @@ var grid = {
     fieldspan.on('click', (event) => grid.showFieldList(event.target, rule, thefilter, fullfilter));
     var operatorspan = $('<span data-operandname=' + rule.op + ' style="cursor: pointer;">' + grid.findOperandLabel(rule.op) + '</span>');
     operatorspan.on('click', (event) => grid.showOperandsList(event.target, rule, thefilter, fullfilter));    
-    var newexpression = $('<span class="badge"></span>');
+    var newexpression = $('<span class="badge dropdown"></span>');
     newexpression.append(fieldspan);
     newexpression.append('&nbsp;');
     newexpression.append(operatorspan);

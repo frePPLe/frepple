@@ -9,9 +9,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: User interface
 
-- | Addition of parameters display_time and date_format.
-  | display_time parameter controls if the time should be displayed in the date time fields.
-  | date_format is used to display the dates day-month-year, year-month-day or month-day-year formats.
+- | The data format is now configurable as a parameter.
+  | The new "display_time" parameter controls if the time should be displayed in the date time fields.
+  | The new "date_format" parameter is used to choose a date format from among day-month-year, year-month-day or month-day-year.
   | These parameters are applied to all users across all scenarios.
 
 .. rubric:: Production planning

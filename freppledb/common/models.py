@@ -341,7 +341,7 @@ class Parameter(AuditModel):
                 "default",
             ]:
                 raise Exception(
-                    'Allowed values for display_time are: "month-day-year", "day-month-year" or "year-month-day"'
+                    'Allowed values for date_format are: "month-day-year", "day-month-year" or "year-month-day"'
                 )
 
             # update djangosettings
@@ -361,7 +361,7 @@ class Parameter(AuditModel):
                 restart_webserver = True
 
             # update the parameter value in all scenarios
-            for sc in Scenario.objects.using(DEFAULT_DB_ALIAS).exclude(status="Free"):
+            for sc in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(status="In use"):
                 # The current scenario is saved by this method
 
                 if sc.name == (self._state.db or DEFAULT_DB_ALIAS):

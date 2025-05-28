@@ -2097,7 +2097,7 @@ class GridReport(View):
                                 )
                         elif isinstance(r, GridFieldBool):
                             if v is not None:
-                                fields[f] = v.lower() in [
+                                fields[f] = v.lower() not in [
                                     "0",
                                     "false",
                                     force_str(_("false")),

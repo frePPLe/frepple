@@ -25,9 +25,9 @@
 edition = "Community Edition"
 
 try:
-    import pkg_resources
+    import importlib.metadata
 
-    __version__ = pkg_resources.get_distribution("freppledb").version
+    __version__ = importlib.metadata.version("freppledb")
 except Exception:
     __version__ = "development"
 

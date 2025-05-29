@@ -24,7 +24,7 @@
 import os
 import subprocess
 from datetime import datetime
-import pkg_resources
+import importlib.metadata
 import platform
 
 from django.core.management.base import BaseCommand, CommandError
@@ -152,7 +152,10 @@ class Command(BaseCommand):
                 # add list of python modules
                 cursor.executemany(
                     "insert into dump_info values ('python module',%s)",
-                    [(str(d),) for d in pkg_resources.working_set],
+                    [
+                        (f"{d.metadata['Name']} {d.version}",)
+                        for d in importlib.metadata.distributions()
+                    ],
                 )
 
             # Run the backup command

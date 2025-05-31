@@ -20,6 +20,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     resources could result in unplanned demands.
   | On bucketized resources it's possible you see now a bit more smaller manufacturing orders.
 
+.. rubric:: System administration
+
+- | The docker container is now running as the user "frepple" rather than as root for extra security.
+  | These may break your customized docker image if you inherit from the base image.
+
 9.8.0 (2025-05-16)
 ==================
 

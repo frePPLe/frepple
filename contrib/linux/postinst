@@ -2,8 +2,12 @@
 set -e
 . /usr/share/debconf/confmodule
 
+
 # Create new group for frepple
-getent group frepple > /dev/null 2>&1 || addgroup --quiet frepple
+getent group frepple > /dev/null 2>&1 || addgroup --quiet --system --firstgid 8000 --lastgid 9000 frepple
+
+# Create new user frepple
+getent passwd frepple > /dev/null 2>&1 || adduser --quiet --firstuid 8000 --lastuid 9000 --ingroup frepple --home / --no-create-home --gecos "" --shell /usr/sbin/nologin --disabled-login --disabled-password frepple
 
 # Remove execute permissions for non-members
 chgrp frepple /usr/bin/frepple /usr/bin/frepplectl
@@ -14,8 +18,8 @@ chmod o= /usr/bin/frepple /usr/bin/frepplectl
 adduser --quiet www-data frepple
 adduser --quiet www-data adm
 
-# Set permissions on configuration files
-chgrp frepple /etc/frepple /etc/frepple/*
+# Set permissions
+chgrp -R frepple /etc/frepple
 chmod 770 /etc/frepple
 chmod 750 /etc/frepple/*
 
@@ -35,7 +39,7 @@ chmod 770 /usr/share/frepple/venv/lib/python*/site-packages/freppledb/wsgi.py
 # Create log directory and set its permissions
 if [ ! -d /var/log/frepple ]; then
   mkdir -p /var/log/frepple
-  chgrp frepple /var/log/frepple
+  chown -R frepple:frepple /var/log/frepple
   chmod g=rwx,o= /var/log/frepple
 fi
 

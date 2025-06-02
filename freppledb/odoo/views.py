@@ -413,8 +413,12 @@ def Upload(request):
 
         # Read the response
         with urlopen(req) as f:
-            msg = f.read()
-            logger.debug("Odoo response: %s" % msg.decode("utf-8"))
+            msg = f.read().decode("utf-8")
+            logger.debug("Odoo response: %s" % msg)
+            if "Exception" in msg:
+                return HttpResponseServerError(
+                    f"Internal server error on Odoo side:<pre>{msg}</pre>"
+                )
         for i in obj:
             if i.status == "proposed":
                 i.status = "approved"

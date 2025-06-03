@@ -219,23 +219,17 @@ class OdooReadData(PlanTask):
                 # Download and parse XML data
                 with urlopen(request) as response:
                     if response.info().get("Content-Encoding") == "gzip":
-                        frepple.readXMLdata(
-                            gzip.decompress(response.read())
-                            .decode(encoding="utf-8", errors="ignore")
-                            .translate({ord(i): None for i in "\f\v\b"}),
-                            False,
-                            False,
-                            loglevel,
+                        data = gzip.decompress(response.read()).decode(
+                            encoding="utf-8", errors="ignore"
                         )
                     else:
-                        frepple.readXMLdata(
-                            response.read()
-                            .decode(encoding="utf-8", errors="ignore")
-                            .translate({ord(i): None for i in "\f\v\b"}),
-                            False,
-                            False,
-                            loglevel,
-                        )
+                        data = response.read().decode(encoding="utf-8", errors="ignore")
+                    if loglevel:
+                        print("Data receive from odoo:")
+                        print(data)
+                    frepple.readXMLdata(
+                        data.translate({ord(i): None for i in "\f\v\b"}), False, False
+                    )
 
             except HTTPError as e:
                 print("Error during connection with odoo")
@@ -267,10 +261,7 @@ class OdooReadData(PlanTask):
             # Parse XML data file
             with open(debugFile, encoding="utf-8") as f:
                 frepple.readXMLdata(
-                    f.read().translate({ord(i): None for i in "\f\v\b"}),
-                    False,
-                    False,
-                    loglevel,
+                    f.read().translate({ord(i): None for i in "\f\v\b"}), False, False
                 )
 
         # All predefined inventory detail records are now loaded.

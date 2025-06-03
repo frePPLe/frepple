@@ -25,6 +25,12 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | The docker container is now running as the user "frepple" rather than as root for extra security.
   | These may break your customized docker image if you inherit from the base image.
 
+.. rubric:: Odoo integration
+
+- | Improved the readability of the Odoo connector log in debug mode.
+  | When the parameter odoo.loglevel is different from 0, the log file of the import displays the
+    raw data received from odoo.
+
 9.8.0 (2025-05-16)
 ==================
 

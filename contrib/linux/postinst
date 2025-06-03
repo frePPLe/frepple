@@ -2,12 +2,11 @@
 set -e
 . /usr/share/debconf/confmodule
 
-
 # Create new group for frepple
 getent group frepple > /dev/null 2>&1 || addgroup --quiet --system --firstgid 8000 --lastgid 9000 frepple
 
 # Create new user frepple
-getent passwd frepple > /dev/null 2>&1 || adduser --quiet --firstuid 8000 --lastuid 9000 --ingroup frepple --home / --no-create-home --gecos "" --shell /usr/sbin/nologin --disabled-login --disabled-password frepple
+getent passwd frepple > /dev/null 2>&1 || adduser --quiet --firstuid 8000 --lastuid 9000 --ingroup frepple --gecos "" --shell /bin/bash --disabled-password frepple
 
 # Remove execute permissions for non-members
 chgrp frepple /usr/bin/frepple /usr/bin/frepplectl

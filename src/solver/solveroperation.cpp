@@ -1172,9 +1172,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
         data->state->q_date = data->state->curOwnerOpplan->getStart();
         Buffer* tmpBuf = data->state->curBuffer;
         q_date = data->state->q_date;
-        (*e)->getOperation()->solve(
-            *this, v);  // @todo if the step itself has child operations, the
-                        // curOwnerOpplan field is changed here!!!
+        (*e)->getOperation()->solve(*this, v);
         a_qty = data->state->a_qty;
         data->state->curBuffer = tmpBuf;
 

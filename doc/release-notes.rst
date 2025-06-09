@@ -20,6 +20,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     resources could result in unplanned demands.
   | On bucketized resources it's possible you see now a bit more smaller manufacturing orders.
 
+- | Bug fix: Manufacturing orders that are part of a routing could get incorrect duration
+    in corner cases where the routing manufacturing orders is resized or constrained.
+
 .. rubric:: System administration
 
 - | The docker container is now running as the user "frepple" rather than as root for extra security.

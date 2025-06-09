@@ -2254,7 +2254,12 @@ double Operation::setOperationPlanQuantity(OperationPlan* oplan, double f,
   if (execute && oplan->firstsubopplan)
     for (auto i = oplan->firstsubopplan; i; i = i->nextsubopplan)
       if (!i->getConfirmed()) {
+        bool resize = i->getOperation()->hasType<OperationTimePer>() &&
+                      fabs(i->quantity - oplan->quantity) > ROUNDING_ERROR;
         i->quantity = oplan->quantity;
+        if (resize)
+          i->setOperationPlanParameters(oplan->quantity, Date::infinitePast,
+                                        i->getEnd());
         if (upd) i->resizeFlowLoadPlans();
       }
 

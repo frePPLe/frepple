@@ -23,9 +23,3 @@ selenium_firefox == 2.0.7   # Issues with urllib3 on recent versions
 
 # Extra package to allow python debugging of the embedded interpreter
 debugpy == 1.6.6
-
-# Extra packages for windows development environments
-# pywin32
-# adodbapi
-# cx_Freeze == 6.5.3
-# cx_Logging == 2.2

@@ -107,7 +107,21 @@
   </tr>
   {% endif %}
   {% endfor %}
+<tr>
+  <td colspan="{% if THEMES|length > 1 %}5{% else %}4{% endif %}" style="padding: 10px; text-align: left;">
+    <div class="btn-group" role="group" aria-label="Scenario actions">
+      <button id="addScenarioBtn" class="btn btn-primary" title="{% trans 'Add Scenario' %}">
+        <i class="fa fa-plus"></i>
+      </button>
+      <button id="removeScenarioBtn" class="btn btn-primary" title="{% trans 'Remove Scenario' %}">
+        <i class="fa fa-minus"></i>
+      </button>
+    </div>
+  </td>
+</tr>
 </table>
+</div>
+
 </div>
 
 <script>
@@ -120,14 +134,14 @@ $(".scenariorelease").on("click", function(event) {
   $.ajax({
    url: target + "/execute/launch/scenario_copy/",
    type: 'POST',
-   data: {release: 1, database:releasedScenario},   
+   data: {release: 1, database:releasedScenario},
    success: function() {
      $("#scenariotoast span").text("Launched releasing task");
      bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0]).show();
      if (target == url_prefix) window.location.href = "/"; },
    fail: function() {
     console.log("FAILED");
-   }});   
+   }});
 });
 $(".scenariopromote").on("click", function(event) {
   event.preventDefault();
@@ -195,5 +209,47 @@ $(".scenario_theme").click(function() {
        location.reload();
     }
    });
+});
+$("#addScenarioBtn").on("click", function(event) {
+  event.preventDefault();
+
+  $.ajax({
+    url: "/default/execute/scenario_add/",
+    type: "POST",
+    success: function() {
+      $("#scenariotoast span").text("Launched add scenario task");
+      bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0],{delay: 5000}).show();
+      setTimeout(() => {
+            $("#scenariotoast").remove();  // Prevent it from appearing on reload
+            location.reload();
+      }, 3000);
+    },
+    error: function(xhr, status, error) {
+      const errorMsg = xhr.responseText || "An error occurred while adding scenario";
+      $("#scenariotoast span").text(errorMsg);
+      bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0],{delay: 5000}).show();
+    }
+  });
+});
+$("#removeScenarioBtn").on("click", function(event) {
+  event.preventDefault();
+
+  $.ajax({
+    url: "/default/execute/scenario_delete/",
+    type: "POST",
+    success: function() {
+      $("#scenariotoast span").text("Launched delete scenario task");
+      bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0],{delay: 5000}).show();
+      setTimeout(() => {
+          $("#scenariotoast").remove();  // Prevent it from appearing on reload
+          location.reload();
+      }, 3000);
+    },
+    error: function(xhr, status, error) {
+      const errorMsg = xhr.responseText || "An error occurred while deleting scenario";
+      $("#scenariotoast span").text(errorMsg);
+      bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0],{delay: 5000}).show();
+    }
+  });
 });
 </script>

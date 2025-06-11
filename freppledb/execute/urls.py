@@ -89,4 +89,14 @@ if mode == "WSGI":
             views.scheduletasks,
             name="scheduletasks",
         ),
+        re_path(
+            r"^execute/scenario_add/$",
+            views.scenario_add,
+            name="scenario_add",
+        ),
+        re_path(
+            r"^execute/scenario_delete/$",
+            views.scenario_delete,
+            name="scenario_delete",
+        ),
     ]

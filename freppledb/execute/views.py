@@ -85,7 +85,9 @@ from freppledb.common.report import (
     matchesModelName,
     sizeof_fmt,
 )
+
 from freppledb.common.views import sendStaticFile
+from .utils import updateScenarioCount
 from .models import Task, ScheduledTask, DataExport
 from .management.commands.runworker import launchWorker
 from .management.commands.runplan import parseConstraints, constraintString
@@ -1211,6 +1213,62 @@ def scheduletasks(request):
     except Exception as e:
         logger.error("Error updating scheduled task: %s" % e)
         return HttpResponseServerError("Error updating scheduled task")
+
+
+@staff_member_required
+@never_cache
+def scenario_add(request):
+    if request.method not in ("POST",):
+        return HttpResponseNotAllowed("Only post requests are allowed")
+    try:
+        error_code = updateScenarioCount(addition=True)
+        print(f"error code is {error_code}")
+        if not error_code:
+            return HttpResponse("Successfully added a new scenario")
+        elif error_code == 1:
+            return HttpResponse(
+                "You have already reached the minimum number of scenarios", status=401
+            )
+        elif error_code == 2:
+            return HttpResponse(
+                "You have already reached the maximum number of scenarios", status=401
+            )
+        elif error_code == 3:
+            return HttpResponse("Release your last scenario and try again", status=401)
+        elif error_code == 4:
+            return HttpResponse("Invalid format of djsngosettings.py file", status=401)
+        else:
+            return HttpResponse("An unknown error occured", status=400)
+    except Exception as e:
+        print(e)
+        return HttpResponse(e, status=400)
+
+
+@staff_member_required
+@never_cache
+def scenario_delete(request):
+    if request.method not in ("POST",):
+        return HttpResponseNotAllowed("Only post requests are allowed")
+    try:
+        error_code = updateScenarioCount(addition=False)
+        if not error_code:
+            return HttpResponse("Succesfully deleted a scenario")
+        elif error_code == 1:
+            return HttpResponse(
+                "You have already reached the minimum number of scenarios", status=401
+            )
+        elif error_code == 2:
+            return HttpResponse(
+                "You have already reached the maximum number of scenarios", status=401
+            )
+        elif error_code == 3:
+            return HttpResponse("Release your last scenario and try again", status=401)
+        elif error_code == 4:
+            return HttpResponse("Invalid format of djsngosettings.py file", status=401)
+        else:
+            return HttpResponse("An unknown error occured", status=400)
+    except Exception as e:
+        return HttpResponse(e, status=400)
 
 
 def exportWorkbook(request):

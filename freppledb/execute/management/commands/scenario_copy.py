@@ -25,6 +25,8 @@ import os
 import subprocess
 from datetime import datetime
 
+from django.db.models import Case, When, Value, IntegerField
+from django.db.models.functions import Cast, Substr, Length
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -374,8 +376,8 @@ class Command(BaseCommand):
                 with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
                     cursor.execute(
                         """
-                        update common_user 
-                        set databases = array_remove(databases, %s) 
+                        update common_user
+                        set databases = array_remove(databases, %s)
                         where %s = any(databases)
                         """,
                         (destination, destination),
@@ -629,8 +631,8 @@ class Command(BaseCommand):
                 with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
                     cursor.execute(
                         """
-                        update common_user 
-                        set databases = array_append(databases, %s) 
+                        update common_user
+                        set databases = array_append(databases, %s)
                         where (databases is null or not %s = any(databases))
                         and id = any(%s)
                         """,
@@ -745,7 +747,21 @@ class Command(BaseCommand):
         scenarios = []
         active_scenarios = []
         free_scenarios = 0
-        for i in Scenario.objects.using(DEFAULT_DB_ALIAS):
+        for i in (
+            Scenario.objects.using(DEFAULT_DB_ALIAS)
+            .annotate(
+                sort_key=Case(
+                    When(name="default", then=Value(0)),
+                    When(
+                        name__startswith="scenario",
+                        then=Cast(Substr("name", 9, Length("name")), IntegerField()),
+                    ),
+                    default=Value(9999),
+                    output_field=IntegerField(),
+                )
+            )
+            .order_by("sort_key", "name")
+        ):
             scenarios.append(i)
             if i.name in (request.user.databases or []):
                 active_scenarios.append(i.name)
@@ -775,6 +791,9 @@ class Command(BaseCommand):
                 "active_scenarios": active_scenarios,
                 "dumps": dumps,
                 "THEMES": settings.THEMES,
+                "has_free_scenarios": any(
+                    j.status == "Free" and j.name != DEFAULT_DB_ALIAS for j in scenarios
+                ),
             },
             request=request,
         )

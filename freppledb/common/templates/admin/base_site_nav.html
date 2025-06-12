@@ -28,6 +28,24 @@ $(function() {
 
 		<div id="nav-menu" class="collapse navbar-collapse">
 			<div class="float-end ms-3 d-lg-none">
+			    <div class="d-flex justify-content-around align-items-center mt-3">
+					<div>
+						<a href="{{request.prefix}}/inbox/">
+							<i id="messages" style="font-size: 1.5em" class="fa fa-envelope-open-o" aria-hidden="true"></i>
+							<span class="position-absolute top-20 start-50 translate-middle badge rounded-pill bg-danger" aria-hidden="true"></span>
+						</a>
+					</div>
+					<div>
+				        <a href="{{request.prefix}}/preferences/">
+							{% if user.avatar %}<img src="{{ user.avatar.url }}" class="avatar-sm">
+							{% else %}<i style="font-size: 1.5em" class="fa fa-user-circle-o"></i>
+							{% endif %}
+						</a>
+					</div>
+					<div>
+  				        <a href="/data/logout/?next=/"><i style="font-size: 1.5em" class="fa fa-sign-out"></i></a>
+					</div>
+				</div>
 			<form class="navbar-form me-start mt-3 mb-3" role="search">
 				<div class="form-group" style="width: 12em">
 				  <input class="form-control typeahead search-input" type="text" placeholder="&#xf002; {% trans 'Search' %}">

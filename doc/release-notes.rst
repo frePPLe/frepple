@@ -14,6 +14,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | The new "date_format" parameter is used to choose a date format from among day-month-year, year-month-day or month-day-year.
   | These parameters are applied to all users across all scenarios.
 
+- | Bug fix: The menu bar didn't display links to edit preferences or sign out.
+
 .. rubric:: Production planning
 
 - | Bug fix: Corner cases with alternate operations or resources that use bucketized

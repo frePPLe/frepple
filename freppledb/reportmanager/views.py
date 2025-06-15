@@ -660,7 +660,14 @@ class ReportManager(GridReport):
             if "id" in request.POST:
                 m = SQLReport.objects.using(request.database).get(pk=request.POST["id"])
                 if m.user and m.user.id != request.user.id:
-                    return HttpResponseForbidden("You're not the owner of this report")
+                    return JsonResponse(
+                        {
+                            "id": m.id,
+                            "status": force_str(
+                                _("You're not the owner of this report")
+                            ),
+                        }
+                    )
                 f = SQLReportForm(request.POST, instance=m)
             else:
                 f = SQLReportForm(request.POST)
@@ -675,12 +682,11 @@ class ReportManager(GridReport):
                     # Otherwise we don't provide feedback on how the query needs correcting
                     return JsonResponse(
                         {
-                            "id": m.id,
                             "status": "Error: %s" % e,  # lgtm[py/stack-trace-exposure]
                         }
                     )
             else:
-                return HttpResponseServerError("Error saving report")
+                return JsonResponse({"status": force_str(_("Error saving report"))})
 
         elif "delete" in request.POST:
             pk = request.POST["id"]

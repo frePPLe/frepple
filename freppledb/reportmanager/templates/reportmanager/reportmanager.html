@@ -198,7 +198,8 @@ $(function() {
   <label for="id_public">{% trans "public"|capfirst %}:</label>
 </div>
 <div class="controls col-md-10">
-  &nbsp;&nbsp;&nbsp;<input class="form-check-input" type="checkbox" style="transform: scale(1.5)" name="public" {% if report.public %}checked {% endif %}id="id_public">
+  <input class="form-check-input" type="checkbox" style="transform: scale(1.5)" name="public" {% if report.public %}checked {% endif %}id="id_public">
+  {% if report.public and request.user.id != report.user.id %}&nbsp;&nbsp;&nbsp;{% trans "owner" %} {{report.user.username}}{% endif %}
 </div>
 </div>
 

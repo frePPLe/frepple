@@ -110,14 +110,12 @@
 {% if can_add_scenarios %}
 <tr>
   <td colspan="{% if THEMES|length > 1 %}5{% else %}4{% endif %}" style="padding: 10px; text-align: left;">
-    <div class="btn-group" role="group" aria-label="Scenario actions">
-      <button id="addScenarioBtn" class="btn btn-primary" title="{% trans 'Add Scenario' %}">
+      <button id="addScenarioBtn" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-title="{% trans 'Add a new scenario' %}">
         <i class="fa fa-plus"></i>
       </button>
-      <button id="removeScenarioBtn" class="btn btn-primary" title="{% trans 'Remove Scenario' %}">
+      <button id="removeScenarioBtn" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-title="{% trans 'Remove the last scenario' %}">
         <i class="fa fa-minus"></i>
       </button>
-    </div>
   </td>
 </tr>
 {% endif %}

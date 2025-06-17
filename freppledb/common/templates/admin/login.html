@@ -32,19 +32,21 @@ if (navigator && 'serviceWorker' in navigator)
 
 let deferredInstallPrompt;
 
+document.getElementById("installAppButton").addEventListener('click', async () => {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      deferredInstallPrompt = null;
+      document.getElementById("installApp").classList.add("d-none");
+    }
+});
+
 window.addEventListener("beforeinstallprompt", event => {
     event.preventDefault();
     deferredInstallPrompt = event;
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-		document.getElementById("installApp").classList.push("d-none");
-		return;
-	}
-    document.getElementById("installApp").classList.remove("d-none");
-    document.getElementById("installAppButton").addEventListener('click', async () => {
-        deferredInstallPrompt.prompt();
-        deferredInstallPrompt = null;
-        document.getElementById("installApp").classList.push("d-none");
-    });
+    if (window.matchMedia('(display-mode: standalone)').matches)
+       document.getElementById("installApp").classList.add("d-none");
+    else
+       document.getElementById("installApp").classList.remove("d-none");
  });
 
 </script>

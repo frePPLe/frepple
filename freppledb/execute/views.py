@@ -1222,21 +1222,14 @@ def scenario_add(request):
         return HttpResponseNotAllowed("Only post requests are allowed")
     try:
         error_code = updateScenarioCount(addition=True)
-        print(f"error code is {error_code}")
         if not error_code:
             return HttpResponse("Successfully added a new scenario")
-        elif error_code == 1:
-            return HttpResponse(
-                "You have already reached the minimum number of scenarios", status=401
-            )
         elif error_code == 2:
             return HttpResponse(
                 "You have already reached the maximum number of scenarios", status=401
             )
-        elif error_code == 3:
-            return HttpResponse("Release your last scenario and try again", status=401)
         elif error_code == 4:
-            return HttpResponse("Invalid format of djsngosettings.py file", status=401)
+            return HttpResponse("Invalid format of djangosettings.py file", status=401)
         else:
             return HttpResponse("An unknown error occured", status=400)
     except Exception as e:
@@ -1252,19 +1245,15 @@ def scenario_delete(request):
     try:
         error_code = updateScenarioCount(addition=False)
         if not error_code:
-            return HttpResponse("Succesfully deleted a scenario")
+            return HttpResponse("Successfully deleted a scenario")
         elif error_code == 1:
             return HttpResponse(
                 "You have already reached the minimum number of scenarios", status=401
             )
-        elif error_code == 2:
-            return HttpResponse(
-                "You have already reached the maximum number of scenarios", status=401
-            )
         elif error_code == 3:
             return HttpResponse("Release your last scenario and try again", status=401)
         elif error_code == 4:
-            return HttpResponse("Invalid format of djsngosettings.py file", status=401)
+            return HttpResponse("Invalid format of djangosettings.py file", status=401)
         else:
             return HttpResponse("An unknown error occured", status=400)
     except Exception as e:

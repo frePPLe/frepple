@@ -107,6 +107,7 @@
   </tr>
   {% endif %}
   {% endfor %}
+{% if can_add_scenarios %}
 <tr>
   <td colspan="{% if THEMES|length > 1 %}5{% else %}4{% endif %}" style="padding: 10px; text-align: left;">
     <div class="btn-group" role="group" aria-label="Scenario actions">
@@ -119,6 +120,7 @@
     </div>
   </td>
 </tr>
+{% endif %}
 </table>
 </div>
 

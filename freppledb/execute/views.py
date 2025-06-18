@@ -1215,11 +1215,12 @@ def scheduletasks(request):
         return HttpResponseServerError("Error updating scheduled task")
 
 
-@staff_member_required
 @never_cache
 def scenario_add(request):
     if request.method not in ("POST",):
         return HttpResponseNotAllowed("Only post requests are allowed")
+    if not request.user.has_perm("common.add_scenario"):
+        return HttpResponse("No permission to add a scenario", status=401)
     try:
         error_code = updateScenarioCount(addition=True)
         if not error_code:
@@ -1237,11 +1238,12 @@ def scenario_add(request):
         return HttpResponse(e, status=400)
 
 
-@staff_member_required
 @never_cache
 def scenario_delete(request):
     if request.method not in ("POST",):
         return HttpResponseNotAllowed("Only post requests are allowed")
+    if not request.user.has_perm("common.delete_scenario"):
+        return HttpResponse("No permission to delete a scenario", status=401)
     try:
         error_code = updateScenarioCount(addition=False)
         if not error_code:

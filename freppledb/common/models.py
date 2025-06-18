@@ -448,7 +448,7 @@ class Scenario(models.Model):
 
     class Meta:
         db_table = "common_scenario"
-        default_permissions = ("copy", "release", "promote")
+        default_permissions = ("copy", "release", "promote", "add", "delete")
         verbose_name_plural = _("scenarios")
         verbose_name = _("scenario")
         ordering = ["name"]

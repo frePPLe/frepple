@@ -72,6 +72,10 @@ scenario slot:
 
 * | **Restore** is used to restore a previous backup file into a what-if scenario.
 
+* | **Add** is used to add a new scenario to the list of the what-if scenarios.
+
+* | **Delete** is used to delete the last scenario of the list of the what-if scenarios.
+
 The label shown in the scenario selection dropdown can also be updated
 in this screen.
 

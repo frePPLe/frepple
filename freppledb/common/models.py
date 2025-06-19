@@ -546,6 +546,7 @@ class User(AbstractUser):
         try:
             user_sc = User.objects.using(new_database).get(pk=self.pk)
             self.is_superuser = user_sc.is_superuser
+            self.is_active = user_sc.is_active
             self.horizonlength = user_sc.horizonlength
             self.horizonbefore = user_sc.horizonbefore
             self.horizontype = user_sc.horizontype
@@ -653,7 +654,7 @@ class User(AbstractUser):
         scenarios = [
             i["name"]
             for i in Scenario.objects.using(DEFAULT_DB_ALIAS)
-            .filter(Q(status="In use") | Q(name=DEFAULT_DB_ALIAS))
+            .filter(status="In use")
             .values("name")
             if i["name"] in settings.DATABASES
         ]

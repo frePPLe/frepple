@@ -72,7 +72,7 @@ The following steps are required to configure a multi-model setup.
       | Extra schema's have NO impact on the performance of the user interface.
         Only the disk space used by the database will increase.
 
-    * One of the schemas MUST be called ‘default’.
+    * One of the schemas MUST be called 'default'.
 
       All information on user logins, user preferences and browser sessions
       are stored in this default schema.

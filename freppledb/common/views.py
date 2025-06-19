@@ -355,11 +355,7 @@ def handler500(request):
     Custom handler for "HTTP 500 - server error"
     """
     try:
-        response = render(
-            request,
-            "500.html",
-            content_type="text/html"
-        )
+        response = render(request, "500.html", content_type="text/html")
         response.status_code = 500
         return response
     except Exception as e:
@@ -626,14 +622,20 @@ def login(request, extra_context=None):
         request.session.set_expiry(settings.SESSION_COOKIE_AGE)
     if (
         request.path == "/data/login/"
-        and getattr(request.user, "default_scenario", None) in settings.DATABASES
         and isinstance(response, HttpResponseRedirect)
         and response.url == "/"
     ):
-        # Automatically switch to the default scenario
-        return HttpResponseRedirect("/%s/" % request.user.default_scenario)
-    else:
-        return response
+        sc = getattr(request.user, "default_scenario", None)
+        if sc not in settings.DATABASES or (
+            request.user.databases and sc not in request.user.databases
+        ):
+            sc = None
+        if not sc and request.user.databases:
+            sc = sorted(request.user.databases)[0]
+        if sc:
+            # Automatically switch to a non-default scenario
+            return HttpResponseRedirect(f"/{sc}/")
+    return response
 
 
 class UserList(GridReport):

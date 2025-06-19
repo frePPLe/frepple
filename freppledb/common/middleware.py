@@ -179,7 +179,7 @@ class MultiDBMiddleware:
         for i in settings.DATABASES:
             try:
                 if settings.DATABASES[i]["regexp"].match(request.path):
-                    request.prefix = "/%s" % i
+                    request.prefix = f"/{i}"
                     request.path_info = request.path_info[len(request.prefix) :]
                     request.path = request.path[len(request.prefix) :]
                     db = i
@@ -207,7 +207,7 @@ class MultiDBMiddleware:
                     user = authenticate(
                         username=auth_header_split[0], password=auth_header_split[1]
                     )
-                    if user and user.is_active:
+                    if user and user.databases:
                         # Active user
                         login(request, user)
                         request.user = user
@@ -321,13 +321,8 @@ class MultiDBMiddleware:
             state = getattr(request.user, "_state", None)
             if state.db == DEFAULT_DB_ALIAS:
                 user_dflt = request.user
-                if (
-                    not user_dflt.databases
-                    or DEFAULT_DB_ALIAS not in user_dflt.databases
-                ) and user_dflt.is_active:
-                    if not user_dflt.databases:
-                        user_dflt.databases = []
-                    user_dflt.databases.append(DEFAULT_DB_ALIAS)
+                if not user_dflt.databases:
+                    user_dflt.databases = []
                     user_dflt.save(update_fields=["databases"])
             else:
                 user_dflt = User.objects.using(DEFAULT_DB_ALIAS).get(pk=request.user.pk)
@@ -340,7 +335,22 @@ class MultiDBMiddleware:
 
             # Check scenario access
             request.scenario = allowed_scenarios.get(request.database, None)
-            if not request.scenario and not request.user.is_anonymous:
+            if (
+                not request.scenario
+                and not request.user.is_anonymous
+                and (
+                    # Some urls are always accepted in the default scenario, even if the user isn't marked active there
+                    request.database == DEFAULT_DB_ALIAS
+                    and request.path
+                    not in (
+                        "/data/login/",
+                        "/accounts/logout",
+                        "/data/logout/",
+                        "/data/jsi18n/",
+                    )
+                )
+            ):
+                print("-------redirecting-", request.path)
                 return HttpResponseNotFound("Scenario not in use, or access is denied")
 
             # Update user

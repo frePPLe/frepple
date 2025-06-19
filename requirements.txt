@@ -28,5 +28,5 @@ channels == 4.0.0
 attrs == 23.1.0
 daphne == 4.0.0
 Twisted[tls,http2]
-https://github.com/frePPLe/django/tarball/frepple_8.3
+https://github.com/frePPLe/django/tarball/frepple_9.9
 django-allauth == 65.4.1 ; python_version >= '3.11'

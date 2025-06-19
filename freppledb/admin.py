@@ -37,6 +37,9 @@ class freppleAuthenticationForm(AuthenticationForm):
         "inactive": _("This user is inactive."),
     }
 
+    def confirm_login_allowed(self, user):
+        pass
+
 
 class freppleAdminSite(AdminSite):
     login_form = freppleAuthenticationForm

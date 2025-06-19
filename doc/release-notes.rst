@@ -9,12 +9,19 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: User interface
 
-- | The data format is now configurable as a parameter.
+- | The date format is now configurable as a parameter.
   | The new "display_time" parameter controls if the time should be displayed in the date time fields.
   | The new "date_format" parameter is used to choose a date format from among day-month-year, year-month-day or month-day-year.
   | These parameters are applied to all users across all scenarios.
 
-- | Bug fix: The menu bar didn't display links to edit preferences or sign out.
+- | It's now allowed any longer that a user isn't active in the default scenario.
+  | In earlier releases, this condition needed to be met before the user could log in.
+  | The new condition is that the user must be active in any scenario.
+  | This is useful in configurations where different business units work indepently in different 
+    scenarios, and the default scenario had to be left unused.
+
+- | Bug fix: On mobiles and tables, the menu bar didn't display links to edit preferences
+    or sign out.
 
 .. rubric:: Production planning
 

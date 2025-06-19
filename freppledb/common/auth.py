@@ -92,6 +92,10 @@ class MultiDBBackend(ModelBackend):
             **{user_groups_query: user_obj}
         )
 
+    def user_can_authenticate(self, user):
+        # Default django code only allows active users to sign in
+        return True
+
     def _get_permissions(self, user_obj, obj, from_name):
         """
         Returns the permissions of `user_obj` from `from_name`. `from_name` can

@@ -304,15 +304,17 @@ The folder with all customizations is typically put under
 version control. This allows a clear process for maintaining your custom code
 and upgrading to new frePPLe releases.
 
-******************************************
-Running frepplectl commands on a container
-******************************************
+*******************************
+Running commands on a container
+*******************************
 
 It is possible to execute a frepplectl command (or any linux command)
 on a running container.
 
 .. code-block:: bash
 
-   docker exec -it <container name> frepplectl importfromfolder
+   # Run a single command in the container
+   docker exec <container name> frepplectl importfromfolder
 
+   # Run an interactive bash shell inside the container
    docker exec -it <container name> /bin/bash

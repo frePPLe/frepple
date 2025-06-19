@@ -112,9 +112,6 @@ def updateScenarioCount(addition=True):
         return 4
 
     if new_val:
-        # djangosettings is updated, we need to reload the web server
-
-        forceWsgiReload()
 
         # We need to create/drop now the database
         # get the db name
@@ -132,6 +129,5 @@ def updateScenarioCount(addition=True):
             if addition:
                 cursor.execute(f"create database {before_digits}{new_val-1}")
 
-    # Synchronize the scenario table with the settings
-    forceWsgiReload()
+            Scenario.syncWithSettings()
     return 0

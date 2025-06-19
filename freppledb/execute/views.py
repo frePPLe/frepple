@@ -87,7 +87,7 @@ from freppledb.common.report import (
 )
 
 from freppledb.common.views import sendStaticFile
-from .utils import updateScenarioCount
+from .utils import updateScenarioCount, forceWsgiReload
 from .models import Task, ScheduledTask, DataExport
 from .management.commands.runworker import launchWorker
 from .management.commands.runplan import parseConstraints, constraintString
@@ -1776,3 +1776,9 @@ def exports(request):
     except Exception as e:
         logger.error("Error updating export: %s" % e)
         return HttpResponseServerError("Error updating export")
+
+
+def refresh_wsgi(request):
+
+    forceWsgiReload()
+    return HttpResponse(content="OK")

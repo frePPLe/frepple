@@ -20,7 +20,7 @@ psutil == 5.9.6
 psycopg2-binary == 2.8.6  ; python_version < '3.10'
 psycopg2-binary == 2.9.9  ; python_version >= '3.10'
 # Python packaging is broken on ubuntu 20 for higher versions of setuptools
-setuptools == 46.1 ; python_version < '3.10'
+setuptools == 78.1.1 ; python_version < '3.10'
 setuptools ; python_version >= '3.11'
 setuptools-rust == 0.12.1
 pysftp == 0.2.9

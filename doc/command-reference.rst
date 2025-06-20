@@ -138,9 +138,8 @@ based on a predefined schedule.
 
 Optionally, a email can be sent out upon failure or success of the execution.
 
-The start time of a scheduled task is saved in the database with a fixed UTC offset.
-As a consequence, planners living in countries where daylight saving time (DST) applies
-will notice a one-hour difference for the scheduled task start depending on whether DST is active or not.
+The execution time of the task are specified in a chosen time zone. The next scheduled run you
+shown in the browser will reflect any offset that may apply.
 
 .. tabs::
 

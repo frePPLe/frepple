@@ -34,6 +34,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: System administration
 
+- | The task scheduler now supports running a task multiple times a day.
+
 - | The docker container is now running as the user "frepple" rather than as root for extra security.
   | These may break your customized docker image if you inherit from the base image.
 

@@ -150,8 +150,8 @@ a task</a> to simplify running the sequence and avoid mistakes.</p>
       <div class="col-9">
         <div class="input-group">
           <input type="text" class="form-control" id="schedule-{{forloop.counter}}-at"
-            data-field="starttime" placeholder="HH:MM:SS"
-            {% if schedule.data.starttime < 86400 and schedule.data.starttime > 0 %}value="{{schedule.data.starttime|timeformat}}"{% endif %}>
+            data-field="starttime" placeholder="HH:MM:SS  HH:MM:SS ..."
+              value="{% for t in schedule.data.starttime %}{% if t < 86400 and t > 0 %}{{t|timeformat}}  {% endif %}{% endfor %}">
           <button class="btn btn-outline-primary dropdown-toggle" data-field="task-timezone"
              type="button" data-bs-toggle="dropdown" aria-expanded="false">{% firstof schedule.tz default_timezone %}</button>
           <ul class="dropdown-menu dropdown-menu-end" style="max-height: 30em; overflow-y: auto">
@@ -316,7 +316,13 @@ function closeScheduledTask(el, event) {
 function saveScheduledTask(el, event) {
   var tgt = $(el);
   var form = tgt.closest('[data-schedule-name]');
-  var starttime = new moment(form.find("[data-field='starttime']").val(), "HH:mm:ss");
+  var starttime = form.find("[data-field='starttime']").val().split(' ')
+    .map(t => {
+      m = new moment(t.trim(), "HH:mm:ss");
+      return m.hours() * 3600 + m.minutes() * 60 + m.seconds();
+    })
+    .filter(seconds => seconds >= 0 && seconds < 86400)
+    .sort((a, b) => a - b);
   var tasks = [];
   form.find(".data-task").each(function(i, el){
   	var t = $(this);
@@ -340,7 +346,7 @@ function saveScheduledTask(el, event) {
       "email_success": form.find("[data-field='email_success']").val(),
       "timezone": form.find("[data-field='task-timezone']").text(),
       "data": {
-        "starttime": starttime.hours() * 3600 + starttime.minutes() * 60 + starttime.seconds(),
+        "starttime": starttime,
         "monday": form.find("[data-field='monday']").is(":checked"),
         "tuesday": form.find("[data-field='tuesday']").is(":checked"),
         "wednesday": form.find("[data-field='wednesday']").is(":checked"),

@@ -140,6 +140,7 @@ class ScheduledTask(models.Model):
         default_permissions = ("add", "delete")
 
     def computeNextRun(self, now=None):
+        self.next_run = None
         if self.data:
             weekdays = [
                 "monday",
@@ -150,9 +151,14 @@ class ScheduledTask(models.Model):
                 "saturday",
                 "sunday",
             ]
-            starttime = self.data.get("starttime", -1)
-            if starttime is not None and starttime >= 0:
-                starttime = int(starttime)
+            starts = self.data.get("starttime", None)
+            if isinstance(starts, list):
+                starts = [int(i) for i in starts if i is not None]
+            elif starts is None:
+                starts = []
+            else:
+                starts = [int(starts)]
+            for starttime in starts:
                 if not now:
                     now = datetime.now(
                         zoneinfo.ZoneInfo(self.tz or settings.TIME_ZONE)
@@ -166,7 +172,7 @@ class ScheduledTask(models.Model):
                         weekday = (weekday + 1) % 7
                     elif self.data.get(weekdays[weekday], False):
                         d = now + timedelta(days=n)
-                        self.next_run = datetime(
+                        nxt = datetime(
                             year=d.year,
                             month=d.month,
                             day=d.day,
@@ -176,13 +182,11 @@ class ScheduledTask(models.Model):
                             microsecond=0,
                             tzinfo=zoneinfo.ZoneInfo(self.tz or settings.TIME_ZONE),
                         )
-                        self.next_run = self.next_run.astimezone(
-                            zoneinfo.ZoneInfo(settings.TIME_ZONE)
-                        )
-                        return
+                        nxt = nxt.astimezone(zoneinfo.ZoneInfo(settings.TIME_ZONE))
+                        if not self.next_run or nxt < self.next_run:
+                            self.next_run = nxt
                     else:
                         weekday = (weekday + 1) % 7
-        self.next_run = None
 
     def adjustForTimezone(self, offset):
         if isinstance(offset, timedelta):

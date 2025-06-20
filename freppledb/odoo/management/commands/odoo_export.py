@@ -208,9 +208,10 @@ class Command(BaseCommand):
 
                 # Mark the exported operations as approved
                 for i in self.exported:
-                    i.status = "approved"
-                    i.source = "odoo_1"
-                    i.save(using=self.database, update_fields=("status", "source"))
+                    if i.status == "proposed":
+                        i.status = "approved"
+                        i.source = "odoo_1"
+                        i.save(using=self.database, update_fields=("status", "source"))
 
                 # Progress
                 task.status = "%s%%" % math.ceil(counter / total_pages * 100)

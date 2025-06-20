@@ -17,7 +17,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | It's now allowed any longer that a user isn't active in the default scenario.
   | In earlier releases, this condition needed to be met before the user could log in.
   | The new condition is that the user must be active in any scenario.
-  | This is useful in configurations where different business units work indepently in different 
+  | This is useful in configurations where different business units work indepently in different
     scenarios, and the default scenario had to be left unused.
 
 - | Bug fix: On mobiles and tables, the menu bar didn't display links to edit preferences
@@ -42,6 +42,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Improved the readability of the Odoo connector log in debug mode.
   | When the parameter odoo.loglevel is different from 0, the log file of the import displays the
     raw data received from odoo.
+
+- | Bug Fix: confirmed MOs exported to Odoo with the odoo export command had
+    their status incorrectly changed to approved.
 
 9.8.0 (2025-05-16)
 ==================

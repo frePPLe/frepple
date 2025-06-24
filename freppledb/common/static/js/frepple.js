@@ -954,8 +954,12 @@ var grid = {
         var hiddenrows = [];
         if (colModel[0].name == "cb") perm.push(0);
         cross_idx = [];
-        if (!graph)
-          $("#grid").jqGrid('destroyFrozenColumns');
+        try {
+          if (!graph) $("#grid").jqGrid('destroyFrozenColumns');
+        }
+        catch (e) {
+          console.log("Error destroying frozen columns:", e);
+        };
 
         $('#Rows li').each(function () {
           var val = parseInt(this.id, 10);

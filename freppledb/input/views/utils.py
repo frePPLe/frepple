@@ -659,8 +659,14 @@ class PathReport(GridReport):
             if not downstream
             else (
                 """
-                and exists (select 1 from operationmaterial om where om.operation_id = operation.name
-                and om.item_id = %s and om.quantity < 0)
+                and (
+                  exists (select 1 from operationmaterial om where om.operation_id = operation.name
+                  and om.item_id = %s and om.quantity < 0)
+                  or exists(select 1 from operation_dependency 
+                   where (operation.name = operation_dependency.operation_id
+                     or operation.name = operation_dependency.blockedby_id) 
+                     and operation.item_id = %s)
+                )
             """,
             )
         )
@@ -746,7 +752,7 @@ class PathReport(GridReport):
         )
 
         if downstream:
-            cursor.execute(query, (item_name,) * 2)
+            cursor.execute(query, (item_name,) * 3)
         else:
             cursor.execute(query, (item_name,) * 7)
 

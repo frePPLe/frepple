@@ -398,6 +398,8 @@ MEDIA_EXTENSIONS = ".gif,.jpeg,.jpg,.png,.docx,.gz,.log,.pdf,.pptx,.txt,.xlsx,.z
 # Number of seconds a browser can cache uploaded content
 MEDIA_MAX_AGE = 12 * 3600
 
+LOGOUT_REDIRECT_URL = "/data/login/"
+
 # Mail settings
 # DEFAULT_FROM_EMAIL #if not pass from_email to send_mail func.
 # EMAIL_HOST #required

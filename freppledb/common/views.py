@@ -623,7 +623,7 @@ def login(request, extra_context=None):
     if (
         request.path == "/data/login/"
         and isinstance(response, HttpResponseRedirect)
-        and response.url == "/"
+        and response.url in ("/", "/data/")
     ):
         sc = getattr(request.user, "default_scenario", None)
         if sc not in settings.DATABASES or (

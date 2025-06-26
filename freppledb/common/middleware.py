@@ -344,13 +344,12 @@ class MultiDBMiddleware:
                     and request.path
                     not in (
                         "/data/login/",
-                        "/accounts/logout",
+                        "/accounts/logout/",
                         "/data/logout/",
                         "/data/jsi18n/",
                     )
                 )
             ):
-                print("-------redirecting-", request.path)
                 return HttpResponseNotFound("Scenario not in use, or access is denied")
 
             # Update user

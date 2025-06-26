@@ -20,6 +20,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | This is useful in configurations where different business units work indepently in different
     scenarios, and the default scenario had to be left unused.
 
+- | Planners can now add `extra scenarios <user-interface/what-if-scenarios.php#scenario-management>`_
+    when the default scenario count is not sufficient.
+  | The maximum number of scenarios depends on the frepple version (community, enterprise, cloud, cloud plus).
+
 - | Bug fix: On mobiles and tables, the menu bar didn't display links to edit preferences
     or sign out.
 

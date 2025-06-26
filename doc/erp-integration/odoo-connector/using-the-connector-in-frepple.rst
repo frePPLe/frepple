@@ -38,9 +38,6 @@ The odoo integration brings new functionality to the user interface.
 
 * | **Task "Export data to Odoo"**
 
-  | The execute screen has an *import data from odoo* command that
-    allows to import the Odoo data in frePPLe database and then generate a plan.
-
   | The plan exported to odoo is a subset of the plan which passes
     certain filter conditions. The remaining part of the plan can
     only be exported manually from frePPLe to Odoo: see below.

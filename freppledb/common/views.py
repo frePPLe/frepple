@@ -634,7 +634,7 @@ def login(request, extra_context=None):
             sc = sorted(request.user.databases)[0]
         if sc:
             # Automatically switch to a non-default scenario
-            return HttpResponseRedirect(f"/{sc}/")
+            return HttpResponseRedirect(f"/{sc}/" if sc != DEFAULT_DB_ALIAS else "/")
     return response
 
 

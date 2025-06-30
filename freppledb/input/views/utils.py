@@ -662,9 +662,9 @@ class PathReport(GridReport):
                 and (
                   exists (select 1 from operationmaterial om where om.operation_id = operation.name
                   and om.item_id = %s and om.quantity < 0)
-                  or exists(select 1 from operation_dependency 
+                  or exists(select 1 from operation_dependency
                    where (operation.name = operation_dependency.operation_id
-                     or operation.name = operation_dependency.blockedby_id) 
+                     or operation.name = operation_dependency.blockedby_id)
                      and operation.item_id = %s)
                 )
             """,
@@ -1289,8 +1289,14 @@ class PathReport(GridReport):
             if not downstream
             else (
                 """
-                and exists (select 1 from operationmaterial om where om.operation_id = operation.name
+                and (exists (select 1 from operationmaterial om where om.operation_id = operation.name
                 and om.item_id = %s and om.quantity < 0)
+                or exists(select 1 from operation_dependency
+                   where (operation.name = operation_dependency.operation_id
+                     or operation.name = operation_dependency.blockedby_id)
+                     and operation.item_id = %s
+                     and operation.location_id = %s)
+                )
                 """,
                 "origin_id",
             )
@@ -1371,7 +1377,7 @@ class PathReport(GridReport):
         query += " order by grandparentoperation_priority, grandparentoperation, parentoperation_priority, parentoperation, sibling_priority"
 
         if downstream:
-            cursor.execute(query, (location, item, item, location))
+            cursor.execute(query, (location, item, item, location, item, location))
         else:
             cursor.execute(
                 query,

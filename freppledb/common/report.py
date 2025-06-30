@@ -2327,6 +2327,7 @@ class GridReport(View):
                                     isinstance(f, DateTimeField)
                                     and f.formfield(
                                         input_formats=settings.DATETIME_INPUT_FORMATS
+                                        + settings.DATE_INPUT_FORMATS
                                     )
                                 )
                                 or (

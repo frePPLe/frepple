@@ -99,5 +99,4 @@ if mode == "WSGI":
             views.scenario_delete,
             name="scenario_delete",
         ),
-        re_path("execute/refresh_wsgi/$", views.refresh_wsgi, name="refresh_wsgi"),
     ]

@@ -108,12 +108,17 @@
   {% endif %}
   {% endfor %}
 {% if can_add_scenarios %}
+{% setting "MAX_NUMBER_OF_SCENARIOS" as max_scenarios %}
 <tr>
   <td colspan="{% if THEMES|length > 1 %}5{% else %}4{% endif %}" style="padding: 10px; text-align: left;">
-      <button id="addScenarioBtn" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-title="{% trans 'Add a new scenario' %}">
+      <button id="addScenarioBtn" class="btn btn-sm btn-primary" 
+        data-bs-toggle="tooltip" data-bs-placement="right" data-bs-offset="0,5"
+        data-bs-title="{% blocktranslate %}Add a new scenario (max {{ max_scenarios }}){% endblocktranslate %}">
         <i class="fa fa-plus"></i>
       </button>
-      <button id="removeScenarioBtn" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-title="{% trans 'Remove the last scenario' %}">
+      <button id="removeScenarioBtn" class="btn btn-sm btn-primary"
+        data-bs-toggle="tooltip" data-bs-placement="right" data-bs-offset="0,5"
+        data-bs-title="{% trans 'Remove the last scenario' %}">
         <i class="fa fa-minus"></i>
       </button>
   </td>
@@ -133,33 +138,16 @@ function handleScenarioAction(action) {
   $addBtn.prop("disabled", true);
   $removeBtn.prop("disabled", true);
 
-  const endpoint = `/default/execute/scenario_${action}/`;
-  const toastMsg = `Launched ${action} scenario task`;
-
   $.ajax({
-    url: endpoint,
+    url: `/default/execute/scenario_${action}/`,
     type: "POST",
     success: function () {
-      $("#scenariotoast span").text(toastMsg);
+      $("#scenariotoast span").text(`Launched ${action} scenario task`);
       bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0], { delay: 5000 }).show();
-
-      setTimeout(() => {
-        $("#scenariotoast").remove();
-      }, 3000);
-
-      // Refresh WSGI and reload
-      $.ajax({
-        url: "/default/execute/refresh_wsgi/",
-        type: "POST",
-        success: function () {
-          // race condition
-          location.reload();
-        },
-        error: function () {
-          console.error("Failed to refresh WSGI");
-          location.reload();  // Still reload
-        }
-      });
+      // Reload the page. This can take while since the web server needs reloading.
+      setTimeout(function () {
+        location.reload(); 
+      }, 1000); 
     },
     error: function (xhr) {
       const errorMsg = xhr.responseText || `An error occurred while ${action}ing scenario`;
@@ -186,10 +174,12 @@ $(".scenariorelease").on("click", function(event) {
    success: function() {
      $("#scenariotoast span").text("Launched releasing task");
      bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0]).show();
-     if (target == url_prefix) window.location.href = "/"; },
+     if (target == url_prefix) window.location.href = "/"; 
+   },
    fail: function() {
     console.log("FAILED");
-   }});
+   }
+  });
 });
 $(".scenariopromote").on("click", function(event) {
   event.preventDefault();

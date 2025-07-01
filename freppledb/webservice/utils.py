@@ -106,8 +106,8 @@ def getWebServiceContext(request):
         "FREPPLE_PORT_PROXIED",
         not settings.DEBUG
         and not (
-            "freppleserver" in sys.argv[0]
-            or "freppleservice" in sys.argv[0]
+            "freppleserver" in sys.argv
+            or "freppleservice" in sys.argv
             or "runwebserver" in sys.argv
         )
         and "FREPPLE_TEST" not in os.environ,

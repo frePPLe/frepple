@@ -45,6 +45,8 @@ ADMINS = (
 SECRET_KEY = "%@mzit!i8b*$zc&6oev96=RANDOMSTRING"
 
 # Configuration of the frepple database
+MIN_NUMBER_OF_SCENARIOS = 2
+MAX_NUMBER_OF_SCENARIOS = 30
 DATABASES = {
     "default" if i == 0 else f"scenario{i}": {
         "ENGINE": "freppledb.common.postgresql",
@@ -96,7 +98,8 @@ DATABASES = {
     }
     # Adjust the range to include extra scenarios in the list.
     # When changing this, your apache configuration file also needs a matching adjustment.
-    for i in range(3)
+    # THE NEXT LINE IS AUTOMATICALLY UPDATED IN SCENARIO MANAGEMENT WIDGET!
+    for i in range(7)
 }
 
 # Google analytics code to report usage statistics to.

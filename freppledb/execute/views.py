@@ -22,7 +22,6 @@
 #
 
 from datetime import datetime, timedelta
-import gzip
 from importlib import import_module
 from io import BytesIO
 import json
@@ -31,7 +30,6 @@ from openpyxl.utils import get_column_letter
 from openpyxl.cell import WriteOnlyCell
 from openpyxl.styles import NamedStyle, PatternFill
 from openpyxl.comments import Comment as CellComment
-import operator
 import os
 import psutil
 import re
@@ -86,8 +84,9 @@ from freppledb.common.report import (
     sizeof_fmt,
 )
 
+from freppledb.common.utils import forceWsgiReload
 from freppledb.common.views import sendStaticFile
-from .utils import updateScenarioCount, forceWsgiReload
+from .utils import updateScenarioCount
 from .models import Task, ScheduledTask, DataExport
 from .management.commands.runworker import launchWorker
 from .management.commands.runplan import parseConstraints, constraintString
@@ -1215,6 +1214,7 @@ def scheduletasks(request):
         return HttpResponseServerError("Error updating scheduled task")
 
 
+@staff_member_required
 @never_cache
 def scenario_add(request):
     if request.method not in ("POST",):
@@ -1227,17 +1227,18 @@ def scenario_add(request):
             return HttpResponse("Successfully added a new scenario")
         elif error_code == 2:
             return HttpResponse(
-                "You have already reached the maximum number of scenarios", status=401
+                "You have reached the maximum number of scenarios", status=401
             )
         elif error_code == 4:
             return HttpResponse("Invalid format of djangosettings.py file", status=401)
         else:
             return HttpResponse("An unknown error occured", status=400)
     except Exception as e:
-        print(e)
+        logger.error("Error adding scenario: %s" % e)
         return HttpResponse(e, status=400)
 
 
+@staff_member_required
 @never_cache
 def scenario_delete(request):
     if request.method not in ("POST",):
@@ -1259,6 +1260,7 @@ def scenario_delete(request):
         else:
             return HttpResponse("An unknown error occured", status=400)
     except Exception as e:
+        logger.error("Error deleting scenario: %s" % e)
         return HttpResponse(e, status=400)
 
 
@@ -1776,9 +1778,3 @@ def exports(request):
     except Exception as e:
         logger.error("Error updating export: %s" % e)
         return HttpResponseServerError("Error updating export")
-
-
-def refresh_wsgi(request):
-
-    forceWsgiReload()
-    return HttpResponse(content="OK")

@@ -23,13 +23,15 @@
 
 import os
 import re
+import shutil
+import subprocess
+import sys
 
 
 from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
 
 from freppledb.common.models import Scenario
-from freppledb.common.utils import forceWsgiReload
 
 
 # This function will update the number of scenarios in the djangosettings.py file.
@@ -42,19 +44,17 @@ from freppledb.common.utils import forceWsgiReload
 # 4: invalid djangosettings.py format
 # 5: unknown error
 def updateScenarioCount(addition=True):
-
-    file_path = os.path.join(settings.FREPPLE_CONFIGDIR, "djangosettings.py")
-
+    using_apache = "freppleserver" not in sys.argv
     scenario_count = Scenario.objects.using(DEFAULT_DB_ALIAS).count()
     min_scenarios = (
         settings.MIN_NUMBER_OF_SCENARIOS
         if hasattr(settings, "MIN_NUMBER_OF_SCENARIOS")
-        else 4
+        else 2
     )
     max_scenarios = (
         settings.MAX_NUMBER_OF_SCENARIOS
         if hasattr(settings, "MAX_NUMBER_OF_SCENARIOS")
-        else 6
+        else 30
     )
     if not addition and scenario_count - 1 < min_scenarios:
         return 1
@@ -67,15 +67,15 @@ def updateScenarioCount(addition=True):
         if last_scenario.status != "Free":
             return 3
 
+    # Udate djangosettings.py file
+    file_path = os.path.join(settings.FREPPLE_CONFIGDIR, "djangosettings.py")
+
     inside_databases = False
     brace_depth = 0
-
     # Regex to match "for i in range(n)"
     range_pattern = re.compile(r"for\s+i\s+in\s+range\((\d+)\)")
-
     with open(file_path, "r") as file:
         lines = file.readlines()
-
     new_val = None
     found = False
     error_code = 0
@@ -111,11 +111,46 @@ def updateScenarioCount(addition=True):
     if not found:
         return 4
 
+    # Update the apache configuration file
+    file_path = "/etc/apache2/sites-enabled/z_frepple.conf"
+    if using_apache and os.access(file_path, os.W_OK):
+        # Regex to match 'Proxypass "/ws/' and 'Proxypass "/svc/'
+        range_pattern = re.compile(r'Proxypass\s+"\/(svc|ws)\/')
+        with open(file_path, "r") as file:
+            lines = file.readlines()
+        updated = False
+        service_port = int(
+            settings.DATABASES[DEFAULT_DB_ALIAS]["FREPPLE_PORT"].split(":")[-1]
+        )
+        with open(file_path, "w") as file:
+            for line in lines:
+                if range_pattern.search(line):
+                    if updated:
+                        continue
+                    updated = True
+                    for i in range(new_val):
+                        if i == 0:
+                            file.write(
+                                f'Proxypass "/ws/default/" "ws://localhost:{service_port+i}/ws/default/" retry=0\n'
+                            )
+                            file.write(
+                                f'Proxypass "/svc/default/" "ws://localhost:{service_port+i}/ws/default/" retry=0\n'
+                            )
+                        else:
+                            file.write(
+                                f'Proxypass "/ws/scenario{i}/" "ws://localhost:{service_port+i}/ws/scenario{i}/" retry=0\n'
+                            )
+                            file.write(
+                                f'Proxypass "/svc/scenario{i}/" "ws://localhost:{service_port+i}/ws/scenario{i}/" retry=0\n'
+                            )
+                else:
+                    file.write(line)
+
     if new_val:
 
         # We need to create/drop now the database
         # get the db name
-        match = re.match(r"^(.*?)(\d+)$", settings.DATABASES["default"]["NAME"])
+        match = re.match(r"^(.*?)(\d+)$", settings.DATABASES[DEFAULT_DB_ALIAS]["NAME"])
         if match:
             before_digits = match.group(1)
         else:
@@ -130,4 +165,10 @@ def updateScenarioCount(addition=True):
                 cursor.execute(f"create database {before_digits}{new_val-1}")
 
             Scenario.syncWithSettings()
+            if using_apache and shutil.which("apachectl"):
+                # Development server automatically reloads the settings.
+                # An apache server reload needs to be triggered manually.
+                print("reloading apache server")
+                subprocess.run(["apachectl", "-k", "graceful"], check=True)
+
     return 0

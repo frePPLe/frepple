@@ -795,10 +795,8 @@ class Command(BaseCommand):
                     j.status == "Free" and j.name != DEFAULT_DB_ALIAS for j in scenarios
                 ),
                 "can_add_scenarios": (
-                    True
-                    if hasattr(settings, "MIN_NUMBER_OF_SCENARIOS")
+                    hasattr(settings, "MIN_NUMBER_OF_SCENARIOS")
                     and hasattr(settings, "MAX_NUMBER_OF_SCENARIOS")
-                    else False
                 ),
             },
             request=request,

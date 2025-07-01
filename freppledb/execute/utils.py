@@ -134,14 +134,14 @@ def updateScenarioCount(addition=True):
                                 f'Proxypass "/ws/default/" "ws://localhost:{service_port+i}/ws/default/" retry=0\n'
                             )
                             file.write(
-                                f'Proxypass "/svc/default/" "ws://localhost:{service_port+i}/ws/default/" retry=0\n'
+                                f'Proxypass "/svc/default/" "http://localhost:{service_port+i}/" retry=0\n'
                             )
                         else:
                             file.write(
                                 f'Proxypass "/ws/scenario{i}/" "ws://localhost:{service_port+i}/ws/scenario{i}/" retry=0\n'
                             )
                             file.write(
-                                f'Proxypass "/svc/scenario{i}/" "ws://localhost:{service_port+i}/ws/scenario{i}/" retry=0\n'
+                                f'Proxypass "/svc/scenario{i}/" "http://localhost:{service_port+i}/" retry=0\n'
                             )
                 else:
                     file.write(line)

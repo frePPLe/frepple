@@ -46,6 +46,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Odoo integration
 
+- | Added the option to read the inbound and outbound files directly from github in frepplexml.
+  | This option prevents from redeploying the connectors after a commit on
+    your odoo connector github repository.
+
 - | Improved the readability of the Odoo connector log in debug mode.
   | When the parameter odoo.loglevel is different from 0, the log file of the import displays the
     raw data received from odoo.

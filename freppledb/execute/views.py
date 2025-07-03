@@ -1219,7 +1219,7 @@ def scheduletasks(request):
 def scenario_add(request):
     if request.method not in ("POST",):
         return HttpResponseNotAllowed("Only post requests are allowed")
-    if not request.user.has_perm("common.add_scenario"):
+    if not request.user.has_perm("auth.run_db"):
         return HttpResponse("No permission to add a scenario", status=401)
     try:
         error_code = updateScenarioCount(addition=True)
@@ -1243,7 +1243,7 @@ def scenario_add(request):
 def scenario_delete(request):
     if request.method not in ("POST",):
         return HttpResponseNotAllowed("Only post requests are allowed")
-    if not request.user.has_perm("common.delete_scenario"):
+    if not request.user.has_perm("auth.run_db"):
         return HttpResponse("No permission to delete a scenario", status=401)
     try:
         error_code = updateScenarioCount(addition=False)

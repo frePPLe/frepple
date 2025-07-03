@@ -273,7 +273,9 @@ loadComplete : function(data) {
     {% endfor %}
     </div>    
 	{% else %}
+  <div class="col-12">
 	{% trans "Sorry, You don't have any execute permissions..." %}
-	{% endif %}
+  </div>
+  {% endif %}
 	</div> <!-- end row -->
 {% endblock %}

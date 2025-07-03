@@ -26,6 +26,7 @@ from importlib import import_module
 from django.conf import settings
 from django.contrib.admin.sites import AdminSite, AlreadyRegistered
 from django.contrib.admin.forms import AuthenticationForm
+from django.forms import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 
@@ -38,7 +39,8 @@ class freppleAuthenticationForm(AuthenticationForm):
     }
 
     def confirm_login_allowed(self, user):
-        pass
+        if not getattr(user, "databases", None):
+            raise ValidationError(_("This account is inactive."), code="inactive")
 
 
 class freppleAdminSite(AdminSite):

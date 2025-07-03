@@ -455,7 +455,7 @@ class Scenario(models.Model):
 
 
 def defaultdatabase():
-    return list([DEFAULT_DB_ALIAS])
+    return list()
 
 
 class User(AbstractUser):
@@ -630,6 +630,28 @@ class User(AbstractUser):
                     update_fields=update_fields2,
                 )
                 self._state.db = tmp
+            elif not update_fields or "is_active" in update_fields:
+                # User in default database
+                is_active_modified = False
+                if (
+                    self.databases
+                    and DEFAULT_DB_ALIAS in self.databases
+                    and not self.is_active
+                ):
+                    self.databases.remove(DEFAULT_DB_ALIAS)
+                    is_active_modified = True
+                elif not self.databases and self.is_active:
+                    self.databases = [DEFAULT_DB_ALIAS]
+                    is_active_modified = True
+                elif (
+                    self.databases
+                    and DEFAULT_DB_ALIAS not in self.databases
+                    and self.is_active
+                ):
+                    self.databases.append(DEFAULT_DB_ALIAS)
+                    is_active_modified = True
+                if update_fields and is_active_modified:
+                    update_fields.append("databases")
 
             return super().save(
                 force_insert=force_insert,

@@ -622,7 +622,7 @@ class Command(BaseCommand):
                 access_allowed = [
                     u["id"]
                     for u in User.objects.using(source)
-                    .filter(is_superuser=True)
+                    .filter(is_superuser=True, is_active=True)
                     .only("id")
                     .values("id")
                 ]

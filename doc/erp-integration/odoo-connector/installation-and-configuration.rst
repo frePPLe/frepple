@@ -99,6 +99,21 @@ The section below describes the installation and configuration of these.
         because Odoo and frepple require different database tuning, and 2) you want both applications
         to be running fully independent.
 
+  * | **Connector development mode**
+    | To speed up development of the odoo connector, you can configure the connector to read
+      the inbound and outbound files directly from github.
+    | This speeds up your developments, since it skips redeploying the connectors after
+      each commit on your odoo connector github repository.
+
+    | To enable this option, you need to uncomment and edit two sections in the frepplemll.py file.
+    
+    * https://github.com/frePPLe/odoo/blob/db24d8b4f882e594b02840f549532e356da4e1dd/frepple/controllers/frepplexml.py#L274
+    * https://github.com/frePPLe/odoo/blob/db24d8b4f882e594b02840f549532e356da4e1dd/frepple/controllers/frepplexml.py#L351
+
+    | You should enable this option with github repositories you can trust 100%. Using it with
+      repositories you don't control is a big security risk, since it allows anyone to run arbitrary
+      code on your odoo server.  
+
 * **Configuring the connector - frePPLe side**
 
   * | **Edit the frePPLe configuration file /etc/frepple/djangosettings.py**

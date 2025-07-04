@@ -1,5 +1,7 @@
 # Runtime packages
 -r requirements.txt
+cheroot == 8.4.5          # Used only in deprecated code and will be removed in a later release.
+# Markdown == 3.1.1       # Optionally used in restframework
 
 # Package to support timezone conversions
 tzlocal

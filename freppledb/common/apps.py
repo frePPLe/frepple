@@ -44,7 +44,6 @@ def check_python_packages(app_configs, **kwargs):
     """
     errors = []
     for p in [
-        ("cheroot", "cheroot"),
         ("portend", "portend"),
         ("rest_framework", "djangorestframework"),
         ("rest_framework_bulk", "djangorestframework-bulk"),
@@ -52,7 +51,6 @@ def check_python_packages(app_configs, **kwargs):
         ("django_filters", "django-filter"),
         ("html5lib", "html5lib"),
         ("jdcal", "jdcal"),
-        ("markdown", "markdown"),
         ("openpyxl", "openpyxl"),
         ("lxml", "lxml"),
         ("jwt", "PyJWT"),

@@ -25,9 +25,8 @@
 Configuration for frePPLe django WSGI web application.
 This is used by the different WSGI deployment options:
   - mod_wsgi on apache web server.
-    See https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
+    See https://docs.djangoproject.com/en/4.2/howto/deployment/wsgi/
   - django development server 'frepplectl.py runserver'
-  - cheroot server 'frepplectl.py runwebserver
 """
 
 import os

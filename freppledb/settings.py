@@ -599,11 +599,6 @@ GOOGLE_ANALYTICS = None
 CACHE_MAXIMUM = 1000000
 CACHE_THREADS = 1
 
-# Adress and port number for the runwebserver command, the Windows system tray
-# executable and the Windows service
-ADDRESS = "0.0.0.0"
-PORT = 8000
-
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.

@@ -734,9 +734,6 @@ FTP_FOLDER = {
     "scenario3": None,
 }  # folder where the files should be uploaded on the remote server
 
-# Port number when not using Apache
-PORT = 8000
-
 # Browser to test with selenium
 SELENIUM_TESTS = "chrome"
 SELENIUM_HEADLESS = True

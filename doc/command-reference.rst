@@ -49,7 +49,6 @@ This section provides an overview of the available actions:
   * :ref:`shell`
   * :ref:`dbshell`
   * :ref:`runserver`
-  * :ref:`runwebserver`
   * :ref:`test`
   * :ref:`dumpdata`
   * :ref:`createmodel`
@@ -1036,23 +1035,6 @@ Run the test suite for the user interface.
       .. code-block:: bash
 
         frepplectl test freppledb
-
-
-.. _runwebserver:
-
-Run the Python web server
--------------------------
-
-Runs a production web server for environments with very few users.
-For a more scalable solution, deploying frePPLe on Apache with mod_wsgi is required.
-
-.. tabs::
-
-   .. tab:: Command line
-
-      .. code-block:: bash
-
-        frepplectl runwebserver
 
 
 .. _runserver:

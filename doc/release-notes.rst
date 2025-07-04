@@ -1,11 +1,14 @@
 Release notes
 -------------
 
-9.9.0 (Upcoming release)
+9.10.0 (Upcoming release)
 ========================
 
-This release is scheduled for end of June.
+This release is scheduled for end of August.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+9.9.0 (2025-07-04)
+==================
 
 .. rubric:: User interface
 

@@ -455,7 +455,7 @@ class Scenario(models.Model):
 
 
 def defaultdatabase():
-    return list()
+    return list([DEFAULT_DB_ALIAS])
 
 
 class User(AbstractUser):

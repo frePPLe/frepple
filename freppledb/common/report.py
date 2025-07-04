@@ -851,7 +851,7 @@ class GridReport(View):
             if end:
                 res = res.filter(startdate__lt=end)
             request.report_bucketlist = res.annotate(
-                history=RawSQL("case when enddate < %s then 1 else 0 end", [current])
+                history=RawSQL("case when enddate <= %s then 1 else 0 end", [current])
             ).values("name", "startdate", "enddate", "history")
         else:
             request.report_bucketlist = []

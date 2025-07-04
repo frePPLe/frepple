@@ -50,8 +50,12 @@ over HTTPS.
 Add extra scenarios
 -------------------
 
-Frepple by default is configured for 3 (Community and Enterprise Editions)
-or 6 (Cloud Edition) scenario databases.
+From v9.9 onwards, these steps can be done from the user interface, which obsoletes
+this section for the vast majority of users. The section is still relevant for
+businesses where a strict control on the number of scenarios is required.
+
+Frepple by default is configured for 3 (Community Editions)
+or 6 (Enterprise and Cloud Edition) scenario databases.
 
 You can change the configuration to include a different amount of database
 with the following steps:

@@ -202,6 +202,9 @@ class ScheduledTask(models.Model):
                 self.lastrun.started += timedelta(seconds=offset)
             if self.lastrun.finished:
                 self.lastrun.finished += timedelta(seconds=offset)
+        starts = self.data.get("starttime", None)
+        if starts is not None and not isinstance(starts, list):
+            self.data["starttime"] = [int(starts)]
         return self
 
     @staticmethod

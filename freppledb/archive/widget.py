@@ -30,6 +30,8 @@ from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.dashboard import Dashboard, Widget
+from freppledb.common.models import Parameter
+from freppledb.common.report import getCurrentDate
 
 
 class ArchivedBufferWidget(Widget):
@@ -52,6 +54,10 @@ class ArchivedBufferWidget(Widget):
     var svg = d3.select("#archivebuffer");
     var svgrectangle = document.getElementById("archivebuffer").getBoundingClientRect();
 
+    // Reduce the number of displayed points if too many
+    var nb_of_ticks = (svgrectangle['width'] - margin_y - 10) / 20;
+
+
     // Collect the data
     var domain_x = [];
     var data = [];
@@ -73,6 +79,13 @@ class ArchivedBufferWidget(Widget):
       });
       data.push(row);
     });
+
+    var visible=[]
+      var step_visible = Math.ceil(domain_x.length / nb_of_ticks);
+      for (let x=0; x < domain_x.length; x++){
+        if (x==0 || x % step_visible == 0)
+          visible.push(domain_x[x]);
+      }
 
     var x = d3.scale.ordinal()
       .domain(domain_x)
@@ -101,7 +114,7 @@ class ArchivedBufferWidget(Widget):
 
     // Draw x-axis
     var xAxis = d3.svg.axis().scale(x)
-        .orient("bottom");
+        .orient("bottom").tickValues(visible);
     svg.append("g")
       .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
       .attr("class", "x axis")
@@ -122,22 +135,42 @@ class ArchivedBufferWidget(Widget):
       .attr("class", "y axis")
       .call(yAxis);
 
-    // Draw the line
     var line = d3.svg.line()
-      .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
-      .y(function(d) { return y(d[2]); });
+  .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
+  .y(function(d) { return y(d[2]); });
 
-    svg.append("svg:path")
-      .attr("transform", "translate(" + margin_y + ", 10 )")
-      .attr('class', 'graphline')
-      .attr("stroke","#8BBA00")
-      .attr("d", line(data));
+    // Group data into segments with the same d[3] value
+    var segments = [];
+    var currentSegment = [data[0]];
+    for (var i = 1; i < data.length; i++) {
+      if (data[i][3] === data[i - 1][3]) {
+        currentSegment.push(data[i]);
+      } else {
+        segments.push({ values: currentSegment, type: data[i - 1][3] });
+        currentSegment = [data[i - 1], data[i]]; // duplicate the transition point
+      }
+    }
+    segments.push({ values: currentSegment, type: currentSegment[currentSegment.length-1][3] });
+
+    // Append each segment as a separate path with color based on d[3]
+    segments.forEach(function(segment) {
+      svg.append("svg:path")
+        .attr("transform", "translate(" + margin_y + ", 10 )")
+        .attr("class", "graphline")
+        .attr("stroke", segment.type === 1 ? "red" : "green")
+        .attr("fill", "none")
+        .attr("d", line(segment.values));
+    });
     """
 
     @classmethod
     def render(cls, request):
         with connections[request.database].cursor() as cursor:
             history = int(request.GET.get("history", cls.history))
+            archiveFrequency = Parameter.getValue(
+                "archive.frequency", request.database, "week"
+            )
+            currentDate = getCurrentDate(request.database, True)
             result = [
                 '<svg class="chart" id="archivebuffer" style="width:100%; height: 100%"></svg>',
                 '<table style="display:none">',
@@ -145,30 +178,66 @@ class ArchivedBufferWidget(Widget):
             cursor.execute(
                 """
                 select * from (
-                select
-                  snapshot_date,
+                (select
+                  cb.startdate,
                   coalesce(sum(onhand), 0),
-                  coalesce(sum(onhand * cost), 0)
+                  coalesce(sum(onhand * cost), 0),
+                  0 as future
                 from ax_manager
+                inner join common_bucketdetail cb on cb.bucket_id = %s
+                and cb.startdate <= snapshot_date and cb.enddate > snapshot_date
                 left outer join ax_buffer
                   on snapshot_date = snapshot_date_id
-                group by snapshot_date
-                order by snapshot_date desc
-                limit %s
+                where snapshot_date < (select startdate from common_bucketdetail where bucket_id = cb.bucket_id
+                                      and startdate <= %s and enddate > %s)
+                group by cb.startdate
+                order by cb.startdate desc
+                limit %s)
+                union all
+                (
+                with cte as(
+                with buffers as
+                (select distinct item_id, location_id from operationplanmaterial),
+                buckets as
+                (select startdate from common_bucketdetail where bucket_id = %s and enddate > %s
+                and startdate < (select max(flowdate) from operationplanmaterial))
+                select
+                buffers.item_id,
+                buffers.location_id,
+                buckets.startdate,
+                coalesce((select onhand
+                from operationplanmaterial
+                where item_id = buffers.item_id and location_id = buffers.location_id
+                and flowdate < buckets.startdate order by flowdate desc, id limit 1),0) as onhand
+                from buffers
+                cross join buckets
+                ) select cte.startdate, sum(cte.onhand), sum(cte.onhand*coalesce(item.cost,0)), 1 as future
+                from cte
+                inner join item on item.name = cte.item_id
+                group by cte.startdate
+                )
                 ) d
-                order by snapshot_date asc
+                order by startdate asc
                 """,
-                (history,),
+                (
+                    archiveFrequency,
+                    currentDate,
+                    currentDate,
+                    history,
+                    archiveFrequency,
+                    currentDate,
+                ),
             )
             for res in cursor.fetchall():
                 result.append(
-                    "<tr><td>%s</td><td>%.1f</td><td>%.1f</td></tr>"
+                    "<tr><td>%s</td><td>%.1f</td><td>%.1f</td><td>%s</td></tr>"
                     % (
                         escape(
                             date_format(res[0], format="DATE_FORMAT", use_l10n=False)
                         ),
                         res[1],
                         res[2],
+                        int(res[3]),
                     )
                 )
             result.append("</table>")
@@ -335,7 +404,7 @@ class ArchivedDemandWidget(Widget):
                         res[1],
                         res[2],
                         res[3],
-                        res[4],
+                        int(res[4]),
                     )
                 )
             result.append("</table>")

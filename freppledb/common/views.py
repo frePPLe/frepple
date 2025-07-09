@@ -99,6 +99,7 @@ from .report import (
 from .utils import getStorageUsage, forceWsgiReload
 
 from freppledb.admin import data_site
+from freppledb.common.models import Scenario
 from freppledb import edition, __version__, runCommand
 
 import logging
@@ -109,6 +110,8 @@ logger = logging.getLogger(__name__)
 
 @staff_member_required
 def AboutView(request):
+    from freppledb.input.utils import countItemLocations
+
     maxstorage = getattr(settings, "MAXSTORAGE", 0) or 0
     usedstorage = getStorageUsage()
     apps = []
@@ -131,6 +134,12 @@ def AboutView(request):
                 sizeof_fmt(maxstorage * 1024 * 1024) if maxstorage else None
             ),
             "storage_exceeded": maxstorage and usedstorage > maxstorage,
+            "itemlocations": {
+                sc.name: countItemLocations(sc.name)
+                for sc in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(
+                    status="In use"
+                )
+            },
             "apps": apps,
             "website": settings.DOCUMENTATION_URL,
         }

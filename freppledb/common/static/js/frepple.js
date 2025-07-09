@@ -3229,14 +3229,18 @@ function about_show() {
         '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
         '</div>' +
         '<div class="modal-body">' +
-        '<div class="row mb-3"><div class="col-3 fw-bold">Version</div>' +
-        '<div class="col-auto">' + data.version + ' ' + data.edition + '</div></div>' +
-        '<div class="row mb-3"><div class="col-3 fw-bold">Storage</div>' +
-        '<div class="col-auto' + (data.storage_exceeded ? " text-danger" : "") + '">' + data.storage_used + ' used';
+        '<div class="row mb-3"><div class="col-6 fw-bold">Version</div>' +
+        '<div class="col-6">' + data.version + ' ' + data.edition + '</div></div>' +
+        '<div class="row mb-3"><div class="col-6 fw-bold">Storage</div>' +
+        '<div class="col-6' + (data.storage_exceeded ? " text-danger" : "") + '">' + data.storage_used + ' used';
       if (data.storage_allocation)
         content += ' of ' + data.storage_allocation + ' allocated';
       content += '</div ></div > ' +
-        '<div class="row mb-3"><div class="col-3 fw-bold">Installed apps</div><div class="col-auto">';
+        '<div class="row"><div class="col-6 fw-bold">Active item locations</div><div class="col-6"><table class="table table-sm table-borderless">';
+      for (const [db, sz] of Object.entries(data.itemlocations))
+        content += "<tr><td>" + db + "</td><td>" + sz + '</td></tr>';
+      content += '</table></div></div> ' +
+        '<div class="row mb-3"><div class="col-6 fw-bold">Installed apps</div><div class="col-6">';
       for (var i of data.apps)
         content += i + '<br>';
       content += '</div></div></div></div></div>';

@@ -7,6 +7,10 @@ Release notes
 This release is scheduled for end of August.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: System administration
+
+- | Added support for PostgreSQL 17.
+
 9.9.0 (2025-07-04)
 ==================
 

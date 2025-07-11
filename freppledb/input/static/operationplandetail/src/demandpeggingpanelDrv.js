@@ -45,24 +45,12 @@ function showoperationpeggingpanelDrv($window, gettextCatalog, $filter) {
         '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
         '<div class="card-body table-responsive collapse' + 
         (scope.$parent.widget[1]["collapsed"] ? '' : ' show') + 
-        '" id="widget_demandpegging" style="max-height:15em; overflow:auto">' +
-        '<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
-        '<b class="text-capitalize">' + gettextCatalog.getString("name") + '</b>' +
-        '</td><td>' +
-        '<b class="text-capitalize">' + gettextCatalog.getString("item") + '</b>' +
-        '</td><td>' +
-        '<b class="text-capitalize">' + gettextCatalog.getString("due") + '</b>' +
-        '</td><td>' +
-        '<b class="text-capitalize">' + gettextCatalog.getString("quantity") + '</b>' +
-        '</td>' +
-        '<tbody></tbody>' +
-        '</table>' +
+        '" id="widget_demandpegging" style="max-height:15em; overflow:auto">' +        
         '</div>'
       );
-      var rows = '<tr><td colspan="2">' + gettextCatalog.getString('no demands') + '</td></tr>';
+      var rows = '';
       if (typeof scope.operationplan !== 'undefined') {
-        if (scope.operationplan.hasOwnProperty('pegging_demand')) {
-          rows = '';
+        if (scope.operationplan.hasOwnProperty('pegging_demand')) {          
           angular.forEach(scope.operationplan.pegging_demand, function (thedemand) {
             rows += '<tr><td>' + $.jgrid.htmlEncode(thedemand.demand.name)
               + "<a href=\"" + url_prefix
@@ -85,7 +73,23 @@ function showoperationpeggingpanelDrv($window, gettextCatalog, $filter) {
         }
       }
 
-      angular.element(document).find('#attributes-operationdemandpegging tbody').append(rows);
+      if (rows == '')
+        angular.element(document).find('#widget_demandpegging').append(
+          '<div>' + gettextCatalog.getString('There is no demand requiring this supply.') + '</div>'
+        );
+      else 
+        angular.element(document).find('#widget_demandpegging').append(
+          '<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
+          '<b class="text-capitalize">' + gettextCatalog.getString("name") + '</b>' +
+          '</td><td>' +
+          '<b class="text-capitalize">' + gettextCatalog.getString("item") + '</b>' +
+          '</td><td>' +
+          '<b class="text-capitalize">' + gettextCatalog.getString("due") + '</b>' +
+          '</td><td>' +
+          '<b class="text-capitalize">' + gettextCatalog.getString("quantity") + '</b>' +
+          '</td></thead>' +
+          '<tbody>' + rows + '</tbody></table>'
+          );
       angular.element(elem).find('.collapse')
         .on("shown.bs.collapse", grid.saveColumnConfiguration)
         .on("hidden.bs.collapse", grid.saveColumnConfiguration);     

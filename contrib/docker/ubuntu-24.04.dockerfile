@@ -60,13 +60,13 @@ FROM ubuntu:24.04
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
-# # Download postgres clients (use when there are major postgresql releases which aren't in this ubuntu release)
-# RUN apt-get -y -q update && \
-#   DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends curl ca-certificates gnupg && \
-#   curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
-#   echo "deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
-#   apt-get -y -q update && \
-#   DEBIAN_FRONTEND=noninteractive apt-get -y install postgresql-client-15 postgresql-client-16
+# Download postgres clients (use when there are major postgresql releases which aren't in this ubuntu release)
+RUN apt-get -y -q update && \
+   DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends curl ca-certificates gnupg && \
+   curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+   echo "deb http://apt.postgresql.org/pub/repos/apt/ noble-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+   apt-get -y -q update && \
+   DEBIAN_FRONTEND=noninteractive apt-get -y install postgresql-client-17
 
 COPY --from=builder /build/*.deb .
 

@@ -682,9 +682,172 @@ if os.access(os.path.join(FREPPLE_CONFIGDIR, "localsettings.py"), os.R_OK):
     with open(os.path.join(FREPPLE_CONFIGDIR, "localsettings.py")) as mysettingfile:
         exec(mysettingfile.read(), globals())
 
-# Some Django settings we don't like to be overriden
+# We don't like some settings to be overriden
 MANAGERS = ADMINS
 MEDIA_ROOT = os.path.join(FREPPLE_LOGDIR, "uploads")
+
+# Some settings depend on things you can override in localsettings.py
+if DATE_STYLE == "month-day-year":
+    # Option 1: US style
+    DATE_FORMAT = (
+        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        "m/d/Y"
+    )
+    DATETIME_FORMAT = (
+        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        "m/d/Y H:i:s"
+        if DATE_STYLE_WITH_HOURS
+        else "m/d/Y"
+    )
+    DATE_FORMAT_JS = (
+        # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
+        "MM/DD/YYYY"
+    )
+    DATETIME_FORMAT_JS = (
+        # see https://momentjs.com/docs/#/displaying/
+        "MM-DD-YYYY HH:mm:ss"
+        if DATE_STYLE_WITH_HOURS
+        else "MM-DD-YYYY"
+    )
+    DATE_INPUT_FORMATS = [
+        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
+        "%m/%d/%Y",
+        "%m/%d/%y",
+        "%m-%d-%Y",
+        "%m-%d-%y",
+        "%m.%d.%Y",
+        "%m.%d.%y",
+        "%b %d %Y",
+        "%b %d, %Y",
+        "%d %b %Y",
+        "%d %b %Y",
+        "%B %d %Y",
+        "%B %d, %Y",
+        "%d %B %Y",
+        "%d %B, %Y",
+    ]
+    DATETIME_INPUT_FORMATS = [
+        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
+        "%m/%d/%Y %H:%M:%S",
+        "%m-%d-%Y %H:%M:%S",
+        "%m-%d-%Y %H:%M",
+        "%m/%d/%Y %H:%M:%S",
+        "%m/%d/%Y %H:%M",
+        "%m/%d/%y %H:%M:%S",
+        "%m/%d/%y %H:%M",
+        "%m.%d.%Y %H:%M:%S",
+        "%m.%d.%Y %H:%M",
+        "%m.%d.%y %H:%M:%S",
+        "%m.%d.%y %H:%M",
+    ]
+elif DATE_STYLE == "day-month-year":
+    # Option 2: European style
+    DATE_FORMAT = (
+        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        "d-m-Y"
+    )
+    DATETIME_FORMAT = (
+        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        "d-m-Y H:i:s"
+        if DATE_STYLE_WITH_HOURS
+        else "d-m-Y"
+    )
+    DATE_FORMAT_JS = (
+        # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
+        "DD-MM-YYYY"
+    )
+    DATETIME_FORMAT_JS = (
+        # see https://momentjs.com/docs/#/displaying/
+        "DD-MM-YYYY HH:mm:ss"
+        if DATE_STYLE_WITH_HOURS
+        else "DD-MM-YYYY"
+    )
+    DATE_INPUT_FORMATS = [
+        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
+        "%d-%m-%Y",
+        "%d-%m-%y",
+        "%d/%m/%Y",
+        "%d/%m/%y",
+        "%d.%m.%Y",
+        "%d.%m.%y",
+        "%b %d %Y",
+        "%b %d, %Y",
+        "%d %b %Y",
+        "%d %b, %Y",
+        "%B %d %Y",
+        "%B %d, %Y",
+        "%d %B %Y",
+        "%d %B, %Y",
+    ]
+    DATETIME_INPUT_FORMATS = [
+        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
+        "%d-%m-%Y %H:%M:%S",
+        "%d-%m-%Y %H:%M",
+        "%d/%m/%y %H:%M:%S",
+        "%d/%m/%y %H:%M",
+        "%d/%m/%Y %H:%M:%S",
+        "%f/%m/%Y %H:%M",
+        "%d/%m/%y %H:%M:%S",
+        "%d/%m/%y %H:%M",
+        "%d.%m.%Y %H:%M:%S",
+        "%d.%m.%Y %H:%M",
+        "%d.%m.%y %H:%M:%S",
+        "%d.%m.%y %H:%M",
+    ]
+else:
+    # Option 3: International style, default
+    DATE_FORMAT = (
+        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        "Y-m-d"
+    )
+    DATETIME_FORMAT = (
+        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        "Y-m-d H:i:s"
+        if DATE_STYLE_WITH_HOURS
+        else "Y-m-d"
+    )
+    DATE_FORMAT_JS = (
+        # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
+        "YYYY-MM-DD"
+    )
+    DATETIME_FORMAT_JS = (
+        # see https://momentjs.com/docs/#/displaying/
+        "YYYY-MM-DD HH:mm:ss"
+        if DATE_STYLE_WITH_HOURS
+        else "YYYY-MM-DD"
+    )
+    DATE_INPUT_FORMATS = [
+        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
+        "%Y-%m-%d",
+        "%y-%m-%d",
+        "%Y/%m/%d",
+        "%y/%m/%d",
+        "%Y.%m.%d",
+        "%y.%m.%d",
+        "%b %d %Y",
+        "%b %d, %Y",
+        "%d %b %Y",
+        "%d %b %Y",
+        "%B %d %Y",
+        "%B %d, %Y",
+        "%d %B %Y",
+        "%d %B, %Y",
+    ]
+    DATETIME_INPUT_FORMATS = [
+        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%d %H:%M",
+        "%y-%m-%d %H:%M:%S",
+        "%y-%m-%d %H:%M",
+        "%Y/%m/%d %H:%M:%S",
+        "%Y/%m/%d %H:%M",
+        "%y/%m/%d %H:%M:%S",
+        "%y/%m/%d %H:%M",
+        "%Y.%m.%d %H:%M:%S",
+        "%Y.%m.%d %H:%M",
+        "%y.%m.%d %H:%M:%S",
+        "%y.%m.%d %H:%M",
+    ]
 
 # Change the default dashboard if the wizard is active
 if "freppledb.wizard" in INSTALLED_APPS:

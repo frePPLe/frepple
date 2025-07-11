@@ -518,11 +518,13 @@ class AggregateDemand(PlanTask):
         create temporary table excludedcombinations as
         select item_id, location_id, customer_id, cb.startdate, cb.enddate
         from demand
-        inner join common_bucketdetail cb on due >= cb.startdate and due < cb.enddate
+        inner join common_bucketdetail cb on cb.bucket_id = %s and due >= cb.startdate and due < cb.enddate
         where coalesce(demand.status, 'open') != 'canceled'
         group by item_id, location_id, customer_id, cb.startdate, cb.enddate
-        having sum(quantity) < 0
-        """
+        having sum(quantity) < 0;
+        create unique index on excludedcombinations (item_id, location_id, customer_id, startdate, enddate);
+        """,
+            (fcst_calendar,),
         )
 
         cursor.execute(

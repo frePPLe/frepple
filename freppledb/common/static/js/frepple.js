@@ -1565,7 +1565,7 @@ var grid = {
   // Display filter dialog
   showFilter: function (gridid, curfilterid, filterid) {
     $("#addsearch").val("");
-    $("#filteroperand, #filterfield").remove();
+    $("#filteroperand, #filterfield, #andordropdown").remove();
     grid.handlerinstalled = false;
     hideModal('popup');
     hideModal('timebuckets');
@@ -1664,7 +1664,7 @@ var grid = {
     $(document).off("click", grid.clickFilter);
     grid.handlerinstalled = false;
     $("#addsearch").val("");
-    $("#filteroperand, #filterfield").remove();
+    $("#filteroperand, #filterfield, #andordropdown").remove();
     $("#tooltip").css("display", "none");
   },
 
@@ -1673,7 +1673,7 @@ var grid = {
       $(document).off("click", grid.clickFilter);
       grid.handlerinstalled = false;
       $("#addsearch").val("");
-      $("#filteroperand, #filterfield").remove();
+      $("#filteroperand, #filterfield, #andordropdown").remove();
     }
   },
 
@@ -1706,9 +1706,9 @@ var grid = {
     }
 
     // Close the dropdown
-    $("#filteroperand, #filterfield").remove();
+    $("#filteroperand, #filterfield, #andordropdown").remove();
 
-    // Refilter the grid    
+    // Refilter the grid
     $("#grid").setGridParam({
       postData: { filters: JSON.stringify(fullfilter) },
       search: true
@@ -1722,31 +1722,58 @@ var grid = {
     let oper = $(event.target).attr("data-operandname");
     let operandlabel = grid.findOperandLabel(oper);
     if (oper == rule.oper) return;
-    
+
     // Set new operand label
     el_badge.find("span[data-operandname]").attr("data-operandname", oper).text(operandlabel);
     rule.op = oper;
 
     // Close the dropdown
-    $("#filteroperand, #filterfield").remove();
+    $("#filteroperand, #filterfield, #andordropdown").remove();
 
     // Refilter the grid
     $("#grid").setGridParam({
       postData: { filters: JSON.stringify(fullfilter) },
       search: true
     }).trigger('reloadGrid');
-    grid.saveColumnConfiguration();    
+    grid.saveColumnConfiguration();
+  },
+
+  setFilterAndOr: function (event, rule, thefilter, fullfilter) {
+    const el = $(event.target);
+    event.stopPropagation();
+    $("#filteroperand, #filterfield, #andordropdown").remove();
+
+    andordropdown = $('<span id="andordropdown" class="list-group dropdown-menu"><a class="dropdown-item">and</a><a class="dropdown-item">or</a></span>');
+    andordropdown.on("click", (event) => {
+      const andor = $(event.target).text();
+      if (andor == "and") {
+        rule.groupOp = "AND";
+      } else if (andor == "or") {
+        rule.groupOp = "OR";
+      } else {
+        return;
+      }
+      $("#filteroperand, #filterfield, #andordropdown").remove();
+      $("#grid").setGridParam({
+        postData: { filters: JSON.stringify(fullfilter) },
+        search: true
+      }).trigger('reloadGrid');
+      grid.saveColumnConfiguration();
+      $(".andor").text(andor);
+    });
+
+    el.before(andordropdown);
   },
 
   showFieldList: function (el, rule, thefilter, fullfilter) {
     $.jgrid.hideModal("#searchmodfbox_grid");
-    $("#filteroperand, #filterfield").remove();
+    $("#filteroperand, #filterfield, #andordropdown").remove();
     event.stopPropagation();
     $(document).on("click", grid.clickFilter);
     let l = $('<span id="filterfield" class="list-group dropdown-menu">');
     let cnt = 15;  // Limits the number fields to choose from
     for (var col of $("#grid").jqGrid('getGridParam', 'colModel')) {
-      var searchoptions = col.searchoptions;      
+      var searchoptions = col.searchoptions;
       if (searchoptions && searchoptions.sopt) {
         if (el.id == "addsearch")
           var n = $('<a class="dropdown-item" onclick="grid.addFilter(event)" />');
@@ -1766,13 +1793,13 @@ var grid = {
 
   showOperandsList: function (el, rule, thefilter, fullfilter) {
     $.jgrid.hideModal("#searchmodfbox_grid");
-    $("#filteroperand, #filterfield").remove();
+    $("#filteroperand, #filterfield, #andordropdown").remove();
     event.stopPropagation();
     $(document).on("click", grid.clickFilter);
     let colname = $(el).closest(".badge").find("span[data-colname]").attr("data-colname");
     let col = $("#grid").jqGrid('getGridParam', 'colModel').filter((col)=> (col.name == colname))[0];
 
-    let l = $('<span id="filteroperand" class="list-group dropdown-menu">');    
+    let l = $('<span id="filteroperand" class="list-group dropdown-menu">');
     let searchoptions = col.searchoptions;
     if (searchoptions && searchoptions.sopt) {
       for (let sopt of searchoptions.sopt) {
@@ -1863,7 +1890,7 @@ var grid = {
     var fieldspan = $('<span data-colname=' + col.name + ' data-collabel=' + col.label + ' style="cursor: pointer;">' + col.label + '</span>');
     fieldspan.on('click', (event) => grid.showFieldList(event.target, rule, thefilter, fullfilter));
     var operatorspan = $('<span data-operandname=' + rule.op + ' style="cursor: pointer;">' + grid.findOperandLabel(rule.op) + '</span>');
-    operatorspan.on('click', (event) => grid.showOperandsList(event.target, rule, thefilter, fullfilter));    
+    operatorspan.on('click', (event) => grid.showOperandsList(event.target, rule, thefilter, fullfilter));
     var newexpression = $('<span class="badge dropdown"></span>');
     newexpression.append(fieldspan);
     newexpression.append('&nbsp;');
@@ -1919,9 +1946,9 @@ var grid = {
       for (var index = 0; index < group.groups.length; index++) {
         if (thefilter.html().length > 2) {
           if (group.groupOp === "OR")
-            thefilter.append(" " + gettext("or") + " ");
+            thefilter.append(" " + gettext("or") + " ").on('click', (event) => grid.setFilterAndOr(event, group, thefilter, fullfilter));
           else
-            thefilter.append(" " + gettext("and") + " ");
+            thefilter.append(" " + gettext("and") + " ").on('click', (event) => grid.setFilterAndOr(event, group, thefilter, fullfilter));
         }
         grid.getFilterGroup(thegrid, group.groups[index], false, thefilter, fullfilter);
       }
@@ -1930,7 +1957,12 @@ var grid = {
     if (group !== null && group !== undefined && group.rules !== undefined) {
       for (var index = 0; index < group.rules.length; index++) {
         if (thefilter.html().length > 2)
-          thefilter.append(" " + gettext((group.groupOp === "OR") ? "or" : "and") + " ");
+          thefilter.append(
+            '<span id="filterandor'+index+'" class="andor dropdown p-1" style="cursor: pointer;"><span>' +
+            gettext((group.groupOp === "OR") ? "or" : "and") +
+            '</span></span>'
+          ).on('click', (event) => grid.setFilterAndOr(event, group, thefilter, fullfilter))
+
         grid.getFilterRule(thegrid, group.rules[index], thefilter, fullfilter);
       }
     }

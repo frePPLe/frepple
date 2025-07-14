@@ -11,6 +11,13 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | Added support for PostgreSQL 17.
 
+.. rubric:: Odoo integration
+
+- | 17, 18: Quoting service bug fix.
+  | Quotes created by the quoting servers weren't erased after a new odoo import.  These records stayed
+    around in the frepple database.
+  | This applies to Enterprise and Cloud Editions only.
+
 9.9.0 (2025-07-04)
 ==================
 

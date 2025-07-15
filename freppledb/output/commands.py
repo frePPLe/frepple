@@ -1513,7 +1513,7 @@ class ExportResourcePlans(PlanTask):
                 if cluster not in (-1, -2) and cluster != i.cluster:
                     continue
                 for j in i.plan(buckets):
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(i.name),
                         str(j["start"]),
                         round(j["available"], 8),
@@ -1521,6 +1521,7 @@ class ExportResourcePlans(PlanTask):
                         round(j["setup"], 8),
                         round(j["load"], 8),
                         round(j["free"], 8),
+                        round(j["load_confirmed"], 8)
                     )
 
         cursor.copy_from(
@@ -1534,6 +1535,7 @@ class ExportResourcePlans(PlanTask):
                 "setup",
                 "load",
                 "free",
+                "load_confirmed"
             ),
             size=1024,
             sep="\v",

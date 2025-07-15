@@ -205,6 +205,7 @@ class OverviewReport(GridPivot):
         ("setuptime", {"title": _("setup"), "initially_hidden": True}),
         ("load", {"title": _("load")}),
         ("utilization", {"title": _("utilization %")}),
+        ("load_confirmed", {"title": _("load confirmed")}),
     )
 
     @classmethod
@@ -301,7 +302,8 @@ class OverviewReport(GridPivot):
         coalesce(sum(out_resourceplan.available),0) / (case when res.type = 'buckets' then 1 else %f end) as available,
         coalesce(sum(out_resourceplan.unavailable),0) / (case when res.type = 'buckets' then 1 else %f end) as unavailable,
         coalesce(sum(out_resourceplan.load),0) / (case when res.type = 'buckets' then 1 else %f end) as loading,
-        coalesce(sum(out_resourceplan.setup),0) / (case when res.type = 'buckets' then 1 else %f end) as setup
+        coalesce(sum(out_resourceplan.setup),0) / (case when res.type = 'buckets' then 1 else %f end) as setup,
+        coalesce(sum(out_resourceplan.load_confirmed),0) / (case when res.type = 'buckets' then 1 else %f end) as load_confirmed
       from (%s) res
       left outer join location
         on res.location_id = location.name
@@ -328,6 +330,7 @@ class OverviewReport(GridPivot):
       order by %s, d.startdate
       """ % (
             reportclass.attr_sql,
+            units[0],
             units[0],
             units[0],
             units[0],
@@ -375,12 +378,13 @@ class OverviewReport(GridPivot):
                         "avgutil": round(row[17], 2),
                         "available_calendar": row[18],
                         "owner": row[19],
-                        "bucket": row[numfields - 6],
-                        "startdate": row[numfields - 5],
-                        "available": row[numfields - 4],
-                        "unavailable": row[numfields - 3],
-                        "load": row[numfields - 2],
-                        "setuptime": row[numfields - 1],
+                        "bucket": row[numfields - 7],
+                        "startdate": row[numfields - 6],
+                        "available": row[numfields - 5],
+                        "unavailable": row[numfields - 4],
+                        "load": row[numfields - 3],
+                        "setuptime": row[numfields - 2],
+                        "load_confirmed": row[numfields - 1],
                         "utilization": util,
                     }
                     idx = 20

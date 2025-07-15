@@ -7,6 +7,11 @@ Release notes
 This release is scheduled for end of August.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Production planning
+
+- | The capacity report now has a row to distinguish confirmed vs proposed loading of the
+    resources.
+
 .. rubric:: System administration
 
 - | Added support for PostgreSQL 17.

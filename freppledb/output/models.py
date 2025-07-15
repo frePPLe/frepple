@@ -88,6 +88,7 @@ class ResourceSummary(models.Model):
     setup = models.DecimalField(_("setup"), max_digits=20, decimal_places=8, null=True)
     load = models.DecimalField(_("load"), max_digits=20, decimal_places=8, null=True)
     free = models.DecimalField(_("free"), max_digits=20, decimal_places=8, null=True)
+    load_confirmed = models.DecimalField(_("confirmed load"), max_digits=20, decimal_places=8, null=True)
 
     class Meta:
         db_table = "out_resourceplan"

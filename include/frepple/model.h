@@ -6958,6 +6958,7 @@ class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator> {
     Date prev_date;
     double cur_size;
     double cur_load;
+    double cur_load_confirmed;
     bool prev_value;
     bool bucketized;
   };
@@ -6974,6 +6975,7 @@ class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator> {
   double bucket_load;
   double bucket_setup;
   double bucket_unavailable;
+  double bucket_load_confirmed;
 
   void update(_res*, Date till);
 

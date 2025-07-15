@@ -421,6 +421,7 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o)
     i->prev_date = i->cur_date;
     i->cur_size = 0.0;
     i->cur_load = 0.0;
+    i->cur_load_confirmed = 0.0;
 
     if (i->bucketized) {
       // Scan forward to the first relevant bucket
@@ -446,14 +447,18 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o)
       }
 
       // Advance loadplan iterator just beyond the starting date
+      i->cur_load_confirmed = 0.0;
       while (i->ldplaniter != i->res->getLoadPlans().end() &&
              i->ldplaniter->getDate() <= i->cur_date) {
         unsigned short tp = i->ldplaniter->getEventType();
         if (tp == 4)
           // New max size
           i->cur_size = i->ldplaniter->getMax();
-        else if (tp == 1)
+        else if (tp == 1) {
           i->cur_load = i->ldplaniter->getOnhand();
+          if (!i->ldplaniter->getOperationPlan()->getProposed())
+            i->cur_load_confirmed += i->ldplaniter->getQuantity();
+        }
         ++(i->ldplaniter);
       }
     }
@@ -486,6 +491,7 @@ void Resource::PlanIterator::update(Resource::PlanIterator::_res* i,
       if (i->prev_value) {
         bucket_available += i->cur_size * timedelta / 3600;
         bucket_load += i->cur_load * timedelta / 3600;
+        bucket_load_confirmed += i->cur_load_confirmed * timedelta / 3600;
       } else
         bucket_unavailable += i->cur_size * timedelta / 3600;
       if (i->unavailIter.getCalendar() &&
@@ -515,6 +521,7 @@ void Resource::PlanIterator::update(Resource::PlanIterator::_res* i,
     if (i->prev_value) {
       bucket_available += i->cur_size * timedelta / 3600;
       bucket_load += i->cur_load * timedelta / 3600;
+      bucket_load_confirmed += i->cur_load_confirmed * timedelta / 3600;
     } else
       bucket_unavailable += i->cur_size * timedelta / 3600;
   } else {
@@ -522,6 +529,7 @@ void Resource::PlanIterator::update(Resource::PlanIterator::_res* i,
     timedelta = till - i->prev_date;
     bucket_available += i->cur_size * timedelta / 3600;
     bucket_load += i->cur_load * timedelta / 3600;
+    bucket_load_confirmed += i->cur_load_confirmed * timedelta / 3600;
   }
   // Remember till which date we already have reported
   i->prev_date = till;
@@ -535,6 +543,7 @@ PyObject* Resource::PlanIterator::iternext() {
   bucket_unavailable = 0.0;
   bucket_load = 0.0;
   bucket_setup = 0.0;
+  bucket_load_confirmed = 0.0;
   if (start_date) Py_DECREF(start_date);
 
   // Repeat until a non-empty bucket is found
@@ -565,10 +574,11 @@ PyObject* Resource::PlanIterator::iternext() {
           while (i->ldplaniter != i->res->getLoadPlans().end() &&
                  i->ldplaniter->getEventType() != 2) {
             if (i->ldplaniter->getEventType() == 1) {
-              if (i->res->isTime())
-                bucket_load -= i->ldplaniter->getQuantity() / 3600;
-              else
-                bucket_load -= i->ldplaniter->getQuantity();
+              auto tmp = -i->ldplaniter->getQuantity();
+              if (i->res->isTime()) tmp /= 3600;
+              bucket_load += tmp;
+              if (!i->ldplaniter->getOperationPlan()->getProposed())
+                bucket_load_confirmed += tmp;
             }
             ++(i->ldplaniter);
           }
@@ -593,9 +603,11 @@ PyObject* Resource::PlanIterator::iternext() {
           if (tp == 4)
             // New max size
             i->cur_size = i->ldplaniter->getMax();
-          else if (tp == 1)
+          else if (tp == 1) {
             i->cur_load = i->ldplaniter->getOnhand();
-
+            if (!i->ldplaniter->getOperationPlan()->getProposed())
+              i->cur_load_confirmed += i->ldplaniter->getQuantity();
+          }
           // Move to the next event
           ++(i->ldplaniter);
         }
@@ -632,12 +644,17 @@ PyObject* Resource::PlanIterator::iternext() {
 
   // Return the result
   bucket_setup /= 3600.0;
-  bucket_load -= bucket_setup;
-  return Py_BuildValue("{s:O,s:O,s:d,s:d,s:d,s:d,s:d}", "start", start_date,
+  bucket_load_confirmed -= bucket_setup;
+  if (bucket_load_confirmed < 0.0) {
+    bucket_load += bucket_load_confirmed;
+    bucket_load_confirmed = 0.0;
+  }
+  return Py_BuildValue("{s:O,s:O,s:d,s:d,s:d,s:d,s:d,s:d}", "start", start_date,
                        "end", end_date, "available", bucket_available, "load",
                        bucket_load, "unavailable", bucket_unavailable, "setup",
                        bucket_setup, "free",
-                       bucket_available - bucket_load - bucket_setup);
+                       bucket_available - bucket_load - bucket_setup,
+                       "load_confirmed", bucket_load_confirmed);
 }
 
 bool Resource::hasSkill(Skill* s, Date st, Date nd,

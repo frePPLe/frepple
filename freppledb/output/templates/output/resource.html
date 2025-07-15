@@ -95,7 +95,8 @@ function drawGraphs(jsondata)
         'unavailable': tmp[1],
         'setup': tmp[2],
         'load': tmp[3],
-        'perc': tmp[4]
+        'perc': tmp[4],
+        'load_confirmed': tmp[5]
         });
       if (1 in fields)
       {
@@ -123,7 +124,7 @@ function drawGraphs(jsondata)
         var newtop = 0;
         var top = 0;
         var load = d['load'];
-        var free = d['available'] - d['setup'] - load;
+        var free = d['available'] - d['setup'] - load;        
         var overload = 0;
         if (free < 0)
         {
@@ -151,9 +152,19 @@ function drawGraphs(jsondata)
             .style("fill","#2B95EC");
           top = newtop;
         }
+        if (d['load_confirmed'] > 0 && 5 in fields) {
+          newtop = top + d['load_confirmed'];
+          bucket.append("rect")
+            .attr("width", x_width)
+            .attr("y", y(newtop))
+            .attr("height", y(top) - y(newtop))
+            .style("fill","#113C5E");
+          top = newtop;
+        }
         if (load > 0 && 3 in fields)
         {
           newtop = top + load;
+          if (5 in fields) newtop -= d['load_confirmed'];
           bucket.append("rect")
             .attr("width", x_width)
             .attr("y", y(newtop))
@@ -226,7 +237,9 @@ function drawGraphs(jsondata)
 	           + '</td></tr><tr><td>{{_('setup')|capfirst}}</td><td style="text-align:center">'
 	           + grid.formatNumber(d['setup'])
 	           + '</td></tr><tr><td>{{_('load')|capfirst}}</td><td style="text-align:center">'
-	           + grid.formatNumber(d['load'])
+	           + grid.formatNumber(d['load'] - d['load_confirmed'])
+	           + '</td></tr><tr><td>{{_('load confirmed')|capfirst}}</td><td style="text-align:center">'
+	           + grid.formatNumber(d['load_confirmed'])             
 	           + '</td></tr></table>'
 	           );
 	        })
@@ -281,6 +294,7 @@ function drawGraphs(jsondata)
       ["{{_('unavailable')|capfirst}}", "#F6BD0F", 1],
       ["{{_('setup')|capfirst}}", "#2B95EC", 2],
       ["{{_('load')|capfirst}}", "#AFD8F8", 3],
+      ["{{_('load confirmed')|capfirst}}", "#113C5E", 4],
       ["{{_('free')|capfirst}}", "#000000", -1],
       ["{{_('overload')|capfirst}}", "#FF0000", -2]
       ];

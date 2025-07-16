@@ -43,9 +43,7 @@ def countItemLocations(db=DEFAULT_DB_ALIAS):
                       select distinct item_id, location_id from operationplanmaterial
                     ) t
                    ),
-                   (select count(*) from 
-                     (select distinct operation_id from operationplan) t
-                   )
+                   (select count(distinct operation_id) from operationplan)
                 )
                 """
                 % (

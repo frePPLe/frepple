@@ -35,22 +35,22 @@ def countItemLocations(db=DEFAULT_DB_ALIAS):
     try:
         with connections[db].cursor() as cursor:
             cursor.execute(
-                """
+                f"""
                 select greatest(
-                   (select count(*) from
-                    (
-                      %s
-                      select distinct item_id, location_id from operationplanmaterial
-                    ) t
+                   (SELECT COUNT(*)
+                    FROM (
+                      SELECT DISTINCT item_id, location_id
+                      FROM (
+                        {"SELECT item_id, location_id FROM forecastplan UNION ALL"
+                         if "freppledb.forecast" in settings.INSTALLED_APPS
+                        else ""}
+                        SELECT item_id, location_id FROM operationplanmaterial
+                      ) t_all
+                    ) t_distinct
                    ),
                    (select count(distinct operation_id) from operationplan)
                 )
                 """
-                % (
-                    "select distinct item_id, location_id from forecastplan union "
-                    if "freppledb.forecast" in settings.INSTALLED_APPS
-                    else ""
-                )
             )
             return cursor.fetchone()[0]
     except Exception:

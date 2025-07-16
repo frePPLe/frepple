@@ -29,6 +29,8 @@ import os.path
 from pathlib import Path
 import re
 
+from django.db.models import Case, When, Value, IntegerField
+from django.db.models.functions import Cast, Substr, Length
 from django.conf import settings
 from django.core import management
 from django.core.paginator import Paginator
@@ -136,9 +138,22 @@ def AboutView(request):
             "storage_exceeded": maxstorage and usedstorage > maxstorage,
             "itemlocations": {
                 sc.name: countItemLocations(sc.name)
-                for sc in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(
-                    status="In use"
+                for sc in Scenario.objects.using(DEFAULT_DB_ALIAS)
+                .filter(status="In use")
+                .annotate(
+                    sort_key=Case(
+                        When(name="default", then=Value(0)),
+                        When(
+                            name__startswith="scenario",
+                            then=Cast(
+                                Substr("name", 9, Length("name")), IntegerField()
+                            ),
+                        ),
+                        default=Value(9999),
+                        output_field=IntegerField(),
+                    )
                 )
+                .order_by("sort_key", "name")
             },
             "apps": apps,
             "website": settings.DOCUMENTATION_URL,

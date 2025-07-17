@@ -7,6 +7,10 @@ Release notes
 This release is scheduled for end of August.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: User interface
+
+- | Small improvements to the quick filter capability.
+
 .. rubric:: Production planning
 
 - | The capacity report now has a row to distinguish confirmed vs proposed loading of the

@@ -1602,11 +1602,11 @@ var grid = {
     $("#searchmodfbox_grid").detach().appendTo("#content-main");
   },
 
-  resetFilter: function() {
+  resetFilter: function () {
     var curfilter = $((typeof curfilterid !== 'undefined') ? curfilterid : "#curfilter");
     curfilter.html("");
     $("#grid").setGridParam({
-      postData: {filters: ''},
+      postData: { filters: '' },
       search: true
     }).trigger('reloadGrid');
     grid.saveColumnConfiguration();
@@ -1685,7 +1685,7 @@ var grid = {
     let oper = el_badge.find("span[data-operandname]").attr("data-operandname");
     let operandlabel = grid.findOperandLabel(oper);
 
-    const col = $("#grid").jqGrid('getGridParam', 'colModel').filter((col)=> (col.name == colname))[0];
+    const col = $("#grid").jqGrid('getGridParam', 'colModel').filter((col) => (col.name == colname))[0];
     const searchoptions = col.searchoptions;
 
     if (rule.field == colname) return;
@@ -1742,10 +1742,12 @@ var grid = {
     const el = $(event.target);
     event.stopPropagation();
     $("#filteroperand, #filterfield, #andordropdown").remove();
-
-    andordropdown = $('<span id="andordropdown" class="list-group dropdown-menu"><a class="dropdown-item">and</a><a class="dropdown-item">or</a></span>');
+    andordropdown = $('<span id="andordropdown" class="mt-1 list-group dropdown-menu" style="min-width: 1em">'
+      + '<a class="dropdown-item" data-oper="and">' + gettext("and") + '</a>'
+      + '<a class="dropdown-item" data-oper="or">' + gettext("or") + '</a>'
+      + '</span>');
     andordropdown.on("click", (event) => {
-      const andor = $(event.target).text();
+      const andor = $(event.target).attr("data-oper");
       if (andor == "and") {
         rule.groupOp = "AND";
       } else if (andor == "or") {
@@ -1759,10 +1761,10 @@ var grid = {
         search: true
       }).trigger('reloadGrid');
       grid.saveColumnConfiguration();
-      $(".andor").text(andor);
+      grid.getFilterGroup($("#grid"), fullfilter, true, thefilter, fullfilter);
     });
 
-    el.before(andordropdown);
+    el.append(andordropdown);
   },
 
   showFieldList: function (el, rule, thefilter, fullfilter) {
@@ -1783,7 +1785,7 @@ var grid = {
         };
         n.attr("data-filterfield", col.name);
         n.attr("data-filterlabel", col.label);
-        n.html(gettext("Search") + ' ' + col.label);
+        n.html(col.label);
         l.append(n);
         if (--cnt <= 0) break;
       }
@@ -1797,7 +1799,7 @@ var grid = {
     event.stopPropagation();
     $(document).on("click", grid.clickFilter);
     let colname = $(el).closest(".badge").find("span[data-colname]").attr("data-colname");
-    let col = $("#grid").jqGrid('getGridParam', 'colModel').filter((col)=> (col.name == colname))[0];
+    let col = $("#grid").jqGrid('getGridParam', 'colModel').filter((col) => (col.name == colname))[0];
 
     let l = $('<span id="filteroperand" class="list-group dropdown-menu">');
     let searchoptions = col.searchoptions;
@@ -1814,25 +1816,9 @@ var grid = {
   },
 
   findOperandLabel(operand) {
-    // Find operator
-    if (operand == "win")
-      oper = gettext("within");
-    else if (operand == "ico")
-      oper = gettext("is child of");
-    else if (operand == "isnull")
-      oper = gettext("is null");
-    else {
-      for (var firstKey in $.jgrid.locales)
-        var operands = $.jgrid.locales[firstKey].search.odata;
-      for (i = 0; i < operands.length; i++){
-        if (operands[i].oper == operand) {
-          oper = operands[i].text;
-          break;
-        }}
-      if (oper == undefined)
-        oper = operand;
-    }
-    return gettext(oper)
+    for (const i of $.jgrid.locales[$.jgrid.defaults.locale].search.odata)
+      if (i.oper == operand) return i.text;
+    return operand;
   },
 
   keyDownSearch: function () {
@@ -1887,7 +1873,7 @@ var grid = {
       return;
 
     // Final result
-    var fieldspan = $('<span data-colname=' + col.name + ' data-collabel=' + col.label + ' style="cursor: pointer;">' + col.label + '</span>');
+    var fieldspan = $('<span data-colname=' + col.name + ' data-collabel=' + col.label + ' style="cursor: pointer">' + col.label + '</span>');
     fieldspan.on('click', (event) => grid.showFieldList(event.target, rule, thefilter, fullfilter));
     var operatorspan = $('<span data-operandname=' + rule.op + ' style="cursor: pointer;">' + grid.findOperandLabel(rule.op) + '</span>');
     operatorspan.on('click', (event) => grid.showOperandsList(event.target, rule, thefilter, fullfilter));
@@ -1899,12 +1885,12 @@ var grid = {
     var newelement = $('<input class="form-control" style="width: 2.4em">');
     rule["filtercount"] = grid.countFilters++;  // Mark position in the expression
     newelement.val(rule.data);
-    newelement.attr("style", "width: " + Math.min((rule.data.length + 4)*0.5, 20) + "em");
+    newelement.attr("style", "width: " + Math.min((rule.data.length + 4) * 0.5, 20) + "em");
     newelement.on({
-      input: function(event){
-        this.style.width = Math.min(($(event.target).val().length + 4)*0.5, 20) + "em";
+      input: function (event) {
+        this.style.width = Math.min(($(event.target).val().length + 4) * 0.5, 20) + "em";
       },
-      change: function(event){
+      change: function (event) {
         grid.updateFilter(fullfilter, rule["filtercount"], $(event.target).val());
         thegrid.setGridParam({
           postData: { filters: JSON.stringify(fullfilter) },
@@ -1945,10 +1931,12 @@ var grid = {
     if (group !== null && group !== undefined && group.groups !== undefined) {
       for (var index = 0; index < group.groups.length; index++) {
         if (thefilter.html().length > 2) {
-          if (group.groupOp === "OR")
-            thefilter.append(" " + gettext("or") + " ").on('click', (event) => grid.setFilterAndOr(event, group, thefilter, fullfilter));
-          else
-            thefilter.append(" " + gettext("and") + " ").on('click', (event) => grid.setFilterAndOr(event, group, thefilter, fullfilter));
+          var newel = $('<span class= "d-inline-block dropdown p-1" style="cursor: pointer">' +
+            '<span class="dropdown-toggle">' +
+            gettext(group.groupOp === "OR" ? "or" : "and ") +
+            '</span></span>');
+          newel.on('click', (event) => grid.setFilterAndOr(event, group, thefilter, fullfilter));
+          thefilter.append(newel);
         }
         grid.getFilterGroup(thegrid, group.groups[index], false, thefilter, fullfilter);
       }
@@ -1956,13 +1944,14 @@ var grid = {
 
     if (group !== null && group !== undefined && group.rules !== undefined) {
       for (var index = 0; index < group.rules.length; index++) {
-        if (thefilter.html().length > 2)
-          thefilter.append(
-            '<span id="filterandor'+index+'" class="andor dropdown p-1" style="cursor: pointer;"><span>' +
+        if (thefilter.html().length > 2) {
+          var newel = $(
+            '<span class="d-inline-block dropdown p-1" style="cursor: pointer"><span>' +
             gettext((group.groupOp === "OR") ? "or" : "and") +
-            '</span></span>'
-          ).on('click', (event) => grid.setFilterAndOr(event, group, thefilter, fullfilter))
-
+            '</span></span>');
+          newel.on('click', (event) => grid.setFilterAndOr(event, group, thefilter, fullfilter));
+          thefilter.append(newel);
+        }
         grid.getFilterRule(thegrid, group.rules[index], thefilter, fullfilter);
       }
     }
@@ -2687,7 +2676,7 @@ var ERPconnection = {
               'reference': row.attributes.orderreference.value,
               'type': row.getAttribute('ordertype'),
               'quantity': Number($(quantity).val()),
-              'enddate':  newDate,
+              'enddate': newDate,
               'supplier': $(supplier).val()
             });
             index++;
@@ -2765,12 +2754,12 @@ var widget = {
     });
   },
 
-  getConfig: function() {
+  getConfig: function () {
     var rows = [];
     $(".widget-list").each(function () {
       var row = {
         "name": $(this).attr("data-widget") || "",
-        "cols": [{"width": $(this).attr("data-widget-width") || 12, "widgets": [] }]
+        "cols": [{ "width": $(this).attr("data-widget-width") || 12, "widgets": [] }]
       };
 
       $(this).find(".widget").each(function () {

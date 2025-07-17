@@ -237,7 +237,7 @@ function drawGraphs(jsondata)
 	           + '</td></tr><tr><td>{{_('setup')|capfirst}}</td><td style="text-align:center">'
 	           + grid.formatNumber(d['setup'])
 	           + '</td></tr><tr><td>{{_('load')|capfirst}}</td><td style="text-align:center">'
-	           + grid.formatNumber(d['load'] - d['load_confirmed'])
+	           + grid.formatNumber(d['load'])
 	           + '</td></tr><tr><td>{{_('load confirmed')|capfirst}}</td><td style="text-align:center">'
 	           + grid.formatNumber(d['load_confirmed'])             
 	           + '</td></tr></table>'

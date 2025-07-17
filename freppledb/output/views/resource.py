@@ -353,8 +353,8 @@ class OverviewReport(GridPivot):
                 locationattributefields = getAttributeFields(Location)
                 for row in cursor_chunked:
                     numfields = len(row)
-                    if row[numfields - 4] != 0:
-                        util = round(row[numfields - 2] * 100 / row[numfields - 4], 2)
+                    if row[numfields - 5] != 0:
+                        util = round(row[numfields - 3] * 100 / row[numfields - 5], 2)
                     else:
                         util = 0
                     result = {

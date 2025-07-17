@@ -196,7 +196,8 @@ class Command(BaseCommand):
         if options["full"]:
             if options["verbosity"]:
                 print("CREATE NEW DATABASE")
-            os.environ["PGPASSWORD"] = options["odoo_db_password"]
+            env = os.environ.copy()
+            env["PGPASSWORD"] = options["odoo_db_password"]
             extraargs = []
             if options["odoo_db_host"]:
                 extraargs = extraargs + [
@@ -220,6 +221,7 @@ class Command(BaseCommand):
                 + [
                     name,
                 ],
+                env=env
             )
             subprocess.run(
                 [
@@ -228,7 +230,8 @@ class Command(BaseCommand):
                     options["odoo_db_user"],
                     name,
                 ]
-                + extraargs
+                + extraargs,
+                env=env
             )
 
             if options["verbosity"]:

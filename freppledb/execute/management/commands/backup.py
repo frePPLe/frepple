@@ -159,9 +159,9 @@ class Command(BaseCommand):
                 )
 
             # Run the backup command
-            # Commenting the next line is a little more secure, but requires you to
-            # create a .pgpass file.
-            os.environ["PGPASSWORD"] = settings.DATABASES[database]["PASSWORD"]
+            env = os.environ.copy()
+            if settings.DATABASES[database]["PASSWORD"]:
+                env["PGPASSWORD"] = settings.DATABASES[database]["PASSWORD"]
             args = [
                 "pg_dump",
                 "-Fc",
@@ -175,7 +175,7 @@ class Command(BaseCommand):
             if settings.DATABASES[database]["PORT"]:
                 args.append("--port=%s" % settings.DATABASES[database]["PORT"])
             args.append(settings.DATABASES[database]["NAME"])
-            with subprocess.Popen(args) as p:
+            with subprocess.Popen(args, env=env) as p:
                 try:
                     task.processid = p.pid
                     task.save(using=database)

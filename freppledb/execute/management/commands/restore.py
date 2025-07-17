@@ -21,9 +21,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import os.path
-import subprocess
 from datetime import datetime
+import os.path
+import pathlib
+import subprocess
+import sys
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -37,9 +39,6 @@ from freppledb import __version__
 class Command(BaseCommand):
     help = """
     This command restores a database dump of the frePPLe database.
-
-    The pg_restore command needs to be in the path, otherwise this command
-    will fail.
     """
 
     requires_system_checks = []
@@ -48,111 +47,89 @@ class Command(BaseCommand):
         return __version__
 
     def add_arguments(self, parser):
-        parser.add_argument("--user", help="User running the command")
         parser.add_argument(
             "--database",
             default=DEFAULT_DB_ALIAS,
             help="Nominates a specific database to restore into",
         )
-        parser.add_argument(
-            "--task",
-            type=int,
-            help="Task identifier (generated automatically if not provided)",
-        )
-        parser.add_argument("dump", help="Database dump file to restore.")
+        parser.add_argument("dump", help="Database dump file to restore.", nargs="?")
 
     def handle(self, **options):
         # Pick up the options
         database = options["database"]
         if database not in settings.DATABASES:
             raise CommandError("No database settings known for '%s'" % database)
-        if options["user"]:
-            try:
-                user = User.objects.all().using(database).get(username=options["user"])
-            except Exception:
-                raise CommandError("User '%s' not found" % options["user"])
-        else:
-            user = None
 
-        now = datetime.now()
-        task = None
-        try:
-            # Initialize the task
-            if options["task"]:
-                try:
-                    task = Task.objects.all().using(database).get(pk=options["task"])
-                except Exception:
-                    raise CommandError("Task identifier not found")
-                if (
-                    task.started
-                    or task.finished
-                    or task.status != "Waiting"
-                    or task.name not in ("frepple_restore", "restore")
-                ):
-                    raise CommandError("Invalid task identifier")
-                task.status = "0%"
-                task.started = now
+        dump = options["dump"]
+        if not dump:
+            if sys.stdin.isatty() and sys.stdout.isatty() and sys.stderr.isatty():
+                # Running interactive shell
+                dumps = [
+                    f.name
+                    for f in pathlib.Path(settings.FREPPLE_LOGDIR).rglob("*.dump")
+                ]
+                if not dumps:
+                    raise CommandError("No database dumps available")
+                print(f"\nAvailable dumps:")
+                for i, o in enumerate(dumps, start=1):
+                    print(f"   {i}. {o}")
+                while True:
+                    try:
+                        choice = int(
+                            input(f"Select a dump to restore (1–{len(dumps)}): ")
+                        )
+                        if 1 <= choice <= len(dumps):
+                            dump = dumps[choice - 1]
+                            break
+                        else:
+                            print("Invalid choice. Try again.")
+                    except ValueError:
+                        print("Invalid choice. Try again.")
             else:
-                task = Task(
-                    name="restore", submitted=now, started=now, status="0%", user=user
-                )
-            task.arguments = options["dump"]
-            task.processid = os.getpid()
-            task.save(using=database)
+                raise CommandError("No database dump argument provided")
 
-            # Validate options
-            dumpfile = os.path.abspath(
-                os.path.join(settings.FREPPLE_LOGDIR, options["dump"])
-            )
-            if not os.path.isfile(dumpfile):
-                raise CommandError("Dump file not found")
+        # Validate options
+        dumpfile = os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, dump))
+        if not os.path.isfile(dumpfile):
+            raise CommandError("Dump file not found")
+        env = os.environ.copy()
+        if settings.DATABASES[database]["PASSWORD"]:
+            env["PGPASSWORD"] = settings.DATABASES[database]["PASSWORD"]
+        commonargs = []
+        if settings.DATABASES[database]["USER"]:
+            commonargs.append(f"--username={settings.DATABASES[database]["USER"]}")
+        if settings.DATABASES[database]["HOST"]:
+            commonargs.append(f"--host={settings.DATABASES[database]["HOST"]}")
+        if settings.DATABASES[database]["PORT"]:
+            commonargs.append(f"--port={settings.DATABASES[database]["PORT"]}")
 
-            # Run the restore command
-            # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
-            if settings.DATABASES[database]["PASSWORD"]:
-                os.environ["PGPASSWORD"] = settings.DATABASES[database]["PASSWORD"]
-            cmd = ["pg_restore", "-n", "public", "-Fc", "-c", "--if-exists"]
-            if settings.DATABASES[database]["USER"]:
-                cmd.append("--username=%s" % settings.DATABASES[database]["USER"])
-            if settings.DATABASES[database]["HOST"]:
-                cmd.append("--host=%s" % settings.DATABASES[database]["HOST"])
-            if settings.DATABASES[database]["PORT"]:
-                cmd.append("--port=%s " % settings.DATABASES[database]["PORT"])
-            cmd.append("-d")
-            cmd.append(settings.DATABASES[database]["NAME"])
-            cmd.append("<%s" % dumpfile)
-            # Shell needs to be True in order to interpret the < character
-            with subprocess.Popen(cmd, shell=True) as p:
-                try:
-                    task.processid = p.pid
-                    task.save(using=database)
-                    p.wait()
-                except Exception:
-                    p.kill()
-                    p.wait()
-                    raise Exception("Database restoration failed")
+        # Drop existing database
+        subprocess.run(
+            ["dropdb", "--if-exists", "--force"]
+            + commonargs
+            + [settings.DATABASES[database]["NAME"]],
+            env=env,
+            check=True,
+        )
 
-            # Task update
-            # We need to recreate a new task record, since the previous one is lost during the restoration.
-            task = Task(
-                name="restore",
-                submitted=task.submitted,
-                started=task.started,
-                arguments=task.arguments,
-                status="Done",
-                finished=datetime.now(),
-                user=task.user,
-            )
+        # Recreate a new database
+        subprocess.run(
+            ["createdb"] + commonargs + [settings.DATABASES[database]["NAME"]],
+            env=env,
+            check=True,
+        )
 
-        except Exception as e:
-            if task:
-                task.status = "Failed"
-                task.message = "%s" % e
-                task.finished = datetime.now()
-            raise e
-
-        finally:
-            # Commit it all, even in case of exceptions
-            if task:
-                task.processid = None
-                task.save(using=database)
+        # Restore the dump
+        subprocess.run(
+            [
+                "pg_restore",
+                "--clean",
+                "--if-exists",
+                "-v",
+                "--no-owner",
+                f"--role={settings.DATABASES[database]["USER"]}",
+            ]
+            + commonargs
+            + [f"--dbname={settings.DATABASES[database]["NAME"]}", dumpfile],
+            env=env,
+        )

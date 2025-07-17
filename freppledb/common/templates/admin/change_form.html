@@ -94,6 +94,7 @@ fieldset th {
     </div></div></div>
 {% endif %}
 
+<div class="row">
 {% block field_sets %}
 {% for fieldset in adminform %}
   {% include "admin/includes/fieldset.html" %}
@@ -107,6 +108,7 @@ fieldset th {
     {% include inline_admin_formset.opts.template %}
 {% endfor %}
 {% endblock %}
+</div>
 
 {% block after_related_objects %}{% endblock %}
 

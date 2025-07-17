@@ -9,6 +9,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: User interface
 
+- | Refreshed layout of the edit forms for data maintenance.
+
 - | Small improvements to the quick filter capability.
 
 .. rubric:: Production planning

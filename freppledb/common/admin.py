@@ -31,6 +31,7 @@ from django.utils.translation import gettext_lazy as _
 from .models import Attribute, User, Parameter, Comment, Follower, Bucket, BucketDetail
 from .adminforms import MultiDBUserCreationForm, MultiDBModelAdmin
 from freppledb.admin import data_site
+from freppledb.boot import getAttributes
 
 
 @admin.register(User, site=data_site)
@@ -148,7 +149,15 @@ class MyGroupAdmin(MultiDBModelAdmin):
 class Parameter_admin(MultiDBModelAdmin):
     model = Parameter
     save_on_top = True
-    exclude = ("source",)
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": ["name", "description", "value"]
+                + [a[0] for a in getAttributes(Parameter) if a[3]]
+            },
+        ),
+    )
     tabs = [
         {
             "name": "edit",
@@ -181,7 +190,16 @@ class Follower_admin(MultiDBModelAdmin):
 class BucketDetail_admin(MultiDBModelAdmin):
     model = BucketDetail
     save_on_top = True
-    exclude = ("source", "id")
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": ["bucket", "name", "startdate", "enddate"]
+                + [a[0] for a in getAttributes(BucketDetail) if a[3]]
+                + ["source"]
+            },
+        ),
+    )
     tabs = [
         {
             "name": "edit",
@@ -201,7 +219,20 @@ class BucketDetail_admin(MultiDBModelAdmin):
 class Bucket_admin(MultiDBModelAdmin):
     model = Bucket
     save_on_top = True
-    exclude = ("source",)
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": [
+                    "name",
+                    "description",
+                    "level",
+                ]
+                + [a[0] for a in getAttributes(Bucket) if a[3]]
+                + ["source"]
+            },
+        ),
+    )
     tabs = [
         {
             "name": "edit",

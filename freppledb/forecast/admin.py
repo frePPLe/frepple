@@ -38,7 +38,7 @@ class Forecast_admin(MultiDBModelAdmin):
         (
             None,
             {
-                "fields": (
+                "fields": [
                     "name",
                     "item",
                     "location",
@@ -46,13 +46,6 @@ class Forecast_admin(MultiDBModelAdmin):
                     "method",
                     "planned",
                     "discrete",
-                )
-            },
-        ),
-        (
-            _("advanced"),
-            {
-                "fields": [
                     "description",
                     "category",
                     "subcategory",
@@ -61,8 +54,8 @@ class Forecast_admin(MultiDBModelAdmin):
                     "maxlateness",
                     "operation",
                 ]
-                + [a[0] for a in getAttributes(Forecast) if a[3]],
-                "classes": ("collapse"),
+                + [a[0] for a in getAttributes(Forecast) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -103,7 +96,29 @@ class ForecastPlan_admin(MultiDBModelAdmin):
 class Measure_admin(MultiDBModelAdmin):
     model = Measure
     save_on_top = True
-    exclude = ("source",)
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": [
+                    "name",
+                    "label",
+                    "description",
+                    "type",
+                    "mode_future",
+                    "mode_past",
+                    "compute_expression",
+                    "update_expression",
+                    "initially_hidden",
+                    "formatter",
+                    "discrete",
+                    "defaultvalue",
+                    "overrides",
+                    "source",
+                ]
+            },
+        ),
+    )
     tabs = [
         {
             "name": "edit",

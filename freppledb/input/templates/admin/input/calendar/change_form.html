@@ -4,14 +4,20 @@
 {% block inline_field_sets %}
 {{ block.super }}
 {% if object_id %}
-<fieldset class="module mb-3 container-fluid" id="fieldset-3" style="background:transparent">
-<h1 class="text-capitalize">{% trans "related" %}</h1>
-<div class="row">
-  <div class="col-form-label col-3">
+<div class="col-lg-auto col-md-6 col-sm-12 mt-3">
+<div class="card">
+  <div class="card-header">
+    <h5 class="card-title text-capitalize">{% trans "related" %}</h5>
+  </div>
+  <div class="card-body">
+
+  <div class="w-100 mb-2 ms-3 me-3">
      <a href="{{ request.prefix }}/data/input/calendarbucket/?calendar={{ object_id | urlencode }}&noautofilter">
      {% trans "calendar buckets"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </div>
-</div>
-</fieldset>
+
+</div>  <!-- card body -->
+</div>  <!-- card -->
+</div>  <!-- col -->
 {% endif %}
 {% endblock %}

@@ -52,16 +52,10 @@ from freppledb.input.models import (
     SubOperation,
     Supplier,
 )
-from freppledb.common.adminforms import MultiDBModelAdmin, MultiDBTabularInline
+from freppledb.common.adminforms import MultiDBModelAdmin
 
 from freppledb.admin import data_site
 from freppledb.boot import getAttributes
-
-
-class CalendarBucket_inline(MultiDBTabularInline):
-    model = CalendarBucket
-    extra = 0
-    exclude = ("source",)
 
 
 @admin.register(CalendarBucket, site=data_site)
@@ -70,22 +64,27 @@ class CalendarBucket_admin(MultiDBModelAdmin):
     raw_id_fields = ("calendar",)
     save_on_top = True
     fieldsets = (
-        (None, {"fields": ("calendar", ("startdate", "enddate"), "value", "priority")}),
         (
-            _("repeating pattern"),
+            None,
             {
-                "fields": (
-                    ("starttime", "endtime"),
-                    (
-                        "monday",
-                        "tuesday",
-                        "wednesday",
-                        "thursday",
-                        "friday",
-                        "saturday",
-                        "sunday",
-                    ),
-                )
+                "fields": [
+                    "calendar",
+                    "startdate",
+                    "enddate",
+                    "value",
+                    "priority",
+                    "starttime",
+                    "endtime",
+                    "monday",
+                    "tuesday",
+                    "wednesday",
+                    "thursday",
+                    "friday",
+                    "saturday",
+                    "sunday",
+                ]
+                + [a[0] for a in getAttributes(CalendarBucket) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -109,13 +108,18 @@ class Calendar_admin(MultiDBModelAdmin):
     model = Calendar
     save_on_top = True
     fieldsets = (
-        (None, {"fields": ("name", "defaultvalue")}),
         (
-            _("advanced"),
+            None,
             {
-                "fields": ["description", "category", "subcategory"]
-                + [a[0] for a in getAttributes(Calendar) if a[3]],
-                "classes": ("collapse",),
+                "fields": [
+                    "name",
+                    "description",
+                    "defaultvalue",
+                    "category",
+                    "subcategory",
+                ]
+                + [a[0] for a in getAttributes(Calendar) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -145,13 +149,19 @@ class Location_admin(MultiDBModelAdmin):
     raw_id_fields = ("available", "owner")
     save_on_top = True
     fieldsets = (
-        (None, {"fields": ("name", "owner", "available")}),
         (
-            _("advanced"),
+            None,
             {
-                "fields": ["description", "category", "subcategory"]
-                + [a[0] for a in getAttributes(Location) if a[3]],
-                "classes": ("collapse",),
+                "fields": [
+                    "name",
+                    "owner",
+                    "available",
+                    "description",
+                    "category",
+                    "subcategory",
+                ]
+                + [a[0] for a in getAttributes(Location) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -196,13 +206,12 @@ class Customer_admin(MultiDBModelAdmin):
     raw_id_fields = ("owner",)
     save_on_top = True
     fieldsets = (
-        (None, {"fields": ("name", "description", "owner")}),
         (
-            _("advanced"),
+            None,
             {
-                "fields": ["category", "subcategory"]
-                + [a[0] for a in getAttributes(Customer) if a[3]],
-                "classes": ("collapse",),
+                "fields": ["name", "description", "category", "subcategory", "owner"]
+                + [a[0] for a in getAttributes(Customer) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -227,13 +236,18 @@ class Supplier_admin(MultiDBModelAdmin):
     raw_id_fields = ("available", "owner")
     save_on_top = True
     fieldsets = (
-        (None, {"fields": ("name", "description")}),
         (
-            _("advanced"),
+            None,
             {
-                "fields": ["category", "subcategory", "available"]
-                + [a[0] for a in getAttributes(Supplier) if a[3]],
-                "classes": ("collapse",),
+                "fields": [
+                    "name",
+                    "description",
+                    "category",
+                    "subcategory",
+                    "available",
+                ]
+                + [a[0] for a in getAttributes(Supplier) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -264,13 +278,23 @@ class Item_admin(MultiDBModelAdmin):
     raw_id_fields = ("owner",)
     search_fields = ("name", "description")
     fieldsets = (
-        (None, {"fields": ("name", "description", "cost", "owner", "uom")}),
         (
-            _("advanced"),
+            None,
             {
-                "fields": ["category", "subcategory", "type", "volume", "weight"]
-                + [a[0] for a in getAttributes(Item) if a[3]],
-                "classes": ("collapse",),
+                "fields": [
+                    "name",
+                    "description",
+                    "cost",
+                    "owner",
+                    "uom",
+                    "category",
+                    "subcategory",
+                    "type",
+                    "volume",
+                    "weight",
+                ]
+                + [a[0] for a in getAttributes(Item) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -307,11 +331,15 @@ class ItemSupplier_admin(MultiDBModelAdmin):
     save_on_top = True
     raw_id_fields = ("item", "supplier", "resource")
     fieldsets = (
-        (None, {"fields": ("item", "supplier", "location", "leadtime", "cost")}),
         (
-            _("advanced"),
+            None,
             {
                 "fields": [
+                    "item",
+                    "supplier",
+                    "location",
+                    "leadtime",
+                    "cost",
                     "sizeminimum",
                     "sizemultiple",
                     "sizemaximum",
@@ -325,8 +353,8 @@ class ItemSupplier_admin(MultiDBModelAdmin):
                     "resource",
                     "resource_qty",
                 ]
-                + [a[0] for a in getAttributes(ItemSupplier) if a[3]],
-                "classes": ("collapse",),
+                + [a[0] for a in getAttributes(ItemSupplier) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -351,11 +379,14 @@ class ItemDistribution_admin(MultiDBModelAdmin):
     save_on_top = True
     raw_id_fields = ("item", "resource")
     fieldsets = (
-        (None, {"fields": ("item", "location", "origin", "leadtime")}),
         (
-            _("advanced"),
+            None,
             {
                 "fields": [
+                    "item",
+                    "location",
+                    "origin",
+                    "leadtime",
                     "sizeminimum",
                     "sizemultiple",
                     "sizemaximum",
@@ -368,8 +399,8 @@ class ItemDistribution_admin(MultiDBModelAdmin):
                     "resource",
                     "resource_qty",
                 ]
-                + [a[0] for a in getAttributes(ItemDistribution) if a[3]],
-                "classes": ("collapse",),
+                + [a[0] for a in getAttributes(ItemDistribution) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -397,7 +428,7 @@ class Operation_admin(MultiDBModelAdmin):
         (
             None,
             {
-                "fields": (
+                "fields": [
                     "name",
                     "type",
                     "item",
@@ -405,13 +436,6 @@ class Operation_admin(MultiDBModelAdmin):
                     "duration",
                     "duration_per",
                     "owner",
-                )
-            },
-        ),
-        (
-            _("advanced"),
-            {
-                "fields": [
                     "description",
                     "category",
                     "subcategory",
@@ -427,8 +451,8 @@ class Operation_admin(MultiDBModelAdmin):
                     "effective_start",
                     "effective_end",
                 ]
-                + [a[0] for a in getAttributes(Operation) if a[3]],
-                "classes": ("collapse",),
+                + [a[0] for a in getAttributes(Operation) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -469,7 +493,22 @@ class SubOperation_admin(MultiDBModelAdmin):
     model = SubOperation
     raw_id_fields = ("operation", "suboperation")
     save_on_top = True
-    exclude = ("source", "id")
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": [
+                    "operation",
+                    "suboperation",
+                    "priority",
+                    "effective_start",
+                    "effective_end",
+                ]
+                + [a[0] for a in getAttributes(SubOperation) if a[3]]
+                + ["source"]
+            },
+        ),
+    )
 
 
 @admin.register(OperationDependency, site=data_site)
@@ -477,7 +516,22 @@ class OperationDependency_admin(MultiDBModelAdmin):
     model = OperationDependency
     raw_id_fields = ("operation", "blockedby")
     save_on_top = True
-    exclude = ("source", "id")
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": [
+                    "operation",
+                    "blockedby",
+                    "quantity",
+                    "safety_leadtime",
+                    "hard_safety_leadtime",
+                ]
+                + [a[0] for a in getAttributes(OperationDependency) if a[3]]
+                + ["source"]
+            },
+        ),
+    )
 
 
 @admin.register(Buffer, site=data_site)
@@ -485,11 +539,15 @@ class Buffer_admin(MultiDBModelAdmin):
     model = Buffer
     raw_id_fields = ("location", "item", "minimum_calendar")
     fieldsets = (
-        (None, {"fields": ("item", "location", "onhand", "minimum", "maximum")}),
         (
-            _("advanced"),
+            None,
             {
                 "fields": [
+                    "item",
+                    "location",
+                    "onhand",
+                    "minimum",
+                    "maximum",
                     "batch",
                     "description",
                     "category",
@@ -499,8 +557,8 @@ class Buffer_admin(MultiDBModelAdmin):
                     "maximum_calendar",
                     "min_interval",
                 ]
-                + [a[0] for a in getAttributes(Buffer) if a[3]],
-                "classes": ("collapse",),
+                + [a[0] for a in getAttributes(Buffer) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -538,7 +596,23 @@ class SetupRule_admin(MultiDBModelAdmin):
     model = SetupRule
     raw_id_fields = ("setupmatrix",)
     save_on_top = True
-    exclude = ("source",)
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": [
+                    "setupmatrix",
+                    "priority",
+                    "fromsetup",
+                    "tosetup",
+                    "duration",
+                    "cost",
+                ]
+                + [a[0] for a in getAttributes(ResourceSkill) if a[3]]
+                + ["source"]
+            },
+        ),
+    )
     tabs = [
         {
             "name": "edit",
@@ -558,7 +632,16 @@ class SetupRule_admin(MultiDBModelAdmin):
 class SetupMatrix_admin(MultiDBModelAdmin):
     model = SetupMatrix
     save_on_top = True
-    exclude = ("source",)
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": ["name"]
+                + [a[0] for a in getAttributes(ResourceSkill) if a[3]]
+                + ["source"]
+            },
+        ),
+    )
     tabs = [
         {
             "name": "edit",
@@ -578,7 +661,16 @@ class SetupMatrix_admin(MultiDBModelAdmin):
 class Skill_admin(MultiDBModelAdmin):
     model = Skill
     save_on_top = True
-    exclude = ("source",)
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": ["name"]
+                + [a[0] for a in getAttributes(Skill) if a[3]]
+                + ["source"]
+            },
+        ),
+    )
     tabs = [
         {
             "name": "edit",
@@ -600,13 +692,18 @@ class ResourceSkill_admin(MultiDBModelAdmin):
     raw_id_fields = ("resource", "skill")
     save_on_top = True
     fieldsets = (
-        (None, {"fields": ("resource", "skill")}),
         (
-            _("advanced"),
+            None,
             {
-                "fields": ["priority", "effective_start", "effective_end"]
-                + [a[0] for a in getAttributes(ResourceSkill) if a[3]],
-                "classes": ("collapse",),
+                "fields": [
+                    "resource",
+                    "skill",
+                    "priority",
+                    "effective_start",
+                    "effective_end",
+                ]
+                + [a[0] for a in getAttributes(ResourceSkill) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -640,7 +737,7 @@ class Resource_admin(MultiDBModelAdmin):
         (
             None,
             {
-                "fields": (
+                "fields": [
                     "name",
                     "location",
                     "type",
@@ -648,13 +745,6 @@ class Resource_admin(MultiDBModelAdmin):
                     "maximum_calendar",
                     "available",
                     "constrained",
-                )
-            },
-        ),
-        (
-            _("advanced"),
-            {
-                "fields": [
                     "description",
                     "category",
                     "subcategory",
@@ -665,8 +755,8 @@ class Resource_admin(MultiDBModelAdmin):
                     "efficiency",
                     "efficiency_calendar",
                 ]
-                + [a[0] for a in getAttributes(Resource) if a[3]],
-                "classes": ("collapse",),
+                + [a[0] for a in getAttributes(Resource) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -710,11 +800,14 @@ class OperationMaterial_admin(MultiDBModelAdmin):
     save_on_top = True
     exclude = ("id",)
     fieldsets = (
-        (None, {"fields": ("operation", "item", "type", "quantity")}),
         (
-            _("advanced"),
+            None,
             {
                 "fields": [
+                    "operation",
+                    "item",
+                    "type",
+                    "quantity",
                     "location",
                     "quantity_fixed",
                     "transferbatch",
@@ -725,8 +818,8 @@ class OperationMaterial_admin(MultiDBModelAdmin):
                     "priority",
                     "search",
                 ]
-                + [a[0] for a in getAttributes(OperationMaterial) if a[3]],
-                "classes": ("collapse",),
+                + [a[0] for a in getAttributes(OperationMaterial) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -752,11 +845,13 @@ class OperationResource_admin(MultiDBModelAdmin):
     save_on_top = True
     exclude = ("id",)
     fieldsets = (
-        (None, {"fields": ("operation", "resource", "quantity")}),
         (
-            _("advanced"),
+            None,
             {
                 "fields": [
+                    "operation",
+                    "resource",
+                    "quantity",
                     "skill",
                     "setup",
                     "quantity_fixed",
@@ -767,7 +862,6 @@ class OperationResource_admin(MultiDBModelAdmin):
                     "search",
                 ]
                 + [a[0] for a in getAttributes(OperationResource) if a[3]],
-                "classes": ("collapse",),
             },
         ),
     )
@@ -1011,7 +1105,7 @@ class Demand_admin(MultiDBModelAdmin):
         (
             None,
             {
-                "fields": (
+                "fields": [
                     "name",
                     "owner",
                     "item",
@@ -1021,13 +1115,6 @@ class Demand_admin(MultiDBModelAdmin):
                     "quantity",
                     "priority",
                     "status",
-                )
-            },
-        ),
-        (
-            _("advanced"),
-            {
-                "fields": [
                     "description",
                     "category",
                     "subcategory",
@@ -1037,8 +1124,8 @@ class Demand_admin(MultiDBModelAdmin):
                     "minshipment",
                     "maxlateness",
                 ]
-                + [a[0] for a in getAttributes(Demand) if a[3]],
-                "classes": ("collapse",),
+                + [a[0] for a in getAttributes(Demand) if a[3]]
+                + ["source"]
             },
         ),
     )
@@ -1072,7 +1159,16 @@ class OperationPlanResource_admin(MultiDBModelAdmin):
         "operationplan",
     )  # TODO a foreign key to OperationPlan doesn't work because it's an abstract class without admin
     save_on_top = True
-    fieldsets = ((None, {"fields": ("operationplan", "resource", "quantity")}),)
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": ["operationplan", "resource", "quantity"]
+                + [a[0] for a in getAttributes(OperationPlanResource) if a[3]]
+                + ["source"]
+            },
+        ),
+    )
     tabs = [
         {
             "name": "edit",

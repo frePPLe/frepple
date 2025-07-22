@@ -1,17 +1,21 @@
-<div class="col-lg col-md-6 col-sm-12 mt-3 d-flex">
+<div class="col-lg col-md-12 mt-3 d-flex">
   <div class="card h-100 w-100">
   <div class="card-body">
 
 <fieldset class="module mt-3 container-fluid" id="fieldset-{% if stacked_prefix %}{{ stacked_prefix }}-{% endif %}{{ forloop.counter }}" style="background:transparent">
-    {% if fieldset.description %}
-        <div class="description">{{ fieldset.description|safe }}</div>
-    {% endif %}
-    {% for line in fieldset %}
-            <div class="row"><div class="control-group {% if line.fields|length_is:'1' and line.errors %}error {% endif %}{% for field in line %}{% if field.field.name %}field-{{ field.field.name }} {% endif %}{% if not line.has_visible_field %}hidden{% endif %}{% endfor %}">
+    <div class="row">
+            {% for line in fieldset %}
+            <div class="col-lg-6 col-md-12 control-group {% if line.fields|length_is:'1' and line.errors %}error {% endif %}{% for field in line %}{% if field.field.name %}field-{{ field.field.name }} {% endif %}{% if not line.has_visible_field %}hidden{% endif %}{% endfor %}">
                 {% for field in line %}
                     <div class="row mb-3 {% if not line.fields|length_is:'1' %} field-box{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if not field.is_readonly and field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}{% endif %}">
                         <div class="text-end col-3">
+                            {% if field.field.help_text %}
+                            <span data-bs-toggle="tooltip" data-bs-title='{{field.field.help_text|escape}}'>{{ field.label_tag }}
+                            <span class="fa fa-question-circle"></span>
+                            </span>
+                            {% else %}
                             {{ field.label_tag }}
+                            {% endif %}
                         </div>
                         {% if field.is_checkbox %}
                         <div class="controls col-9">
@@ -27,14 +31,12 @@
                                 {% render_field_bootstrap field.field %}
                             {% endif %}
                             {% if not field.is_readonly and field.errors %}<span class="d-block text-danger">{{ field.errors|striptags }}</span>{% endif %}
-                            {% if field.field.help_text %}
-                                <div class="mt-1 help-block">{{ field.field.help_text|safe }}</div>
-                            {% endif %}
                         </div>
                         {% endif %}
                     </div>
                 {% endfor %}
-            </div></div>    {% endfor %}
+            </div>{% endfor %}
+    </div>
 </fieldset>
 
 </div>

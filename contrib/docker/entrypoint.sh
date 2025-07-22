@@ -27,7 +27,10 @@ do
   fi
 done
 
-# check if item table exists on the default schema
+# Create the databases
+frepplectl createdatabase --skip-if-exists
+
+# Check if item table exists on the default schema.
 # This is needed to figure out if we load the demo datasets
 RAW_OUTPUT=$(frepplectl dbshell <<EOF
 SELECT EXISTS (
@@ -39,11 +42,10 @@ EOF
 # Extract just 't' or 'f'
 TABLE_EXISTS=$(echo "$RAW_OUTPUT" | sed -n '3p' | xargs)
 
-# Create and migrate the databases
-frepplectl createdatabase --skip-if-exists
+# Migrate the databases to build the complete database schema
 frepplectl migrate --noinput
 
-# populate the database with initial data
+# Populate the database with initial data, but only on a fresh install.
 if [ "$TABLE_EXISTS" = "t" ]; then
 	echo "Schema already created. Skipping initial data population."
 else

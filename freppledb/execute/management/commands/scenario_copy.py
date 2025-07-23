@@ -386,7 +386,7 @@ class Command(BaseCommand):
             # Copying the data
             env = os.environ.copy()
             if settings.DATABASES[source]["PASSWORD"]:
-                env = settings.DATABASES[source]["PASSWORD"]
+                env["PGPASSWORD"] = settings.DATABASES[source]["PASSWORD"]
             if not options["dumpfile"]:
                 cmd = "pg_dump -Fc %s%s%s%s%s%s | pg_restore -n public -Fc %s%s%s -d %s"
                 commandline = cmd % (

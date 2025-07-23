@@ -1,0 +1,5 @@
+{% if related_url %} <div class="d-flex align-items-center gap-2"><span class="flex-grow-1">{% endif %}
+{% include 'django/forms/widgets/input.html' %}{% if related_url %}</span>
+<a href="{{ related_url }}" class="related-lookup" id="lookup_id_{{ widget.name }}" title="{{ link_title }}"></a>
+<a href="{{link_url}}"><span class="leftpadding fa fa-caret-right"></span></a>
+</div>{% endif %}

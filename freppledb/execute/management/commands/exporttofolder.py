@@ -31,7 +31,7 @@ from datetime import datetime
 from time import localtime, strftime
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.db import DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS, connections
 from django.db.models import Q
 from django.template.loader import render_to_string
 from django.test import RequestFactory
@@ -42,8 +42,8 @@ from django.utils.translation import gettext_lazy as _
 import freppledb
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
-from freppledb.common.report import GridReport, create_connection, sizeof_fmt
-from freppledb.common.utils import getStorageUsage
+from freppledb.common.report import GridReport, sizeof_fmt
+from freppledb.common.utils import getStorageUsage, get_databases
 from freppledb import __version__
 from freppledb.execute.models import Task, DataExport
 from freppledb.output.views import resource
@@ -240,7 +240,7 @@ class Command(BaseCommand):
         # Pick up the options
         now = datetime.now()
         self.database = options["database"]
-        if self.database not in settings.DATABASES:
+        if self.database not in get_databases():
             raise CommandError("No database settings known for '%s'" % self.database)
 
         if options["user"]:
@@ -323,23 +323,23 @@ class Command(BaseCommand):
             task.save(using=self.database)
 
             # Try to create the upload if doesn't exist yet
-            if not os.path.isdir(settings.DATABASES[self.database]["FILEUPLOADFOLDER"]):
+            if not os.path.isdir(get_databases()[self.database]["FILEUPLOADFOLDER"]):
                 try:
-                    os.makedirs(settings.DATABASES[self.database]["FILEUPLOADFOLDER"])
+                    os.makedirs(get_databases()[self.database]["FILEUPLOADFOLDER"])
                 except Exception:
                     pass
 
             # Execute
-            if os.path.isdir(settings.DATABASES[self.database]["FILEUPLOADFOLDER"]):
+            if os.path.isdir(get_databases()[self.database]["FILEUPLOADFOLDER"]):
                 if not os.path.isdir(
                     os.path.join(
-                        settings.DATABASES[self.database]["FILEUPLOADFOLDER"], "export"
+                        get_databases()[self.database]["FILEUPLOADFOLDER"], "export"
                     )
                 ):
                     try:
                         os.makedirs(
                             os.path.join(
-                                settings.DATABASES[self.database]["FILEUPLOADFOLDER"],
+                                get_databases()[self.database]["FILEUPLOADFOLDER"],
                                 "export",
                             )
                         )
@@ -365,7 +365,7 @@ class Command(BaseCommand):
 
                     # Make sure export folder exists
                     exportFolder = os.path.join(
-                        settings.DATABASES[self.database]["FILEUPLOADFOLDER"], "export"
+                        get_databases()[self.database]["FILEUPLOADFOLDER"], "export"
                     )
                     if not os.path.isdir(exportFolder):
                         os.makedirs(exportFolder)
@@ -477,25 +477,24 @@ class Command(BaseCommand):
                                 raise Exception(
                                     "Exports based on an SQL query can only be created in .csv or .csv.gz format"
                                 )
-                            try:
-                                conn = create_connection(self.database)
-                                with conn.cursor() as cursor_sql:
-                                    sqlrole = settings.DATABASES[self.database].get(
-                                        "SQL_ROLE", "report_role"
-                                    )
-                                    if sqlrole:
-                                        cursor_sql.execute("set role %s" % (sqlrole,))
-                                    cursor_sql.copy_expert(
-                                        (
-                                            cfg.sql
-                                            if getattr(cfg, "no_wrapper", False)
-                                            else "COPY(select * from (%s) as t) TO STDOUT WITH CSV HEADER"
-                                            % cfg.sql
-                                        ),
-                                        datafile,
-                                    )
-                            finally:
-                                conn.close()
+
+                            with connections[
+                                (
+                                    self.database
+                                    if f"{self.database}_report"
+                                    not in get_databases(True)
+                                    else f"{self.database}_report"
+                                )
+                            ].cursor() as cursor:
+                                cursor.copy_expert(
+                                    (
+                                        cfg.sql
+                                        if getattr(cfg, "no_wrapper", False)
+                                        else "COPY(select * from (%s) as t) TO STDOUT WITH CSV HEADER"
+                                        % cfg.sql
+                                    ),
+                                    datafile,
+                                )
                         else:
                             logger.error(f"Skipping export of {cfg.name}: Unknown type")
                             continue
@@ -561,16 +560,16 @@ class Command(BaseCommand):
     @classmethod
     def getHTML(cls, request):
         if (
-            "FILEUPLOADFOLDER" not in settings.DATABASES[request.database]
+            "FILEUPLOADFOLDER" not in get_databases()[request.database]
             or not request.user.is_superuser
         ):
             return None
 
         # List available data files
         data_exports = cls.getExports(request.database)
-        if "FILEUPLOADFOLDER" in settings.DATABASES[request.database]:
+        if "FILEUPLOADFOLDER" in get_databases()[request.database]:
             exportfolder = os.path.join(
-                settings.DATABASES[request.database]["FILEUPLOADFOLDER"], "export"
+                get_databases()[request.database]["FILEUPLOADFOLDER"], "export"
             )
             tzoffset = GridReport.getTimezoneOffset(request)
             if os.path.isdir(exportfolder):

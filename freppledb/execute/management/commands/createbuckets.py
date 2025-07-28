@@ -36,6 +36,7 @@ from freppledb.common.models import Bucket, BucketDetail
 from freppledb.execute.models import Task
 from freppledb.common.models import User
 from freppledb.common.localization import parseLocalizedDateTime
+from freppledb.common.utils import get_databases
 from freppledb import __version__
 
 
@@ -119,7 +120,7 @@ class Command(BaseCommand):
         # Pick up the options
         weekstart = int(options["weekstart"])
         database = options["database"]
-        if database not in settings.DATABASES:
+        if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
         if options["user"]:
             try:

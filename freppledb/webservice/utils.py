@@ -32,6 +32,7 @@ from django.db import DEFAULT_DB_ALIAS
 from freppledb.common.auth import getWebserviceAuthorization
 from freppledb.common.commands import PlanTaskRegistry
 from freppledb.common.models import Parameter
+from freppledb.common.utils import get_databases
 
 # Only a single service can be making updates at the same time
 try:
@@ -59,9 +60,9 @@ def checkRunning(database=DEFAULT_DB_ALIAS, timeout=1.0):
     Returns True if the web service is running.
     """
     if "FREPPLE_TEST" in os.environ:
-        (host, port) = settings.DATABASES[database]["TEST"]["FREPPLE_PORT"].split(":")
+        (host, port) = get_databases()[database]["TEST"]["FREPPLE_PORT"].split(":")
     else:
-        (host, port) = settings.DATABASES[database]["FREPPLE_PORT"].split(":")
+        (host, port) = get_databases()[database]["FREPPLE_PORT"].split(":")
     try:
         portend.free(host.replace("0.0.0.0", "localhost"), port, timeout=timeout)
         return False
@@ -74,9 +75,9 @@ def waitTillRunning(database=DEFAULT_DB_ALIAS, timeout=180):
     Raise an exception if the service isn't running within the specified time.
     """
     if "FREPPLE_TEST" in os.environ:
-        (host, port) = settings.DATABASES[database]["TEST"]["FREPPLE_PORT"].split(":")
+        (host, port) = get_databases()[database]["TEST"]["FREPPLE_PORT"].split(":")
     else:
-        (host, port) = settings.DATABASES[database]["FREPPLE_PORT"].split(":")
+        (host, port) = get_databases()[database]["FREPPLE_PORT"].split(":")
     try:
         portend.occupied(host.replace("0.0.0.0", "localhost"), port, timeout=timeout)
     except Exception:
@@ -88,9 +89,9 @@ def waitTillNotRunning(database=DEFAULT_DB_ALIAS, timeout=60):
     Raise an exception if the web service isn't stopped within the specified time.
     """
     if "FREPPLE_TEST" in os.environ:
-        (host, port) = settings.DATABASES[database]["TEST"]["FREPPLE_PORT"].split(":")
+        (host, port) = get_databases()[database]["TEST"]["FREPPLE_PORT"].split(":")
     else:
-        (host, port) = settings.DATABASES[database]["FREPPLE_PORT"].split(":")
+        (host, port) = get_databases()[database]["FREPPLE_PORT"].split(":")
     try:
         portend.free(host.replace("0.0.0.0", "localhost"), port, timeout=timeout)
     except Exception:
@@ -99,10 +100,10 @@ def waitTillNotRunning(database=DEFAULT_DB_ALIAS, timeout=60):
 
 def getWebServiceContext(request):
     if "FREPPLE_TEST" in os.environ:
-        port = settings.DATABASES[request.database]["TEST"].get("FREPPLE_PORT", None)
+        port = get_databases()[request.database]["TEST"].get("FREPPLE_PORT", None)
     else:
-        port = settings.DATABASES[request.database].get("FREPPLE_PORT", None)
-    proxied = settings.DATABASES[request.database].get(
+        port = get_databases()[request.database].get("FREPPLE_PORT", None)
+    proxied = get_databases()[request.database].get(
         "FREPPLE_PORT_PROXIED",
         not settings.DEBUG
         and not (

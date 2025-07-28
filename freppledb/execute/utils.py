@@ -32,6 +32,7 @@ from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
 
 from freppledb.common.models import Scenario
+from freppledb.common.utils import get_databases
 
 
 # This function will update the number of scenarios in the djangosettings.py file.
@@ -120,7 +121,7 @@ def updateScenarioCount(addition=True):
             lines = file.readlines()
         updated = False
         service_port = int(
-            settings.DATABASES[DEFAULT_DB_ALIAS]["FREPPLE_PORT"].split(":")[-1]
+            get_databases()[DEFAULT_DB_ALIAS]["FREPPLE_PORT"].split(":")[-1]
         )
         with open(file_path, "w") as file:
             for line in lines:
@@ -150,7 +151,7 @@ def updateScenarioCount(addition=True):
 
         # We need to create/drop now the database
         # get the db name
-        match = re.match(r"^(.*?)(\d+)$", settings.DATABASES[DEFAULT_DB_ALIAS]["NAME"])
+        match = re.match(r"^(.*?)(\d+)$", get_databases()[DEFAULT_DB_ALIAS]["NAME"])
         if match:
             before_digits = match.group(1)
         else:

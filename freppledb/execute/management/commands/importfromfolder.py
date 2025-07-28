@@ -47,7 +47,7 @@ from freppledb import __version__
 from freppledb.common.dataload import parseCSVdata, parseExcelWorksheet
 from freppledb.common.models import User, NotificationFactory, Parameter
 from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS, create_connection
-from freppledb.common.utils import getStorageUsage
+from freppledb.common.utils import getStorageUsage, get_databases
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +85,7 @@ class Command(BaseCommand):
         # Pick up the options
         now = datetime.now()
         self.database = options["database"]
-        if self.database not in settings.DATABASES:
+        if self.database not in get_databases():
             raise CommandError("No database settings known for '%s'" % self.database)
         if options["user"]:
             try:
@@ -156,9 +156,6 @@ class Command(BaseCommand):
                 or ","
             )
             translation.activate(settings.LANGUAGE_CODE)
-            self.SQLrole = settings.DATABASES[self.database].get(
-                "SQL_ROLE", "report_role"
-            )
 
             # confirm there is enough storage to proceed
             maxstorage = getattr(settings, "MAXSTORAGE", 0) or 0
@@ -171,9 +168,9 @@ class Command(BaseCommand):
                     )
 
             # Execute
-            if "FILEUPLOADFOLDER" in settings.DATABASES[
-                self.database
-            ] and os.path.isdir(settings.DATABASES[self.database]["FILEUPLOADFOLDER"]):
+            if "FILEUPLOADFOLDER" in get_databases()[self.database] and os.path.isdir(
+                get_databases()[self.database]["FILEUPLOADFOLDER"]
+            ):
                 # Open the logfile
                 logger.info("Started importfromfolder\n")
 
@@ -184,7 +181,7 @@ class Command(BaseCommand):
                 ]
                 models = []
                 for ifile in os.listdir(
-                    settings.DATABASES[self.database]["FILEUPLOADFOLDER"]
+                    get_databases()[self.database]["FILEUPLOADFOLDER"]
                 ):
                     if not ifile.lower().endswith(
                         (
@@ -244,7 +241,7 @@ class Command(BaseCommand):
                     i += 1
                     filetoparse = os.path.join(
                         os.path.abspath(
-                            settings.DATABASES[self.database]["FILEUPLOADFOLDER"]
+                            get_databases()[self.database]["FILEUPLOADFOLDER"]
                         ),
                         ifile,
                     )
@@ -416,20 +413,20 @@ class Command(BaseCommand):
             file_open = gzip.open
         else:
             file_open = open
-        conn = None
         try:
-            conn = create_connection(self.database)
-            with conn.cursor() as cursor:
-                if self.SQLrole:
-                    cursor.execute("set role %s", (self.SQLrole,))
+            with connections[
+                (
+                    self.database
+                    if f"{self.database}_report" not in get_databases(True)
+                    else f"{self.database}_report"
+                )
+            ].cursor() as cursor:
                 cursor.execute(file_open(ifile, "rt").read())
+
             return 0
         except Exception as e:
             logger.error("Error executing SQL: %s" % e)
             return 1
-        finally:
-            if conn:
-                conn.close()
 
     def loadCSVfile(self, model, file, skip_audit_log):
         errorcount = 0
@@ -555,14 +552,14 @@ class Command(BaseCommand):
     @staticmethod
     def getHTML(request):
         if (
-            "FILEUPLOADFOLDER" not in settings.DATABASES[request.database]
+            "FILEUPLOADFOLDER" not in get_databases()[request.database]
             or not request.user.is_superuser
         ):
             return None
 
         filestoupload = []
-        if "FILEUPLOADFOLDER" in settings.DATABASES[request.database]:
-            uploadfolder = settings.DATABASES[request.database]["FILEUPLOADFOLDER"]
+        if "FILEUPLOADFOLDER" in get_databases()[request.database]:
+            uploadfolder = get_databases()[request.database]["FILEUPLOADFOLDER"]
             if os.path.isdir(uploadfolder):
                 tzoffset = GridReport.getTimezoneOffset(request)
                 for file in sorted(os.listdir(uploadfolder)):

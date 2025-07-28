@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2021 by frePPLe bv
+# Copyright (C) 2024 by frePPLe bv
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -21,31 +21,30 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django.apps import AppConfig
-from django.core import checks
+from django.db import migrations, connections
 
 from freppledb.common.utils import get_databases
 
 
-@checks.register(checks.Tags.database)
-def check_python_packages(app_configs, **kwargs):
-    errors = []
-    for db, dbparams in get_databases().items():
-        if "SQL_ROLE" not in dbparams:
-            errors.append(db)
-    return (
-        [
-            checks.Error(
-                "No SQL_ROLE setting configured in djangosettings.py for databases: %s"
-                % ", ".join(errors),
-                id="reportmanager.E001",
-            )
-        ]
-        if errors
-        else []
-    )
+class Migration(migrations.Migration):
+    dependencies = [("common", "0040_add_delete_scenario_permissions")]
 
+    def alterRoleSetLogin(apps, schema_editor):
+        db = schema_editor.connection.alias
+        if get_databases()[db].get("SQL_ROLE"):
+            with connections[db].cursor() as cursor:
+                cursor.execute(
+                    f"alter role {get_databases()[db].get('SQL_ROLE')} with login password '{get_databases()[db].get('PASSWORD')}'"
+                )
 
-class ReportManagerConfig(AppConfig):
-    name = "freppledb.reportmanager"
-    verbose_name = "reportmanager"
+    def alterRoleSetNoLogin(apps, schema_editor):
+        db = schema_editor.connection.alias
+        if get_databases()[db].get("SQL_ROLE"):
+            with connections[db].cursor() as cursor:
+                cursor.execute(
+                    f"alter role {get_databases()[db].get('SQL_ROLE')} with nologin"
+                )
+
+    operations = [
+        migrations.RunPython(code=alterRoleSetLogin, reverse_code=alterRoleSetNoLogin),
+    ]

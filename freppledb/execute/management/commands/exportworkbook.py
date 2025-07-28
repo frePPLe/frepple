@@ -70,7 +70,7 @@ class Command(BaseCommand):
     # def handle(self, **options):
     #   # Pick up the options
     #   database = options['database']
-    #   if database not in settings.DATABASES:
+    #   if database not in get_databases():
     #     raise CommandError("No database settings known for '%s'" % database )
     #   if options['user']:
     #     try:

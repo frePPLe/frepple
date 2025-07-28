@@ -49,6 +49,7 @@ from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.auth import MultiDBBackend
 from freppledb.common.models import Scenario, User
+from freppledb.common.utils import get_databases
 
 import logging
 
@@ -145,8 +146,8 @@ def resetRequest(**kwargs):
 
 
 # Initialize the URL parsing middleware
-for i in settings.DATABASES:
-    settings.DATABASES[i]["regexp"] = re.compile("^/%s/" % i)
+for i in get_databases():
+    get_databases()[i]["regexp"] = re.compile("^/%s/" % i)
 
 
 class MultiDBMiddleware:
@@ -176,9 +177,9 @@ class MultiDBMiddleware:
         # Select scenario database
         request.prefix = ""
         db = DEFAULT_DB_ALIAS
-        for i in settings.DATABASES:
+        for i in get_databases():
             try:
-                if settings.DATABASES[i]["regexp"].match(request.path):
+                if get_databases()[i]["regexp"].match(request.path):
                     request.prefix = f"/{i}"
                     request.path_info = request.path_info[len(request.prefix) :]
                     request.path = request.path[len(request.prefix) :]
@@ -216,7 +217,7 @@ class MultiDBMiddleware:
                     decoded = None
                     for secret in (
                         getattr(settings, "AUTH_SECRET_KEY", None),
-                        settings.DATABASES[db].get(
+                        get_databases()[db].get(
                             "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
                         ),
                     ):

@@ -682,6 +682,16 @@ if os.access(os.path.join(FREPPLE_CONFIGDIR, "localsettings.py"), os.R_OK):
     with open(os.path.join(FREPPLE_CONFIGDIR, "localsettings.py")) as mysettingfile:
         exec(mysettingfile.read(), globals())
 
+# duplicate the entries in the DATABASES dict to create the SQL roles entries.
+for i in DATABASES.copy():
+    if DATABASES[i].get("SQL_ROLE", "report_role"):
+        DATABASES[f"{i}_report"] = {
+            **DATABASES[i],
+            "USER": DATABASES[i].get("SQL_ROLE", "report_role"),
+            "IS_REPORTING_DATABASE": True,
+        }
+
+
 # We don't like some settings to be overriden
 MANAGERS = ADMINS
 MEDIA_ROOT = os.path.join(FREPPLE_LOGDIR, "uploads")

@@ -25,13 +25,13 @@ import os
 from shutil import rmtree
 import tempfile
 
-from django.conf import settings
 from django.core import management
 from django.db import DEFAULT_DB_ALIAS
 from django.test import TransactionTestCase
 
 from freppledb.input.models import ManufacturingOrder, PurchaseOrder, DistributionOrder
 from freppledb.common.models import Notification, User, Comment
+from freppledb.common.utils import get_databases
 
 
 class execute_with_commands(TransactionTestCase):
@@ -43,7 +43,7 @@ class execute_with_commands(TransactionTestCase):
         # Export and import from a temporary folder to avoid interfering with
         # existing data files
         self.datafolder = tempfile.mkdtemp()
-        settings.DATABASES[DEFAULT_DB_ALIAS]["FILEUPLOADFOLDER"] = self.datafolder
+        get_databases()[DEFAULT_DB_ALIAS]["FILEUPLOADFOLDER"] = self.datafolder
         if not User.objects.filter(username="admin").count():
             User.objects.create_superuser("admin", "your@company.com", "admin")
         self.client.login(username="admin", password="admin")

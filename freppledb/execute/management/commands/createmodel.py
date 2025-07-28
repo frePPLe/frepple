@@ -37,6 +37,7 @@ from freppledb.input.models import ItemSupplier
 from freppledb.execute.models import Task
 from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.common.models import User
+from freppledb.common.utils import get_databases
 from freppledb import __version__
 
 
@@ -148,7 +149,7 @@ class Command(BaseCommand):
         deliver_lt = int(options["deliver_lt"])
         procure_lt = int(options["procure_lt"])
         database = options["database"]
-        if database not in settings.DATABASES:
+        if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
         if options["user"]:
             try:

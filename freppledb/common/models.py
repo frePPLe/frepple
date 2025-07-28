@@ -55,7 +55,11 @@ from django.utils.text import capfirst
 
 from freppledb import runFunction
 from freppledb.boot import addAttributesFromDatabase
-from freppledb.common.utils import forceWsgiReload, update_variable_in_file
+from freppledb.common.utils import (
+    forceWsgiReload,
+    update_variable_in_file,
+    get_databases,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -416,7 +420,7 @@ class Scenario(models.Model):
         try:
             # Bring the scenario table in sync with settings.databases
             with transaction.atomic(savepoint=False):
-                dbs = [i for i, j in settings.DATABASES.items() if j["NAME"]]
+                dbs = [i for i, j in get_databases().items() if j["NAME"]]
                 scs = []
                 for sc in Scenario.objects.using(DEFAULT_DB_ALIAS):
                     if sc.name not in dbs:
@@ -678,7 +682,7 @@ class User(AbstractUser):
             for i in Scenario.objects.using(DEFAULT_DB_ALIAS)
             .filter(status="In use")
             .values("name")
-            if i["name"] in settings.DATABASES
+            if i["name"] in get_databases()
         ]
 
         # The id of a new user MUST be identical in all databases.
@@ -745,7 +749,7 @@ class User(AbstractUser):
             .filter(Q(status="In use") & ~Q(name=cur_db))
             .only("name")
         ):
-            if db.name in settings.DATABASES:
+            if db.name in get_databases():
                 self._state.db = db.name
                 self.id = cur_id
                 super().delete(*args, using=db.name, **kwargs)
@@ -1195,7 +1199,7 @@ class SystemMessage(models.Model):
                 for i in Scenario.objects.using(DEFAULT_DB_ALIAS)
                 .filter(status="In use")
                 .values("name")
-                if i["name"] in settings.DATABASES
+                if i["name"] in get_databases()
             ]
         for db in scenarios:
             c = Comment(

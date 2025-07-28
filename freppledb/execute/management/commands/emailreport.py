@@ -42,6 +42,7 @@ from freppledb.execute.models import Task
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
 from freppledb.common.report import GridReport, sizeof_fmt
+from freppledb.common.utils import get_databases
 from freppledb import __version__
 
 
@@ -90,7 +91,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         now = datetime.now()
         database = options["database"]
-        if database not in settings.DATABASES:
+        if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
 
         # Pick up options
@@ -157,7 +158,7 @@ class Command(BaseCommand):
                 if len(r.strip()) == 0:
                     continue
                 path = os.path.join(
-                    settings.DATABASES[database]["FILEUPLOADFOLDER"],
+                    get_databases()[database]["FILEUPLOADFOLDER"],
                     "export",
                     r.strip(),
                 )
@@ -269,7 +270,7 @@ class Command(BaseCommand):
     @staticmethod
     def getHTML(request):
         if (
-            "FILEUPLOADFOLDER" not in settings.DATABASES[request.database]
+            "FILEUPLOADFOLDER" not in get_databases()[request.database]
             or not settings.EMAIL_HOST
             or not request.user.is_superuser
         ):
@@ -278,9 +279,9 @@ class Command(BaseCommand):
         # List available data files
         filesexported = []
         all_reports = []
-        if "FILEUPLOADFOLDER" in settings.DATABASES[request.database]:
+        if "FILEUPLOADFOLDER" in get_databases()[request.database]:
             exportfolder = os.path.join(
-                settings.DATABASES[request.database]["FILEUPLOADFOLDER"], "export"
+                get_databases()[request.database]["FILEUPLOADFOLDER"], "export"
             )
             if os.path.isdir(exportfolder):
                 tzoffset = GridReport.getTimezoneOffset(request)

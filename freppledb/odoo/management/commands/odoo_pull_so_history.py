@@ -38,6 +38,7 @@ from django.utils.translation import gettext_lazy as _
 from freppledb import __version__
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Parameter
+from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 from freppledb.input.models import (
     Item,
@@ -129,7 +130,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         self.verbosity = int(options["verbosity"])
         self.database = options["database"]
-        if self.database not in settings.DATABASES.keys():
+        if self.database not in get_databases().keys():
             raise CommandError("No database settings known for '%s'" % self.database)
 
         if options["user"]:

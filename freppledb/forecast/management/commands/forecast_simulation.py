@@ -25,13 +25,13 @@ from datetime import datetime
 from dateutil.parser import parse
 import os
 
-from django.conf import settings
 from django.core import management
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS
 
 from freppledb import VERSION
 from freppledb.common.models import User, Parameter, BucketDetail
+from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 
 
@@ -80,7 +80,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         # Pick up the options
         database = options["database"]
-        if database not in settings.DATABASES:
+        if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
         if options["user"]:
             try:

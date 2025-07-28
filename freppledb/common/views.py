@@ -102,6 +102,7 @@ from .utils import getStorageUsage, forceWsgiReload
 
 from freppledb.admin import data_site
 from freppledb.common.models import Scenario
+from freppledb.common.utils import get_databases
 from freppledb import edition, __version__, runCommand
 
 import logging
@@ -402,7 +403,7 @@ class PreferencesForm(forms.Form):
     default_scenario = forms.ChoiceField(
         label=_("default scenario"),
         required=False,
-        choices=[(i, i) for i in settings.DATABASES.keys()] + [(None, None)],
+        choices=[(i, i) for i in get_databases().keys()] + [(None, None)],
     )
     cur_password = forms.CharField(
         label=_("Change password"),
@@ -650,7 +651,7 @@ def login(request, extra_context=None):
         and response.url in ("/", "/data/")
     ):
         sc = getattr(request.user, "default_scenario", None)
-        if sc not in settings.DATABASES or (
+        if sc not in get_databases() or (
             request.user.databases and sc not in request.user.databases
         ):
             sc = None

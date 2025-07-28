@@ -98,6 +98,7 @@ from django.db import DEFAULT_DB_ALIAS, connections
 from django.utils.encoding import force_str
 
 from freppledb.execute.models import Task
+from freppledb.common.utils import get_databases
 
 logger = logging.getLogger(__name__)
 
@@ -576,9 +577,7 @@ if __name__ == "__main__":
 
     # Use the test database if we are running the test suite
     if "FREPPLE_TEST" in os.environ:
-        settings.DATABASES[database]["NAME"] = settings.DATABASES[database]["TEST"][
-            "NAME"
-        ]
+        get_databases()[database]["NAME"] = get_databases()[database]["TEST"]["NAME"]
 
     # Make sure the debug flag is not set!
     # When it is set, the Django database wrapper collects a list of all sql

@@ -38,8 +38,7 @@ from freppledb.execute.models import Task, ScheduledTask
 from freppledb.execute.views import FileManager
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Scenario, Parameter
-from freppledb.common.report import create_connection
-from freppledb.common.utils import getStorageUsage
+from freppledb.common.utils import getStorageUsage, get_databases
 from freppledb.input.models import Item
 from freppledb import __version__
 
@@ -236,7 +235,7 @@ class Command(BaseCommand):
                 FROM pg_catalog.pg_tables
                 WHERE schemaname='public' and tableowner != %s;
                 """,
-                    (settings.DATABASES[source]["USER"],),
+                    (get_databases()[source]["USER"],),
                 )
 
                 for t in cursor:
@@ -265,18 +264,24 @@ class Command(BaseCommand):
                 if destination != DEFAULT_DB_ALIAS:
                     try:
                         cursor.execute(
-                            "drop owned by %s" % settings.DATABASES[destination]["USER"]
+                            "drop owned by %s" % get_databases()[destination]["USER"]
                         )
                     except Exception:
                         quick_drop_failed = True
-                    sql_role = settings.DATABASES[destination].get("SQL_ROLE", None)
+                    sql_role = get_databases()[destination].get("SQL_ROLE", None)
                     if sql_role:
-                        with create_connection(destination).cursor() as cursor2:
+                        with connections[
+                            (
+                                destination
+                                if f"{destination}_report" not in get_databases(True)
+                                else f"{destination}_report"
+                            )
+                        ].cursor() as cursor2:
                             try:
-                                cursor2.execute("set role %s", (sql_role,))
                                 cursor2.execute("drop owned by %s" % sql_role)
                             except Exception:
                                 quick_drop_failed = True
+
                 if destination == DEFAULT_DB_ALIAS or quick_drop_failed:
                     # drop tables
                     cursor.execute(
@@ -385,19 +390,19 @@ class Command(BaseCommand):
 
             # Copying the data
             env = os.environ.copy()
-            if settings.DATABASES[source]["PASSWORD"]:
-                env["PGPASSWORD"] = settings.DATABASES[source]["PASSWORD"]
+            if get_databases()[source]["PASSWORD"]:
+                env["PGPASSWORD"] = get_databases()[source]["PASSWORD"]
             if not options["dumpfile"]:
                 cmd = "pg_dump -Fc %s%s%s%s%s%s | pg_restore -n public -Fc %s%s%s -d %s"
                 commandline = cmd % (
-                    settings.DATABASES[source]["USER"]
-                    and ("-U %s " % settings.DATABASES[source]["USER"])
+                    get_databases()[source]["USER"]
+                    and ("-U %s " % get_databases()[source]["USER"])
                     or "",
-                    settings.DATABASES[source]["HOST"]
-                    and ("-h %s " % settings.DATABASES[source]["HOST"])
+                    get_databases()[source]["HOST"]
+                    and ("-h %s " % get_databases()[source]["HOST"])
                     or "",
-                    settings.DATABASES[source]["PORT"]
-                    and ("-p %s " % settings.DATABASES[source]["PORT"])
+                    get_databases()[source]["PORT"]
+                    and ("-p %s " % get_databases()[source]["PORT"])
                     or "",
                     (
                         (
@@ -418,36 +423,36 @@ class Command(BaseCommand):
                         else ""
                     ),
                     test
-                    and settings.DATABASES[source]["TEST"]["NAME"]
-                    or settings.DATABASES[source]["NAME"],
-                    settings.DATABASES[destination]["USER"]
-                    and ("-U %s " % settings.DATABASES[destination]["USER"])
+                    and get_databases()[source]["TEST"]["NAME"]
+                    or get_databases()[source]["NAME"],
+                    get_databases()[destination]["USER"]
+                    and ("-U %s " % get_databases()[destination]["USER"])
                     or "",
-                    settings.DATABASES[destination]["HOST"]
-                    and ("-h %s " % settings.DATABASES[destination]["HOST"])
+                    get_databases()[destination]["HOST"]
+                    and ("-h %s " % get_databases()[destination]["HOST"])
                     or "",
-                    settings.DATABASES[destination]["PORT"]
-                    and ("-p %s " % settings.DATABASES[destination]["PORT"])
+                    get_databases()[destination]["PORT"]
+                    and ("-p %s " % get_databases()[destination]["PORT"])
                     or "",
                     test
-                    and settings.DATABASES[destination]["TEST"]["NAME"]
-                    or settings.DATABASES[destination]["NAME"],
+                    and get_databases()[destination]["TEST"]["NAME"]
+                    or get_databases()[destination]["NAME"],
                 )
             else:
                 cmd = "pg_restore -n public -Fc --no-password %s%s%s -d %s %s"
                 commandline = cmd % (
-                    settings.DATABASES[destination]["USER"]
-                    and ("-U %s " % settings.DATABASES[destination]["USER"])
+                    get_databases()[destination]["USER"]
+                    and ("-U %s " % get_databases()[destination]["USER"])
                     or "",
-                    settings.DATABASES[destination]["HOST"]
-                    and ("-h %s " % settings.DATABASES[destination]["HOST"])
+                    get_databases()[destination]["HOST"]
+                    and ("-h %s " % get_databases()[destination]["HOST"])
                     or "",
-                    settings.DATABASES[destination]["PORT"]
-                    and ("-p %s " % settings.DATABASES[destination]["PORT"])
+                    get_databases()[destination]["PORT"]
+                    and ("-p %s " % get_databases()[destination]["PORT"])
                     or "",
                     test
-                    and settings.DATABASES[destination]["TEST"]["NAME"]
-                    or settings.DATABASES[destination]["NAME"],
+                    and get_databases()[destination]["TEST"]["NAME"]
+                    or get_databases()[destination]["NAME"],
                     os.path.join(settings.FREPPLE_LOGDIR, options["dumpfile"]),
                 )
 
@@ -577,7 +582,7 @@ class Command(BaseCommand):
                 )
 
             # Shut down the web service in the destination
-            if "freppledb.webservice" in settings.DATABASES:
+            if "freppledb.webservice" in get_databases():
                 call_command("stopwebservice", database=destination, force=True)
 
             # Update the scenario table
@@ -629,11 +634,11 @@ class Command(BaseCommand):
                     )
 
             # Delete data files present in the scenario folders
-            if destination != DEFAULT_DB_ALIAS and settings.DATABASES[destination][
+            if destination != DEFAULT_DB_ALIAS and get_databases()[destination][
                 "FILEUPLOADFOLDER"
             ] not in (
-                settings.DATABASES[DEFAULT_DB_ALIAS]["FILEUPLOADFOLDER"],
-                settings.DATABASES[source]["FILEUPLOADFOLDER"],
+                get_databases()[DEFAULT_DB_ALIAS]["FILEUPLOADFOLDER"],
+                get_databases()[source]["FILEUPLOADFOLDER"],
             ):
                 FileManager.cleanFolder(0, destination)
                 FileManager.cleanFolder(1, destination)

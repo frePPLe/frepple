@@ -25,13 +25,13 @@ from datetime import datetime
 
 from django.core import management
 from django.core.management.base import BaseCommand, CommandError
-from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
 from django.template import Template, RequestContext
 from django.template.loader import render_to_string
 
 from freppledb import __version__
+from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 
 
@@ -73,7 +73,7 @@ class Command(BaseCommand):
                 "Invalid environment: %s. It must be odoo_read_X with X being a number between 1 to 5"
                 % environment
             )
-        if database not in settings.DATABASES.keys():
+        if database not in get_databases().keys():
             raise CommandError("No database settings known for '%s'" % self.database)
         kwargs = {
             "env": "%s,nowebservice" % environment,

@@ -42,6 +42,7 @@ class ReportManagerTest(TransactionTestCase):
         if not User.objects.filter(username="admin").count():
             User.objects.create_superuser("admin", "your@company.com", "admin")
         self.client.login(username="admin", password="admin")
+        super()._remove_databases_failures()
 
     def test_create_and_edit(self):
         # Create a report
@@ -139,3 +140,7 @@ class ReportManagerTest(TransactionTestCase):
         checkResponse(self, response)
         self.assertEqual(SQLReport.objects.all().count(), 0)
         self.assertEqual(SQLColumn.objects.all().count(), 0)
+
+    def tearDown(self):
+        super()._add_databases_failures()
+        super().tearDown()

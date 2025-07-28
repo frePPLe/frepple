@@ -62,7 +62,7 @@ def getStorageUsage():
 
     # Add the size of all scenarios in use
     dblist = [
-        settings.DATABASES[sc.name]["NAME"]
+        get_databases()[sc.name]["NAME"]
         for sc in Scenario.objects.using(DEFAULT_DB_ALIAS)
         .filter(status="In use")
         .only("name")
@@ -135,3 +135,14 @@ def update_variable_in_file(file_path, var_name, new_value_code):
     # Write the updated lines back to the file
     with open(file_path, "w", encoding="utf-8") as f:
         f.writelines(new_lines)
+
+
+def get_databases(includeReporting=False):
+    if not includeReporting:
+        return {
+            k: v
+            for k, v in settings.DATABASES.items()
+            if not v.get("IS_REPORTING_DATABASE", False)
+        }
+    else:
+        return settings.DATABASES

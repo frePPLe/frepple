@@ -21,12 +21,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django.conf import settings
-from django.db import models, DEFAULT_DB_ALIAS
+from django.db import models, DEFAULT_DB_ALIAS, connections
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import AuditModel, User, MultiDBManager
-from freppledb.common.report import create_connection
+from freppledb.common.utils import get_databases
 
 
 class SQLReport(AuditModel):
@@ -57,41 +56,36 @@ class SQLReport(AuditModel):
             db = getattr(_thread_locals, "database", DEFAULT_DB_ALIAS)
         SQLColumn.objects.filter(report=self).using(db).delete()
         if self.sql:
-            conn = None
-            try:
-                conn = create_connection(db)
-                with conn.cursor() as cursor:
-                    sqlrole = settings.DATABASES[db].get("SQL_ROLE", "report_role")
-                    if sqlrole:
-                        cursor.execute("set role %s" % (sqlrole,))
-                    # The query is limited to 1 row. We just need the column names at this point.
-                    cursor.execute("select * from (%s) as Q limit 1" % self.sql)
-                    if self.id:
-                        cols = []
-                        seq = 1
-                        for f in cursor.description:
-                            if f[0] in cols:
-                                raise Exception("Duplicate column name '%s'" % f[0])
-                            cols.append(f[0])
-                            if f[1] == 1700:
-                                fmt = "number"
-                            elif f[1] == 1184:
-                                fmt = "datetime"
-                            elif f[1] in (23, 20):
-                                fmt = "integer"
-                            elif f[1] == 1186:
-                                fmt = "duration"
-                            elif f[1] == 1043:
-                                fmt = "text"
-                            else:
-                                fmt = "character"
-                            SQLColumn(
-                                report=self, sequence=seq, name=f[0], format=fmt
-                            ).save(using=db)
-                            seq += 1
-            finally:
-                if conn:
-                    conn.close()
+
+            with connections[
+                (db if f"{db}_report" not in get_databases(True) else f"{db}_report")
+            ].cursor() as cursor:
+
+                # The query is limited to 1 row. We just need the column names at this point.
+                cursor.execute("select * from (%s) as Q limit 1" % self.sql)
+                if self.id:
+                    cols = []
+                    seq = 1
+                    for f in cursor.description:
+                        if f[0] in cols:
+                            raise Exception("Duplicate column name '%s'" % f[0])
+                        cols.append(f[0])
+                        if f[1] == 1700:
+                            fmt = "number"
+                        elif f[1] == 1184:
+                            fmt = "datetime"
+                        elif f[1] in (23, 20):
+                            fmt = "integer"
+                        elif f[1] == 1186:
+                            fmt = "duration"
+                        elif f[1] == 1043:
+                            fmt = "text"
+                        else:
+                            fmt = "character"
+                        SQLColumn(
+                            report=self, sequence=seq, name=f[0], format=fmt
+                        ).save(using=db)
+                        seq += 1
 
     def save(self, *args, **kwargs):
         if self.sql and "pg_" in self.sql:

@@ -35,6 +35,7 @@ from django.db.models import Sum, Max, Count, F
 from freppledb import __version__
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Parameter
+from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 from freppledb.input.models import (
     PurchaseOrder,
@@ -140,7 +141,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         # Pick up the options
         database = options["database"]
-        if database not in settings.DATABASES:
+        if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
         if options["user"]:
             try:

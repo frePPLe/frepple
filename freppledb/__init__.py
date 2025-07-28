@@ -57,6 +57,8 @@ def runCommand(taskname, *args, **kwargs):
     from django.conf import settings
     from django.db import DEFAULT_DB_ALIAS, connections
     from freppledb.common.middleware import _thread_locals
+    from freppledb.common.utils import get_databases
+
     from threading import local
 
     database = kwargs.get("database", DEFAULT_DB_ALIAS)
@@ -64,8 +66,8 @@ def runCommand(taskname, *args, **kwargs):
     connections._connections = local()
     if "FREPPLE_TEST" in os.environ:
         settings.EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
-        for db in settings.DATABASES:
-            settings.DATABASES[db]["NAME"] = settings.DATABASES[db]["TEST"]["NAME"]
+        for db in get_databases():
+            get_databases()[db]["NAME"] = get_databases()[db]["TEST"]["NAME"]
 
     # Run the command
     try:
@@ -110,6 +112,8 @@ def runFunction(func, *args, **kwargs):
     from django.conf import settings
     from django.db import DEFAULT_DB_ALIAS, connections
     from freppledb.common.middleware import _thread_locals
+    from freppledb.common.utils import get_databases
+
     from threading import local
 
     database = kwargs.get("database", DEFAULT_DB_ALIAS)
@@ -117,8 +121,8 @@ def runFunction(func, *args, **kwargs):
     connections._connections = local()
     if "FREPPLE_TEST" in os.environ:
         settings.EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
-        for db in settings.DATABASES:
-            settings.DATABASES[db]["NAME"] = settings.DATABASES[db]["TEST"]["NAME"]
+        for db in get_databases():
+            get_databases()[db]["NAME"] = get_databases()[db]["TEST"]["NAME"]
 
     # Run the function
     mod_name, func_name = func.rsplit(".", 1)

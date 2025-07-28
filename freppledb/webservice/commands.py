@@ -35,6 +35,7 @@ from django.core import management
 import freppledb
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.common.models import Parameter
+from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 from freppledb.webservice.utils import useWebService, createSolvers
 
@@ -84,16 +85,16 @@ class setDatabaseConnection(PlanTask):
 
         # Database connection string
         res = ["client_encoding=utf-8", "connect_timeout=10"]
-        if settings.DATABASES[database]["NAME"]:
-            res.append("dbname=%s" % settings.DATABASES[database]["NAME"])
-        if settings.DATABASES[database]["USER"]:
-            res.append("user=%s" % settings.DATABASES[database]["USER"])
-        if settings.DATABASES[database]["PASSWORD"]:
-            res.append("password=%s" % settings.DATABASES[database]["PASSWORD"])
-        if settings.DATABASES[database]["HOST"]:
-            res.append("host=%s" % settings.DATABASES[database]["HOST"])
-        if settings.DATABASES[database]["PORT"]:
-            res.append("port=%s" % settings.DATABASES[database]["PORT"])
+        if get_databases()[database]["NAME"]:
+            res.append("dbname=%s" % get_databases()[database]["NAME"])
+        if get_databases()[database]["USER"]:
+            res.append("user=%s" % get_databases()[database]["USER"])
+        if get_databases()[database]["PASSWORD"]:
+            res.append("password=%s" % get_databases()[database]["PASSWORD"])
+        if get_databases()[database]["HOST"]:
+            res.append("host=%s" % get_databases()[database]["HOST"])
+        if get_databases()[database]["PORT"]:
+            res.append("port=%s" % get_databases()[database]["PORT"])
         frepple.settings.dbconnection = " ".join(res)
         frepple.settings.database = database
         frepple.settings.dbchannel = "frepple"
@@ -120,9 +121,9 @@ class StopWebService(PlanTask):
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         if "FREPPLE_TEST" in os.environ:
-            server = settings.DATABASES[database]["TEST"].get("FREPPLE_PORT", None)
+            server = get_databases()[database]["TEST"].get("FREPPLE_PORT", None)
         else:
-            server = settings.DATABASES[database].get("FREPPLE_PORT", None)
+            server = get_databases()[database].get("FREPPLE_PORT", None)
         if not server:
             return
 
@@ -170,9 +171,9 @@ class RunWebService(PlanTask):
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         if "FREPPLE_TEST" in os.environ:
-            server = settings.DATABASES[database]["TEST"].get("FREPPLE_PORT", None)
+            server = get_databases()[database]["TEST"].get("FREPPLE_PORT", None)
         else:
-            server = settings.DATABASES[database].get("FREPPLE_PORT", None)
+            server = get_databases()[database].get("FREPPLE_PORT", None)
         if not server:
             logger.warning(
                 "\nWeb service will not be activated: missing FREPPLE_PORT configuration for database %s"
@@ -195,9 +196,9 @@ class RunWebService(PlanTask):
         # Close all database connections.
         connections.close_all()
         if "FREPPLE_TEST" in os.environ:
-            server = settings.DATABASES[database]["TEST"].get("FREPPLE_PORT", None)
+            server = get_databases()[database]["TEST"].get("FREPPLE_PORT", None)
         else:
-            server = settings.DATABASES[database].get("FREPPLE_PORT", None)
+            server = get_databases()[database].get("FREPPLE_PORT", None)
 
         # Running the server
         os.environ["FREPPLE_DATABASE"] = database

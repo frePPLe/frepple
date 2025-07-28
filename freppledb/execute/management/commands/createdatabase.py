@@ -24,6 +24,8 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
+from freppledb.common.utils import get_databases
+
 
 class Command(BaseCommand):
     help = """
@@ -71,19 +73,19 @@ class Command(BaseCommand):
         # Get the list of databases to create
         databaselist = options["database"]
         if databaselist:
-            if databaselist in settings.DATABASES:
+            if databaselist in get_databases():
                 databaselist = [databaselist]
             else:
                 raise CommandError("No database settings known for '%s'" % databaselist)
         else:
-            databaselist = settings.DATABASES.keys()
+            databaselist = get_databases().keys()
 
         for database in databaselist:
             # Connect to the database
             import psycopg2
 
-            user = options["user"] or settings.DATABASES[database].get("USER", "")
-            password = options["password"] or settings.DATABASES[database].get(
+            user = options["user"] or get_databases()[database].get("USER", "")
+            password = options["password"] or get_databases()[database].get(
                 "PASSWORD", ""
             )
             conn_params = {"database": "template1"}
@@ -91,13 +93,13 @@ class Command(BaseCommand):
                 conn_params["user"] = user
             if password:
                 conn_params["password"] = password
-            database_host = settings.DATABASES[database].get("HOST", None)
+            database_host = get_databases()[database].get("HOST", None)
             if database_host:
                 conn_params["host"] = database_host
-            database_port = settings.DATABASES[database].get("PORT", None)
+            database_port = get_databases()[database].get("PORT", None)
             if database_port:
                 conn_params["port"] = database_port
-            database_name = settings.DATABASES[database].get("NAME", None)
+            database_name = get_databases()[database].get("NAME", None)
             if not database_name:
                 raise CommandError("No database name specified")
 

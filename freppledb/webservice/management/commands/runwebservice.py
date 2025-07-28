@@ -26,7 +26,6 @@ import shlex
 import os
 import psutil
 
-from django.conf import settings
 from django.core import management
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS
@@ -35,6 +34,7 @@ from django.template.loader import render_to_string
 
 from freppledb import VERSION
 from freppledb.common.models import Parameter
+from freppledb.common.utils import get_databases
 from freppledb.input.models import Item
 from freppledb.execute.models import Task
 from freppledb.execute.management.commands.runplan import parseConstraints
@@ -83,7 +83,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         # Validate the database option
         database = options["database"]
-        if database not in settings.DATABASES:
+        if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
 
         # Update task when specified

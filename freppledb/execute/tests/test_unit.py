@@ -27,7 +27,6 @@ import os
 from time import sleep
 import unittest
 
-from django.conf import settings
 from django.core import management
 from django.db import DEFAULT_DB_ALIAS, transaction
 from django.db.models import Sum, Count, Q
@@ -39,6 +38,7 @@ import freppledb.input as input
 import freppledb.common as common
 from freppledb.common.auth import getWebserviceAuthorization
 from freppledb.common.models import Parameter, User, Notification
+from freppledb.common.utils import get_databases
 
 
 class execute_with_commands(TransactionTestCase):
@@ -53,8 +53,10 @@ class execute_with_commands(TransactionTestCase):
         if not User.objects.filter(username="admin").count():
             User.objects.create_superuser("admin", "your@company.com", "admin")
         super().setUp()
+        super()._remove_databases_failures()
 
     def tearDown(self):
+        super()._add_databases_failures()
         Notification.wait()
         del os.environ["FREPPLE_TEST"]
         super().tearDown()
@@ -90,7 +92,7 @@ class execute_with_commands(TransactionTestCase):
 
         # Export to CSV files
         outfolder = os.path.join(
-            settings.DATABASES[DEFAULT_DB_ALIAS]["FILEUPLOADFOLDER"], "export"
+            get_databases()[DEFAULT_DB_ALIAS]["FILEUPLOADFOLDER"], "export"
         )
         if not os.path.isdir(outfolder):
             os.makedirs(outfolder)
@@ -114,7 +116,7 @@ class execute_with_commands(TransactionTestCase):
 class execute_multidb(TransactionTestCase):
     fixtures = ["demo"]
 
-    databases = settings.DATABASES.keys()
+    databases = get_databases().keys()
 
     def setUp(self):
         os.environ["FREPPLE_TEST"] = "YES"
@@ -122,8 +124,10 @@ class execute_multidb(TransactionTestCase):
         param.value = "false"
         param.save()
         super().setUp()
+        super()._remove_databases_failures()
 
     def tearDown(self):
+        super()._add_databases_failures()
         Notification.wait()
         del os.environ["FREPPLE_TEST"]
         super().tearDown()
@@ -132,7 +136,7 @@ class execute_multidb(TransactionTestCase):
         # Find out which databases to use
         db1 = DEFAULT_DB_ALIAS
         db2 = None
-        for i in settings.DATABASES:
+        for i in get_databases():
             if i != DEFAULT_DB_ALIAS:
                 db2 = i
                 break
@@ -279,7 +283,7 @@ class execute_simulation(TransactionTestCase):
 class remote_commands(TransactionTestCase):
     fixtures = ["demo"]
 
-    databases = settings.DATABASES.keys()
+    databases = get_databases().keys()
 
     def setUp(self):
         # Make sure the test database is used
@@ -339,7 +343,7 @@ class remote_commands(TransactionTestCase):
 
         # Copy the plan
         db2 = None
-        for i in settings.DATABASES:
+        for i in get_databases():
             if i != DEFAULT_DB_ALIAS:
                 db2 = i
                 break

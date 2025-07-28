@@ -83,6 +83,7 @@ from freppledb.common.report import (
     matchesModelName,
     sizeof_fmt,
 )
+from freppledb.common.utils import get_databases
 
 from freppledb.common.utils import forceWsgiReload
 from freppledb.common.views import sendStaticFile
@@ -899,14 +900,14 @@ class FileManager:
         if foldercode == "0":
             # File upload folder
             return (
-                settings.DATABASES[request.database]["FILEUPLOADFOLDER"],
+                get_databases()[request.database]["FILEUPLOADFOLDER"],
                 FileManager.all_extensions,
             )
         elif foldercode == "1":
             # Export folder
             return (
                 os.path.join(
-                    settings.DATABASES[request.database]["FILEUPLOADFOLDER"], "export"
+                    get_databases()[request.database]["FILEUPLOADFOLDER"], "export"
                 ),
                 None,  # No upload here
             )
@@ -916,11 +917,11 @@ class FileManager:
     @staticmethod
     def cleanFolder(foldercode, database=DEFAULT_DB_ALIAS):
         if foldercode == 0:
-            folder = settings.DATABASES[database]["FILEUPLOADFOLDER"]
+            folder = get_databases()[database]["FILEUPLOADFOLDER"]
             extensions = FileManager.all_extensions
         elif foldercode == 1:
             folder = os.path.join(
-                settings.DATABASES[database]["FILEUPLOADFOLDER"], "export"
+                get_databases()[database]["FILEUPLOADFOLDER"], "export"
             )
             extensions = None
         else:
@@ -945,7 +946,7 @@ class FileManager:
             # Return a list of available data files
             folder, extensions = FileManager.getFolderInfo(request, foldercode)
             filelist = {}
-            if os.path.isdir(settings.DATABASES[request.database]["FILEUPLOADFOLDER"]):
+            if os.path.isdir(get_databases()[request.database]["FILEUPLOADFOLDER"]):
                 for filename in os.listdir(folder):
                     clean_filename = re.split(r"/|:|\\", filename)[-1]
                     if (
@@ -969,13 +970,9 @@ class FileManager:
             folder, extensions = FileManager.getFolderInfo(request, foldercode)
 
             # Try to create the upload if doesn't exist yet
-            if not os.path.isdir(
-                settings.DATABASES[request.database]["FILEUPLOADFOLDER"]
-            ):
+            if not os.path.isdir(get_databases()[request.database]["FILEUPLOADFOLDER"]):
                 try:
-                    os.makedirs(
-                        settings.DATABASES[request.database]["FILEUPLOADFOLDER"]
-                    )
+                    os.makedirs(get_databases()[request.database]["FILEUPLOADFOLDER"])
                 except Exception:
                     errorcount += 1
                     response.write("Upload folder doesn't exist")
@@ -1668,7 +1665,7 @@ def exports(request):
                 try:
                     os.remove(
                         os.path.join(
-                            settings.DATABASES[request.database]["FILEUPLOADFOLDER"],
+                            get_databases()[request.database]["FILEUPLOADFOLDER"],
                             "export",
                             data["delete"],
                         )

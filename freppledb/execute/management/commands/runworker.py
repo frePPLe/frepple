@@ -41,6 +41,7 @@ from django.db import DEFAULT_DB_ALIAS, connections
 from freppledb import __version__, runCommand
 from freppledb.common.models import Parameter
 from freppledb.common.middleware import _thread_locals
+from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 
 
@@ -188,7 +189,7 @@ def runTask(task, database):
                 "Worker %s for database '%s' finished task %d at %s: success"
                 % (
                     os.getpid(),
-                    settings.DATABASES[database]["NAME"],
+                    get_databases()[database]["NAME"],
                     task.id,
                     datetime.now(),
                 )
@@ -221,22 +222,22 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # Pick up the options
         database = options["database"]
-        if database not in settings.DATABASES:
+        if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
         continuous = options["continuous"]
 
         # Use the test database if we are running the test suite
         if "FREPPLE_TEST" in os.environ:
-            for db in settings.DATABASES:
+            for db in get_databases():
                 connections[db].close()
-                settings.DATABASES[db]["NAME"] = settings.DATABASES[db]["TEST"]["NAME"]
+                get_databases()[db]["NAME"] = get_databases()[db]["TEST"]["NAME"]
 
         # Check if a worker already exists
         if checkActive(database):
             if "FREPPLE_TEST" not in os.environ:
                 logger.debug(
                     "Worker for database '%s' already active"
-                    % settings.DATABASES[database]["NAME"]
+                    % get_databases()[database]["NAME"]
                 )
             return
 
@@ -247,7 +248,7 @@ class Command(BaseCommand):
         if "FREPPLE_TEST" not in os.environ:
             logger.debug(
                 "Worker %s for database '%s' starting to process jobs"
-                % (os.getpid(), settings.DATABASES[database]["NAME"])
+                % (os.getpid(), get_databases()[database]["NAME"])
             )
         idle_loop_done = False
         old_thread_locals = getattr(_thread_locals, "database", None)
@@ -282,7 +283,7 @@ class Command(BaseCommand):
                         "Worker %s for database '%s' starting task %d at %s"
                         % (
                             os.getpid(),
-                            settings.DATABASES[database]["NAME"],
+                            get_databases()[database]["NAME"],
                             task.id,
                             datetime.now(),
                         )
@@ -304,7 +305,7 @@ class Command(BaseCommand):
                             "Worker %s for database '%s' finished task %d at %s: failed"
                             % (
                                 os.getpid(),
-                                settings.DATABASES[database]["NAME"],
+                                get_databases()[database]["NAME"],
                                 task.id,
                                 datetime.now(),
                             )
@@ -356,5 +357,5 @@ class Command(BaseCommand):
         if "FREPPLE_TEST" not in os.environ:
             logger.debug(
                 "Worker %s for database '%s' finished all jobs in the queue and exits"
-                % (os.getpid(), settings.DATABASES[database]["NAME"])
+                % (os.getpid(), get_databases()[database]["NAME"])
             )

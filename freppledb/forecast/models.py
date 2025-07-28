@@ -33,7 +33,6 @@ import requests
 from requests import ConnectionError
 from threading import Thread
 
-from django.conf import settings
 from django.core import management
 from django.core.exceptions import ValidationError
 from django.db import models, DEFAULT_DB_ALIAS, connections
@@ -44,7 +43,7 @@ from django.utils.translation import pgettext, gettext_lazy as _
 from freppledb.common.auth import getWebserviceAuthorization
 from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.common.models import AuditModel, BucketDetail, Parameter, Scenario
-from freppledb.common.utils import forceWsgiReload
+from freppledb.common.utils import forceWsgiReload, get_databases
 from freppledb.input.models import Customer, Item, Location, Operation
 from freppledb.webservice.utils import useWebService
 
@@ -176,11 +175,11 @@ class Forecast(AuditModel):
     @staticmethod
     def flush(session, mode, database=DEFAULT_DB_ALIAS, token=None):
         if "FREPPLE_TEST" in os.environ:
-            server = settings.DATABASES[database]["TEST"]["FREPPLE_PORT"].replace(
+            server = get_databases()[database]["TEST"]["FREPPLE_PORT"].replace(
                 "0.0.0.0:", "localhost:"
             )
         else:
-            server = settings.DATABASES[database]["FREPPLE_PORT"].replace(
+            server = get_databases()[database]["FREPPLE_PORT"].replace(
                 "0.0.0.0:", "localhost:"
             )
         response = session.post(
@@ -221,11 +220,11 @@ class Forecast(AuditModel):
         if forecast:
             data["forecast"] = forecast
         if "FREPPLE_TEST" in os.environ:
-            server = settings.DATABASES[database]["TEST"]["FREPPLE_PORT"].replace(
+            server = get_databases()[database]["TEST"]["FREPPLE_PORT"].replace(
                 "0.0.0.0:", "localhost:"
             )
         else:
-            server = settings.DATABASES[database]["FREPPLE_PORT"].replace(
+            server = get_databases()[database]["FREPPLE_PORT"].replace(
                 "0.0.0.0:", "localhost:"
             )
         if startdate:
@@ -672,11 +671,9 @@ class ForecastPlan(models.Model):
                     exp=3600,
                 )
                 if "FREPPLE_TEST" in os.environ:
-                    server = settings.DATABASES[database]["TEST"].get(
-                        "FREPPLE_PORT", None
-                    )
+                    server = get_databases()[database]["TEST"].get("FREPPLE_PORT", None)
                 else:
-                    server = settings.DATABASES[database].get("FREPPLE_PORT", None)
+                    server = get_databases()[database].get("FREPPLE_PORT", None)
                 if server:
                     server = server.replace("0.0.0.0:", "localhost:")
 

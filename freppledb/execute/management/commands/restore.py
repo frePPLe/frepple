@@ -33,6 +33,7 @@ from django.db import DEFAULT_DB_ALIAS
 
 from freppledb.execute.models import Task
 from freppledb.common.models import User
+from freppledb.common.utils import get_databases
 from freppledb import __version__
 
 
@@ -57,7 +58,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         # Pick up the options
         database = options["database"]
-        if database not in settings.DATABASES:
+        if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
 
         dump = options["dump"]
@@ -93,28 +94,28 @@ class Command(BaseCommand):
         if not os.path.isfile(dumpfile):
             raise CommandError("Dump file not found")
         env = os.environ.copy()
-        if settings.DATABASES[database]["PASSWORD"]:
-            env["PGPASSWORD"] = settings.DATABASES[database]["PASSWORD"]
+        if get_databases()[database]["PASSWORD"]:
+            env["PGPASSWORD"] = get_databases()[database]["PASSWORD"]
         commonargs = []
-        if settings.DATABASES[database]["USER"]:
-            commonargs.append(f"--username={settings.DATABASES[database]["USER"]}")
-        if settings.DATABASES[database]["HOST"]:
-            commonargs.append(f"--host={settings.DATABASES[database]["HOST"]}")
-        if settings.DATABASES[database]["PORT"]:
-            commonargs.append(f"--port={settings.DATABASES[database]["PORT"]}")
+        if get_databases()[database]["USER"]:
+            commonargs.append(f"--username={get_databases()[database]["USER"]}")
+        if get_databases()[database]["HOST"]:
+            commonargs.append(f"--host={get_databases()[database]["HOST"]}")
+        if get_databases()[database]["PORT"]:
+            commonargs.append(f"--port={get_databases()[database]["PORT"]}")
 
         # Drop existing database
         subprocess.run(
             ["dropdb", "--if-exists", "--force"]
             + commonargs
-            + [settings.DATABASES[database]["NAME"]],
+            + [get_databases()[database]["NAME"]],
             env=env,
             check=True,
         )
 
         # Recreate a new database
         subprocess.run(
-            ["createdb"] + commonargs + [settings.DATABASES[database]["NAME"]],
+            ["createdb"] + commonargs + [get_databases()[database]["NAME"]],
             env=env,
             check=True,
         )
@@ -127,9 +128,9 @@ class Command(BaseCommand):
                 "--if-exists",
                 "-v",
                 "--no-owner",
-                f"--role={settings.DATABASES[database]["USER"]}",
+                f"--role={get_databases()[database]["USER"]}",
             ]
             + commonargs
-            + [f"--dbname={settings.DATABASES[database]["NAME"]}", dumpfile],
+            + [f"--dbname={get_databases()[database]["NAME"]}", dumpfile],
             env=env,
         )

@@ -32,6 +32,7 @@ from django.db import DEFAULT_DB_ALIAS
 
 from freppledb import __version__
 from freppledb.common.models import Parameter
+from freppledb.common.utils import get_databases
 
 from ...utils import getOdooVersion
 
@@ -98,22 +99,22 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             "--odoo-db-host",
-            default=settings.DATABASES[DEFAULT_DB_ALIAS]["HOST"],
+            default=get_databases()[DEFAULT_DB_ALIAS]["HOST"],
             help="Database host to use for odoo. Defaults to the same as used by frepple.",
         )
         parser.add_argument(
             "--odoo-db-port",
-            default=settings.DATABASES[DEFAULT_DB_ALIAS]["PORT"],
+            default=get_databases()[DEFAULT_DB_ALIAS]["PORT"],
             help="Database port to use for odoo. Defaults to the same as used by frepple.",
         )
         parser.add_argument(
             "--odoo-db-user",
-            default=settings.DATABASES[DEFAULT_DB_ALIAS]["USER"],
+            default=get_databases()[DEFAULT_DB_ALIAS]["USER"],
             help="Database user to use for odoo. Defaults to the same as used by frepple.",
         )
         parser.add_argument(
             "--odoo-db-password",
-            default=settings.DATABASES[DEFAULT_DB_ALIAS]["PASSWORD"],
+            default=get_databases()[DEFAULT_DB_ALIAS]["PASSWORD"],
             help="Database password to use for odoo. Defaults to the same as used by frepple.",
         )
         parser.add_argument(
@@ -221,7 +222,7 @@ class Command(BaseCommand):
                 + [
                     name,
                 ],
-                env=env
+                env=env,
             )
             subprocess.run(
                 [
@@ -231,7 +232,7 @@ class Command(BaseCommand):
                     name,
                 ]
                 + extraargs,
-                env=env
+                env=env,
             )
 
             if options["verbosity"]:
@@ -398,7 +399,7 @@ class Command(BaseCommand):
                         disclose_stack_trace = true
                     """
                     % (
-                        settings.DATABASES[DEFAULT_DB_ALIAS].get(
+                        get_databases()[DEFAULT_DB_ALIAS].get(
                             "SECRET_WEBTOKEN_KEY", None
                         )
                         or settings.SECRET_KEY,

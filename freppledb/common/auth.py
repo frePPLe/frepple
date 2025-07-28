@@ -36,6 +36,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 
 from freppledb.common.models import User, Scenario
+from freppledb.common.utils import get_databases
 
 import logging
 
@@ -139,7 +140,7 @@ def getWebserviceAuthorization(database=DEFAULT_DB_ALIAS, secret=None, **kwargs)
     # Create authorization header for the web service
     payload = {}
     if not secret:
-        secret = settings.DATABASES[database].get(
+        secret = get_databases()[database].get(
             "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
         )
     for key, value in kwargs.items():

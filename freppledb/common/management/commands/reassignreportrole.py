@@ -21,7 +21,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django.conf import settings
 import django.apps
 from django.core.management.base import BaseCommand
 from django.db import DEFAULT_DB_ALIAS, connections
@@ -29,6 +28,7 @@ from django.db.models import Q
 
 from freppledb import __version__
 from freppledb.common.models import Scenario
+from freppledb.common.utils import get_databases
 
 
 class Command(BaseCommand):
@@ -47,7 +47,7 @@ class Command(BaseCommand):
             .filter(Q(status="In use") | Q(name=DEFAULT_DB_ALIAS))
             .only("name")
         ):
-            role = settings.DATABASES[sc.name].get("SQL_ROLE", "report_role")
+            role = get_databases()[sc.name].get("SQL_ROLE", "report_role")
             if role:
                 with connections[sc.name].cursor() as cursor:
                     cursor.execute(
@@ -56,7 +56,7 @@ class Command(BaseCommand):
                     )
                     if not cursor.fetchone()[0]:
                         cursor.execute(
-                            "create role %s with nologin noinherit role current_user"
+                            "create role %s with login noinherit role current_user"
                             % (role,)
                         )
                     for model in django.apps.apps.get_models():

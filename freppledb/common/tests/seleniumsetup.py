@@ -28,6 +28,7 @@ from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from freppledb.common.models import User
+from freppledb.common.utils import get_databases
 
 noSelenium = settings.SELENIUM_TESTS is None
 
@@ -41,9 +42,9 @@ class SeleniumTest(StaticLiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        for db in settings.DATABASES:
+        for db in get_databases():
             # Avoid leaking persistent connections
-            settings.DATABASES[db]["CONN_MAX_AGE"] = 0
+            get_databases()[db]["CONN_MAX_AGE"] = 0
         os.environ["FREPPLE_TEST"] = "YES"
         super().setUpClass()
         if settings.SELENIUM_TESTS == "firefox":

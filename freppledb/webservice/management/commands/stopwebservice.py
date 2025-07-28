@@ -27,12 +27,12 @@ import os
 from http.client import HTTPConnection
 
 from django.core.management.base import BaseCommand, CommandError
-from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
 from freppledb import VERSION
 from freppledb.common.auth import getWebserviceAuthorization
 from freppledb.common.middleware import _thread_locals
+from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 from freppledb.webservice.utils import checkRunning, waitTillNotRunning
 
@@ -70,7 +70,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         # Pick up the options
         database = options["database"]
-        if database not in settings.DATABASES:
+        if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
 
         # Update task if needed
@@ -97,11 +97,9 @@ class Command(BaseCommand):
         try:
             try:
                 if "FREPPLE_TEST" in os.environ:
-                    server = settings.DATABASES[database]["TEST"].get(
-                        "FREPPLE_PORT", None
-                    )
+                    server = get_databases()[database]["TEST"].get("FREPPLE_PORT", None)
                 else:
-                    server = settings.DATABASES[database].get("FREPPLE_PORT", None)
+                    server = get_databases()[database].get("FREPPLE_PORT", None)
                 if not server:
                     return
                 conn = HTTPConnection(

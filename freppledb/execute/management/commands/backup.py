@@ -36,6 +36,7 @@ from django.template.loader import render_to_string
 from freppledb.execute.models import Task
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Attribute
+from freppledb.common.utils import get_databases
 from freppledb import __version__
 
 
@@ -72,7 +73,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         # Pick up the options
         database = options["database"]
-        if database not in settings.DATABASES:
+        if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
         if options["user"]:
             try:
@@ -160,21 +161,21 @@ class Command(BaseCommand):
 
             # Run the backup command
             env = os.environ.copy()
-            if settings.DATABASES[database]["PASSWORD"]:
-                env["PGPASSWORD"] = settings.DATABASES[database]["PASSWORD"]
+            if get_databases()[database]["PASSWORD"]:
+                env["PGPASSWORD"] = get_databases()[database]["PASSWORD"]
             args = [
                 "pg_dump",
                 "-Fc",
                 "-w",
-                "--username=%s" % settings.DATABASES[database]["USER"],
+                "--username=%s" % get_databases()[database]["USER"],
                 "--file=%s"
                 % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, backupfile)),
             ]
-            if settings.DATABASES[database]["HOST"]:
-                args.append("--host=%s" % settings.DATABASES[database]["HOST"])
-            if settings.DATABASES[database]["PORT"]:
-                args.append("--port=%s" % settings.DATABASES[database]["PORT"])
-            args.append(settings.DATABASES[database]["NAME"])
+            if get_databases()[database]["HOST"]:
+                args.append("--host=%s" % get_databases()[database]["HOST"])
+            if get_databases()[database]["PORT"]:
+                args.append("--port=%s" % get_databases()[database]["PORT"])
+            args.append(get_databases()[database]["NAME"])
             with subprocess.Popen(args, env=env) as p:
                 try:
                     task.processid = p.pid

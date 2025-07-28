@@ -35,6 +35,7 @@ from django.utils.translation import gettext_lazy as _
 from freppledb.common.models import User, addAttributesFromDatabase
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.report import getCurrentDate
+from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 
 
@@ -80,7 +81,7 @@ class Command(loaddata.Command):
     def handle(self, *fixture_labels, **options):
         # get the database object
         database = options["database"]
-        if database not in settings.DATABASES:
+        if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
 
         now = datetime.now()

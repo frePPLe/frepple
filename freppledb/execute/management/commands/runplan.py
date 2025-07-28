@@ -42,6 +42,7 @@ from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
 from freppledb.common.report import GridReport
 from freppledb.execute.models import Task
+from freppledb.common.utils import get_databases
 from freppledb import __version__
 
 
@@ -156,7 +157,7 @@ class Command(BaseCommand):
             database = options["database"] or DEFAULT_DB_ALIAS
         else:
             database = DEFAULT_DB_ALIAS
-        if database not in settings.DATABASES:
+        if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
         if "user" in options and options["user"]:
             try:
@@ -302,7 +303,7 @@ class Command(BaseCommand):
             os.environ["FREPPLE_TASKID"] = str(task.id)
             os.environ["FREPPLE_DATABASE"] = database
             os.environ["FREPPLE_LOGFILE"] = logfile
-            os.environ["FREPPLE_PROCESSNAME"] = settings.DATABASES[database][
+            os.environ["FREPPLE_PROCESSNAME"] = get_databases()[database][
                 "NAME"
             ].replace("demo", "")
             os.environ["PATH"] = (

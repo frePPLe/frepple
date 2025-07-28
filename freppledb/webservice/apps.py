@@ -28,10 +28,11 @@ from threading import Thread
 from time import sleep
 
 from django.apps import AppConfig
-from django.conf import settings
 from django.contrib.auth.signals import user_logged_in
 from django.core import management
 from django.db import DEFAULT_DB_ALIAS, connections, close_old_connections
+
+from freppledb.common.utils import get_databases
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +53,7 @@ def startWebService(request, **kwargs):
         .filter(status="In use")
         .values("name")
     }
-    for i in settings.DATABASES:
+    for i in get_databases():
         if (
             i in active_scenarios
             and Parameter.getValue("plan.webservice", i, "true").lower() == "true"
@@ -67,7 +68,9 @@ def startWebService(request, **kwargs):
 def startWebServiceAsync(request, **kwargs):
     # Note: API requests don't start the web service
     if not hasattr(request, "api"):
-        Thread(target=startWebService, args=(request,), kwargs=kwargs, daemon=True).start()
+        Thread(
+            target=startWebService, args=(request,), kwargs=kwargs, daemon=True
+        ).start()
 
 
 class WebServiceConfig(AppConfig):

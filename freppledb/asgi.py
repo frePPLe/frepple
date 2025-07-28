@@ -36,6 +36,7 @@ from django.urls import re_path
 
 from django.contrib.auth.models import AnonymousUser
 from freppledb.common.models import User
+from freppledb.common.utils import get_databases
 
 from channels.auth import AuthMiddleware
 from channels.db import database_sync_to_async
@@ -147,7 +148,7 @@ class TokenMiddleware(BaseMiddleware):
                             # JWT webtoken authentication
                             for secret in (
                                 getattr(settings, "AUTH_SECRET_KEY", None),
-                                settings.DATABASES[self.database].get(
+                                get_databases()[self.database].get(
                                     "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
                                 ),
                             ):

@@ -43,6 +43,7 @@ from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Comment, Parameter
 from freppledb.common.report import GridReport, matchesModelName
 from freppledb.common.dataload import parseExcelWorksheet
+from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 
 
@@ -80,7 +81,7 @@ class Command(BaseCommand):
         # Pick up the options
         now = datetime.now()
         self.database = options["database"]
-        if self.database not in settings.DATABASES:
+        if self.database not in get_databases():
             raise CommandError("No database settings known for '%s'" % self.database)
         if options["user"]:
             try:

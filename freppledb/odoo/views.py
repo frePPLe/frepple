@@ -43,6 +43,7 @@ from freppledb.input.models import (
     Supplier,
 )
 from freppledb.common.models import Parameter
+from freppledb.common.utils import get_databases
 
 import logging
 
@@ -91,7 +92,7 @@ def Upload(request):
 
         token = jwt.encode(
             {"exp": round(time.time()) + 600, "user": odoo_user},
-            settings.DATABASES[request.database].get(
+            get_databases()[request.database].get(
                 "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
             ),
             algorithm="HS256",

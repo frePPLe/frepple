@@ -26,8 +26,8 @@ import json
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connections, DEFAULT_DB_ALIAS
-from django.conf import settings
 
+from freppledb.common.utils import get_databases
 from freppledb import __version__
 
 
@@ -121,7 +121,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # Pick up the options
         database = options["database"]
-        if database not in settings.DATABASES:
+        if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
         with codecs.open(options["output"], "w", "utf-8") as file_object:
             # open the square bracket

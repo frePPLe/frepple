@@ -40,6 +40,7 @@ from django.template.loader import render_to_string
 from freppledb import __version__
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Parameter
+from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 from freppledb.input.models import (
     PurchaseOrder,
@@ -75,7 +76,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         self.verbosity = int(options["verbosity"])
         self.database = options["database"]
-        if self.database not in settings.DATABASES.keys():
+        if self.database not in get_databases().keys():
             raise CommandError("No database settings known for '%s'" % self.database)
 
         if options["user"]:
@@ -288,7 +289,7 @@ class Command(BaseCommand):
     def buildPage(self, output, objtype):
         token = jwt.encode(
             {"exp": round(time.time()) + 600, "user": self.odoo_user},
-            settings.DATABASES[self.database].get(
+            get_databases()[self.database].get(
                 "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
             ),
             algorithm="HS256",

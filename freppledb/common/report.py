@@ -108,7 +108,7 @@ from freppledb.common.models import (
 )
 from freppledb.common.dataload import parseExcelWorksheet, parseCSVdata
 from freppledb.common.localization import parseLocalizedDate, parseLocalizedDateTime
-from freppledb.common.utils import getStorageUsage
+from freppledb.common.utils import getStorageUsage, get_databases
 
 
 logger = logging.getLogger(__name__)
@@ -161,12 +161,12 @@ class IsChildOfLookup(Lookup):
 
 def create_connection(alias=DEFAULT_DB_ALIAS):
     if alias == DEFAULT_DB_ALIAS:
-        connections.configure_settings({alias: settings.DATABASES[alias]})
+        connections.configure_settings({alias: get_databases()[alias]})
     else:
         connections.configure_settings(
             {
-                DEFAULT_DB_ALIAS: settings.DATABASES[DEFAULT_DB_ALIAS],
-                alias: settings.DATABASES[alias],
+                DEFAULT_DB_ALIAS: get_databases()[DEFAULT_DB_ALIAS],
+                alias: get_databases()[alias],
             }
         )
     db = connections.databases[alias]

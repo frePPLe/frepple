@@ -45,6 +45,7 @@ from freppledb import __version__
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Scenario
 from freppledb.common.report import GridReport
+from freppledb.common.utils import get_databases
 from .runworker import launchWorker, runTask
 
 
@@ -194,7 +195,7 @@ class Command(BaseCommand):
             # days the at-command was used to execute the schedule.
             return
         database = options["database"]
-        if database not in settings.DATABASES:
+        if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
         try:
             schedule = ScheduledTask.objects.using(database).get(

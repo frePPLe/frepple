@@ -33,6 +33,7 @@ from django.utils.translation import gettext_lazy as _
 
 from freppledb import __version__
 from freppledb.common.models import User
+from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 
 from ...utils import getERPconnection
@@ -99,7 +100,7 @@ class Command(BaseCommand):
 
         # Select the correct frePPLe scenario database
         self.database = options["database"]
-        if self.database not in settings.DATABASES.keys():
+        if self.database not in get_databases().keys():
             raise CommandError("No database settings known for '%s'" % self.database)
         self.cursor_frepple = connections[self.database].cursor()
 

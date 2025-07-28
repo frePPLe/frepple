@@ -65,6 +65,22 @@ fieldset th {
   max-width: 400px !important;
 }
 
+.selector, .selector-filter {
+  width: 100% !important;
+}
+
+.selector select {
+  width: 100%;
+}
+
+.selector-available, .selector-chosen {
+  width: calc(100% - 11px) !important;
+}
+
+.selector .selector-available input, .selector .selector-chosen input {
+    width: calc(100% - 30px) !important;
+}
+
 @media (min-width: 992px) {
   #content-main .col-form-label {
     text-align: right;

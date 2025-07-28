@@ -42,7 +42,7 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
     add_fieldsets = (
         (
             _("Personal info"),
-            {"fields": ("username", ("first_name", "last_name"), "email")},
+            {"fields": ("username", "first_name", "last_name", "email")},
         ),
         (_("password"), {"fields": ("password1", "password2")}),
         (_("scenario access"), {"fields": ("scenarios",)}),
@@ -50,16 +50,25 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
 
     change_user_password_template = "auth/change_password.html"
     fieldsets = (
-        (None, {"fields": ("username", "password")}),
         (
-            _("Personal info"),
-            {"fields": ("first_name", "last_name", "email", "avatar")},
+            None,
+            {
+                "fields": (
+                    "username",
+                    "password",
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "avatar",
+                    "last_login",
+                    "date_joined",
+                )
+            },
         ),
         (
             _("Permissions in this scenario"),
             {"fields": ("is_active", "is_superuser", "groups", "user_permissions")},
         ),
-        (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
 
     tabs = [
@@ -130,6 +139,20 @@ class MyGroupAdmin(MultiDBModelAdmin):
     filter_horizontal = ("permissions",)
     save_on_top = True
     form = MyGroupAdminForm
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": [
+                    "name",
+                ]
+            },
+        ),
+        (
+            _("permissions and users"),
+            {"fields": ["permissions", "users"]},
+        ),
+    )
     tabs = [
         {
             "name": "edit",

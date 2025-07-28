@@ -1,5 +1,12 @@
-<div class="col-lg col-md-12 mt-3 mb-3 d-flex">
-  <div class="card h-100 w-100">
+<div class="col-lg{% if forloop.counter > 1 %}-12{% endif %} col-md-12 mb-3 d-flex">
+  <div class="card w-100">
+
+    {% if fieldset.name %}
+    <div class="card-header">
+       <h5 class="card-title text-capitalize">{{ fieldset.name }}</h5>
+    </div>
+    {% endif %}
+
   <div class="card-body">
 
 <fieldset class="module mt-3 container-fluid" id="fieldset-{% if stacked_prefix %}{{ stacked_prefix }}-{% endif %}{{ forloop.counter }}" style="background:transparent">
@@ -10,7 +17,7 @@
                     <div class="row mb-3 {% if not line.fields|length_is:'1' %} field-box{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if not field.is_readonly and field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}{% endif %}">
                         <div class="align-items-center flex-row-reverse d-flex col-3">
                             {% if field.field.help_text %}
-                            <span class="text-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-offset="0,10"
+                            <span class="text-end" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right" data-bs-offset="0,10"
                               data-bs-title='{{field.field.help_text|escape}}'>
                               {{ field.label_tag }} <span class="fa fa-question-circle"></span>
                             </span>
@@ -18,12 +25,12 @@
                             <span class="text-end">{{ field.label_tag }}</span>
                             {% endif %}
                         </div>
-                        <div class="controls col-9">
+                        <div class="controls col-9 align-items-center">
                         {% if field.is_checkbox %}
                             {% render_field_bootstrap field.field %}
                         {% else %}
                             {% if field.is_readonly %}
-                                <p>{{ field.contents }}</p>
+                                <p class="m-0">{{ field.contents }}</p>
                             {% else %}
                                 {% render_field_bootstrap field.field %}
                             {% endif %}

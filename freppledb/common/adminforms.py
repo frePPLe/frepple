@@ -37,7 +37,13 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction, DEFAULT_DB_ALIAS
 from django.db.models import Q
-from django.db.models.fields import DecimalField, DateField, DateTimeField, TimeField
+from django.db.models.fields import (
+    DecimalField,
+    DateField,
+    DateTimeField,
+    TimeField,
+    CharField,
+)
 from django import forms
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
@@ -99,13 +105,18 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     formfield_overrides = {
         # Django by default uses the value of decimal_places to compute a step.
         # We prefer to stick to a default step of 1.
-        DecimalField: {"widget": forms.NumberInput(attrs={"step": "1"})},
-        DateField: {"widget": DatePickerInput()},
-        TimeField: {"widget": TimePickerInput()},
+        DecimalField: {
+            "widget": forms.NumberInput(attrs={"step": "1", "placeholder": ""})
+        },
+        DateField: {"widget": DatePickerInput(attrs={"placeholder": ""})},
+        TimeField: {"widget": TimePickerInput(attrs={"placeholder": ""})},
         DateTimeField: {
             "form_class": DateTimeLocalField,
-            "widget": DateTimePickerInput(format="%Y-%m-%dT%H:%M:%S"),
+            "widget": DateTimePickerInput(
+                format="%Y-%m-%dT%H:%M:%S", attrs={"placeholder": ""}
+            ),
         },
+        CharField: {"widget": forms.TextInput(attrs={"placeholder": ""})},
     }
 
     def get_urls(self):

@@ -34,6 +34,7 @@ from freppledb.forecast.models import Forecast, ForecastPlan, Measure
 class Forecast_admin(MultiDBModelAdmin):
     model = Forecast
     raw_id_fields = ("customer", "item", "operation")
+    help_url = "model-reference/forecast.html"
     fieldsets = (
         (
             None,
@@ -95,6 +96,7 @@ class ForecastPlan_admin(MultiDBModelAdmin):
 @admin.register(Measure, site=data_site)
 class Measure_admin(MultiDBModelAdmin):
     model = Measure
+    help_url = "model-reference/forecast-measures.html"
     save_on_top = True
     fieldsets = (
         (

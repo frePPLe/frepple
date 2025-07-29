@@ -62,6 +62,7 @@ from freppledb.boot import getAttributes
 class CalendarBucket_admin(MultiDBModelAdmin):
     model = CalendarBucket
     raw_id_fields = ("calendar",)
+    help_url = "model-reference/calendar-buckets.html"
     save_on_top = True
     fieldsets = (
         (
@@ -107,6 +108,7 @@ class CalendarBucket_admin(MultiDBModelAdmin):
 class Calendar_admin(MultiDBModelAdmin):
     model = Calendar
     save_on_top = True
+    help_url = "model-reference/calendars.html"
     fieldsets = (
         (
             None,
@@ -147,6 +149,7 @@ class Calendar_admin(MultiDBModelAdmin):
 class Location_admin(MultiDBModelAdmin):
     model = Location
     raw_id_fields = ("available", "owner")
+    help_url = "model-reference/locations.html"
     save_on_top = True
     fieldsets = (
         (
@@ -204,6 +207,7 @@ class Location_admin(MultiDBModelAdmin):
 class Customer_admin(MultiDBModelAdmin):
     model = Customer
     raw_id_fields = ("owner",)
+    help_url = "model-reference/customers.html"
     save_on_top = True
     fieldsets = (
         (
@@ -234,6 +238,7 @@ class Customer_admin(MultiDBModelAdmin):
 class Supplier_admin(MultiDBModelAdmin):
     model = Supplier
     raw_id_fields = ("available", "owner")
+    help_url = "model-reference/suppliers.html"
     save_on_top = True
     fieldsets = (
         (
@@ -277,6 +282,7 @@ class Item_admin(MultiDBModelAdmin):
     save_on_top = True
     raw_id_fields = ("owner",)
     search_fields = ("name", "description")
+    help_url = "model-reference/items.html"
     fieldsets = (
         (
             None,
@@ -330,6 +336,7 @@ class ItemSupplier_admin(MultiDBModelAdmin):
     model = ItemSupplier
     save_on_top = True
     raw_id_fields = ("item", "supplier", "resource")
+    help_url = "model-reference/item-suppliers.html"
     fieldsets = (
         (
             None,
@@ -378,6 +385,7 @@ class ItemDistribution_admin(MultiDBModelAdmin):
     model = ItemDistribution
     save_on_top = True
     raw_id_fields = ("item", "resource")
+    help_url = "model-reference/item-distributions.html"
     fieldsets = (
         (
             None,
@@ -423,6 +431,7 @@ class ItemDistribution_admin(MultiDBModelAdmin):
 class Operation_admin(MultiDBModelAdmin):
     model = Operation
     raw_id_fields = ("item", "available", "owner")
+    help_url = "model-reference/operations.html"
     save_on_top = True
     fieldsets = (
         (
@@ -492,6 +501,7 @@ class Operation_admin(MultiDBModelAdmin):
 class SubOperation_admin(MultiDBModelAdmin):
     model = SubOperation
     raw_id_fields = ("operation", "suboperation")
+    help_url = "model-reference/suboperations.html"
     save_on_top = True
     fieldsets = (
         (
@@ -515,6 +525,7 @@ class SubOperation_admin(MultiDBModelAdmin):
 class OperationDependency_admin(MultiDBModelAdmin):
     model = OperationDependency
     raw_id_fields = ("operation", "blockedby")
+    help_url = "model-reference/operation-dependencies.html"
     save_on_top = True
     fieldsets = (
         (
@@ -538,6 +549,7 @@ class OperationDependency_admin(MultiDBModelAdmin):
 class Buffer_admin(MultiDBModelAdmin):
     model = Buffer
     raw_id_fields = ("location", "item", "minimum_calendar")
+    help_url = "model-reference/buffers.html"
     fieldsets = (
         (
             None,
@@ -595,6 +607,7 @@ class Buffer_admin(MultiDBModelAdmin):
 class SetupRule_admin(MultiDBModelAdmin):
     model = SetupRule
     raw_id_fields = ("setupmatrix",)
+    help_url = "model-reference/setup-matrices.html#setup-rule"
     save_on_top = True
     fieldsets = (
         (
@@ -631,6 +644,7 @@ class SetupRule_admin(MultiDBModelAdmin):
 @admin.register(SetupMatrix, site=data_site)
 class SetupMatrix_admin(MultiDBModelAdmin):
     model = SetupMatrix
+    help_url = "model-reference/setup-matrices.html"
     save_on_top = True
     fieldsets = (
         (
@@ -660,6 +674,7 @@ class SetupMatrix_admin(MultiDBModelAdmin):
 @admin.register(Skill, site=data_site)
 class Skill_admin(MultiDBModelAdmin):
     model = Skill
+    help_url = "model-reference/skils.html"
     save_on_top = True
     fieldsets = (
         (
@@ -690,6 +705,7 @@ class Skill_admin(MultiDBModelAdmin):
 class ResourceSkill_admin(MultiDBModelAdmin):
     model = ResourceSkill
     raw_id_fields = ("resource", "skill")
+    help_url = "model-reference/resource-skills.html"
     save_on_top = True
     fieldsets = (
         (
@@ -733,6 +749,7 @@ class Resource_admin(MultiDBModelAdmin):
         "available",
         "efficiency_calendar",
     )
+    help_url = "model-reference/resources.html"
     fieldsets = (
         (
             None,
@@ -797,6 +814,7 @@ class Resource_admin(MultiDBModelAdmin):
 class OperationMaterial_admin(MultiDBModelAdmin):
     model = OperationMaterial
     raw_id_fields = ("operation", "item", "location")
+    help_url = "model-reference/operation-materials.html"
     save_on_top = True
     exclude = ("id",)
     fieldsets = (
@@ -842,6 +860,7 @@ class OperationMaterial_admin(MultiDBModelAdmin):
 class OperationResource_admin(MultiDBModelAdmin):
     model = OperationResource
     raw_id_fields = ("operation", "resource", "skill")
+    help_url = "model-reference/operation-resources.html"
     save_on_top = True
     exclude = ("id",)
     fieldsets = (
@@ -884,6 +903,7 @@ class OperationResource_admin(MultiDBModelAdmin):
 class ManufacturingOrder_admin(MultiDBModelAdmin):
     model = ManufacturingOrder
     raw_id_fields = ("operation", "owner", "demand")
+    help_url = "model-reference/manufacturing-orders.html"
     save_on_top = True
     fieldsets = (
         (
@@ -939,6 +959,7 @@ class ManufacturingOrder_admin(MultiDBModelAdmin):
 class DistributionOrder_admin(MultiDBModelAdmin):
     model = DistributionOrder
     raw_id_fields = ("item",)
+    help_url = "model-reference/distribution-orders.html"
     save_on_top = True
     fieldsets = (
         (
@@ -995,6 +1016,7 @@ class DistributionOrder_admin(MultiDBModelAdmin):
 class PurchaseOrder_admin(MultiDBModelAdmin):
     model = PurchaseOrder
     raw_id_fields = ("item", "supplier")
+    help_url = "model-reference/purchase-orders.html"
     save_on_top = True
     fieldsets = (
         (
@@ -1051,6 +1073,7 @@ class PurchaseOrder_admin(MultiDBModelAdmin):
 class DeliveryOrder_admin(MultiDBModelAdmin):
     model = DeliveryOrder
     raw_id_fields = ("item", "demand")
+    help_url = "model-reference/delivery-orders.html"
     save_on_top = True
     fieldsets = (
         (
@@ -1101,6 +1124,7 @@ class DeliveryOrder_admin(MultiDBModelAdmin):
 class Demand_admin(MultiDBModelAdmin):
     model = Demand
     raw_id_fields = ("customer", "item", "operation")
+    help_url = "model-reference/sales-orders.html"
     fieldsets = (
         (
             None,
@@ -1158,6 +1182,7 @@ class OperationPlanResource_admin(MultiDBModelAdmin):
     raw_id_fields = (
         "operationplan",
     )  # TODO a foreign key to OperationPlan doesn't work because it's an abstract class without admin
+    help_url = "model-reference/operationplan-resources.html"
     save_on_top = True
     fieldsets = (
         (
@@ -1186,6 +1211,7 @@ class OperationPlanMaterial_admin(MultiDBModelAdmin):
         "operationplan",
         "item",
     )  # TODO a foreign key to OperationPlan doesn't work because it's an abstract class without admin
+    help_url = "model-reference/operationplan-materials.html"
     save_on_top = True
     fieldsets = (
         (

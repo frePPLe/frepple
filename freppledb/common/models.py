@@ -770,6 +770,18 @@ class User(AbstractUser):
             self.save()
         return (datetime.now() - self.date_joined).total_seconds() / 86400
 
+    def passwordlink(self):
+        return mark_safe(
+            _(
+                # This string is standard in django. Don't change it here.
+                "Raw passwords are not stored, so there is no way to see this "
+                "user’s password, but you can change the password using "
+                '<a href="{}">this form</a>.'
+            ).format(f"/data/common/user/{self.id}/password/")
+        )
+
+    passwordlink.short_description = _("password")
+
     class Meta:
         db_table = "common_user"
         verbose_name = _("user")

@@ -55,7 +55,7 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
             {
                 "fields": (
                     "username",
-                    "password",
+                    "passwordlink",
                     "first_name",
                     "last_name",
                     "email",
@@ -93,7 +93,7 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
-            return self.readonly_fields + ("last_login", "date_joined")
+            return self.readonly_fields + ("last_login", "date_joined", "passwordlink")
         return self.readonly_fields
 
     def has_delete_permission(self, request, obj=None):

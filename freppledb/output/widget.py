@@ -35,6 +35,7 @@ from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.dashboard import Dashboard, Widget
+from freppledb.common.models import Parameter
 from freppledb.common.report import GridReport, getCurrency, getCurrentDate
 from freppledb.input.models import (
     PurchaseOrder,
@@ -1959,3 +1960,219 @@ class DeliveryPerformanceWidget(Widget):
 
 
 Dashboard.register(DeliveryPerformanceWidget)
+
+
+class InventoryProfileWidget(Widget):
+    """
+    This widget displays the on hand history (based on the archive app) and forecasted future on hand.
+    """
+
+    name = "inventory_profile"
+    title = _("Inventory profile")
+    tooltip = _("Show the history and forecasted future of the on hand")
+    asynchronous = True
+    history = 12
+
+    def args(self):
+        return "?%s" % urlencode({"history": self.history})
+
+    javascript = """
+    var margin_y = 50;  // Width allocated for the Y-axis
+    var margin_x = 80;  // Height allocated for the X-axis
+    var svg = d3.select("#archivebuffer");
+    var svgrectangle = document.getElementById("archivebuffer").getBoundingClientRect();
+
+    // Reduce the number of displayed points if too many
+    var nb_of_ticks = (svgrectangle['width'] - margin_y - 10) / 20;
+
+
+    // Collect the data
+    var domain_x = [];
+    var data = [];
+    var max_val = 0;
+    var min_val = 0;
+    $("#archivebuffer").next().find("tr").each(function() {
+      var row = [];
+      $("td", this).each(function() {
+        if (row.length == 0) {
+          domain_x.push($(this).html());
+          row.push($(this).html());
+        }
+        else {
+          var val = parseFloat($(this).html());
+          row.push(val);
+          if (val > max_val)
+            max_val = val;
+        }
+      });
+      data.push(row);
+    });
+
+    var visible=[]
+      var step_visible = Math.ceil(domain_x.length / nb_of_ticks);
+      for (let x=0; x < domain_x.length; x++){
+        if (x==0 || x % step_visible == 0)
+          visible.push(domain_x[x]);
+      }
+
+    var x = d3.scale.ordinal()
+      .domain(domain_x)
+      .rangeRoundBands([0, svgrectangle['width'] - margin_y - 10], 0);
+    var y = d3.scale.linear()
+      .range([svgrectangle['height'] - margin_x - 10, 0])
+      .domain([min_val - 5, max_val + 5]);
+
+    // Draw invisible rectangles for the hoverings
+    svg.selectAll("g")
+     .data(data)
+     .enter()
+     .append("g")
+     .attr("transform", function(d, i) { return "translate(" + ((i) * x.rangeBand() + margin_y) + ",10)"; })
+     .append("rect")
+      .attr("height", svgrectangle['height'] - 10 - margin_x)
+      .attr("width", x.rangeBand())
+      .attr("fill-opacity", 0)
+      .on("mouseover", function(d) {
+        const formattedUnits = Number(d[1]).toLocaleString();
+        const formattedAmount = Number(d[2]).toLocaleString();
+        graph.showTooltip(d[0] + "<br>" + currency[0]
+          + formattedAmount + currency[1] + "<br>" + formattedUnits + " units");
+        $("#tooltip").css('background-color','black').css('color','white');
+      })
+      .on("mousemove", graph.moveTooltip)
+      .on("mouseout", graph.hideTooltip);
+
+    // Draw x-axis
+    var xAxis = d3.svg.axis().scale(x)
+        .orient("bottom").tickValues(visible);
+    svg.append("g")
+      .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
+      .attr("class", "x axis")
+      .call(xAxis)
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.75em")
+      .attr("dy", "-.25em")
+      .attr("transform", "rotate(-90)" );
+
+    // Draw y-axis
+    var yAxis = d3.svg.axis().scale(y)
+        .orient("left")
+        .ticks(Math.min(Math.floor((svgrectangle['height'] - margin_x - 20) / 20), 5))
+        .tickFormat(d3.format("s"));
+    svg.append("g")
+      .attr("transform", "translate(" + margin_y + ", 10 )")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+    var line = d3.svg.line()
+  .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
+  .y(function(d) { return y(d[2]); });
+
+    // Group data into segments with the same d[3] value
+    var segments = [];
+    var currentSegment = [data[0]];
+    for (var i = 1; i < data.length; i++) {
+      if (data[i][3] === data[i - 1][3]) {
+        currentSegment.push(data[i]);
+      } else {
+        segments.push({ values: currentSegment, type: data[i - 1][3] });
+        currentSegment = [data[i - 1], data[i]]; // duplicate the transition point
+      }
+    }
+    segments.push({ values: currentSegment, type: currentSegment[currentSegment.length-1][3] });
+
+    // Append each segment as a separate path with color based on d[3]
+    segments.forEach(function(segment) {
+      svg.append("svg:path")
+        .attr("transform", "translate(" + margin_y + ", 10 )")
+        .attr("class", "graphline")
+        .attr("stroke", segment.type === 1 ? "#FF0000" : "#8BBA00")
+        .attr("fill", "none")
+        .attr("d", line(segment.values));
+    });
+    """
+
+    @classmethod
+    def render(cls, request):
+        with connections[request.database].cursor() as cursor:
+            history = int(request.GET.get("history", cls.history))
+            archiveFrequency = Parameter.getValue(
+                "archive.frequency", request.database, "week"
+            )
+            currentDate = getCurrentDate(request.database, True)
+            result = [
+                '<svg class="chart" id="archivebuffer" style="width:100%; height: 100%"></svg>',
+                '<table style="display:none">',
+            ]
+            cursor.execute(
+                """
+                select * from (
+                (select
+                  cb.startdate,
+                  coalesce(sum(onhand), 0),
+                  coalesce(sum(onhand * cost), 0),
+                  0 as future
+                from ax_manager
+                inner join common_bucketdetail cb on cb.bucket_id = %s
+                and cb.startdate <= snapshot_date and cb.enddate > snapshot_date
+                left outer join ax_buffer
+                  on snapshot_date = snapshot_date_id
+                where snapshot_date < (select startdate from common_bucketdetail where bucket_id = cb.bucket_id
+                                      and startdate <= %s and enddate > %s)
+                group by cb.startdate
+                order by cb.startdate desc
+                limit %s)
+                union all
+                (
+                with cte as(
+                with buffers as
+                (select distinct item_id, location_id from operationplanmaterial),
+                buckets as
+                (select startdate from common_bucketdetail where bucket_id = %s and enddate > %s
+                and startdate < (select max(flowdate) from operationplanmaterial))
+                select
+                buffers.item_id,
+                buffers.location_id,
+                buckets.startdate,
+                coalesce((select onhand
+                from operationplanmaterial
+                where item_id = buffers.item_id and location_id = buffers.location_id
+                and flowdate < buckets.startdate order by flowdate desc, id limit 1),0) as onhand
+                from buffers
+                cross join buckets
+                )
+                select cte.startdate, sum(cte.onhand), sum(cte.onhand*coalesce(item.cost,0)), 1 as future
+                from cte
+                inner join item on item.name = cte.item_id
+                group by cte.startdate
+                )
+                ) d
+                order by future, startdate asc
+                """,
+                (
+                    archiveFrequency,
+                    currentDate,
+                    currentDate,
+                    history,
+                    archiveFrequency,
+                    currentDate,
+                ),
+            )
+            for res in cursor.fetchall():
+                result.append(
+                    "<tr><td>%s</td><td>%.1f</td><td>%.1f</td><td>%s</td></tr>"
+                    % (
+                        escape(
+                            date_format(res[0], format="DATE_FORMAT", use_l10n=False)
+                        ),
+                        res[1],
+                        res[2],
+                        int(res[3]),
+                    )
+                )
+            result.append("</table>")
+            return HttpResponse("\n".join(result))
+
+
+Dashboard.register(InventoryProfileWidget)

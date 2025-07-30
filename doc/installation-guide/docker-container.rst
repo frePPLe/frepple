@@ -127,6 +127,7 @@ The following environment variables can be set to configure your container:
         FREPPLE_FTP_PORT: 22
         FREPPLE_FTP_USER: ""
         FREPPLE_FTP_PASSWORD: ""
+        FREPPLE_AUTOSTART_WEBSERVICE: ""  # List of scenarios for which to automatically start the web service, separated by space
 
 ************************************
 Deployment of the Enterprise Edition

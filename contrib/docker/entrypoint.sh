@@ -58,6 +58,13 @@ else
   frepplectl runplan --database=scenario2 --env=fcst,supply --background
 fi
 
+# Automatically start the web service if needed
+for sc in $FREPPLE_AUTOSTART_WEBSERVICE
+do
+  echo "Starting web service for scenario $sc in the background"
+  frepplectl runwebservice --database=$sc --daemon 
+done
+
 # Configure Apache
 grep -qxF 'ServerName' /etc/apache2/apache2.conf || echo "ServerName localhost" >> /etc/apache2/apache2.conf
 rm -f /usr/local/apache2/logs/httpd.pid

@@ -561,7 +561,7 @@ DEFAULT_DASHBOARD = [
             {
                 "width": 4,
                 "widgets": [
-                    ("archived_buffer", {"history": 12}),
+                    ("inventory_evolution", {"history": 12}),
                 ],
             },
         ],

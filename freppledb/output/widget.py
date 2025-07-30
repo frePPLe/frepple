@@ -1962,13 +1962,13 @@ class DeliveryPerformanceWidget(Widget):
 Dashboard.register(DeliveryPerformanceWidget)
 
 
-class InventoryProfileWidget(Widget):
+class InventoryEvolutionWidget(Widget):
     """
     This widget displays the on hand history (based on the archive app) and forecasted future on hand.
     """
 
-    name = "inventory_profile"
-    title = _("Inventory profile")
+    name = "inventory_evolution"
+    title = _("Inventory evolution")
     tooltip = _("Show the history and forecasted future of the on hand")
     asynchronous = True
     history = 12
@@ -1979,8 +1979,8 @@ class InventoryProfileWidget(Widget):
     javascript = """
     var margin_y = 50;  // Width allocated for the Y-axis
     var margin_x = 80;  // Height allocated for the X-axis
-    var svg = d3.select("#archivebuffer");
-    var svgrectangle = document.getElementById("archivebuffer").getBoundingClientRect();
+    var svg = d3.select("#inventory_evolution");
+    var svgrectangle = document.getElementById("inventory_evolution").getBoundingClientRect();
 
     // Reduce the number of displayed points if too many
     var nb_of_ticks = (svgrectangle['width'] - margin_y - 10) / 20;
@@ -1991,7 +1991,7 @@ class InventoryProfileWidget(Widget):
     var data = [];
     var max_val = 0;
     var min_val = 0;
-    $("#archivebuffer").next().find("tr").each(function() {
+    $("#inventory_evolution").next().find("tr").each(function() {
       var row = [];
       $("td", this).each(function() {
         if (row.length == 0) {
@@ -2102,7 +2102,7 @@ class InventoryProfileWidget(Widget):
             )
             currentDate = getCurrentDate(request.database, True)
             result = [
-                '<svg class="chart" id="archivebuffer" style="width:100%; height: 100%"></svg>',
+                '<svg class="chart" id="inventory_evolution" style="width:100%; height: 100%"></svg>',
                 '<table style="display:none">',
             ]
             cursor.execute(
@@ -2175,4 +2175,4 @@ class InventoryProfileWidget(Widget):
             return HttpResponse("\n".join(result))
 
 
-Dashboard.register(InventoryProfileWidget)
+Dashboard.register(InventoryEvolutionWidget)

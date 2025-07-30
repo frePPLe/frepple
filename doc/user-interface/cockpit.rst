@@ -82,15 +82,16 @@ The following widgets are available:
 * | **Inventory history**
   | Displays the historical evolution of the inventory. 
 
-* | **Purchase order history**
-  | Displays the historical evolution of the open purchase orders. 
+* | **Inventory evolution**
+  | This widgets shows the archived inventory value from the past, followed 
+    with the projected evolution of the inventory value in the future.
 
 * | **Inventory by location**
   | This widget shows the locations carrying the most inventory.
 
 * | **Inventory by item**
   | This widget shows the items which take up the most inventory value.
-
+  
 * | **Inventory analysis**
   | Display an analysis of which item-locations have stockout risks.
   | Depending on the stockout risk, a red/yellow/green color code is assigned.

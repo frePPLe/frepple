@@ -32,6 +32,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     around in the frepple database.
   | This applies to Enterprise and Cloud Editions only.
 
+- | 17, 18: Bug fix for sales orders of type "kit". 
+
 9.9.0 (2025-07-04)
 ==================
 

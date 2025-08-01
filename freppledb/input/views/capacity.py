@@ -382,6 +382,21 @@ class ResourceSkillList(GridReport):
         GridFieldLastModified("lastmodified"),
     )
 
+    @classmethod
+    def initialize(reportclass, request):
+        if reportclass._attributes_added != 2:
+            reportclass._attributes_added = 2
+            reportclass.attr_sql = ""
+            # Adding custom resource attributes
+            for f in getAttributeFields(
+                Resource,
+                related_name_prefix="resource",
+                initially_hidden=True,
+                editable=False,
+            ):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "resource.%s, " % f.name.split("__")[-1]
+
 
 class ResourceDetail(OperationPlanMixin):
     template = "input/operationplanreport.html"

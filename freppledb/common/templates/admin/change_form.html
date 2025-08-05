@@ -135,6 +135,10 @@ fieldset th {
     <script>
         (function($) {
             $(document).ready(function() {
+                $("#content-main form input[type='submit']").prop("disabled", true);
+                $("#content-main form").on("change input", ":input", function() {
+                  $("#content-main form input[type='submit']").prop("disabled", false);
+                });
                 $('.add-another').click(function(e) {
                     e.preventDefault();
                     showAddAnotherPopup(this);

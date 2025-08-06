@@ -753,6 +753,19 @@ var grid = {
     return result;
   },
 
+  toggleCollapseSubOptions: function (optionString, elemId) {
+    let isExpanded = $('#'+elemId+' i').hasClass( "fa-chevron-down" ) ? true : false;
+
+    if (isExpanded) {
+      $('#popup #'+elemId+' i').removeClass( "fa-chevron-down" ).addClass("fa-chevron-right");
+      $('#popup #DroppointRows li[type="'+optionString+'"]').addClass("d-none");
+    } else {
+      $('#popup #'+elemId+' i').removeClass( "fa-chevron-right" ).addClass("fa-chevron-down");
+      $('#popup #DroppointRows li[type="'+optionString+'"]').removeClass("d-none");
+    }
+
+  },
+
   // Render the customization popup window
   showCustomize: function (pivot, gridid, cross_arg, cross_idx_arg, cross_only_arg, ok_callback, reset_callback) {
     hideModal('timebuckets');
@@ -790,6 +803,7 @@ var grid = {
     var val0a = {}; //available columns
     var val1s = ""; //selected crosses
     var val1a = ""; //available crosses
+    const collapsibleSet = new Set();
 
     for (var i in colModel) {
       if (colModel[i].name == 'graph')
@@ -859,8 +873,19 @@ var grid = {
 
     row0 = row0.replace('placeholder0', val0s);
     var availableoptions = "";
-    for (var o of Object.keys(val0a).sort())
-      availableoptions += '<li id="' + val0a[o] + '" class="list-group-item" style="cursor: move">' + o + '</li>';
+    for (var o of Object.keys(val0a).sort()) {
+      if (o.indexOf(' - ') > 1) {
+        collapsibleOption = o.split(' - ')[0];
+        if (!collapsibleSet.has(collapsibleOption)) {
+          collapsibleSet.add(collapsibleOption);
+          let collapseIcon = '<i class="fa fa-chevron-right pt-1 float-end" style="cursor: pointer; z-index: 3000; position: relative"></i>';
+          availableoptions += '<li id="' + collapsibleSet.size*1000 + '" class="list-group-item do-not-drag fw-bold text-muted" style="cursor: pointer" onclick="grid.toggleCollapseSubOptions(\'' + collapsibleOption + '\',' + collapsibleSet.size*1000 + ')">' + collapsibleOption + ' attributes' + collapseIcon + '</li>';
+        }
+        availableoptions += '<li id="' + val0a[o] + '" type="' + collapsibleOption + '" class="list-group-item ps-4 d-none" style="cursor: move">' + o + '</li>';
+      } else {
+        availableoptions += '<li id="' + val0a[o] + '" class="list-group-item" style="cursor: move">' + o + '</li>';
+      }
+    }
     row0 = row0.replace('placeholder1', availableoptions);
     if (pivot) {
       row1 = row1.replace('placeholder0', val1s);
@@ -904,7 +929,8 @@ var grid = {
           name: 'DroppointRows',
           put: ['Rows']
         },
-        animation: 100
+        animation: 100,
+        filter: ".do-not-drag"
       });
     }
 

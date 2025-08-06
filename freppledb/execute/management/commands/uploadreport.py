@@ -24,7 +24,7 @@
 import os
 from ftplib import FTP, FTP_TLS
 from datetime import datetime
-import pysftp
+import paramiko
 from time import localtime, strftime
 
 from django.core.management.base import BaseCommand, CommandError
@@ -43,8 +43,8 @@ from freppledb import __version__
 
 class Command(BaseCommand):
     help = """
-  This command will upload reports from the export folder to sftp or ftps server configured in djangosettings.
-  """
+        This command will upload reports from the export folder to sftp or ftps server configured in djangosettings.
+        """
 
     requires_system_checks = []
 
@@ -234,22 +234,19 @@ class Command(BaseCommand):
             task.message = "Uploading reports"
             task.save(using=database)
 
-            # SFTP
             if ftp_protocol.strip().upper() == "SFTP":
-                cinfo = {
-                    "host": ftp_host,
-                    "username": ftp_user,
-                    "password": ftp_password,
-                    "port": ftp_port,
-                }
-                conn = pysftp.Connection(**cinfo)
-
-                with conn.cd(ftp_folder):
-                    for r in correctedReports:
-                        conn.put(r[0])
-
-                # Closes the connection
-                conn.close()
+                transport = paramiko.Transport((ftp_host, ftp_port))
+                try:
+                    transport.connect(username=ftp_user, password=ftp_password)
+                    sftp = paramiko.SFTPClient.from_transport(transport)
+                    try:
+                        sftp.chdir(ftp_folder)
+                        for r in correctedReports:
+                            sftp.put(r[0], r[1])
+                    finally:
+                        sftp.close()
+                finally:
+                    transport.close()
 
             elif ftp_protocol.strip().upper() in ["FTPS", "FTP"]:
                 session = (

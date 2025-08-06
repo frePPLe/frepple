@@ -58,7 +58,6 @@ def check_python_packages(app_configs, **kwargs):
         ("dateutil", "python-dateutil"),
         ("PIL", "pillow"),
         ("psutil", "psutil"),
-        ("pysftp", "pysftp"),
     ]:
         try:
             __import__(p[0])

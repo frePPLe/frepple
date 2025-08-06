@@ -781,16 +781,16 @@ var grid = {
       '' :
       '<div class="row mb-3">' +
       '<div class="col">' +
-      '<div class="card"><div class="card-header">' + gettext("Selected options") + '</div>' +
+      '<div class="card"><div class="card-header">' + gettext("Available options") + '</div>' +
       '<div class="card-body">' +
-      '<ul class="list-group" id="Rows" style="height: 160px; overflow-y: scroll;">placeholder0</ul>' +
+      '<ul class="list-group" id="DroppointRows" style="height: 160px; overflow-y: scroll;">placeholder1</ul>' +
       '</div>' +
       '</div>' +
       '</div>' +
       '<div class="col">' +
-      '<div class="card"><div class="card-header">' + gettext("Available options") + '</div>' +
+      '<div class="card"><div class="card-header">' + gettext("Selected options") + '</div>' +
       '<div class="card-body">' +
-      '<ul class="list-group" id="DroppointRows" style="height: 160px; overflow-y: scroll;">placeholder1</ul>' +
+      '<ul class="list-group" id="Rows" style="height: 160px; overflow-y: scroll;">placeholder0</ul>' +
       '</div>' +
       '</div>' +
       '</div>' +
@@ -827,20 +827,20 @@ var grid = {
         '<div class="col">' +
         '<div class="card">' +
         '<div class="card-header">' +
-        gettext('Selected Cross') +
+        gettext('Available Cross') +
         '</div>' +
         '<div class="card-body">' +
-        '<ul class="list-group" id="Crosses" style="height: 160px; overflow-y: scroll;">placeholder0</ul>' +
+        '<ul class="list-group" id="DroppointCrosses" style="height: 160px; overflow-y: scroll;">placeholder1</ul>' +
         '</div>' +
         '</div>' +
         '</div>' +
         '<div class="col">' +
         '<div class="card">' +
         '<div class="card-header">' +
-        gettext('Available Cross') +
+        gettext('Selected Cross') +
         '</div>' +
         '<div class="card-body">' +
-        '<ul class="list-group" id="DroppointCrosses" style="height: 160px; overflow-y: scroll;">placeholder1</ul>' +
+        '<ul class="list-group" id="Crosses" style="height: 160px; overflow-y: scroll;">placeholder0</ul>' +
         '</div>' +
         '</div>' +
         '</div>' +

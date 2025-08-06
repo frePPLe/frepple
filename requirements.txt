@@ -21,7 +21,8 @@ psycopg2-binary == 2.9.9  ; python_version >= '3.10'
 setuptools == 46.1 ; python_version < '3.10'
 setuptools ; python_version >= '3.11'
 setuptools-rust == 0.12.1
-pysftp == 0.2.9
+pysftp == 0.2.9    # To be removed very soon
+paramiko < 4
 channels == 4.0.0
 attrs == 23.1.0
 daphne == 4.0.0

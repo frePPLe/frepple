@@ -188,8 +188,8 @@ def Upload(request):
                     op.supplier = s
                     op.dirty = True
 
-                if op.quantity != rec["quantity"]:
-                    op.quantity = rec["quantity"]
+                if op.quantity != float(rec["quantity"]):
+                    op.quantity = float(rec["quantity"])
                     op.dirty = True
 
                 if type == "PO":
@@ -400,7 +400,10 @@ def Upload(request):
 
         for i in obj:
             if hasattr(i, "dirty"):
-                i.save(using=request.database)
+                i.save(
+                    update_fields=["enddate", "supplier", "quantity"],
+                    using=request.database,
+                )
 
         req = Request(
             "%sfrepple/xml/" % odoo_url,

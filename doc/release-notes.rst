@@ -20,6 +20,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | The capacity report now has a row to distinguish confirmed vs proposed loading of the
     resources.
+    
+- | Bug fix: Approved and confirmed manufacturing orders were not correctly distributed
+    over the available resources on the pool for bucketized resources.
 
 .. rubric:: System administration
 

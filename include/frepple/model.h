@@ -6677,7 +6677,7 @@ class Resource : public HasHierarchy<Resource>,
 
   inline OperationPlanIterator getOperationPlans() const;
 
-  double getUtilization(Date, Date) const;
+  virtual double getUtilization(Date, Date) const = 0;
 
   /* Returns a constant reference to the list of loads. It defines
    * which operations are using the resource.
@@ -6996,6 +6996,8 @@ class ResourceDefault : public Resource {
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
+
+  virtual double getUtilization(Date, Date) const;
 };
 
 /* This class represents a resource that'll never have any
@@ -7012,6 +7014,8 @@ class ResourceInfinite : public Resource {
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
+
+  virtual double getUtilization(Date, Date) const;
 };
 
 /* This class represents a resource whose capacity is defined per
@@ -7037,6 +7041,8 @@ class ResourceBuckets : public Resource {
   }
 
   double getMaxBucketCapacity() const;
+
+  virtual double getUtilization(Date, Date) const;
 
   /* Updates the time buckets and the quantity per time bucket. */
   virtual void setMaximumCalendar(Calendar*);

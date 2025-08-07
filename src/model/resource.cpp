@@ -965,7 +965,7 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(
   return Py_BuildValue("");
 }
 
-double Resource::getUtilization(Date st, Date nd) const {
+double ResourceDefault::getUtilization(Date st, Date nd) const {
   auto prevdate = st;
   double curmax = 0.0, curload = 0.0, sumload = 0.0, summax = 0.0;
   for (auto& l : getLoadPlans()) {
@@ -979,6 +979,29 @@ double Resource::getUtilization(Date st, Date nd) const {
     if (l.getEventType() == 4) curmax = l.getMax();
   }
   return summax ? sumload / summax : sumload;
+}
+
+double ResourceBuckets::getUtilization(Date st, Date nd) const {
+  double curmax = 0.0, curonhand = 0.0, sumload = 0.0, summax = 0.0;
+  Date bucketstart = Date::infinitePast;
+  for (auto& l : getLoadPlans()) {
+    if (l.getEventType() == 2) {
+      if (bucketstart && st < l.getDate() && nd >= bucketstart) {
+        // A bucket ended that overlaps with the argument date range
+        sumload += curmax - curonhand;
+        summax += curmax;
+      }
+      bucketstart = l.getDate();
+      curmax = l.getOnhand();
+    }
+    curonhand = l.getOnhand();
+  }
+  return summax ? sumload / summax : sumload;
+}
+
+double ResourceInfinite::getUtilization(Date st, Date nd) const {
+  // Life can be simple sometimes...
+  return 0.0;
 }
 
 }  // namespace frepple

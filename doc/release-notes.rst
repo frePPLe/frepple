@@ -37,6 +37,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: User interface
 
+- | The table customization modal changed.
+  | The available options list is now on the left and the selected options list is now on the right.
+  | It is now possible to collapse/expand options with multiple attributes in the available options list.
+
 - | The date format is now configurable as a parameter.
   | The new "display_time" parameter controls if the time should be displayed in the date time fields.
   | The new "date_format" parameter is used to choose a date format from among day-month-year, year-month-day or month-day-year.

@@ -421,7 +421,10 @@ class OperationPlan(AuditModel):
                                         break
 
     def save(self, *args, **kwargs):
-        self.propagateStatus()
+        if not (
+            kwargs.get("update_fields") and "status" not in kwargs.get("update_fields")
+        ):
+            self.propagateStatus()
         # Call the real save() method
         super().save(*args, **kwargs)
 

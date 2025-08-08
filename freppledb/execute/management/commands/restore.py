@@ -33,7 +33,7 @@ from django.db import DEFAULT_DB_ALIAS
 
 from freppledb.execute.models import Task
 from freppledb.common.models import User
-from freppledb.common.utils import get_databases
+from freppledb.common.utils import get_databases, getPostgresVersion
 from freppledb import __version__
 
 
@@ -106,7 +106,7 @@ class Command(BaseCommand):
 
         # Drop existing database
         subprocess.run(
-            ["dropdb", "--if-exists", "--force"]
+            [f"/usr/lib/postgresql/{getPostgresVersion()}/bin/dropdb", "--if-exists", "--force"]
             + commonargs
             + [get_databases()[database]["NAME"]],
             env=env,
@@ -115,7 +115,7 @@ class Command(BaseCommand):
 
         # Recreate a new database
         subprocess.run(
-            ["createdb"] + commonargs + [get_databases()[database]["NAME"]],
+            [f"/usr/lib/postgresql/{getPostgresVersion()}/bin/createdb"] + commonargs + [get_databases()[database]["NAME"]],
             env=env,
             check=True,
         )
@@ -123,7 +123,7 @@ class Command(BaseCommand):
         # Restore the dump
         subprocess.run(
             [
-                "pg_restore",
+                f"/usr/lib/postgresql/{getPostgresVersion()}/bin/pg_restore",
                 "--clean",
                 "--if-exists",
                 "-v",

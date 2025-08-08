@@ -36,7 +36,7 @@ from django.template.loader import render_to_string
 from freppledb.execute.models import Task
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Attribute
-from freppledb.common.utils import get_databases
+from freppledb.common.utils import get_databases, getPostgresVersion
 from freppledb import __version__
 
 
@@ -164,7 +164,7 @@ class Command(BaseCommand):
             if get_databases()[database]["PASSWORD"]:
                 env["PGPASSWORD"] = get_databases()[database]["PASSWORD"]
             args = [
-                "pg_dump",
+                f"/usr/lib/postgresql/{getPostgresVersion()}/bin/pg_dump",
                 "-Fc",
                 "-w",
                 "--username=%s" % get_databases()[database]["USER"],

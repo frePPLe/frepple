@@ -62,17 +62,16 @@ ENV LC_ALL=C.UTF-8
 
 # Download postgres clients (use when there are major postgresql releases which aren't in this ubuntu release)
 RUN apt-get -y -q update && \
-   DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends curl ca-certificates gnupg && \
-   curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
-   echo "deb http://apt.postgresql.org/pub/repos/apt/ noble-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
-   apt-get -y -q update && \
-   DEBIAN_FRONTEND=noninteractive apt-get -y install postgresql-client-17
+  DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends curl ca-certificates gnupg && \
+  curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+  echo "deb http://apt.postgresql.org/pub/repos/apt/ noble-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+  apt-get -y -q update && \
+  DEBIAN_FRONTEND=noninteractive apt-get -y install postgresql-common postgresql-common postgresql-client-17 postgresql-client-16 postgresql-client-15 postgresql-client-14
 
-COPY --from=builder /build/*.deb .
+  COPY --from=builder /build/*.deb .
 
 RUN apt-get -y -q update && \
   DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt install --no-install-recommends -f -y -q ./*.deb && \
-  DEBIAN_FRONTEND=noninteractive apt -y install ca-certificates && \
   apt-get -y purge --autoremove && \
   apt-get clean && \
   rm -rf *.deb /var/lib/apt/lists/* /etc/apt/sources.list.d/pgdg.list && \

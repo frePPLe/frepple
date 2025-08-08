@@ -23,6 +23,7 @@
 
 from importlib.util import find_spec
 from io import StringIO
+import math
 import os
 from pathlib import Path
 import tokenize
@@ -30,6 +31,10 @@ import tokenize
 
 from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
+
+
+def getPostgresVersion():
+    return math.floor(connections[DEFAULT_DB_ALIAS].pg_version / 10000)
 
 
 def forceWsgiReload():

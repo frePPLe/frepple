@@ -38,7 +38,7 @@ from freppledb.execute.models import Task, ScheduledTask
 from freppledb.execute.views import FileManager
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Scenario, Parameter
-from freppledb.common.utils import getStorageUsage, get_databases
+from freppledb.common.utils import getStorageUsage, get_databases, getPostgresVersion
 from freppledb.input.models import Item
 from freppledb import __version__
 
@@ -393,8 +393,9 @@ class Command(BaseCommand):
             if get_databases()[source]["PASSWORD"]:
                 env["PGPASSWORD"] = get_databases()[source]["PASSWORD"]
             if not options["dumpfile"]:
-                cmd = "pg_dump -Fc %s%s%s%s%s%s | pg_restore -n public -Fc %s%s%s -d %s"
+                cmd = "/usr/lib/postgresql/%s/bin/pg_dump -Fc %s%s%s%s%s%s | /usr/lib/postgresql/%s/bin/pg_restore -n public -Fc %s%s%s -d %s"
                 commandline = cmd % (
+                    getPostgresVersion(),
                     get_databases()[source]["USER"]
                     and ("-U %s " % get_databases()[source]["USER"])
                     or "",
@@ -425,6 +426,7 @@ class Command(BaseCommand):
                     test
                     and get_databases()[source]["TEST"]["NAME"]
                     or get_databases()[source]["NAME"],
+                    getPostgresVersion(),
                     get_databases()[destination]["USER"]
                     and ("-U %s " % get_databases()[destination]["USER"])
                     or "",

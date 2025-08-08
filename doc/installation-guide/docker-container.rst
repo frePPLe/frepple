@@ -232,7 +232,7 @@ the max_connections setting is moved from the default 100 to eg 400).
         FREPPLE_FTP_PASSWORD: ""
 
     frepple-community-postgres:
-      image: "postgres:13"
+      image: "postgres:16"
       container_name: frepple-community-postgres
       networks:
         - backend

@@ -62,7 +62,7 @@ fi
 for sc in $FREPPLE_AUTOSTART_WEBSERVICE
 do
   echo "Starting web service for scenario $sc in the background"
-  frepplectl runwebservice --database=$sc --daemon 
+  frepplectl runwebservice --database=$sc --verbosity=0 
 done
 
 # Configure Apache

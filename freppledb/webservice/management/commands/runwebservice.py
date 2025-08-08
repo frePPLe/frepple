@@ -101,6 +101,10 @@ class Command(BaseCommand):
                 raise CommandError("Invalid task identifier")
             task.started = datetime.now()
             task.processid = os.getpid()
+        elif not options["daemon"]:
+            now = datetime.now()
+            task = Task(name="runwebservice", submitted=now, started=now, status="0%")
+            task.save(using=database)
         else:
             task = None
 

@@ -30,7 +30,7 @@ services:
           memory: 4096M
 
   frepple-@PROJECT_BRANCH@-postgres:
-    image: "postgres:13"
+    image: "postgres:16"
     container_name: frepple-@PROJECT_BRANCH@-postgres
     deploy:
       resources:

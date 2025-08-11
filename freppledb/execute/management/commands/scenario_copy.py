@@ -441,8 +441,9 @@ class Command(BaseCommand):
                     or get_databases()[destination]["NAME"],
                 )
             else:
-                cmd = "pg_restore -n public -Fc --no-password %s%s%s -d %s %s"
+                cmd = "/usr/lib/postgresql/%s/bin/pg_restore -n public -Fc --no-password %s%s%s -d %s %s"
                 commandline = cmd % (
+                    getPostgresVersion(),
                     get_databases()[destination]["USER"]
                     and ("-U %s " % get_databases()[destination]["USER"])
                     or "",

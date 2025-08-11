@@ -268,7 +268,7 @@ void ResourceBuckets::setMaximumCalendar(Calendar* c) {
   // Only create events in the time window from 3 years before current
   // till 6 years after the current date
   Date minEventDate =
-      Plan::instance().getCurrent() - Duration(3L * 365L * 86400L);
+      Plan::instance().getCurrent() - Duration(1L * 365L * 86400L);
   Date maxEventDate =
       Plan::instance().getCurrent() + Duration(6L * 365L * 86400L);
   for (CalendarDefault::EventIterator x(size_max_cal);

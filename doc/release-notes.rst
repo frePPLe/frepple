@@ -28,11 +28,14 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     
 - | Bug fix: Approved and confirmed manufacturing orders were not correctly distributed
     over the available resources on the pool for bucketized resources.
+    
+- | Bug fix: Some corner cases where the algorith couldn't plan a demand have been resolved.
+  | If your plan has unpexplainable unplanned demands, you could be impacted by this bug.
 
 .. rubric:: System administration
 
 - | Added support for PostgreSQL 17.
-
+  
 .. rubric:: Odoo integration
 
 - | 17, 18: Quoting service bug fix.

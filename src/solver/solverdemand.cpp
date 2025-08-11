@@ -453,28 +453,43 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                          << "' plans coordination." << endl;
                 setLogLevel(0);
                 double tmpresult = 0;
+                short tries = 7;
+                Date coordination_date = copy_plan_date;
+                bool coordination_flag = true;
                 try {
                   for (double remainder = data->state->a_qty;
                        remainder > ROUNDING_ERROR;
                        remainder -= data->state->a_qty) {
                     data->state->q_qty = remainder;
-                    data->state->q_date = copy_plan_date;
+                    data->state->q_date = coordination_date;
                     data->state->curDemand = const_cast<Demand*>(l);
                     data->state->curBatch = l->getBatch();
                     data->state->curBuffer = nullptr;
                     data->state->dependency = nullptr;
                     data->state->blockedOpplan = nullptr;
-                    data->coordination_run = true;
+                    data->coordination_run = coordination_flag;
                     data->accept_partial_reply = false;
                     data->recent_buffers.clear();
                     data->dependency_list.clear();
                     deliveryoper->solve(*this, v);
                     if (data->state->a_qty < ROUNDING_ERROR) {
-                      logger << indentlevel << "Warning: Demand '" << l
-                             << "': Failing coordination" << endl;
-                      break;
+                      // The coordingation run didn't come back with a positive
+                      // reply. We retry with slightly different parameters
+                      // hoping to get a proper answer.
+                      if (coordination_flag) {
+                        coordination_flag = false;
+                      } else if (tries-- > 0) {
+                        coordination_flag = true;
+                        coordination_date -= Duration(24L * 3600L);
+                      } else {
+                        logger << indentlevel << "Warning: Demand '" << l
+                               << "': Failing coordination" << endl;
+                        break;
+                      }
+                    } else {
+                      coordination_flag = true;
+                      tmpresult += data->state->a_qty;
                     }
-                    tmpresult += data->state->a_qty;
                   }
                 } catch (...) {
                   setLogLevel(loglevel);

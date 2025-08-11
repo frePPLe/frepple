@@ -271,7 +271,7 @@ void ResourceBuckets::setMaximumCalendar(Calendar* c) {
       Plan::instance().getCurrent() - Duration(1L * 365L * 86400L);
   Date maxEventDate =
       Plan::instance().getCurrent() + Duration(6L * 365L * 86400L);
-  for (CalendarDefault::EventIterator x(size_max_cal);
+  for (CalendarDefault::EventIterator x(size_max_cal, maxEventDate);
        x.getDate() < maxEventDate; ++x)
     if (v != x.getValue() && x.getDate() >= minEventDate) {
       v = x.getValue();

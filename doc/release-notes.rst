@@ -11,6 +11,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | Refreshed layout of the edit forms for data maintenance.
 
+- | The table customization popup dialog has been refreshed.
+  | Watch out: The available and selected columns have been swapped. We did this to 
+    to align with the common design practice to have the available options on the left.
+    You can be a cit confused at first, but you'll quickly get used to it.
+
 - | Small improvements to the quick filter capability.
 
 - | The widget *Inventory history* is replaced with a widget *Inventory profile*
@@ -39,10 +44,6 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 ==================
 
 .. rubric:: User interface
-
-- | The table customization modal changed.
-  | The available options list is now on the left and the selected options list is now on the right.
-  | It is now possible to collapse/expand options with multiple attributes in the available options list.
 
 - | The date format is now configurable as a parameter.
   | The new "display_time" parameter controls if the time should be displayed in the date time fields.

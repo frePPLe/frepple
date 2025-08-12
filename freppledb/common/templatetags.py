@@ -711,7 +711,7 @@ class DashboardNode(Node):
             for j in i["cols"]:
                 widgets = []
                 for k in j["widgets"]:
-                    if k[0] in reg and reg[k[0]].has_permission(req.user):
+                    if k[0] in reg and reg[k[0]].has_permission(req.user, req.database):
                         widgets.append(reg[k[0]](**k[1]))
                         context[self.hiddenvarname].pop(k[0], None)
                 cols.append({"width": j["width"], "widgets": widgets})

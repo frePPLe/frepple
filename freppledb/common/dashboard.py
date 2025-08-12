@@ -95,7 +95,7 @@ class Dashboard:
                 return HttpResponseServerError("Unknown widget")
             if not w.asynchronous:
                 return HttpResponseServerError("This widget is synchronous")
-            if not w.has_permission(request.user):
+            if not w.has_permission(request.user, request.database):
                 return HttpResponseForbidden()
             return w.render(request)
         except Exception as e:
@@ -168,7 +168,7 @@ class Widget:
         return "Not implemented"
 
     @classmethod
-    def has_permission(cls, user):
+    def has_permission(cls, user, database):
         for perm in cls.permissions:
             if not user.has_perm("auth.%s" % perm[0]):
                 return False

@@ -41,6 +41,7 @@ from freppledb.input.models import (
     PurchaseOrder,
     DistributionOrder,
     OperationPlanResource,
+    ManufacturingOrder,
 )
 
 
@@ -206,7 +207,7 @@ class ManufacturingOrderWidget(Widget):
     name = "manufacturing_orders"
     title = _("manufacturing orders")
     tooltip = _("Shows manufacturing orders by start date")
-    permissions = (("view_problem_report", "Can view problem report"),)
+    permissions = (("view_manufacturingorder", "Can view manufacturing orders"),)
     asynchronous = True
     url = "/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&status__in=proposed,confirmed,approved"
     exporturl = True
@@ -215,6 +216,12 @@ class ManufacturingOrderWidget(Widget):
 
     def args(self):
         return "?%s" % urlencode({"fence1": self.fence1, "fence2": self.fence2})
+
+    @classmethod
+    def has_permission(cls, user, database):
+        if not ManufacturingOrder.objects.using(database).exists():
+            return False
+        return super().has_permission(user, database)
 
     javascript = r"""
     var margin_y = 70;  // Width allocated for the Y-axis
@@ -522,7 +529,7 @@ class DistributionOrderWidget(Widget):
     name = "distribution_orders"
     title = _("distribution orders")
     tooltip = _("Shows distribution orders by start date")
-    permissions = (("view_problem_report", "Can view problem report"),)
+    permissions = (("view_distributionorder", "Can view distribution orders"),)
     asynchronous = True
     url = "/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&status__in=proposed,confirmed"
     exporturl = True
@@ -531,6 +538,12 @@ class DistributionOrderWidget(Widget):
 
     def args(self):
         return "?%s" % urlencode({"fence1": self.fence1, "fence2": self.fence2})
+
+    @classmethod
+    def has_permission(cls, user, database):
+        if not DistributionOrder.objects.using(database).exists():
+            return False
+        return super().has_permission(user, database)
 
     javascript = r"""
     var margin_y = 70;  // Width allocated for the Y-axis
@@ -839,7 +852,7 @@ class PurchaseOrderWidget(Widget):
     name = "purchase_orders"
     title = _("purchase orders")
     tooltip = _("Shows purchase orders by ordering date")
-    permissions = (("view_problem_report", "Can view problem report"),)
+    permissions = (("view_purchaseorder", "Can view purchase orders"),)
     asynchronous = True
     url = "/data/input/purchaseorder/?sord=asc&sidx=startdate&status__in=proposed,confirmed,approved"
     exporturl = True
@@ -858,6 +871,12 @@ class PurchaseOrderWidget(Widget):
             )
         else:
             return "?%s" % urlencode({"fence1": self.fence1, "fence2": self.fence2})
+
+    @classmethod
+    def has_permission(cls, user, database):
+        if not PurchaseOrder.objects.using(database).exists():
+            return False
+        return super().has_permission(user, database)
 
     javascript = r"""
     var margin_y = 70;  // Width allocated for the Y-axis
@@ -1245,6 +1264,12 @@ class PurchaseQueueWidget(Widget):
         return "?%s" % urlencode({"limit": self.limit})
 
     @classmethod
+    def has_permission(cls, user, database):
+        if not PurchaseOrder.objects.using(database).exists():
+            return False
+        return super().has_permission(user, database)
+
+    @classmethod
     def render(cls, request):
         limit = int(request.GET.get("limit", cls.limit))
         result = [
@@ -1299,6 +1324,12 @@ class DistributionQueueWidget(Widget):
 
     def args(self):
         return "?%s" % urlencode({"limit": self.limit})
+
+    @classmethod
+    def has_permission(cls, user, database):
+        if not DistributionOrder.objects.using(database).exists():
+            return False
+        return super().has_permission(user, database)
 
     @classmethod
     def render(cls, request):
@@ -1415,6 +1446,12 @@ class ResourceQueueWidget(Widget):
 
     def args(self):
         return "?%s" % urlencode({"limit": self.limit})
+
+    @classmethod
+    def has_permission(cls, user, database):
+        if not OperationPlanResource.objects.using(database).exists():
+            return False
+        return super().has_permission(user, database)
 
     @classmethod
     def render(cls, request):
@@ -1631,6 +1668,12 @@ class ResourceLoadWidget(Widget):
         return "?%s" % urlencode(
             {"limit": self.limit, "medium": self.medium, "high": self.high}
         )
+
+    @classmethod
+    def has_permission(cls, user, database):
+        if not OperationPlanResource.objects.using(database).exists():
+            return False
+        return super().has_permission(user, database)
 
     javascript = """
     // Collect the data

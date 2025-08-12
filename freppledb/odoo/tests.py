@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+from datetime import datetime
 import json
 import os
 from unittest import skipUnless
@@ -212,6 +213,10 @@ class OdooTest(TransactionTestCase):
                     {
                         "reference": proposed_mo.reference,
                         "type": "MO",
+                        "quantity": float(proposed_mo.quantity),
+                        "enddate": datetime.strftime(
+                            proposed_mo.enddate, "%Y-%m-%dT%H:%M:%S"
+                        ),
                     }
                 ]
             ),
@@ -225,6 +230,10 @@ class OdooTest(TransactionTestCase):
                     {
                         "reference": proposed_po.reference,
                         "type": "PO",
+                        "quantity": float(proposed_po.quantity),
+                        "enddate": datetime.strftime(
+                            proposed_po.enddate, "%Y-%m-%dT%H:%M:%S"
+                        ),
                     }
                 ]
             ),

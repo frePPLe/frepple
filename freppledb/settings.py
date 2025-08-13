@@ -548,7 +548,7 @@ if DATE_STYLE == "month-day-year":
     )
     DATE_FORMAT_JS = (
         # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
-        "MM/DD/YYYY"
+        "MM-DD-YYYY"
     )
     DATETIME_FORMAT_JS = (
         # see https://momentjs.com/docs/#/displaying/

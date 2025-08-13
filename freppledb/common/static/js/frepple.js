@@ -754,14 +754,14 @@ var grid = {
   },
 
   toggleCollapseSubOptions: function (optionString, elemId) {
-    let isExpanded = $('#'+elemId+' i').hasClass( "fa-chevron-down" ) ? true : false;
+    let isExpanded = $('#' + elemId + ' i').hasClass("fa-chevron-down") ? true : false;
 
     if (isExpanded) {
-      $('#popup #'+elemId+' i').removeClass( "fa-chevron-down" ).addClass("fa-chevron-right");
-      $('#popup #DroppointRows li[type="'+optionString+'"]').addClass("d-none");
+      $('#popup #' + elemId + ' i').removeClass("fa-chevron-down").addClass("fa-chevron-right");
+      $('#popup #DroppointRows li[type="' + optionString + '"]').addClass("d-none");
     } else {
-      $('#popup #'+elemId+' i').removeClass( "fa-chevron-right" ).addClass("fa-chevron-down");
-      $('#popup #DroppointRows li[type="'+optionString+'"]').removeClass("d-none");
+      $('#popup #' + elemId + ' i').removeClass("fa-chevron-right").addClass("fa-chevron-down");
+      $('#popup #DroppointRows li[type="' + optionString + '"]').removeClass("d-none");
     }
 
   },
@@ -879,7 +879,7 @@ var grid = {
         if (!collapsibleSet.has(collapsibleOption)) {
           collapsibleSet.add(collapsibleOption);
           let collapseIcon = '<i class="fa fa-chevron-right pt-1 float-end" style="cursor: pointer; z-index: 3000; position: relative"></i>';
-          availableoptions += '<li id="' + collapsibleSet.size*1000 + '" class="list-group-item do-not-drag" style="cursor: pointer" onclick="grid.toggleCollapseSubOptions(\'' + collapsibleOption + '\',' + collapsibleSet.size*1000 + ')">' + collapsibleOption + ' attributes' + collapseIcon + '</li>';
+          availableoptions += '<li id="' + collapsibleSet.size * 1000 + '" class="list-group-item do-not-drag" style="cursor: pointer" onclick="grid.toggleCollapseSubOptions(\'' + collapsibleOption + '\',' + collapsibleSet.size * 1000 + ')">' + collapsibleOption + ' attributes' + collapseIcon + '</li>';
         }
         availableoptions += '<li id="' + val0a[o] + '" type="' + collapsibleOption + '" class="list-group-item ps-4 d-none" style="cursor: move">' + o + '</li>';
       } else {
@@ -2907,7 +2907,7 @@ var dashboard = {
       if (layout != "")
         layout += " - ";
       if ($(this).hasClass("col-md-12"))
-        layout += "100%";
+        layout += gettext("Automatic");
       else if ($(this).hasClass("col-md-11"))
         layout += "92%";
       else if ($(this).hasClass("col-md-10"))
@@ -2952,8 +2952,7 @@ var dashboard = {
       '<span id="id_layout">' + layout + '</span>&nbsp;<span class="caret"></span>' +
       '</button>' +
       '<ul class="dropdown-menu" aria-labelledby="id_layout" id="id_layoutul">' +
-      '<li class="dropdown-header">' + gettext("Single column") + '</li>' +
-      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">100%</a></li>' +
+      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">' + gettext("Automatic") + '</a></li>' +
       '<li class="divider"></li>' +
       '<li class="dropdown-header">' + gettext("Two columns") + '</li>' +
       '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">75% - 25%</a></li>' +
@@ -3028,7 +3027,9 @@ var dashboard = {
     }
 
     // Update the layout
-    var newlayout = $("#id_layout").text().split("-");
+    var newlayout = $("#id_layout").text();
+    if (newlayout == gettext("Automatic")) newlayout = "100%";
+    newlayout = newlayout.split("-");
     var colindex = 0;
     var lastcol = null;
     // Loop over existing columns
@@ -3087,7 +3088,9 @@ var dashboard = {
       '</h1></div>' +
 
       '<div class="horizontal-form" id="' + newname + '">';
-    var newlayout = $("#id_layout").text().split("-");
+    var newlayout = $("#id_layout").text();
+    if (newlayout == gettext("Automatic")) newlayout = "100%";
+    newlayout = newlayout.split("-");
     var newwidget = $("#newwidgetname").text();
     for (var i = 0; i < newlayout.length; i++) {
       newelements += '<div class="cockpitcolumn col-md-' + Math.round(0.12 * parseInt(newlayout[i])) + ' col-sm-12">';

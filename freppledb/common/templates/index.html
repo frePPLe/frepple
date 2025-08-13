@@ -27,7 +27,7 @@
 
 {% block content %}
 {% getDashboard as dashboard hiddenwidgets %}
-<div id="dashboard">
+<div id="dashboard" class="mb-3">
 {% for row in dashboard %}
 <div data-cockpit-row="{{ row.rowname }}">
     <div class="row mt-3">
@@ -60,7 +60,7 @@
 
     <div class="row" id="{{ row.rowname }}">
         {% for cols in row.cols %}
-        <div class="cockpitcolumn col-md-{{cols.width}} col-sm-12">
+        <div class="cockpitcolumn col-md-{{cols.width}} col-sm-12{% if row.cols.0.width == 12 %} masonry{% endif %}">
             {% for widget in cols.widgets %}
             <div class="card mb-3" data-cockpit-widget="{{widget.name}}">
                 <div class="card-header" data-bs-toggle="tooltip" data-bs-placement="top" title="{{widget.tooltip|escape}}">

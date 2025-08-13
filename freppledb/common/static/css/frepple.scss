@@ -935,3 +935,26 @@ input[type="date"] {
 .widget-handle:active {
     cursor: grabbing;
 }
+
+// Masonry layout for the home screen 
+
+.masonry {
+    column-count: 1;
+    column-gap: 1rem;
+}
+
+.masonry .card {
+    break-inside: avoid;
+}
+
+@media (min-width: map-get($grid-breakpoints, md)) {
+    .masonry {
+        column-count: 2;
+    }
+}
+
+@media (min-width: map-get($grid-breakpoints, lg)) {
+    .masonry {
+        column-count: 3;
+    }
+}

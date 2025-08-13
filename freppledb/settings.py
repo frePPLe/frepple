@@ -558,10 +558,10 @@ if DATE_STYLE == "month-day-year":
     )
     DATE_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
+        "%m/%d/%Y",
         "%Y-%m-%d",  # Still recognize input in international format with 4-digit year
         "%Y.%m.%d",  # Still recognize input in international format with 4-digit year
         "%Y/%m/%d",  # Still recognize input in international format with 4-digit year
-        "%m/%d/%Y",
         "%m/%d/%y",
         "%m-%d-%Y",
         "%m-%d-%y",
@@ -578,13 +578,13 @@ if DATE_STYLE == "month-day-year":
     ]
     DATETIME_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
+        "%m/%d/%Y %H:%M:%S",
         "%Y-%m-%d %H:%M:%S",  # Still recognize input in international format with 4-digit year
         "%Y.%m.%d %H:%M:%S",  # Still recognize input in international format with 4-digit year
         "%Y/%m/%d %H:%M:%S",  # Still recognize input in international format with 4-digit year
         "%Y-%m-%d %H:%M",  # Still recognize input in international format with 4-digit year
         "%Y.%m.%d %H:%M",  # Still recognize input in international format with 4-digit year
-        "%Y/%m/%d %H:%M",  # Still recognize input in international format with 4-digit year 
-        "%m/%d/%Y %H:%M:%S",
+        "%Y/%m/%d %H:%M",  # Still recognize input in international format with 4-digit year
         "%m-%d-%Y %H:%M:%S",
         "%m-%d-%Y %H:%M",
         "%m/%d/%Y %H:%M:%S",
@@ -620,10 +620,10 @@ elif DATE_STYLE == "day-month-year":
     )
     DATE_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
+        "%d-%m-%Y",
         "%Y-%m-%d",  # Still recognize input in international format with 4-digit year
         "%Y.%m.%d",  # Still recognize input in international format with 4-digit year
-        "%Y/%m/%d",  # Still recognize input in international format with 4-digit year        
-        "%d-%m-%Y",
+        "%Y/%m/%d",  # Still recognize input in international format with 4-digit year
         "%d-%m-%y",
         "%d/%m/%Y",
         "%d/%m/%y",
@@ -640,13 +640,13 @@ elif DATE_STYLE == "day-month-year":
     ]
     DATETIME_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
+        "%d-%m-%Y %H:%M:%S",
         "%Y-%m-%d %H:%M:%S",  # Still recognize input in international format with 4-digit year
         "%Y.%m.%d %H:%M:%S",  # Still recognize input in international format with 4-digit year
         "%Y/%m/%d %H:%M:%S",  # Still recognize input in international format with 4-digit year
         "%Y-%m-%d %H:%M",  # Still recognize input in international format with 4-digit year
         "%Y.%m.%d %H:%M",  # Still recognize input in international format with 4-digit year
-        "%Y/%m/%d %H:%M",  # Still recognize input in international format with 4-digit year     
-        "%d-%m-%Y %H:%M:%S",
+        "%Y/%m/%d %H:%M",  # Still recognize input in international format with 4-digit year
         "%d-%m-%Y %H:%M",
         "%d/%m/%y %H:%M:%S",
         "%d/%m/%y %H:%M",

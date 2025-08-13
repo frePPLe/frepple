@@ -34,7 +34,17 @@ from django.db import connections, DEFAULT_DB_ALIAS
 
 
 def getPostgresVersion():
-    return math.floor(connections[DEFAULT_DB_ALIAS].pg_version / 10000)
+    """
+    Find a PostgreSQL client that matches your database instance version.
+    If an exact match isn't found, try higher numbers.
+    """
+    v = math.floor(connections[DEFAULT_DB_ALIAS].pg_version / 10000)
+    while True:
+        if os.path.isdir(f"/usr/lib/postgresql/{v}/bin"):
+            return v
+        v += 1
+        if v > 20:
+            raise Exception("No client found for your PostgreSQL version")
 
 
 def forceWsgiReload():

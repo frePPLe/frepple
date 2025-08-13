@@ -229,7 +229,6 @@ class Command(BaseCommand):
                 plantype = 1
 
             # Reset environment variables
-            # TODO avoid having to delete the environment variables. Use options directly?
             for label in freppledb.common.commands.PlanTaskRegistry.getLabels(
                 database=database
             ):
@@ -240,6 +239,10 @@ class Command(BaseCommand):
                 else:
                     # No options specified - default to activate them all
                     os.environ[label[0]] = "1"
+            for i in range(5):
+                v = f"odoo_read_{i}"
+                if v in os.environ:
+                    del os.environ[v]
 
             # Set environment variables
             if task.name != "odoo_import":

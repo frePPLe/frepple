@@ -125,7 +125,7 @@ class OdooTest(TransactionTestCase):
         self.assertEqual(User.objects.get(username="admin").groups.all().count(), 1)
 
         # A list with the items we use in our demo
-        odoo_version = getOdooVersion()
+        odoo_version = int(getOdooVersion())
         frepple_items = [
             "chair",
             "chair leg",
@@ -134,7 +134,7 @@ class OdooTest(TransactionTestCase):
             "varnished chair",
             "wooden beam - 木头",
         ]
-        if int(odoo_version) >= 18:
+        if odoo_version >= 18:
             # Kitting BOM is present in v18 onwards
             frepple_items.append("DIY varnished chair")
 
@@ -167,14 +167,14 @@ class OdooTest(TransactionTestCase):
             PurchaseOrder.objects.all().filter(status="proposed").count(),
             0,
         )
-        self.assertGreater(
+        self.assertEqual(
             Demand.objects.all()
             .filter(item__name__in=frepple_items, status="open")
             .count(),
-            3,
+            {16: 1, 17: 10, 18: 9}[odoo_version],
         )
 
-        if int(odoo_version) >= 15:
+        if odoo_version >= 15:
             # Work order level integration is only available from odoo 15 onwards
             self.assertEqual(
                 ManufacturingOrder.objects.all()

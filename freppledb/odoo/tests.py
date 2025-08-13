@@ -34,8 +34,7 @@ from django.test import TransactionTestCase
 from django.contrib.auth.models import Group
 
 from freppledb.common.models import User
-from freppledb.input.models import Item, PurchaseOrder, ManufacturingOrder
-from .management.commands.odoo_container import Command as odoo_container_command
+from freppledb.input.models import Item, PurchaseOrder, ManufacturingOrder, Demand
 from .utils import getOdooVersion
 
 
@@ -125,22 +124,28 @@ class OdooTest(TransactionTestCase):
         self.assertEqual(Group.objects.filter(name__icontains="odoo").count(), 1)
         self.assertEqual(User.objects.get(username="admin").groups.all().count(), 1)
 
+        # A list with the items we use in our demo
+        odoo_version = getOdooVersion()
+        frepple_items = [
+            "chair",
+            "chair leg",
+            "cushion",
+            "varnish",
+            "varnished chair",
+            "wooden beam - 木头",
+        ]
+        if int(odoo_version) >= 18:
+            # Kitting BOM is present in v18 onwards
+            frepple_items.append("DIY varnished chair")
+
         # Check input data
         self.assertEqual(
-            Item.objects.all()
-            .exclude(name__startswith="D")
-            .exclude(name__startswith="E")
-            .exclude(name__startswith="F")
-            .exclude(name__startswith="All")
-            .count(),
-            6,
+            Item.objects.filter(name__in=frepple_items).count(),
+            len(frepple_items),
         )
-        po_list = (
-            PurchaseOrder.objects.all()
-            .exclude(item__name__startswith="D")
-            .exclude(item__name__startswith="E")
-            .exclude(item__name__startswith="F")
-            .filter(status="confirmed")
+        po_list = PurchaseOrder.objects.filter(
+            item__name__in=frepple_items,
+            status="confirmed",
         )
         self.assertEqual(po_list.count(), 2)
         po = po_list[0]
@@ -148,12 +153,10 @@ class OdooTest(TransactionTestCase):
         # TODO receipt date changes between runs, making it difficult to compare here
         # self.assertEqual(po.receipt_date, datetime.today() + timedelta)
         self.assertEqual(
-            ManufacturingOrder.objects.all()
-            .exclude(item__name__startswith="D")
-            .exclude(item__name__startswith="E")
-            .exclude(item__name__startswith="F")
-            .filter(status="confirmed")
-            .count(),
+            ManufacturingOrder.objects.filter(
+                item__name__in=frepple_items,
+                status="confirmed",
+            ).count(),
             0,  # TODO add draft and confirmed PO in demo dataset
         )
         self.assertEqual(
@@ -164,7 +167,14 @@ class OdooTest(TransactionTestCase):
             PurchaseOrder.objects.all().filter(status="proposed").count(),
             0,
         )
-        if int(getOdooVersion()) >= 15:
+        self.assertGreater(
+            Demand.objects.all()
+            .filter(item__name__in=frepple_items, status="open")
+            .count(),
+            3,
+        )
+
+        if int(odoo_version) >= 15:
             # Work order level integration is only available from odoo 15 onwards
             self.assertEqual(
                 ManufacturingOrder.objects.all()
@@ -183,20 +193,16 @@ class OdooTest(TransactionTestCase):
 
         # Check plan results
         proposed_mo = (
-            ManufacturingOrder.objects.all()
-            .exclude(item__name__startswith="D")
-            .exclude(item__name__startswith="E")
-            .exclude(item__name__startswith="F")
-            .filter(status="proposed", owner__isnull=True)
+            ManufacturingOrder.objects.filter(
+                item__name__in=frepple_items, status="proposed", owner__isnull=True
+            )
             .order_by("startdate", "operation")
             .first()
         )
         proposed_po = (
-            PurchaseOrder.objects.all()
-            .exclude(item__name__startswith="D")
-            .exclude(item__name__startswith="E")
-            .exclude(item__name__startswith="F")
-            .filter(status="proposed")
+            PurchaseOrder.objects.filter(
+                item__name__in=frepple_items, status="proposed"
+            )
             .order_by("startdate", "supplier", "item")
             .first()
         )

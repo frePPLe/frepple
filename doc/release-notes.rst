@@ -35,6 +35,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 .. rubric:: System administration
 
 - | Added support for PostgreSQL 17.
+
+- | The database configuration for the read-only reporting role has been refectored.
+  | This change will only impact you if a) you have customized extension apps that rely
+    on the settings.DATABASES setting or b) you manually managed the creation  of the
+    reporting database role.
   
 .. rubric:: Odoo integration
 

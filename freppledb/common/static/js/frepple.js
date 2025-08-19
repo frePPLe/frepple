@@ -3917,7 +3917,7 @@ function Gauge(placeholderName, configuration) {
   this.configure = function (configuration) {
     this.config = configuration;
 
-    this.config.size = this.config.size * 0.9;
+    this.config.size = Math.min($("#" + placeholderName).parent().width() - 30, 200);
 
     this.config.raduis = this.config.size * 0.97 / 2;
     this.config.cx = this.config.size / 2;

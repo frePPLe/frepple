@@ -145,7 +145,10 @@ class Widget:
       - Class attribute 'url' optionally defines a url to a report with a more
         complete content than can be displayed in the dashboard widget.
       - Class attribute "size" specifies the desired size of the widget.
-        Possible values are "xl", "lg", "md" (default), "sm"
+           - "xl": fits 1 per line
+           - "lg": 2 fit on a line
+           - "md": 3 fit on a line, default
+           - "sm": 4 fit on a line
     """
 
     name = "Undefined"

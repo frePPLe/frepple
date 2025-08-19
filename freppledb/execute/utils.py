@@ -157,13 +157,13 @@ def updateScenarioCount(addition=True):
         else:
             return 4
 
-        with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
-
-            cursor.execute(
-                f"drop database if exists {before_digits}{new_val if not addition else new_val-1}"
-            )
-            if addition:
-                cursor.execute(f"create database {before_digits}{new_val-1}")
+        try:
+            with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
+                cursor.execute(
+                    f"drop database if exists {before_digits}{new_val if not addition else new_val-1} WITH (FORCE)"
+                )
+                if addition:
+                    cursor.execute(f"create database {before_digits}{new_val-1}")
 
             Scenario.syncWithSettings()
             if using_apache and shutil.which("apachectl"):
@@ -171,5 +171,7 @@ def updateScenarioCount(addition=True):
                 # An apache server reload needs to be triggered manually.
                 print("reloading apache server")
                 subprocess.run(["apachectl", "-k", "graceful"], check=True)
+        except Exception:
+            return 5
 
     return 0

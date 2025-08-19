@@ -1844,6 +1844,7 @@ var grid = {
   findOperandLabel(operand) {
     for (const i of $.jgrid.locales[$.jgrid.defaults.locale].search.odata)
       if (i.oper == operand) return i.text;
+    if (operand == "ico") return gettext("is child of");
     return operand;
   },
 

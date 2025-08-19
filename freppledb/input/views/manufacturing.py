@@ -2465,7 +2465,7 @@ class ManufacturingOrderList(OperationPlanMixin):
         actions = [
             {
                 "name": "erp_incr_export",
-                "label": format_lazy("export to {erp}", erp=settings.ERP_CONNECTOR),
+                "label": format_lazy(_("export to {erp}"), erp=settings.ERP_CONNECTOR),
                 "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'MO')",
             }
         ]

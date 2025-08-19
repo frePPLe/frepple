@@ -1231,7 +1231,6 @@ class PurchaseOrderList(OperationPlanMixin):
                 "function": "grid.setStatus('closed')",
             },
         ]
-    print(actions)
 
     @classmethod
     def initialize(reportclass, request):

@@ -135,22 +135,9 @@ class Command(BaseCommand):
                             )
                             continue
 
-                    # Close current connections
-                    try:
-                        cursor.execute(
-                            """
-                                SELECT pg_terminate_backend(pg_stat_activity.pid)
-                                FROM pg_stat_activity
-                                WHERE pg_stat_activity.datname = '%s'
-                                """
-                            % database_name
-                        )
-                    except psycopg2.ProgrammingError as e:
-                        raise CommandError(str(e))
-
                     # Drop the database
                     try:
-                        sql = 'drop database "%s"' % database_name
+                        sql = f'drop database "{database_name}" with(force)'
                         print("Executing SQL statement:", sql)
                         cursor.execute(sql)
                     except psycopg2.ProgrammingError as e:

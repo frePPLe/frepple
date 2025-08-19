@@ -40,6 +40,7 @@ class WelcomeWidget(Widget):
     title = _("Welcome")
     tooltip = _("Some links to get started")
     asynchronous = False
+    size = 'xl'
 
     @staticmethod
     def render(request):
@@ -84,6 +85,7 @@ class NewsWidget(Widget):
     title = _("News")
     tooltip = _("Show the latest news items from the frePPLe website")
     asynchronous = False
+    size = 'md'
 
     @staticmethod
     def render(request):
@@ -99,6 +101,7 @@ class InboxWidget(Widget):
     tooltip = _("Unread messages from your inbox")
     url = "/inbox/"
     asynchronous = False
+    size = 'md'
     limit = 10
 
     @classmethod

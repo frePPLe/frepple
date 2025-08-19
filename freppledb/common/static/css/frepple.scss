@@ -936,25 +936,34 @@ input[type="date"] {
     cursor: grabbing;
 }
 
-// Masonry layout for the home screen 
+// Home screen widgets
 
-.masonry {
-    column-count: 1;
-    column-gap: 1rem;
-}
-
-.masonry .card {
-    break-inside: avoid;
+.cockpitwidget-xl,
+.cockpitwidget-lg,
+.cockpitwidget-md,
+.cockpitwidget-sm {
+    min-width: 100%;    
 }
 
 @media (min-width: map-get($grid-breakpoints, md)) {
-    .masonry {
-        column-count: 2;
+    .cockpitwidget-xl {
+        min-width: auto;
+        flex: 12;
     }
-}
 
-@media (min-width: map-get($grid-breakpoints, lg)) {
-    .masonry {
-        column-count: 3;
+    .cockpitwidget-lg {
+        min-width: auto;
+        flex: 6;
     }
+
+    .cockpitwidget-md {
+        min-width: auto;
+        flex: 4;
+    }
+
+    .cockpitwidget-sm {
+        min-width: auto;
+        flex: 3;
+    }
+
 }

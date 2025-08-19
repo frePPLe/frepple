@@ -708,11 +708,17 @@ class DashboardNode(Node):
         context[self.varname] = []
         for i in mydashboard:
             cols = []
+            width = 0
             for j in i["cols"]:
                 widgets = []
                 for k in j["widgets"]:
                     if k[0] in reg and reg[k[0]].has_permission(req.user, req.database):
-                        widgets.append(reg[k[0]](**k[1]))
+                        w = reg[k[0]](**k[1])
+                        width += {"xl": 12, "lg": 6, "md": 4, "sm": 3}[w.size]
+                        if width > 12:
+                            width -= 12
+                            w.linebreak = True
+                        widgets.append(w)
                         context[self.hiddenvarname].pop(k[0], None)
                 cols.append({"width": j["width"], "widgets": widgets})
             context[self.varname].append({"rowname": i["rowname"], "cols": cols})

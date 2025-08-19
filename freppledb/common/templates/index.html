@@ -58,11 +58,12 @@
       </div>
     </div>
 
-    <div class="row" id="{{ row.rowname }}">
+    <div class="row cockpitcolumn g-3" id="{{ row.rowname }}">
         {% for cols in row.cols %}
-        <div class="cockpitcolumn col-md-{{cols.width}} col-sm-12{% if row.cols.0.width == 12 %} masonry{% endif %}">
             {% for widget in cols.widgets %}
-            <div class="card mb-3" data-cockpit-widget="{{widget.name}}">
+            {% if widget.linebreak %}</div><div class="row cockpitcolumn g-3" id="{{ row.rowname }}">{% endif %}
+            <div class="cockpitwidget-{{widget.size}} mb-3">
+            <div class="card  h-100" data-cockpit-widget="{{widget.name}}">
                 <div class="card-header" data-bs-toggle="tooltip" data-bs-placement="top" title="{{widget.tooltip|escape}}">
                     <span class='fa fa-times float-end ms-2 panel-close'></span>
                     <span class='fa fa-minus float-end  ms-2 panel-toggle'></span>
@@ -78,10 +79,10 @@
 					{% else %}
 					{% renderDashboardWidget widget %}
 					{% endif %}
-                </div>
 			</div>
-			{% endfor %}
+      </div>
 		</div>
+			{% endfor %}
         {% endfor %}
 	</div>
 

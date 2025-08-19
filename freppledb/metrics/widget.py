@@ -46,6 +46,7 @@ class AnalysisDemandProblems(Widget):
     asynchronous = True
     url = "/demand/?noautofilter&sidx=latedemandvalue%20desc%2C%20latedemandquantity%20desc%2C%20latedemandcount&sord=desc"
     exporturl = True
+    size = 'lg'
     limit = 20
     orderby = "latedemandvalue"
 

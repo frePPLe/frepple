@@ -45,6 +45,7 @@ class ForecastWidget(Widget):
     tooltip = _("Show the value of all sales order and forecast")
     permissions = (("view_forecast_report", "Can view forecast report"),)
     asynchronous = True
+    size = 'lg'
     history = 12
     future = 12
 
@@ -326,6 +327,7 @@ class ForecastAccuracyWidget(Widget):
     tooltip = _("Show the evolution of the SMAPE forecast error")
     permissions = (("view_forecast_report", "Can view forecast report"),)
     asynchronous = True
+    size = 'sm'
     history = 12
 
     def args(self):
@@ -481,6 +483,7 @@ class OutliersWidget(Widget):
     asynchronous = True
     url = "/problem/?name=outlier"
     exporturl = True
+    size = 'lg'
     limit = 20
 
     query = """

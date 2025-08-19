@@ -32,6 +32,7 @@ class WizardWidget(Widget):
     name = "wizard"
     title = _("Loading your first data")
     asynchronous = False
+    size = "xl"
 
     def render(self, request=None):
         from freppledb.common.middleware import _thread_locals

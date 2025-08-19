@@ -41,6 +41,7 @@ class ArchivedDemandWidget(Widget):
     title = _("Demand history")
     tooltip = _("Show the evolution of the open sales orders")
     asynchronous = True
+    size = 'lg'
     history = 12
 
     def args(self):
@@ -208,6 +209,7 @@ class ArchivedPurchaseOrderWidget(Widget):
     title = _("Purchase order history")
     tooltip = _("Show the evolution of the open purchase orders")
     asynchronous = True
+    size = 'lg'
     history = 12
 
     def args(self):

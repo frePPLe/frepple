@@ -127,24 +127,25 @@ class Widget:
     """
     Widgets are UI components that can be added to the dashboard.
     Subclasses need to follow these conventions:
-        - They can only be defined in a file "widget.py" in an application module.
-        - In the file widget.py each widget needs to register itself by calling
+     - They can only be defined in a file "widget.py" in an application module.
+     - In the file widget.py each widget needs to register itself by calling
         the method Widget.register().
-        - We don't expect widgets to be instantiated.
-        - Class attribute 'name' defines a unique identifier for the widget.
+     - Class attribute 'name' defines a unique identifier for the widget.
         This string is also used for the URL to access the widget, so keep it
         short and avoid special characters.
-        - Class attribute 'title' defines a translatable title string for the widget.
-        - Class attribute 'asynchronous' needs to be set to true for asynchronous widgets.
+      - Class attribute 'title' defines a translatable title string for the widget.
+      - Class attribute 'asynchronous' needs to be set to true for asynchronous widgets.
         Such widgets are rendered in 2 steps: initially the dashboard displays a
         loading icon, and next an ajax request is launched to populate the widget
         content.
-        - Class method render(request) is called to render the widget to the
+      - Class method render(request) is called to render the widget to the
         client browser.
         It returns a string for synchronous widgets.
         It returns a HTTPResponse object for asynchronous widgets.
-        - Class attribute 'url' optionally defines a url to a report with a more
+      - Class attribute 'url' optionally defines a url to a report with a more
         complete content than can be displayed in the dashboard widget.
+      - Class attribute "size" specifies the desired size of the widget.
+        Possible values are "xl", "lg", "md" (default), "sm"
     """
 
     name = "Undefined"
@@ -153,6 +154,7 @@ class Widget:
     asynchronous = False  # Asynchroneous widget
     repeat = False  # Asynchronous widgets can be set to automatically refresh
     url = None  # URL opened when the header is clicked
+    size = "md"
     exporturl = False  # Enable or disable a download icon
     args = ""  # Arguments passed in the url for asynchronous widgets
     javascript = ""  # Javascript called for rendering the widget

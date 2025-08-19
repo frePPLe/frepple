@@ -51,6 +51,7 @@ class LateOrdersWidget(Widget):
     tooltip = _("Shows orders that will be delivered after their due date")
     permissions = (("view_problem_report", "Can view problem report"),)
     asynchronous = True
+    size = 'lg'
     url = "/problem/?noautofilter&entity=demand&name=late&sord=asc&sidx=startdate"
     exporturl = True
     limit = 20
@@ -133,6 +134,7 @@ class ShortOrdersWidget(Widget):
     tooltip = _("Shows orders that are not planned completely")
     permissions = (("view_problem_report", "Can view problem report"),)
     asynchronous = True
+    size = 'lg'
     # Note the gte filter lets pass "short" and "unplanned", and filters out
     # "late" and "early".
     url = "/problem/?noautofilter&entity=demand&name__gte=short&sord=asc&sidx=startdate"
@@ -209,6 +211,7 @@ class ManufacturingOrderWidget(Widget):
     tooltip = _("Shows manufacturing orders by start date")
     permissions = (("view_manufacturingorder", "Can view manufacturing orders"),)
     asynchronous = True
+    size = 'lg'
     url = "/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&status__in=proposed,confirmed,approved"
     exporturl = True
     fence1 = 7
@@ -531,6 +534,7 @@ class DistributionOrderWidget(Widget):
     tooltip = _("Shows distribution orders by start date")
     permissions = (("view_distributionorder", "Can view distribution orders"),)
     asynchronous = True
+    size = 'lg'
     url = "/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&status__in=proposed,confirmed"
     exporturl = True
     fence1 = 7
@@ -854,6 +858,7 @@ class PurchaseOrderWidget(Widget):
     tooltip = _("Shows purchase orders by ordering date")
     permissions = (("view_purchaseorder", "Can view purchase orders"),)
     asynchronous = True
+    size = 'lg'
     url = "/data/input/purchaseorder/?sord=asc&sidx=startdate&status__in=proposed,confirmed,approved"
     exporturl = True
     fence1 = 7
@@ -1256,6 +1261,7 @@ class PurchaseQueueWidget(Widget):
     tooltip = _("Display a list of new purchase orders")
     permissions = (("view_purchaseorder", "Can view purchase orders"),)
     asynchronous = True
+    size = 'lg'
     url = "/data/input/purchaseorder/?noautofilter&status=proposed&sidx=startdate&sord=asc"
     exporturl = True
     limit = 20
@@ -1318,6 +1324,7 @@ class DistributionQueueWidget(Widget):
     tooltip = _("Display a list of new distribution orders")
     permissions = (("view_distributionorder", "Can view distribution order"),)
     asynchronous = True
+    size = 'lg'
     url = "/data/input/distributionorder/?noautofilter&status=proposed&sidx=startdate&sord=asc"
     exporturl = True
     limit = 20
@@ -1382,6 +1389,7 @@ class ShippingQueueWidget(Widget):
     tooltip = _("Display a list of new distribution orders")
     permissions = (("view_distributionorder", "Can view distribution order"),)
     asynchronous = True
+    size = 'lg'
     url = "/data/input/distributionorder/?noautofilter&sidx=plandate&sord=asc"
     exporturl = True
     limit = 20
@@ -1440,6 +1448,7 @@ class ResourceQueueWidget(Widget):
     tooltip = _("Display planned activities for the resources")
     permissions = (("view_resource_report", "Can view resource report"),)
     asynchronous = True
+    size = 'lg'
     url = "/data/input/operationplanresource/?sidx=operatiopnplan__startdate&sord=asc"
     exporturl = True
     limit = 20
@@ -1522,6 +1531,7 @@ class PurchaseAnalysisWidget(Widget):
     tooltip = _("Analyse the urgency of existing purchase orders")
     permissions = (("view_purchaseorder", "Can view purchase orders"),)
     asynchronous = True
+    size = 'lg'
     url = "/data/input/purchaseorder/?noautofilter&status=confirmed&sidx=color&sord=asc"
     limit = 20
 
@@ -1575,6 +1585,7 @@ class AlertsWidget(Widget):
     tooltip = _("Overview of all alerts in the plan")
     permissions = (("view_problem_report", "Can view problem report"),)
     asynchronous = True
+    size = 'md'
     url = "/problem/"
     entities = "material,capacity,demand,operation"
 
@@ -1659,6 +1670,7 @@ class ResourceLoadWidget(Widget):
     permissions = (("view_resource_report", "Can view resource report"),)
     asynchronous = True
     url = "/resource/"
+    size = 'md'
     exporturl = True
     limit = 5
     high = 90
@@ -1770,6 +1782,7 @@ class InventoryByLocationWidget(Widget):
     title = _("inventory by location")
     tooltip = _("Display the locations with the highest inventory value")
     asynchronous = True
+    size = 'md'
     limit = 5
 
     def args(self):
@@ -1860,6 +1873,7 @@ class InventoryByItemWidget(Widget):
     title = _("inventory by item")
     tooltip = _("Display the items with the highest inventory value")
     asynchronous = True
+    size = 'lg'
     limit = 20
 
     def args(self):
@@ -1951,6 +1965,7 @@ class DeliveryPerformanceWidget(Widget):
     )
     permissions = (("view_demand", "Can view sales order"),)
     asynchronous = True
+    size = 'sm'
     green = 90
     yellow = 80
 
@@ -2014,6 +2029,7 @@ class InventoryEvolutionWidget(Widget):
     title = _("Inventory evolution")
     tooltip = _("Show the history and forecasted future of the on hand")
     asynchronous = True
+    size = 'lg'
     history = 12
 
     def args(self):

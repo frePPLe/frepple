@@ -37,8 +37,8 @@ importers:
         specifier: ^9.33.0
         version: 9.33.0(eslint@9.23.0(jiti@2.4.2))
       globals:
-        specifier: ^15.15.0
-        version: 15.15.0
+        specifier: ^16.0.0
+        version: 16.3.0
       grunt:
         specifier: ^1.6.1
         version: 1.6.1
@@ -60,9 +60,6 @@ importers:
       grunt-contrib-watch:
         specifier: ^1.1.0
         version: 1.1.0
-      grunt-exec:
-        specifier: ^3.0.0
-        version: 3.0.0(grunt@1.6.1)
       grunt-sass:
         specifier: ^3.1.0
         version: 3.1.0(grunt@1.6.1)
@@ -888,8 +885,8 @@ packages:
     resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
     engines: {node: '>=18'}
 
-  globals@15.15.0:
-    resolution: {integrity: sha512-7ACyT3wmyp3I61S4fG682L0VA2RGD9otkqGJIwNUMF1SWUombIIk+af1unuDYgMm082aHYwD+mzJvv9Iu8dsgg==}
+  globals@16.3.0:
+    resolution: {integrity: sha512-bqWEnJ1Nt3neqx2q5SFfGS8r/ahumIakg3HcwtNlrVlwXIeNumWn/c7Pn/wKzGhf6SaW6H6uWXLqC30STCMchQ==}
     engines: {node: '>=18'}
 
   globule@1.3.4:
@@ -938,12 +935,6 @@ packages:
   grunt-contrib-watch@1.1.0:
     resolution: {integrity: sha512-yGweN+0DW5yM+oo58fRu/XIRrPcn3r4tQx+nL7eMRwjpvk+rQY6R8o94BPK0i2UhTg9FN21hS+m8vR8v9vXfeg==}
     engines: {node: '>=0.10.0'}
-
-  grunt-exec@3.0.0:
-    resolution: {integrity: sha512-cgAlreXf3muSYS5LzW0Cc4xHK03BjFOYk0MqCQ/MZ3k1Xz2GU7D+IAJg4UKicxpO+XdONJdx/NJ6kpy2wI+uHg==}
-    engines: {node: '>=0.8.0'}
-    peerDependencies:
-      grunt: '>=0.4'
 
   grunt-known-options@2.0.0:
     resolution: {integrity: sha512-GD7cTz0I4SAede1/+pAbmJRG44zFLPipVtdL9o3vqx9IEyb7b4/Y3s7r6ofI3CchR5GvYJ+8buCSioDv5dQLiA==}
@@ -2876,7 +2867,7 @@ snapshots:
 
   globals@14.0.0: {}
 
-  globals@15.15.0: {}
+  globals@16.3.0: {}
 
   globule@1.3.4:
     dependencies:
@@ -2935,10 +2926,6 @@ snapshots:
       tiny-lr: 1.1.1
     transitivePeerDependencies:
       - supports-color
-
-  grunt-exec@3.0.0(grunt@1.6.1):
-    dependencies:
-      grunt: 1.6.1
 
   grunt-known-options@2.0.0: {}
 

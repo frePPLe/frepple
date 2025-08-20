@@ -21,7 +21,7 @@
     "**/*": "prettier --write --ignore-unknown"
   },
   "engines": {
-    "node": ">=v22.8.0"
+    "node": ">=18.19.1"
   },
   "dependencies": {
     "angular-gettext": "^2.4.2"
@@ -35,7 +35,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.5",
     "eslint-plugin-vue": "^9.33.0",
-    "globals": "^15.15.0",
+    "globals": "^16.0.0",
     "grunt": "^1.6.1",
     "grunt-angular-gettext": "^2.5.3",
     "grunt-contrib-clean": "^2.0.1",
@@ -43,7 +43,6 @@
     "grunt-contrib-less": "^3.0.0",
     "grunt-contrib-uglify-es": "^3.3.0",
     "grunt-contrib-watch": "^1.1.0",
-    "grunt-exec": "^3.0.0",
     "grunt-sass": "^3.1.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.0",

@@ -411,6 +411,8 @@ class OperationResource(AuditModel):
     quantity = models.DecimalField(
         _("quantity"),
         default="1.00",
+        null=True,
+        blank=True,
         max_digits=20,
         decimal_places=8,
         help_text=_("Required quantity of the resource"),

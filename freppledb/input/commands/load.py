@@ -2041,9 +2041,10 @@ class loadOperationResources(LoadTask):
                         curload = frepple.load(
                             operation=frepple.operation(name=i[0]),
                             resource=frepple.resource(name=i[1]),
-                            quantity=i[2],
                             source=i[10],
                         )
+                        if i[2] is not None:
+                            curload.quantity = i[2]
                         if i[3] and i[3] > datetime(1971, 1, 3):
                             curload.effective_start = i[3]
                         if i[4] and i[4] < datetime(2030, 12, 29):

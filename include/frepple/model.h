@@ -634,6 +634,8 @@ class Problem : public NonCopyable, public Object {
   static void clearProblems(HasProblems& p, bool setchanged = true,
                             bool includeInvalidData = true);
 
+  static void clearConstraints(Object& p);
+
   /* Returns a pointer to the object that owns this problem. */
   virtual Object* getOwner() const = 0;
 
@@ -798,12 +800,15 @@ class Problem::List {
   /* Get the last problem on the list. */
   Problem* top() const;
 
-  /* Cur the list in two parts . */
+  /* Cut the list in two parts . */
   Problem* unlink(Problem* p) {
     Problem* tmp = p->nextProblem;
     p->nextProblem = nullptr;
     return tmp;
   }
+
+  /* Remove all problems with a specific owner. */
+  void erase(Object&);
 
   /* Returns true if the list is empty. */
   bool empty() const { return first == nullptr; }

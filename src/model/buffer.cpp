@@ -539,6 +539,10 @@ Buffer::~Buffer() {
   // Remove the inventory operation
   Operation* invoper = Operation::find("Inventory " + string(getName()));
   if (invoper) delete invoper;
+
+  // Problems are automatically deleted by the HasProblem class.
+  // Constraints need to be cleared explicitly.
+  Problem::clearConstraints(*this);
 }
 
 void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,

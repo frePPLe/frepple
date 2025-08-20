@@ -191,6 +191,10 @@ Operation::~Operation() {
 
   // Clear dependencies
   while (!dependencies.empty()) delete dependencies.front();
+
+  // Problems are automatically deleted by the HasProblem class.
+  // Constraints need to be cleared explicitly.
+  Problem::clearConstraints(*this);
 }
 
 OperationRouting::~OperationRouting() {

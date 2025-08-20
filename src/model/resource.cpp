@@ -321,6 +321,10 @@ Resource::~Resource() {
     while (ItemDistribution* itmdist = itmdist_iter.next())
       if (itmdist->getResource() == this) itmdist->setResource(nullptr);
   }
+
+  // Problems are automatically deleted by the HasProblem class.
+  // Constraints need to be cleared explicitly.
+  Problem::clearConstraints(*this);
 }
 
 void Resource::setOwner(Resource* o) {

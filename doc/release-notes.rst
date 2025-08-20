@@ -32,6 +32,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Bug fix: Some corner cases where the algorith couldn't plan a demand have been resolved.
   | If your plan has unpexplainable unplanned demands, you could be impacted by this bug.
 
+- | Bug fix: Correct engine crash when objects are deleted in customized planning scripts.
+
 .. rubric:: System administration
 
 - | Added support for PostgreSQL 17.

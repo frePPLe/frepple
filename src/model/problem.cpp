@@ -215,6 +215,11 @@ void Problem::clearProblems() {
   }
 }
 
+void Problem::clearConstraints(Object& p) {
+  for (auto dmd = Demand::begin(); dmd != Demand::end(); ++dmd)
+    dmd->getConstraints().erase(p);
+}
+
 void Problem::clearProblems(HasProblems& p, bool setchanged,
                             bool includeInvalidData) {
   // Nothing to do
@@ -510,6 +515,28 @@ void Problem::List::clear(Problem* c) {
 
   // Set the header to nullptr
   if (!c) first = nullptr;
+}
+
+void Problem::List::erase(Object& p) {
+  Problem* prev = nullptr;
+  for (Problem* x = first; x;) {
+    if (x->getOwner() == &p ||
+        (x->getOwner() && x->getOwner()->hasType<OperationPlan>() &&
+         p.hasType<Operation>() &&
+         static_cast<OperationPlan*>(x->getOwner())->getOperation() == &p)) {
+      // Remove from the list
+      auto tmp = x;
+      if (prev)
+        prev->nextProblem = x->nextProblem;
+      else
+        first = x->nextProblem;
+      x = x->nextProblem;
+      delete tmp;
+    } else {
+      prev = x;
+      x = x->nextProblem;
+    }
+  }
 }
 
 Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,

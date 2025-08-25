@@ -105,14 +105,14 @@ The section below describes the installation and configuration of these.
     | This speeds up your developments, since it skips redeploying the connectors after
       each commit on your odoo connector github repository.
 
-    | To enable this option, you need to uncomment and edit two sections in the frepplemll.py file.
-    
+    | To enable this option, you need to uncomment and edit two sections in the frepplexml.py file.
+
     * https://github.com/frePPLe/odoo/blob/db24d8b4f882e594b02840f549532e356da4e1dd/frepple/controllers/frepplexml.py#L274
     * https://github.com/frePPLe/odoo/blob/db24d8b4f882e594b02840f549532e356da4e1dd/frepple/controllers/frepplexml.py#L351
 
     | You should enable this option with github repositories you can trust 100%. Using it with
       repositories you don't control is a big security risk, since it allows anyone to run arbitrary
-      code on your odoo server.  
+      code on your odoo server.
 
 * **Configuring the connector - frePPLe side**
 
@@ -157,7 +157,7 @@ The section below describes the installation and configuration of these.
       | Odoo user for the connection.
 
     * | odoo.password:
-      | Password for the connection.
+      | Password for the connection or alternatively the API key of the odoo user.
 
     * | odoo.company:
       | Company name for which to create purchase quotation and

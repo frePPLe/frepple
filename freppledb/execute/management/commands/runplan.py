@@ -239,6 +239,8 @@ class Command(BaseCommand):
                 else:
                     # No options specified - default to activate them all
                     os.environ[label[0]] = "1"
+            if "loadplan" in os.environ:
+                del os.environ["loadplan"]
             for i in range(5):
                 v = f"odoo_read_{i}"
                 if v in os.environ:

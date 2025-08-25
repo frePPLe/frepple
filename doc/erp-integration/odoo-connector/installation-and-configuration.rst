@@ -157,7 +157,7 @@ The section below describes the installation and configuration of these.
       | Odoo user for the connection.
 
     * | odoo.password:
-      | Password for the connection or alternatively the API key of the odoo user.
+      | Password for the connection (or even better, an API key of the odoo user).
 
     * | odoo.company:
       | Company name for which to create purchase quotation and

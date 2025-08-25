@@ -1961,7 +1961,11 @@ class ForecastEditor:
                 t = "location %s" % (i.object_pk,)
             result_comment.append(
                 {
-                    "user": "%s (%s)" % (i.user.username, i.user.get_full_name()),
+                    "user": (
+                        "%s (%s)" % (i.user.username, i.user.get_full_name())
+                        if i.user
+                        else None
+                    ),
                     "lastmodified": str(i.lastmodified),
                     "comment": i.comment,
                     "type": t,
@@ -1983,7 +1987,11 @@ class ForecastEditor:
         for i in history:
             result_history.append(
                 {
-                    "user": "%s (%s)" % (i.user.username, i.user.get_full_name()),
+                    "user": (
+                        "%s (%s)" % (i.user.username, i.user.get_full_name())
+                        if i.user
+                        else None
+                    ),
                     "object_id": i.object_id,
                     "content_type": i.content_type.name,
                     "change_message": i.change_message,

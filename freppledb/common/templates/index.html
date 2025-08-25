@@ -64,14 +64,17 @@
             {% if widget.linebreak %}</div><div class="row cockpitcolumn g-3" id="{{ row.rowname }}">{% endif %}
             <div class="cockpitwidget-{{widget.size}} mb-3">
             <div class="card  h-100" data-cockpit-widget="{{widget.name}}">
-                <div class="card-header" data-bs-toggle="tooltip" data-bs-placement="top" title="{{widget.tooltip|escape}}">
-                    <span class='fa fa-times float-end ms-2 panel-close'></span>
-                    <span class='fa fa-minus float-end  ms-2 panel-toggle'></span>
-                    {% if widget.exporturl %}<a href="{{request.prefix}}{{widget.url}}&amp;format=spreadsheet"><span class='fa fa-arrow-down float-end  ms-2 card-header-color'></span></a>
-					{% endif %}
+                <div class="card-header d-flex align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="{{widget.tooltip|escape}}">
                     {% if widget.url %}<a class="text-decoration-underline card-header-color" href="{{request.prefix}}{{widget.url}}">{{widget.title|upper}}&nbsp;<span class="fa fa-caret-right"></span></a>
                     {% else %}<span style="cursor: default">{{widget.title|upper}}</span>
-					{% endif %}
+                    {% endif %}
+                    {% if widget.exporturl %}
+                    <a class='fa fa-arrow-down d-inline-block ms-auto' href="{{request.prefix}}{{widget.url}}&amp;format=spreadsheet"></a>
+                    <span class='fa fa-times ms-2 panel-close'></span>
+					          {% else %}
+                    <span class='fa fa-times ms-auto panel-close'></span>
+                    {% endif %}
+                    <span class="fa fa-arrows ms-2 widget-handle"></span>
                 </div>
 				<div class="card-body">
 					{% if widget.asynchronous %}

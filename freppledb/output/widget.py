@@ -1671,7 +1671,6 @@ class ResourceLoadWidget(Widget):
     asynchronous = True
     url = "/resource/"
     size = "md"
-    exporturl = True
     limit = 5
     high = 90
     medium = 80

@@ -2947,31 +2947,6 @@ var dashboard = {
       '</div></div>' +
 
       '<div class="row mb-3">' +
-      '<label class="col-3 col-form-label" for="id_layout2" class="col-form-label">' + gettext("Layout") + ':</label>' +
-      '<div class="col-9 dropdown">' +
-      '<button class="form-control dropdown-toggle w-100" id="id_layout2" name="layout" type="button" data-bs-toggle="dropdown" aria-haspopup="true">' +
-      '<span id="id_layout">' + layout + '</span>&nbsp;<span class="caret"></span>' +
-      '</button>' +
-      '<ul class="dropdown-menu" aria-labelledby="id_layout" id="id_layoutul">' +
-      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">' + gettext("Automatic") + '</a></li>' +
-      '<li class="divider"></li>' +
-      '<li class="dropdown-header">' + gettext("Two columns") + '</li>' +
-      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">75% - 25%</a></li>' +
-      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">67% - 33%</a></li>' +
-      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">50% - 50%</a></li>' +
-      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">33% - 67%</a></li>' +
-      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">25% - 75%</a></li>' +
-      '<li class="divider"></li>' +
-      '<li class="dropdown-header">' + gettext("Three columns") + '</li>' +
-      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">50% - 25% - 25%</a></li>' +
-      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">33% - 33% - 33%</a></li>' +
-      '<li class="divider"></li>' +
-      '<li class="dropdown-header">' + gettext("Four columns") + '</li>' +
-      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">25% - 25% - 25% - 25%</a></li>' +
-      '</ul></div>' +
-      '</div>' +
-
-      '<div class="row mb-3">' +
       '<label class="col-3 col-form-label" for="id_widget2" class="col-form-label">' + gettext("Add widget") + ':</label>' +
       '<div class="col-9 dropdown">' +
       '<button class="form-control dropdown-toggle w-100" id="id_widget2" type="button" data-bs-toggle="dropdown">' +

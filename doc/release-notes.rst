@@ -12,7 +12,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Refreshed layout of the edit forms for data maintenance.
 
 - | The table customization popup dialog has been refreshed.
-  | Watch out: The available and selected columns have been swapped. We did this to 
+  | Watch out: The available and selected columns have been swapped. We did this to
     to align with the common design practice to have the available options on the left.
     You can be a cit confused at first, but you'll quickly get used to it.
 
@@ -25,10 +25,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | The capacity report now has a row to distinguish confirmed vs proposed loading of the
     resources.
-    
+
 - | Bug fix: Approved and confirmed manufacturing orders were not correctly distributed
     over the available resources on the pool for bucketized resources.
-    
+
 - | Bug fix: Some corner cases where the algorith couldn't plan a demand have been resolved.
   | If your plan has unpexplainable unplanned demands, you could be impacted by this bug.
 
@@ -42,10 +42,13 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | This change will only impact you if a) you have customized extension apps that rely
     on the settings.DATABASES setting or b) you manually managed the creation  of the
     reporting database role.
-  
+
 .. rubric:: Odoo integration
 
 - | 17, 18: Ability to use an APIT for authentication in the connector.
+
+- | 17, 18: Support of the BOM component updates made in the PLM module. BOM operation
+    updates are not supported yet.
 
 - | 17, 18: Quoting service bug fix.
   | Quotes created by the quoting servers weren't erased after a new odoo import.  These records stayed

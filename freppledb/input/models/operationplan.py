@@ -256,11 +256,14 @@ class OperationPlan(AuditModel):
                 "completed_allow_future_%s" % db, completed_allow_future, timeout=60
             )
 
-        # Assure that all child operationplans also get the same status
+        # Assure that all child operationplans also get a valid status
+        # suboperation status can only be equal or beyond the routing status using this order:
+        # proposed -> approved -> confirmed -> completed -> closed
+        statuses = ["proposed", "approved", "confirmed", "completed", "closed"]
         now = datetime.now()
         if self.type not in ("DO", "PO"):
             for subop in self.xchildren.all().using(db):
-                if subop.status != self.status:
+                if statuses.index(subop.status) < statuses.index(self.status):
                     subop.status = self.status
                     subop.save(update_fields=["status"])
 
@@ -421,10 +424,8 @@ class OperationPlan(AuditModel):
                                         break
 
     def save(self, *args, **kwargs):
-        if not (
-            kwargs.get("update_fields") and "status" not in kwargs.get("update_fields")
-        ):
-            self.propagateStatus()
+
+        self.propagateStatus()
         # Call the real save() method
         super().save(*args, **kwargs)
 

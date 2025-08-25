@@ -45,6 +45,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   
 .. rubric:: Odoo integration
 
+- | 17, 18: Ability to use an APIT for authentication in the connector.
+
 - | 17, 18: Quoting service bug fix.
   | Quotes created by the quoting servers weren't erased after a new odoo import.  These records stayed
     around in the frepple database.

@@ -714,9 +714,10 @@ class DashboardNode(Node):
                 for k in j["widgets"]:
                     if k[0] in reg and reg[k[0]].has_permission(req.user, req.database):
                         w = reg[k[0]](**k[1])
-                        width += {"xl": 12, "lg": 6, "md": 4, "sm": 3}[w.size]
+                        sz = {"xl": 12, "lg": 6, "md": 4, "sm": 3}[w.size]
+                        width += sz
                         if width > 12:
-                            width -= 12
+                            width = sz
                             w.linebreak = True
                         widgets.append(w)
                         context[self.hiddenvarname].pop(k[0], None)

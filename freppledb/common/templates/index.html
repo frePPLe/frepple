@@ -66,7 +66,7 @@
             <div class="card widget h-100" data-cockpit-widget="{{widget.name}}">
                 <div class="card-header d-flex align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="{{widget.tooltip|escape}}">
                     {% if widget.url %}<a class="text-decoration-underline card-header-color" href="{{request.prefix}}{{widget.url}}">{{widget.title|upper}}&nbsp;<span class="fa fa-caret-right"></span></a>
-                    {% else %}<span>{{widget.title|upper}}</span>
+                    {% else %}<span style="cursor: default">{{widget.title|upper}}</span>
                     {% endif %}
                     {% if widget.exporturl %}
                     <a class='fa fa-arrow-down d-inline-block ms-auto' href="{{request.prefix}}{{widget.url}}&amp;format=spreadsheet"></a>

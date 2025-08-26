@@ -21,6 +21,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | The widget *Inventory history* is replaced with a widget *Inventory profile*
     that displays both the on hand history and the projected on hand in the horizon.
 
+- | The home screen has been refactored to make it easier to customize and
+    automatically display widgets that are relevant to your dataset.
+
 .. rubric:: Production planning
 
 - | The capacity report now has a row to distinguish confirmed vs proposed loading of the

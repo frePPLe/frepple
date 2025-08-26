@@ -141,15 +141,15 @@ module.exports = function (grunt) {
       },
       forecast: {
         src: [
-            'freppledb/forecast/static/forecast/src/module.js',
-            'freppledb/forecast/static/forecast/src/customerstable.js',
-            'freppledb/forecast/static/forecast/src/itemstable.js',
-            'freppledb/forecast/static/forecast/src/locationstable.js',
-            'freppledb/forecast/static/forecast/src/forecastgridDrv.js',
-            'freppledb/forecast/static/forecast/src/displayForecastGraph.js',
-            'freppledb/forecast/static/forecast/src/forecast.js'
-            ],
-          dest: 'freppledb/forecast/static/js/frepple-forecast.js'
+          'freppledb/forecast/static/forecast/src/module.js',
+          'freppledb/forecast/static/forecast/src/customerstable.js',
+          'freppledb/forecast/static/forecast/src/itemstable.js',
+          'freppledb/forecast/static/forecast/src/locationstable.js',
+          'freppledb/forecast/static/forecast/src/forecastgridDrv.js',
+          'freppledb/forecast/static/forecast/src/displayForecastGraph.js',
+          'freppledb/forecast/static/forecast/src/forecast.js'
+        ],
+        dest: 'freppledb/forecast/static/js/frepple-forecast.js'
       }
     },
 
@@ -218,7 +218,6 @@ module.exports = function (grunt) {
   // the following 3 are deprecated even in latest versions
   grunt.loadNpmTasks('grunt-contrib-uglify-es');
   grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-exec');
 
   // Register our tasks
   grunt.registerTask('minify', ['concat', 'uglify', 'clean']);

@@ -8,7 +8,7 @@
 <script>
     var currency = {{currency|json}};
   $(function() {
-      dashboard.dragAndDrop();
+    widget.init(dashboard.save);
 
     $("#horizonbucketsul li a").click(function(){
       $("#horizonbuckets1").html($(this).text() + '  <span class="caret"></span>');
@@ -32,7 +32,7 @@
 <div data-cockpit-row="{{ row.rowname }}">
     <div class="row mt-3">
       <div class="col-auto">
-         <h1 style="float: left; cursor: move; text-transform: capitalize">{{ row.rowname }}</h1>
+         <h1 class="widget-title" style="float: left; text-transform: capitalize">{{ row.rowname }}</h1>
       </div>
 
       <div class="col-auto ms-auto">
@@ -58,15 +58,15 @@
       </div>
     </div>
 
-    <div class="row cockpitcolumn g-3" id="{{ row.rowname }}">
+    <div class="row cockpitcolumn widget-list g-3">
         {% for cols in row.cols %}
             {% for widget in cols.widgets %}
-            {% if widget.linebreak %}</div><div class="row cockpitcolumn g-3" id="{{ row.rowname }}">{% endif %}
+            {% if widget.linebreak %}</div><div class="row cockpitcolumn widget-list g-3">{% endif %}
             <div class="cockpitwidget-{{widget.size}} mb-3">
-            <div class="card  h-100" data-cockpit-widget="{{widget.name}}">
+            <div class="card widget h-100" data-cockpit-widget="{{widget.name}}">
                 <div class="card-header d-flex align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="{{widget.tooltip|escape}}">
                     {% if widget.url %}<a class="text-decoration-underline card-header-color" href="{{request.prefix}}{{widget.url}}">{{widget.title|upper}}&nbsp;<span class="fa fa-caret-right"></span></a>
-                    {% else %}<span style="cursor: default">{{widget.title|upper}}</span>
+                    {% else %}<span>{{widget.title|upper}}</span>
                     {% endif %}
                     {% if widget.exporturl %}
                     <a class='fa fa-arrow-down d-inline-block ms-auto' href="{{request.prefix}}{{widget.url}}&amp;format=spreadsheet"></a>

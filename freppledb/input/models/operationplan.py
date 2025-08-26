@@ -262,8 +262,12 @@ class OperationPlan(AuditModel):
         statuses = ["proposed", "approved", "confirmed", "completed", "closed"]
         now = datetime.now()
         if self.type not in ("DO", "PO"):
+            status_index = statuses.index(self.status)
             for subop in self.xchildren.all().using(db):
-                if statuses.index(subop.status) < statuses.index(self.status):
+                if (
+                    self.operation.type != "routing"
+                    or statuses.index(subop.status) < status_index
+                ):
                     subop.status = self.status
                     subop.save(update_fields=["status"])
 

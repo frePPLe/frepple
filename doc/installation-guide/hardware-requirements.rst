@@ -9,7 +9,7 @@ Nevertheless we can provide some example configurations:
 
 - | **A medium size deployment (< 50000 item locations) running on a single server**
 
-  - Ubuntu 20 linux physical or virtual server.
+  - Ubuntu 24 linux physical or virtual server.
     Or deploy frepple as a docker container on the operating system of your choice.
   - Application server: 80 GB disk space, 4 cpu cores, 16 GB RAM
 
@@ -18,4 +18,4 @@ Nevertheless we can provide some example configurations:
 
   - Servers can be physical servers, virtual servers or containers.
   - Database server: Postgresql, 50 GB disk space, 2 cpu cores, 8 GB RAM
-  - Application server:  Unbuntu 20, 30 GB disk space, 2 cpu cores, 8 GB RAM
+  - Application server: Unbuntu 24, 30 GB disk space, 2 cpu cores, 8 GB RAM

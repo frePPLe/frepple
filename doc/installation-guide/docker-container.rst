@@ -34,7 +34,7 @@ Basic concepts
   | In our instructions you can have a docker-compose script that launces a Frepple container and a
   | PostgreSQL database container (:doc:`advanced/docker-compose`).
 
-* | Kubernettes:
+* | Kubernetes:
   | Kuberbetes is a level above Docker-compose, it is a container orchestrator. It is used to separated
   | and manage containers distributed across multiple servers.
   | In our instructions you can find a kuberbetes script that launces a Frepple container and a

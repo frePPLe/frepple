@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.16)
 # The version is defined in 2 places:
 #  - pyproject.toml
 #  - this file, next line
-project(frepple VERSION 9.10.0)
+project(frepple VERSION 9.11.0)
 
 set(PROJECT_EDITION "Community Edition")
 set(PROJECT_BRANCH "community")
@@ -270,7 +270,7 @@ if(valgrind)
     DEPENDS venv
     COMMAND ${CMAKE_COMMAND} -E env
     FREPPLE_HOME=${CMAKE_SOURCE_DIR}/bin
-    VIRTUAL_ENV=${CMAKE_SOURCE_DIR}/venv    
+    VIRTUAL_ENV=${CMAKE_SOURCE_DIR}/venv
     PYTHONPATH=${CMAKE_SOURCE_DIR}
     DJANGO_SETTINGS_MODULE=freppledb.settings
     FREPPLE_LOGFILE=frepple.log

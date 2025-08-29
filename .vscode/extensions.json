@@ -12,6 +12,8 @@
     // "ms-vscode-remote.remote-wsl"
     // Git
     "mhutchie.git-graph",
-    "waderyan.gitblame"
+    "waderyan.gitblame",
+    // EditorConfig for VS Code
+    "editorconfig.editorconfig"
   ],
 }

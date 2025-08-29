@@ -17,7 +17,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | The table customization popup dialog has been refreshed.
   | Watch out: The available and selected columns have been swapped. We did this to
     to align with the common design practice to have the available options on the left.
-    You can be a cit confused at first, but you'll quickly get used to it.
+    You can be a bit confused at first, but you'll quickly get used to it.
 
 - | Small improvements to the quick filter capability.
 
@@ -44,7 +44,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | Added support for PostgreSQL 17.
 
-- | The database configuration for the read-only reporting role has been refectored.
+- | The database configuration for the read-only reporting role has been refactored.
   | This change will only impact you if a) you have customized extension apps that rely
     on the settings.DATABASES setting or b) you manually managed the creation  of the
     reporting database role.

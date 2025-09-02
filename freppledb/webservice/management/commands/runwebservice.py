@@ -33,7 +33,7 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
 from freppledb import VERSION
-from freppledb.common.models import Parameter
+from freppledb.common.models import Parameter, Scenario
 from freppledb.common.utils import get_databases
 from freppledb.input.models import Item
 from freppledb.execute.models import Task
@@ -85,6 +85,15 @@ class Command(BaseCommand):
         database = options["database"]
         if database not in get_databases():
             raise CommandError("No database settings known for '%s'" % database)
+
+        if (
+            database != DEFAULT_DB_ALIAS
+            and not Scenario.objects.using(DEFAULT_DB_ALIAS)
+            .filter(name=database, status="In use")
+            .exists()
+        ):
+            # Silent exit when the scenario isn't in use
+            return
 
         # Update task when specified
         if options["task"]:

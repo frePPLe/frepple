@@ -36,6 +36,7 @@ from django.db.models import Q
 from django.template.loader import render_to_string
 from django.test import RequestFactory
 from django.utils.encoding import force_str
+from django.utils.formats import get_format
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
@@ -50,6 +51,10 @@ from freppledb.output.views import resource
 from freppledb.output.views import buffer
 
 logger = logging.getLogger(__name__)
+
+delimiter = (
+    ";" if get_format("DECIMAL_SEPARATOR", settings.LANGUAGE_CODE, True) == "," else ","
+)
 
 
 def timesince(st):
@@ -76,8 +81,8 @@ class Command(BaseCommand):
                 criticality, EXTRACT(EPOCH FROM delay) as delay,
                 owner_id, item_id, location_id, supplier_id from operationplan
                 where status <> 'confirmed' and type='PO')
-                TO STDOUT WITH CSV HEADER"""
-            % (settings.DATE_FORMAT_JS, settings.DATE_FORMAT_JS),
+                TO STDOUT WITH CSV HEADER DELIMITER '%s'"""
+            % (settings.DATE_FORMAT_JS, settings.DATE_FORMAT_JS, delimiter),
         },
         {
             "filename": "distributionorder.csv.gz",
@@ -89,8 +94,8 @@ class Command(BaseCommand):
                 criticality, EXTRACT(EPOCH FROM delay) as delay,
                 plan, destination_id, item_id, origin_id from operationplan
                 where status <> 'confirmed' and type='DO')
-                TO STDOUT WITH CSV HEADER"""
-            % (settings.DATE_FORMAT_JS, settings.DATE_FORMAT_JS),
+                TO STDOUT WITH CSV HEADER DELIMITER '%s'"""
+            % (settings.DATE_FORMAT_JS, settings.DATE_FORMAT_JS, delimiter),
         },
         {
             "filename": "manufacturingorder.csv.gz",
@@ -102,8 +107,8 @@ class Command(BaseCommand):
                 criticality, EXTRACT(EPOCH FROM delay) as delay,
                 operation_id, owner_id, plan, item_id, batch
                 from operationplan where status <> 'confirmed' and type='MO')
-                TO STDOUT WITH CSV HEADER"""
-            % (settings.DATE_FORMAT_JS, settings.DATE_FORMAT_JS),
+                TO STDOUT WITH CSV HEADER DELIMITER '%s'"""
+            % (settings.DATE_FORMAT_JS, settings.DATE_FORMAT_JS, delimiter),
         },
         {
             "filename": "problems.csv.gz",
@@ -117,8 +122,8 @@ class Command(BaseCommand):
                 from out_problem
                 where name <> 'material excess'
                 order by entity, name, startdate
-                ) TO STDOUT WITH CSV HEADER"""
-            % (settings.DATE_FORMAT_JS, settings.DATE_FORMAT_JS),
+                ) TO STDOUT WITH CSV HEADER DELIMITER '%s'"""
+            % (settings.DATE_FORMAT_JS, settings.DATE_FORMAT_JS, delimiter),
         },
         {
             "filename": "operationplanmaterial.csv.gz",
@@ -130,8 +135,8 @@ class Command(BaseCommand):
                     operationplan_id as operationplan, status
                 from operationplanmaterial
                 order by item_id, location_id, flowdate, quantity desc
-                ) TO STDOUT WITH CSV HEADER"""
-            % settings.DATE_FORMAT_JS,
+                ) TO STDOUT WITH CSV HEADER DELIMITER '%s'"""
+            % (settings.DATE_FORMAT_JS, delimiter),
         },
         {
             "filename": "operationplanresource.csv.gz",
@@ -149,8 +154,8 @@ class Command(BaseCommand):
                 order by operationplanresource.resource_id,
                 operationplan.startdate,
                 operationplanresource.quantity
-                ) TO STDOUT WITH CSV HEADER"""
-            % (settings.DATE_FORMAT_JS, settings.DATE_FORMAT_JS),
+                ) TO STDOUT WITH CSV HEADER DELIMITER '%s'"""
+            % (settings.DATE_FORMAT_JS, settings.DATE_FORMAT_JS, delimiter),
         },
         {
             "filename": "capacityreport.csv.gz",
@@ -490,8 +495,7 @@ class Command(BaseCommand):
                                     (
                                         cfg.sql
                                         if getattr(cfg, "no_wrapper", False)
-                                        else "COPY(select * from (%s) as t) TO STDOUT WITH CSV HEADER"
-                                        % cfg.sql
+                                        else f"COPY(select * from ({cfg.sql}) as t) TO STDOUT WITH CSV HEADER DELIMITER '{delimiter}'"
                                     ),
                                     datafile,
                                 )

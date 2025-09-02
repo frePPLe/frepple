@@ -7,6 +7,14 @@ Release notes
 This release is scheduled for end of September.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: System administration
+
+- | Bug fix: The "export plan results" task didn't consistently use the correct
+    CSV separator. Depending on the language_code setting, that's either a comma
+    or a semicolon.
+  | If you use SQL-based exports and a European language, this bug fix will change
+    the output of your exports.
+
 9.10.0 (2025-08-29)
 ===================
 

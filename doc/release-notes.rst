@@ -15,6 +15,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | If you use SQL-based exports and a European language, this bug fix will change
     the output of your exports.
 
+.. rubric:: Odoo integration
+
+- | 17, 18: Bug fix. Sales orders for make-to-order items were incorrectly mapped
+    in the closed status.
+
 9.10.0 (2025-08-29)
 ===================
 
@@ -59,7 +64,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Odoo integration
 
-- | 17, 18: Ability to use an APIT for authentication in the connector.
+- | 17, 18: Ability to use an API token for authentication in the connector.
 
 - | 17, 18: Support of the BOM component updates made in the PLM module. BOM operation
     updates are not supported yet.

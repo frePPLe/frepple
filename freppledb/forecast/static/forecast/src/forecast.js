@@ -950,17 +950,17 @@ function forecastController($scope, $http, $q, $location) {
       '<div class="row">' +
       '<div class="col-6">' +
       '<div class="card">' +
-      '<div class="card-header">' + gettext('Selected Cross') + '</div>' +
+      '<div class="card-header">' + gettext('Available Cross') + '</div>' +
       '<div class="card-body">' +
-      '<ul class="list-group" id="Crosses" style="height: 160px; overflow-y: scroll;"></ul>' +
+      '<ul class="list-group" id="DroppointCrosses" style="height: 160px; overflow-y: scroll;"></ul>' +
       '</div>' +
       '</div>' +
       '</div>' +
       '<div class="col-6">' +
       '<div class="card">' +
-      '<div class="card-header">' + gettext('Available Cross') + '</div>' +
+      '<div class="card-header">' + gettext('Selected Cross') + '</div>' +
       '<div class="card-body">' +
-      '<ul class="list-group" id="DroppointCrosses" style="height: 160px; overflow-y: scroll;"></ul>' +
+      '<ul class="list-group" id="Crosses" style="height: 160px; overflow-y: scroll;"></ul>' +
       '</div>' +
       '</div>' +
       '</div>' +

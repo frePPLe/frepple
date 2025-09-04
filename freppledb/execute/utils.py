@@ -45,7 +45,7 @@ from freppledb.common.utils import get_databases
 # 4: invalid djangosettings.py format
 # 5: unknown error
 def updateScenarioCount(addition=True):
-    using_apache = "freppleserver" not in sys.argv
+    using_apache = "runserver" not in sys.argv
     scenario_count = Scenario.objects.using(DEFAULT_DB_ALIAS).count()
     min_scenarios = (
         settings.MIN_NUMBER_OF_SCENARIOS
@@ -94,19 +94,23 @@ def updateScenarioCount(addition=True):
 
             # Only modify range inside DATABASES block
             if inside_databases:
-                match = range_pattern.search(line)
-                if match:
-                    found = True
-                    current_val = int(match.group(1))
-                    if current_val != scenario_count:
-                        return 5
-                    new_val = (
-                        current_val
-                        if error_code
-                        else (current_val + 1 if addition else current_val - 1)
-                    )
-                    line = range_pattern.sub(f"for i in range({new_val})", line)
-
+                try:
+                    match = range_pattern.search(line)
+                    if match:
+                        found = True
+                        current_val = int(match.group(1))
+                        if current_val != scenario_count:
+                            return 5
+                        new_val = (
+                            current_val
+                            if error_code
+                            else (current_val + 1 if addition else current_val - 1)
+                        )
+                        line = range_pattern.sub(f"for i in range({new_val})", line)
+                except Exception:
+                    # If we throw an exception here, the djangosettings.py file
+                    # would be left partially updated.
+                    pass
             file.write(line)
 
     if not found:
@@ -129,21 +133,26 @@ def updateScenarioCount(addition=True):
                     if updated:
                         continue
                     updated = True
-                    for i in range(new_val):
-                        if i == 0:
-                            file.write(
-                                f'Proxypass "/ws/default/" "ws://localhost:{service_port+i}/ws/default/" retry=0\n'
-                            )
-                            file.write(
-                                f'Proxypass "/svc/default/" "http://localhost:{service_port+i}/" retry=0\n'
-                            )
-                        else:
-                            file.write(
-                                f'Proxypass "/ws/scenario{i}/" "ws://localhost:{service_port+i}/ws/scenario{i}/" retry=0\n'
-                            )
-                            file.write(
-                                f'Proxypass "/svc/scenario{i}/" "http://localhost:{service_port+i}/" retry=0\n'
-                            )
+                    try:
+                        for i in range(new_val):
+                            if i == 0:
+                                file.write(
+                                    f'Proxypass "/ws/default/" "ws://localhost:{service_port+i}/ws/default/" retry=0\n'
+                                )
+                                file.write(
+                                    f'Proxypass "/svc/default/" "http://localhost:{service_port+i}/" retry=0\n'
+                                )
+                            else:
+                                file.write(
+                                    f'Proxypass "/ws/scenario{i}/" "ws://localhost:{service_port+i}/ws/scenario{i}/" retry=0\n'
+                                )
+                                file.write(
+                                    f'Proxypass "/svc/scenario{i}/" "http://localhost:{service_port+i}/" retry=0\n'
+                                )
+                    except Exception:
+                        # If we throw an exception here, the apache config file
+                        # would be left partially updated.
+                        pass
                 else:
                     file.write(line)
 
@@ -164,12 +173,18 @@ def updateScenarioCount(addition=True):
                 )
                 if addition:
                     cursor.execute(f"create database {before_digits}{new_val-1}")
+                    print(
+                        f"in de puree for {before_digits}{new_val-1} to {settings.DATABASES[DEFAULT_DB_ALIAS]["SQL_ROLE"]}"
+                    )
+                    # if settings.DATABASES[DEFAULT_DB_ALIAS]["SQL_ROLE"]:
+                    #     cursor.execute(
+                    #         f"grant connect on database {before_digits}{new_val-1} to {settings.DATABASES[DEFAULT_DB_ALIAS]["SQL_ROLE"]}"
+                    #     )
 
             Scenario.syncWithSettings()
             if using_apache and shutil.which("apachectl"):
                 # Development server automatically reloads the settings.
                 # An apache server reload needs to be triggered manually.
-                print("reloading apache server")
                 subprocess.run(["apachectl", "-k", "graceful"], check=True)
         except Exception:
             return 5

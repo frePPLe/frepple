@@ -106,11 +106,7 @@ def getWebServiceContext(request):
     proxied = get_databases()[request.database].get(
         "FREPPLE_PORT_PROXIED",
         not settings.DEBUG
-        and not (
-            "freppleserver" in sys.argv
-            or "freppleservice" in sys.argv
-            or "runwebserver" in sys.argv
-        )
+        and not ("freppleservice" in sys.argv or "runserver" in sys.argv)
         and "FREPPLE_TEST" not in os.environ,
     )
     if port and not proxied:

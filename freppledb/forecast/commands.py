@@ -161,7 +161,10 @@ class PopulateForecastTable(PlanTask):
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         if "fcst" in os.environ:
-            return 1
+            param = Parameter.getValue(
+                "forecast.populateForecastTable", database, "true"
+            )
+            return 1 if param.lower() == "true" else -1
         else:
             return -1
 
@@ -183,9 +186,7 @@ class PopulateForecastTable(PlanTask):
 
         # Check value of parameter to check if this population should be done
         # missing parameter means false
-        param = Parameter.getValue("forecast.populateForecastTable", database, "true")
-        if param.lower() == "true":
-            cursor = connections[database].cursor()
+        with connections[database].cursor() as cursor:
             parentCustomer = getParentCustomer(cursor)
 
             if parentCustomer:
@@ -275,10 +276,6 @@ class PopulateForecastTable(PlanTask):
                     "Adding %s records into forecast table"
                     % (added_rows + cursor.rowcount)
                 )
-        else:
-            logger.info(
-                "Parameter forecast.populateForecastTable set to false: skipping this step."
-            )
 
 
 @PlanTaskRegistry.register

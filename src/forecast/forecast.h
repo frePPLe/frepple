@@ -1051,10 +1051,11 @@ class ForecastBucket : public Demand {
                          Date::infinitePast, PLAN);
     m->addIntField<Cls>(Tags::priority, &Cls::getPriority,
                         &Cls::setForecastPriority, 0, DONT_SERIALIZE);
-    m->addDurationField<Cls>(Tags::maxlateness, &Cls::getMaxLateness, 0,
-                             Duration::MAX, DONT_SERIALIZE);
-    m->addDoubleField<Cls>(Tags::minshipment, &Cls::getMinShipment, 0, 1,
-                           DONT_SERIALIZE);
+    m->addDurationField<Cls>(Tags::maxlateness, &Cls::getMaxLateness,
+                             &Cls::setMaxLateness, Duration::MAX,
+                             DONT_SERIALIZE);
+    m->addDoubleField<Cls>(Tags::minshipment, &Cls::getMinShipment,
+                           &Cls::setMinShipment, 1, DONT_SERIALIZE);
     m->addDateField<Cls>(Tags::start, &Cls::getStartDate, &Cls::setStartDate,
                          Date::infinitePast, MANDATORY);
     m->addDateField<Cls>(Tags::end, &Cls::getEndDate, &Cls::setEndDate,

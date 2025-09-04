@@ -163,7 +163,7 @@ class ReportManager(GridReport):
     template = "reportmanager/reportmanager.html"
     reportkey = "reportmanager.reportmanager"
     help_url = "user-interface/report-manager.html"
-    default_sort = ""
+    default_sort = None
 
     @staticmethod
     def _filter_ne(reportrow, field, data):
@@ -465,11 +465,16 @@ class ReportManager(GridReport):
                 if not hasattr(request, "filter"):
                     request.filter = cls.getFilter(request, *args, **kwargs)
                 cursor.execute(
-                    "select * from (%s) t_subquery %s order by %s %s %s"
+                    "select * from (%s) t_subquery %s %s %s %s"
                     % (
                         request.report.sql.replace("%", "%%"),
                         "where %s" % request.filter[0] if request.filter[0] else "",
-                        cls._apply_sort_index(request),
+                        (
+                            f"order by {cls._apply_sort_index(request)}"
+                            if request.GET.get("sidx", None)
+                            or (request.prefs and "sidx" in request.prefs)
+                            else ""
+                        ),
                         (
                             ("offset %s" % ((page - 1) * request.pagesize + 1))
                             if page and page > 1

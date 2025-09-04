@@ -110,7 +110,10 @@ class TaskReport(GridReport):
         Task.objects.all()
         .extra(
             select={
-                "duration": "case when finished is not null and started is not null then finished::timestamp(0) - started::timestamp(0) end"
+                "duration": """case when processid is not null and started is not null then
+                   date_trunc('second', coalesce(finished::timestamp(0), now()) - started::timestamp(0))
+                   end
+                   """
             }
         )
         .select_related("user")

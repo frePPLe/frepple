@@ -130,7 +130,7 @@ class cleanStatic(PlanTask):
     @classmethod
     def getSQLNoReferences(cls, table, field):
         sql = " and ".join(
-            'not exists (select 1 from "%s" someunusedalias where someunusedalias."%s" = "%s"."%s")'
+            'not exists (select 1 from "%s" as someunusedalias where someunusedalias."%s" = "%s"."%s")'
             % (x[0], x[1], table, field)
             for x in cls.fk_relations.get("%s.%s" % (table, field), [])
         )

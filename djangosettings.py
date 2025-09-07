@@ -51,7 +51,7 @@ DATABASES = {
     "default" if i == 0 else f"scenario{i}": {
         "ENGINE": "freppledb.common.postgresql",
         # Database name
-        "NAME": f"{os.environ.get("POSTGRES_DBNAME","frepple")}{i}",
+        "NAME": f"{os.environ.get('POSTGRES_DBNAME', 'frepple')}{'' if i == 0 else i}",
         # Role name when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
@@ -74,7 +74,7 @@ DATABASES = {
         "CONN_HEALTH_CHECKS": True,
         "TEST": {
             # Database name used when running the test suite.
-            "NAME": (f"{os.environ.get("POSTGRES_DBNAME","frepple")}_test{i}"),
+            "NAME": f"{os.environ.get('POSTGRES_DBNAME', 'frepple')}_test{i}",
             # Port for web service when running the test suite
             "FREPPLE_PORT": f"127.0.0.1:{i+9002}",
         },

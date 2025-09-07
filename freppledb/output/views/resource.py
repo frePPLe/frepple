@@ -218,9 +218,9 @@ class OverviewReport(GridPivot):
                 f.editable = False
                 reportclass.rows += (f,)
                 if f.formatter == "detail":
-                    reportclass.attr_sql += f"res.{ f.field_name.split("__")[0] }_id, "
+                    reportclass.attr_sql += f"res.{ f.field_name.split('__')[0] }_id, "
                 else:
-                    reportclass.attr_sql += f"res.{ f.field_name.split("__")[-1] }, "
+                    reportclass.attr_sql += f"res.{ f.field_name.split('__')[-1] }, "
             # Adding custom location attributes
             for f in getAttributeFields(
                 Location, related_name_prefix="location", initially_hidden=True

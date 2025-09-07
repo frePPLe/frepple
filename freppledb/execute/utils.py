@@ -174,7 +174,7 @@ def updateScenarioCount(addition=True):
                 if addition:
                     cursor.execute(f"create database {before_digits}{new_val-1}")
                     print(
-                        f"in de puree for {before_digits}{new_val-1} to {settings.DATABASES[DEFAULT_DB_ALIAS]["SQL_ROLE"]}"
+                        f"in de puree for {before_digits}{new_val-1} to {settings.DATABASES[DEFAULT_DB_ALIAS]['SQL_ROLE']}"
                     )
                     # if settings.DATABASES[DEFAULT_DB_ALIAS]["SQL_ROLE"]:
                     #     cursor.execute(

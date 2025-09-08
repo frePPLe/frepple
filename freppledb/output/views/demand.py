@@ -380,12 +380,16 @@ class OverviewReportWithForecast(GridPivot):
           from forecastplan
           left outer join common_parameter cp on cp.name = 'forecast.DueWithinBucket'
           inner join (%s) item on forecastplan.item_id = item.name
+          inner join common_bucketdetail cb on cb.bucket_id = %%s and cb.startdate <= %%s and cb.enddate > %%s
           where forecastplan.location_id = (select name from location where lvl=0)
           and forecastplan.customer_id = (select name from customer where lvl=0)
           and case when coalesce(cp.value, 'start') = 'start' then forecastplan.startdate
                    when coalesce(cp.value, 'start') = 'end' then forecastplan.enddate - interval '1 second'
                    when coalesce(cp.value, 'start') = 'middle' then forecastplan.startdate + age(forecastplan.enddate, forecastplan.startdate)/2 end < %%s
           and forecastplan.enddate >= %%s
+          and cb.startdate > case when coalesce(cp.value, 'start') = 'start' then forecastplan.startdate
+                   when coalesce(cp.value, 'start') = 'end' then forecastplan.enddate - interval '1 second'
+                   when coalesce(cp.value, 'start') = 'middle' then forecastplan.startdate + age(forecastplan.enddate, forecastplan.startdate)/2 end
           group by item.name
           union all
           select item.name,
@@ -412,6 +416,9 @@ class OverviewReportWithForecast(GridPivot):
                     baseparams
                     + (request.report_startdate,)
                     + baseparams
+                    + (request.report_bucket,)
+                    + (request.report_startdate,)
+                    + (request.report_startdate,)
                     + (request.report_startdate,)
                     + (current,)
                     + baseparams
@@ -481,7 +488,7 @@ class OverviewReportWithForecast(GridPivot):
             and forecastplan.customer_id = (select name from customer where lvl=0)
             and case when coalesce(cp.value, 'start') = 'start' then forecastplan.startdate
                      when coalesce(cp.value, 'start') = 'end' then forecastplan.enddate - interval '1 second'
-                     when coalesce(cp.value, 'start') = 'middle' then forecastplan.startdate + age(forecastplan.enddate, forecastplan.startdate)/2 end >= greatest(%%s,d.startdate)
+                     when coalesce(cp.value, 'start') = 'middle' then forecastplan.startdate + age(forecastplan.enddate, forecastplan.startdate)/2 end >= d.startdate
             and case when coalesce(cp.value, 'start') = 'start' then forecastplan.startdate
                      when coalesce(cp.value, 'start') = 'end' then forecastplan.enddate - interval '1 second'
                      when coalesce(cp.value, 'start') = 'middle' then forecastplan.startdate + age(forecastplan.enddate, forecastplan.startdate)/2 end < d.enddate
@@ -516,7 +523,6 @@ class OverviewReportWithForecast(GridPivot):
                         request.report_startdate,  # planned orders
                         request.report_startdate,  # planned forecast
                         request.report_startdate,  # reasons
-                        request.report_startdate,  # forecast
                         current,
                     )
                     + baseparams

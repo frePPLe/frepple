@@ -608,17 +608,22 @@ class OverviewReport(GridPivot):
         # code assumes no max lateness is set to calculate the backlog
         # forecast knows nothing about batch so all is counted as backlog
 
-        backlog_fcst = """
+        backlog_fcst = f"""
             union all
           select opm.item_id, opm.location_id, '' as batch, 0::numeric qty_orders, coalesce(sum(forecastplan.forecastnet),0) qty_forecast
           from forecastplan
           left outer join common_parameter cp on cp.name = 'forecast.DueWithinBucket'
           inner join (%s) opm on forecastplan.item_id = opm.item_id
           and forecastplan.location_id = opm.location_id
+          inner join common_bucketdetail cb on cb.bucket_id = '{request.report_bucket}' and cb.startdate <= '{request.report_startdate}' and cb.enddate > '{request.report_startdate}'
           where forecastplan.customer_id = (select name from customer where lvl=0)
           and case when coalesce(cp.value, 'start') = 'start' then forecastplan.startdate
                    when coalesce(cp.value, 'start') = 'end' then forecastplan.enddate - interval '1 second'
                    when coalesce(cp.value, 'start') = 'middle' then forecastplan.startdate + age(forecastplan.enddate, forecastplan.startdate)/2 end < %%s
+          and forecastplan.enddate >= '{request.report_startdate}'
+          and cb.startdate > case when coalesce(cp.value, 'start') = 'start' then forecastplan.startdate
+                   when coalesce(cp.value, 'start') = 'end' then forecastplan.enddate - interval '1 second'
+                   when coalesce(cp.value, 'start') = 'middle' then forecastplan.startdate + age(forecastplan.enddate, forecastplan.startdate)/2 end
           group by opm.item_id, opm.location_id
         """ % (
             basesql,

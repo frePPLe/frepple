@@ -7,6 +7,10 @@ Release notes
 This release is scheduled for end of September.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: User interface
+
+- | Inventory report: Fixed the forecast backlog calculation that was sometimes wrong.
+
 .. rubric:: System administration
 
 - | Bug fix: The "export plan results" task didn't consistently use the correct

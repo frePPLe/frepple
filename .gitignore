@@ -3,6 +3,7 @@
 /build*
 /logs
 /node_modules
+/.pnpm-store
 /localsettings*
 /test/*/output.*.xml
 .vs

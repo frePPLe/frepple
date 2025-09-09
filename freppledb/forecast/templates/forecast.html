@@ -9,6 +9,7 @@
 <script type="text/javascript" src="{{STATIC_URL}}js/d3.min.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/angular-gettext.min.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/i18n/angular-freppletranslations.js"></script>
+<script type="module" src="http://localhost:5173/static/src/main.js"></script>
 {% if debug_js %}
 <script type="text/javascript" src="{{STATIC_URL}}forecast/src/module.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}forecast/src/forecast.js"></script>
@@ -151,7 +152,40 @@ $(function() {
 });
 
 </script>
-
+<div id="toolicons" class="col-auto ms-auto hor-align-right ver-align-middle">
+    <form>
+        <button class="btn btn-sm btn-primary" onclick="grid.showBucket()" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'set time horizon'}">
+            <span class="fa fa-clock-o"></span>
+        </button>
+        <button class="btn btn-sm btn-primary" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
+                 data-bs-title="{% trans 'Bookmark your favorite report configurations'}">
+                <span class="fa fa-star"></span>
+            </div>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" id="favoritelist">
+            <li data-ng-repeat="(favname, fav) in preferences.favorites">
+                <a class="dropdown-item" data-ng-click="openfavorite(favname, $event)">{{favname}}
+                    <div style="float:right"><span class="fa fa-trash-o" data-ng-click="removefavorite(favname, $event)"></span></div>
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item d-flex" >
+                    <button id="favoritesave" data-ng-click="savefavorite()" type="button" disabled class="flex-fill btn btn-primary btn-sm me-1 text-capitalize">{% trans 'save'}</button>
+                    <input class="form-control form-control-sm" id="favoritename" oninput="favorite.check()" type="text" size="15">
+                </a>
+            </li>
+        </ul>
+        <button class="btn btn-sm d-none d-md-inline-block btn-primary" onclick="url = url_prefix + '/forecast/'; import_show('', undefined, true)"
+                data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-title="Import CSV or Excel file">
+            <span id="csvimport" class="fa fa-arrow-up"></span>
+        </button>
+        <button class="btn btn-sm btn-primary" data-ng-click="showCustomizeGrid()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Customize'}">
+            <span class="fa fa-wrench"></span>
+        </button>
+    </form>
+</div>
+<div id="app"></div>
 <div data-ng-include="'/static/forecast/forecast.html'"></div>
 <div id="popup" class="modal fade in" role="dialog" style="z-index: 10000;">
 </div>

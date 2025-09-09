@@ -9,7 +9,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: User interface
 
-- | Inventory report: Fixed the forecast backlog calculation that was sometimes wrong.
+- | Bug fix: The forecast backlog calculation was sometimes wrong in the inventory report.
 
 .. rubric:: System administration
 

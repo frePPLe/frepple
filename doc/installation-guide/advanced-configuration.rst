@@ -29,7 +29,7 @@ of many companies requires encrypting all web traffic of all web applications
 over HTTPS.
 
 #. | Activate HTTPS encryption on your web server.
-   | FrePPLe uses a standard `Apache <https://httpd.apache.org/>`_ web server. 
+   | FrePPLe uses a standard `Apache <https://httpd.apache.org/>`_ web server.
      A google search will provide a lot of info on the required configuration steps.
 
    .. code-block:: bash
@@ -40,7 +40,7 @@ over HTTPS.
    | You can also use a proxy server in front of frepple. Typically you will do
      the HTTPS encryption on the proxy server then, and you can thus skip this first step.
 
-#. | Update the settings SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE to true. You do this 
+#. | Update the settings SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE to true. You do this
      by editing the /etc/frepple/djangosettings.py file or by setting these variables in
      a docker deployment.
    | This step is required regardless of where the HTTPS encryption is done.
@@ -169,7 +169,7 @@ django-allauth will have pretty similar instructions.
    | Assure that you have set the callback URL of the provider to
      https://<DOMAIN-OF-YOUR-FREPPLE-INSTALL>/accounts/auth0/login/callback/
 
-#. | Install the django-allauth python package.   
+#. | Install the django-allauth python package.
    | Recent frepple releases (>=9.6) already include the package and you can skip
      this step.
    | In earlier versions you need to install it yourself in the frepple venv.
@@ -185,13 +185,19 @@ django-allauth will have pretty similar instructions.
 
         INSTALLED_APPS = (
           ...
-          # Add these lines.
+          # Add these lines at the top of the section with project-apps
           "freppledb.external_auth",
           "django.contrib.sites",
           "allauth",
           "allauth.account",
           "allauth.socialaccount",
           "allauth.socialaccount.providers.auth0",
+        )
+
+        MIDDLEWARE = (
+          ...
+          # Add or uncomment this line.
+          "allauth.account.middleware.AccountMiddleware",
         )
 
         AUTHENTICATION_BACKENDS = (
@@ -272,4 +278,4 @@ django-allauth will have pretty similar instructions.
    | Authorization determines what users can and cannot access.
    | Authorization can be handled externally or in frePPLe. The file
      https://github.com/frePPLe/frepple/blob/master/freppledb/external_auth/auth.py
-     may need to be tailored to handle your requirements. 
+     may need to be tailored to handle your requirements.

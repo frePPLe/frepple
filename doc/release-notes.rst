@@ -19,6 +19,13 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | If you use SQL-based exports and a European language, this bug fix will change
     the output of your exports.
 
+.. rubric:: User interface
+
+- | The editing permissions of public custom reports have been updated.
+  | In earlier releases, only the owner could edit a custom report. Now all users with permissions
+    to change reports can edit public custom reports.
+  | Of course, private reports remain visible and editable only by their owner. No change there.
+
 .. rubric:: Odoo integration
 
 - | 17, 18: Bug fix. Sales orders for make-to-order items were incorrectly mapped

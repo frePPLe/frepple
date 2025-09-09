@@ -656,7 +656,7 @@ class ReportManager(GridReport):
         elif "save" in request.POST:
             if "id" in request.POST:
                 m = SQLReport.objects.using(request.database).get(pk=request.POST["id"])
-                if m.user and m.user.id != request.user.id:
+                if m.user and not m.public and m.user.id != request.user.id:
                     return JsonResponse(
                         {
                             "id": m.id,

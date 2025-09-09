@@ -11,6 +11,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | Bug fix: The forecast backlog calculation was sometimes wrong in the inventory report.
 
+- | Bug fix: Manufacturing orders could not be exported to Odoo from Plan Editor.
+  | This applies to Enterprise and Cloud Editions only.
+
 .. rubric:: System administration
 
 - | Bug fix: The "export plan results" task didn't consistently use the correct

@@ -1,4 +1,14 @@
-import { ref, toValue, watchEffect } from 'vue';
+/*
+ * Copyright (C) 2025 by frePPLe bv
+ *
+ * All information contained herein is, and remains the property of frePPLe.
+ * You are allowed to use and modify the source code, as long as the software is used
+ * within your company.
+ * You are not allowed to distribute the software, either in the form of source code
+ * or in the form of compiled binaries.
+ */
+
+import { ref, toValue } from 'vue';
 import axios from 'axios';
 
 // reference info about Axios, to be deleted in final version
@@ -34,7 +44,7 @@ const axiosInstance = axios.create({
 });
 
 // Function to get CSRF token from cookies
-const getCsrfToken = () => {
+export function getCsrfToken() {
   const name = 'csrftoken=';
   const decodedCookie = decodeURIComponent(document.cookie);
   const cookieArray = decodedCookie.split(';');

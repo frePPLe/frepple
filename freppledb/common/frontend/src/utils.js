@@ -1,4 +1,14 @@
-import {onMounted, onUnmounted, ref} from 'vue';
+/*
+ * Copyright (C) 2025 by frePPLe bv
+ *
+ * All information contained herein is, and remains the property of frePPLe.
+ * You are allowed to use and modify the source code, as long as the software is used
+ * within your company.
+ * You are not allowed to distribute the software, either in the form of source code
+ * or in the form of compiled binaries.
+ */
+
+import { onMounted, onUnmounted, ref } from 'vue';
 
 const isEmpty = data => data === null || data === undefined;
 
@@ -34,47 +44,8 @@ const dateTimeFormat = (input, fmt) => {
   return fmt ? date.toLocaleString() : formatter.format(date);
 };
 
-// const getDjangoTemplateVariable = variableName => {
-//   const result = ref(window[variableName]); // assuming variable is defined globally
-//   console.log(39, result)
-//   return result;
-// };
-
 function getDjangoTemplateVariable(key, options = { reactive: false }) {
-  const result = ref(window[key]);
-
-  if (false && options.reactive) {
-    onMounted(() => {
-      // First I need to intercept property changes, this can be done with a Proxy (this is very advanced stuff)
-      window[key] = new Proxy(window[key] || {}, {
-        set(target, property, value) {
-          target[property] = value;
-          // Dispatch a custom event when properties change
-          window.dispatchEvent(new CustomEvent(`${key}Changed`, {
-            detail: { property, value, newState: target }
-          }));
-          return true;
-        }
-      });
-
-      // Listen for our custom event, I use structured clone because this is a general function so it should also work for a deeper object
-      const updateValue = (event) => {
-        result.value = structuredClone(event.detail.newState);
-      };
-
-      window.addEventListener(`${key}Changed`, updateValue);
-
-      // Initial value
-      result.value = structuredClone(window[key]);
-
-      // Cleanup
-      onUnmounted(() => {
-        window.removeEventListener(`${key}Changed`, updateValue);
-      });
-    });
-  }
-
-  return result;
+  return ref(window[key]);
 }
 
 const dateFormat = (input, fmt) => {

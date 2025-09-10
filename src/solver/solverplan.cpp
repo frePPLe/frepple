@@ -429,6 +429,9 @@ void SolverCreate::SolverData::commit() {
           }
         }
       }
+
+      // Clean up excess inventory
+      scanExcess(false);
     } else {
       // Normal case: demand-per-demand loop
 
@@ -529,9 +532,6 @@ void SolverCreate::SolverData::commit() {
         buffer_solve_shortages_only = tmp_buffer_solve_shortages_only;
       }
       purchase_buffers.clear();
-
-      // Solve for safety stock in buffers.
-      // solveSafetyStock(solver);
     }
 
     // Operation batching postprocessing
@@ -542,6 +542,9 @@ void SolverCreate::SolverData::commit() {
 
     // Clean the list of demands of this cluster
     demands->clear();
+
+    // Clean up excess inventory
+    scanExcess(solver->getPlanType() == 1);
   } catch (...) {
     // We come in this exception handling code only if there is a problem with
     // with this cluster that goes beyond problems with single orders.
@@ -577,8 +580,6 @@ void SolverCreate::SolverData::commit() {
 }
 
 void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
-  OperatorDelete cleanup(getCommandManager());
-  cleanup.setConstrained(solver->getPlanType() == 1);
   safety_stock_planning = true;
   if (getLogLevel() > 0)
     logger << "Start safety stock replenishment pass for cluster " << cluster
@@ -611,8 +612,6 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
         // Call the buffer safety stock solver
         iteration_count = 0;
         b->solve(*solver, this);
-        // Check for excess
-        b->solve(cleanup, this);
         getCommandManager()->commit();
       } catch (const bad_exception&) {
         logger << "Error: bad exception solving safety stock for " << *b
@@ -634,6 +633,46 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
   if (getLogLevel() > 0)
     logger << "Finished safety stock replenishment pass" << endl;
   safety_stock_planning = false;
+}
+
+void SolverCreate::SolverData::scanExcess(bool constrained) {
+  OperatorDelete cleanup(getCommandManager());
+  cleanup.setConstrained(constrained);
+  cleanup.setPropagate(false);
+  if (getLogLevel() > 0) {
+    logger << "Start scanning excess in cluster " << cluster << endl;
+    cleanup.setLogLevel(getLogLevel());
+  }
+  vector<list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
+  for (auto& buf : Buffer::all())
+    if ((buf.getCluster() == cluster || cluster == -1) &&
+        !buf.hasType<BufferInfinite>() && buf.getProducingOperation() &&
+        (buf.getMinimum() || buf.getMinimumCalendar() ||
+         buf.getFlowPlans().begin() != buf.getFlowPlans().end()))
+      bufs[(buf.getLevel() >= 0) ? buf.getLevel() : 0].push_back(&buf);
+  State* mystate = state;
+  for (auto& b_list : bufs) {
+    for (auto& b : b_list) {
+      try {
+        b->solve(cleanup, this);
+      } catch (const bad_exception&) {
+        logger << "Error: bad exception scanning excess for " << *b << endl;
+        while (state > mystate) pop();
+        getCommandManager()->rollback();
+      } catch (const exception& e) {
+        logger << "Error: exception scanning excess for " << *b << ": "
+               << e.what() << endl;
+        while (state > mystate) pop();
+        getCommandManager()->rollback();
+      } catch (...) {
+        logger << "Error: unknown exception scanning excess for " << *b << endl;
+        while (state > mystate) pop();
+        getCommandManager()->rollback();
+      }
+    }
+    getCommandManager()->commit();
+  }
+  if (getLogLevel() > 0) logger << "Finished excess scan" << endl;
 }
 
 void SolverCreate::SolverData::maskTemporaryShortages() {

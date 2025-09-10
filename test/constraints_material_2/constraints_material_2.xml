@@ -8,7 +8,7 @@
          is different than 1.0.
          Includes fixed quantity material consumption on the delivery operation.
     - 2: identical to 1, but now including also now enforcing integer quantities
-         No fixed quantity materials involved. 
+         No fixed quantity materials involved.
     - 3: same as 1, but now the make operation consumes from 2 more materials
          Includes fixed quantity material consumption and production on the
          make operation.
@@ -42,14 +42,14 @@
           <suboperations>
             <suboperation>
               <operation name="make 5 from 5a">
-                 <size_multiple>1</size_multiple>			  
-              </operation>				 
+                 <size_multiple>1</size_multiple>
+              </operation>
               <priority>1</priority>
             </suboperation>
             <suboperation>
               <operation name="make 5 from 5b">
-			     <size_multiple>1</size_multiple>			  
-              </operation>				 
+			     <size_multiple>1</size_multiple>
+              </operation>
               <priority>2</priority>
             </suboperation>
           </suboperations>
@@ -289,11 +289,6 @@
         <buffer name="constraint buffer 5a" />
         <quantity>-2</quantity>
       </flow>
-      <flow xsi:type="flow_end">
-        <operation name="make 5 from 5a" />
-        <buffer name="buffer 5" />
-        <quantity>1</quantity>
-      </flow>
       <flow xsi:type="flow_start">
         <operation name="make 5 from 5b" />
         <buffer name="constraint buffer 5b" />
@@ -420,7 +415,7 @@
         <end>2009-01-04T00:00:00</end>
         <quantity>25</quantity>
         <status>confirmed</status>
-      </operationplan>      
+      </operationplan>
       <operationplan id="3003">
         <operation name="supply 3b"/>
         <start>2009-01-01T00:00:00</start>

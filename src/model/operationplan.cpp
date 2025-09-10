@@ -1682,8 +1682,17 @@ double OperationPlan::isExcess(bool use_zero) const {
     }
 
     // Convert excess on this flowplan to excess on operationplan
+    auto topopplan = i->getOperationPlan();
+    if (topopplan->getOwner() &&
+        topopplan->getOwner()->getOperation()->hasType<OperationRouting>())
+      topopplan = topopplan->getOwner();
+
     flpln_excess_qty -= i->getFlow()->getQuantityFixed();
-    if (flpln_excess_qty < ROUNDING_ERROR) return 0.0;
+    if (flpln_excess_qty < topopplan->getOperation()->getSizeMultiple() *
+                                   i->getFlow()->getQuantity() +
+                               ROUNDING_ERROR)
+      // Not excess or an unavoidable leftover
+      return 0.0;
     if (i->getFlow()->getQuantity()) {
       flpln_excess_qty /= i->getFlow()->getQuantity();
       if (flpln_excess_qty < opplan_excess_qty)

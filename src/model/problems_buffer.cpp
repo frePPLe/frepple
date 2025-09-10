@@ -39,16 +39,15 @@ void Buffer::updateProblems() {
   // Loop through the flowplans
   Date shortageProblemStart;
   bool shortageProblem = false;
-  double curMax(0.0);
+  // double curMax(0.0);
   double shortageQty(0.0);
   double curMin(0.0);
   for (flowplanlist::const_iterator iter = flowplans.begin();
        iter != flowplans.end();) {
     // Process changes in the maximum or minimum targets
-    if (iter->getEventType() == 4)
-      curMax = iter->getMax();
-    else if (iter->getEventType() == 3)
-      curMin = iter->getMin();
+    if (iter->getEventType() == 3) curMin = iter->getMin();
+    // else if (iter->getEventType() == 4)
+    //   curMax = iter->getMax();
 
     // Only consider the last flowplan for a certain date
     const TimeLine<FlowPlan>::Event *f = &*(iter++);

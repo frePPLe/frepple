@@ -91,6 +91,10 @@ class OperatorDelete : public Solver {
 
   void setConstrained(bool b) { constrained = b; }
 
+  bool getPropagate() const { return propagate; }
+
+  void setPropagate(bool b) { propagate = b; }
+
  private:
   /* A list of buffers still to scan for excess. */
   vector<Buffer*> buffersToScan;  // TODO Use a different data structure to
@@ -102,6 +106,8 @@ class OperatorDelete : public Solver {
   CommandManager* cmds;
 
   bool constrained = true;
+
+  bool propagate = true;
 };
 
 /* This solver implements a heuristic algorithm for planning demands.
@@ -906,6 +912,8 @@ class SolverCreate : public Solver {
     void maskTemporaryShortages();
 
     void unmaskTemporaryShortages();
+
+    void scanExcess(bool constrained);
 
     /* Pointer to the command manager. */
     CommandManager* mgr = nullptr;

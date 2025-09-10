@@ -7,6 +7,11 @@ Release notes
 This release is scheduled for end of September.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Production planning
+
+- | The planning algorithm has been updated to improve the plan quality in situations
+    where the safety stock varies over time.
+
 .. rubric:: User interface
 
 - | Bug fix: The forecast backlog calculation was sometimes wrong in the inventory report.

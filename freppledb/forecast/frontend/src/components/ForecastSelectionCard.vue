@@ -1,11 +1,39 @@
-<script setup lang="ts">
+<script setup lang="js">
 
 </script>
 
 <template>
+  <!--        <div class="card ng-pristine ng-untouched ng-valid ng-scope ng-not-empty" data-ng-model="items" style="min-height: 100px; height: 100%;" id="itemspanel" data-ng-if="panel=='I'">-->
+  <!--          <div class="card-header">-->
+  <!--            <h5 class="card-title text-capitalize mb-0" translate=""><span class="ng-scope">items</span></h5>-->
+  <!--          </div>-->
+  <!--          <div class="card-body ps-0 pe-0 pt-2 pb-2" data-ng-style="{'overflow': 'auto', 'height':  datarowheight - 31 + 'px'}" style="overflow: auto; height: 209px;">-->
+  <!--            <div class="">-->
+  <!--              <div id="itemstable" data-itemstable=""><div class="d-table w-100"><div style="float: left; overflow:hidden;">&nbsp;</div><div class="ms-auto text-right"><span class="numbervalueslast"><strong><small>Nov 25</small></strong></span><span class="numbervalues"><strong><small>Oct 25</small></strong></span><span class="numbervalues"><strong><small>Sep 25</small></strong></span></div></div><div index="0" class="d-flex flex-wrap evtitemrow" style=""><div style="overflow:visible; padding-left: 0px">&nbsp;<span class="fa fa-caret-down"></span><span style="white-space:nowrap">All items</span></div><div class="ms-auto text-right"><span class="numbervalueslast">492</span><span class="numbervalues">489</span><span class="numbervalues">479</span></div></div><div level="1"><div index="1" class="d-flex flex-wrap evtitemrow" style=""><div style="overflow:visible; padding-left: 13px">&nbsp;<span>&nbsp;</span><span style="white-space:nowrap">chair</span></div><div class="ms-auto text-right"><span class="numbervalueslast">294</span><span class="numbervalues">292</span><span class="numbervalues">286</span></div></div><div index="2" class="d-flex flex-wrap evtitemrow" style=""><div style="overflow:visible; padding-left: 13px">&nbsp;<span>&nbsp;</span><span style="white-space:nowrap">varnished chair</span></div><div class="ms-auto text-right"><span class="numbervalueslast">147</span><span class="numbervalues">145</span><span class="numbervalues">143</span></div></div><div index="3" class="d-flex flex-wrap evtitemrow" style=""><div style="overflow:visible; padding-left: 13px">&nbsp;<span>&nbsp;</span><span style="white-space:nowrap">square table</span></div><div class="ms-auto text-right"><span class="numbervalueslast">28</span><span class="numbervalues">28</span><span class="numbervalues">28</span></div></div><div index="4" class="d-flex flex-wrap evtitemrow bg-light" style=""><div style="overflow:visible; padding-left: 13px">&nbsp;<span>&nbsp;</span><span style="white-space:nowrap">round table</span></div><div class="ms-auto text-right"><span class="numbervalueslast">23</span><span class="numbervalues">24</span><span class="numbervalues">22</span></div></div></div></div>-->
+  <!--            </div>-->
+  <!--          </div>-->
+  <!--        </div>&lt;!&ndash; end ngIf: panel=='I' &ndash;&gt;-->
 
+  <!--        </div>&lt;!&ndash; end ngRepeat: panel in sequence track by $index &ndash;&gt;<div class="col-sm-4" data-ng-repeat="panel in sequence track by $index" style="height: 100%">-->
+  <!--          &lt;!&ndash; ngIf: panel=='L' &ndash;&gt;<div class="card ng-scope" style="min-height: 100px; height: 100%;" data-ng-if="panel=='L'">-->
+  <!--          <div class="card-header">-->
+  <!--            <h5 class="card-title text-capitalize mb-0" translate=""><span class="ng-scope">locations</span></h5>-->
+  <!--          </div>-->
+  <!--          <div class="card-body ps-0 pe-0 pt-2 pb-2" data-ng-style="{'overflow': 'auto', 'height': datarowheight - 31 + 'px'}" style="overflow: auto; height: 209px;">-->
+  <!--            <div>-->
+  <!--              <div id="locationstable" data-locationstable=""><div class="d-table w-100"><div style="float: left; overflow:hidden;">&nbsp;</div><div class="ms-auto text-right"><span class="numbervalueslast"><strong><small>Nov 25</small></strong></span><span class="numbervalues"><strong><small>Oct 25</small></strong></span><span class="numbervalues"><strong><small>Sep 25</small></strong></span></div></div><div index="0" class="d-flex flex-wrap evtlocatrow bg-light"><div style="overflow:hidden; padding-left: 0px">&nbsp;<span class="fa fa-caret-down"></span><span style="white-space:nowrap">All locations</span></div><div class="ms-auto text-right"><span class="numbervalueslast">23</span><span class="numbervalues">24</span><span class="numbervalues">22</span></div></div><div level="1"><div index="1" class="d-flex flex-wrap evtlocatrow" style=""><div style="overflow:hidden; padding-left: 13px">&nbsp;<span>&nbsp;</span><span style="white-space:nowrap">shop 1</span></div><div class="ms-auto text-right"><span class="numbervalueslast">13</span><span class="numbervalues">14</span><span class="numbervalues">13</span></div></div><div index="2" class="d-flex flex-wrap evtlocatrow"><div style="overflow:hidden; padding-left: 13px">&nbsp;<span>&nbsp;</span><span style="white-space:nowrap">shop 2</span></div><div class="ms-auto text-right"><span class="numbervalueslast">8</span><span class="numbervalues">9</span><span class="numbervalues">8</span></div></div><div index="3" class="d-flex flex-wrap evtlocatrow" style=""><div style="overflow:hidden; padding-left: 13px">&nbsp;<span>&nbsp;</span><span style="white-space:nowrap">warehouse</span></div><div class="ms-auto text-right"><span class="numbervalueslast">2</span><span class="numbervalues">1</span><span class="numbervalues">1</span></div></div></div></div>-->
+  <!--            </div>-->
+  <!--          </div>-->
+  <!--        </div>&lt;!&ndash; end ngIf: panel=='L' &ndash;&gt;-->
+
+  <!--        <div class="card ng-scope" style="min-height: 100px; height: 100%;" data-ng-if="panel=='C'">-->
+  <!--          <div class="card-header">-->
+  <!--            <h5 class="card-title text-capitalize mb-0" translate=""><span class="ng-scope">customers</span></h5>-->
+  <!--          </div>-->
+  <!--          <div class="card-body ps-0 pe-0 pt-2 pb-2" data-ng-style="{'overflow': 'auto', 'height':  datarowheight - 31 + 'px'}" style="overflow: auto; height: 209px;">-->
+  <!--            <div>-->
+  <!--              <div id="customerstable" data-customerstable=""><div class="d-table w-100"><div style="float: left; overflow:hidden;">&nbsp;</div><div class="ms-auto text-right"><span class="numbervalueslast"><strong><small>Nov 25</small></strong></span><span class="numbervalues"><strong><small>Oct 25</small></strong></span><span class="numbervalues"><strong><small>Sep 25</small></strong></span></div></div><div index="0" class="d-flex flex-wrap evtcustrow bg-light"><div style="overflow:hidden; padding-left: 0px;">&nbsp;<span class="fa fa-caret-down"></span><span style="white-space:nowrap">All customers</span></div><div class="ms-auto text-right"><span class="numbervalueslast">23</span><span class="numbervalues">24</span><span class="numbervalues">22</span></div></div><div level="1"><div index="1" class="d-flex flex-wrap evtcustrow" style=""><div style="overflow:hidden; padding-left: 13px;">&nbsp;<span>&nbsp;</span><span style="white-space:nowrap">Customer near shop 1</span></div><div class="ms-auto text-right"><span class="numbervalueslast">15</span><span class="numbervalues">15</span><span class="numbervalues">14</span></div></div><div index="2" class="d-flex flex-wrap evtcustrow" style=""><div style="overflow:hidden; padding-left: 13px;">&nbsp;<span>&nbsp;</span><span style="white-space:nowrap">Customer near shop 2</span></div><div class="ms-auto text-right"><span class="numbervalueslast">8</span><span class="numbervalues">9</span><span class="numbervalues">8</span></div></div></div></div>-->
+  <!--            </div>-->
+  <!--          </div>-->
+  <!--        </div>&lt;!&ndash; end ngIf: panel=='C' &ndash;&gt;-->
 </template>
-
-<style scoped>
-
-</style>

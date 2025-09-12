@@ -1,24 +1,41 @@
 <script setup lang="js">
 import { useForecastsStore } from '@/stores/forecastsStore';
 import {computed} from "vue";
+import ForecastSelectionCard from "@/components/ForecastSelectionCard.vue";
 
 const store = useForecastsStore();
 const dict =  {'I':'item', 'L':'location', 'C':'customer'};
 
+const currentMeasure = computed(() => {
+  if (store.currentMeasure === null) {
+    store.setCurrentMeasure(store.preferences.measure || 'nodata', false);
+    console.log(19, store.preferences.measure, ' measures: ',store.measures);
+    return store.preferences.measure || 'nodata'
+  }
+  return store.currentMeasure;
+});
+
 const currentSequence = computed(() => {
   if (store.currentSequence === null) {
+    store.setCurrentSequence(store.preferences.sequence || 'ILC', false);
     return store.preferences.sequence || 'ILC'
   }
   return store.currentSequence;
 });
 
-const measure = computed(() => {
-  return store.currentMeasure;
-})
-
-console.log("ForecastSelection.vue");
-console.log(currentSequence);
-console.log(store.measures);
+const currentHeight = computed(() => {
+  if (store.dataRowHeight === null) {
+    store.setCurrentHeight(store.preferences.height || 'ILC', false);
+    return store.preferences.height || 400
+  }
+  return store.dataRowHeight;
+});
+console.log(29,"ForecastSelection.vue");
+console.log(30,currentSequence);
+console.log(31,store.measures);
+console.log(32,store.preferences);
+console.log(33,store.currentMeasure);
+console.log(34,currentHeight);
 
 const sortedMeasureList = computed(() => {
   return Object.values(store.measures).sort((a, b) => {
@@ -78,7 +95,7 @@ const sortedMeasureList = computed(() => {
       &nbsp;&nbsp;
       <div class="dropdown d-inline w-auto">
         <button id="selectmeasure" :title="$t('Select panel measure')" class="dropdown-toggle form-control d-inline w-auto text-capitalize" name="measure" :value="measure" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          {{ store.measures[store.currentMeasure].label }}&nbsp;&nbsp;<span class="caret"></span>
+          {{ store.measures[currentMeasure].label }}&nbsp;&nbsp;<span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
           <li v-for="m in sortedMeasureList" :key="m.name" >
@@ -88,13 +105,14 @@ const sortedMeasureList = computed(() => {
       </div>
     </div>
 
-    <div class="row resizable" id="data-row" :style="{'max-height': '50vh', 'height': datarowheight + 'px', 'min-height': '150px'}" style="max-height: 50vh; height: 240px; min-height: 150px;">
+    <div v-if="currentSequence && currentMeasure && currentHeight" class="row resizable" id="data-row" :style="{'max-height': '50vh', 'height': currentHeight + 'px', 'min-height': '150px'}" style="max-height: 50vh; height: 240px; min-height: 150px;">
       <div class="col-sm-4" v-for="panel in currentSequence" :key="panel" style="height: 100%">
-        <div>panel - {{ panel }}</div>
-        {{ panel === 'I' ? store.itemTree : panel === 'L' ? store.locationTree : store.customerTree}}
+        <div>panel - {{ panel }} / measure {{ currentMeasure }} / buckets {{ store.treeBuckets }}
+<!--          {{ panel === 'I' ? store.itemTree : panel === 'L' ? store.locationTree : store.customerTree}}-->
+          <ForecastSelectionCard v-if="panel" :panelid="panel" />
+        </div>
 
-
-    </div><!-- end ngRepeat: panel in sequence track by $index -->
+      </div>
     </div>
 
 

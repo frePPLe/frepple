@@ -4,22 +4,22 @@
 {% block title %}{%trans 'Forecast editor'|capfirst %}{% endblock %}
 
 {% block extrahead %}{{block.super}}
-<script type="text/javascript" src="{{STATIC_URL}}js/angular.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/angular-cookies.min.js"></script>
+<!--<script type="text/javascript" src="{{STATIC_URL}}js/angular.min.js"></script>-->
+<!--<script type="text/javascript" src="{{STATIC_URL}}js/angular-cookies.min.js"></script>-->
 <script type="text/javascript" src="{{STATIC_URL}}js/d3.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/angular-gettext.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/i18n/angular-freppletranslations.js"></script>
+<!--<script type="text/javascript" src="{{STATIC_URL}}js/angular-gettext.min.js"></script>-->
+<!--<script type="text/javascript" src="{{STATIC_URL}}js/i18n/angular-freppletranslations.js"></script>-->
 <script type="module" src="http://localhost:5173/static/src/main.js"></script>
 {% if debug_js %}
-<script type="text/javascript" src="{{STATIC_URL}}forecast/src/module.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}forecast/src/forecast.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}forecast/src/itemstable.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}forecast/src/customerstable.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}forecast/src/locationstable.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}forecast/src/displayForecastGraph.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}forecast/src/forecastgridDrv.js"></script>
+<!--<script type="text/javascript" src="{{STATIC_URL}}forecast/src/module.js"></script>-->
+<!--<script type="text/javascript" src="{{STATIC_URL}}forecast/src/forecast.js"></script>-->
+<!--<script type="text/javascript" src="{{STATIC_URL}}forecast/src/itemstable.js"></script>-->
+<!--<script type="text/javascript" src="{{STATIC_URL}}forecast/src/customerstable.js"></script>-->
+<!--<script type="text/javascript" src="{{STATIC_URL}}forecast/src/locationstable.js"></script>-->
+<!--<script type="text/javascript" src="{{STATIC_URL}}forecast/src/displayForecastGraph.js"></script>-->
+<!--<script type="text/javascript" src="{{STATIC_URL}}forecast/src/forecastgridDrv.js"></script>-->
 {% else %}
-<script type="text/javascript" src="{{STATIC_URL}}js/frepple-forecast.min.js"></script>
+<!--<script type="text/javascript" src="{{STATIC_URL}}js/frepple-forecast.min.js"></script>-->
 {% endif %}
 <style>
 
@@ -186,7 +186,7 @@ $(function() {
     </form>
 </div>
 <div id="app"></div>
-<div data-ng-include="'/static/forecast/forecast.html'"></div>
+<!--<div data-ng-include="'/static/forecast/forecast.html'"></div>-->
 <div id="popup" class="modal fade in" role="dialog" style="z-index: 10000;">
 </div>
 {% endblock %}

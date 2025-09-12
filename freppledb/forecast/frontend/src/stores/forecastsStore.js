@@ -38,41 +38,56 @@ export const useForecastsStore = defineStore('forecasts', {
     itemTree: {},
     locationTree: {},
     customerTree: {},
+    treeBuckets: [],
     currentSequence: null,
-    currentMeasure: 'nodata',
+    currentMeasure: null,
     loading: false,
-    error: null
+    error: null,
+    dataRowHeight: null
   }),
 
   getters: {
     measures: () => window.measures,
     preferences: () => window.preferences,
-    // hasProblems: (state) => state.quote.problems.length > 0,
-    // hasOperations: (state) => state.quote.pegging.length > 0,
-    // canIncreasePegLevel: (state) => state.quote.pegging && state.quote.pegging.length > 0,
-    // canDecreasePegLevel: (state) => state.peglevel > 0 && state.quote.pegging
+    // computedItemTree: state => state.itemTree,
+    // computedLocationTree: state => state.locationTree,
+    // computedCustomerTree: state => state.customerTree,
   },
 
   actions: {
-    setCurrentMeasure(measure) {
+    setCurrentMeasure(measure, save = true) {
+      console.log('setCurrentSequence', this.currentSequence,'setCurrentMeasure', measure, save);
+      if (this.currentMeasure === measure) return;
       this.currentMeasure = measure;
+      if (this.currentSequence === null) return;
       this.getItemtree();
       this.getLocationtree();
       this.getCustomertree();
+      if (save) this.savePreferences();
     },
 
-    setCurrentSequence(sequence) {
+    setCurrentSequence(sequence, save = true) {
+      console.log('setCurrentSequence', sequence, 'setCurrentMeasure', this.currentMeasure, save);
+      if (this.currentSequence === sequence) return;
       this.currentSequence = sequence;
+      if (this.currentMeasure === null) return;
       this.getItemtree();
       this.getLocationtree();
       this.getCustomertree();
-      this.preferences.sequence = sequence;
-      this.savePreferences();
+      if (save) this.savePreferences();
+    },
+
+    setCurrentHeight(height) {
+      this.dataRowHeight = height;
+      console.log('setDataRowHeight', height);
     },
 
     async savePreferences() {
       this.loading = true;
       this.error = null;
+      console.log('76', this.currentSequence, this.currentMeasure);
+      this.preferences.sequence = this.currentSequence;
+      this.preferences.measure = this.currentMeasure;
 
       try {
         const result = await forecastService.savePreferences({"freppledb.forecast.planning": this.preferences});
@@ -118,8 +133,10 @@ export const useForecastsStore = defineStore('forecasts', {
         }
 
         if (responseData.value) {
-          this.itemTree = toRaw(responseData.value);
-          console.log('Data successfully loaded:', this.itemTree);
+          const result = toRaw(responseData.value);
+          this.treeBuckets = result[0].values.map(x => x['bucketname']);
+          this.itemTree = result;
+          console.log('Data successfully loaded:', this.itemTree, result);
         } else {
           console.warn('⚠️ No data received from API');
           this.itemTree = {};

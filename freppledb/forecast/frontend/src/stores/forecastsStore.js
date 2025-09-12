@@ -48,38 +48,54 @@ export const useForecastsStore = defineStore('forecasts', {
 
   getters: {
     measures: () => window.measures,
-    preferences: () => window.preferences,
-    // computedItemTree: state => state.itemTree,
-    // computedLocationTree: state => state.locationTree,
-    // computedCustomerTree: state => state.customerTree,
+    preferences: () => window.preferences
   },
 
   actions: {
-    setCurrentMeasure(measure, save = true) {
+    async setCurrentMeasure(measure, save = true) {
       console.log('setCurrentSequence', this.currentSequence,'setCurrentMeasure', measure, save);
       if (this.currentMeasure === measure) return;
       this.currentMeasure = measure;
       if (this.currentSequence === null) return;
-      this.getItemtree();
-      this.getLocationtree();
-      this.getCustomertree();
+      this.itemTree = await this.getItemtree();
+      this.locationTree = await this.getLocationtree();
+      this.customerTree = await this.getCustomertree();
       if (save) this.savePreferences();
     },
 
-    setCurrentSequence(sequence, save = true) {
+    async setCurrentSequence(sequence, save = true) {
       console.log('setCurrentSequence', sequence, 'setCurrentMeasure', this.currentMeasure, save);
       if (this.currentSequence === sequence) return;
       this.currentSequence = sequence;
       if (this.currentMeasure === null) return;
-      this.getItemtree();
-      this.getLocationtree();
-      this.getCustomertree();
+      this.itemTree = await this.getItemtree();
+      this.locationTree = await this.getLocationtree();
+      this.customerTree = await this.getCustomertree();
       if (save) this.savePreferences();
     },
 
     setCurrentHeight(height) {
       this.dataRowHeight = height;
       console.log('setDataRowHeight', height);
+    },
+
+    setItemLocationCustomer(model, objectName, asChildrent) {
+      let newData = [];
+      console.log('setItemLocationCustomer', model, objectName);
+      this[model].name = objectName;
+
+      for (let m of this.currentSequence.toLowerCase()) {
+        console.log(88, m, this.currentSequence)
+        // get drill down data for following sequence trees
+      }
+
+      if (asChildrent) {
+        console.log(asChildrent);
+        // get the children data from the backend
+        // and splice into tree
+      }
+
+      this.savePreferences();
     },
 
     async savePreferences() {
@@ -135,11 +151,11 @@ export const useForecastsStore = defineStore('forecasts', {
         if (responseData.value) {
           const result = toRaw(responseData.value);
           this.treeBuckets = result[0].values.map(x => x['bucketname']);
-          this.itemTree = result;
-          console.log('Data successfully loaded:', this.itemTree, result);
+
+          return result;
         } else {
           console.warn('⚠️ No data received from API');
-          this.itemTree = {};
+          return {};
         }
 
       } catch (error) {
@@ -169,11 +185,11 @@ export const useForecastsStore = defineStore('forecasts', {
         }
 
         if (responseData.value) {
-          this.locationTree = toRaw(responseData.value);
           console.log('Data successfully loaded:', this.locationTree);
+          return toRaw(responseData.value);
         } else {
           console.warn('⚠️ No data received from API');
-          this.locationTree = {};
+          return {};
         }
 
       } catch (error) {
@@ -202,11 +218,11 @@ export const useForecastsStore = defineStore('forecasts', {
         }
 
         if (responseData.value) {
-          this.customerTree = toRaw(responseData.value);
           console.log('Data successfully loaded:', this.customerTree);
+          return toRaw(responseData.value);
         } else {
           console.warn('⚠️ No data received from API');
-          this.customerTree = {};
+          return  {};
         }
 
       } catch (error) {

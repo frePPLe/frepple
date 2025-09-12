@@ -52,10 +52,13 @@ plan.administrativeLeadtime          | Specifies an administrative lead time in 
                                      | Setting this parameter to a high value (eg 999) will result in a plan
                                        where everything is planned ASAP in **forward scheduling mode**.
 
-plan.autoFenceOperations             | The number of days the solver should wait for a confirmed
+plan.autoFenceOperations             | The number of working days the solver should wait for a confirmed
                                        replenishment before generating a proposed order.
-                                     | Default: 999 (wait indefinitely)
-                                     | Default before release 5.0.0: 0 (don't wait)
+                                     | Default: 999 (i.e. wait indefinitely)
+plan.deliveryDuration                | The duration (in working hours) for the delivery shipment of a sales order
+                                       to the customer.
+                                     | Default: 0 (i.e. the sales order due date is treated as the shipping
+                                       date from our location, not the arrival date at the customer)
 plan.individualPoolResources         | Defines the behavior of aggregate resource.
 
                                      | A operation-resource record with quantity N for an aggregate resource

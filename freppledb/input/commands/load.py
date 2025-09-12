@@ -294,7 +294,7 @@ class checkDatabaseHealth(CheckTask):
                     """
                     with recs_to_delete as (
                         select id from (
-                            select 
+                            select
                               id,
                               row_number() over (order by lastmodified ASC) AS row_num
                             from common_comment
@@ -484,7 +484,7 @@ class loadParameter(LoadTask):
                        'currentdate', 'last_currentdate',
                        'COMPLETED.allow_future', 'WIP.produce_full_quantity',
                        'plan.individualPoolResources', 'plan.minimalBeforeCurrentConstraints',
-                       'plan.autoFenceOperations'
+                       'plan.autoFenceOperations', 'plan.deliveryDuration'
                        )
                     """
                 )
@@ -513,6 +513,8 @@ class loadParameter(LoadTask):
                         )
                     elif rec[0] == "plan.autoFenceOperations":
                         frepple.settings.autofence = float(rec[1]) * 86400
+                    elif rec[0] == "plan.deliveryDuration":
+                        frepple.settings.deliveryduration = float(rec[1]) * 3600
                 current_set = False
                 if "loadplan" in os.environ and last_current_date:
                     try:

@@ -1083,6 +1083,11 @@ and ask us any questions you may have.
   | Some customers like to keep them around. In very old releases we did keep
     them, but then stopped doing that.
 
+- | A new parameter "plan.delivery" is added to model the duration of the delivery shipment
+    of a sales order to the customer.
+  | The default is 0, i.e. the sales order due date is treated as the shipping date from
+    our location, not the arrival date at the customer.
+
 - | Bug fix: Fix corner case with the tools-per-piece feature when the tool
     availability conflicts with the operation size minimum.
 

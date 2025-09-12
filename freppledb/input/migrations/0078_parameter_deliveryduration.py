@@ -1,4 +1,3 @@
-#
 # Copyright (C) 2025 by frePPLe bv
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -19,27 +18,26 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
 
-from django.db import migrations, models
+from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [
-        ("input", "0076_operationplan_remark"),
-    ]
+    dependencies = [("input", "0077_operationresource_quantity")]
 
     operations = [
-        migrations.AlterField(
-            model_name="operationresource",
-            name="quantity",
-            field=models.DecimalField(
-                blank=True,
-                decimal_places=8,
-                default="1.00",
-                help_text="Required quantity of the resource",
-                max_digits=20,
-                null=True,
-                verbose_name="quantity",
-            ),
-        ),
+        migrations.RunSQL(
+            """
+            insert into common_parameter (name, value, lastmodified, description)
+            values (
+              'plan.deliveryDuration', '0', now(),
+              'The duration (in working hours) for the final shipment of a sales order to the customer. Default: 0'
+              )
+            on conflict (name) do nothing
+            """,
+            """
+            delete from common_parameter where name = 'plan.deliveryDuration'
+            """,
+        )
     ]

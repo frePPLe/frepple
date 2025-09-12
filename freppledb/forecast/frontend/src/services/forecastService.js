@@ -12,16 +12,28 @@
 import { api } from './api.js';
 
 export const forecastService = {
-  async getItemtree(measure) {
-    return api.get('forecast/itemtree/?measure=' + measure);
+  async getItemtree(measure, item =null, location =null, customer=null) {
+    let additional = "";
+    if (item) additional += "&item=" + item;
+    if (location) additional += "&location=" + location;
+    if (customer) additional += "&customer=" + customer;
+    return api.get('forecast/itemtree/?measure=' + measure + additional);
   },
 
-  async getLocationtree(measure) {
-    return api.get('forecast/locationtree/?measure=' + measure);
+  async getLocationtree(measure, item =null, location =null, customer=null) {
+    let additional = "";
+    if (item) additional += "&item=" + item;
+    if (location) additional += "&location=" + location;
+    if (customer) additional += "&customer=" + customer;
+    return api.get('forecast/locationtree/?measure=' + measure + additional);
   },
 
-  async getCustomertree(measure) {
-    return api.get('forecast/customertree/?measure=' + measure);
+  async getCustomertree(measure, item =null, location =null, customer=null) {
+    let additional = "";
+    if (item) additional += "&item=" + item;
+    if (location) additional += "&location=" + location;
+    if (customer) additional += "&customer=" + customer;
+    return api.get('forecast/customertree/?measure=' + measure + additional);
   },
 
   async savePreferences(preferencesData) {

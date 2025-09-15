@@ -33,7 +33,7 @@ from ..models.location import Location
 
 class SetupMatrix(AuditModel):
     # Database fields
-    name = models.CharField(_("name"), max_length=300, primary_key=True)
+    name = models.CharField(_("name"), primary_key=True)
 
     # Methods
     def __str__(self):
@@ -61,18 +61,13 @@ class Resource(AuditModel, HierarchyModel):
     )
 
     # Database fields
-    description = models.CharField(
-        _("description"), max_length=500, null=True, blank=True
-    )
-    category = models.CharField(
-        _("category"), max_length=300, null=True, blank=True, db_index=True
-    )
+    description = models.CharField(_("description"), null=True, blank=True)
+    category = models.CharField(_("category"), null=True, blank=True, db_index=True)
     subcategory = models.CharField(
-        _("subcategory"), max_length=300, null=True, blank=True, db_index=True
+        _("subcategory"), null=True, blank=True, db_index=True
     )
     type = models.CharField(
         _("type"),
-        max_length=20,
         null=True,
         blank=True,
         choices=types,
@@ -148,7 +143,6 @@ class Resource(AuditModel, HierarchyModel):
     )
     setup = models.CharField(
         _("setup"),
-        max_length=300,
         null=True,
         blank=True,
         help_text=_("Setup of the resource at the start of the plan"),
@@ -189,7 +183,7 @@ class Resource(AuditModel, HierarchyModel):
 class Skill(AuditModel):
     # Database fields
     name = models.CharField(
-        _("name"), max_length=300, primary_key=True, help_text=_("Unique identifier")
+        _("name"), primary_key=True, help_text=_("Unique identifier")
     )
 
     # Methods
@@ -271,14 +265,12 @@ class SetupRule(AuditModel):
     priority = models.IntegerField(_("priority"))
     fromsetup = models.CharField(
         _("from setup"),
-        max_length=300,
         blank=True,
         null=True,
         help_text=_("Name of the old setup (wildcard characters are supported)"),
     )
     tosetup = models.CharField(
         _("to setup"),
-        max_length=300,
         blank=True,
         null=True,
         help_text=_("Name of the new setup (wildcard characters are supported)"),

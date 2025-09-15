@@ -62,15 +62,11 @@ class Forecast(AuditModel):
     )
 
     # Database fields
-    name = models.CharField(_("name"), max_length=300, primary_key=True)
-    description = models.CharField(
-        _("description"), max_length=500, null=True, blank=True
-    )
-    category = models.CharField(
-        _("category"), max_length=300, null=True, blank=True, db_index=True
-    )
+    name = models.CharField(_("name"), primary_key=True)
+    description = models.CharField(_("description"), null=True, blank=True)
+    category = models.CharField(_("category"), null=True, blank=True, db_index=True)
     subcategory = models.CharField(
-        _("subcategory"), max_length=300, null=True, blank=True, db_index=True
+        _("subcategory"), null=True, blank=True, db_index=True
     )
     customer = models.ForeignKey(
         Customer, verbose_name=_("customer"), db_index=True, on_delete=models.CASCADE
@@ -83,14 +79,12 @@ class Forecast(AuditModel):
     )
     batch = models.CharField(
         _("batch"),
-        max_length=300,
         null=True,
         blank=True,
         help_text=_("MTO batch name"),
     )
     method = models.CharField(
         _("Forecast method"),
-        max_length=20,
         null=True,
         blank=True,
         choices=methods,
@@ -129,7 +123,7 @@ class Forecast(AuditModel):
         decimal_places=8,
     )
     out_method = models.CharField(
-        _("calculated forecast method"), max_length=20, null=True, blank=True
+        _("calculated forecast method"), null=True, blank=True
     )
     out_deviation = models.DecimalField(
         _("calculated standard deviation"),
@@ -1288,21 +1282,17 @@ class Measure(AuditModel):
 
     # Database fields
     name = models.CharField(
-        _("name"), max_length=300, primary_key=True, help_text=_("Unique identifier")
+        _("name"), primary_key=True, help_text=_("Unique identifier")
     )
     label = models.CharField(
         _("label"),
-        max_length=300,
         null=True,
         blank=True,
         help_text=_("Label to be displayed in the user interface"),
     )
-    description = models.CharField(
-        _("description"), max_length=500, null=True, blank=True
-    )
+    description = models.CharField(_("description"), null=True, blank=True)
     type = models.CharField(
         _("type"),
-        max_length=20,
         null=True,
         blank=True,
         choices=types,
@@ -1310,7 +1300,6 @@ class Measure(AuditModel):
     )
     mode_future = models.CharField(
         _("mode in future periods"),
-        max_length=20,
         null=True,
         blank=True,
         choices=modes,
@@ -1318,7 +1307,6 @@ class Measure(AuditModel):
     )
     mode_past = models.CharField(
         _("mode in past periods"),
-        max_length=20,
         null=True,
         blank=True,
         choices=modes,
@@ -1326,14 +1314,12 @@ class Measure(AuditModel):
     )
     compute_expression = models.CharField(
         _("compute expression"),
-        max_length=300,
         null=True,
         blank=True,
         help_text=_("Formula to compute values"),
     )
     update_expression = models.CharField(
         _("update expression"),
-        max_length=300,
         null=True,
         blank=True,
         help_text=_("Formula executed when updating this field"),
@@ -1346,7 +1332,6 @@ class Measure(AuditModel):
     )
     formatter = models.CharField(
         _("format"),
-        max_length=20,
         null=True,
         blank=True,
         choices=formatters,
@@ -1361,9 +1346,7 @@ class Measure(AuditModel):
         null=True,
         blank=True,
     )
-    overrides = models.CharField(
-        _("override measure"), max_length=300, null=True, blank=True
-    )
+    overrides = models.CharField(_("override measure"), null=True, blank=True)
 
     @property
     def editable(self):
@@ -1422,12 +1405,10 @@ class ForecastPlanView(models.Model):
     objects = models.Manager()  # The default model manager
 
     # Database fields
-    name = models.CharField(
-        "name", max_length=300, null=False, blank=False, primary_key=True
-    )
-    item_id = models.CharField("item", max_length=300, null=False, blank=False)
-    location_id = models.CharField("location", max_length=300, null=False, blank=False)
-    customer_id = models.CharField("customer", max_length=300, null=False, blank=False)
+    name = models.CharField("name", null=False, blank=False, primary_key=True)
+    item_id = models.CharField("item", null=False, blank=False)
+    location_id = models.CharField("location", null=False, blank=False)
+    customer_id = models.CharField("customer", null=False, blank=False)
 
     class Meta(AuditModel.Meta):
         db_table = "forecastreport_view"

@@ -19,7 +19,12 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Bug fix: Manufacturing orders could not be exported to Odoo from Plan Editor.
   | This applies to Enterprise and Cloud Editions only.
 
-.. rubric:: System administration
+.. rubric:: Data integration
+
+- | The database schema has been updated to remove the max_length on all columns.
+    This means there are no length limits any longer on object names, descriptions, ...
+  | On PostgreSQL `this has no performance implications <https://www.postgresql.org/docs/16/datatype-character.html>`_
+    and it allows us to keep the code clean and simple.
 
 - | Bug fix: The "export plan results" task didn't consistently use the correct
     CSV separator. Depending on the language_code setting, that's either a comma

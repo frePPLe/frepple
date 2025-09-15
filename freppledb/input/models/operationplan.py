@@ -84,7 +84,6 @@ class OperationPlan(AuditModel):
     # Common fields
     reference = models.CharField(
         _("reference"),
-        max_length=300,
         primary_key=True,
         help_text=_("Unique identifier"),
     )
@@ -92,13 +91,11 @@ class OperationPlan(AuditModel):
         _("status"),
         null=True,
         blank=True,
-        max_length=20,
         choices=orderstatus,
         help_text=_("Status of the order"),
     )
     type = models.CharField(
         _("type"),
-        max_length=5,
         choices=types,
         default="MO",
         help_text=_("Order type"),
@@ -128,7 +125,6 @@ class OperationPlan(AuditModel):
         _("remark"),
         null=True,
         blank=True,
-        max_length=300,
         help_text=_("remark"),
     )
     criticality = models.DecimalField(
@@ -161,7 +157,6 @@ class OperationPlan(AuditModel):
     )
     batch = models.CharField(
         _("batch"),
-        max_length=300,
         null=True,
         blank=True,
         db_index=True,
@@ -228,9 +223,7 @@ class OperationPlan(AuditModel):
         blank=True,
         editable=False,
     )
-    name = models.CharField(
-        _("name"), max_length=1000, null=True, blank=True, db_index=True
-    )
+    name = models.CharField(_("name"), null=True, blank=True, db_index=True)
 
     class Manager(MultiDBManager):
         pass
@@ -565,12 +558,11 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
         blank=True,
         null=True,
     )
-    setup = models.CharField(_("setup"), max_length=300, null=True, blank=True)
+    setup = models.CharField(_("setup"), null=True, blank=True)
     status = models.CharField(
         _("load status"),
         null=True,
         blank=True,
-        max_length=20,
         choices=OPRstatus,
         help_text=_("Status of the resource assignment"),
     )
@@ -647,7 +639,6 @@ class OperationPlanMaterial(AuditModel, OperationPlanRelatedMixin):
         _("material status"),
         null=True,
         blank=True,
-        max_length=20,
         choices=OPMstatus,
         help_text=_("status of the material production or consumption"),
     )

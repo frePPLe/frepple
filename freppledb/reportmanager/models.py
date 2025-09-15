@@ -30,10 +30,10 @@ from freppledb.common.utils import get_databases
 
 class SQLReport(AuditModel):
     id = models.AutoField(_("identifier"), primary_key=True)
-    name = models.CharField(_("name"), max_length=300, db_index=True)
+    name = models.CharField(_("name"), db_index=True)
     sql = models.TextField(_("SQL query"), null=True, blank=True)
     description = models.CharField(
-        _("description"), max_length=1000, null=True, blank=True
+        _("description"), null=True, blank=True
     )
     user = models.ForeignKey(
         User,
@@ -114,8 +114,8 @@ class SQLColumn(models.Model):
         on_delete=models.CASCADE,
     )
     sequence = models.IntegerField("sequence", default=1)
-    name = models.CharField("name", max_length=300)
-    format = models.CharField("format", max_length=20, null=True, blank=True)
+    name = models.CharField("name")
+    format = models.CharField("format", null=True, blank=True)
 
     class Manager(MultiDBManager):
         def get_by_natural_key(self, report, sequence):

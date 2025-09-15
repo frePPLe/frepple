@@ -71,7 +71,7 @@ class HierarchyModel(models.Model):
     rght = models.PositiveIntegerField(null=True, editable=False, blank=True)
     lvl = models.PositiveIntegerField(null=True, editable=False, blank=True)
     name = models.CharField(
-        _("name"), max_length=300, primary_key=True, help_text=_("Unique identifier")
+        _("name"), primary_key=True, help_text=_("Unique identifier")
     )
     owner = models.ForeignKey(
         "self",
@@ -270,9 +270,7 @@ class AuditModel(models.Model):
     """
 
     # Database fields
-    source = models.CharField(
-        _("source"), db_index=True, max_length=300, null=True, blank=True
-    )
+    source = models.CharField(_("source"), db_index=True, null=True, blank=True)
     lastmodified = models.DateTimeField(
         _("last modified"), editable=False, db_index=True, default=timezone.now
     )
@@ -305,11 +303,9 @@ class Parameter(AuditModel):
     obfuscate = False
 
     # Database fields
-    name = models.CharField(_("name"), max_length=60, primary_key=True)
-    value = models.CharField(_("value"), max_length=1000, null=True, blank=True)
-    description = models.CharField(
-        _("description"), max_length=1000, null=True, blank=True
-    )
+    name = models.CharField(_("name"), primary_key=True)
+    value = models.CharField(_("value"), null=True, blank=True)
+    description = models.CharField(_("description"), null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -398,12 +394,10 @@ class Scenario(models.Model):
     scenarioStatus = (("free", _("free")), ("in use", _("in use")), ("busy", _("busy")))
 
     # Database fields
-    name = models.CharField(_("name"), max_length=300, primary_key=True)
-    description = models.CharField(
-        _("description"), max_length=500, null=True, blank=True
-    )
+    name = models.CharField(_("name"), primary_key=True)
+    description = models.CharField(_("description"), null=True, blank=True)
     status = models.CharField(
-        _("status"), max_length=10, null=False, blank=False, choices=scenarioStatus
+        _("status"), null=False, blank=False, choices=scenarioStatus
     )
     help_url = models.URLField("help", null=True, editable=False)
     info = models.JSONField(blank=True, null=True)
@@ -467,18 +461,17 @@ class User(AbstractUser):
         [("auto", _("Detect automatically"))] + list(settings.LANGUAGES)
     )
     language = models.CharField(
-        _("language"), max_length=10, choices=languageList, default=languageList[1][0]
+        _("language"), choices=languageList, default=languageList[1][0]
     )
     theme = models.CharField(
         _("theme"),
-        max_length=20,
         default=settings.DEFAULT_THEME,
         choices=[(i, capfirst(i)) for i in settings.THEMES],
     )
     pagesize = models.PositiveIntegerField(
         _("page size"), default=settings.DEFAULT_PAGESIZE
     )
-    horizonbuckets = models.CharField(max_length=300, blank=True, null=True)
+    horizonbuckets = models.CharField(blank=True, null=True)
     horizonstart = models.DateTimeField(blank=True, null=True)
     horizonend = models.DateTimeField(blank=True, null=True)
     horizontype = models.BooleanField(blank=True, default=True)
@@ -486,7 +479,6 @@ class User(AbstractUser):
     horizonbefore = models.IntegerField(blank=True, default=0, null=True)
     horizonunit = models.CharField(
         blank=True,
-        max_length=5,
         default="month",
         null=True,
         choices=(("day", "day"), ("week", "week"), ("month", "month")),
@@ -500,17 +492,10 @@ class User(AbstractUser):
         editable=False,
         db_index=True,
     )
-    default_scenario = models.CharField(
-        _("default scenario"),
-        max_length=300,
-        null=True,
-        blank=True,
-    )
+    default_scenario = models.CharField(_("default scenario"), null=True, blank=True)
     scenario_themes = models.JSONField(blank=True, null=True)
     databases = ArrayField(
-        models.CharField(_("databases"), max_length=300),
-        null=True,
-        default=defaultdatabase,
+        models.CharField(_("databases")), null=True, default=defaultdatabase
     )
 
     @property
@@ -960,8 +945,8 @@ class UserPreference(models.Model):
         related_name="preferences",
         on_delete=models.CASCADE,
     )
-    property = models.CharField(max_length=100, blank=False, null=False)
-    value = models.JSONField(max_length=1000, blank=False, null=False)
+    property = models.CharField(blank=False, null=False)
+    value = models.JSONField(blank=False, null=False)
 
     def natural_key(self):
         return (self.user, self.property)
@@ -992,21 +977,19 @@ class Comment(models.Model):
         ("follower", _("follower")),
     )
     id = models.AutoField(_("identifier"), primary_key=True)
-    type = models.CharField(
-        _("type"), max_length=10, null=False, default="add", choices=type_list
-    )
+    type = models.CharField(_("type"), null=False, default="add", choices=type_list)
     content_type = models.ForeignKey(
         ContentType,
         verbose_name=_("content type"),
         related_name="content_type_set_for_%(class)s",
         on_delete=models.CASCADE,
     )
-    object_repr = models.CharField(_("object repr"), max_length=200)
+    object_repr = models.CharField(_("object repr"))
     object_pk = models.TextField(_("object id"))
     content_object = GenericForeignKey(
         ct_field="content_type", fk_field="object_pk", for_concrete_model=False
     )
-    comment = models.TextField(_("message"), max_length=3000)
+    comment = models.TextField(_("message"))
     attachment = models.FileField(
         null=True,
         blank=True,
@@ -1253,9 +1236,7 @@ class Follower(models.Model):
     user = models.ForeignKey(
         User, verbose_name=_("user"), blank=True, on_delete=models.CASCADE
     )
-    type = models.CharField(
-        _("type"), max_length=10, null=False, default="O", choices=type_list
-    )
+    type = models.CharField(_("type"), null=False, default="O", choices=type_list)
     args = models.JSONField(blank=True, null=True)
 
     def getURL(self, database=DEFAULT_DB_ALIAS):
@@ -1325,12 +1306,8 @@ class Notification(models.Model):
         Comment, verbose_name=_("comment"), on_delete=models.CASCADE, null=True
     )
     user = models.ForeignKey(User, verbose_name=_("user"), on_delete=models.CASCADE)
-    status = models.CharField(
-        _("status"), max_length=5, null=False, default="U", choices=status_list
-    )
-    type = models.CharField(
-        _("type"), max_length=5, null=False, default="O", choices=type_list
-    )
+    status = models.CharField(_("status"), null=False, default="U", choices=status_list)
+    type = models.CharField(_("type"), null=False, default="O", choices=type_list)
     follower = models.ForeignKey(
         Follower, verbose_name=_("follower"), null=True, on_delete=models.SET_NULL
     )
@@ -1744,10 +1721,8 @@ class Bucket(AuditModel):
     extra_strings = (_("day"), _("week"), _("month"), _("quarter"), _("year"))
 
     # Database fields
-    name = models.CharField(_("name"), max_length=300, primary_key=True)
-    description = models.CharField(
-        _("description"), max_length=500, null=True, blank=True
-    )
+    name = models.CharField(_("name"), primary_key=True)
+    description = models.CharField(_("description"), null=True, blank=True)
     level = models.IntegerField(
         _("level"), help_text=_("Higher values indicate more granular time buckets")
     )
@@ -1769,7 +1744,7 @@ class BucketDetail(AuditModel):
     bucket = models.ForeignKey(
         Bucket, verbose_name=_("bucket"), db_index=True, on_delete=models.CASCADE
     )
-    name = models.CharField(_("name"), max_length=300, db_index=True)
+    name = models.CharField(_("name"), db_index=True)
     startdate = models.DateTimeField(_("start date"))
     enddate = models.DateTimeField(_("end date"))
 
@@ -1852,16 +1827,10 @@ class Attribute(AuditModel):
 
     # Database fields
     id = models.AutoField(_("identifier"), primary_key=True)
-    model = models.CharField(
-        verbose_name=_("model"),
-        choices=_getContentTypeChoices(),
-        max_length=300,
-    )
-    name = models.CharField(_("name"), max_length=300, db_index=True)
-    label = models.CharField(_("label"), max_length=300, db_index=True)
-    type = models.CharField(
-        _("type"), max_length=20, null=False, blank=False, choices=types
-    )
+    model = models.CharField(verbose_name=_("model"), choices=_getContentTypeChoices())
+    name = models.CharField(_("name"), db_index=True)
+    label = models.CharField(_("label"), db_index=True)
+    type = models.CharField(_("type"), null=False, blank=False, choices=types)
     editable = models.BooleanField(_("editable"), blank=True, default=True)
     initially_hidden = models.BooleanField(
         _("initially hidden"), blank=True, default=False

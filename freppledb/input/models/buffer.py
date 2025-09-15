@@ -37,18 +37,13 @@ class Buffer(AuditModel):
 
     # Fields common to all buffer types
     id = models.AutoField(_("identifier"), primary_key=True)
-    description = models.CharField(
-        _("description"), max_length=500, null=True, blank=True
-    )
-    category = models.CharField(
-        _("category"), max_length=300, null=True, blank=True, db_index=True
-    )
+    description = models.CharField(_("description"), null=True, blank=True)
+    category = models.CharField(_("category"), null=True, blank=True, db_index=True)
     subcategory = models.CharField(
-        _("subcategory"), max_length=300, null=True, blank=True, db_index=True
+        _("subcategory"), null=True, blank=True, db_index=True
     )
     type = models.CharField(
         _("type"),
-        max_length=20,
         null=True,
         blank=True,
         choices=types,
@@ -70,9 +65,7 @@ class Buffer(AuditModel):
         null=False,
         on_delete=models.CASCADE,
     )
-    batch = models.CharField(
-        _("batch"), max_length=300, null=True, blank=True, default=""
-    )
+    batch = models.CharField(_("batch"), null=True, blank=True, default="")
     onhand = models.DecimalField(
         _("onhand"),
         null=True,

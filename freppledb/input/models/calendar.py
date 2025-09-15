@@ -32,15 +32,11 @@ from freppledb.common.models import AuditModel, MultiDBManager
 
 class Calendar(AuditModel):
     # Database fields
-    name = models.CharField(_("name"), max_length=300, primary_key=True)
-    description = models.CharField(
-        _("description"), max_length=500, null=True, blank=True
-    )
-    category = models.CharField(
-        _("category"), max_length=300, null=True, blank=True, db_index=True
-    )
+    name = models.CharField(_("name"), primary_key=True)
+    description = models.CharField(_("description"), null=True, blank=True)
+    category = models.CharField(_("category"), null=True, blank=True, db_index=True)
     subcategory = models.CharField(
-        _("subcategory"), max_length=300, null=True, blank=True, db_index=True
+        _("subcategory"), null=True, blank=True, db_index=True
     )
     defaultvalue = models.DecimalField(
         _("default value"),

@@ -187,10 +187,9 @@ their fields and indexes.
 
    class My_Model(AuditModel):
        # Database fields
-       name = models.CharField(_("name"), max_length=300, primary_key=True)
+       name = models.CharField(_("name"), primary_key=True)
        charfield = models.CharField(
            _("charfield"),
-           max_length=300,
            null=True,
            blank=True,
            help_text=_("A sample character field"),

@@ -51,19 +51,13 @@ class Demand(AuditModel):
 
     # Database fields
     name = models.CharField(
-        _("name"), max_length=300, primary_key=True, help_text=_("Unique identifier")
+        _("name"), primary_key=True, help_text=_("Unique identifier")
     )
-    owner = models.CharField(
-        _("owner"), max_length=300, null=True, blank=True, db_index=True
-    )
-    description = models.CharField(
-        _("description"), max_length=500, null=True, blank=True
-    )
-    category = models.CharField(
-        _("category"), max_length=300, null=True, blank=True, db_index=True
-    )
+    owner = models.CharField(_("owner"), null=True, blank=True, db_index=True)
+    description = models.CharField(_("description"), null=True, blank=True)
+    category = models.CharField(_("category"), null=True, blank=True, db_index=True)
     subcategory = models.CharField(
-        _("subcategory"), max_length=300, null=True, blank=True, db_index=True
+        _("subcategory"), null=True, blank=True, db_index=True
     )
     customer = models.ForeignKey(
         Customer, verbose_name=_("customer"), db_index=True, on_delete=models.CASCADE
@@ -83,7 +77,6 @@ class Demand(AuditModel):
     )
     status = models.CharField(
         _("status"),
-        max_length=10,
         null=True,
         blank=True,
         choices=demandstatus,
@@ -125,7 +118,6 @@ class Demand(AuditModel):
     )
     policy = models.CharField(
         _("policy"),
-        max_length=15,
         null=True,
         blank=True,
         choices=delivery_policies,
@@ -134,7 +126,6 @@ class Demand(AuditModel):
     )
     batch = models.CharField(
         _("batch"),
-        max_length=300,
         null=True,
         blank=True,
         db_index=True,

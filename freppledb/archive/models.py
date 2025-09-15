@@ -73,9 +73,9 @@ class ArchivedModel(models.Model):
 
 
 class ArchivedBuffer(ArchivedModel):
-    item = models.CharField(_("item"), max_length=300, db_index=True)
-    location = models.CharField(_("location"), max_length=300, db_index=True)
-    batch = models.CharField(_("batch"), max_length=300, null=True, blank=True)
+    item = models.CharField(_("item"), db_index=True)
+    location = models.CharField(_("location"), db_index=True)
+    batch = models.CharField(_("batch"), null=True, blank=True)
     cost = models.DecimalField(
         _("cost"), null=True, blank=True, max_digits=20, decimal_places=8
     )
@@ -98,15 +98,15 @@ class ArchivedBuffer(ArchivedModel):
 
 
 class ArchivedDemand(ArchivedModel):
-    name = models.CharField(_("name"), max_length=300)
-    item = models.CharField(_("item"), max_length=300, db_index=True)
+    name = models.CharField(_("name"))
+    item = models.CharField(_("item"), db_index=True)
     cost = models.DecimalField(
         _("cost"), null=True, blank=True, max_digits=20, decimal_places=8
     )
-    location = models.CharField(_("location"), max_length=300, db_index=True)
-    customer = models.CharField(_("customer"), max_length=300, db_index=True)
+    location = models.CharField(_("location"), db_index=True)
+    customer = models.CharField(_("customer"), db_index=True)
     due = models.DateTimeField(_("due"))
-    status = models.CharField(_("status"), max_length=10, null=True, blank=True)
+    status = models.CharField(_("status"), null=True, blank=True)
     priority = models.IntegerField(_("priority"))
     quantity = models.DecimalField(_("quantity"), max_digits=20, decimal_places=8)
     deliverydate = models.DateTimeField(_("delivery date"), null=True, blank=True)
@@ -126,9 +126,9 @@ class ArchivedDemand(ArchivedModel):
 
 
 class ArchivedOperationPlan(ArchivedModel):
-    reference = models.CharField(_("reference"), max_length=300)
-    status = models.CharField(_("status"), null=True, blank=True, max_length=20)
-    type = models.CharField(_("type"), max_length=5, db_index=True)
+    reference = models.CharField(_("reference"))
+    status = models.CharField(_("status"), null=True, blank=True)
+    type = models.CharField(_("type"), db_index=True)
     quantity = models.DecimalField(_("quantity"), max_digits=20, decimal_places=8)
     startdate = models.DateTimeField(
         _("start date"), help_text=_("start date"), null=True, blank=True
@@ -137,11 +137,11 @@ class ArchivedOperationPlan(ArchivedModel):
         _("end date"), help_text=_("end date"), null=True, blank=True
     )
     # Used only for manufacturing orders
-    operation = models.CharField(_("operation"), max_length=300, blank=True, null=True)
-    owner = models.CharField(_("owner"), max_length=300, null=True, blank=True)
-    batch = models.CharField(_("batch"), max_length=300, null=True, blank=True)
+    operation = models.CharField(_("operation"), blank=True, null=True)
+    owner = models.CharField(_("owner"), null=True, blank=True)
+    batch = models.CharField(_("batch"), null=True, blank=True)
     # Used for purchase orders and distribution orders
-    item = models.CharField(_("item"), max_length=300, db_index=True)
+    item = models.CharField(_("item"), db_index=True)
     item_cost = models.DecimalField(
         _("item cost"), null=True, blank=True, max_digits=20, decimal_places=8
     )
@@ -149,19 +149,17 @@ class ArchivedOperationPlan(ArchivedModel):
         _("itemsupplier cost"), null=True, blank=True, max_digits=20, decimal_places=8
     )
     # Used only for distribution orders
-    origin = models.CharField(_("origin"), max_length=300, null=True, blank=True)
+    origin = models.CharField(_("origin"), null=True, blank=True)
     destination = models.CharField(
-        _("destination"), max_length=300, db_index=True, null=True, blank=True
+        _("destination"), db_index=True, null=True, blank=True
     )
     # Used only for purchase orders
-    supplier = models.CharField(_("supplier"), max_length=300, null=True, blank=True)
-    location = models.CharField(_("location"), max_length=300, null=True, blank=True)
+    supplier = models.CharField(_("supplier"), null=True, blank=True)
+    location = models.CharField(_("location"), null=True, blank=True)
     # Used for delivery operationplans
-    demand = models.CharField(_("demand"), max_length=300, null=True, blank=True)
+    demand = models.CharField(_("demand"), null=True, blank=True)
     due = models.DateTimeField(_("due"), null=True, blank=True)
-    name = models.CharField(
-        _("name"), max_length=1000, null=True, blank=True, db_index=True
-    )
+    name = models.CharField(_("name"), null=True, blank=True, db_index=True)
 
     def __str__(self):
         return "Archived %s @ %s" % (self.reference, self.snapshot_date)

@@ -29,10 +29,10 @@ class Problem(models.Model):
     allow_report_manager_access = True
 
     # Database fields
-    entity = models.CharField(_("entity"), max_length=15, db_index=True)
-    owner = models.CharField(_("owner"), max_length=300, db_index=True)
-    name = models.CharField(_("name"), max_length=20, db_index=True)
-    description = models.CharField(_("description"), max_length=1000)
+    entity = models.CharField(_("entity"), db_index=True)
+    owner = models.CharField(_("owner"), db_index=True)
+    name = models.CharField(_("name"), db_index=True)
+    description = models.CharField(_("description"))
     startdate = models.DateTimeField(_("start date"), db_index=True)
     enddate = models.DateTimeField(_("end date"), db_index=True)
     weight = models.DecimalField(_("weight"), max_digits=20, decimal_places=8)
@@ -52,13 +52,13 @@ class Constraint(models.Model):
     allow_report_manager_access = True
 
     # Database fields
-    demand = models.CharField(_("demand"), max_length=300, null=True, db_index=True)
-    forecast = models.CharField(_("forecast"), max_length=300, null=True, db_index=True)
-    item = models.CharField(_("item"), max_length=300, null=True, db_index=True)
-    entity = models.CharField(_("entity"), max_length=15, db_index=True)
-    owner = models.CharField(_("owner"), max_length=300, db_index=True)
-    name = models.CharField(_("name"), max_length=20, db_index=True)
-    description = models.CharField(_("description"), max_length=1000)
+    demand = models.CharField(_("demand"), null=True, db_index=True)
+    forecast = models.CharField(_("forecast"), null=True, db_index=True)
+    item = models.CharField(_("item"), null=True, db_index=True)
+    entity = models.CharField(_("entity"), db_index=True)
+    owner = models.CharField(_("owner"), db_index=True)
+    name = models.CharField(_("name"), db_index=True)
+    description = models.CharField(_("description"))
     startdate = models.DateTimeField(_("start date"), db_index=True)
     enddate = models.DateTimeField(_("end date"), db_index=True)
     weight = models.DecimalField(_("weight"), max_digits=20, decimal_places=8)
@@ -77,7 +77,7 @@ class Constraint(models.Model):
 class ResourceSummary(models.Model):
     allow_report_manager_access = True
 
-    resource = models.CharField(_("resource"), max_length=300)
+    resource = models.CharField(_("resource"))
     startdate = models.DateTimeField(_("startdate"))
     available = models.DecimalField(
         _("available"), max_digits=20, decimal_places=8, null=True
@@ -88,7 +88,9 @@ class ResourceSummary(models.Model):
     setup = models.DecimalField(_("setup"), max_digits=20, decimal_places=8, null=True)
     load = models.DecimalField(_("load"), max_digits=20, decimal_places=8, null=True)
     free = models.DecimalField(_("free"), max_digits=20, decimal_places=8, null=True)
-    load_confirmed = models.DecimalField(_("confirmed load"), max_digits=20, decimal_places=8, null=True)
+    load_confirmed = models.DecimalField(
+        _("confirmed load"), max_digits=20, decimal_places=8, null=True
+    )
 
     class Meta:
         db_table = "out_resourceplan"

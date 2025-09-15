@@ -34,14 +34,10 @@ class Item(AuditModel, HierarchyModel):
     )
 
     # Database fields
-    description = models.CharField(
-        _("description"), max_length=500, null=True, blank=True
-    )
-    category = models.CharField(
-        _("category"), max_length=300, null=True, blank=True, db_index=True
-    )
+    description = models.CharField(_("description"), null=True, blank=True)
+    category = models.CharField(_("category"), null=True, blank=True, db_index=True)
     subcategory = models.CharField(
-        _("subcategory"), max_length=300, null=True, blank=True, db_index=True
+        _("subcategory"), null=True, blank=True, db_index=True
     )
     cost = models.DecimalField(
         _("cost"),
@@ -52,7 +48,7 @@ class Item(AuditModel, HierarchyModel):
         help_text=_("Cost of the item"),
     )
     type = models.CharField(
-        _("type"), max_length=20, null=True, blank=True, choices=types
+        _("type"), null=True, blank=True, choices=types
     )
     weight = models.DecimalField(
         _("weight"),
@@ -77,7 +73,7 @@ class Item(AuditModel, HierarchyModel):
         help_text=_("Period of cover in days"),
         editable=False,
     )
-    uom = models.CharField(_("unit of measure"), max_length=20, null=True, blank=True)
+    uom = models.CharField(_("unit of measure"), null=True, blank=True)
 
     extra_dependencies = [
         Parameter,

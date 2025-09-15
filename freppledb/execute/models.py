@@ -51,18 +51,16 @@ class Task(models.Model):
 
     # Database fields
     id = models.AutoField(_("identifier"), primary_key=True, editable=False)
-    name = models.CharField(_("name"), max_length=50, db_index=True, editable=False)
+    name = models.CharField(_("name"), db_index=True, editable=False)
     submitted = models.DateTimeField(_("submitted"), editable=False)
     started = models.DateTimeField(_("started"), blank=True, null=True, editable=False)
     finished = models.DateTimeField(
         _("finished"), blank=True, null=True, editable=False
     )
-    arguments = models.TextField(
-        _("arguments"), max_length=200, null=True, editable=False
-    )
-    status = models.CharField(_("status"), max_length=20, editable=False)
-    message = models.TextField(_("message"), max_length=200, null=True, editable=False)
-    logfile = models.TextField(_("log file"), max_length=200, null=True, editable=False)
+    arguments = models.TextField(_("arguments"), null=True, editable=False)
+    status = models.CharField(_("status"), editable=False)
+    message = models.TextField(_("message"), null=True, editable=False)
+    logfile = models.TextField(_("log file"), null=True, editable=False)
     user = models.ForeignKey(
         User,
         verbose_name=_("user"),
@@ -92,7 +90,7 @@ class Task(models.Model):
 
 class ScheduledTask(models.Model):
     # Database fields
-    name = models.CharField("name", primary_key=True, max_length=300, db_index=True)
+    name = models.CharField("name", primary_key=True, db_index=True)
     next_run = models.DateTimeField("nextrun", blank=True, null=True, db_index=True)
     user = models.ForeignKey(
         User,
@@ -102,17 +100,12 @@ class ScheduledTask(models.Model):
         related_name="schedules",
         on_delete=models.SET_NULL,
     )
-    email_failure = models.CharField(
-        "email_failure", max_length=300, null=True, blank=True
-    )
-    email_success = models.CharField(
-        "email_success", max_length=300, null=True, blank=True
-    )
+    email_failure = models.CharField("email_failure", null=True, blank=True)
+    email_success = models.CharField("email_success", null=True, blank=True)
     data = models.JSONField(null=True, blank=True)
     tz = models.CharField(
         _("time zone"),
         choices=[(i, i) for i in zoneinfo.available_timezones()],
-        max_length=40,
         null=True,
         blank=True,
     )
@@ -212,7 +205,7 @@ class ScheduledTask(models.Model):
         with connections[database].cursor() as cursor:
             cursor.execute(
                 """
-                select count(*) 
+                select count(*)
                 from execute_schedule
                 where next_run is not null
                 """
@@ -222,7 +215,7 @@ class ScheduledTask(models.Model):
                 cursor_dflt.execute(
                     """
                     update common_scenario
-                    set info = %s 
+                    set info = %s
                     where name = %%s
                     """
                     % (
@@ -246,9 +239,9 @@ class ScheduledTask(models.Model):
 
 class DataExport(models.Model):
     # Database fields
-    name = models.CharField("name", primary_key=True, max_length=300, db_index=True)
+    name = models.CharField("name", primary_key=True, db_index=True)
     sql = models.TextField("sql", null=True, blank=True)
-    report = models.CharField("report", max_length=300, null=True, blank=True)
+    report = models.CharField("report", null=True, blank=True)
     arguments = models.JSONField(null=True, blank=True)
 
     def __str__(self):

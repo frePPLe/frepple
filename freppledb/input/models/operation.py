@@ -54,23 +54,18 @@ class Operation(AuditModel):
     )
 
     # Database fields
-    name = models.CharField(_("name"), max_length=300, primary_key=True)
+    name = models.CharField(_("name"), primary_key=True)
     type = models.CharField(
         _("type"),
-        max_length=20,
         null=True,
         blank=True,
         choices=types,
         default="fixed_time",
     )
-    description = models.CharField(
-        _("description"), max_length=500, null=True, blank=True
-    )
-    category = models.CharField(
-        _("category"), max_length=300, null=True, blank=True, db_index=True
-    )
+    description = models.CharField(_("description"), null=True, blank=True)
+    category = models.CharField(_("category"), null=True, blank=True, db_index=True)
     subcategory = models.CharField(
-        _("subcategory"), max_length=300, null=True, blank=True, db_index=True
+        _("subcategory"), null=True, blank=True, db_index=True
     )
     item = models.ForeignKey(
         Item,
@@ -172,7 +167,6 @@ class Operation(AuditModel):
     )
     search = models.CharField(
         _("search mode"),
-        max_length=20,
         null=True,
         blank=True,
         choices=searchmode,
@@ -279,7 +273,6 @@ class OperationMaterial(AuditModel):
     )
     type = models.CharField(
         _("type"),
-        max_length=20,
         null=True,
         blank=True,
         choices=types,
@@ -304,7 +297,6 @@ class OperationMaterial(AuditModel):
     )
     name = models.CharField(
         _("name"),
-        max_length=300,
         null=True,
         blank=True,
         help_text=_("Name of this operation material to identify alternates"),
@@ -318,7 +310,6 @@ class OperationMaterial(AuditModel):
     )
     search = models.CharField(
         _("search mode"),
-        max_length=20,
         null=True,
         blank=True,
         choices=searchmode,
@@ -443,7 +434,6 @@ class OperationResource(AuditModel):
     )
     name = models.CharField(
         _("name"),
-        max_length=300,
         null=True,
         blank=True,
         help_text=_("Name of this operation resource to identify alternates"),
@@ -457,14 +447,12 @@ class OperationResource(AuditModel):
     )
     setup = models.CharField(
         _("setup"),
-        max_length=300,
         null=True,
         blank=True,
         help_text=_("Setup required on the resource for this operation"),
     )
     search = models.CharField(
         _("search mode"),
-        max_length=20,
         null=True,
         blank=True,
         choices=searchmode,

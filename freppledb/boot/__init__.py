@@ -70,18 +70,15 @@ def add_extra_model_fields(sender, **kwargs):
         )
 
         if fieldtype == "string":
+            kwargs = {
+                "null": True,
+                "blank": True,
+                "db_index": True,
+                "editable": editable,
+            }
             if register_args and "max_length" in register_args:
-                max_length = register_args["max_length"]
-            else:
-                max_length = 300
-            field = models.CharField(
-                label,
-                max_length=max_length,
-                null=True,
-                blank=True,
-                db_index=True,
-                editable=editable,
-            )
+                kwargs["max_length"] = register_args["max_length"]
+            field = models.CharField(label, **kwargs)
         elif fieldtype == "boolean":
             field = models.BooleanField(
                 label, null=True, blank=True, db_index=True, editable=editable

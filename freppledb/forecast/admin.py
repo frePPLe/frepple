@@ -74,6 +74,11 @@ class Forecast_admin(MultiDBModelAdmin):
         },
         {"name": "plan", "label": _("plan"), "view": "forecast_plan"},
         {
+            "name": "detail",
+            "label": _("plan detail"),
+            "view": "forecast_plandetail",
+        },
+        {
             "name": "constraint",
             "label": _("why short or late?"),
             "view": "forecast_constraint",

@@ -69,7 +69,7 @@ from freppledb.common.report import (
 from freppledb.input.views import PathReport, DemandList
 from freppledb.input.models import Demand, Item, Location, Customer, Buffer
 from freppledb.output.models import Constraint
-from freppledb.output.views.constraint import BaseReport
+from freppledb.output.views import constraint, pegging
 from freppledb.webservice.utils import getWebServiceContext
 
 import logging
@@ -1203,7 +1203,7 @@ class OrderReport(DemandList):
             return {"title": force_str(_("sales orders")) + thetitle}
 
 
-class ConstraintReport(BaseReport):
+class ConstraintReport(constraint.BaseReport):
     template = "forecast/constraint_forecast.html"
 
     detailmodel = Forecast
@@ -1217,6 +1217,30 @@ class ConstraintReport(BaseReport):
             return Constraint.objects.all().filter(demand__startswith=args[0])
         else:
             return Constraint.objects.all()
+
+
+class PeggingReport(pegging.ReportByDemand):
+    detailmodel = Forecast
+    detail_post_title = _("plan detail")
+    help_url = "user-interface/plan-analysis/demand-gantt-report.html"
+    model = Forecast
+
+    @classmethod
+    def basequeryset(reportclass, request, *args, **kwargs):
+        return Forecast.objects.filter(name__exact=args[0]).values("name")
+
+    @classmethod
+    def extra_context(reportclass, request, *args, **kwargs):
+        if args and args[0]:
+            request.session["lasttab"] = "detail"
+            return {
+                "active_tab": "detail",
+                "title": force_str(Forecast._meta.verbose_name) + " " + args[0],
+                "post_title": _("plan detail"),
+                "model": Forecast,
+            }
+        else:
+            return {}
 
 
 class ForecastEditor:

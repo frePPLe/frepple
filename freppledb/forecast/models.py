@@ -1161,7 +1161,7 @@ class Measure(AuditModel):
                     mode_future="view",
                     mode_past="hide",
                     formatter="number",
-                    initially_hidden=True,
+                    initially_hidden=False,
                 ),
                 Measure(
                     name="forecastplanned",
@@ -1170,7 +1170,7 @@ class Measure(AuditModel):
                     mode_future="view",
                     mode_past="hide",
                     formatter="number",
-                    initially_hidden=True,
+                    initially_hidden=False,
                 ),
                 # Measures computed in the backend
                 Measure(

@@ -52,7 +52,6 @@ else:
         path("data/forecast/forecast/", views.ForecastList.as_view()),
         path("data/forecast/measure/", views.MeasureList.as_view()),
         path("forecast/demand/", views.OrderReport.as_view()),
-        # NOT READY... path("forecast/wizard/", views.ForecastWizard.as_view()),
         re_path(
             "forecast/(.+)/$", views.OverviewReport.as_view(), name="forecast_plan"
         ),
@@ -66,6 +65,11 @@ else:
             r"^supplypath/forecast/(.+)/$",
             views.UpstreamForecastPath.as_view(),
             name="supplypath_forecast",
+        ),
+        re_path(
+            r"^demandpegging/forecast/(.+)/$",
+            views.PeggingReport.as_view(),
+            name="forecast_plandetail",
         ),
         # REST API framework
         path("api/forecast/forecast/", serializers.ForecastAPI.as_view()),

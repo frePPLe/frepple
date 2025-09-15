@@ -36,7 +36,6 @@ const MetaCategory* Buffer::metadata;
 const MetaClass *BufferDefault::metadata, *BufferInfinite::metadata,
     *OperationInventory::metadata, *OperationDelivery::metadata;
 OperationFixedTime* Buffer::uninitializedProducing = nullptr;
-Duration OperationDelivery::deliveryduration = 0L;
 
 int Buffer::initialize() {
   // Initialize the metadata
@@ -123,7 +122,7 @@ OperationDelivery::OperationDelivery() {
   // size specified on the demand.
   setSizeMinimum(0.0);
   initType(metadata);
-  setDuration(deliveryduration);
+  setDuration(Demand::getDefaultDeliveryDuration());
 }
 
 void OperationDelivery::setBuffer(Buffer* buf) {

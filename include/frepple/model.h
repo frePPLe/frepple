@@ -5495,18 +5495,6 @@ class OperationDelivery : public OperationFixedTime {
     m->addDurationField<Cls>(Tags::duration, &Cls::getDuration,
                              &Cls::setDuration);
   }
-
-  static Duration getDeliveryDuration() { return deliveryduration; }
-
-  static void setDeliveryDuration(Duration d) {
-    if (d < 0L)
-      logger << "Warning: Delivery duration must be >= 0." << endl;
-    else
-      deliveryduration = d;
-  }
-
- private:
-  static Duration deliveryduration;
 };
 
 inline bool OperationPlan::getHidden() const {
@@ -7687,6 +7675,19 @@ class Demand : public HasHierarchy<Demand>,
     setChanged();
   }
 
+  virtual Duration getDeliveryDuration() { return DefaultDeliveryDuration; }
+
+  static Duration getDefaultDeliveryDuration() {
+    return DefaultDeliveryDuration;
+  }
+
+  static void setDefaultDeliveryDuration(Duration d) {
+    if (d < 0L)
+      logger << "Warning: Delivery duration must be >= 0." << endl;
+    else
+      DefaultDeliveryDuration = d;
+  }
+
   /* This function returns the operation that is to be used to satisfy this
    * demand. In sequence of priority this goes as follows:
    *   1) If the "operation" field on the demand is explicitly set, use it.
@@ -8007,6 +8008,8 @@ class Demand : public HasHierarchy<Demand>,
    * this default to compute a minshipment value.
    */
   static const int DefaultMaxShipments = 10;
+
+  static Duration DefaultDeliveryDuration;
 
   /* Requested item. */
   Item* it = nullptr;
@@ -8818,11 +8821,11 @@ class Plan : public Plannable, public Object {
   }
 
   Duration getDeliveryDuration() const {
-    return OperationDelivery::getDeliveryDuration();
+    return Demand::getDefaultDeliveryDuration();
   }
 
   void setDeliveryDuration(Duration l) {
-    OperationDelivery::setDeliveryDuration(l);
+    Demand::setDefaultDeliveryDuration(l);
   }
 
   /* Returns the description of the plan. */
@@ -8928,7 +8931,7 @@ class Plan : public Plannable, public Object {
                               &Plan::setAutoFence);
     m->addDurationField<Plan>(Tags::deliveryduration,
                               &Plan::getDeliveryDuration,
-                              &Plan::setDeliveryDuration);
+                              &Plan::setDeliveryDuration, 0L, DONT_SERIALIZE);
     m->addStringRefField<Plan>(Tags::description, &Plan::getDescription,
                                &Plan::setDescription);
     m->addStringRefField<Plan>(Tags::dbconnection, &Plan::getDBconnection,

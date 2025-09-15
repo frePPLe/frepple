@@ -995,6 +995,8 @@ class ForecastBucket : public Demand {
 
   void reduceDeliveries(double, CommandManager* = nullptr);
 
+  virtual Duration getDeliveryDuration() { return 0L; }
+
   /* A flag to mark at which date with a forecasting bucket the forecast
    * is due.
    * Possible values are:
@@ -1444,6 +1446,8 @@ class Forecast : public Demand, public ForecastBase {
   virtual Customer* getForecastCustomer() const { return getCustomer(); }
 
   virtual const string& getForecastName() const { return getName(); }
+
+  virtual Duration getDeliveryDuration() { return 0L; }
 
   static void parse(Object* o, const DataValueDict& in, CommandManager* cmdmgr);
 

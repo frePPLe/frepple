@@ -101,6 +101,8 @@
 
 <?python
 
+frepple.settings.deliveryduration = 86400
+
 print("FIRST NETTING RUN - NET_IGNORELOCATION = TRUE")
 fcstsolver = frepple.solver_forecast(
   loglevel=2, Net_CustomerThenItemHierarchy=True,

@@ -35,6 +35,7 @@ const MetaClass* DemandDefault::metadata;
 const MetaClass* DemandGroup::metadata;
 
 OperationFixedTime* Demand::uninitializedDelivery = nullptr;
+Duration Demand::DefaultDeliveryDuration = 0L;
 
 int Demand::initialize() {
   // Initialize the metadata

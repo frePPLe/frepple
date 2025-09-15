@@ -990,6 +990,11 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
   Duration production_wanted_duration =
       efficiency > 0.0 ? Duration(double(duration) / efficiency)
                        : Duration::MAX;
+  if (opplan && hasType<OperationDelivery>() && opplan->getDemand())
+    // Special case to have the duration of deliveries demand-dependent when
+    // they use the default delivery operation.
+    production_wanted_duration = opplan->getDemand()->getDeliveryDuration();
+
   Duration setup_wanted_duration;
   while (true) {
     if (forward) {

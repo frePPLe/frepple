@@ -244,8 +244,8 @@ void ForecastMeasure::evalExpression(const string& formula, ForecastBase* fcst,
   if (!parser.compile(formula, expression))
     throw DataException("Error compiling expression");
 
-  // Evaluate the expression for all leave forecast buckets
-  double remainder = 0.0;
+  // Evaluate the expression for all leaf forecast buckets
+  // double remainder = 0.0;
   for (auto c = fcst->getLeaves(true, this); c; ++c) {
     auto fcstdata = c->getData();
     lock_guard<recursive_mutex> exclusive(fcstdata->lock);
@@ -261,8 +261,10 @@ void ForecastMeasure::evalExpression(const string& formula, ForecastBase* fcst,
         // Evaluate the expression
         auto result = expression.value();
         if (getDiscrete()) {
+          // Note: We just round the numbers to discrete values.
+          // We are not rolling forward remainders across buckets.
           auto qty = floor(result + ROUNDING_ERROR);
-          remainder = result - qty;
+          // remainder = result - qty;
           result = qty;
         }
 

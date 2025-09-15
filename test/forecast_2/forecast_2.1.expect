@@ -1347,7 +1347,7 @@
 			<demand>
 				<name>Order 1 for product 1</name>
 			</demand>
-			<start>2022-01-10T00:00:00</start>
+			<start>2022-01-09T00:00:00</start>
 			<end>2022-01-10T00:00:00</end>
 			<quantity>20</quantity>
 			<ordertype>DLVR</ordertype>

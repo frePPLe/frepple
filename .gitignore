@@ -31,6 +31,9 @@ venv
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# Other editors
+.idea
+
 # Packaging
 *.deb
 *.rpm

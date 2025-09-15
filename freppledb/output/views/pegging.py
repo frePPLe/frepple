@@ -50,6 +50,8 @@ class ReportByDemand(GridReport):
     hasTimeBuckets = True
     multiselect = False
     help_url = "user-interface/plan-analysis/demand-gantt-report.html"
+    model = Demand
+
     rows = (
         GridFieldText("id", key=True, editable=False, sortable=False, hidden=True),
         GridFieldText("depth", title=_("depth"), editable=False, sortable=False),
@@ -705,7 +707,7 @@ class ReportByDemand(GridReport):
                     "csvtable",
                     "csv",
                 ]:
-                    for r in sorted(response, key=lambda d: d["id"]):
+                    for r in swap_mo_wo(sorted(response, key=lambda d: d["id"])):
                         r["operationplans"] = [
                             "reference=%s start=%s end=%s"
                             % (p["reference"], p["startdate"], p["enddate"])

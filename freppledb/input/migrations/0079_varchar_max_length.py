@@ -342,46 +342,9 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name="item",
-            name="adi",
-            field=models.DecimalField(
-                blank=True,
-                db_index=True,
-                decimal_places=6,
-                editable=False,
-                max_digits=15,
-                null=True,
-                verbose_name="adi",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="item",
             name="category",
             field=models.CharField(
                 blank=True, db_index=True, null=True, verbose_name="category"
-            ),
-        ),
-        migrations.AlterField(
-            model_name="item",
-            name="cv2",
-            field=models.DecimalField(
-                blank=True,
-                db_index=True,
-                decimal_places=6,
-                editable=False,
-                max_digits=15,
-                null=True,
-                verbose_name="cv2",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="item",
-            name="demand_pattern",
-            field=models.CharField(
-                blank=True,
-                db_index=True,
-                editable=False,
-                null=True,
-                verbose_name="demand_pattern",
             ),
         ),
         migrations.AlterField(
@@ -397,45 +360,6 @@ class Migration(migrations.Migration):
                 primary_key=True,
                 serialize=False,
                 verbose_name="name",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="item",
-            name="outlier_12b",
-            field=models.DecimalField(
-                blank=True,
-                db_index=True,
-                decimal_places=6,
-                editable=False,
-                max_digits=15,
-                null=True,
-                verbose_name="outliers last 12 buckets",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="item",
-            name="outlier_1b",
-            field=models.DecimalField(
-                blank=True,
-                db_index=True,
-                decimal_places=6,
-                editable=False,
-                max_digits=15,
-                null=True,
-                verbose_name="outliers last bucket",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="item",
-            name="outlier_6b",
-            field=models.DecimalField(
-                blank=True,
-                db_index=True,
-                decimal_places=6,
-                editable=False,
-                max_digits=15,
-                null=True,
-                verbose_name="outliers last 6 buckets",
             ),
         ),
         migrations.AlterField(
@@ -867,17 +791,6 @@ class Migration(migrations.Migration):
                 help_text="MTO batch name",
                 null=True,
                 verbose_name="batch",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="operationplan",
-            name="forecast",
-            field=models.CharField(
-                blank=True,
-                db_index=True,
-                editable=False,
-                null=True,
-                verbose_name="forecast",
             ),
         ),
         migrations.AlterField(

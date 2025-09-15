@@ -26,6 +26,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
+        ("input", "0079_varchar_max_length"),
         ("forecast", "0010_forecastplan"),
     ]
 
@@ -230,6 +231,26 @@ class Migration(migrations.Migration):
 
             refresh materialized view forecastreport_view;
             """,
-            reverse_sql=migrations.RunSQL.noop,
+            reverse_sql="""
+              drop materialized view if exists forecastreport_view;
+
+              create materialized view forecastreport_view as
+              select distinct
+                   coalesce(forecast.name, forecastplan.item_id||' @ '||
+                     forecastplan.location_id||' @ '||
+                     forecastplan.customer_id) as name,
+                   forecastplan.item_id,
+                   forecastplan.location_id,
+                   forecastplan.customer_id
+              from forecastplan
+              left outer join forecast
+                on forecast.item_id = forecastplan.item_id
+                and forecast.location_id = forecastplan.location_id
+                and forecast.customer_id = forecastplan.customer_id;
+
+            create unique index on forecastreport_view (item_id, location_id, customer_id);
+
+            refresh materialized view forecastreport_view;
+            """,
         ),
     ]

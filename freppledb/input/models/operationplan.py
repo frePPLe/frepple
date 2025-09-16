@@ -1106,7 +1106,7 @@ class ManufacturingOrder(OperationPlan):
                                         user_id=user.id,
                                         content_type_id=content_type_id,
                                         object_pk=obj.pk,
-                                        object_repr=force_str(obj)[:200],
+                                        object_repr=force_str(obj),
                                         type="change",
                                         comment="Changed %s."
                                         % get_text_list(form.changed_data, "and"),
@@ -1116,7 +1116,7 @@ class ManufacturingOrder(OperationPlan):
                                         user_id=user.id,
                                         content_type_id=content_type_id,
                                         object_pk=obj.pk,
-                                        object_repr=force_str(obj)[:200],
+                                        object_repr=force_str(obj),
                                         type="add",
                                         comment="Added",
                                     ).save(using=database)

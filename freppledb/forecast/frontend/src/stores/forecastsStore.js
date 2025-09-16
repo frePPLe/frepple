@@ -58,8 +58,11 @@ export const useForecastsStore = defineStore('forecasts', {
       this.currentMeasure = measure;
       if (this.currentSequence === null) return;
       this.itemTree = await this.getItemtree();
+      this.itemTree[0].expanded = 1;
       this.locationTree = await this.getLocationtree();
+      this.locationTree[0].expanded = 1;
       this.customerTree = await this.getCustomertree();
+      this.customerTree[0].expanded = 1;
       if (save) this.savePreferences();
     },
 
@@ -69,8 +72,11 @@ export const useForecastsStore = defineStore('forecasts', {
       this.currentSequence = sequence;
       if (this.currentMeasure === null) return;
       this.itemTree = await this.getItemtree();
+      this.itemTree[0].expanded = 1;
       this.locationTree = await this.getLocationtree();
+      this.locationTree[0].expanded = 1;
       this.customerTree = await this.getCustomertree();
+      this.customerTree[0].expanded = 1;
       if (save) this.savePreferences();
     },
 
@@ -79,18 +85,44 @@ export const useForecastsStore = defineStore('forecasts', {
       console.log('setDataRowHeight', height);
     },
 
-    setItemLocationCustomer(model, objectName, asChildrent) {
+    async setItemLocationCustomer(model, objectName, asChildren) {
+      // This function will get the tree values according to the panel ordering
+      // and also add get from the backend the leafs/children of the tree.
       let newData = [];
-      console.log('setItemLocationCustomer', model, objectName);
-      this[model].name = objectName;
+      console.log('86 setItemLocationCustomer', model, objectName, asChildren);
+      this.item.name = objectName;
 
       for (let m of this.currentSequence.toLowerCase()) {
         console.log(88, m, this.currentSequence)
         // get drill down data for following sequence trees
       }
 
-      if (asChildrent) {
-        console.log(asChildrent);
+      if (asChildren) {
+        console.log(95, asChildren);
+        let insertIndex = 0;
+        switch (model) {
+          case 'item': {
+            insertIndex = this.itemTree.findIndex(x => x.item === objectName) + 1;
+            newData = await this.getItemtree(objectName, null, null);
+            console.log(99, newData);
+            this.itemTree.splice(insertIndex, 0, ...newData);
+            break;
+          }
+          case 'location':
+            insertIndex = this.locationTree.findIndex(x => x.location === objectName) + 1;
+            newData = await this.getLocationtree(null, objectName, null);
+            this.locationTree.splice(insertIndex, 0, ...newData);
+            break;
+          case 'customer':
+            insertIndex = this.customerTree.findIndex(x => x.customer === objectName) + 1;
+            newData = await this.getCustomertree(null, null, objectName);
+            this.customer.splice(insertIndex, 0, ...newData);
+            break;
+          default:
+            break;
+        }
+
+
         // get the children data from the backend
         // and splice into tree
       }
@@ -130,15 +162,15 @@ export const useForecastsStore = defineStore('forecasts', {
       }
     },
 
-    async getItemtree() {
+    async getItemtree(itemName = null, locationName = null, customerName= null) {
       this.loading = true;
       this.error = null;
 
       try {
-        console.log('Calling API with measure:', this.currentMeasure);
+        console.log('Calling API with measure:', this.currentMeasure, itemName, locationName, customerName );
 
         // Use the promise-like behavior of the composable
-        const result = await forecastService.getItemtree(this.currentMeasure);
+        const result = await forecastService.getItemtree(this.currentMeasure, itemName, locationName, customerName);
 
         // The result now contains the resolved refs with data
         const {loading, backendError, responseData} = result;
@@ -167,14 +199,14 @@ export const useForecastsStore = defineStore('forecasts', {
       }
     },
 
-    async getLocationtree() {
+    async getLocationtree(itemName = null, locationName = null, customerName= null) {
       this.error = null;
 
       try {
-        console.log('Calling API with measure:', this.currentMeasure);
+        console.log('Calling API with measure:', this.currentMeasure, itemName, locationName, customerName);
 
         // Use the promise-like behavior of the composable
-        const result = await forecastService.getLocationtree(this.currentMeasure);
+        const result = await forecastService.getLocationtree(this.currentMeasure, itemName, locationName, customerName);
 
         // The result now contains the resolved refs with data
         const {loading, backendError, responseData} = result;
@@ -201,14 +233,14 @@ export const useForecastsStore = defineStore('forecasts', {
       }
     },
 
-    async getCustomertree() {
+    async getCustomertree(itemName = null, locationName = null, customerName= null) {
 
       this.error = null;
 
       try {
-        console.log('Calling API with measure:', this.currentMeasure);
+        console.log('Calling API with measure:', this.currentMeasure, itemName, locationName, customerName);
 
-        const result = await forecastService.getCustomertree(this.currentMeasure);
+        const result = await forecastService.getCustomertree(this.currentMeasure, itemName, locationName, customerName);
 
         const {loading, backendError, responseData} = result;
         this.loading = loading;

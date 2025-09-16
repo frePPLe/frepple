@@ -1,5 +1,5 @@
 const DEFAULT_CUSTOMER = {
-  name:  	"All customers",
+  name:  	"Generic customer",
   description: "",
   category: "",
   subcategory: "",

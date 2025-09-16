@@ -107,8 +107,8 @@ const sortedMeasureList = computed(() => {
 
     <div v-if="currentSequence && currentMeasure && currentHeight" class="row resizable" id="data-row" :style="{'max-height': '50vh', 'height': currentHeight + 'px', 'min-height': '150px'}" style="max-height: 50vh; height: 240px; min-height: 150px;">
       <div class="col-sm-4" v-for="panel in currentSequence" :key="panel" style="height: 100%">
-        <div>panel - {{ panel }} / measure {{ currentMeasure }} / buckets {{ store.treeBuckets }}
-<!--          {{ panel === 'I' ? store.itemTree : panel === 'L' ? store.locationTree : store.customerTree}}-->
+        <div>
+<!--          panel - {{ panel }} / measure {{ currentMeasure }} / buckets {{ store.treeBuckets }}-->
           <ForecastSelectionCard v-if="panel" :panelid="panel" />
         </div>
 

@@ -151,7 +151,7 @@ a task</a> to simplify running the sequence and avoid mistakes.</p>
         <div class="input-group">
           <input type="text" class="form-control" id="schedule-{{forloop.counter}}-at"
             data-field="starttime" placeholder="HH:MM:SS  HH:MM:SS ..."
-              value="{% for t in schedule.data.starttime %}{% if t < 86400 and t > 0 %}{{t|timeformat}}  {% endif %}{% endfor %}">
+              value="{% for t in schedule.data.starttime %}{% if t < 86400 and t >= 0 %}{{t|timeformat}}  {% endif %}{% endfor %}">
           <button class="btn btn-outline-primary dropdown-toggle" data-field="task-timezone"
              type="button" data-bs-toggle="dropdown" aria-expanded="false">{% firstof schedule.tz default_timezone %}</button>
           <ul class="dropdown-menu dropdown-menu-end" style="max-height: 30em; overflow-y: auto">

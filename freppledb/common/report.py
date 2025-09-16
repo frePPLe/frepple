@@ -2183,7 +2183,7 @@ class GridReport(View):
                                         user_id=request.user.id,
                                         content_type_id=content_type_id,
                                         object_pk=force_str(o),
-                                        object_repr=o[:200],
+                                        object_repr=o,
                                         type="change",
                                         comment=comment,
                                     ).save(using=request.database)
@@ -2200,7 +2200,7 @@ class GridReport(View):
                                         user_id=request.user.id,
                                         content_type_id=content_type_id,
                                         object_pk=force_str(k.pk),
-                                        object_repr=force_str(k)[:200],
+                                        object_repr=force_str(k),
                                         type="change",
                                         comment=comment,
                                     ).save(using=request.database)
@@ -2220,7 +2220,7 @@ class GridReport(View):
                                 user_id=request.user.id,
                                 content_type_id=content_type_id,
                                 object_pk=force_str(key),
-                                object_repr=force_str(obj)[:200],
+                                object_repr=force_str(obj),
                                 type="delete",
                                 comment="Deleted %s." % force_str(obj),
                             ).save(using=request.database)
@@ -2272,7 +2272,7 @@ class GridReport(View):
                                 user_id=request.user.pk,
                                 content_type_id=content_type_id,
                                 object_pk=obj.pk,
-                                object_repr=force_str(obj)[:200],
+                                object_repr=force_str(obj),
                                 type="add",
                                 comment="Copied from %s." % orig_repr,
                             ).save(using=request.database)
@@ -2349,7 +2349,7 @@ class GridReport(View):
                                 user_id=request.user.pk,
                                 content_type_id=content_type_id,
                                 object_pk=obj.pk,
-                                object_repr=force_str(obj)[:200],
+                                object_repr=force_str(obj),
                                 type="change",
                                 comment="Changed %s."
                                 % get_text_list(form.changed_data, "and"),

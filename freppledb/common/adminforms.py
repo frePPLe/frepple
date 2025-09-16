@@ -204,7 +204,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             user_id=request.user.pk,
             content_type_id=content_type.pk,
             object_pk=str(obj.pk),
-            object_repr=str(obj)[:200],
+            object_repr=str(obj),
             type="add",
             comment="Added %s." % str(obj),
         )
@@ -271,7 +271,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                         user_id=request.user.pk,
                         content_type_id=content_type.pk,
                         object_pk=str(obj.pk),
-                        object_repr=str(obj)[:200],
+                        object_repr=str(obj),
                         type="change",
                         comment=(
                             message
@@ -309,7 +309,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                 self.model, for_concrete_model=False
             ).pk,
             object_pk=str(obj.pk),
-            object_repr=object_repr[:200],
+            object_repr=object_repr,
             type="delete",
             comment="Deleted %s." % object_repr,
         )
@@ -615,7 +615,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                 if comment or att:
                     c = Comment(
                         content_object=modelinstance,
-                        object_repr=str(modelinstance)[:200],
+                        object_repr=str(modelinstance),
                         user=request.user,
                         comment=comment,
                         type="comment",

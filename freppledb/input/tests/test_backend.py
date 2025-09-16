@@ -870,7 +870,7 @@ class NotificationTest(TransactionTestCase):
         item = Item.objects.get(name="test item")
         Comment(
             content_object=item,
-            object_repr=str(item)[:200],
+            object_repr=str(item),
             user=user,
             comment="test comment",
             type="comment",

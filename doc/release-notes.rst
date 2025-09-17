@@ -44,6 +44,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 17, 18: Bug fix. Sales orders for make-to-order items were incorrectly mapped
     in the closed status.
 
+- | 17, 18: Remove the truncation of very long item or operation names.
+
 9.10.0 (2025-08-29)
 ===================
 

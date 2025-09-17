@@ -14,13 +14,15 @@ const data = computed(() => (props.panelid === 'I') ? store.itemTree: (props.pan
 const modelName = (props.panelid === 'I') ? 'item': (props.panelid === 'L') ? 'location': 'customer';
 console.log(14, toRaw(data).value);
 let currentHeight = (store.preferences.height || 240);
-store.setCurrentModelObject(model, objectName);
+// store.setCurrentModelObject(model, objectName);
 function selectILCobject(model, rowIndex) {
   console.log(19, data.value[rowIndex][model], 'children: ', data.value[rowIndex]['children'],'model: ', model, 'expanded: ', data.value[rowIndex].expanded === 0);
-  if (data.value[rowIndex]['children'] && data.value[rowIndex].expanded === 0) {
-    store.setItemLocationCustomer(model, data.value[rowIndex][model], data.value[rowIndex]['children']);
+
+  store.setItemLocationCustomer(model, data.value[rowIndex][model], data.value[rowIndex]['children']);
+  if (data.value[rowIndex]['children']) {
+    toggleRowVisibility(rowIndex);
   }
-  toggleRowVisibility(rowIndex);
+
 }
 
 function toggleRowVisibility(rowIndex) {

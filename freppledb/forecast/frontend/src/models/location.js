@@ -1,5 +1,5 @@
 const DEFAULT_LOCATION = {
-  name:  	"All locations",
+  name:  	"",
   description: "",
   category: "",
   subcategory: "",

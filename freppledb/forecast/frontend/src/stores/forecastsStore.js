@@ -90,7 +90,7 @@ export const useForecastsStore = defineStore('forecasts', {
       // and also add get from the backend the leafs/children of the tree.
       let newData = [];
       console.log('86 setItemLocationCustomer', model, objectName, asChildren);
-      this.item.name = objectName;
+      this[model].name = objectName;
 
       for (let m of this.currentSequence.toLowerCase()) {
         console.log(88, m, this.currentSequence)
@@ -184,6 +184,10 @@ export const useForecastsStore = defineStore('forecasts', {
           const result = toRaw(responseData.value);
           this.treeBuckets = result[0].values.map(x => x['bucketname']);
 
+          if (result[0].lvl === 0) {
+            this.item.name = result[0].item;
+          }
+
           return result;
         } else {
           console.warn('⚠️ No data received from API');
@@ -217,8 +221,14 @@ export const useForecastsStore = defineStore('forecasts', {
         }
 
         if (responseData.value) {
+          const result = toRaw(responseData.value);
           console.log('Data successfully loaded:', this.locationTree);
-          return toRaw(responseData.value);
+
+          if (result[0].lvl === 0) {
+            this.location.name = result[0].location;
+          }
+
+          return result;
         } else {
           console.warn('⚠️ No data received from API');
           return {};
@@ -250,8 +260,14 @@ export const useForecastsStore = defineStore('forecasts', {
         }
 
         if (responseData.value) {
+          const result = toRaw(responseData.value);
           console.log('Data successfully loaded:', this.customerTree);
-          return toRaw(responseData.value);
+
+          if (result[0].lvl === 0) {
+            this.customer.name = result[0].customer;
+          }
+
+          return result;
         } else {
           console.warn('⚠️ No data received from API');
           return  {};

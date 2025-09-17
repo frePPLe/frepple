@@ -1,5 +1,5 @@
 const DEFAULT_ITEM = {
-  name:  	"All items",
+  name:  	"",
   description: "",
   category: "",
   subcategory: "",

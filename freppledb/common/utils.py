@@ -76,19 +76,17 @@ def getStorageUsage():
                 total_size += os.path.getsize(fp)
 
     # Add the size of all scenarios in use
-    dblist = [
-        get_databases()[sc.name]["NAME"]
+    for db in [
+        sc.name
         for sc in Scenario.objects.using(DEFAULT_DB_ALIAS)
         .filter(status="In use")
         .only("name")
-    ]
-    with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
-        cursor.execute(
-            "select %s" % " + ".join(["pg_database_size(%s)"] * len(dblist)), dblist
-        )
-        dbsizevalue = cursor.fetchone()
-        if len(dbsizevalue) > 0:
-            total_size += dbsizevalue[0]
+    ]:
+        with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
+            cursor.execute("select pg_database_size(current_database())")
+            dbsizevalue = cursor.fetchone()
+            if len(dbsizevalue) > 0:
+                total_size += dbsizevalue[0]
     return total_size
 
 

@@ -39,7 +39,7 @@ export const useForecastsStore = defineStore('forecasts', {
     locationTree: {},
     customerTree: {},
     treeBuckets: [],
-    treeExpansion: {item: {}, location: {}, customer: {}},
+    treeExpansion: {item: {0: new Set()}, location: {0: new Set()}, customer: {0: new Set()}},
     currentSequence: null,
     currentMeasure: null,
     loading: false,
@@ -86,16 +86,42 @@ export const useForecastsStore = defineStore('forecasts', {
       console.log('setDataRowHeight', height);
     },
 
-    async setItemLocationCustomer(model, objectName, asChildren, lvl, isExpanded = false) {
+    async setItemLocationCustomer(model, objectName, hasChildren, lvl, isExpanded = false) {
       // This function will get the tree values according to the panel ordering
       // and also add get from the backend the leafs/children of the tree.
       let newData = [];
       // console.log('86 setItemLocationCustomer', model, objectName, asChildren, isExpanded);
       this[model].name = objectName;
+      const modelSequence = this.currentSequence.split("").map(x => (x === 'I' ? 'item' : (x === 'L' ? 'location' : 'customer')));
 
-      for (let m of this.currentSequence.toLowerCase()) {
-        console.log(88, m, this.currentSequence, isExpanded)
-        // get drill down data for following sequence trees
+      let getTree = false;
+      const rootParameters = {item: null, location: null, customer: null};
+      const childrenParameters = {item: null, location: null, customer: null};
+      for (let m of modelSequence) {
+        console.log(88, model, m, this.currentSequence);
+
+        if (getTree) {
+          switch (m) {
+            case 'item':
+              this.itemTree = await this.getItemtree(rootParameters['item'], rootParameters['location'], rootParameters['customer']);
+              break;
+            case 'location':
+              this.locationTree = await this.getLocationtree(rootParameters['item'], rootParameters['location'], rootParameters['customer']);
+              break;
+            case 'customer':
+              this.customerTree = await this.getCustomertree(rootParameters['item'], rootParameters['location'], rootParameters['customer']);
+              break;
+            default:
+              break;
+          }
+        }
+        rootParameters[m] = this[m].name;
+        if (m === model) {
+          getTree = true;
+          childrenParameters[m] = objectName;
+        } else {
+          childrenParameters[m] = this[m].name;
+        }
       }
 
       if (!isExpanded) {
@@ -103,13 +129,13 @@ export const useForecastsStore = defineStore('forecasts', {
         return;
       }
 
-      if (asChildren) {
-        console.log(95, asChildren);
+      if (hasChildren) {
+        console.log(95, hasChildren);
         let insertIndex = 0;
         switch (model) {
           case 'item': {
             insertIndex = this.itemTree.findIndex(x => x.item === objectName) + 1;
-            newData = await this.getItemtree(objectName, null, null);
+            newData = await this.getItemtree(childrenParameters['item'], childrenParameters['location'], childrenParameters['customer']);
             console.log(99, newData);
             this.itemTree.splice(insertIndex, 0, ...newData);
 
@@ -122,7 +148,7 @@ export const useForecastsStore = defineStore('forecasts', {
           }
           case 'location':
             insertIndex = this.locationTree.findIndex(x => x.location === objectName) + 1;
-            newData = await this.getLocationtree(null, objectName, null);
+            newData = await this.getLocationtree(childrenParameters['item'], childrenParameters['location'], childrenParameters['customer']);
             this.locationTree.splice(insertIndex, 0, ...newData);
 
             if (!Object.prototype.hasOwnProperty.call(this.treeExpansion.location, lvl)) {
@@ -131,8 +157,9 @@ export const useForecastsStore = defineStore('forecasts', {
             this.treeExpansion.location[lvl].add(objectName);
             break;
           case 'customer':
+            console.log(157, 'case customer');
             insertIndex = this.customerTree.findIndex(x => x.customer === objectName) + 1;
-            newData = await this.getCustomertree(null, null, objectName);
+            newData = await this.getCustomertree(childrenParameters['item'], childrenParameters['location'], childrenParameters['customer']);
             this.customer.splice(insertIndex, 0, ...newData);
 
             if (!Object.prototype.hasOwnProperty.call(this.treeExpansion.customer, lvl)) {
@@ -143,45 +170,9 @@ export const useForecastsStore = defineStore('forecasts', {
           default:
             break;
         }
-
-
-        // get the children data from the backend
-        // and splice into tree
       }
 
       await this.savePreferences();
-    },
-
-    async savePreferences() {
-      this.loading = true;
-      this.error = null;
-      console.log('76', this.currentSequence, this.currentMeasure);
-      this.preferences.sequence = this.currentSequence;
-      this.preferences.measure = this.currentMeasure;
-
-      try {
-        const result = await forecastService.savePreferences({"freppledb.forecast.planning": this.preferences});
-
-        const {loading, backendError, responseData} = result;
-        this.loading = loading;
-
-        if (backendError) {
-          throw new Error(backendError.value.message || 'API Error');
-        }
-
-        if (responseData.value) {
-          console.log('Preferences saved', this.itemTree);
-        } else {
-          console.warn('Preferences not saved');
-        }
-
-      } catch (error) {
-        console.error('API Error:', error);
-        this.error = error.message;
-        throw error;
-      } finally {
-        this.loading = false;
-      }
     },
 
     async getItemtree(itemName = null, locationName = null, customerName= null) {
@@ -208,6 +199,10 @@ export const useForecastsStore = defineStore('forecasts', {
 
           if (result[0]['lvl'] === 0) {
             this.item.name = result[0].item;
+            if (result[0]['children']) {
+              this.treeExpansion.item[0].add(result[0].item);
+              result[0]['expanded'] = 1;
+            }
           }
 
           return result;
@@ -248,6 +243,10 @@ export const useForecastsStore = defineStore('forecasts', {
 
           if (result[0]['lvl'] === 0) {
             this.location.name = result[0].location;
+            if (result[0]['children']) {
+              this.treeExpansion.location[0].add(result[0].location);
+              result[0]['expanded'] = 1;
+            }
           }
 
           return result;
@@ -287,12 +286,48 @@ export const useForecastsStore = defineStore('forecasts', {
 
           if (result[0]['lvl'] === 0) {
             this.customer.name = result[0].customer;
+            if (result[0]['children']) {
+              this.treeExpansion.customer[0].add(result[0].customer);
+              result[0]['expanded'] = 1;
+            }
           }
 
           return result;
         } else {
           console.warn('⚠️ No data received from API');
           return  {};
+        }
+
+      } catch (error) {
+        console.error('API Error:', error);
+        this.error = error.message;
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async savePreferences() {
+      this.loading = true;
+      this.error = null;
+      console.log('76', this.currentSequence, this.currentMeasure);
+      this.preferences.sequence = this.currentSequence;
+      this.preferences.measure = this.currentMeasure;
+
+      try {
+        const result = await forecastService.savePreferences({"freppledb.forecast.planning": this.preferences});
+
+        const {loading, backendError, responseData} = result;
+        this.loading = loading;
+
+        if (backendError) {
+          throw new Error(backendError.value.message || 'API Error');
+        }
+
+        if (responseData.value) {
+          console.log('Preferences saved', this.itemTree);
+        } else {
+          console.warn('Preferences not saved');
         }
 
       } catch (error) {

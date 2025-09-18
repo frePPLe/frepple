@@ -18,7 +18,7 @@ let currentHeight = (store.preferences.height || 240);
 function selectILCobject(model, rowIndex) {
   console.log(19, data.value[rowIndex][model], 'children: ', data.value[rowIndex]['children'],'model: ', model, 'expanded: ', data.value[rowIndex].expanded === 0);
 
-  store.setItemLocationCustomer(model, data.value[rowIndex][model], data.value[rowIndex]['children']);
+  store.setItemLocationCustomer(model, data.value[rowIndex][model], data.value[rowIndex]['children'], data.value[rowIndex]['lvl'],data.value[rowIndex].expanded === 0);
   if (data.value[rowIndex]['children']) {
     toggleRowVisibility(rowIndex);
   }
@@ -26,6 +26,8 @@ function selectILCobject(model, rowIndex) {
 }
 
 function toggleRowVisibility(rowIndex) {
+  // Should this be moved to the store? We are manipulating store values directly.
+  console.log(29, 'toggleRowVisibility', rowIndex, 'data: ', data.value[rowIndex], 'expanded: ', data.value[rowIndex].expanded === 1, 'children: ', data.value[rowIndex]['children'])
   data.value[rowIndex].expanded = data.value[rowIndex].expanded === 1 ? 0 : 1;
   const isExpanded = data.value[rowIndex].expanded === 1;
   let lineCount = 0;

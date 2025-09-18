@@ -20,13 +20,13 @@
  * @property {string} currentMeasure
  * @property {boolean} loading
  * @property {string|null} error
+ * @property {Object} treeExpansion
  */
 
 import { defineStore } from 'pinia';
 import { Item } from '../models/item.js';
 import { Location } from '../models/location.js';
 import { Customer } from '../models/customer.js';
-import { Measure } from '../models/measure.js';
 import { forecastService } from '../services/forecastService.js';
 import { toRaw } from "vue";
 
@@ -39,6 +39,7 @@ export const useForecastsStore = defineStore('forecasts', {
     locationTree: {},
     customerTree: {},
     treeBuckets: [],
+    treeExpansion: {item: {}, location: {}, customer: {}},
     currentSequence: null,
     currentMeasure: null,
     loading: false,
@@ -63,7 +64,7 @@ export const useForecastsStore = defineStore('forecasts', {
       this.locationTree[0].expanded = 1;
       this.customerTree = await this.getCustomertree();
       this.customerTree[0].expanded = 1;
-      if (save) this.savePreferences();
+      if (save) await this.savePreferences();
     },
 
     async setCurrentSequence(sequence, save = true) {
@@ -77,7 +78,7 @@ export const useForecastsStore = defineStore('forecasts', {
       this.locationTree[0].expanded = 1;
       this.customerTree = await this.getCustomertree();
       this.customerTree[0].expanded = 1;
-      if (save) this.savePreferences();
+      if (save) await this.savePreferences();
     },
 
     setCurrentHeight(height) {
@@ -85,16 +86,21 @@ export const useForecastsStore = defineStore('forecasts', {
       console.log('setDataRowHeight', height);
     },
 
-    async setItemLocationCustomer(model, objectName, asChildren) {
+    async setItemLocationCustomer(model, objectName, asChildren, lvl, isExpanded = false) {
       // This function will get the tree values according to the panel ordering
       // and also add get from the backend the leafs/children of the tree.
       let newData = [];
-      console.log('86 setItemLocationCustomer', model, objectName, asChildren);
+      // console.log('86 setItemLocationCustomer', model, objectName, asChildren, isExpanded);
       this[model].name = objectName;
 
       for (let m of this.currentSequence.toLowerCase()) {
-        console.log(88, m, this.currentSequence)
+        console.log(88, m, this.currentSequence, isExpanded)
         // get drill down data for following sequence trees
+      }
+
+      if (!isExpanded) {
+        this.treeExpansion[model][lvl].delete(objectName);
+        return;
       }
 
       if (asChildren) {
@@ -106,17 +112,33 @@ export const useForecastsStore = defineStore('forecasts', {
             newData = await this.getItemtree(objectName, null, null);
             console.log(99, newData);
             this.itemTree.splice(insertIndex, 0, ...newData);
+
+            if (!Object.prototype.hasOwnProperty.call(this.treeExpansion.item, lvl)) {
+              this.treeExpansion.item[lvl] = new Set();
+            }
+            this.treeExpansion.item[lvl].add(objectName);
+            console.log(117, toRaw(this.treeExpansion))
             break;
           }
           case 'location':
             insertIndex = this.locationTree.findIndex(x => x.location === objectName) + 1;
             newData = await this.getLocationtree(null, objectName, null);
             this.locationTree.splice(insertIndex, 0, ...newData);
+
+            if (!Object.prototype.hasOwnProperty.call(this.treeExpansion.location, lvl)) {
+              this.treeExpansion.location[lvl] = new Set();
+            }
+            this.treeExpansion.location[lvl].add(objectName);
             break;
           case 'customer':
             insertIndex = this.customerTree.findIndex(x => x.customer === objectName) + 1;
             newData = await this.getCustomertree(null, null, objectName);
             this.customer.splice(insertIndex, 0, ...newData);
+
+            if (!Object.prototype.hasOwnProperty.call(this.treeExpansion.customer, lvl)) {
+              this.treeExpansion.customer[lvl] = new Set();
+            }
+            this.treeExpansion.customer[lvl].add(objectName);
             break;
           default:
             break;
@@ -127,7 +149,7 @@ export const useForecastsStore = defineStore('forecasts', {
         // and splice into tree
       }
 
-      this.savePreferences();
+      await this.savePreferences();
     },
 
     async savePreferences() {
@@ -184,7 +206,7 @@ export const useForecastsStore = defineStore('forecasts', {
           const result = toRaw(responseData.value);
           this.treeBuckets = result[0].values.map(x => x['bucketname']);
 
-          if (result[0].lvl === 0) {
+          if (result[0]['lvl'] === 0) {
             this.item.name = result[0].item;
           }
 
@@ -224,7 +246,7 @@ export const useForecastsStore = defineStore('forecasts', {
           const result = toRaw(responseData.value);
           console.log('Data successfully loaded:', this.locationTree);
 
-          if (result[0].lvl === 0) {
+          if (result[0]['lvl'] === 0) {
             this.location.name = result[0].location;
           }
 
@@ -263,7 +285,7 @@ export const useForecastsStore = defineStore('forecasts', {
           const result = toRaw(responseData.value);
           console.log('Data successfully loaded:', this.customerTree);
 
-          if (result[0].lvl === 0) {
+          if (result[0]['lvl'] === 0) {
             this.customer.name = result[0].customer;
           }
 

@@ -49,7 +49,7 @@ function toggleRowVisibility(rowIndex) {
 </script>
 
 <template>
-  <div class="card " style="min-height: 100px; height: 100%;" id="{{modelName + 'panel'}}">
+  <div class="card " style="min-height: 100px; height: 100%;" :id="modelName + 'panel'">
     <div class="card-header">
       <h5 class="card-title text-capitalize mb-0" translate=""><span>{{ modelName }}</span></h5>
     </div>
@@ -57,10 +57,9 @@ function toggleRowVisibility(rowIndex) {
          :style="{'height':  currentHeight - 31 + 'px'}"
          style="overflow: auto">
       <div class="">
-        <div id="{{modelName + 'table'}}">
-          <div class="d-table w-100">
-            <div style="float: left; overflow:hidden;">&nbsp;</div>
-            <div class="ms-auto text-right">
+        <div :id="modelName + 'table'">
+          <div class="d-flex w-100">
+            <div class="w-100 d-flex justify-content-end text-start">
               <span v-for="bucketname in store.treeBuckets" :key="bucketname" class="numbervalues">
                 <strong><small>{{ bucketname }}</small></strong>
               </span>
@@ -72,7 +71,7 @@ function toggleRowVisibility(rowIndex) {
               &nbsp;<span v-if="row.children && row.visible" class="fa" :class="row.expanded == 1 ? 'fa-caret-down' : 'fa-caret-right'"></span>
               <span v-if="row.visible" style="white-space:nowrap">{{row[modelName]}}</span>
             </div>
-            <div v-if="row.visible" class="ms-auto text-right">
+            <div v-if="row.visible" class="ms-auto d-flex justify-content-end text-start">
               <span v-for="val in row.values" :key="val.bucketname" class="numbervalues">{{val.value}}</span>
             </div>
           </div>

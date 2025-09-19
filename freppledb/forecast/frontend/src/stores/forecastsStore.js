@@ -160,7 +160,7 @@ export const useForecastsStore = defineStore('forecasts', {
             console.log(157, 'case customer');
             insertIndex = this.customerTree.findIndex(x => x.customer === objectName) + 1;
             newData = await this.getCustomertree(childrenParameters['item'], childrenParameters['location'], childrenParameters['customer']);
-            this.customer.splice(insertIndex, 0, ...newData);
+            this.customerTree.splice(insertIndex, 0, ...newData);
 
             if (!Object.prototype.hasOwnProperty.call(this.treeExpansion.customer, lvl)) {
               this.treeExpansion.customer[lvl] = new Set();

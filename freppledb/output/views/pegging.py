@@ -23,6 +23,7 @@
 
 from datetime import datetime, timedelta
 
+from django.conf import settings
 from django.db import connections, transaction
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
@@ -147,60 +148,78 @@ class ReportByDemand(GridReport):
     @classmethod
     def getBuckets(reportclass, request, *args, **kwargs):
         # Get the earliest and latest operationplan, and the demand due date
+        with_fcst = "freppledb.forecast" in settings.INSTALLED_APPS
         cursor = connections[request.database].cursor()
         cursor.execute(
-            """
-            with cte as (
-                with recursive cte as
-                    (
-                        select 1 as level,
-                        (coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
-                        operationplan.reference::text as reference,
-                        0::numeric as pegged_x,
-                        operationplan.quantity::numeric as pegged_y
-                        from operationplan
-                        inner join demand on demand.name = %s
+            f"""
+            with demand as (
+                select due, plan from demand where name = %s
+                {"""union all
+                select min(due) as due,
+                jsonb_build_object(
+                    'pegging',
+                    jsonb_agg(
+                    jsonb_build_object(
+                        'opplan', reference,
+                        'quantity', quantity
+                    )
+                    )
+                    ) AS plan
+                        FROM operationplan
+                        WHERE type = 'DLVR' and forecast = %s
+                        group by forecast
+                """ if with_fcst else ""}),
+                cte as (
+                    with recursive cte as
+                        (
+                            select 1 as level,
+                            (coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
+                            operationplan.reference::text as reference,
+                            0::numeric as pegged_x,
+                            operationplan.quantity::numeric as pegged_y
+                            from operationplan
+                                cross join demand
+                                inner join lateral
+                                (select t->>'opplan' as reference,
+                                (t->>'quantity')::numeric as quantity from jsonb_array_elements(demand.plan->'pegging') t) t on true
+                                where operationplan.reference = t.reference
+                            union all
+                            select cte.level+1,
+                            cte.path||'/'||coalesce(upstream_opplan.item_id,'')||'/'||upstream_opplan.reference,
+                            t1.upstream_reference::text,
+                            greatest(t1.x, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x)) as pegged_x,
+                            least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y
+                            from operationplan
+                            inner join cte on cte.reference = operationplan.reference
                             inner join lateral
-                            (select t->>'opplan' as reference,
-                            (t->>'quantity')::numeric as quantity from jsonb_array_elements(demand.plan->'pegging') t) t on true
-                            where operationplan.reference = t.reference
-                        union all
-                        select cte.level+1,
-                        cte.path||'/'||coalesce(upstream_opplan.item_id,'')||'/'||upstream_opplan.reference,
-                        t1.upstream_reference::text,
-                        greatest(t1.x, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x)) as pegged_x,
-                        least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y
-                        from operationplan
-                        inner join cte on cte.reference = operationplan.reference
-                        inner join lateral
-                        (select t->>0 upstream_reference,
-                        (t->>1)::numeric + (t->>2)::numeric as y,
-                        (t->>2)::numeric as x from jsonb_array_elements(operationplan.plan->'upstream_opplans') t) t1 on true
-                        inner join operationplan upstream_opplan on upstream_opplan.reference = t1.upstream_reference
-                        inner join lateral
-                        (select t->>0 downstream_reference,
-                        (t->>1)::numeric+(t->>2)::numeric as y,
-                        (t->>2)::numeric as x from jsonb_array_elements(upstream_opplan.plan->'downstream_opplans') t) t2
-                            on t2.downstream_reference = operationplan.reference and numrange(t2.x,t2.y) && numrange(cte.pegged_x,cte.pegged_y)
-                    )
-                select reference from cte
-                where level < 25
-                order by path,level desc
-                )
-                    select
-                    (select due from demand where name = %s),
-                    min(operationplan.startdate),
-                    max(operationplan.enddate),
-                    (sum(case when name is not null then 1 else 0 end)
-                    -count(distinct name) != 0)
-                    from operationplan
-                    where reference in
-                    (
+                            (select t->>0 upstream_reference,
+                            (t->>1)::numeric + (t->>2)::numeric as y,
+                            (t->>2)::numeric as x from jsonb_array_elements(operationplan.plan->'upstream_opplans') t) t1 on true
+                            inner join operationplan upstream_opplan on upstream_opplan.reference = t1.upstream_reference
+                            inner join lateral
+                            (select t->>0 downstream_reference,
+                            (t->>1)::numeric+(t->>2)::numeric as y,
+                            (t->>2)::numeric as x from jsonb_array_elements(upstream_opplan.plan->'downstream_opplans') t) t2
+                                on t2.downstream_reference = operationplan.reference and numrange(t2.x,t2.y) && numrange(cte.pegged_x,cte.pegged_y)
+                        )
                     select reference from cte
+                    where level < 25
+                    order by path,level desc
                     )
-                    and type != 'STCK'
+                        select
+                        (select due from demand),
+                        min(operationplan.startdate),
+                        max(operationplan.enddate),
+                        (sum(case when name is not null then 1 else 0 end)
+                        -count(distinct name) != 0)
+                        from operationplan
+                        where reference in
+                        (
+                        select reference from cte
+                        )
+                        and type != 'STCK'
             """,
-            (args[0], args[0]),
+            (args[0],) * (2 if with_fcst else 1),
         )
         x = cursor.fetchone()
         (due, start, end, requires_grouping) = x
@@ -290,9 +309,28 @@ class ReportByDemand(GridReport):
         ).total_seconds() / 10000
         current = getCurrentDate(request.database, lastplan=True)
 
+        with_fcst = "freppledb.forecast" in settings.INSTALLED_APPS
+
         # Collect demand due date, all operationplans and loaded resources
-        query = """
-          with cte as (
+        query = f"""
+          with demand as (
+                select due, plan from demand where name = %s
+                {"""union all
+                select min(due) as due,
+                jsonb_build_object(
+                    'pegging',
+                    jsonb_agg(
+                    jsonb_build_object(
+                        'opplan', reference,
+                        'quantity', quantity
+                    )
+                    )
+                    ) AS plan
+                        FROM operationplan
+                        WHERE type = 'DLVR' and forecast = %s
+                        group by forecast
+                """ if with_fcst else ""}),
+          cte as (
                 with recursive cte as
                 (
                 select 1 as level,
@@ -302,7 +340,7 @@ class ReportByDemand(GridReport):
                 operationplan.quantity::numeric as pegged_y,
                 operationplan.owner_id
                 from operationplan
-                inner join demand on demand.name = %s
+                cross join demand
                     inner join lateral
                     (select t->>'opplan' as reference,
                     (t->>'quantity')::numeric as quantity from jsonb_array_elements(demand.plan->'pegging') t) t on true
@@ -350,7 +388,6 @@ class ReportByDemand(GridReport):
               cte.path
               from demand
               cross join cte
-              where name = %s
               ) d1
               ) d2
             group by opplan, quantity, path
@@ -438,7 +475,7 @@ class ReportByDemand(GridReport):
         # Build the Python result
         with transaction.atomic(using=request.database):
             with connections[request.database].chunked_cursor() as cursor_chunked:
-                cursor_chunked.execute(query, baseparams * 2)
+                cursor_chunked.execute(query, baseparams * (2 if with_fcst else 1))
                 prevrec = None
                 parents = {}
                 response = []

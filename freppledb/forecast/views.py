@@ -1226,6 +1226,245 @@ class PeggingReport(pegging.ReportByDemand):
     model = Forecast
 
     @classmethod
+    def getBucketsQuery(reportclass, *args):
+        return (
+            """
+            with demand as (
+                select min(due) as due,
+                jsonb_build_object(
+                    'pegging',
+                    jsonb_agg(
+                    jsonb_build_object(
+                        'opplan', reference,
+                        'quantity', quantity
+                    )
+                    )
+                    ) AS plan
+                        FROM operationplan
+                        WHERE type = 'DLVR' and forecast = %s
+                        group by forecast
+                ),
+                cte as (
+                    with recursive cte as
+                        (
+                            select 1 as level,
+                            (coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
+                            operationplan.reference::text as reference,
+                            0::numeric as pegged_x,
+                            operationplan.quantity::numeric as pegged_y
+                            from operationplan
+                                cross join demand
+                                inner join lateral
+                                (select t->>'opplan' as reference,
+                                (t->>'quantity')::numeric as quantity from jsonb_array_elements(demand.plan->'pegging') t) t on true
+                                where operationplan.reference = t.reference
+                            union all
+                            select cte.level+1,
+                            cte.path||'/'||coalesce(upstream_opplan.item_id,'')||'/'||upstream_opplan.reference,
+                            t1.upstream_reference::text,
+                            greatest(t1.x, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x)) as pegged_x,
+                            least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y
+                            from operationplan
+                            inner join cte on cte.reference = operationplan.reference
+                            inner join lateral
+                            (select t->>0 upstream_reference,
+                            (t->>1)::numeric + (t->>2)::numeric as y,
+                            (t->>2)::numeric as x from jsonb_array_elements(operationplan.plan->'upstream_opplans') t) t1 on true
+                            inner join operationplan upstream_opplan on upstream_opplan.reference = t1.upstream_reference
+                            inner join lateral
+                            (select t->>0 downstream_reference,
+                            (t->>1)::numeric+(t->>2)::numeric as y,
+                            (t->>2)::numeric as x from jsonb_array_elements(upstream_opplan.plan->'downstream_opplans') t) t2
+                                on t2.downstream_reference = operationplan.reference and numrange(t2.x,t2.y) && numrange(cte.pegged_x,cte.pegged_y)
+                        )
+                    select reference from cte
+                    where level < 25
+                    order by path,level desc
+                    )
+                        select
+                        (select due from demand),
+                        min(operationplan.startdate),
+                        max(operationplan.enddate),
+                        (sum(case when name is not null then 1 else 0 end)
+                        -count(distinct name) != 0)
+                        from operationplan
+                        where reference in
+                        (
+                        select reference from cte
+                        )
+                        and type != 'STCK'
+            """,
+            (args[0],),
+        )
+
+    @classmethod
+    def getQuery(reportclass, basequery):
+        # Build the base query
+        basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(
+            with_col_aliases=False
+        )
+        return (
+            """
+          with demand as (
+                select min(due) as due,
+                jsonb_build_object(
+                    'pegging',
+                    jsonb_agg(
+                    jsonb_build_object(
+                        'opplan', reference,
+                        'quantity', quantity
+                    )
+                    )
+                    ) AS plan
+                        FROM operationplan
+                        WHERE type = 'DLVR' and forecast = %s
+                        group by forecast
+                ),
+          cte as (
+                with recursive cte as
+                (
+                select 1 as level,
+                (coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
+                operationplan.reference::text,
+                0::numeric as pegged_x,
+                operationplan.quantity::numeric as pegged_y,
+                operationplan.owner_id
+                from operationplan
+                cross join demand
+                    inner join lateral
+                    (select t->>'opplan' as reference,
+                    (t->>'quantity')::numeric as quantity from jsonb_array_elements(demand.plan->'pegging') t) t on true
+                    where operationplan.reference = t.reference
+                union all
+                select case when upstream_opplan.owner_id = cte.owner_id then cte.level else cte.level+1 end,
+                cte.path||'/'||coalesce(upstream_opplan.item_id,'')||'/'||upstream_opplan.reference,
+                t1.upstream_reference::text,
+                greatest(t1.x, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x)) as pegged_x,
+                least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y,
+                upstream_opplan.owner_id
+                from operationplan
+                inner join cte on cte.reference = operationplan.reference
+                inner join lateral
+                (select t->>0 upstream_reference,
+                (t->>1)::numeric + (t->>2)::numeric as y,
+                (t->>2)::numeric as x from jsonb_array_elements(operationplan.plan->'upstream_opplans') t) t1 on true
+                inner join operationplan upstream_opplan on upstream_opplan.reference = t1.upstream_reference
+                inner join lateral
+                (select t->>0 downstream_reference,
+                (t->>1)::numeric+(t->>2)::numeric as y,
+                (t->>2)::numeric as x from jsonb_array_elements(upstream_opplan.plan->'downstream_opplans') t) t2
+                    on t2.downstream_reference = operationplan.reference and numrange(t2.x,t2.y) && numrange(cte.pegged_x,cte.pegged_y)
+                )
+                select level, reference, (pegged_y-pegged_x) as quantity, path from cte
+                where level < 25
+                order by path,level desc
+          ),
+           pegging_0 as (
+            select
+              min(rownum) as rownum,
+              min(due) as due,
+              opplan,
+              min(lvl) as lvl,
+              quantity as required_quantity,
+              sum(quantity) as quantity,
+              path
+            from (select
+              row_number() over () as rownum, opplan, due, lvl, quantity, path
+            from (select
+              due,
+              cte.reference as opplan,
+              cte.level as lvl,
+              cte.quantity as quantity,
+              cte.path
+              from demand
+              cross join cte
+              ) d1
+              ) d2
+            group by opplan, quantity, path
+            ),
+            pegging as (select
+              child.rownum,
+              child.due,
+              child.opplan,
+			  parent.opplan as parent_reference,
+              child.lvl,
+              child.required_quantity,
+              child.quantity,
+              child.path
+            from pegging_0 child
+			left outer join pegging_0 parent
+			on parent.lvl = child.lvl -1
+			and parent.rownum < child.rownum
+			and not exists (select 1 from pegging_0 where lvl = parent.lvl and rownum > parent.rownum
+						   and rownum < child.rownum)
+		)
+          select
+            pegging.due, --0
+            operationplan.name,
+            pegging.lvl,
+            ops.pegged,
+            pegging.rownum,
+            operationplan.startdate,
+            operationplan.enddate,
+            operationplan.quantity,
+            operationplan.status,
+            array_agg(operationplanresource.resource_id) FILTER (WHERE operationplanresource.resource_id is not null),
+            operationplan.type, --10
+            case when operationplan.operation_id is not null then 1 else 0 end as show,
+            operationplan.color,
+            operationplan.reference,
+            operationplan.item_id,
+            coalesce(operationplan.location_id, operationplan.destination_id),
+            operationplan.supplier_id,
+            operationplan.origin_id,
+            operationplan.criticality,
+            operationplan.demand_id,
+            extract(epoch from operationplan.delay), -- 20
+            pegging.required_quantity,
+            operationplan.batch,
+            item.description,
+            pegging.path,
+            case when operationplan.status = 'proposed' then pegging.required_quantity else 0 end as required_quantity_proposed, -- 25
+            case when operationplan.status in ('confirmed','approved','completed','closed') then pegging.required_quantity else 0 end as required_quantity_confirmed, --26
+            operationplan.owner_id --27
+          from pegging
+          inner join operationplan
+            on operationplan.reference = pegging.opplan
+          left outer join item
+            on operationplan.item_id = item.name
+          inner join (
+            select name,
+			  parent_reference,
+              min(rownum) as rownum,
+              sum(pegging.quantity) as pegged
+            from pegging
+            inner join operationplan
+              on pegging.opplan = operationplan.reference
+            group by operationplan.name, parent_reference
+            ) ops
+          on operationplan.name = ops.name
+		  and pegging.parent_reference is not distinct from ops.parent_reference
+          left outer join operationplanresource
+            on pegging.opplan = operationplanresource.operationplan_id
+          group by
+            pegging.due, operationplan.name, pegging.lvl, ops.pegged,
+            pegging.rownum, operationplan.startdate, operationplan.enddate, operationplan.quantity,
+            operationplan.status,
+            operationplan.type,
+            case when operationplan.operation_id is not null then 1 else 0 end,
+            operationplan.color, operationplan.reference, operationplan.item_id,
+            item.description,
+            coalesce(operationplan.location_id, operationplan.destination_id),
+            operationplan.supplier_id, operationplan.origin_id,
+            operationplan.criticality, operationplan.demand_id,
+            extract(epoch from operationplan.delay), ops.rownum, pegging.required_quantity,
+            pegging.path
+          order by pegging.rownum
+          """,
+            baseparams,
+        )
+
+    @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         return Forecast.objects.filter(name__exact=args[0]).values("name")
 

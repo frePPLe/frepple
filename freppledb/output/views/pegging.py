@@ -146,81 +146,68 @@ class ReportByDemand(GridReport):
             return {}
 
     @classmethod
+    def getBucketsQuery(reportclass, *args):
+        return (
+            """
+            with cte as (
+                with recursive cte as
+                    (
+                        select 1 as level,
+                        (coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
+                        operationplan.reference::text as reference,
+                        0::numeric as pegged_x,
+                        operationplan.quantity::numeric as pegged_y
+                        from operationplan
+                        inner join demand on demand.name = %s
+                            inner join lateral
+                            (select t->>'opplan' as reference,
+                            (t->>'quantity')::numeric as quantity from jsonb_array_elements(demand.plan->'pegging') t) t on true
+                            where operationplan.reference = t.reference
+                        union all
+                        select cte.level+1,
+                        cte.path||'/'||coalesce(upstream_opplan.item_id,'')||'/'||upstream_opplan.reference,
+                        t1.upstream_reference::text,
+                        greatest(t1.x, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x)) as pegged_x,
+                        least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y
+                        from operationplan
+                        inner join cte on cte.reference = operationplan.reference
+                        inner join lateral
+                        (select t->>0 upstream_reference,
+                        (t->>1)::numeric + (t->>2)::numeric as y,
+                        (t->>2)::numeric as x from jsonb_array_elements(operationplan.plan->'upstream_opplans') t) t1 on true
+                        inner join operationplan upstream_opplan on upstream_opplan.reference = t1.upstream_reference
+                        inner join lateral
+                        (select t->>0 downstream_reference,
+                        (t->>1)::numeric+(t->>2)::numeric as y,
+                        (t->>2)::numeric as x from jsonb_array_elements(upstream_opplan.plan->'downstream_opplans') t) t2
+                            on t2.downstream_reference = operationplan.reference and numrange(t2.x,t2.y) && numrange(cte.pegged_x,cte.pegged_y)
+                    )
+                select reference from cte
+                where level < 25
+                order by path,level desc
+                )
+                    select
+                    (select due from demand where name = %s),
+                    min(operationplan.startdate),
+                    max(operationplan.enddate),
+                    (sum(case when name is not null then 1 else 0 end)
+                    -count(distinct name) != 0)
+                    from operationplan
+                    where reference in
+                    (
+                    select reference from cte
+                    )
+                    and type != 'STCK'
+            """,
+            (args[0], args[0]),
+        )
+
+    @classmethod
     def getBuckets(reportclass, request, *args, **kwargs):
         # Get the earliest and latest operationplan, and the demand due date
-        with_fcst = "freppledb.forecast" in settings.INSTALLED_APPS
         cursor = connections[request.database].cursor()
-        cursor.execute(
-            f"""
-            with demand as (
-                select due, plan from demand where name = %s
-                {"""union all
-                select min(due) as due,
-                jsonb_build_object(
-                    'pegging',
-                    jsonb_agg(
-                    jsonb_build_object(
-                        'opplan', reference,
-                        'quantity', quantity
-                    )
-                    )
-                    ) AS plan
-                        FROM operationplan
-                        WHERE type = 'DLVR' and forecast = %s
-                        group by forecast
-                """ if with_fcst else ""}),
-                cte as (
-                    with recursive cte as
-                        (
-                            select 1 as level,
-                            (coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
-                            operationplan.reference::text as reference,
-                            0::numeric as pegged_x,
-                            operationplan.quantity::numeric as pegged_y
-                            from operationplan
-                                cross join demand
-                                inner join lateral
-                                (select t->>'opplan' as reference,
-                                (t->>'quantity')::numeric as quantity from jsonb_array_elements(demand.plan->'pegging') t) t on true
-                                where operationplan.reference = t.reference
-                            union all
-                            select cte.level+1,
-                            cte.path||'/'||coalesce(upstream_opplan.item_id,'')||'/'||upstream_opplan.reference,
-                            t1.upstream_reference::text,
-                            greatest(t1.x, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x)) as pegged_x,
-                            least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y
-                            from operationplan
-                            inner join cte on cte.reference = operationplan.reference
-                            inner join lateral
-                            (select t->>0 upstream_reference,
-                            (t->>1)::numeric + (t->>2)::numeric as y,
-                            (t->>2)::numeric as x from jsonb_array_elements(operationplan.plan->'upstream_opplans') t) t1 on true
-                            inner join operationplan upstream_opplan on upstream_opplan.reference = t1.upstream_reference
-                            inner join lateral
-                            (select t->>0 downstream_reference,
-                            (t->>1)::numeric+(t->>2)::numeric as y,
-                            (t->>2)::numeric as x from jsonb_array_elements(upstream_opplan.plan->'downstream_opplans') t) t2
-                                on t2.downstream_reference = operationplan.reference and numrange(t2.x,t2.y) && numrange(cte.pegged_x,cte.pegged_y)
-                        )
-                    select reference from cte
-                    where level < 25
-                    order by path,level desc
-                    )
-                        select
-                        (select due from demand),
-                        min(operationplan.startdate),
-                        max(operationplan.enddate),
-                        (sum(case when name is not null then 1 else 0 end)
-                        -count(distinct name) != 0)
-                        from operationplan
-                        where reference in
-                        (
-                        select reference from cte
-                        )
-                        and type != 'STCK'
-            """,
-            (args[0],) * (2 if with_fcst else 1),
-        )
+        query, arguments = reportclass.getBucketsQuery(*args)
+        cursor.execute(query, arguments)
         x = cursor.fetchone()
         (due, start, end, requires_grouping) = x
         if not due:
@@ -253,84 +240,14 @@ class ReportByDemand(GridReport):
         request.requires_grouping = requires_grouping
 
     @classmethod
-    def query(reportclass, request, basequery):
-
-        # pos1 is the position in the list l of the last suboperation
-        # pos2 is the id==position in the list of the routing
-        # id1 < id2
-        # swap will move the routing in front of its subops and update the depth and parent
-        # of its suboperations
-        def swap(l: list, pos1, pos2):
-
-            # store the depth
-            depth = l[pos1]["depth"]
-
-            # move the routing in front of the first suboperation
-            l.insert(pos1, l.pop(pos2))
-            # give to the routing the parent/depth of the last subop
-            l[pos1]["parent"] = l[pos1 + 1]["parent"]
-            l[pos1]["depth"] = l[pos1 + 1]["depth"]
-            # iterate over the suboperations
-            i = pos1 + 1
-            while i <= pos2:
-                l[i]["parent"] = l[pos1]["id"]
-                l[i]["depth"] = depth + 1
-                l[i]["leaf"] = "true"
-                i += 1
-
-        # swap_mo_wo will move a routing operation before its suboperations
-        # in the delivery plan
-        def swap_mo_wo(l: list):
-            visited = []
-            owner = None
-            counter = 0
-            for r in l:
-                if owner and owner[0] in [l["reference"] for l in r["operationplans"]]:
-                    # ...and now we found the owner, let's make the swap
-                    swap(l, owner[2], counter)
-                    # we need to reset the variables as we may find other routings in the path
-                    owner = None
-                    visited.clear()
-                if not owner and r["owner"] and r["owner"] not in visited:
-                    # We found a suboperation before its owner...
-                    owner = (r["owner"], r["id"], counter)
-                visited.append(r["id"])
-                counter += 1
-            return l
-
+    def getQuery(reportclass, basequery):
         # Build the base query
         basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(
             with_col_aliases=False
         )
-
-        # Get current date and horizon
-        horizon = (
-            request.report_enddate - request.report_startdate
-        ).total_seconds() / 10000
-        current = getCurrentDate(request.database, lastplan=True)
-
-        with_fcst = "freppledb.forecast" in settings.INSTALLED_APPS
-
-        # Collect demand due date, all operationplans and loaded resources
-        query = f"""
-          with demand as (
-                select due, plan from demand where name = %s
-                {"""union all
-                select min(due) as due,
-                jsonb_build_object(
-                    'pegging',
-                    jsonb_agg(
-                    jsonb_build_object(
-                        'opplan', reference,
-                        'quantity', quantity
-                    )
-                    )
-                    ) AS plan
-                        FROM operationplan
-                        WHERE type = 'DLVR' and forecast = %s
-                        group by forecast
-                """ if with_fcst else ""}),
-          cte as (
+        return (
+            """
+          with cte as (
                 with recursive cte as
                 (
                 select 1 as level,
@@ -340,7 +257,7 @@ class ReportByDemand(GridReport):
                 operationplan.quantity::numeric as pegged_y,
                 operationplan.owner_id
                 from operationplan
-                cross join demand
+                inner join demand on demand.name = %s
                     inner join lateral
                     (select t->>'opplan' as reference,
                     (t->>'quantity')::numeric as quantity from jsonb_array_elements(demand.plan->'pegging') t) t on true
@@ -388,6 +305,7 @@ class ReportByDemand(GridReport):
               cte.path
               from demand
               cross join cte
+              where name = %s
               ) d1
               ) d2
             group by opplan, quantity, path
@@ -470,12 +388,67 @@ class ReportByDemand(GridReport):
             extract(epoch from operationplan.delay), ops.rownum, pegging.required_quantity,
             pegging.path
           order by pegging.rownum
-          """
+          """,
+            baseparams * 2,
+        )
+
+    @classmethod
+    def query(reportclass, request, basequery):
+
+        # pos1 is the position in the list l of the last suboperation
+        # pos2 is the id==position in the list of the routing
+        # id1 < id2
+        # swap will move the routing in front of its subops and update the depth and parent
+        # of its suboperations
+        def swap(l: list, pos1, pos2):
+
+            # store the depth
+            depth = l[pos1]["depth"]
+
+            # move the routing in front of the first suboperation
+            l.insert(pos1, l.pop(pos2))
+            # give to the routing the parent/depth of the last subop
+            l[pos1]["parent"] = l[pos1 + 1]["parent"]
+            l[pos1]["depth"] = l[pos1 + 1]["depth"]
+            # iterate over the suboperations
+            i = pos1 + 1
+            while i <= pos2:
+                l[i]["parent"] = l[pos1]["id"]
+                l[i]["depth"] = depth + 1
+                l[i]["leaf"] = "true"
+                i += 1
+
+        # swap_mo_wo will move a routing operation before its suboperations
+        # in the delivery plan
+        def swap_mo_wo(l: list):
+            visited = []
+            owner = None
+            counter = 0
+            for r in l:
+                if owner and owner[0] in [l["reference"] for l in r["operationplans"]]:
+                    # ...and now we found the owner, let's make the swap
+                    swap(l, owner[2], counter)
+                    # we need to reset the variables as we may find other routings in the path
+                    owner = None
+                    visited.clear()
+                if not owner and r["owner"] and r["owner"] not in visited:
+                    # We found a suboperation before its owner...
+                    owner = (r["owner"], r["id"], counter)
+                visited.append(r["id"])
+                counter += 1
+            return l
+
+        # Get current date and horizon
+        horizon = (
+            request.report_enddate - request.report_startdate
+        ).total_seconds() / 10000
+        current = getCurrentDate(request.database, lastplan=True)
 
         # Build the Python result
         with transaction.atomic(using=request.database):
             with connections[request.database].chunked_cursor() as cursor_chunked:
-                cursor_chunked.execute(query, baseparams * (2 if with_fcst else 1))
+                query, arguments = reportclass.getQuery(basequery)
+                cursor_chunked.execute(query, arguments)
                 prevrec = None
                 parents = {}
                 response = []

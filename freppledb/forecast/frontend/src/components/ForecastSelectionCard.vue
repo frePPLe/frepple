@@ -13,8 +13,8 @@ const props = defineProps({
 const data = computed(() => (props.panelid === 'I') ? store.itemTree: (props.panelid === 'L') ? store.locationTree: store.customerTree);
 const modelName = (props.panelid === 'I') ? 'item': (props.panelid === 'L') ? 'location': 'customer';
 console.log(14, toRaw(data).value);
-let currentHeight = (store.preferences.height || 240);
-// store.setCurrentModelObject(model, objectName);
+const currentHeight = computed(() => (store.dataRowHeight || 240));
+
 function selectILCobject(model, rowIndex) {
   console.log(19, data.value[rowIndex][model], 'children: ', data.value[rowIndex]['children'],'model: ', model, 'expanded: ', data.value[rowIndex].expanded === 0);
 
@@ -49,13 +49,11 @@ function toggleRowVisibility(rowIndex) {
 </script>
 
 <template>
-  <div class="card " style="min-height: 100px; height: 100%;" :id="modelName + 'panel'">
+  <div class="card " :style="{'height':  currentHeight - 31 + 'px'}" style="min-height: 100px; max-height: 50vh" :id="modelName + 'panel'">
     <div class="card-header">
       <h5 class="card-title text-capitalize mb-0" translate=""><span>{{ modelName }}</span></h5>
     </div>
-    <div class="card-body ps-0 pe-0 pt-2 pb-2"
-         :style="{'height':  currentHeight - 31 + 'px'}"
-         style="overflow: auto">
+    <div class="card-body ps-0 pe-0 pt-2 pb-2"  style="overflow: auto">
       <div class="">
         <div :id="modelName + 'table'">
           <div class="d-flex w-100">
@@ -68,7 +66,7 @@ function toggleRowVisibility(rowIndex) {
 
           <div v-for="(row, index) in data" :key="row[modelName]" :class="(row[modelName] === store[modelName].name) ? 'bg-light' : ''" class="d-flex flex-wrap evtitemrow" v-on:click="selectILCobject(modelName, index)">
             <div style="overflow:visible;" :style="'padding-left: ' + row.lvl * 13 + 'px'">
-              &nbsp;<span v-if="row.children && row.visible" class="fa" :class="row.expanded == 1 ? 'fa-caret-down' : 'fa-caret-right'"></span>
+              &nbsp;<span v-if="row.children && row.visible" class="fa" :class="row.expanded === 1 ? 'fa-caret-down' : 'fa-caret-right'"></span>
               <span v-if="row.visible" style="white-space:nowrap">{{row[modelName]}}</span>
             </div>
             <div v-if="row.visible" class="ms-auto d-flex justify-content-end text-start">

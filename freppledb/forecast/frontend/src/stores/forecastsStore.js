@@ -83,8 +83,11 @@ export const useForecastsStore = defineStore('forecasts', {
 
     setCurrentHeight(height) {
       this.dataRowHeight = height;
+      // Update preferences to persist the height
+      this.preferences.height = height;
       console.log('setDataRowHeight', height);
     },
+
 
     async setItemLocationCustomer(model, objectName, hasChildren, lvl, isExpanded = false) {
       // This function will get the tree values according to the panel ordering
@@ -310,9 +313,13 @@ export const useForecastsStore = defineStore('forecasts', {
     async savePreferences() {
       this.loading = true;
       this.error = null;
-      console.log('76', this.currentSequence, this.currentMeasure);
+      console.log('76', this.currentSequence, this.currentMeasure, this.dataRowHeight);
       this.preferences.sequence = this.currentSequence;
       this.preferences.measure = this.currentMeasure;
+      // Include height in preferences if it exists
+      if (this.dataRowHeight !== null) {
+        this.preferences.height = this.dataRowHeight;
+      }
 
       try {
         const result = await forecastService.savePreferences({"freppledb.forecast.planning": this.preferences});
@@ -325,7 +332,7 @@ export const useForecastsStore = defineStore('forecasts', {
         }
 
         if (responseData.value) {
-          console.log('Preferences saved', this.itemTree);
+          console.log('Preferences saved', this.preferences);
         } else {
           console.warn('Preferences not saved');
         }

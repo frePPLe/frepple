@@ -46,6 +46,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | 17, 18: Remove the truncation of very long item or operation names.
 
+- | 17, 18: New field "quantity multiple" on the odoo BOM.
+  | Manufacturing orders for that BOM will have a quantity that is multiple of this value.
+
 9.10.0 (2025-08-29)
 ===================
 

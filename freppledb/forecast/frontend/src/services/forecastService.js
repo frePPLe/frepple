@@ -36,6 +36,14 @@ export const forecastService = {
     return api.get('forecast/customertree/?measure=' + measure + additional);
   },
 
+  async getForecastDetails(measure, item =null, location =null, customer=null) {
+    let additional = "";
+    if (item) additional += "&item=" + item;
+    if (location) additional += "&location=" + location;
+    if (customer) additional += "&customer=" + customer;
+    return api.get('forecast/detail/?measure=' + measure + additional);
+  },
+
   async savePreferences(preferencesData) {
     return api.post('settings/', preferencesData );
   },

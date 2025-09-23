@@ -44,7 +44,11 @@ export const useForecastsStore = defineStore('forecasts', {
     currentMeasure: null,
     loading: false,
     error: null,
-    dataRowHeight: null
+    dataRowHeight: null,
+    showTab: 'attributes',
+    forecastData: [],
+    comments: [],
+    history: []
   }),
 
   getters: {
@@ -64,6 +68,7 @@ export const useForecastsStore = defineStore('forecasts', {
       this.locationTree[0].expanded = 1;
       this.customerTree = await this.getCustomertree();
       this.customerTree[0].expanded = 1;
+      await this.getForecastDetails();
       if (save) await this.savePreferences();
     },
 
@@ -310,6 +315,49 @@ export const useForecastsStore = defineStore('forecasts', {
       }
     },
 
+    async getForecastDetails(itemName = null, locationName = null, customerName= null) {
+
+      this.error = null;
+
+      try {
+        console.log('Calling Details measure:', this.currentMeasure, itemName, locationName, customerName);
+
+        const result = await forecastService.getForecastDetails(this.currentMeasure, itemName, locationName, customerName);
+
+        const {loading, backendError, responseData} = result;
+        this.loading = loading;
+
+        if (backendError) {
+          throw new Error(backendError.value.message || 'API Error');
+        }
+
+        if (responseData.value) {
+          const result = toRaw(responseData.value);
+          console.log('Details successfully loaded:', result);
+
+          // if (result[0]['lvl'] === 0) {
+          //   this.customer.name = result[0].customer;
+          //   if (result[0]['children']) {
+          //     this.treeExpansion.customer[0].add(result[0].customer);
+          //     result[0]['expanded'] = 1;
+          //   }
+          // }
+
+          return result;
+        } else {
+          console.warn('⚠️ No data received from API');
+          return  {};
+        }
+
+      } catch (error) {
+        console.error('API Error:', error);
+        this.error = error.message;
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
     async savePreferences() {
       this.loading = true;
       this.error = null;
@@ -344,6 +392,10 @@ export const useForecastsStore = defineStore('forecasts', {
       } finally {
         this.loading = false;
       }
+    },
+
+    setShowTab(tab) {
+      this.showTab = tab;
     },
   },
 })

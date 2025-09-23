@@ -1214,7 +1214,7 @@ class ConstraintReport(constraint.BaseReport):
     def basequeryset(reportclass, request, *args, **kwargs):
         if args and args[0]:
             request.session["lasttab"] = "constraint"
-            return Constraint.objects.all().filter(demand__startswith=args[0])
+            return Constraint.objects.all().filter(forecast=args[0])
         else:
             return Constraint.objects.all()
 

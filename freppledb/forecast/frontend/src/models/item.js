@@ -1,61 +1,93 @@
-const DEFAULT_ITEM = {
-  name:  	"",
+/*
+ * Copyright (C) 2025 by frePPLe bv
+ *
+ * All information contained herein is, and remains the property of frePPLe.
+ * You are allowed to use and modify the source code, as long as the software is used
+ * within your company.
+ * You are not allowed to distribute the software, either in the form of source code
+ * or in the form of compiled binaries.
+ */
+
+// const DEFAULT_ITEM = {
+//   name:  	"",
+//   description: "",
+//   category: "",
+//   subcategory: "",
+//   cost:  	0.0,
+  // "count of late demands": 0,
+  // "Quantity of late demands": 0,
+  // "value of late demand": 0,
+  // "count of unplanned demands": 0,
+  // "Quantity of unplanned demands": 0,
+  // "Value of unplanned demands": 0,
+  // "Demand_pattern": "",
+  // Adi: 0,
+  // Cv2: 0,
+  // "Outliers last bucket": 0,
+  // "Outliers last 6 buckets": 0,
+  // "Outliers last 12 buckets": 0
+// };
+
+const REQUIRED_PROPERTIES = {
+  name: "",
   description: "",
   category: "",
-  subcategory: "",
-  cost:  	0.0,
-  "count of late demands": 0,
-  "Quantity of late demands": 0,
-  "value of late demand": 0,
-  "count of unplanned demands": 0,
-  "Quantity of unplanned demands": 0,
-  "Value of unplanned demands": 0,
-  "Demand_pattern": "",
-  Adi: 0,
-  Cv2: 0,
-  "Outliers last bucket": 0,
-  "Outliers last 6 buckets": 0,
-  "Outliers last 12 buckets": 0
+  subcategory: ""
 };
 
 export class Item {
   constructor(data = {}) {
-    // Initialize with default values merged with provided data
-    Object.assign(this, DEFAULT_ITEM, data);
+    Object.assign(this, REQUIRED_PROPERTIES);
+
+    Object.assign(this, data);
   }
 
-  // Convert to API format
+  // Get only the required properties
+  getRequiredProperties() {
+    const { name, description, category, subcategory } = this;
+    return { name, description, category, subcategory };
+  }
+
+  // Get all custom/optional properties (everything except the required ones)
+  getCustomProperties() {
+    const result = {};
+    const requiredKeys = Object.keys(REQUIRED_PROPERTIES);
+
+    for (const [key, value] of Object.entries(this)) {
+      if (!requiredKeys.includes(key)) {
+        result[key] = value;
+      }
+    }
+
+    return result;
+  }
+
+  // Convert to API format - includes all properties
   toJSON() {
-    return {
-      name: this.name,
-      Description: this.description,
-      Category: this.category,
-      Subcategory: this.subcategory,
-      Cost: this.cost,
-      "count of late demands": this["count of late demands"],
-      "Quantity of late demands": this["Quantity of late demands"],
-      "value of late demand": this["value of late demand"],
-      "count of unplanned demands": this["count of unplanned demands"],
-      "Quantity of unplanned demands": this["Quantity of unplanned demands"],
-      "Value of unplanned demands": this["Value of unplanned demands"],
-      "Demand_pattern": this["Demand_pattern"],
-      Adi: this.Adi,
-      Cv2: this.Cv2,
-      "Outliers last bucket": this["Outliers last bucket"],
-      "Outliers last 6 buckets": this["Outliers last 6 buckets"],
-      "Outliers last 12 buckets": this["Outliers last 12 buckets"],
-    };
+    // Return all properties as-is
+    return { ...this };
   }
 
-  // Create a Quote instance from API data
+  // Create an Item instance from API data
   static fromJSON(data) {
-    return new Item({
-      ...data
-    });
+    return new Item(data);
   }
 
-  // Clone the quote
+  // Clone the item with all its properties
   clone() {
-    return new Item(this.toJSON());
+    return new Item({ ...this });
+  }
+
+  // Check if all required properties are present and valid
+  isValid() {
+    return Object.keys(REQUIRED_PROPERTIES).every(key =>
+      this[key] !== undefined && this[key] !== null
+    );
+  }
+
+  // Update properties while preserving existing ones
+  update(data = {}) {
+    Object.assign(this, data);
+    return this;
   }
 }

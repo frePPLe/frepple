@@ -1,35 +1,73 @@
-const DEFAULT_CUSTOMER = {
-  name:  	"",
+/*
+ * Copyright (C) 2025 by frePPLe bv
+ *
+ * All information contained herein is, and remains the property of frePPLe.
+ * You are allowed to use and modify the source code, as long as the software is used
+ * within your company.
+ * You are not allowed to distribute the software, either in the form of source code
+ * or in the form of compiled binaries.
+ */
+
+const REQUIRED_PROPERTIES = {
+  name: "",
   description: "",
   category: "",
-  subcategory: "",
+  subcategory: ""
 };
 
 export class Customer {
   constructor(data = {}) {
-    // Initialize with default values merged with provided data
-    Object.assign(this, DEFAULT_CUSTOMER, data);
+    Object.assign(this, REQUIRED_PROPERTIES);
+
+    Object.assign(this, data);
   }
 
-  // Convert to API format
+  // Get only the required properties
+  getRequiredProperties() {
+    const { name, description, category, subcategory } = this;
+    return { name, description, category, subcategory };
+  }
+
+  // Get all custom/optional properties (everything except the required ones)
+  getCustomProperties() {
+    const result = {};
+    const requiredKeys = Object.keys(REQUIRED_PROPERTIES);
+
+    for (const [key, value] of Object.entries(this)) {
+      if (!requiredKeys.includes(key)) {
+        result[key] = value;
+      }
+    }
+
+    return result;
+  }
+
+  // Convert to API format - includes all properties
   toJSON() {
-    return {
-      name: this.name,
-      Description: this.description,
-      Category: this.category,
-      Subcategory: this.subcategory,
-    };
+    // Return all properties as-is
+    return { ...this };
   }
 
-  // Create a Quote instance from API data
+  // Create an Customer instance from API data
   static fromJSON(data) {
-    return new Customer({
-      ...data
-    });
+    return new Customer(data);
   }
 
-  // Clone the quote
+  // Clone the item with all its properties
   clone() {
-    return new Customer(this.toJSON());
+    return new Customer({ ...this });
+  }
+
+  // Check if all required properties are present and valid
+  isValid() {
+    return Object.keys(REQUIRED_PROPERTIES).every(key =>
+      this[key] !== undefined && this[key] !== null
+    );
+  }
+
+  // Update properties while preserving existing ones
+  update(data = {}) {
+    Object.assign(this, data);
+    return this;
   }
 }

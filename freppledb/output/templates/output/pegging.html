@@ -80,51 +80,98 @@ function escapeAttribute(val) {
 		return val;
 }
 
-function ganttcell(cellvalue, options, rowdata)
-{
-  var layer = [];
-  var result = [];
-  var map = {};
-  map["MO"] = "manufacturingorder";
-  map["PO"] = "purchaseorder";
-  map["DO"] = "distributionorder";
-  map["DLVR"] = "deliveryorder";
+function ganttcell(cellvalue, options, rowdata) {
+  const map = { MO: "manufacturingorder", PO: "purchaseorder", DO: "distributionorder", DLVR: "deliveryorder" };
 
-  for (data of rowdata["operationplans"])
-  {
-    var row = 0;
-     for (; row < layer.length; ++row)
-     {
-        if (data["startdate"] >= layer[row] && (data["enddate"] != data["startdate"]))
-        {
-           layer[row] = data["enddate"];
-           break;
-        }
-     };
-     if (row >= layer.length) layer.push(data["enddate"]);
-     var rect = '<a href="' + url_prefix + '/data/input/' + map[data["type"]] +'/?reference='+ admin_escape(data["reference"]) + '">'
-       + '<rect class="opplan" x="' + data["x"] + '" y="' + (-row*gantt.rowsize)
-       + '" fill="' + buildcolor(data) + '" width="' + Math.max(data["w"],1)
-       + '" height="' + (gantt.rowsize-3) + '"';
-     if (data["status"] == "proposed")
-    	 rect += ' fill-opacity="0.5"';
-     Object.keys(data).forEach(function(key,index) {
-    	 if (key != "w" && key != "x" && data[key] !== null) {
-    		 rect += ' data-' + key + '="' + escapeAttribute(data[key]) + '"';
-    	 }
-     });
-     rect += '/>';
-     rect += '</a>'
-     result.push(rect);
+  // Horizontal scale to compute a domain-space epsilon ~0.5px
+  const headerW = $("#jqgh_grid_operationplans").width() || 1;
+  const scale = headerW / 10000;
+  const EPS_DOM = (10000 / headerW) * 0.5; // ~0.5 px in domain units
+
+  // Track the rightmost x per lane in *domain* units (pre-scale)
+  const laneRight = [];
+
+  // Stable sort so packing is predictable (start → end → ref)
+  const ops = (rowdata.operationplans || []).slice().sort((a, b) => {
+    // Prefer numeric timestamps if present; else fall back to pixels
+    const as = Number(a.start_ts ?? a.startdate ?? a.x ?? 0);
+    const bs = Number(b.start_ts ?? b.startdate ?? b.x ?? 0);
+    if (as !== bs) return as - bs;
+
+    const ae = Number(a.end_ts ?? a.enddate ?? ((a.x ?? 0) + (a.w ?? 0)));
+    const be = Number(b.end_ts ?? b.enddate ?? ((b.x ?? 0) + (b.w ?? 0)));
+    if (ae !== be) return ae - be;
+
+    const ax = Number(a.x) || 0, bx = Number(b.x) || 0;
+    if (ax !== bx) return ax - bx;
+
+    const aw = Number(a.w) || 0, bw = Number(b.w) || 0;
+    if (aw !== bw) return aw - bw;
+
+    return String(a.reference || "").localeCompare(String(b.reference || ""));
+  });
+
+  const result = [];
+
+  for (const data of ops) {
+    // Geometry in domain units
+    const pxStart = Number(data.x) || 0;
+    const pxWidth = Math.max(Number(data.w) || 0, 1);
+    const pxEnd = pxStart + pxWidth;
+
+    // Find first lane where this bar fits **by geometry only**
+    // Fit rule: start ≥ laneRight - EPS  (adjacent allowed, overlap denied)
+    let row = 0;
+    for (; row < laneRight.length; ++row) {
+      if (pxStart >= laneRight[row] - EPS_DOM) {
+        laneRight[row] = pxEnd;
+        break;
+      }
+    }
+    if (row >= laneRight.length) laneRight.push(pxEnd);
+
+    // Build anchor + rect
+    const typePath = map[data.type] || "";
+    const href = typePath
+      ? `${url_prefix}/data/input/${typePath}/?reference=${encodeURIComponent(String(data.reference || ""))}`
+      : "#";
+
+    let rect =
+      `<a href="${href}">` +
+      `<rect class="opplan" x="${pxStart}" y="${-row * gantt.rowsize}" ` +
+      `fill="${buildcolor(data)}" width="${pxWidth}" height="${gantt.rowsize - 3}"`;
+
+    if (data.status === "proposed") rect += ' fill-opacity="0.5"';
+
+    // data-* for tooltips
+    for (const [k, v] of Object.entries(data)) {
+      if (v == null) continue;
+      if (k === "w" || k === "x") continue;
+      rect += ` data-${k}="${escapeAttribute(String(v))}"`;
+    }
+    rect += '/></a>';
+
+    result.push(rect);
   }
-  result.push( '<line x1="' + rowdata["due"] + '" y1="' + gantt.rowsize + '" x2="' + rowdata["due"] + '" y2="-' + (layer.length*gantt.rowsize) + '" vector-effect="non-scaling-stroke" stroke="red" stroke-width="1" />');
-  result.push( '<line x1="' + rowdata["current"] + '" y1="' + gantt.rowsize + '" x2="' + rowdata["current"] + '" y2="-' + (layer.length*gantt.rowsize) + '" vector-effect="non-scaling-stroke" stroke="black" stroke-width="1" />');
-  var scale = $("#jqgh_grid_operationplans").width() / 10000;
-  return '<svg width="100%" height="' + (gantt.rowsize*layer.length+3) + 'px">'
-    + '<g class="transformer" transform="scale(' + scale + ',1) translate(0,' + ((layer.length-1)*gantt.rowsize+3) +')" title="' + layer.length +'">'
-    + result.join('\n')
-    + '</g></svg>';
+
+  // Vertical markers span all lanes
+  result.push(
+    `<line x1="${rowdata.due}" y1="${gantt.rowsize}" x2="${rowdata.due}" y2="-${laneRight.length * gantt.rowsize}" vector-effect="non-scaling-stroke" stroke="red" stroke-width="1" />`
+  );
+  result.push(
+    `<line x1="${rowdata.current}" y1="${gantt.rowsize}" x2="${rowdata.current}" y2="-${laneRight.length * gantt.rowsize}" vector-effect="non-scaling-stroke" stroke="black" stroke-width="1" />`
+  );
+
+  // Render SVG with horizontal scale
+  return (
+    `<svg width="100%" height="${gantt.rowsize * laneRight.length + 3}px">` +
+    `<g class="transformer" transform="scale(${scale},1) translate(0, ${(laneRight.length - 1) * gantt.rowsize + 3})" title="${laneRight.length}">` +
+    result.join("\n") +
+    `</g></svg>`
+  );
 }
+
+
 
 function buildtooltip(){
   var extra = '';

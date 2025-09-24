@@ -9,10 +9,10 @@
  */
 
 const REQUIRED_PROPERTIES = {
-  name: "",
-  description: "",
-  category: "",
-  subcategory: ""
+  Name: "",
+  Description: "",
+  Category: "",
+  Subcategory: ""
 };
 
 export class Customer {
@@ -66,8 +66,8 @@ export class Customer {
   }
 
   // Update properties while preserving existing ones
-  update(data = {}) {
-    Object.assign(this, data);
+  update(attributeData = []) {
+    Object.assign(this, Object.fromEntries(attributeData));
     return this;
   }
 }

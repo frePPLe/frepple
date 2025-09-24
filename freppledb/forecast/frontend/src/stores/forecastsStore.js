@@ -68,7 +68,6 @@ export const useForecastsStore = defineStore('forecasts', {
       this.locationTree[0].expanded = 1;
       this.customerTree = await this.getCustomertree();
       this.customerTree[0].expanded = 1;
-      await this.getForecastDetails();
       if (save) await this.savePreferences();
     },
 
@@ -94,12 +93,14 @@ export const useForecastsStore = defineStore('forecasts', {
     },
 
 
-    async setItemLocationCustomer(model, objectName, hasChildren, lvl, isExpanded = false) {
+    async setItemLocationCustomer(model, objectAttributes, hasChildren, lvl, isExpanded = false) {
       // This function will get the tree values according to the panel ordering
       // and also add get from the backend the leafs/children of the tree.
       let newData = [];
       // console.log('86 setItemLocationCustomer', model, objectName, asChildren, isExpanded);
-      this[model].name = objectName;
+      const objectName = objectAttributes.Name;
+      this[model].Name = objectName;
+      this[model].Description = objectAttributes.Description;
       const modelSequence = this.currentSequence.split("").map(x => (x === 'I' ? 'item' : (x === 'L' ? 'location' : 'customer')));
 
       let getTree = false;
@@ -123,12 +124,12 @@ export const useForecastsStore = defineStore('forecasts', {
               break;
           }
         }
-        rootParameters[m] = this[m].name;
+        rootParameters[m] = this[m].Name;
         if (m === model) {
           getTree = true;
           childrenParameters[m] = objectName;
         } else {
-          childrenParameters[m] = this[m].name;
+          childrenParameters[m] = this[m].Name;
         }
       }
 
@@ -179,6 +180,7 @@ export const useForecastsStore = defineStore('forecasts', {
             break;
         }
       }
+      await this.getForecastDetails(childrenParameters['item'], childrenParameters['location'], childrenParameters['customer']);
 
       await this.savePreferences();
     },
@@ -206,7 +208,7 @@ export const useForecastsStore = defineStore('forecasts', {
           this.treeBuckets = result[0].values.map(x => x['bucketname']);
 
           if (result[0]['lvl'] === 0) {
-            this.item.name = result[0].item;
+            this.item.Name = result[0].item;
             if (result[0]['children']) {
               this.treeExpansion.item[0].add(result[0].item);
               result[0]['expanded'] = 1;
@@ -250,7 +252,7 @@ export const useForecastsStore = defineStore('forecasts', {
           console.log('Data successfully loaded:', this.locationTree);
 
           if (result[0]['lvl'] === 0) {
-            this.location.name = result[0].location;
+            this.location.Name = result[0].location;
             if (result[0]['children']) {
               this.treeExpansion.location[0].add(result[0].location);
               result[0]['expanded'] = 1;
@@ -293,7 +295,7 @@ export const useForecastsStore = defineStore('forecasts', {
           console.log('Data successfully loaded:', this.customerTree);
 
           if (result[0]['lvl'] === 0) {
-            this.customer.name = result[0].customer;
+            this.customer.Name = result[0].customer;
             if (result[0]['children']) {
               this.treeExpansion.customer[0].add(result[0].customer);
               result[0]['expanded'] = 1;
@@ -335,13 +337,9 @@ export const useForecastsStore = defineStore('forecasts', {
           const result = toRaw(responseData.value);
           console.log('Details successfully loaded:', result);
 
-          // if (result[0]['lvl'] === 0) {
-          //   this.customer.name = result[0].customer;
-          //   if (result[0]['children']) {
-          //     this.treeExpansion.customer[0].add(result[0].customer);
-          //     result[0]['expanded'] = 1;
-          //   }
-          // }
+          this.item.update(result['attributes']['item']);
+          this.location.update(result['attributes']['location']);
+          this.customer.update(result['attributes']['customer']);
 
           return result;
         } else {

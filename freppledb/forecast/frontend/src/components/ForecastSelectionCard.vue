@@ -28,7 +28,7 @@ const currentHeight = computed(() => (store.dataRowHeight || 240));
 function selectILCobject(model, rowIndex) {
   console.log(19, data.value[rowIndex][model], 'children: ', data.value[rowIndex]['children'],'model: ', model, 'expanded: ', data.value[rowIndex].expanded === 0);
 
-  store.setItemLocationCustomer(model, data.value[rowIndex][model], data.value[rowIndex]['children'], data.value[rowIndex]['lvl'],data.value[rowIndex].expanded === 0);
+  store.setItemLocationCustomer(model, {Name: data.value[rowIndex][model], Description: data.value[rowIndex]['description']}, data.value[rowIndex]['children'], data.value[rowIndex]['lvl'],data.value[rowIndex].expanded === 0);
   if (data.value[rowIndex]['children']) {
     toggleRowVisibility(rowIndex);
   }
@@ -74,7 +74,7 @@ function toggleRowVisibility(rowIndex) {
             </div>
           </div>
 
-          <div v-for="(row, index) in data" :key="row[modelName]" :class="(row[modelName] === store[modelName].name) ? 'bg-light' : ''" class="d-flex flex-wrap evtitemrow" v-on:click="selectILCobject(modelName, index)">
+          <div v-for="(row, index) in data" :key="row[modelName]" :class="(row[modelName] === store[modelName].Name) ? 'bg-light' : ''" class="d-flex flex-wrap evtitemrow" v-on:click="selectILCobject(modelName, index)">
             <div style="overflow:visible;" :style="'padding-left: ' + row.lvl * 13 + 'px'">
               &nbsp;<span v-if="row.children && row.visible" class="fa" :class="row.expanded === 1 ? 'fa-caret-down' : 'fa-caret-right'"></span>
               <span v-if="row.visible" style="white-space:nowrap">{{row[modelName]}}</span>

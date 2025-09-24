@@ -44,6 +44,38 @@ export const forecastService = {
     return api.get('forecast/detail/?measure=' + measure + additional);
   },
 
+  async postForecastDetail(postData) {
+    // {
+    //   "POST": {
+    //   "scheme": "https",
+    //     "host": "demo-preview.frepple.com",
+    //     "filename": "/svc/default/forecast/detail/",
+    //     "query": {
+    //     "measure": "forecasttotal"
+    //   },
+    //   "remote": {
+    //     "Address": "34.253.149.144:443"
+    //   }
+    // }
+    // }
+
+    // postData= {
+    //   "recalculate": false,
+    //   "units": "forecasttotal",
+    //   "item": "All items",
+    //   "location": "All locations",
+    //   "customer": "All customers",
+    //   "horizonbuckets": "month",
+    //   "comment": "item-location test 0",
+    //   "commenttype": "itemlocation",
+    //   "forecastmethod": "aggregate",
+    //   "horizon": "month",
+    //   "buckets": []
+    // }
+
+    return api.post('settings/', preferencesData );
+  },
+
   async savePreferences(preferencesData) {
     return api.post('settings/', preferencesData );
   },

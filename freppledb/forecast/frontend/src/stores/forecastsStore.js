@@ -340,6 +340,7 @@ export const useForecastsStore = defineStore('forecasts', {
           this.item.update(result['attributes']['item']);
           this.location.update(result['attributes']['location']);
           this.customer.update(result['attributes']['customer']);
+          this.comments = result['comments'];
 
           return result;
         } else {
@@ -354,6 +355,12 @@ export const useForecastsStore = defineStore('forecasts', {
       } finally {
         this.loading = false;
       }
+    },
+
+    async postComment(comment) {
+      this.loading = true;
+      this.error = null;
+      console.log(363, comment);
     },
 
     async savePreferences() {

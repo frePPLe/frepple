@@ -1173,10 +1173,10 @@ def scheduletasks(request):
                     status=401,
                 )
             fld = data.get("email_failure", None)
-            if fld:
+            if fld is not None:
                 obj.email_failure = fld
             fld = data.get("email_success", None)
-            if fld:
+            if fld is not None:
                 obj.email_success = fld
             obj.tz = data.get("timezone", settings.TIME_ZONE)
             fld = data.get("data", None)

@@ -619,25 +619,28 @@ class DeliveryOrderList(GridReport):
             formatter="detail",
             extra='"role":"input/demand"',
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "item",
             title=_("item"),
             field_name="item__name",
             formatter="detail",
             extra='"role":"input/item"',
+            model=Item,
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "cust",
             title=_("customer"),
             formatter="detail",
             extra='"role":"input/customer"',
+            model=Customer,
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "location",
             title=_("location"),
             field_name="location__name",
             formatter="detail",
             extra='"role":"input/location"',
+            model=Location,
         ),
         GridFieldNumber("quantity", title=_("quantity")),
         GridFieldNumber("demandquantity", title=_("demand quantity"), editable=False),

@@ -20,7 +20,13 @@
  * @property {string} currentMeasure
  * @property {boolean} loading
  * @property {string|null} error
- * @property {Object} treeExpansion
+ * @property {number} dataRowHeight
+ * @property {Array} history
+ * @property {Array} comments
+ * @property {string} commentType
+ * @property {string} newComment
+ * @property {string} originalComment
+ * @property {boolean} hasChanges
  */
 
 import { defineStore } from 'pinia';
@@ -38,7 +44,7 @@ export const useForecastsStore = defineStore('forecasts', {
     itemTree: {},
     locationTree: {},
     customerTree: {},
-    treeBuckets: [],
+    treeBuckets: [], // bucket labels for selection cards
     treeExpansion: {item: {0: new Set()}, location: {0: new Set()}, customer: {0: new Set()}},
     currentSequence: null,
     currentMeasure: null,
@@ -47,9 +53,17 @@ export const useForecastsStore = defineStore('forecasts', {
     dataRowHeight: null,
     showTab: 'attributes',
     forecastData: [],
+    history: [],
     comments: [],
-    history: []
+    commentType: '',
+    newComment: '',
+    originalComment: '',
+    hasChanges: false,
+    horizon: 'week',
+    buckets: [],
+    horizonbuckets: 'week',
   }),
+
 
   getters: {
     measures: () => window.measures,
@@ -341,6 +355,7 @@ export const useForecastsStore = defineStore('forecasts', {
           this.location.update(result['attributes']['location']);
           this.customer.update(result['attributes']['customer']);
           this.comments = result['comments'];
+          this.horizonbuckets = result['forecast'];
 
           return result;
         } else {
@@ -357,10 +372,72 @@ export const useForecastsStore = defineStore('forecasts', {
       }
     },
 
-    async postComment(comment) {
+    setCommentType(newCommentType) {
+      this.commentType = newCommentType;
+      this.newComment = '';
+      this.originalComment = '';
+      this.hasChanges = false;
+    },
+
+    updateCommentContent(content) {
+      this.newComment = content;
+      this.hasChanges = content !== this.originalComment;
+    },
+
+    async saveComment() {
+      console.log('Saving comment:', this.newComment, 'for type:', this.commentType);
+      this.originalComment = this.newComment;
+      this.hasChanges = false;
+
+      await this.saveForecastChanges();
+    },
+
+    undoComment() {
+      this.newComment = this.originalComment;
+      this.hasChanges = false;
+    },
+
+    async saveForecastChanges() {
       this.loading = true;
       this.error = null;
-      console.log(363, comment);
+      const newData = {
+        item: this.item.Name,
+        location: this.location.Name,
+        customer: this.customer.Name,
+        comment: this.newComment,
+        commentType: this.commentType,
+        units: this.currentMeasure,
+        horizon: this.horizon,
+        buckets: this.buckets,
+        horizonbuckets: this.horizonbuckets,
+      };
+      console.log(413, newData);
+
+      try {
+        const result = await forecastService.postForecastDetails(newData);
+
+        const {loading, backendError, responseData} = result;
+
+        this.loading = loading;
+
+        if (backendError) {
+          throw new Error(backendError.value.message || 'API Error in forecast changes');
+        }
+
+        if (responseData.value) {
+          console.log('Forecast Changes saved', this.preferences);
+        } else {
+          console.warn('Forecast changes not saved');
+        }
+
+    } catch (error) {
+      console.error('API Error:', error);
+      this.error = error.message;
+      throw error;
+    } finally {
+      this.loading = false;
+    }
+
     },
 
     async savePreferences() {

@@ -44,7 +44,7 @@ export const forecastService = {
     return api.get('forecast/detail/?measure=' + measure + additional);
   },
 
-  async postForecastDetail(postData) {
+  async postForecastDetails(postData) {
     // {
     //   "POST": {
     //   "scheme": "https",
@@ -73,7 +73,7 @@ export const forecastService = {
     //   "buckets": []
     // }
 
-    return api.post('settings/', preferencesData );
+    return api.wspost('forecast/detail/', postData );
   },
 
   async savePreferences(preferencesData) {

@@ -1,10 +1,10 @@
 import { ref as o } from "vue";
-const i = (t) => t == null, a = (t) => t && typeof t == "object", c = (t) => i(t) || Array.isArray(t) && t.length === 0 || a(t) && Object.keys(t).length === 0 || typeof t == "string" && t.trim().length === 0, m = () => {
+const u = (t) => t == null, c = (t) => t && typeof t == "object", d = (t) => u(t) || Array.isArray(t) && t.length === 0 || c(t) && Object.keys(t).length === 0 || typeof t == "string" && t.trim().length === 0, f = () => {
   const t = o(window.database);
   return t.value === "default" ? "" : `/${t.value}`;
-}, l = (t, n) => {
+}, g = (t, e) => {
   if (!t) return "";
-  const e = new Date(t), r = new Intl.DateTimeFormat("default", {
+  const r = new Date(t), n = new Intl.DateTimeFormat("default", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -12,26 +12,39 @@ const i = (t) => t == null, a = (t) => t && typeof t == "object", c = (t) => i(t
     minute: "2-digit",
     second: "2-digit"
   });
-  return n ? e.toLocaleString() : r.format(e);
+  return e ? r.toLocaleString() : n.format(r);
 };
-function f(t, n = { reactive: !1 }) {
+function y(t, e = { reactive: !1 }) {
   return o(window[t]);
 }
-const u = (t, n) => {
+const p = (t, e) => {
   if (!t) return "";
-  const e = new Date(t), r = new Intl.DateTimeFormat("default", {
+  const r = new Date(t), n = new Intl.DateTimeFormat("default", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit"
   });
-  return n ? e.toLocaleString() : r.format(e);
+  return e ? r.toLocaleString() : n.format(r);
 };
+function l(t, e = 300, r = !1) {
+  let n;
+  return function(...i) {
+    const a = () => {
+      n = null, t.apply(this, i);
+    };
+    clearTimeout(n), n = setTimeout(a, e), n || t.apply(this, i);
+  };
+}
+function b(t, e = 300) {
+  return l(t, e);
+}
 export {
-  u as dateFormat,
-  l as dateTimeFormat,
-  f as getDjangoTemplateVariable,
-  m as getURLprefix,
-  c as isBlank,
-  i as isEmpty,
-  a as isObject
+  p as dateFormat,
+  g as dateTimeFormat,
+  b as debouncedInputHandler,
+  y as getDjangoTemplateVariable,
+  f as getURLprefix,
+  d as isBlank,
+  u as isEmpty,
+  c as isObject
 };

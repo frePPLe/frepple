@@ -60,6 +60,22 @@ const dateFormat = (input, fmt) => {
   return fmt ? date.toLocaleString() : formatter.format(date);
 };
 
+function debouncedInputHandler(func, delay = 300) {
+  let timeoutId;
+
+  return function executedFunction(...args) {
+    const later = () => {
+      timeoutId = null;
+      func.apply(this, args);
+    };
+
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(later, delay);
+
+    if (!timeoutId) func.apply(this, args);
+  };
+}
+
 export {
   isEmpty,
   isObject,
@@ -68,4 +84,5 @@ export {
   dateTimeFormat,
   dateFormat,
   getDjangoTemplateVariable,
+  debouncedInputHandler,
 };

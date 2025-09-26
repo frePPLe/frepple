@@ -27,6 +27,8 @@
  * @property {string} newComment
  * @property {string} originalComment
  * @property {boolean} hasChanges
+ * @property {boolean} forecastAttributes
+ * @property {boolean} currency
  */
 
 import { defineStore } from 'pinia';
@@ -62,6 +64,12 @@ export const useForecastsStore = defineStore('forecasts', {
     horizon: 'week',
     buckets: [],
     horizonbuckets: 'week',
+    forecastAttributes: {
+      "forecastmethod": "",
+      "forecast_out_method": "",
+      "forecast_out_smape": 0
+    },
+    currency: []
   }),
 
 
@@ -356,6 +364,11 @@ export const useForecastsStore = defineStore('forecasts', {
           this.customer.update(result['attributes']['customer']);
           this.comments = result['comments'];
           this.horizonbuckets = result['forecast'];
+          this.forecastAttributes.forecastmethod = result['attributes']['forecast']['forecastmethod'];
+          this.forecastAttributes.forecast_out_method = result['attributes']['forecast']['forecast_out_method'];
+          this.forecastAttributes.forecast_out_smape = result['attributes']['forecast']['forecast_out_smape'];
+          this.currency.length = 0;
+          this.currency.push(...result['attributes']['currency']);
 
           return result;
         } else {
@@ -389,7 +402,7 @@ export const useForecastsStore = defineStore('forecasts', {
       this.originalComment = this.newComment;
       this.hasChanges = false;
 
-      await this.saveForecastChanges();
+      await this.saveForecastChanges(false);
     },
 
     undoComment() {
@@ -397,7 +410,8 @@ export const useForecastsStore = defineStore('forecasts', {
       this.hasChanges = false;
     },
 
-    async saveForecastChanges() {
+    async saveForecastChanges(recalculate = false) {
+      console.log('Saving forecast changes');
       this.loading = true;
       this.error = null;
       const newData = {
@@ -410,8 +424,10 @@ export const useForecastsStore = defineStore('forecasts', {
         horizon: this.horizon,
         buckets: this.buckets,
         horizonbuckets: this.horizonbuckets,
+        forecastmethod: this.forecastAttributes.forecastmethod,
+        recalculate: recalculate,
       };
-      console.log(413, newData);
+      console.log(427, newData);
 
       try {
         const result = await forecastService.postForecastDetails(newData);
@@ -425,25 +441,24 @@ export const useForecastsStore = defineStore('forecasts', {
         }
 
         if (responseData.value) {
-          console.log('Forecast Changes saved', this.preferences);
+          console.log('Forecast Changes saved', newData);
         } else {
           console.warn('Forecast changes not saved');
         }
 
-    } catch (error) {
-      console.error('API Error:', error);
-      this.error = error.message;
-      throw error;
-    } finally {
-      this.loading = false;
-    }
-
+      } catch (error) {
+        console.error('API Error:', error);
+        this.error = error.message;
+        throw error;
+      } finally {
+        this.loading = false;
+      }
     },
 
     async savePreferences() {
       this.loading = true;
       this.error = null;
-      console.log('76', this.currentSequence, this.currentMeasure, this.dataRowHeight);
+      // console.log('76 savePreferences ', this.currentSequence, this.currentMeasure, this.dataRowHeight);
       this.preferences.sequence = this.currentSequence;
       this.preferences.measure = this.currentMeasure;
       // Include height in preferences if it exists

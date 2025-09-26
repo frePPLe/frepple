@@ -10,7 +10,7 @@
 
 <script setup lang="js">
 import {useForecastsStore} from "@/stores/forecastsStore";
-import {computed, toRaw} from "vue";
+import {computed} from "vue";
 const store = useForecastsStore();
 
 const props = defineProps({
@@ -22,11 +22,10 @@ const props = defineProps({
 
 const data = computed(() => (props.panelid === 'I') ? store.itemTree: (props.panelid === 'L') ? store.locationTree: store.customerTree);
 const modelName = (props.panelid === 'I') ? 'item': (props.panelid === 'L') ? 'location': 'customer';
-console.log(14, toRaw(data).value);
 const currentHeight = computed(() => (store.dataRowHeight || 240));
 
 function selectILCobject(model, rowIndex) {
-  console.log(19, data.value[rowIndex][model], 'children: ', data.value[rowIndex]['children'],'model: ', model, 'expanded: ', data.value[rowIndex].expanded === 0);
+  // console.log(19, data.value[rowIndex][model], 'children: ', data.value[rowIndex]['children'],'model: ', model, 'expanded: ', data.value[rowIndex].expanded === 0);
 
   store.setItemLocationCustomer(model, {Name: data.value[rowIndex][model], Description: data.value[rowIndex]['description']}, data.value[rowIndex]['children'], data.value[rowIndex]['lvl'],data.value[rowIndex].expanded === 0);
   if (data.value[rowIndex]['children']) {
@@ -37,7 +36,7 @@ function selectILCobject(model, rowIndex) {
 
 function toggleRowVisibility(rowIndex) {
   // Should this be moved to the store? We are manipulating store values directly.
-  console.log(29, 'toggleRowVisibility', rowIndex, 'data: ', data.value[rowIndex], 'expanded: ', data.value[rowIndex].expanded === 1, 'children: ', data.value[rowIndex]['children'])
+  // console.log(29, 'toggleRowVisibility', rowIndex, 'data: ', data.value[rowIndex], 'expanded: ', data.value[rowIndex].expanded === 1, 'children: ', data.value[rowIndex]['children'])
   data.value[rowIndex].expanded = data.value[rowIndex].expanded === 1 ? 0 : 1;
   const isExpanded = data.value[rowIndex].expanded === 1;
   let lineCount = 0;

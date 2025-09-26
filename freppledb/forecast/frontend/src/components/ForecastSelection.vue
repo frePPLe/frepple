@@ -24,7 +24,7 @@ const isResizing = ref(false);
 const currentMeasure = computed(() => {
   if (store.currentMeasure === null) {
     store.setCurrentMeasure(store.preferences.measure || 'nodata', false);
-    console.log(19, store.preferences.measure, ' measures: ',store.measures);
+    // console.log(19, store.preferences.measure, ' measures: ',store.measures);
     return store.preferences.measure || 'nodata'
   }
   return store.currentMeasure;
@@ -46,12 +46,12 @@ const currentHeight = computed(() => {
   return store.dataRowHeight;
 });
 
-console.log(29,"ForecastSelection.vue");
-console.log(30,currentSequence);
-console.log(31,store.measures);
-console.log(32,store.preferences);
-console.log(33,store.currentMeasure);
-console.log(34,currentHeight);
+// console.log(29,"ForecastSelection.vue");
+// console.log(30,currentSequence);
+// console.log(31,store.measures);
+// console.log(32,store.preferences);
+// console.log(33,store.currentMeasure);
+// console.log(34,currentHeight);
 
 const sortedMeasureList = computed(() => {
   return Object.values(store.measures).sort((a, b) => {

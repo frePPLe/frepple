@@ -191,7 +191,8 @@ django-allauth will have pretty similar instructions.
           "allauth",
           "allauth.account",
           "allauth.socialaccount",
-          "allauth.socialaccount.providers.auth0",
+          "allauth.socialaccount.providers.auth0",          # For oauth
+          # "allauth.socialaccount.providers.mircrosoft",   # For Microsoft
         )
 
         MIDDLEWARE = (
@@ -208,8 +209,10 @@ django-allauth will have pretty similar instructions.
 
         # Add new settings at the end of the file
         SITE_ID = 1
-        LOGIN_URL = "/accounts/auth0/login/"
-        LOGIN_REDIRECT_URL = "/accounts/auth0/login/"
+        LOGIN_URL = "/accounts/auth0/login/"  # For oauth
+        LOGIN_REDIRECT_URL = "/accounts/auth0/login/"  # For oauth
+        # LOGIN_URL = "/accounts/microsoft/login/"  # For Microsoft
+        # LOGIN_REDIRECT_URL = "/accounts/microsoft/login/"  # For Microsoft
         LOGOUT_REDIRECT_URL = "/accounts/logout/"
         ACCOUNT_LOGOUT_ON_GET = True
         ACCOUNT_EMAIL_VERIFICATION = "none"
@@ -218,21 +221,28 @@ django-allauth will have pretty similar instructions.
         SOCIALACCOUNT_ADAPTER = 'freppledb.external_auth.auth.CustomAccountAdapter'
         ACCOUNT_ADAPTER = 'freppledb.external_auth.auth.CustomAdapter'
         SOCIALACCOUNT_PROVIDERS = {
+              # For oauth:
               "auth0": {
                   "AUTH0_URL": "<URL-OF-YOUR-OAUTH-PROVIDER>", # UPDATE!!!
-              }
+              },
+              # For Microsoft:
+              # "microsoft": {
+              #   "tenant": "<INSERT-YOUR-TENANT-ID>",
+              #   "client_id": "<INSERT-YOUR-CLIENT-ID>",
+              # },
             }
         DEFAULT_USER_GROUP = "Planner" # New users are automatically added to this group
 
         # The following settings may be needed to satisfy the CORS
-        # requirements with the authentication provider. Don't copy these
-        # lines blindly but carefully review what is really needed.
+        # requirements with the authentication provider.
+        # Don't copy these lines blindly but carefully review what is really needed.
         CONTENT_SECURITY_POLICY = "frame-ancestors 'self' <URL-OF-EXTERNAL-APP>;"
         X_FRAME_OPTIONS = None
         SESSION_COOKIE_SAMESITE = "none"
         CSRF_COOKIE_SAMESITE = "none"
 
-        # The followins settings are needed when you use a HTTPS proxy
+        # The following settings are needed when you use a HTTPS proxy.
+        # Don't copy these lines blindly but carefully review what is really needed.
         SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
         ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 

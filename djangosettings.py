@@ -437,6 +437,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
+# Maximum allowed life time (in days) before an API key expires
+# Use None for keys that never expire.
+APIKEY_MAX_LIFE = None
+
 # Configuration of SMTP mail server
 EMAIL_USE_TLS = os.environ.get("FREPPLE_EMAIL_USE_TLS", "true").lower() == "true"
 DEFAULT_FROM_EMAIL = os.environ.get(

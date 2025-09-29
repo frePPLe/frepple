@@ -21,6 +21,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Data integration
 
+- | Authentication for system to system integration is now possible using API tokens.
+  | Each user can create API tokens in their user preferences.
+
 - | The database schema has been updated to remove the max length on all text fields.
     This means there are no length limits any longer on object names, descriptions, ...
   | On PostgreSQL `this has no performance implications <https://www.postgresql.org/docs/16/datatype-character.html>`_

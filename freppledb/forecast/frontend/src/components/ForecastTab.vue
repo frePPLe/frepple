@@ -9,17 +9,23 @@
 */
 
 <script setup lang="js">
-import { useForecastsStore } from '@/stores/forecastsStore';
+import ForecastEditFormCard from "@/components/ForecastEditFormCard.vue";
+import ForecastParametersCard from "@/components/ForecastParametersCard.vue";
+import ForecastGraph from "@/components/ForecastGraph.vue";
+import ForecastTable from "@/components/ForecastTable.vue";
 
-const store = useForecastsStore();
 </script>
 
 <template>
-  <div class="forecast-tab">
-    <h3>Forecast</h3>
-    <div class="card">
-      <div class="card-body">
-        <p>forecast tab</p>
+  <div>
+    <ForecastGraph />
+    <ForecastTable />
+    <div class="row mb-3" data-ng-show="showtab=='forecast'">
+      <div class="col-lg-8 col-md-12 mb-3" style="max-width: 900px">
+        <ForecastEditFormCard />
+      </div>
+      <div class="col-md-4 col-md-12 mb-3" style="max-width: 400px">
+        <ForecastParametersCard />
       </div>
     </div>
   </div>

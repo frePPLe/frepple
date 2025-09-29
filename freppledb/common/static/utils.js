@@ -1,10 +1,10 @@
-import { ref as o } from "vue";
-const u = (t) => t == null, c = (t) => t && typeof t == "object", d = (t) => u(t) || Array.isArray(t) && t.length === 0 || c(t) && Object.keys(t).length === 0 || typeof t == "string" && t.trim().length === 0, f = () => {
-  const t = o(window.database);
+import { ref as i } from "vue";
+const c = (t) => t == null, u = (t) => t && typeof t == "object", s = (t) => c(t) || Array.isArray(t) && t.length === 0 || u(t) && Object.keys(t).length === 0 || typeof t == "string" && t.trim().length === 0, m = () => {
+  const t = i(window.database);
   return t.value === "default" ? "" : `/${t.value}`;
-}, g = (t, e) => {
+}, d = (t, n) => {
   if (!t) return "";
-  const r = new Date(t), n = new Intl.DateTimeFormat("default", {
+  const e = new Date(t), r = new Intl.DateTimeFormat("default", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -12,39 +12,36 @@ const u = (t) => t == null, c = (t) => t && typeof t == "object", d = (t) => u(t
     minute: "2-digit",
     second: "2-digit"
   });
-  return e ? r.toLocaleString() : n.format(r);
+  return n ? e.toLocaleString() : r.format(e);
 };
-function y(t, e = { reactive: !1 }) {
-  return o(window[t]);
+function f(t, n = { reactive: !1 }) {
+  return i(window[t]);
 }
-const p = (t, e) => {
+const g = (t, n) => {
   if (!t) return "";
-  const r = new Date(t), n = new Intl.DateTimeFormat("default", {
+  const e = new Date(t), r = new Intl.DateTimeFormat("default", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit"
   });
-  return e ? r.toLocaleString() : n.format(r);
+  return n ? e.toLocaleString() : r.format(e);
 };
-function l(t, e = 300, r = !1) {
-  let n;
-  return function(...i) {
+function y(t, n = 300) {
+  let e;
+  return function(...o) {
     const a = () => {
-      n = null, t.apply(this, i);
+      e = null, t.apply(this, o);
     };
-    clearTimeout(n), n = setTimeout(a, e), n || t.apply(this, i);
+    clearTimeout(e), e = setTimeout(a, n), e || t.apply(this, o);
   };
 }
-function b(t, e = 300) {
-  return l(t, e);
-}
 export {
-  p as dateFormat,
-  g as dateTimeFormat,
-  b as debouncedInputHandler,
-  y as getDjangoTemplateVariable,
-  f as getURLprefix,
-  d as isBlank,
-  u as isEmpty,
-  c as isObject
+  g as dateFormat,
+  d as dateTimeFormat,
+  y as debouncedInputHandler,
+  f as getDjangoTemplateVariable,
+  m as getURLprefix,
+  s as isBlank,
+  c as isEmpty,
+  u as isObject
 };

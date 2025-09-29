@@ -20,16 +20,17 @@ function save(saveAll) {
   console.log(14, 'save', saveAll);
 
   // If on comments tab and there are changes, save the comment
-  if (store.showTab === 'comments' && store.hasChanges) {
-    store.saveComment();
+  if (store.hasChanges) {
+    store.saveForecastChanges();
   }
 }
 
 function undo() {
   console.log(14, 'undo');
 
-  if (store.showTab === 'comments' && store.hasChanges) {
+  if (store.hasChanges) {
     store.undoComment();
+    store.forecastAttributes.forecastmethod = store.forecastAttributes.oldForecastmethod;
   }
 }
 </script>
@@ -42,19 +43,21 @@ function undo() {
         <div class="form-inline">
           <button
             id="save"
-            class="btn btn-primary ng-binding"
+            class="btn btn-primary"
             @click="save(false)"
             data-bs-toggle="tooltip"
             :disabled="!store.hasChanges"
+            :class="store.hasChanges ? 'btn-danger' : ''"
             data-bs-original-title="Save changes to the database">
             Save
           </button>
           <button
             id="undo"
-            class="btn btn-primary ng-binding"
+            class="btn btn-primary"
             @click="undo()"
             data-bs-toggle="tooltip"
             :disabled="!store.hasChanges"
+            :class="store.hasChanges ? 'btn-danger' : ''"
             data-bs-original-title="Undo changes">
             Undo
           </button>

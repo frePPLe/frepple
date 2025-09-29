@@ -224,13 +224,17 @@ django-allauth will have pretty similar instructions.
             }
         DEFAULT_USER_GROUP = "Planner" # New users are automatically added to this group
 
-       # The following settings may be needed to satisfy the CORS
-       # requirements with the authentication provider. Don't copy these
-       # lines blindly but carefully review what is really needed.
+        # The following settings may be needed to satisfy the CORS
+        # requirements with the authentication provider. Don't copy these
+        # lines blindly but carefully review what is really needed.
         CONTENT_SECURITY_POLICY = "frame-ancestors 'self' <URL-OF-EXTERNAL-APP>;"
         X_FRAME_OPTIONS = None
         SESSION_COOKIE_SAMESITE = "none"
         CSRF_COOKIE_SAMESITE = "none"
+
+        # The followins settings are needed when you use a HTTPS proxy
+        SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+        ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
 #. Migrate the database structure for the new apps.
 

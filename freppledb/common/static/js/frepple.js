@@ -2456,17 +2456,21 @@ var ERPconnection = {
 
           // update both cell value and grid data
           for (var i in sel) {
-            var tp = grid.jqGrid('getCell', sel[i], 'operationplan__type');
-            if (!tp) tp = grid.jqGrid('getCell', sel[i], 'type');
+
             var cur = grid.jqGrid('getCell', sel[i], 'operationplan__status');
-            if (cur === 'proposed' && !['STCK', 'DLVR'].includes(tp)) {
-              grid.jqGrid('setCell', sel[i], 'operationplan__status', 'approved');
-              rowdata = grid.jqGrid('getRowData', sel[i]);
-              rowdata.operationplan__status = 'approved';
+            // Case 1: Exporting from Inventory detail
+            if (cur === 'proposed') {
+              var tp = grid.jqGrid('getCell', sel[i], 'operationplan__type');
+              if (!['STCK', 'DLVR'].includes(tp)) {
+                grid.jqGrid('setCell', sel[i], 'operationplan__status', 'approved');
+                rowdata = grid.jqGrid('getRowData', sel[i]);
+                rowdata.operationplan__status = 'approved';
+              }
             }
+            // Case 2: Exporting from MO/PO/DO screen
             else if (!cur) {
-              cur = grid.jqGrid('getCell', sel[i], 'operationplan__status');
-              if (cur === 'proposed' && !['STCK', 'DLVR'].includes(tp)) {
+              cur = grid.jqGrid('getCell', sel[i], 'status');
+              if (cur === 'proposed') {
                 grid.jqGrid('setCell', sel[i], 'status', 'approved');
                 rowdata = grid.jqGrid('getRowData', sel[i]);
                 rowdata.status = 'approved';

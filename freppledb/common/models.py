@@ -20,7 +20,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-from datetime import datetime
+from datetime import datetime, timedelta
 from importlib import import_module
 import inspect
 import json
@@ -1904,3 +1904,33 @@ class Attribute(AuditModel):
         db_table = "common_attribute"
         unique_together = (("model", "name"),)
         ordering = ["model", "name"]
+
+
+class APIKey(models.Model):
+
+    id = models.AutoField(_("identifier"), primary_key=True)
+    name = models.CharField(null=False, blank=False)
+    user = models.ForeignKey(
+        User,
+        verbose_name=_("user"),
+        on_delete=models.CASCADE,
+        related_name="api_keys",
+    )
+    expiry_date = models.DateTimeField(verbose_name=_("expiry date"))
+    created = models.DateTimeField(default=timezone.now, editable=False)
+    hashed_key = models.CharField(max_length=150, editable=False)
+
+    def save(self, *args, **kwargs):
+        if not self.created:
+            self.created = timezone.now()
+        max_life = getattr(settings, "APIKEY_MAX_LIFE", None)
+        if max_life:
+            max_expiry_date = self.created + timedelta(days=max_life)
+            if not self.expiry_date or self.expiry_date > max_expiry_date:
+                self.expiry_date = max_expiry_date
+        return super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _("API key")
+        verbose_name_plural = _("API keys")
+        db_table = "common_apikey"

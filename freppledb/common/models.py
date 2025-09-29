@@ -34,6 +34,7 @@ import time
 from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.auth.models import AbstractUser, Group
+from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import ArrayField
@@ -48,6 +49,7 @@ from django import forms
 from django.forms.models import modelform_factory
 from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django.utils.encoding import force_str
 from django.utils.html import mark_safe, escape
 from django.utils.translation import gettext_lazy as _
@@ -1918,12 +1920,12 @@ class APIKey(models.Model):
     )
     expiry_date = models.DateTimeField(verbose_name=_("expiry date"))
     created = models.DateTimeField(default=timezone.now, editable=False)
-    hashed_key = models.CharField(max_length=150, editable=False)
+    hashed_key = models.CharField(max_length=150, editable=False, unique=True)
 
     def save(self, *args, **kwargs):
         if not self.created:
             self.created = timezone.now()
-        max_life = getattr(settings, "APIKEY_MAX_LIFE", None)
+        max_life = getattr(settings, "APIKEY_MAX_LIFE", 10000)
         if max_life:
             max_expiry_date = self.created + timedelta(days=max_life)
             if not self.expiry_date or self.expiry_date > max_expiry_date:
@@ -1934,3 +1936,15 @@ class APIKey(models.Model):
         verbose_name = _("API key")
         verbose_name_plural = _("API keys")
         db_table = "common_apikey"
+
+    def verify(self, key: str) -> bool:
+        return check_password(key, self.hashed_key)
+
+    def generateKey(self):
+        """
+        The secret key will only be available ONCE. If you loose it you can't use
+        the APIKey any longer.
+        """
+        secret_value = get_random_string(50)
+        self.hashed_key = make_password(secret_value)
+        return secret_value

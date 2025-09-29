@@ -50,7 +50,10 @@ class Migration(migrations.Migration):
                         default=django.utils.timezone.now, editable=False
                     ),
                 ),
-                ("hashed_key", models.CharField(editable=False, max_length=150)),
+                (
+                    "hashed_key",
+                    models.CharField(editable=False, max_length=150, unique=True),
+                ),
                 (
                     "user",
                     models.ForeignKey(

@@ -1937,14 +1937,32 @@ class APIKey(models.Model):
         verbose_name_plural = _("API keys")
         db_table = "common_apikey"
 
-    def verify(self, key: str) -> bool:
-        return check_password(key, self.hashed_key)
+    @staticmethod
+    def findKey(key: str) -> bool:
+        try:
+            hash = make_password(key[15:], salt=key[:15])
+            obj = APIKey.objects.using(DEFAULT_DB_ALIAS).get(hashed_key=hash)
+            if obj.expiry_date and obj.expiry_date < datetime.now():
+                raise Exception("Key expired")
+            return obj
+        except APIKey.DoesNotExist:
+            raise Exception("Key not found")
+        except Exception:
+            raise Exception("Invalid key")
 
     def generateKey(self):
         """
-        The secret key will only be available ONCE. If you loose it you can't use
-        the APIKey any longer.
+        The secret key will only be available ONCE. If you loose the return value of
+        this function you can't use the APIKey.
         """
-        secret_value = get_random_string(50)
-        self.hashed_key = make_password(secret_value)
-        return secret_value
+        while True:
+            salt = get_random_string(15)
+            secret_value = get_random_string(50)
+            self.hashed_key = make_password(secret_value, salt=salt)
+            if (
+                not APIKey.objects.using(DEFAULT_DB_ALIAS)
+                .filter(hashed_key=self.hashed_key)
+                .exists()
+            ):
+                # It's unique
+                return f"{salt}{secret_value}"

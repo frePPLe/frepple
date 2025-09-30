@@ -48,7 +48,7 @@ from django.utils.translation import get_supported_language_variant
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.auth import MultiDBBackend
-from freppledb.common.models import Scenario, User
+from freppledb.common.models import Scenario, User, APIKey
 from freppledb.common.utils import get_databases
 
 import logging
@@ -213,7 +213,7 @@ class MultiDBMiddleware:
                         login(request, user)
                         request.user = user
                 elif authmethod == "bearer" or webtoken:
-                    # JWT webtoken authentication
+                    # JWT webtoken or APIkey authentication
                     decoded = None
                     for secret in (
                         getattr(settings, "AUTH_SECRET_KEY", None),
@@ -230,34 +230,43 @@ class MultiDBMiddleware:
                                 )
                             except jwt.exceptions.InvalidTokenError:
                                 pass
-                    if not decoded:
-                        logger.error("Missing or invalid webtoken")
-                        return HttpResponseForbidden("Missing or invalid webtoken")
-                    try:
-                        if "user" in decoded:
-                            user = User.objects.get(username=decoded["user"])
-                        elif "email" in decoded:
-                            user = User.objects.get(email=decoded["email"])
-                        else:
-                            logger.error("No user or email in webtoken")
-                            return HttpResponseForbidden("No user or email in webtoken")
-                    except User.DoesNotExist:
-                        if getattr(settings, "SOCIALACCOUNT_AUTO_SIGNUP", True):
-                            # Autocreate new user
-                            user_args = {}
+                    if decoded:
+                        # Authenticated with a valid JWT token
+                        try:
                             if "user" in decoded:
-                                user_args["username"] = decoded["user"]
-                                user_args["email"] = decoded["user"]
-                            if "email" in decoded:
-                                user_args["email"] = decoded["email"]
-                            user = User.objects.create_user(**user_args)
-                            user.save(using=DEFAULT_DB_ALIAS)
-                        else:
-                            logger.error("Invalid user in webtoken")
-                            messages.add_message(
-                                request, messages.ERROR, "Unknown user"
-                            )
-                            return HttpResponseRedirect("/data/login/")
+                                user = User.objects.get(username=decoded["user"])
+                            elif "email" in decoded:
+                                user = User.objects.get(email=decoded["email"])
+                            else:
+                                logger.error("No user or email in webtoken")
+                                return HttpResponseForbidden(
+                                    "No user or email in webtoken"
+                                )
+                        except User.DoesNotExist:
+                            if getattr(settings, "SOCIALACCOUNT_AUTO_SIGNUP", True):
+                                # Autocreate new user
+                                user_args = {}
+                                if "user" in decoded:
+                                    user_args["username"] = decoded["user"]
+                                    user_args["email"] = decoded["user"]
+                                if "email" in decoded:
+                                    user_args["email"] = decoded["email"]
+                                user = User.objects.create_user(**user_args)
+                                user.save(using=DEFAULT_DB_ALIAS)
+                            else:
+                                logger.error("Invalid user in webtoken")
+                                messages.add_message(
+                                    request, messages.ERROR, "Unknown user"
+                                )
+                                return HttpResponseRedirect("/data/login/")
+                    else:
+                        # Not a JWT token. Might be an APIKey.
+                        try:
+                            user = APIKey.findKey(webtoken or auth_header_split[1]).user
+                        except Exception as e:
+                            # Not a valid API token
+                            logger.error(f"Invalid API webtoken: {e}")
+                            return HttpResponseForbidden("Invalid API webtoken: {e}")
                     user.backend = settings.AUTHENTICATION_BACKENDS[0]
                     login(request, user)
                     request.user = user

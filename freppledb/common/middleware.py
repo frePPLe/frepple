@@ -270,12 +270,13 @@ class MultiDBMiddleware:
                     user.backend = settings.AUTHENTICATION_BACKENDS[0]
                     login(request, user)
                     request.user = user
-                    if "navbar" in decoded:
-                        request.session["navbar"] = decoded["navbar"] == True
-                    if "branding" in decoded:
-                        request.session["branding"] = decoded["branding"] == True
-                    if decoded.get("xframe_options_exempt", True):
-                        request.session["xframe_options_exempt"] = True
+                    if decoded:
+                        if "navbar" in decoded:
+                            request.session["navbar"] = decoded["navbar"] == True
+                        if "branding" in decoded:
+                            request.session["branding"] = decoded["branding"] == True
+                        if decoded.get("xframe_options_exempt", True):
+                            request.session["xframe_options_exempt"] = True
             except Exception as e:
                 logger.warning(
                     "silently ignoring exception in http authentication: %s" % e

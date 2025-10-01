@@ -23,6 +23,11 @@ const isBlank = data => {
   );
 };
 
+const isNumeric = value => {
+  if (value === '' || value === null || value === undefined) return false;
+  return !isNaN(parseFloat(value)) && isFinite(value);
+};
+
 const getURLprefix = () => {
   const database = ref(window.database); // assuming database is defined globally
   return database.value === 'default' ? '' : `/${database.value}`;
@@ -80,6 +85,7 @@ export {
   isEmpty,
   isObject,
   isBlank,
+  isNumeric,
   getURLprefix,
   dateTimeFormat,
   dateFormat,

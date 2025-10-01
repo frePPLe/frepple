@@ -19,7 +19,7 @@ const store = useForecastsStore();
 function save(saveAll) {
   console.log(14, 'save', saveAll);
 
-  // If on comments tab and there are changes, save the comment
+  // If on the comments tab and there are changes, save the comment
   if (store.hasChanges) {
     store.saveForecastChanges();
   }
@@ -29,8 +29,7 @@ function undo() {
   console.log(14, 'undo');
 
   if (store.hasChanges) {
-    store.undoComment();
-    store.forecastAttributes.forecastmethod = store.forecastAttributes.oldForecastmethod;
+    store.undo();
   }
 }
 </script>

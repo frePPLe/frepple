@@ -1,91 +1,249 @@
-/*
-* Copyright (C) 2025 by frePPLe bv
-*
-* All information contained herein is, and remains the property of frePPLe.
-* You are allowed to use and modify the source code, as long as the software is used
-* within your company.
-* You are not allowed to distribute the software, either in the form of source code
-* or in the form of compiled binaries.
-*/
-
 <script setup lang="js">
+import {ref, computed, onMounted} from "vue";
 import {useForecastsStore} from "@/stores/forecastsStore.js";
+import { isNumeric } from "@common/utils.js";
 
 const store = useForecastsStore();
+
+let activateApply = ref(false);
+
+// Validation states for each input
+const validationErrors = ref({
+  setTo: '',
+  increaseBy: '',
+  increaseByPercent: ''
+});
+
+const sortedEditableMeasureList = computed(() => {
+  return Object.values(store.measures).filter(x => x.editable).sort((a, b) => {
+    return a.label.localeCompare(b.label);
+  });
+});
+
+// Initialize selectedMeasure when component mounts
+onMounted(() => {
+  if (sortedEditableMeasureList.value.length > 0 && !store.editForm.selectedMeasure?.label) {
+    store.editForm.selectedMeasure = sortedEditableMeasureList.value[0];
+  }
+  store.editForm.mode = "set";
+});
+
+function validateField(field, value) {
+  if (!isNumeric(value)) {
+    validationErrors.value[field] = 'Please enter a valid number';
+    return false;
+  } else {
+    validationErrors.value[field] = '';
+    return true;
+  }
+}
+
+function setSelectedMeasure(measure) {
+  store.editForm.selectedMeasure = measure;
+  changeEdit();
+}
+
+function setStartDate(event) {
+  store.editForm.startDate = event.target.value;
+  changeEdit();
+}
+
+function setEndDate(event) {
+  store.editForm.endDate = event.target.value;
+  changeEdit();
+}
+
+function setEditMode(mode) {
+  store.editForm.mode = mode;
+  changeEdit();
+}
+
+function setEditValue(field, value) {
+  store.editForm[field] = value;
+  validateField(field, value);
+  changeEdit();
+}
+
+function applyEdit() {
+  console.log('applyEdit', store.editForm.value);
+  // Add your apply logic here
+}
+
+function changeEdit() {
+  if (store.editForm.selectedMeasure?.label === undefined) {
+    activateApply.value = false;
+    return;
+  }
+
+  let result = false;
+  console.log('changeEdit', store.editForm.value);
+
+  switch (store.editForm.mode) {
+    case 'set':
+      result = isNumeric(store.editForm.setTo) && parseFloat(store.editForm.setTo) >= 0;
+      break;
+    case 'increase':
+      result = isNumeric(store.editForm.increaseBy);
+      break;
+    case 'increasePercent':
+      result = isNumeric(store.editForm.increaseByPercent);
+      break;
+    default:
+      result = false;
+      break;
+  }
+
+  // Also check that there are no validation errors
+  const hasValidationErrors = Object.values(validationErrors.value).some(error => error !== '');
+  activateApply.value = result && !hasValidationErrors;
+}
 </script>
 
 <template>
   <div class="card">
     <div class="card-header">
-      <h5 class="card-title text-capitalize mb-0" data-translate=""><span class="ng-scope">edit</span></h5>
+      <h5 class="card-title text-capitalize mb-0"><span class="">edit</span></h5>
     </div>
     <div class="card-body">
       <table>
-        <tbody><tr>
+        <tbody>
+        <tr>
           <td style="vertical-align:top; padding: 15px">
-            <button id="applyedit" type="submit" data-ng-click="applyEdit()" class="btn btn-primary disabled" translate=""><span class="ng-scope">Apply</span></button>
+            <button
+              id="applyedit"
+              type="submit"
+              @click="applyEdit()"
+              class="btn btn-primary"
+              :disabled="!activateApply"
+            >
+              <span class="">Apply</span>
+            </button>
           </td>
-          <td><form class="mb-3 ng-pristine ng-valid">
-            Update
-            <div class="dropdown" style="display:inline-block">
-              <button type="button" class="dropdown-toggle form-control d-inline w-auto ng-binding" data-bs-toggle="dropdown" id="editmeasure" name="editmeasure" aria-haspopup="true" aria-expanded="true" style="min-width:200px">
-                forecast override&nbsp;&nbsp;<span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="editmeasure">
-                <!-- ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><li data-ng-repeat="m in measurelist | orderBy:'label'" data-ng-if="m.editable" class="ng-scope">
-                <a class="dropdown-item" data-ng-click="$parent.$parent.edit_measure = m.name; changeEdit()" href="#" translate=""><span class="ng-binding ng-scope">forecast override</span></a>
-              </li><!-- end ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><li data-ng-repeat="m in measurelist | orderBy:'label'" data-ng-if="m.editable" class="ng-scope">
-                <a class="dropdown-item" data-ng-click="$parent.$parent.edit_measure = m.name; changeEdit()" href="#" translate=""><span class="ng-binding ng-scope">forecast override value</span></a>
-              </li><!-- end ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><li data-ng-repeat="m in measurelist | orderBy:'label'" data-ng-if="m.editable" class="ng-scope">
-                <a class="dropdown-item" data-ng-click="$parent.$parent.edit_measure = m.name; changeEdit()" href="#" translate=""><span class="ng-binding ng-scope">no data</span></a>
-              </li><!-- end ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><li data-ng-repeat="m in measurelist | orderBy:'label'" data-ng-if="m.editable" class="ng-scope">
-                <a class="dropdown-item" data-ng-click="$parent.$parent.edit_measure = m.name; changeEdit()" href="#" translate=""><span class="ng-binding ng-scope">orders adjustment</span></a>
-              </li><!-- end ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><li data-ng-repeat="m in measurelist | orderBy:'label'" data-ng-if="m.editable" class="ng-scope">
-                <a class="dropdown-item" data-ng-click="$parent.$parent.edit_measure = m.name; changeEdit()" href="#" translate=""><span class="ng-binding ng-scope">orders adjustment 1 years ago</span></a>
-              </li><!-- end ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><li data-ng-repeat="m in measurelist | orderBy:'label'" data-ng-if="m.editable" class="ng-scope">
-                <a class="dropdown-item" data-ng-click="$parent.$parent.edit_measure = m.name; changeEdit()" href="#" translate=""><span class="ng-binding ng-scope">orders adjustment 2 years ago</span></a>
-              </li><!-- end ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><li data-ng-repeat="m in measurelist | orderBy:'label'" data-ng-if="m.editable" class="ng-scope">
-                <a class="dropdown-item" data-ng-click="$parent.$parent.edit_measure = m.name; changeEdit()" href="#" translate=""><span class="ng-binding ng-scope">orders adjustment 3 years ago</span></a>
-              </li><!-- end ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><li data-ng-repeat="m in measurelist | orderBy:'label'" data-ng-if="m.editable" class="ng-scope">
-                <a class="dropdown-item" data-ng-click="$parent.$parent.edit_measure = m.name; changeEdit()" href="#" translate=""><span class="ng-binding ng-scope">orders adjustment value</span></a>
-              </li><!-- end ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><li data-ng-repeat="m in measurelist | orderBy:'label'" data-ng-if="m.editable" class="ng-scope">
-                <a class="dropdown-item" data-ng-click="$parent.$parent.edit_measure = m.name; changeEdit()" href="#" translate=""><span class="ng-binding ng-scope">orders adjustment value 1 years ago</span></a>
-              </li><!-- end ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><li data-ng-repeat="m in measurelist | orderBy:'label'" data-ng-if="m.editable" class="ng-scope">
-                <a class="dropdown-item" data-ng-click="$parent.$parent.edit_measure = m.name; changeEdit()" href="#" translate=""><span class="ng-binding ng-scope">orders adjustment value 2 years ago</span></a>
-              </li><!-- end ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><li data-ng-repeat="m in measurelist | orderBy:'label'" data-ng-if="m.editable" class="ng-scope">
-                <a class="dropdown-item" data-ng-click="$parent.$parent.edit_measure = m.name; changeEdit()" href="#" translate=""><span class="ng-binding ng-scope">orders adjustment value 3 years ago</span></a>
-              </li><!-- end ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' --><!-- ngIf: m.editable --><!-- end ngRepeat: m in measurelist | orderBy:'label' -->
-              </ul>
-            </div>
-            &nbsp;from&nbsp;
-            <input id="editstartdate" type="date" class="form-control d-inline w-auto ng-pristine ng-untouched ng-valid ng-not-empty" data-ng-model="edit_startdate" data-ng-change="changeEdit()" style="background: white !important">
-            &nbsp;till&nbsp;
-            <input id="editenddate" type="date" class="form-control d-inline w-auto ng-pristine ng-untouched ng-valid ng-not-empty" data-ng-model="edit_enddate" data-ng-change="changeEdit()" style="background: white !important">
-          </form>
+          <td>
+            <form class="mb-3 pristine valid">
+              Update
+              <div class="dropdown" style="display:inline-block">
+                <button
+                  type="button"
+                  class="dropdown-toggle form-control d-inline w-auto"
+                  data-bs-toggle="dropdown"
+                  id="editmeasure"
+                  name="editmeasure"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  style="min-width:200px"
+                >
+                  {{ store.editForm.selectedMeasure?.label || 'Select measure' }}&nbsp;&nbsp;<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="editmeasure">
+                  <li v-for="m in sortedEditableMeasureList" :key="m.label">
+                    <a class="dropdown-item" @click="setSelectedMeasure(m)" href="#">
+                      <span class="ng-binding ng-scope">{{m.label}}</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              &nbsp;from&nbsp;
+              <input
+                id="editstartdate"
+                type="date"
+                class="form-control d-inline w-auto pristine untouched valid not-empty"
+                :value="store.editForm.startDate"
+                @input="setStartDate"
+                style="background: white !important"
+              >
+              &nbsp;till&nbsp;
+              <input
+                id="editenddate"
+                type="date"
+                class="form-control d-inline w-auto pristine untouched valid not-empty"
+                :value="store.editForm.endDate"
+                @input="setEndDate"
+                style="background: white !important"
+              >
+            </form>
+
             <div class="radio mb-3">
-              <label><input class="form-check-input nodirty align-text-bottom ng-pristine ng-untouched ng-valid ng-not-empty" type="radio" data-ng-model="edit_mode" name="optradio" value="0" data-ng-change="changeEdit()">
-                Set to <input type="number" class="form-control d-inline ng-pristine ng-untouched ng-valid ng-empty" data-ng-model="edit_set" data-ng-change="changeEdit()" data-ng-focus="edit_mode=0" style="width:8rem; background: white !important"></label>
-            </div>
-            <div class="radio mb-3">
-              <label><input class="form-check-input nodirty align-text-bottom ng-pristine ng-untouched ng-valid ng-not-empty" type="radio" data-ng-model="edit_mode" name="optradio" value="1" data-ng-change="changeEdit()">
-                Increase by <input type="number" class="form-control d-inline ng-pristine ng-untouched ng-valid ng-empty" data-ng-change="changeEdit()" data-ng-focus="edit_mode=1" data-ng-model="edit_inc" style="width:8rem; background: white !important"></label>
-            </div>
-            <div class="radio mb-3">
-              <label><input class="form-check-input nodirty align-text-bottom ng-pristine ng-untouched ng-valid ng-not-empty" type="radio" data-ng-model="edit_mode" name="optradio" value="2" data-ng-change="changeEdit()">
-                Increase by <input type="number" class="form-control d-inline ng-pristine ng-untouched ng-valid ng-empty" data-ng-change="changeEdit()" data-ng-focus="edit_mode=2" data-ng-model="edit_inc_perc" style="width:3rem; background: white !important"> %</label>
+              <label>
+                <input
+                  class="form-check-input nodirty align-text-bottom pristine untouched valid not-empty"
+                  type="radio"
+                  :checked="store.editForm.mode === 'set'"
+                  @change="setEditMode('set')"
+                  name="optradio"
+                  value="set"
+                >
+                Set to
+                <input
+                  type="text"
+                  class="form-control d-inline pristine untouched valid empty"
+                  :class="{ 'is-invalid': validationErrors.setTo }"
+                  :value="store.editForm.setTo"
+                  @input="setEditValue('setTo', $event.target.value)"
+                  @focus="setEditMode('set')"
+                  style="width:8rem; background: white !important"
+                >
+              </label>
+              <div v-if="validationErrors.setTo" class="invalid-feedback d-block" style="font-size: 0.875em; margin-left: 2rem;">
+                {{ validationErrors.setTo }}
+              </div>
             </div>
 
+            <div class="radio mb-3">
+              <label>
+                <input
+                  class="form-check-input nodirty align-text-bottom pristine untouched valid not-empty"
+                  type="radio"
+                  :checked="store.editForm.mode === 'increase'"
+                  @change="setEditMode('increase')"
+                  name="optradio"
+                  value="increase"
+                >
+                Increase by
+                <input
+                  type="text"
+                  class="form-control d-inline pristine untouched valid empty"
+                  :class="{ 'is-invalid': validationErrors.increaseBy }"
+                  :value="store.editForm.increaseBy"
+                  @input="setEditValue('increaseBy', $event.target.value)"
+                  @focus="setEditMode('increase')"
+                  style="width:8rem; background: white !important"
+                >
+              </label>
+              <div v-if="validationErrors.increaseBy" class="invalid-feedback d-block" style="font-size: 0.875em; margin-left: 2rem;">
+                {{ validationErrors.increaseBy }}
+              </div>
+            </div>
+
+            <div class="radio mb-3">
+              <label>
+                <input
+                  class="form-check-input nodirty align-text-bottom pristine untouched valid not-empty"
+                  type="radio"
+                  :checked="store.editForm.mode === 'increasePercent'"
+                  @change="setEditMode('increasePercent')"
+                  name="optradio"
+                  value="increasePercent"
+                >
+                Increase by
+                <input
+                  type="text"
+                  class="form-control d-inline pristine untouched valid empty"
+                  :class="{ 'is-invalid': validationErrors.increaseByPercent }"
+                  :value="store.editForm.increaseByPercent"
+                  @input="setEditValue('increaseByPercent', $event.target.value)"
+                  @focus="setEditMode('increasePercent')"
+                  style="width:3rem; background: white !important"
+                > %
+              </label>
+              <div v-if="validationErrors.increaseByPercent" class="invalid-feedback d-block" style="font-size: 0.875em; margin-left: 2rem;">
+                {{ validationErrors.increaseByPercent }}
+              </div>
+            </div>
           </td>
         </tr>
-        </tbody></table>
-      <!-- <div class="col-12">
-      <label for="comment">Comment:</label>
-      <textarea class="form-control" rows="3" id="comment" ng-model="edit_comment"></textarea>
-      </div> -->
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
-
-<style scoped>
-
-</style>

@@ -54,7 +54,7 @@ export const useForecastsStore = defineStore('forecasts', {
       error: null,
       dataRowHeight: null,
       showTab: 'attributes',
-      forecastData: [],
+      bucketChanges: [], // buckets changed in the UI
       history: [],
       comments: [],
       commentType: '',
@@ -62,7 +62,7 @@ export const useForecastsStore = defineStore('forecasts', {
       originalComment: '',
       hasChanges: false,
       horizon: 'week',
-      buckets: [],
+      buckets: [], // buckets arriving from backend
       horizonbuckets: 'week',
       forecastAttributes: {
         "oldForecastmethod": "aggregated",
@@ -70,9 +70,17 @@ export const useForecastsStore = defineStore('forecasts', {
         "forecast_out_method": "",
         "forecast_out_smape": 0
       },
-      currency: []
+      currency: [],
+      editForm: {
+        selectedMeasure: null,
+        startDate: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD for date input
+        endDate: new Date().toISOString().split('T')[0],   // Format as YYYY-MM-DD for date input
+        mode: 'set', // 'set', 'increase', or 'increasePercent'
+        setTo: 0,
+        increaseBy: 0,
+        increaseByPercent: 0
+      },
     }),
-
 
     getters: {
       measures: () => window.measures,

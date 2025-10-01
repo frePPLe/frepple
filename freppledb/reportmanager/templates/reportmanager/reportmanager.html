@@ -129,7 +129,7 @@ $(function() {
         "delete": true
         },
       success: function(data) {
-        if (data.status == "ok") {
+        if (data == "ok") {
           window.location.href = url_prefix + "/data/reportmanager/sqlreport/";
         }
         else {

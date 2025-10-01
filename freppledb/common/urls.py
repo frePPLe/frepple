@@ -94,6 +94,11 @@ if mode == "WSGI":
             name="common_attribute_changelist",
         ),
         re_path(
+            r"^data/common/apikey/$",
+            freppledb.common.views.APIKeyList.as_view(),
+            name="common_apikey_changelist",
+        ),
+        re_path(
             r"^data/common/comment/$",
             freppledb.common.views.CommentList.as_view(),
             name="common_comment_changelist",

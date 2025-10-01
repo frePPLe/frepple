@@ -1932,6 +1932,9 @@ class APIKey(models.Model):
                 self.expiry_date = max_expiry_date
         return super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f"'{self.name}' for '{self.user.username if self.user else ""}"
+
     class Meta:
         verbose_name = _("API key")
         verbose_name_plural = _("API keys")

@@ -26,6 +26,7 @@ from django.utils.translation import gettext_lazy as _
 
 import freppledb.common.views
 from freppledb.common.models import (
+    APIKey,
     Attribute,
     User,
     Bucket,
@@ -79,6 +80,18 @@ menu.addItem(
     index=1160,
     dependencies=[
         hasInstallableApps,
+    ],
+)
+menu.addItem(
+    "admin",
+    "apikey admin",
+    url="/data/common/apikey/",
+    report=freppledb.common.views.APIKeyList,
+    index=1170,
+    model=APIKey,
+    admin=True,
+    dependencies=[
+        isDefaultDatabase,
     ],
 )
 menu.addItem(

@@ -11,6 +11,7 @@ a high level overview of the model objects and their relationships.
    :maxdepth: 2
 
    domain-model
+   apikey
    attributes
    buckets
    bucket-dates

@@ -265,8 +265,8 @@ class MultiDBMiddleware:
                             user = APIKey.findKey(webtoken or auth_header_split[1]).user
                         except Exception as e:
                             # Not a valid API token
-                            logger.error(f"Invalid API webtoken: {e}")
-                            return HttpResponseForbidden("Invalid API webtoken: {e}")
+                            logger.error(f"Invalid API key: {e}")
+                            return HttpResponseForbidden(f"Invalid API key: {e}")
                     user.backend = settings.AUTHENTICATION_BACKENDS[0]
                     login(request, user)
                     request.user = user

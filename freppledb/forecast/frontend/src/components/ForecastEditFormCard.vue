@@ -28,7 +28,7 @@ onMounted(() => {
   store.editForm.mode = "set";
 });
 
-function validateField(field, value) {
+function validateNumericField(field, value) {
   if (!isNumeric(value)) {
     validationErrors.value[field] = 'Please enter a valid number';
     return false;
@@ -59,14 +59,19 @@ function setEditMode(mode) {
 }
 
 function setEditValue(field, value) {
-  store.editForm[field] = value;
-  validateField(field, value);
+  if (value === '') return;
+  if (store.editForm.selectedMeasure.formatter === 'number' || store.editForm.selectedMeasure.formatter === 'currency') {
+    validateNumericField(field, value);
+    store.editForm[field] = parseFloat(value);
+  } else {
+    store.editForm[field] = value;
+  }
   changeEdit();
 }
 
 function applyEdit() {
-  console.log('applyEdit', store.editForm.value);
-  // Add your apply logic here
+  store.applyForecastChanges();
+  // Add your logic here
 }
 
 function changeEdit() {
@@ -76,7 +81,6 @@ function changeEdit() {
   }
 
   let result = false;
-  console.log('changeEdit', store.editForm.value);
 
   switch (store.editForm.mode) {
     case 'set':
@@ -93,7 +97,7 @@ function changeEdit() {
       break;
   }
 
-  // Also check that there are no validation errors
+  // check validation errors
   const hasValidationErrors = Object.values(validationErrors.value).some(error => error !== '');
   activateApply.value = result && !hasValidationErrors;
 }
@@ -159,6 +163,7 @@ function changeEdit() {
                 class="form-control d-inline w-auto pristine untouched valid not-empty"
                 :value="store.editForm.endDate"
                 @input="setEndDate"
+                :min="store.editForm.startDate"
                 style="background: white !important"
               >
             </form>
@@ -189,7 +194,7 @@ function changeEdit() {
               </div>
             </div>
 
-            <div class="radio mb-3">
+            <div v-if="store.editForm.selectedMeasure && (store.editForm.selectedMeasure.formatter == 'number' || store.editForm.selectedMeasure.formatter == 'currency')" class="radio mb-3">
               <label>
                 <input
                   class="form-check-input nodirty align-text-bottom pristine untouched valid not-empty"
@@ -215,7 +220,7 @@ function changeEdit() {
               </div>
             </div>
 
-            <div class="radio mb-3">
+            <div v-if="store.editForm.selectedMeasure && (store.editForm.selectedMeasure.formatter == 'number' || store.editForm.selectedMeasure.formatter == 'currency')" class="radio mb-3">
               <label>
                 <input
                   class="form-check-input nodirty align-text-bottom pristine untouched valid not-empty"

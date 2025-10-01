@@ -29,6 +29,7 @@
  * @property {boolean} hasChanges
  * @property {boolean} forecastAttributes
  * @property {boolean} currency
+ * @property {Object} editForm
  */
 
 import {defineStore} from 'pinia';
@@ -76,9 +77,9 @@ export const useForecastsStore = defineStore('forecasts', {
         startDate: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD for date input
         endDate: new Date().toISOString().split('T')[0],   // Format as YYYY-MM-DD for date input
         mode: 'set', // 'set', 'increase', or 'increasePercent'
-        setTo: 0,
-        increaseBy: 0,
-        increaseByPercent: 0
+        setTo: 0.0,
+        increaseBy: 0.0,
+        increaseByPercent: 0.0
       },
     }),
 
@@ -373,7 +374,7 @@ export const useForecastsStore = defineStore('forecasts', {
             this.location.update(result['attributes']['location']);
             this.customer.update(result['attributes']['customer']);
             this.comments = result['comments'];
-            this.horizonbuckets = result['forecast'];
+            this.buckets = result['forecast'];
             this.forecastAttributes.forecastmethod = result['attributes']['forecast']['forecastmethod'];
             this.forecastAttributes.oldForecastmethod = result['attributes']['forecast']['forecastmethod'];
             this.forecastAttributes.forecast_out_method = result['attributes']['forecast']['forecast_out_method'];
@@ -428,6 +429,64 @@ export const useForecastsStore = defineStore('forecasts', {
         this.commentType = "";
         this.forecastAttributes.forecastmethod = this.forecastAttributes.oldForecastmethod;
         this.hasChanges = false;
+      },
+
+      applyForecastChanges() {
+        // // Toggle classes in the grid
+        // angular.element(document).find('#forecasttablebody input.edit-cell')
+        //   .removeClass("edit-cell").addClass("ng-dirty");
+
+        // Update grid
+        const factor = 1 + this.editForm.increaseByPercent / 100.0;
+        const msr = this.editForm.selectedMeasure.name;
+
+        for (const bckt in this.buckets) {
+          this.buckets[bckt][msr] = parseFloat(this.editForm.setTo);
+
+          console.log(444, bckt, msr, this.buckets[bckt][msr]);
+          if (this.buckets[bckt]["startdate_date"] < $scope.edit_enddate
+            && this.buckets[bckt]["enddate_date"] > $scope.edit_startdate) {
+
+            switch (this.editForm.mode) {
+              case "set":
+                this.buckets[bckt][msr] = msr.discrete ? Math.round(this.editForm.setTo) : this.editForm.setTo;
+                break;
+              case "increase":
+                if (msr.name === "forecastoverride") {
+                  this.buckets[bckt][msr] =
+                    msr.discrete ? Math.round(this.buckets[bckt]["forecasttotal"] + this.editForm.increaseBy) : this.buckets[bckt]["forecasttotal"] + this.editForm.increaseBy;
+                } else {
+                  this.buckets[bckt][msr] =
+                    msr.discrete ? Math.round(this.buckets[bckt][msr] + this.editForm.increaseBy) : this.buckets[bckt][msr] + this.editForm.increaseBy;
+                }
+                break;
+              case "increasePercent":
+                if (msr.name === "forecastoverride") {
+                  this.buckets[bckt][msr] =
+                    msr.discrete ? Math.round(this.buckets[bckt]["forecasttotal"] * factor) : this.buckets[bckt]["forecasttotal"] * factor;
+                } else {
+                  this.buckets[bckt][msr] =
+                    msr.discrete ? Math.round(this.buckets[bckt][msr] * factor) : this.buckets[bckt][msr] * factor;
+                }
+                break;
+              default:
+                break;
+            }
+
+            if (msr.name === "forecastoverride") {
+              store.bucket[bckt]["forecasttotal"] =
+                (store.bucket[bckt]["forecastoverride"] != -1
+                  && store.bucket[bckt]["forecastoverride"] != null) ?
+                  store.bucket[bckt]["forecastoverride"] :
+                  store.bucket[bckt]["forecastbaseline"];
+            }
+
+
+
+          }
+          if (this.buckets[bckt]["startdate_date"] > $scope.edit_enddate)
+            break;
+        }
       },
 
       async saveForecastChanges(recalculate = false) {

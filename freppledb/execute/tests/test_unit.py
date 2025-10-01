@@ -37,7 +37,7 @@ import freppledb.output as output
 import freppledb.input as input
 import freppledb.common as common
 from freppledb.common.auth import getWebserviceAuthorization
-from freppledb.common.models import Parameter, User, Notification
+from freppledb.common.models import APIKey, Parameter, User, Notification
 from freppledb.common.utils import get_databases
 
 
@@ -303,18 +303,22 @@ class remote_commands(TransactionTestCase):
     def test_remote_command_basic_authentication(self):
         self.remote_commands_base(
             {
-                "HTTP_AUTHORIZATION": "Basic %s"
-                % base64.b64encode("admin:admin".encode()).decode()
+                "HTTP_AUTHORIZATION": f"Basic {base64.b64encode("admin:admin".encode()).decode()}"
             }
         )
 
     def test_remote_command_jwt_authentication(self):
         self.remote_commands_base(
             {
-                "HTTP_AUTHORIZATION": "Bearer %s"
-                % getWebserviceAuthorization(user="admin", exp=3600),
+                "HTTP_AUTHORIZATION": f"Bearer {getWebserviceAuthorization(user="admin", exp=3600)}"
             }
         )
+
+    def test_remote_command_apikey_authentication(self):
+        key = APIKey(name="test", user=User.objects.get(username="admin"))
+        secret = key.generateKey()
+        key.save()
+        self.remote_commands_base({"HTTP_AUTHORIZATION": f"Bearer {secret}"})
 
     def remote_commands_base(self, headers):
         # Run a plan

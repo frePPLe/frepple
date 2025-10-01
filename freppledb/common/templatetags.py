@@ -532,13 +532,16 @@ class MenuNode(Node):
             cursor.execute(
                 """
                 select tablename from (
-                  select tablename,
+                  select c.relname as tablename,
                     query_to_xml(
-                      format('select 1 as cnt from %I.%I limit 1', schemaname, tablename),
+                      format('select 1 as cnt from %I.%I limit 1', n.nspname, c.relname),
                       false, true, ''
                       ) as xml_count
-                  from pg_catalog.pg_tables
-                  where schemaname = 'public'
+                  from pg_class c
+                  inner join pg_namespace n on n.oid = c.relnamespace
+                  where n.nspname = 'public'
+                    and c.relkind = 'r' -- only ordinary tables
+                    and pg_get_userbyid(c.relowner) = current_user
                   ) s
                 where xml_count is document;
                 """

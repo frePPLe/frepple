@@ -83,12 +83,14 @@ from .models import (
     BucketDetail,
     Notification,
     Follower,
+    APIKey,
 )
 from .report import (
     GridReport,
     GridFieldLastModified,
     GridFieldText,
     GridFieldBool,
+    GridFieldLocalDateTime,
     sizeof_fmt,
 )
 from .report import (
@@ -1311,3 +1313,48 @@ def follow(request):
         return HttpResponseNotAllowed(
             ["post", "get"], content="Only ajax GET and POST requests are allowed"
         )
+
+
+class APIKeyList(GridReport):
+    title = _("my API keys")
+    model = APIKey
+    frozenColumns = 1
+    help_url = "model-reference/apikeys.html"
+    message_when_empty = Template(
+        """
+        <h3>API Keys</h3>
+        <br>
+        API Keys are used to connect to frepple from external applications.<br>
+        They replace passwords, and facilitate managing access to the application.<br>
+        <br><br>
+        <a href="{{request.prefix}}/data/common/apikey/add/" class="btn btn-primary">Add API key</a>
+        <br>
+        """
+    )
+
+    @classmethod
+    def basequeryset(reportclass, request, *args, **kwargs):
+        return APIKey.objects.filter(user=request.user)
+
+    rows = (
+        GridFieldInteger(
+            "id",
+            title=_("identifier"),
+            key=True,
+            formatter="detail",
+            extra='"role":"common/apikey"',
+        ),
+        GridFieldText(
+            "name",
+            title=_("name"),
+            width="500",
+        ),
+        GridFieldLocalDateTime(
+            "created",
+            editable=False,
+        ),
+        GridFieldLocalDateTime(
+            "expiry_date",
+            editable=False,
+        ),
+    )

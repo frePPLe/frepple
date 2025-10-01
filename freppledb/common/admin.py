@@ -21,14 +21,26 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+from datetime import datetime, timedelta
+
 from django import forms
+from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
-from .models import Attribute, User, Parameter, Comment, Follower, Bucket, BucketDetail
+from .models import (
+    Attribute,
+    APIKey,
+    User,
+    Parameter,
+    Comment,
+    Follower,
+    Bucket,
+    BucketDetail,
+)
 from .adminforms import MultiDBUserCreationForm, MultiDBModelAdmin
 from freppledb.admin import data_site
 from freppledb.boot import getAttributes
@@ -289,3 +301,38 @@ class Attribute_admin(MultiDBModelAdmin):
             "view": "admin:common_attribute_comment",
         },
     ]
+
+
+@admin.register(APIKey, site=data_site)
+class APIKey_admin(MultiDBModelAdmin):
+    model = APIKey
+    save_on_top = True
+    exclude = ("user",)
+    tabs = [
+        {
+            "name": "edit",
+            "label": _("edit"),
+            "view": "admin:common_apikey_change",
+            "permission": "common.change_apikey",
+        }
+    ]
+
+    def get_changeform_initial_data(self, request):
+        max_life = getattr(settings, "APIKEY_MAX_LIFE", 10000)
+        return (
+            {"expiry_date": datetime.today() + timedelta(days=max_life)}
+            if max_life
+            else {}
+        )
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ("created", "expiry_date")
+        return self.readonly_fields
+
+    def save_model(self, request, obj, form, change):
+        if not obj.pk:  # Only set user on creation
+            obj.user = request.user
+            secret_token = obj.generateKey()
+            print("------", secret_token)  # TODO Need to show this to the user
+        super().save_model(request, obj, form, change)

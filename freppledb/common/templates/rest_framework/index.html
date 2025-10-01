@@ -75,6 +75,17 @@ Using <a class="text-decoration-underline" href="https://jwt.io/" target="_blank
 <span>curl -H 'Accept: application/json' --header 'Authorization: Bearer {{token}}' {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
 <span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
 </div></div>
+<div class="mb-2">
+Using an <a class="text-decoration-underline" href="/common/apikey/">API key</a>:
+</div>
+<div class="card mb-3"><div class="card-body" onclick="copyToClipboard(this)">
+<span>wget --header 'Authorization: Bearer <insert api key here>' {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+<span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
+</div></div>
+<div class="card mb-3"><div class="card-body" onclick="copyToClipboard(this)">
+<span>curl -H 'Accept: application/json' --header 'Authorization: Bearer <insert api key here>' {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+<span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
+</div></div>
 </div>
 {% endblocktrans %}
 </div></div>

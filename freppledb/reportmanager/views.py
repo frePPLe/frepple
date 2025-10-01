@@ -655,13 +655,30 @@ class ReportManager(GridReport):
 
         elif "save" in request.POST:
             if "id" in request.POST:
+
                 m = SQLReport.objects.using(request.database).get(pk=request.POST["id"])
                 if m.user and not m.public and m.user.id != request.user.id:
                     return JsonResponse(
                         {
                             "id": m.id,
                             "status": force_str(
-                                _("You're not the owner of this report")
+                                _("Private reports can only be edited by their owner")
+                            ),
+                        }
+                    )
+                elif (
+                    m.user
+                    and m.public
+                    and m.user.id != request.user.id
+                    and not request.user.is_superuser
+                ):
+                    return JsonResponse(
+                        {
+                            "id": m.id,
+                            "status": force_str(
+                                _(
+                                    "Only superusers can edit public reports they don't own"
+                                )
                             ),
                         }
                     )
@@ -687,9 +704,33 @@ class ReportManager(GridReport):
 
         elif "delete" in request.POST:
             pk = request.POST["id"]
-            SQLReport.objects.using(request.database).filter(
-                pk=pk, user=request.user
-            ).delete()
+            m = SQLReport.objects.using(request.database).get(pk=request.POST["id"])
+            if m.user and not m.public and m.user.id != request.user.id:
+                return JsonResponse(
+                    {
+                        "id": m.id,
+                        "status": force_str(
+                            _("Private reports can only be edited by their owner")
+                        ),
+                    }
+                )
+            elif (
+                m.user
+                and m.public
+                and m.user.id != request.user.id
+                and not request.user.is_superuser
+            ):
+                return JsonResponse(
+                    {
+                        "id": m.id,
+                        "status": force_str(
+                            _(
+                                "Only superusers can delete public reports they don't own"
+                            )
+                        ),
+                    }
+                )
+            m.delete()
             messages.add_message(
                 request,
                 messages.INFO,

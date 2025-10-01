@@ -128,8 +128,17 @@ $(function() {
         "id": {{report.id}},
         "delete": true
         },
-      success: function() {
-        window.location.href = url_prefix + "/data/reportmanager/sqlreport/";
+      success: function(data) {
+        if (data.status == "ok") {
+          window.location.href = url_prefix + "/data/reportmanager/sqlreport/";
+        }
+        else {
+          $("#workarea").prepend(
+            '<div class="alert alert-danger">{% trans "Deleting the report failed" %}&nbsp;:&nbsp;'
+            + data.status
+            + '</div></div>'
+            );
+        }
       },
       async: true
       });

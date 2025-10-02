@@ -26,9 +26,10 @@ from datetime import datetime, timedelta
 from django import forms
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .models import (
@@ -333,6 +334,19 @@ class APIKey_admin(MultiDBModelAdmin):
     def save_model(self, request, obj, form, change):
         if not obj.pk:  # Only set user on creation
             obj.user = request.user
-            secret_token = obj.generateKey()
-            print("------", secret_token)  # TODO Need to show this to the user
+            obj.secret_token = obj.generateKey()
         super().save_model(request, obj, form, change)
+
+    def response_add(self, request, obj, post_url_continue=None):
+        self.message_user(
+            request,
+            mark_safe(
+                _(
+                    f'<p>Here is your API key:&nbsp;&nbsp;&nbsp;<span class="fs-5">%s</span></p>'
+                    "<strong>This is the only time you will see it. Copy it now and keep it secret.</strong>"
+                )
+                % obj.secret_token
+            ),
+            level=messages.SUCCESS,
+        )
+        return self.response_post_save_add(request, obj)

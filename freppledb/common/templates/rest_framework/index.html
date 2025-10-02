@@ -52,40 +52,81 @@ The results can be shown in JSON format or as HTML in your browser.<br>
 <br>
 Using tools like 'wget' or 'curl' you can access the API from the command line.<br>
 For instance, to return the list of all sales orders in JSON format:<br><br>
-<div class="ms-4">
-<div class="mb-2">
-Using <a class="text-decoration-underline" href="https://en.wikipedia.org/wiki/Basic_access_authentication" target="_blank">basic authentication</a>:
-</div>
-<div class="card mb-3"><div class="card-body" onclick="copyToClipboard(this)">
-<span>wget --http-user={{username}} --http-password=PASSWORD {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
-<span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
-</div></div>
-<div class="card mb-3"><div class="card-body" onclick="copyToClipboard(this)">
-<span>curl -u {{username}}:PASSWORD {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
-<span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
-</div></div>
-<div class="mb-2">
-Using <a class="text-decoration-underline" href="https://jwt.io/" target="_blank">JSON Web Token authentication</a> valid for the next <input id="jwt" class="d-inline form-control p-1" type="number" value="{{exp}}" min="0" step="1" style="width:4em; background:white"/>  days:
-</div>
-<div class="card mb-3"><div class="card-body" onclick="copyToClipboard(this)">
-<span>wget --header 'Authorization: Bearer {{token}}' {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
-<span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
-</div></div>
-<div class="card mb-3"><div class="card-body" onclick="copyToClipboard(this)">
-<span>curl -H 'Accept: application/json' --header 'Authorization: Bearer {{token}}' {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
-<span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
-</div></div>
-<div class="mb-2">
-Using an <a class="text-decoration-underline" href="/common/apikey/">API key</a>:
-</div>
-<div class="card mb-3"><div class="card-body" onclick="copyToClipboard(this)">
-<span>wget --header 'Authorization: Bearer <insert api key here>' {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
-<span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
-</div></div>
-<div class="card mb-3"><div class="card-body" onclick="copyToClipboard(this)">
-<span>curl -H 'Accept: application/json' --header 'Authorization: Bearer <insert api key here>' {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
-<span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
-</div></div>
+
+
+<ul class="nav nav-tabs" id="AuthTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="auth-basic-tab" data-bs-toggle="tab" data-bs-target="#auth-basic" type="button" role="tab" aria-controls="home" aria-selected="true">
+      Using basic authentication</a>
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#auth-jwt" type="button" role="tab" aria-controls="auth-jwt" aria-selected="false">
+      Using JSON Web Token authentication
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#auth-apikey" type="button" role="tab" aria-controls="auth-apikey" aria-selected="false">
+      Using API key authentication
+    </button>
+  </li>
+</ul>
+<div class="tab-content mt-3 mb-3" id="AuthTabsContent">
+
+  <!--- Basic authentication -->
+  <div class="tab-pane show active" id="auth-basic" role="tabpanel" aria-labelledby="auth-basic-tab">
+    <div class="mb-3">
+      <a class="text-decoration-underline" href="https://en.wikipedia.org/wiki/Basic_access_authentication" target="_blank">Basic authentication</a>
+      sends the user name and password in the request.<br>
+      As long as you use HTTPS it is a simple and secure way of authentication.
+    </div>
+    <div class="card mb-1"><div class="card-body" onclick="copyToClipboard(this)">
+      <span>wget --http-user={{username}} --http-password=PASSWORD {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+      <span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
+    </div></div>
+    <div class="card mb-1"><div class="card-body" onclick="copyToClipboard(this)">
+      <span>curl -u {{username}}:PASSWORD {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+      <span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
+    </div></div>
+  </div>
+
+  <!--- JWT authentication -->
+  <div class="tab-pane" id="auth-jwt" role="tabpanel" aria-labelledby="auth-jwt-tab">
+    <div class="mb-3">
+      <a class="text-decoration-underline" href="https://jwt.io/" target="_blank">JSON Web Token authentication</a> uses
+      a digitally signed token to prove a user's identity.<br>
+      Below is a token we generated for the next
+      <input id="jwt" class="d-inline form-control p-1" type="number" value="{{exp}}" min="0" step="1" style="width:4em; background:white"/>
+      days.
+    </div>
+    <div class="card mb-1"><div class="card-body" onclick="copyToClipboard(this)">
+      <span>wget --header 'Authorization: Bearer {{token}}' {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+      <span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
+    </div></div>
+    <div class="card mb-1"><div class="card-body" onclick="copyToClipboard(this)">
+      <span>curl -H 'Accept: application/json' --header 'Authorization: Bearer {{token}}' {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+      <span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
+    </div></div>
+  </div>
+
+  <!--- API key authentication -->
+  <div class="tab-pane" id="auth-apikey" role="tabpanel" aria-labelledby="auth-apikey-tab">
+      <div class="mb-3">
+      <a class="text-decoration-underline" href="https://en.wikipedia.org/wiki/API_key" target="_blank">API keys</a> are
+      secret tokens you generate and manage on
+      <a class="text-decoration-underline" class="text-decoration-underline" href="/common/apikey/">this page</a>.<br>
+      The secret key is shown only once to you and you need to store it safely.
+      </div>
+      <div class="card mb-1"><div class="card-body" onclick="copyToClipboard(this)">
+      <span>wget --header 'Authorization: Bearer API_KEY' {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+      <span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
+      </div></div>
+      <div class="card mb-1"><div class="card-body" onclick="copyToClipboard(this)">
+      <span>curl -H 'Accept: application/json' --header 'Authorization: Bearer API_KEY' {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+      <span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
+      </div></div>
+  </div>
+
 </div>
 {% endblocktrans %}
 </div></div>

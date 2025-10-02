@@ -29,6 +29,7 @@ import sqlparse
 from django.conf import settings
 from django.contrib.auth.decorators import permission_required
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.db import connections
 from django.db.models import Q
 from django.http import (
@@ -157,6 +158,62 @@ class ReportList(GridReport):
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         return SQLReport.objects.filter(Q(user=request.user) | Q(public=True))
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.method == "POST":
+            l = json.loads(request.body.decode("utf-8"))
+            # bulk update
+            if "update" in l:
+                ids = l.get("update", {}).get("pk")
+                # user selected all the rows
+                if not ids:
+                    ids = [
+                        p.id
+                        for p in SQLReport.objects.filter(
+                            Q(user=request.user) | Q(public=True)
+                        )
+                    ]
+                for id in ids:
+                    m = SQLReport.objects.using(request.database).get(pk=id)
+                    if (m.user and not m.public and m.user.id != request.user.id) or (
+                        m.user
+                        and m.public
+                        and m.user.id != request.user.id
+                        and not request.user.is_superuser
+                    ):
+                        raise PermissionDenied(
+                            "You can't edit a report you don't own (requires superuser permission)"
+                        )
+            # Delete case
+            elif len(l) == 1 and "delete" in l[0]:
+                for id in l[0].get("delete"):
+                    m = SQLReport.objects.using(request.database).get(pk=id)
+                    if (m.user and not m.public and m.user.id != request.user.id) or (
+                        m.user
+                        and m.public
+                        and m.user.id != request.user.id
+                        and not request.user.is_superuser
+                    ):
+                        raise PermissionDenied(
+                            f"You can't delete report {m.name} as you don't own it (requires superuser permission)"
+                        )
+            # inline edits
+            elif len(l):
+                for i in l:
+                    if "id" in i:
+                        m = SQLReport.objects.using(request.database).get(pk=i["id"])
+                        if (
+                            m.user and not m.public and m.user.id != request.user.id
+                        ) or (
+                            m.user
+                            and m.public
+                            and m.user.id != request.user.id
+                            and not request.user.is_superuser
+                        ):
+                            raise PermissionDenied(
+                                f"You can't edit report {m.name} as you don't own it (requires superuser permission)"
+                            )
+        return super().dispatch(request, *args, **kwargs)
 
 
 class ReportManager(GridReport):
@@ -710,7 +767,7 @@ class ReportManager(GridReport):
                     {
                         "id": m.id,
                         "status": force_str(
-                            _("Private reports can only be edited by their owner")
+                            _("Private reports can only be deleted by their owner")
                         ),
                     }
                 )

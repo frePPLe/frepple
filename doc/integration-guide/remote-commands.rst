@@ -64,7 +64,7 @@ polls the /execute/api/status URL to monitor the status.
 Authentication
 --------------
 
-FrePPLe supports 2 methods for authentication of your user in this API:
+FrePPLe supports 3 methods for authentication of your user:
 
 * | **Basic authentication**
   | See https://en.wikipedia.org/wiki/Basic_access_authentication for more
@@ -76,8 +76,16 @@ FrePPLe supports 2 methods for authentication of your user in this API:
   | With curl you use the argument ``--header 'Authorization: Bearer TOKEN'``
     on the command line.
 
-We strongly recommend the use of a HTTPS configuration of the frePPLe
-server when using this API. Without it your data and login credentials
+* | **API key**
+  | See https://en.wikipedia.org/wiki/API_key for more details.
+  | You generate and manage your API keys from the "admin / My API keys" screen.
+    The API key will be shown to you ONCE when you create it. Copy it and store
+    it privately.
+  | With curl you use the argument ``--header 'Authorization: Bearer APIK_KEY'``
+    on the command line.
+
+HTTPS encryption of the web traffic to the frePPLe server is essential in each
+of these authentication methods. Without it your data and authentication credentials
 are sent unencrypted over the internet.
 
 

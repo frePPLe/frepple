@@ -1950,8 +1950,6 @@ class APIKey(models.Model):
             return obj
         except APIKey.DoesNotExist:
             raise Exception("Key not found")
-        except Exception:
-            raise Exception("Invalid key")
 
     def generateKey(self):
         """

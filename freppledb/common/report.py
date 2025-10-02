@@ -98,6 +98,7 @@ from freppledb import __version__
 from freppledb.boot import getAttributeFields
 from freppledb.common.auth import MultiDBBackend
 from freppledb.common.models import (
+    APIKey,
     User,
     Comment,
     Parameter,
@@ -116,7 +117,7 @@ logger = logging.getLogger(__name__)
 
 # A list of models with some special, administrative purpose.
 # They should be excluded from bulk import, export and erasing actions.
-EXCLUDE_FROM_BULK_OPERATIONS = (Group, User, Comment)
+EXCLUDE_FROM_BULK_OPERATIONS = (Group, User, Comment, APIKey)
 
 
 separatorpattern = re.compile(r"[\s\-_]+")

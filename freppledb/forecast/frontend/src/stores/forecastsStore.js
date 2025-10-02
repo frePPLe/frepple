@@ -21,6 +21,7 @@
  * @property {boolean} loading
  * @property {string|null} error
  * @property {number} dataRowHeight
+ * @property {Object} bucketChanges
  * @property {Array} history
  * @property {Array} comments
  * @property {string} commentType
@@ -432,21 +433,22 @@ export const useForecastsStore = defineStore('forecasts', {
       },
 
       applyForecastChanges() {
-        // // Toggle classes in the grid
-        // angular.element(document).find('#forecasttablebody input.edit-cell')
-        //   .removeClass("edit-cell").addClass("ng-dirty");
-
-        // Update grid
+        // Make custom changest to forecast
         const factor = 1 + this.editForm.increaseByPercent / 100.0;
         const msr = this.editForm.selectedMeasure.name;
 
         for (const bckt in this.buckets) {
           this.buckets[bckt][msr] = parseFloat(this.editForm.setTo);
 
-          console.log(444, bckt, msr, this.buckets[bckt][msr]);
-          if (this.buckets[bckt]["startdate_date"] < $scope.edit_enddate
-            && this.buckets[bckt]["enddate_date"] > $scope.edit_startdate) {
+          const bucketStartDate = new Date(this.buckets[bckt]["startdate"]);
+          const bucketEndDate = new Date(this.buckets[bckt]["enddate"]);
+          const editFormStartDate = new Date(this.editForm.startDate); // Fixed property name
+          const editFormEndDate = new Date(this.editForm.endDate);     // Fixed property name
 
+          // console.log('448 bucket.startdate: ', this.buckets[bckt]["startdate"], ' UTC: ', bucketStartDate.getTime(), 'editForm.startDate: ', this.editForm.startDate, ' UTC: ', editFormStartDate.getTime());
+
+          if (bucketStartDate.getTime() < editFormEndDate.getTime() &&
+            bucketEndDate.getTime() > editFormStartDate.getTime()) {
             switch (this.editForm.mode) {
               case "set":
                 this.buckets[bckt][msr] = msr.discrete ? Math.round(this.editForm.setTo) : this.editForm.setTo;
@@ -473,18 +475,17 @@ export const useForecastsStore = defineStore('forecasts', {
                 break;
             }
 
-            if (msr.name === "forecastoverride") {
-              store.bucket[bckt]["forecasttotal"] =
-                (store.bucket[bckt]["forecastoverride"] != -1
-                  && store.bucket[bckt]["forecastoverride"] != null) ?
-                  store.bucket[bckt]["forecastoverride"] :
-                  store.bucket[bckt]["forecastbaseline"];
+            if (msr === "forecastoverride") {
+              this.buckets[bckt]["forecasttotal"] =
+                (this.buckets[bckt]["forecastoverride"] !== -1
+                  && this.buckets[bckt]["forecastoverride"] != null) ?
+                  this.buckets[bckt]["forecastoverride"] :
+                  this.buckets[bckt]["forecastbaseline"];
             }
 
-
-
+            this.bucketChanges.push(this.buckets[bckt]);
           }
-          if (this.buckets[bckt]["startdate_date"] > $scope.edit_enddate)
+          if (this.buckets[bckt]["startdate_date"] > this.editForm.enddate)
             break;
         }
       },

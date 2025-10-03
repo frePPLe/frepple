@@ -82,8 +82,8 @@ RUN apt-get -y -q update && \
   chgrp -R frepple /etc/apache2 && \
   chmod -R g+w /var/www/html /var/log/apache2 /etc/apache2 /var/run/apache2 && \
   # Pipe the apache log files to the stdout of the container
-  echo 'ErrorLog "|/usr/bin/tee ${APACHE_LOG_DIR}/error.log"' >> /etc/apache2/sites-available/z_frepple.conf && \
-  echo 'CustomLog "|/usr/bin/tee ${APACHE_LOG_DIR}/access.log" "%v %h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\""\n' >> /etc/apache2/sites-available/z_frepple.conf && \
+  echo 'ErrorLog "|/usr/bin/tee -a ${APACHE_LOG_DIR}/error.log"' >> /etc/apache2/sites-available/z_frepple.conf && \
+  echo 'CustomLog "|/usr/bin/tee -a ${APACHE_LOG_DIR}/access.log" "%v %h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\""\n' >> /etc/apache2/sites-available/z_frepple.conf && \
   a2dissite 000-default
 
 EXPOSE 80

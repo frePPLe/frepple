@@ -182,7 +182,7 @@ class ReportList(GridReport):
                         and not request.user.is_superuser
                     ):
                         raise PermissionDenied(
-                            "You can't edit a report you don't own (requires superuser permission)"
+                            _("Only superusers can modify public report they don't own")
                         )
             # Delete case
             elif len(l) == 1 and "delete" in l[0]:
@@ -195,7 +195,7 @@ class ReportList(GridReport):
                         and not request.user.is_superuser
                     ):
                         raise PermissionDenied(
-                            f"You can't delete report {m.name} as you don't own it (requires superuser permission)"
+                            _("Only superusers can modify public report they don't own")
                         )
             # inline edits
             elif len(l):
@@ -211,7 +211,7 @@ class ReportList(GridReport):
                             and not request.user.is_superuser
                         ):
                             raise PermissionDenied(
-                                f"You can't edit report {m.name} as you don't own it (requires superuser permission)"
+                                _("Only superusers can modify public report they don't own")
                             )
         return super().dispatch(request, *args, **kwargs)
 

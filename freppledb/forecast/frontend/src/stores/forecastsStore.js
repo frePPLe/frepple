@@ -432,14 +432,12 @@ export const useForecastsStore = defineStore('forecasts', {
         this.hasChanges = false;
       },
 
-      applyForecastChanges() {
+      applyForecastChanges: function () {
         // Make custom changest to forecast
         const factor = 1 + this.editForm.increaseByPercent / 100.0;
         const msr = this.editForm.selectedMeasure.name;
 
         for (const bckt in this.buckets) {
-          this.buckets[bckt][msr] = parseFloat(this.editForm.setTo);
-
           const bucketStartDate = new Date(this.buckets[bckt]["startdate"]);
           const bucketEndDate = new Date(this.buckets[bckt]["enddate"]);
           const editFormStartDate = new Date(this.editForm.startDate); // Fixed property name
@@ -483,7 +481,8 @@ export const useForecastsStore = defineStore('forecasts', {
                   this.buckets[bckt]["forecastbaseline"];
             }
 
-            this.bucketChanges.push(this.buckets[bckt]);
+            this.bucketChanges[bckt] = this.buckets[bckt];
+            this.hasChanges = true;
           }
           if (this.buckets[bckt]["startdate_date"] > this.editForm.enddate)
             break;
@@ -502,13 +501,12 @@ export const useForecastsStore = defineStore('forecasts', {
           commentType: this.commentType,
           units: this.currentMeasure,
           horizon: this.horizon,
-          buckets: this.buckets,
+          buckets: Object.values(toRaw(this.bucketChanges)), //should be a list of buckets not a dictionary
           horizonbuckets: this.horizonbuckets,
           forecastmethod: this.forecastAttributes.forecastmethod,
           recalculate: recalculate,
         };
-        console.log(427, newData);
-
+        console.log(509, newData);
         try {
           const result = await forecastService.postForecastDetails(newData);
 

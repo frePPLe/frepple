@@ -342,7 +342,10 @@ class APIKey_admin(MultiDBModelAdmin):
             request,
             mark_safe(
                 _(
-                    f'<p>Here is your API key:&nbsp;&nbsp;&nbsp;<span class="fs-5">%s</span></p>'
+                    "<p>Here is your API key:&nbsp;&nbsp;&nbsp;"
+                    '<span style="cursor: pointer" onclick="navigator.clipboard.writeText($(\'#apikey-once\').text())">'
+                    '<span id="apikey-once" class="fs-5">%s</span>'
+                    '&nbsp;&nbsp;<i class="fa fa-clipboard"></i></p>'
                     "<strong>This is the only time you will see it. Copy it now and keep it secret.</strong>"
                 )
                 % obj.secret_token

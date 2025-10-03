@@ -179,7 +179,6 @@ input.ng-dirty {
     <tr id="statusrow" data-ng-if="operationplan.type !== 'STCK'">
       <td><b class="text-capitalize">{{'status'|translate}}</b></td>
       <td>
-        <span data-ng-if="actions.hasOwnProperty('erp_incr_export') && operationplan.status != 'proposed'" class="text-capitalize">{{operationplan.status|translate}}</span>
         <div class="btn-group" role="group">
           <button id="proposedBtn" data-ng-if="(!editable && operationplan.status == 'proposed') || editable" type="button" class="btn btn-primary" data-ng-class="['text-capitalize', {'active': operationplan.status == 'proposed'}]" ng-click="operationplan.status = 'proposed'" data-ng-disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" title="{{'proposed'|translate}}"> <i class="fa fa-unlock"></i></button>
           <button id="approvedBtn" data-ng-if="(!editable && operationplan.status == 'approved') || editable" type="button" class="btn btn-primary" data-ng-class="['text-capitalize', {'active': operationplan.status == 'approved'}]" ng-click="operationplan.status = 'approved'" data-ng-disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" title="{{'approved'|translate}}"><i class="fa fa-unlock-alt"></i></button>

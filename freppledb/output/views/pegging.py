@@ -51,7 +51,6 @@ class ReportByDemand(GridReport):
     hasTimeBuckets = True
     multiselect = False
     help_url = "user-interface/plan-analysis/demand-gantt-report.html"
-    model = Demand
 
     rows = (
         GridFieldText("id", key=True, editable=False, sortable=False, hidden=True),

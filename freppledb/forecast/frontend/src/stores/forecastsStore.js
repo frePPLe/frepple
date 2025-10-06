@@ -56,7 +56,7 @@ export const useForecastsStore = defineStore('forecasts', {
       error: null,
       dataRowHeight: null,
       showTab: 'attributes',
-      bucketChanges: [], // buckets changed in the UI
+      bucketChanges: {}, // buckets changed in the UI
       history: [],
       comments: [],
       commentType: '',
@@ -447,6 +447,8 @@ export const useForecastsStore = defineStore('forecasts', {
 
           if (bucketStartDate.getTime() < editFormEndDate.getTime() &&
             bucketEndDate.getTime() > editFormStartDate.getTime()) {
+            console.log('450 bucket.startdate: ', this.buckets[bckt]["startdate"], 'editForm.startDate: ', this.editForm.startDate);
+
             switch (this.editForm.mode) {
               case "set":
                 this.buckets[bckt][msr] = msr.discrete ? Math.round(this.editForm.setTo) : this.editForm.setTo;
@@ -481,10 +483,13 @@ export const useForecastsStore = defineStore('forecasts', {
                   this.buckets[bckt]["forecastbaseline"];
             }
 
+            console.log(486, bckt);
             this.bucketChanges[bckt] = this.buckets[bckt];
             this.hasChanges = true;
+            console.log(489, toRaw(this.bucketChanges[bckt]));
+
           }
-          if (this.buckets[bckt]["startdate_date"] > this.editForm.enddate)
+          if (bucketStartDate > editFormEndDate)
             break;
         }
       },
@@ -501,7 +506,7 @@ export const useForecastsStore = defineStore('forecasts', {
           commentType: this.commentType,
           units: this.currentMeasure,
           horizon: this.horizon,
-          buckets: Object.values(toRaw(this.bucketChanges)), //should be a list of buckets not a dictionary
+          buckets: Object.values(toRaw(this.bucketChanges)), //list of buckets not a dictionary
           horizonbuckets: this.horizonbuckets,
           forecastmethod: this.forecastAttributes.forecastmethod,
           recalculate: recalculate,

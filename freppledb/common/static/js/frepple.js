@@ -1842,9 +1842,11 @@ var grid = {
   },
 
   findOperandLabel(operand) {
+    console.log($.jgrid.locales[$.jgrid.defaults.locale].search.odata);
     for (const i of $.jgrid.locales[$.jgrid.defaults.locale].search.odata)
       if (i.oper == operand) return i.text;
     if (operand == "ico") return gettext("is child of");
+    if (operand == "isnull") return gettext("is null");
     return operand;
   },
 

@@ -191,17 +191,21 @@ class checkDatabaseHealth(CheckTask):
             # check 1: make sure the max(id) is less than the sequence value
             cursor.execute(
                 """
-                    select s.relname as sequencename,
+                select
+                    s.relname as sequencename,
                     t.relname as tablename,
                     a.attname as columnname,
                     pg_sequences.last_value
-                    from pg_class s
-                    inner join pg_depend d on d.objid=s.oid and d.classid='pg_class'::regclass and d.refclassid='pg_class'::regclass
-                    inner join pg_class t on t.oid=d.refobjid
-                    inner join pg_namespace n on n.oid=t.relnamespace
-                    inner join pg_attribute a on a.attrelid=t.oid and a.attnum=d.refobjsubid
-                    inner join pg_sequences on pg_sequences.sequencename = s.relname
-                    where s.relkind='S' and n.nspname = 'public';
+                from pg_class s
+                inner join pg_depend d on d.objid=s.oid and d.classid='pg_class'::regclass and d.refclassid='pg_class'::regclass
+                inner join pg_class t on t.oid=d.refobjid
+                inner join pg_namespace n on n.oid=t.relnamespace
+                inner join pg_attribute a on a.attrelid=t.oid and a.attnum=d.refobjsubid
+                inner join pg_sequences on pg_sequences.sequencename = s.relname
+                where s.relkind='S'
+                  and n.nspname = 'public'
+                  and has_table_privilege(current_user, format('%I.%I', n.nspname, t.relname), 'select')
+                  and has_sequence_privilege(current_user, format('%I.%I', n.nspname, s.relname), 'update')
                 """
             )
             sequences = [i for i in cursor]
@@ -256,7 +260,10 @@ class checkDatabaseHealth(CheckTask):
                 inner join pg_namespace n on n.oid=t.relnamespace
                 inner join pg_attribute a on a.attrelid=t.oid and a.attnum=d.refobjsubid
                 inner join cte on cte.sequencename = s.relname
-                where s.relkind='S' and n.nspname = 'public'
+                where s.relkind='S'
+                  and n.nspname = 'public'
+                  and has_table_privilege(current_user, format('%I.%I', n.nspname, t.relname), 'select')
+                  and has_sequence_privilege(current_user, format('%I.%I', n.nspname, sequencename), 'update')
                 """
             )
             sequences = [i for i in cursor]

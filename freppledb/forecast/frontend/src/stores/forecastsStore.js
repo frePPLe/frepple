@@ -18,6 +18,8 @@
  * @property {Array} customerTree
  * @property {string} currentSequence
  * @property {string} currentMeasure
+ * @property {string} currentBucket
+ * @property {Array} preselectedBucketIndexes
  * @property {boolean} loading
  * @property {string|null} error
  * @property {number} dataRowHeight
@@ -52,6 +54,8 @@ export const useForecastsStore = defineStore('forecasts', {
       treeExpansion: {item: {0: new Set()}, location: {0: new Set()}, customer: {0: new Set()}},
       currentSequence: null,
       currentMeasure: null,
+      currentBucket: null,
+      preselectedBucketIndexes: [],
       loading: false,
       error: null,
       dataRowHeight: null,
@@ -86,7 +90,8 @@ export const useForecastsStore = defineStore('forecasts', {
 
     getters: {
       measures: () => window.measures,
-      preferences: () => window.preferences
+      preferences: () => window.preferences,
+      currentBucket: () => window.currentbucket
     },
 
     actions: {
@@ -432,65 +437,74 @@ export const useForecastsStore = defineStore('forecasts', {
         this.hasChanges = false;
       },
 
+      getBucketIndexesFromFormDates() {
+        let bucketIndexes = [];
+
+        for (const bckt in this.buckets) {
+          const bucketStartDate = new Date(this.buckets[bckt]["startdate"]);
+          const bucketEndDate = new Date(this.buckets[bckt]["enddate"]);
+          const editFormStartDate = new Date(this.editForm.startDate);
+          const editFormEndDate = new Date(this.editForm.endDate);
+
+          if (bucketStartDate.getTime() < editFormEndDate.getTime() &&
+            bucketEndDate.getTime() > editFormStartDate.getTime()) {
+            bucketIndexes.push(bckt);
+          }
+          if (bucketStartDate > editFormEndDate)
+            break;
+        }
+        return bucketIndexes;
+      },
+
       applyForecastChanges: function () {
         // Make custom changest to forecast
         const factor = 1 + this.editForm.increaseByPercent / 100.0;
         const msr = this.editForm.selectedMeasure.name;
 
-        for (const bckt in this.buckets) {
-          const bucketStartDate = new Date(this.buckets[bckt]["startdate"]);
-          const bucketEndDate = new Date(this.buckets[bckt]["enddate"]);
-          const editFormStartDate = new Date(this.editForm.startDate); // Fixed property name
-          const editFormEndDate = new Date(this.editForm.endDate);     // Fixed property name
-
+        for (const bckt of this.getBucketIndexesFromFormDates()) {
           // console.log('448 bucket.startdate: ', this.buckets[bckt]["startdate"], ' UTC: ', bucketStartDate.getTime(), 'editForm.startDate: ', this.editForm.startDate, ' UTC: ', editFormStartDate.getTime());
 
-          if (bucketStartDate.getTime() < editFormEndDate.getTime() &&
-            bucketEndDate.getTime() > editFormStartDate.getTime()) {
-            console.log('450 bucket.startdate: ', this.buckets[bckt]["startdate"], 'editForm.startDate: ', this.editForm.startDate);
+          console.log('450 bucket.startdate: ', this.buckets[bckt]["startdate"], 'editForm.startDate: ', this.editForm.startDate);
 
-            switch (this.editForm.mode) {
-              case "set":
-                this.buckets[bckt][msr] = msr.discrete ? Math.round(this.editForm.setTo) : this.editForm.setTo;
-                break;
-              case "increase":
-                if (msr.name === "forecastoverride") {
-                  this.buckets[bckt][msr] =
-                    msr.discrete ? Math.round(this.buckets[bckt]["forecasttotal"] + this.editForm.increaseBy) : this.buckets[bckt]["forecasttotal"] + this.editForm.increaseBy;
-                } else {
-                  this.buckets[bckt][msr] =
-                    msr.discrete ? Math.round(this.buckets[bckt][msr] + this.editForm.increaseBy) : this.buckets[bckt][msr] + this.editForm.increaseBy;
-                }
-                break;
-              case "increasePercent":
-                if (msr.name === "forecastoverride") {
-                  this.buckets[bckt][msr] =
-                    msr.discrete ? Math.round(this.buckets[bckt]["forecasttotal"] * factor) : this.buckets[bckt]["forecasttotal"] * factor;
-                } else {
-                  this.buckets[bckt][msr] =
-                    msr.discrete ? Math.round(this.buckets[bckt][msr] * factor) : this.buckets[bckt][msr] * factor;
-                }
-                break;
-              default:
-                break;
-            }
-
-            if (msr === "forecastoverride") {
-              this.buckets[bckt]["forecasttotal"] =
-                (this.buckets[bckt]["forecastoverride"] !== -1
-                  && this.buckets[bckt]["forecastoverride"] != null) ?
-                  this.buckets[bckt]["forecastoverride"] :
-                  this.buckets[bckt]["forecastbaseline"];
-            }
-
-            console.log(486, bckt);
-            this.bucketChanges[bckt] = this.buckets[bckt];
-            this.hasChanges = true;
-            console.log(489, toRaw(this.bucketChanges[bckt]));
-
+          switch (this.editForm.mode) {
+            case "set":
+              this.buckets[bckt][msr] = msr.discrete ? Math.round(this.editForm.setTo) : this.editForm.setTo;
+              break;
+            case "increase":
+              if (msr.name === "forecastoverride") {
+                this.buckets[bckt][msr] =
+                  msr.discrete ? Math.round(this.buckets[bckt]["forecasttotal"] + this.editForm.increaseBy) : this.buckets[bckt]["forecasttotal"] + this.editForm.increaseBy;
+              } else {
+                this.buckets[bckt][msr] =
+                  msr.discrete ? Math.round(this.buckets[bckt][msr] + this.editForm.increaseBy) : this.buckets[bckt][msr] + this.editForm.increaseBy;
+              }
+              break;
+            case "increasePercent":
+              if (msr.name === "forecastoverride") {
+                this.buckets[bckt][msr] =
+                  msr.discrete ? Math.round(this.buckets[bckt]["forecasttotal"] * factor) : this.buckets[bckt]["forecasttotal"] * factor;
+              } else {
+                this.buckets[bckt][msr] =
+                  msr.discrete ? Math.round(this.buckets[bckt][msr] * factor) : this.buckets[bckt][msr] * factor;
+              }
+              break;
+            default:
+              break;
           }
-          if (bucketStartDate > editFormEndDate)
-            break;
+
+          if (msr === "forecastoverride") {
+            this.buckets[bckt]["forecasttotal"] =
+              (this.buckets[bckt]["forecastoverride"] !== -1
+                && this.buckets[bckt]["forecastoverride"] != null) ?
+                this.buckets[bckt]["forecastoverride"] :
+                this.buckets[bckt]["forecastbaseline"];
+          }
+
+          console.log(486, bckt);
+          this.bucketChanges[bckt] = this.buckets[bckt];
+          this.hasChanges = true;
+          console.log(489, toRaw(this.bucketChanges[bckt]));
+
         }
       },
 

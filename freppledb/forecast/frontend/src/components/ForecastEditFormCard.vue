@@ -39,22 +39,22 @@ function validateNumericField(field, value) {
 }
 
 function setSelectedMeasure(measure) {
-  store.editForm.selectedMeasure = measure;
+  store.setEditFormValues("selectedMeasure", measure);
   changeEdit();
 }
 
 function setStartDate(event) {
-  store.editForm.startDate = event.target.value;
+  store.setEditFormValues("startDate", event.target.value);
   changeEdit();
 }
 
 function setEndDate(event) {
-  store.editForm.endDate = event.target.value;
+  store.setEditFormValues("endDate", event.target.value);
   changeEdit();
 }
 
 function setEditMode(mode) {
-  store.editForm.mode = mode;
+  store.setEditFormValues("mode", mode);
   changeEdit();
 }
 
@@ -62,9 +62,9 @@ function setEditValue(field, value) {
   if (value === '') return;
   if (store.editForm.selectedMeasure.formatter === 'number' || store.editForm.selectedMeasure.formatter === 'currency') {
     validateNumericField(field, value);
-    store.editForm[field] = parseFloat(value);
+    store.setEditFormValues(field, parseFloat(value));
   } else {
-    store.editForm[field] = value;
+    store.setEditFormValues(field, value);
   }
   changeEdit();
 }
@@ -100,6 +100,7 @@ function changeEdit() {
   // check validation errors
   const hasValidationErrors = Object.values(validationErrors.value).some(error => error !== '');
   activateApply.value = result && !hasValidationErrors;
+  store.preselectedBucketIndexes.value = store.getBucketIndexesFromFormDates();
 }
 </script>
 

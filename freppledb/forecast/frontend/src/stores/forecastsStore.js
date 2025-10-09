@@ -91,7 +91,7 @@ export const useForecastsStore = defineStore('forecasts', {
     getters: {
       measures: () => window.measures,
       preferences: () => window.preferences,
-      currentBucket: () => window.currentbucket
+      currentBucketName: () => window.currentbucket,
     },
 
     actions: {
@@ -448,12 +448,52 @@ export const useForecastsStore = defineStore('forecasts', {
 
           if (bucketStartDate.getTime() < editFormEndDate.getTime() &&
             bucketEndDate.getTime() > editFormStartDate.getTime()) {
-            bucketIndexes.push(bckt);
+            bucketIndexes.push(parseInt(bckt));
           }
           if (bucketStartDate > editFormEndDate)
             break;
         }
         return bucketIndexes;
+      },
+
+      setPreselectedBucketIndexes() {
+        this.preselectedBucketIndexes.length = 0;
+        this.preselectedBucketIndexes.push(...this.getBucketIndexesFromFormDates());
+      },
+
+      getBucketIndexFromName(bucketName) {
+        if (!bucketName) return 0;
+        let bckt = 0;
+        for (bckt; bckt++; bckt < this.buckets.length) {
+          if (this.buckets[bckt] === bucketName)
+            break;
+        }
+        return bckt;
+      },
+
+      setEditFormValues( field, value) {
+        switch (field) {
+          case "selectedMeasure":
+            this.editForm.selectedMeasure = value;
+            break
+          case "startDate":
+            this.editForm.startDate = value;
+            break;
+          case "endDate":
+            this.editForm.endDate = value;
+            break;
+          case "setTo":
+            this.editForm.setTo = value;
+            break;
+          case "increaseBy":
+            this.editForm.increaseBy = value;
+            break;
+          case "increaseByPercent":
+            this.editForm.increaseByPercent = value;
+            break;
+          default:
+            break;
+        }
       },
 
       applyForecastChanges: function () {

@@ -8,117 +8,9 @@
 * or in the form of compiled binaries.
 */
 
-<template>
-  <div class="row mb-3">
-    <div class="col-md-12">
-      <div class="panel" id="forecastgrid" style="background-color: transparent;">
-        <div class="forecast-grid-container">
-          <!-- Row labels table -->
-          <div class="pull-left" style="border-top-left-radius: 6px; border-bottom-left-radius: 6px;">
-            <table class="table-sm table-hover" id="forecasttabletags">
-              <thead class="thead-default">
-              <tr>
-                <th style="background-color: #aaa; border-top-left-radius: 6px">&nbsp;</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr v-for="(row, index) in rows" :key="index">
-                <td v-if="measures[row].mode_future !== 'edit'"
-                    style="white-space: nowrap; text-transform: capitalize;">
-                  {{ measures[row].label || row }}
-                </td>
-                <td v-else style="white-space: nowrap; text-transform: capitalize;">
-                  {{ measures[row].label || row }}
-                  <input style="width: 0" class="invisible">
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Data table -->
-          <form
-              id="forecasttable"
-              name="forecasttable"
-              style="overflow-x: scroll; border-top-right-radius: 6px; border-bottom-right-radius: 6px;"
-          >
-            <table class="table-sm table-hover" id="fforecasttable">
-              <thead class="thead-default" id="fforecasttablehead">
-              <tr id="row0">
-                <th
-                    v-for="(bucket, bucketIndex) in visibleBuckets"
-                    :key="bucketIndex"
-                    class="text-center text-nowrap"
-                    style="background-color: #aaa"
-                    :title="`${formatDate(bucket.startdate)} - ${formatDate(bucket.enddate)}`"
-                >
-                  {{ bucket.bucket }}
-                </th>
-              </tr>
-              </thead>
-              <tbody id="forecasttablebody">
-              <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
-                <td v-for="(bucket, bucketIndex) in visibleBuckets" :key="bucketIndex">
-                  <template v-if="getCellData(bucket, row, rowIndex) !== undefined">
-                    <!-- Editable cell -->
-                    <template v-if="measures[row].mode_future === 'edit'">
-                      <input
-                          :class="isEditCell(bucketIndex, row) ? 'edit-cell' : ''"
-                          class="smallpadding"
-                          :data-index="bucketIndex"
-                          :data-measure="getBaseMeasureName(row)"
-                          type="number"
-                          :value="getCellValue(bucket, row)"
-                          :tabindex="rowIndex"
-                          @input="updateCellValue(bucket, row, $event)"
-                          @focus="focusEdit($event)"
-                      >
-                      <br>
-                    </template>
-                    <!-- Read-only cell -->
-                    <template v-else>
-                      <div class="text-center text-nowrap">
-                          <span v-if="isBacklogRow(row) && getCellValue(bucket, row) > 0" class="red">
-                            {{ formatCellValue(getCellValue(bucket, row), measures[row]) }}
-                          </span>
-                        <span v-else>
-                            {{ formatCellValue(getCellValue(bucket, row), measures[row]) }}
-                          </span>
-
-                        <!-- Drilldown links -->
-                        <a v-if="shouldShowDrilldownLink(row, bucket)"
-                           :href="getDrilldownUrl(row, bucket)"
-                           @click.prevent.stop="navigateToDrilldown">
-                          <span class="ps-1 fa fa-caret-right"></span>
-                        </a>
-
-                        <!-- Outlier warning -->
-                        <span v-if="isOutlierBucket(bucket)"
-                              class="fa fa-warning text-danger"
-                              :title="outlierString"
-                              @mouseover="showOutlierTooltip">
-                          </span>
-                      </div>
-                    </template>
-                  </template>
-                  <template v-else>
-                    <!-- Empty cell -->
-                  </template>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
-import {computed, onMounted, watch} from 'vue';
+import {computed, onMounted, toRaw, watch} from 'vue';
 import {useForecastsStore} from '../stores/forecastsStore.js';
-
 
 // Store
 const store = useForecastsStore();
@@ -135,12 +27,15 @@ const outlierString = 'Demand outlier'; // You might want to use i18n here
 const visibleBuckets = computed(() => {
   if (!forecastdata) return [];
 
-  const currentBucket = store.currentbucket || 0;
-  return forecastdata.slice(currentBucket);
+  const currentBucketIndex = store.getBucketIndexFromName(store.currentBucketName) || 0;
+  console.log(139, currentBucketIndex, forecastdata.length, store.currentBucketName, store.buckets[currentBucketIndex]);
+  return forecastdata.slice(currentBucketIndex);
 });
+
 const preselectedIndexes = computed(() => {
   if (!forecastdata) return [];
-  return store.getBucketIndexesFromFormDates();
+  store.setPreselectedBucketIndexes();
+  return store.preselectedBucketIndexes;
 });
 
 // Helper functions
@@ -216,6 +111,13 @@ const getCellData = (bucket, row, bucketIndex) => {
   return {value, idx};
 };
 
+const onCellFocus = (bucketIndex, row) => {
+  console.log(222, bucketIndex, row, store.buckets[bucketIndex]);
+  store.setEditFormValues("startDate", new Date(store.buckets[bucketIndex].startdate).toISOString().split('T')[0]);
+  store.setEditFormValues("endDate", new Date(store.buckets[bucketIndex].enddate).toISOString().split('T')[0]);
+  store.editForm.selectedMeasure = measures[row];
+};
+
 const getCellValue = (bucket, row) => {
   const cellData = getCellData(bucket, row, visibleBuckets.value.indexOf(bucket));
   return cellData?.value ?? null;
@@ -248,10 +150,11 @@ const isOutlierBucket = (bucket) => {
 };
 
 const isEditCell = (bucketIndex, row) => {
-  console.log(bucketIndex, store.preselectedBucketIndexes.indexOf(bucketIndex) > -1, row, measures, store.editForm.selectedMeasure);
-  if (store.preselectedBucketIndexes.indexOf(bucketIndex) > -1 && measures[row].name === store.editForm.selectedMeasure)
-    return true;
-  return false;
+  if (!store.editForm.selectedMeasure) return false;
+  if (preselectedIndexes.value.indexOf(bucketIndex) > -1 && row === store.editForm.selectedMeasure.name) {
+    console.log(155, bucketIndex, row, store.editForm.selectedMeasure.name, store.editForm.selectedMeasure.name === row, preselectedIndexes.value, preselectedIndexes.value.indexOf(bucketIndex) > -1);
+  }
+  return preselectedIndexes.value.indexOf(bucketIndex) > -1 && row === store.editForm.selectedMeasure.name;
 }
 
 const shouldShowDrilldownLink = (row, bucket) => {
@@ -293,11 +196,6 @@ const updateCellValue = (bucket, row, event) => {
   }
 };
 
-const focusEdit = (event) => {
-  // Handle focus event for editable cells
-  console.log('Focus edit:', event.target);
-};
-
 const navigateToDrilldown = (event) => {
   const href = event.target.closest('a')?.getAttribute('href');
   if (href) {
@@ -332,3 +230,110 @@ onMounted(() => {
   // Component mounted
 });
 </script>
+
+<template>
+  <div class="row mb-3">
+    <div class="col-md-12">
+      <div class="panel" id="forecastgrid" style="background-color: transparent;">
+        <div class="forecast-grid-container">
+          <!-- Row labels table -->
+          <div class="pull-left" style="border-top-left-radius: 6px; border-bottom-left-radius: 6px;">
+            <table class="table-sm table-hover" id="forecasttabletags">
+              <thead class="thead-default">
+              <tr>
+                <th style="background-color: #aaa; border-top-left-radius: 6px">&nbsp;</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="(row, index) in rows" :key="index">
+                <td v-if="measures[row].mode_future !== 'edit'"
+                    style="white-space: nowrap; text-transform: capitalize;">
+                  {{ measures[row].label || row }}
+                </td>
+                <td v-else style="white-space: nowrap; text-transform: capitalize;">
+                  {{ measures[row].label || row }}
+                  <input style="width: 0" class="invisible">
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Data table -->
+          <form
+              id="forecasttable"
+              name="forecasttable"
+              style="overflow-x: scroll; border-top-right-radius: 6px; border-bottom-right-radius: 6px;"
+          >
+            <table class="table-sm table-hover" id="fforecasttable">
+              <thead class="thead-default" id="fforecasttablehead">
+              <tr id="row0">
+                <th
+                    v-for="(bucket, bucketIndex) in visibleBuckets"
+                    :key="bucketIndex"
+                    class="text-center text-nowrap"
+                    style="background-color: #aaa"
+                    :title="`${formatDate(bucket.startdate)} - ${formatDate(bucket.enddate)}`"
+                >
+                  {{ bucket.bucket }}
+                </th>
+              </tr>
+              </thead>
+              <tbody id="forecasttablebody">
+              <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
+                <td v-for="(bucket, bucketIndex) in visibleBuckets" :key="bucketIndex">
+                  <template v-if="getCellData(bucket, row, rowIndex) !== undefined">
+                    <!-- Editable cell -->
+                    <template v-if="measures[row].mode_future === 'edit'">
+                      <input
+                          :class="isEditCell(bucketIndex, row) ? 'edit-cell' : ''"
+                          class="smallpadding"
+                          :data-index="bucketIndex"
+                          :data-measure="getBaseMeasureName(row)"
+                          type="number"
+                          :value="getCellValue(bucket, row)"
+                          :tabindex="rowIndex"
+                          @input="updateCellValue(bucket, row, $event)"
+                          @focus="onCellFocus(bucketIndex, row)"
+                      >
+                      <br>
+                    </template>
+                    <!-- Read-only cell -->
+                    <template v-else>
+                      <div class="text-center text-nowrap">
+                          <span v-if="isBacklogRow(row) && getCellValue(bucket, row) > 0" class="red">
+                            {{ formatCellValue(getCellValue(bucket, row), measures[row]) }}
+                          </span>
+                        <span v-else>
+                            {{ formatCellValue(getCellValue(bucket, row), measures[row]) }}
+                          </span>
+
+                        <!-- Drilldown links -->
+                        <a v-if="shouldShowDrilldownLink(row, bucket)"
+                           :href="getDrilldownUrl(row, bucket)"
+                           @click.prevent.stop="navigateToDrilldown">
+                          <span class="ps-1 fa fa-caret-right"></span>
+                        </a>
+
+                        <!-- Outlier warning -->
+                        <span v-if="isOutlierBucket(bucket)"
+                              class="fa fa-warning text-danger"
+                              :title="outlierString"
+                              @mouseover="showOutlierTooltip">
+                          </span>
+                      </div>
+                    </template>
+                  </template>
+                  <template v-else>
+                    <!-- Empty cell -->
+                  </template>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

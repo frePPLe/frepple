@@ -111,13 +111,10 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <div
-      class="row mb-1"
-    >
+    <div class="row mb-1">
       <div class="col-auto">
         <div class="dropdown d-inline w-auto">
-          <button id="selectseq" bs-title="{{t('Select panel sequence')}}" class="form-control d-inline w-auto dropdown-toggle text-capitalize" name="sequence" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <!--          {{ $t(dict[currentSequence[0]]) }}{{(currentSequence).length > 1 ? "," : ""}}&nbsp;{{ $t(dict[currentSequence[1]]) }}{{(currentSequence).length > 2 ? "," : ""}}&nbsp;{{ $t(dict[currentSequence[2]]) }}&nbsp;&nbsp;<span class="caret"></span>-->
+          <button id="selectseq" :title="$t('Select panel sequence')" class="form-control d-inline w-auto dropdown-toggle text-capitalize" name="sequence" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             {{ dict[currentSequence[0]] }}{{(currentSequence).length > 1 ? "," : ""}}&nbsp;{{ dict[currentSequence[1]] }}{{(currentSequence).length > 2 ? "," : ""}}&nbsp;{{ dict[currentSequence[2]] }}&nbsp;&nbsp;<span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
@@ -137,7 +134,7 @@ onUnmounted(() => {
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('LCI')">{{ $t(dict['L']) }},&nbsp;{{ $t(dict['C']) }},&nbsp;{{ $t(dict['I']) }}</a>
             </li>
             <li>
-              <a class="dropdown-ite text-capitalize" href="#" v-on:click="store.setCurrentSequence('CIL')">{{ $t(dict['C']) }},&nbsp;{{ $t(dict['I']) }},&nbsp;{{ $t(dict['L']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('CIL')">{{ $t(dict['C']) }},&nbsp;{{ $t(dict['I']) }},&nbsp;{{ $t(dict['L']) }}</a>
             </li>
             <li>
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('IL')">{{ $t(dict['I']) }},&nbsp;{{ $t(dict['L']) }}</a>
@@ -160,7 +157,7 @@ onUnmounted(() => {
           </ul>
         </div>
         &nbsp;&nbsp;
-        <div class="dropdown d-inline w-auto">
+        <div class="dropdown d-inline w-auto ">
           <button id="selectmeasure" :title="$t('Select panel measure')" class="dropdown-toggle form-control d-inline w-auto text-capitalize" name="measure" :value="measure" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             {{ store.measures[currentMeasure].label }}&nbsp;&nbsp;<span class="caret"></span>
           </button>
@@ -172,16 +169,50 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div v-if="currentSequence && currentMeasure && currentHeight" class="row resizable" id="data-row" style="max-height: 50vh; min-height: 150px;" :style="{'height': (currentHeight-31) + 'px'}"
-           ref="resizableContainer">
-        <div class="col-sm-4" v-for="panel in currentSequence" :key="panel">
-          <div>
-            <ForecastSelectionCard v-if="panel" :panelid="panel" />
-          </div>
+      <div id="toolicons" class="col-auto ms-auto hor-align-right ver-align-middle">
+        <form>
+            <button class="btn btn-sm btn-primary me-1" onclick="grid.showBucket()" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'set time horizon'}">
+                <span class="fa fa-clock-o"></span>
+            </button>
+            <button class="btn btn-sm btn-primary me-1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
+                    data-bs-title="{% trans 'Bookmark your favorite report configurations'}">
+                    <span class="fa fa-star"></span>
+                </div>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" id="favoritelist">
+                <li data-ng-repeat="(favname, fav) in preferences.favorites">
+                    <a class="dropdown-item" data-ng-click="openfavorite(favname, $event)">{{favname}}
+                        <div style="float:right"><span class="fa fa-trash-o" data-ng-click="removefavorite(favname, $event)"></span></div>
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item d-flex" >
+                        <button id="favoritesave" data-ng-click="savefavorite()" type="button" disabled class="flex-fill btn btn-primary btn-sm me-1 text-capitalize">{% trans 'save'}</button>
+                        <input class="form-control form-control-sm" id="favoritename" oninput="favorite.check()" type="text" size="15">
+                    </a>
+                </li>
+            </ul>
+            <button class="btn btn-sm d-none d-md-inline-block btn-primary me-1" onclick="url = url_prefix + '/forecast/'; import_show('', undefined, true)"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-title="Import CSV or Excel file">
+                <span id="csvimport" class="fa fa-arrow-up"></span>
+            </button>
+            <button class="btn btn-sm btn-primary me-1" data-ng-click="showCustomizeGrid()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Customize'}">
+                <span class="fa fa-wrench"></span>
+            </button>
+        </form>
+      </div>
+    </div>
 
+    <div class="row resizable" v-if="currentSequence && currentMeasure && currentHeight" id="data-row" style="max-height: 50vh; min-height: 150px;" :style="{'height': (currentHeight-31) + 'px'}"
+          ref="resizableContainer">
+      <div :class="{'col-sm-12': currentSequence.length === 1, 'col-sm-6': currentSequence.length === 2, 'col-sm-4': currentSequence.length === 3}" v-for="panel in currentSequence" :key="panel">
+        <div>
+          <ForecastSelectionCard v-if="panel" :panelid="panel" />
         </div>
       </div>
     </div>
+
     <div class="row">
       <div
         id="resize-handle"

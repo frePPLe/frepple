@@ -58,7 +58,7 @@ function toggleRowVisibility(rowIndex) {
 </script>
 
 <template>
-  <div class="card " :style="{'height':  currentHeight - 31 + 'px'}" style="min-height: 100px; max-height: 50vh" :id="modelName + 'panel'">
+  <div class="card" :style="{'height':  currentHeight - 31 + 'px'}" style="min-height: 100px; max-height: 50vh" :id="modelName + 'panel'">
     <div class="card-header">
       <h5 class="card-title text-capitalize mb-0" translate=""><span>{{ modelName }}</span></h5>
     </div>

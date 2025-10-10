@@ -42,7 +42,7 @@ function undo() {
         <div class="form-inline">
           <button
             id="save"
-            class="btn btn-primary"
+            class="btn btn-primary me-1"
             @click="save(false)"
             data-bs-toggle="tooltip"
             :disabled="!store.hasChanges"
@@ -62,6 +62,21 @@ function undo() {
           </button>
         </div>
       </span>
+      &nbsp;<span>Selection should be put here</span>
+      <!-- copied from angular
+      <span data-ng-repeat="something in sequence">
+          <span data-ng-if="$index > 0">&nbsp;-&nbsp;</span>
+          <span data-ng-if="something=='I'">{{ selecteditem }}{{ selecteditemdescription }}
+            <a data-ng-href='{{urlprefix}}/detail/input/item/{{ selecteditem | urlEncode }}/' onclick='event.stopPropagation()'><span class="fa fa-caret-right"></span></a>
+          </span>
+          <span data-ng-if="something=='L'">{{ selectedlocation }}{{ selectedlocationdescription }}
+            <a data-ng-href='{{urlprefix}}/detail/input/location/{{ selectedlocation | urlEncode }}/' onclick='event.stopPropagation()'><span class="fa fa-caret-right"></span></a>
+          </span>
+          <span data-ng-if="something=='C'">{{ selectedcustomer }}{{ selectedcustomerdescription }}
+            <a data-ng-href='{{urlprefix}}/detail/input/customer/{{ selectedcustomer | urlEncode }}/' onclick='event.stopPropagation()'><span class="fa fa-caret-right"></span></a>
+          </span>
+        </span>
+        -->
       </div>
       <div id="tabs" class="col-auto form-inline ms-auto">
         <ul class="nav nav-tabs">

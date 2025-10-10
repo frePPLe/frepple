@@ -463,12 +463,7 @@ export const useForecastsStore = defineStore('forecasts', {
 
       getBucketIndexFromName(bucketName) {
         if (!bucketName) return 0;
-        let bckt = 0;
-        for (bckt; bckt++; bckt < this.buckets.length) {
-          if (this.buckets[bckt] === bucketName)
-            break;
-        }
-        return bckt;
+        return this.buckets.findIndex(bucket => bucket.bucket === bucketName);
       },
 
       setEditFormValues( field, value) {

@@ -111,11 +111,12 @@ const getCellData = (bucket, row, bucketIndex) => {
   return {value, idx};
 };
 
-const onCellFocus = (bucketIndex, row) => {
-  console.log(222, bucketIndex, row, store.buckets[bucketIndex]);
-  store.setEditFormValues("startDate", new Date(store.buckets[bucketIndex].startdate).toISOString().split('T')[0]);
-  store.setEditFormValues("endDate", new Date(store.buckets[bucketIndex].enddate).toISOString().split('T')[0]);
+const onCellFocus = (bucketName, row) => {
+  console.log(115, visibleBuckets.value, bucketName, row);
+  store.setEditFormValues("startDate", new Date(store.buckets[store.getBucketIndexFromName(bucketName)].startdate).toISOString().split('T')[0]);
+  store.setEditFormValues("endDate", new Date(store.buckets[store.getBucketIndexFromName(bucketName)].enddate).toISOString().split('T')[0]);
   store.editForm.selectedMeasure = measures[row];
+  store.setPreselectedBucketIndexes();
 };
 
 const getCellValue = (bucket, row) => {
@@ -149,12 +150,12 @@ const isOutlierBucket = (bucket) => {
   return bucket.outlier === 1;
 };
 
-const isEditCell = (bucketIndex, row) => {
+const isEditCell = (bucketName, row) => {
   if (!store.editForm.selectedMeasure) return false;
-  if (preselectedIndexes.value.indexOf(bucketIndex) > -1 && row === store.editForm.selectedMeasure.name) {
-    console.log(155, bucketIndex, row, store.editForm.selectedMeasure.name, store.editForm.selectedMeasure.name === row, preselectedIndexes.value, preselectedIndexes.value.indexOf(bucketIndex) > -1);
+  if (preselectedIndexes.value.indexOf(store.getBucketIndexFromName(bucketName)) > -1 && row === store.editForm.selectedMeasure.name) {
+    console.log(155, bucketName, row, store.editForm.selectedMeasure.name, store.editForm.selectedMeasure.name === row, preselectedIndexes.value, preselectedIndexes.value.indexOf(store.getBucketIndexFromName(bucketName)) > -1);
   }
-  return preselectedIndexes.value.indexOf(bucketIndex) > -1 && row === store.editForm.selectedMeasure.name;
+  return preselectedIndexes.value.indexOf(store.getBucketIndexFromName(bucketName)) > -1 && row === store.editForm.selectedMeasure.name;
 }
 
 const shouldShowDrilldownLink = (row, bucket) => {
@@ -286,7 +287,7 @@ onMounted(() => {
                     <!-- Editable cell -->
                     <template v-if="measures[row].mode_future === 'edit'">
                       <input
-                          :class="isEditCell(bucketIndex, row) ? 'edit-cell' : ''"
+                          :class="isEditCell(bucket.bucket, row) ? 'edit-cell' : ''"
                           class="smallpadding"
                           :data-index="bucketIndex"
                           :data-measure="getBaseMeasureName(row)"
@@ -294,7 +295,7 @@ onMounted(() => {
                           :value="getCellValue(bucket, row)"
                           :tabindex="rowIndex"
                           @input="updateCellValue(bucket, row, $event)"
-                          @focus="onCellFocus(bucketIndex, row)"
+                          @focus="onCellFocus(bucket.bucket, row)"
                       >
                       <br>
                     </template>

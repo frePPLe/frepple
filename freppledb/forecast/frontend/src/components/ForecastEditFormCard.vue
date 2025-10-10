@@ -54,11 +54,13 @@ function setEndDate(event) {
 }
 
 function setEditMode(mode) {
+  console.log(57, "setEditMode", mode);
   store.setEditFormValues("mode", mode);
   changeEdit();
 }
 
 function setEditValue(field, value) {
+  console.log(63, "setEditValue", field, value);
   if (value === '') return;
   if (store.editForm.selectedMeasure.formatter === 'number' || store.editForm.selectedMeasure.formatter === 'currency') {
     validateNumericField(field, value);

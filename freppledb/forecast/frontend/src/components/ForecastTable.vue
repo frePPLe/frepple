@@ -28,7 +28,7 @@ const visibleBuckets = computed(() => {
   if (!forecastdata) return [];
 
   const currentBucketIndex = store.getBucketIndexFromName(store.currentBucketName) || 0;
-  console.log(139, currentBucketIndex, forecastdata.length, store.currentBucketName, store.buckets[currentBucketIndex]);
+  console.log(139, currentBucketIndex, forecastdata.length, store.currentBucketName, forecastdata[currentBucketIndex]);
   return forecastdata.slice(currentBucketIndex);
 });
 
@@ -74,9 +74,11 @@ const getBaseMeasureName = (measureName) => {
   return measureName.replace(/[123]ago$/, '');
 };
 
-const getCellData = (bucket, row, bucketIndex) => {
+const getCellData = (bucket, row) => {
   const measure = measures[row];
   if (!measure) return undefined;
+
+  const bucketIndex = store.getBucketIndexFromName(bucket.bucket);
 
   let value, idx;
 
@@ -113,9 +115,13 @@ const getCellData = (bucket, row, bucketIndex) => {
 
 const onCellFocus = (bucketName, row) => {
   console.log(115, visibleBuckets.value, bucketName, row);
-  store.setEditFormValues("startDate", new Date(store.buckets[store.getBucketIndexFromName(bucketName)].startdate).toISOString().split('T')[0]);
-  store.setEditFormValues("endDate", new Date(store.buckets[store.getBucketIndexFromName(bucketName)].enddate).toISOString().split('T')[0]);
-  store.editForm.selectedMeasure = measures[row];
+  const bucketIndex = store.getBucketIndexFromName(bucketName);
+  store.setEditFormValues("startDate", new Date(forecastdata[bucketIndex].startdate).toISOString().split('T')[0]);
+  store.setEditFormValues("endDate", new Date(forecastdata[bucketIndex].enddate).toISOString().split('T')[0]);
+  store.setEditFormValues("selectedMeasure", measures[row]);
+  store.setEditFormValues("mode", "set");
+  store.setEditFormValues("setTo", forecastdata[bucketIndex][row]);
+
   store.setPreselectedBucketIndexes();
 };
 
@@ -142,19 +148,12 @@ const formatNumber = (value, decimals = 0) => {
   });
 };
 
-const isBacklogRow = (row) => {
-  return row.includes('backlog');
-};
+const isBacklogRow = (row) => row.includes('backlog');
 
-const isOutlierBucket = (bucket) => {
-  return bucket.outlier === 1;
-};
+const isOutlierBucket = (bucket) => bucket["outlier"] === 1;
 
 const isEditCell = (bucketName, row) => {
   if (!store.editForm.selectedMeasure) return false;
-  if (preselectedIndexes.value.indexOf(store.getBucketIndexFromName(bucketName)) > -1 && row === store.editForm.selectedMeasure.name) {
-    console.log(155, bucketName, row, store.editForm.selectedMeasure.name, store.editForm.selectedMeasure.name === row, preselectedIndexes.value, preselectedIndexes.value.indexOf(store.getBucketIndexFromName(bucketName)) > -1);
-  }
   return preselectedIndexes.value.indexOf(store.getBucketIndexFromName(bucketName)) > -1 && row === store.editForm.selectedMeasure.name;
 }
 
@@ -184,17 +183,22 @@ const getDrilldownUrl = (row, bucket) => {
 
 const updateCellValue = (bucket, row, event) => {
   const value = event.target.value;
-  const bucketIndex = visibleBuckets.value.indexOf(bucket);
-  const measure = getBaseMeasureName(row);
+  const bucketIndex = store.getBucketIndexFromName(bucket.bucket);
+  store.setEditFormValues("mode", "set");
+  store.setEditFormValues("setTo", value);
+  store.applyForecastChanges();
+  // const bucketIndex = visibleBuckets.value.indexOf(bucket);
+  // const measure = getBaseMeasureName(row);
+  // console.log(182, bucket, row, event.target.value);
 
   // Update the bucket data
-  if (bucketIndex >= 0 && forecastdata[bucketIndex]) {
-    forecastdata[bucketIndex][measure] = value ? Number(value) : null;
-
-    // Mark bucket as changed in store
-    store.bucketChanges[bucketIndex] = forecastdata[bucketIndex];
-    store.hasChanges = true;
-  }
+  // if (bucketIndex >= 0 && forecastdata[bucketIndex]) {
+  //   forecastdata[bucketIndex][measure] = value ? Number(value) : null;
+  //
+  //   // Mark bucket as changed in store
+  //   store.bucketChanges[bucketIndex] = forecastdata[bucketIndex];
+  //   store.hasChanges = true;
+  // }
 };
 
 const navigateToDrilldown = (event) => {

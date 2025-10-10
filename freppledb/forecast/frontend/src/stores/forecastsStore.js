@@ -480,6 +480,9 @@ export const useForecastsStore = defineStore('forecasts', {
           case "setTo":
             this.editForm.setTo = value;
             break;
+          case "mode":
+            this.editForm.mode = value;
+            break;
           case "increaseBy":
             this.editForm.increaseBy = value;
             break;

@@ -219,7 +219,7 @@ class checkDatabaseHealth(CheckTask):
                         """
                     )
                     logger.info(
-                        f"updated sequence {sequencename} for table {tablename}: nexval too low"
+                        f"Updated sequence {sequencename} for table {tablename}: nexval too low"
                     )
 
             # check 2: make sure the sequence has not reached 90% of the max value
@@ -290,7 +290,7 @@ class checkDatabaseHealth(CheckTask):
                     """
                 )
                 logger.info(
-                    f"updated sequence {sequencename} for table {tablename}: reaching max value"
+                    f"Updated sequence {sequencename} for table {tablename}: reaching max value"
                 )
 
             # check 3: Make sure table common_comment remains below 5M records
@@ -324,6 +324,9 @@ class checkDatabaseHealth(CheckTask):
                     (to_delete,),
                 )
                 logger.info(f"Deleted {cursor.rowcount} old comments")
+
+            cursor.execute("vacuum analyze")
+            logger.info(f"Analyzed database")
 
 
 @PlanTaskRegistry.register

@@ -78,14 +78,5 @@ export const forecastService = {
 
   async savePreferences(preferencesData) {
     return api.post('settings/', preferencesData );
-  },
-  //
-  // async infoQuote(quoteName) {
-  //   console.log("Calling info quote service", quoteName);
-  //   return api.post('quote/info/', [quoteName] );
-  // },
-  //
-  // async fetchQuoteData(endpoint) {
-  //   return api.get(endpoint);
-  // }
+  }
 };

@@ -35,10 +35,10 @@ const comments1 = [{"user": "admin ()", "lastmodified": "2025-09-25 06:20:14.060
     <div class="row">
       <div class="col">
         <div style="clear: both;">
-          <input type="submit" role="button" id="commentitem" value="new item comment" v-on:click="setCommentType('item')" aria-disabled="false" style="font-size:12px" :class="(store.commentType==='item') ? 'active': 'inactive'" class="btn btn-primary text-capitalize">
-          <input type="submit" role="button" id="commentitemlocation" value="new item-location comment" v-on:click="setCommentType('itemlocation')" aria-disabled="false" style="font-size:12px" :class="(store.commentType==='itemlocation') ? 'active': 'inactive'" class="btn btn-primary text-capitalize">
-          <input type="submit" role="button" id="commentlocation" value="new location comment" v-on:click="setCommentType('location')" aria-disabled="false" style="font-size:12px" :class="(store.commentType==='location') ? 'active': 'inactive'" class="btn btn-primary text-capitalize">
-          <input type="submit" role="button" id="commentcustomer" value="new customer comment" v-on:click="setCommentType('customer')" aria-disabled="false" style="font-size:12px" :class="(store.commentType==='customer') ? 'active': 'inactive'" class="btn btn-primary text-capitalize">
+          <input type="submit" role="button" id="commentitem" value="new item comment" v-on:click="setCommentType('item')" aria-disabled="false" :class="(store.commentType==='item') ? 'active': 'inactive'" class="btn btn-primary text-capitalize me-1">
+          <input type="submit" role="button" id="commentitemlocation" value="new item-location comment" v-on:click="setCommentType('itemlocation')" aria-disabled="false" :class="(store.commentType==='itemlocation') ? 'active': 'inactive'" class="btn btn-primary text-capitalize me-1">
+          <input type="submit" role="button" id="commentlocation" value="new location comment" v-on:click="setCommentType('location')" aria-disabled="false" :class="(store.commentType==='location') ? 'active': 'inactive'" class="btn btn-primary text-capitalize me-1">
+          <input type="submit" role="button" id="commentcustomer" value="new customer comment" v-on:click="setCommentType('customer')" aria-disabled="false" :class="(store.commentType==='customer') ? 'active': 'inactive'" class="btn btn-primary text-capitalize me-1">
 
           <textarea
             class="form-control mt-2 mb-2"

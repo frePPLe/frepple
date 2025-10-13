@@ -194,10 +194,6 @@ module.exports = function (grunt) {
       operationplandetail: {
         src: ['freppledb/input/static/js/frepple-operationplandetail.js'],
         dest: 'freppledb/input/static/js/frepple-operationplandetail.min.js'
-      },
-      forecast: {
-        src: ['freppledb/forecast/static/js/frepple-forecast.js'],
-        dest: 'freppledb/forecast/static/js/frepple-forecast.min.js'
       }
     },
 
@@ -207,7 +203,12 @@ module.exports = function (grunt) {
       'freppledb/input/static/js/frepple-input.js',
       'freppledb/input/static/js/frepple-operationplandetail.js',
       'freppledb/forecast/static/js/frepple-forecast.js'
-    ]
+    ],
+
+    // Vue compilation
+    shell: {
+      viteBuild: { command: 'pnpm -r build' },
+    }
   });
 
   // Load tasks
@@ -218,9 +219,10 @@ module.exports = function (grunt) {
   // the following 3 are deprecated even in latest versions
   grunt.loadNpmTasks('grunt-contrib-uglify-es');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-shell');
 
   // Register our tasks
   grunt.registerTask('minify', ['concat', 'uglify', 'clean']);
-  grunt.registerTask('default', ['sass', 'concat', 'uglify', 'clean']);
+  grunt.registerTask('default', ['sass', 'concat', 'uglify', 'shell', 'clean']);
 
 };

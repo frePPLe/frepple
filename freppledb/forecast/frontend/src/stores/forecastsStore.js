@@ -28,7 +28,6 @@
  * @property {Array} comments
  * @property {string} commentType
  * @property {string} newComment
- * @property {string} originalComment
  * @property {boolean} hasChanges
  * @property {boolean} forecastAttributes
  * @property {boolean} currency
@@ -65,7 +64,6 @@ export const useForecastsStore = defineStore('forecasts', {
     comments: [],
     commentType: '',
     newComment: '',
-    originalComment: '',
     hasChanges: false,
     horizon: 'week',
     buckets: [], // buckets arriving from backend
@@ -412,14 +410,10 @@ export const useForecastsStore = defineStore('forecasts', {
 
     setCommentType(newCommentType) {
       this.commentType = newCommentType;
-      this.newComment = '';
-      this.originalComment = '';
-      this.hasChanges = false;
     },
 
     updateCommentContent(content) {
       this.newComment = content;
-      this.hasChanges = content !== this.originalComment;
     },
 
     async undo() {

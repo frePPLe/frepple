@@ -166,7 +166,7 @@ class TruncatePlan(PlanTask):
         else:
             # Partial export for a single cluster
             cursor.execute(
-                "create temporary table cluster_keys (name character varying(300), constraint cluster_key_pkey primary key (name))"
+                "create temporary table cluster_keys (name character varying, constraint cluster_key_pkey primary key (name))"
             )
             for i in frepple.items():
                 if i.cluster in cluster:
@@ -293,7 +293,7 @@ class TruncatePlan(PlanTask):
             for i in frepple.operations():
                 if i.cluster in cluster:
                     cursor.execute(
-                        "insert into cluster_keys (name) select substring(%s from 1 for 300)",
+                        "insert into cluster_keys (name) select %s",
                         (i.name,),
                     )
             cursor.execute(
@@ -381,7 +381,7 @@ class ExportProblems(PlanTask):
             yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                 clean_value(entity),
                 clean_value(i.name),
-                clean_value(owner.name)[:300],
+                clean_value(owner.name),
                 clean_value(i.description),
                 str(i.start),
                 str(i.end),
@@ -450,7 +450,7 @@ class ExportConstraints(PlanTask):
                             isinstance(i.owner, frepple.operationplan)
                             and clean_value(i.owner.operation.name)
                             or clean_value(i.owner.name)
-                        )[:300],
+                        ),
                         clean_value(i.description),
                         str(i.start),
                         str(i.end),
@@ -907,34 +907,34 @@ class ExportOperationPlans(PlanTask):
         cursor = connections[database].cursor()
         sql = """
             create temporary table tmp_operationplan (
-                name character varying(1000),
-                type character varying(5) NOT NULL,
-                status character varying(20),
+                name character varying,
+                type character varying NOT NULL,
+                status character varying,
                 quantity numeric(20,8) NOT NULL,
                 startdate timestamp with time zone,
                 enddate timestamp with time zone,
                 criticality numeric(20,8),
                 delay numeric,
                 plan jsonb,
-                source character varying(300),
+                source character varying,
                 lastmodified timestamp with time zone NOT NULL,
-                operation_id character varying(300),
-                owner_id character varying(300),
-                item_id character varying(300),
-                destination_id character varying(300),
-                origin_id character varying(300),
-                location_id character varying(300),
-                supplier_id character varying(300),
-                demand_id character varying(300),
+                operation_id character varying,
+                owner_id character varying,
+                item_id character varying,
+                destination_id character varying,
+                origin_id character varying,
+                location_id character varying,
+                supplier_id character varying,
+                demand_id character varying,
                 due timestamp with time zone,
                 color numeric(20,8),
-                reference character varying(300) NOT NULL,
-                batch character varying(300),
-                remark character varying(300),
+                reference character varying NOT NULL,
+                batch character varying,
+                remark character varying,
                 quantity_completed numeric(20,8)
             """
         if with_fcst:
-            sql += ", forecast character varying(300)"
+            sql += ", forecast character varying"
         for attr in cls.attrs:
             if attr[2] == "boolean":
                 sql += ", %s boolean" % attr[0]
@@ -945,7 +945,7 @@ class ExportOperationPlans(PlanTask):
             elif attr[2] == "number":
                 sql += ", %s numeric(15,6)" % attr[0]
             elif attr[2] == "string":
-                sql += ", %s character varying(300)" % attr[0]
+                sql += ", %s character varying" % attr[0]
             elif attr[2] == "time":
                 sql += ", %s time without time zone" % attr[0]
             elif attr[2] == "date":
@@ -1521,7 +1521,7 @@ class ExportResourcePlans(PlanTask):
                         round(j["setup"], 8),
                         round(j["load"], 8),
                         round(j["free"], 8),
-                        round(j["load_confirmed"], 8)
+                        round(j["load_confirmed"], 8),
                     )
 
         cursor.copy_from(
@@ -1535,7 +1535,7 @@ class ExportResourcePlans(PlanTask):
                 "setup",
                 "load",
                 "free",
-                "load_confirmed"
+                "load_confirmed",
             ),
             size=1024,
             sep="\v",

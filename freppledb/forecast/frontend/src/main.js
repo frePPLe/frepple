@@ -11,4 +11,3 @@ if (import.meta.env.DEV) {
   app.config.performance = true;
 }
 app.mount('#app');
-

@@ -117,7 +117,7 @@ def updateScenarioCount(addition=True):
         return 4
 
     # Update the apache configuration file
-    file_path = "/etc/apache2/sites-enabled/z_frepple.conf"
+    file_path = "/etc/apache2/sites-available/z_frepple.conf"
     if using_apache and os.access(file_path, os.W_OK):
         # Regex to match 'Proxypass "/ws/' and 'Proxypass "/svc/'
         range_pattern = re.compile(r'Proxypass\s+"\/(svc|ws)\/')

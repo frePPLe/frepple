@@ -69,7 +69,7 @@ with the following steps:
    | The FREPPLE_PORT must be unique for each scenario database. It'll be
      used in the next step.
 
-#. | The apache configuration file /etc/apache2/sites-enabled/z_frepple.conf
+#. | The apache configuration file /etc/apache2/sites-available/z_frepple.conf
      needs a section as shown below for each scenario.
    | Edit the file, and replace SCENARIO_KEY and FREPPLE_PORT with the values
      you used in the /etc/frepple/djangosettings.py file.

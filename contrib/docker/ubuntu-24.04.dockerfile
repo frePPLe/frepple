@@ -68,7 +68,7 @@ RUN apt-get -y -q update && \
   apt-get -y -q update && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install postgresql-common postgresql-common postgresql-client-17 postgresql-client-16 postgresql-client-15 postgresql-client-14
 
-  COPY --from=builder /build/*.deb .
+COPY --from=builder /build/*.deb .
 
 RUN apt-get -y -q update && \
   DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt install --no-install-recommends -f -y -q ./*.deb && \
@@ -84,6 +84,7 @@ RUN apt-get -y -q update && \
   # Pipe the apache log files to the stdout of the container
   echo 'ErrorLog "|/usr/bin/tee -a ${APACHE_LOG_DIR}/error.log"' >> /etc/apache2/sites-available/z_frepple.conf && \
   echo 'CustomLog "|/usr/bin/tee -a ${APACHE_LOG_DIR}/access.log" "%v %h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\""\n' >> /etc/apache2/sites-available/z_frepple.conf && \
+  a2disconf other-vhosts-access-log && \
   a2dissite 000-default
 
 EXPOSE 80

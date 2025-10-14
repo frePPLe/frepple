@@ -13,8 +13,10 @@ import { useForecastsStore } from '@/stores/forecastsStore';
 import AttributesTab from './AttributesTab.vue';
 import ForecastTab from './ForecastTab.vue';
 import CommentsTab from './CommentsTab.vue';
+import {computed} from "vue";
 
 const store = useForecastsStore();
+const database = computed(() => window.database);
 
 function save(saveAll) {
   console.log(14, 'save', saveAll);
@@ -62,21 +64,20 @@ function undo() {
           </button>
         </div>
       </span>
-      &nbsp;<span>Selection should be put here</span>
-      <!-- copied from angular
-      <span data-ng-repeat="something in sequence">
-          <span data-ng-if="$index > 0">&nbsp;-&nbsp;</span>
-          <span data-ng-if="something=='I'">{{ selecteditem }}{{ selecteditemdescription }}
-            <a data-ng-href='{{urlprefix}}/detail/input/item/{{ selecteditem | urlEncode }}/' onclick='event.stopPropagation()'><span class="fa fa-caret-right"></span></a>
-          </span>
-          <span data-ng-if="something=='L'">{{ selectedlocation }}{{ selectedlocationdescription }}
-            <a data-ng-href='{{urlprefix}}/detail/input/location/{{ selectedlocation | urlEncode }}/' onclick='event.stopPropagation()'><span class="fa fa-caret-right"></span></a>
-          </span>
-          <span data-ng-if="something=='C'">{{ selectedcustomer }}{{ selectedcustomerdescription }}
-            <a data-ng-href='{{urlprefix}}/detail/input/customer/{{ selectedcustomer | urlEncode }}/' onclick='event.stopPropagation()'><span class="fa fa-caret-right"></span></a>
-          </span>
+
+      <span v-for="(model, index) in store.currentSequence" :key="model">
+        <span v-if="index > 0">&nbsp;-&nbsp;</span>
+        <span v-if="model==='I'">{{ store.item.Name }}{{ store.item.Description ? " (" + store.item.Description + ")" : "" }}
+          <a :href="'/' + database + '/detail/input/item/' + store.item.Name + '/'" onclick.stop=""><span class="fa fa-caret-right"></span></a>
         </span>
-        -->
+        <span v-if="model==='L'">{{ store.location.Name }}{{ store.location.Description ? " (" + store.location.Description + ")" : ""}}
+          <a :href="'/' + database + '/detail/input/location/' + store.location.Name + '/'" onclick.stop=""><span class="fa fa-caret-right"></span></a>
+        </span>
+        <span v-if="model==='C'">{{ store.customer.Name }}{{ store.customer.Description ?  " (" + store.customer.Description + ")" : "" }}
+          <a :href="'/' + database + '/detail/input/customer/' + store.customer.Name + '/'" onclick.stop=""><span class="fa fa-caret-right"></span></a>
+        </span>
+      </span>
+
       </div>
       <div id="tabs" class="col-auto form-inline ms-auto">
         <ul class="nav nav-tabs">

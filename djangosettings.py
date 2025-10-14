@@ -463,6 +463,7 @@ CONTENT_SECURITY_POLICY = os.environ.get(
 )
 X_FRAME_OPTIONS = os.environ.get("FREPPLE_X_FRAME_OPTIONS", "SAMEORIGIN")
 CSRF_COOKIE_SAMESITE = os.environ.get("FREPPLE_CSRF_COOKIE_SAMESITE", "lax")
+SESSION_COOKIE_SAMESITE = os.environ.get("FREPPLE_SESSION_COOKIE_SAMESITE", "lax")
 # Alternative: prohibit embedding in any frame
 #   CONTENT_SECURITY_POLICY = "frame-ancestors 'none'"
 #   X_FRAME_OPTIONS = "DENY"
@@ -470,6 +471,7 @@ CSRF_COOKIE_SAMESITE = os.environ.get("FREPPLE_CSRF_COOKIE_SAMESITE", "lax")
 #   CONTENT_SECURITY_POLICY = "frame-ancestors 'self' mydomain.com;"
 #   X_FRAME_OPTIONS = None
 #   CSRF_COOKIE_SAMESITE = "none"
+#   SESSION_COOKIE_SAMESITE = "none"
 
 # ADVANCED HTTP SECURITY SETTING: Secure cookies
 SESSION_COOKIE_SECURE = (

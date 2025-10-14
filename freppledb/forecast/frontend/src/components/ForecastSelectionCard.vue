@@ -20,6 +20,7 @@ const props = defineProps({
   }
 });
 
+const preferences = computed(() => store.preferences);
 const data = computed(() => (props.panelid === 'I') ? store.itemTree: (props.panelid === 'L') ? store.locationTree: store.customerTree);
 const modelName = (props.panelid === 'I') ? 'item': (props.panelid === 'L') ? 'location': 'customer';
 const currentHeight = computed(() => (store.dataRowHeight || 240));
@@ -79,6 +80,9 @@ function toggleRowVisibility(rowIndex) {
               <span v-if="row.visible" style="white-space:nowrap">{{row[modelName]}}</span>
             </div>
             <div v-if="row.visible" class="ms-auto d-flex justify-content-end text-start">
+              <span v-if="preferences['showdescription']" class="numbervalues ms-auto text-right">
+                {{ row["description"] }}
+              </span>
               <span v-for="val in row.values" :key="val.bucketname" class="numbervalues">{{val.value}}</span>
             </div>
           </div>

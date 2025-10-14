@@ -453,6 +453,8 @@ if not EMAIL_HOST:
     EMAIL_HOST = None
 EMAIL_PORT = int(os.environ.get("FREPPLE_EMAIL_PORT", 25))
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# Fill in this setting with the url of your server to get hyperlinks in emails
+EMAIL_URL_PREFIX = None
 
 # ADVANCED HTTP SECURITY SETTING: Clickjacking security http headers
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options

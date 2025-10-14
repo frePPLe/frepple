@@ -30,7 +30,9 @@ import tokenize
 
 
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 from django.db import connections, DEFAULT_DB_ALIAS
+from django.template import Template, Context
 
 
 def getPostgresVersion():
@@ -159,3 +161,17 @@ def get_databases(includeReporting=False):
         }
     else:
         return settings.DATABASES
+
+
+def sendEmail(to, subject, body, body_html=None, **context):
+    ctx = Context(context)
+    if getattr(settings, "EMAIL_URL_PREFIX", None):
+        ctx.push()
+    msg = EmailMultiAlternatives(
+        subject=Template(subject).render(ctx),
+        body=Template(body).render(ctx),
+        to=to if isinstance(to, (list, tuple)) else (str(to),),
+    )
+    if body_html:
+        msg.attach_alternative(Template(body_html).render(ctx), "text/html")
+    msg.send()

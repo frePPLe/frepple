@@ -38,9 +38,8 @@ function undo() {
 
 <template>
   <div>
-    <div class="row">
-      <div class="col-auto d-flex">
-      <span class="d-flex">
+    <div class="row align-items-center">
+      <div class="col-auto">
         <div class="form-inline">
           <button
             id="save"
@@ -63,9 +62,10 @@ function undo() {
             Undo
           </button>
         </div>
-      </span>
+      </div>
 
-      <span v-for="(model, index) in store.currentSequence" :key="model">
+      <div class="col">
+      <h1 class="d-inline" v-for="(model, index) in store.currentSequence" :key="model">
         <span v-if="index > 0">&nbsp;-&nbsp;</span>
         <span v-if="model==='I'">{{ store.item.Name }}{{ store.item.Description ? " (" + store.item.Description + ")" : "" }}
           <a :href="'/' + database + '/detail/input/item/' + store.item.Name + '/'" onclick.stop=""><span class="fa fa-caret-right"></span></a>
@@ -76,10 +76,10 @@ function undo() {
         <span v-if="model==='C'">{{ store.customer.Name }}{{ store.customer.Description ?  " (" + store.customer.Description + ")" : "" }}
           <a :href="'/' + database + '/detail/input/customer/' + store.customer.Name + '/'" onclick.stop=""><span class="fa fa-caret-right"></span></a>
         </span>
-      </span>
-
+      </h1>
       </div>
-      <div id="tabs" class="col-auto form-inline ms-auto">
+
+      <div id="tabs" class="col-auto form-inline">
         <ul class="nav nav-tabs">
           <li class="nav-item" id="attributestab" role="presentation" @click="store.setShowTab('attributes')">
             <a :class="['text-capitalize', {'nav-link': true, 'active': store.showTab === 'attributes'}]" class="text-capitalize nav-link">

@@ -54,7 +54,6 @@ function setEndDate(event) {
 }
 
 function setEditMode(mode) {
-  console.log(57, "setEditMode", mode);
   store.setEditFormValues("mode", mode);
   changeEdit();
 }
@@ -73,7 +72,6 @@ function setEditValue(field, value) {
 
 function applyEdit() {
   store.applyForecastChanges();
-  // Add your logic here
 }
 
 function changeEdit() {

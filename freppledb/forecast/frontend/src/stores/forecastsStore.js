@@ -414,6 +414,7 @@ export const useForecastsStore = defineStore('forecasts', {
 
     updateCommentContent(content) {
       this.newComment = content;
+      this.hasChanges = true;
     },
 
     async undo() {

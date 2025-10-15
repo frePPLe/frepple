@@ -7,6 +7,11 @@ Release notes
 This release is scheduled for early November.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Demand forecasting
+
+- | Parameter forecast.DeadAfterInactivity has ben redesigned to prevent a forecast
+    from being set as dead if demand exists in the future.
+
 9.11.0 (2025-10-03)
 ===================
 

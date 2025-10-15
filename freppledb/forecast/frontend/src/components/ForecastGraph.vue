@@ -27,15 +27,7 @@ const graphData = computed(() => {
   return buckets;
 });
 
-// Props for rows configuration
-// const props = defineProps({
-//   rows: {
-//     type: Array,
-//     default: () => []
-//   }
-// });
-const rows = store.preferences['rows'];
-
+const rows = store.tableRows;
 const d3 = window.d3;
 
 // Window resize handler

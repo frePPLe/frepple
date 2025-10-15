@@ -32,6 +32,7 @@
  * @property {boolean} forecastAttributes
  * @property {boolean} currency
  * @property {Object} editForm
+ * @property {Array} tableRows
  */
 
 import { defineStore } from 'pinia';
@@ -84,11 +85,28 @@ export const useForecastsStore = defineStore('forecasts', {
       increaseBy: 0.0,
       increaseByPercent: 0.0
     },
+    tableRows: [],
   }),
 
   getters: {
     measures: () => window.measures,
-    preferences: () => window.preferences,
+    preferences(state) {
+      let prefs = window.preferences;
+      if (prefs['rows'] === undefined) {
+        if (state.buckets.length === 0) {
+          state.tableRows = Object.keys(this.measures);
+        } else {
+          const detailDataKeys = Object.keys(state.buckets[0]) || [];
+          const measureKeys = Object.keys(this.measures);
+          console.log(101, detailDataKeys, measureKeys);
+
+          state.tableRows = detailDataKeys.filter(key => measureKeys.includes(key)).sort();
+        }
+      } else {
+        state.tableRows = window.preferences.rows;
+      }
+      return window.preferences;
+    },
     currentBucketName: () => window.currentbucket,
   },
 

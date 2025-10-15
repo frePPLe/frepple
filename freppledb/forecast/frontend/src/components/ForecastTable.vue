@@ -9,14 +9,13 @@
 */
 
 <script setup>
-import {computed, onMounted, toRaw, watch} from 'vue';
+import {computed, onMounted, watch} from 'vue';
 import {useForecastsStore} from '../stores/forecastsStore.js';
 
 // Store
 const store = useForecastsStore();
 
 const forecastdata = store.buckets;
-const rows = store.preferences.rows;
 const measures = store.measures;
 
 // Reactive data
@@ -250,7 +249,7 @@ onMounted(() => {
               </tr>
               </thead>
               <tbody>
-              <tr v-for="(row, index) in rows" :key="index">
+              <tr v-for="(row, index) in store.tableRows" :key="index">
                 <td v-if="measures[row].mode_future !== 'edit'"
                     style="white-space: nowrap; text-transform: capitalize;">
                   {{ measures[row].label || row }}
@@ -285,7 +284,7 @@ onMounted(() => {
               </tr>
               </thead>
               <tbody id="forecasttablebody">
-              <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
+              <tr v-for="(row, rowIndex) in store.tableRows" :key="rowIndex">
                 <td v-for="(bucket, bucketIndex) in visibleBuckets" :key="bucketIndex">
                   <template v-if="getCellData(bucket, row, rowIndex) !== undefined">
                     <!-- Editable cell -->

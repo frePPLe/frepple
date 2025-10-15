@@ -113,10 +113,9 @@ const getCellData = (bucket, row) => {
 };
 
 const onCellFocus = (bucketName, row) => {
-  console.log(115, visibleBuckets.value, bucketName, row);
   const bucketIndex = store.getBucketIndexFromName(bucketName);
-  store.setEditFormValues("startDate", new Date(forecastdata[bucketIndex].startdate).toISOString().split('T')[0]);
-  store.setEditFormValues("endDate", new Date(forecastdata[bucketIndex].enddate).toISOString().split('T')[0]);
+  store.setEditFormValues("startDate", forecastdata[bucketIndex].startdate.split(' ')[0]);
+  store.setEditFormValues("endDate", forecastdata[bucketIndex].enddate.split(' ')[0]);
   store.setEditFormValues("selectedMeasure", measures[row]);
   store.setEditFormValues("mode", "set");
   store.setEditFormValues("setTo", forecastdata[bucketIndex][row]);

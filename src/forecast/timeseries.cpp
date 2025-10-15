@@ -179,8 +179,20 @@ void ForecastSolver::computeBaselineForecast(const Forecast* fcst) {
       qualifiedmethods[numberOfMethods++] = &moving_avg;
   } else if (inactive_buckets >= DeadAfterInactivity) {
     // If the part has not been active recenty, switch to manual or the forced
-    // methods
-    qualifiedmethods[numberOfMethods++] = &manual;
+    // methods unless a new demand is present in the future
+    bool foundFutureDemand=false;
+    for (auto bckt_iter = bckt_end;
+       bckt_iter != end;
+       ++bckt_iter) {
+        if (Measures::orderstotal->getValue(*bckt_iter) +
+            Measures::ordersadjustment->getValue(*bckt_iter) !=
+        0.0) {
+          foundFutureDemand = true;
+          break;
+        }
+    }
+    if (!foundFutureDemand)
+      qualifiedmethods[numberOfMethods++] = &manual;
   } else {
     if (zero > Croston::getMinIntermittence() * historycount) {
       // If there are too many zeros: use croston or moving average.

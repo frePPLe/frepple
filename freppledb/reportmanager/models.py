@@ -32,9 +32,7 @@ class SQLReport(AuditModel):
     id = models.AutoField(_("identifier"), primary_key=True)
     name = models.CharField(_("name"), db_index=True)
     sql = models.TextField(_("SQL query"), null=True, blank=True)
-    description = models.CharField(
-        _("description"), null=True, blank=True
-    )
+    description = models.CharField(_("description"), null=True, blank=True)
     user = models.ForeignKey(
         User,
         verbose_name=_("user"),
@@ -88,7 +86,7 @@ class SQLReport(AuditModel):
                         seq += 1
 
     def save(self, *args, **kwargs):
-        if self.sql and "pg_" in self.sql:
+        if self.sql and "pg_" in self.sql.lower():
             raise Exception("Uhuh... What are trying to do?")
         if not self.id:
             self.refreshColumns()

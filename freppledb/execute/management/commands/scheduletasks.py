@@ -63,7 +63,7 @@ class TaskScheduler:
             ):
                 try:
                     with transaction.atomic(using=db.name, savepoint=False):
-                        with connection.cursor() as cursor:
+                        with connections[db.name].cursor() as cursor:
                             cursor.execute(
                                 "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ"
                             )
@@ -124,7 +124,7 @@ class TaskScheduler:
         created = False
         try:
             with transaction.atomic(using=database, savepoint=False):
-                with connection.cursor() as cursor:
+                with connections[database].cursor() as cursor:
                     cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
                     for schedule in (
                         ScheduledTask.objects.all()

@@ -440,6 +440,7 @@ export const useForecastsStore = defineStore('forecasts', {
       this.commentType = "";
       this.forecastAttributes.forecastmethod = this.forecastAttributes.oldForecastmethod;
       this.hasChanges = false;
+      await this.getForecastDetails(this.store['item'], this.store['location'], this.store['customer']);
     },
 
     getBucketIndexesFromFormDates() {
@@ -584,6 +585,7 @@ export const useForecastsStore = defineStore('forecasts', {
           this.hasChanges = false;
         } else {
           console.warn('Forecast changes not saved');
+          await this.getForecastDetails(this.store['item'], this.store['location'], this.store['customer']);
         }
 
       } catch (error) {

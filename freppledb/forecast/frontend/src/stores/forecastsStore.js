@@ -59,7 +59,7 @@ export const useForecastsStore = defineStore('forecasts', {
     loading: false,
     error: null,
     dataRowHeight: null,
-    showTab: 'attributes',
+    showTab: 'forecast',
     bucketChanges: {}, // buckets changed in the UI
     history: [],
     comments: [],
@@ -447,8 +447,8 @@ export const useForecastsStore = defineStore('forecasts', {
       let bucketIndexes = [];
 
       for (const bckt in this.buckets) {
-        const bucketStartDate = new Date(this.buckets[bckt]["startdate"].replace(" ",'T')+'Z');
-        const bucketEndDate = new Date(this.buckets[bckt]["enddate"].replace(" ",'T')+'Z');
+        const bucketStartDate = new Date(this.buckets[bckt]["startdate"].replace(" ", 'T') + 'Z');
+        const bucketEndDate = new Date(this.buckets[bckt]["enddate"].replace(" ", 'T') + 'Z');
         const editFormStartDate = new Date(this.editForm.startDate);
         const editFormEndDate = new Date(this.editForm.endDate);
 

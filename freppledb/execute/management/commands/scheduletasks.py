@@ -324,8 +324,8 @@ class Command(BaseCommand):
                     )
                 else:
                     try:
-                        body = [f"Task {task.id} completed succesfully.\n"]
-                        body_html = [f"Task {task.id} completed succesfully.<br>"]
+                        body = [f"Task {task.id} completed succesfully."]
+                        body_html = [f"Task {task.id} completed succesfully."]
                         if getattr(settings, "EMAIL_URL_PREFIX", None):
                             url = f"{settings.EMAIL_URL_PREFIX}{"" if database==DEFAULT_DB_ALIAS else "/%s" % database}/execute/"
                             body.append(f"Check the logs at {url}\n")
@@ -401,8 +401,8 @@ class Command(BaseCommand):
                         )
                     else:
                         try:
-                            body = [f"Task {task.id} failed.\n"]
-                            body_html = [f"Task {task.id} failed.<br>"]
+                            body = [f"Task {task.id} failed."]
+                            body_html = [f"Task {task.id} failed."]
                             if getattr(settings, "EMAIL_URL_PREFIX", None):
                                 url = f"{settings.EMAIL_URL_PREFIX}{"" if database==DEFAULT_DB_ALIAS else "/%s" % database}/execute/"
                                 body.append(f"Check the logs at {url}\n")

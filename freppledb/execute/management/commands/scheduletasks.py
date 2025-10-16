@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 from importlib import import_module
 import os
 from random import uniform
@@ -32,10 +32,9 @@ import time
 import zoneinfo
 
 from django.conf import settings
-from django.core.mail import EmailMessage
 from django.core.management import get_commands
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction, DEFAULT_DB_ALIAS, connection, connections
+from django.db import transaction, DEFAULT_DB_ALIAS, connections
 from django.db.utils import OperationalError
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
@@ -45,7 +44,7 @@ from freppledb import __version__
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Scenario
 from freppledb.common.report import GridReport
-from freppledb.common.utils import get_databases
+from freppledb.common.utils import get_databases, sendEmail
 from .runworker import launchWorker, runTask
 
 
@@ -325,12 +324,26 @@ class Command(BaseCommand):
                     )
                 else:
                     try:
-                        EmailMessage(
-                            subject="FrePPLe successfully executed %s on %s"
-                            % (schedule.name, database),
-                            body="Task %s completed succesfully" % task.id,
+                        body = [f"Task {task.id} completed succesfully.\n"]
+                        body_html = [f"Task {task.id} completed succesfully.<br>"]
+                        if getattr(settings, "EMAIL_URL_PREFIX", None):
+                            url = f"{settings.EMAIL_URL_PREFIX}{"" if database==DEFAULT_DB_ALIAS else "/%s" % database}/execute/"
+                            body.append(f"Check the logs at {url}\n")
+                            body_html.append(
+                                f'Check the logs <a style="font-weight:bold" href="{url}">here</a><br>'
+                            )
+                        body.append("Thanks for using frepple!\n")
+                        body_html.append("Thanks for using frepple!<br>")
+                        sendEmail(
                             to=correctedRecipients,
-                        ).send()
+                            subject=(
+                                f"FrePPLe successfully executed {schedule.name}"
+                                if database == DEFAULT_DB_ALIAS
+                                else f"FrePPLe successfully executed {schedule.name} on {database}"
+                            ),
+                            body="\n".join(body),
+                            body_html="<br>".join(body_html),
+                        )
                     except Exception as e:
                         task.message = "Can't send success e-mail: %s" % e
                         task.save(
@@ -388,12 +401,26 @@ class Command(BaseCommand):
                         )
                     else:
                         try:
-                            EmailMessage(
-                                subject="FrePPLe failed executing %s on %s"
-                                % (schedule.name, database),
-                                body="Task %s failed: %s" % (task.id, e),
+                            body = [f"Task {task.id} failed.\n"]
+                            body_html = [f"Task {task.id} failed.<br>"]
+                            if getattr(settings, "EMAIL_URL_PREFIX", None):
+                                url = f"{settings.EMAIL_URL_PREFIX}{"" if database==DEFAULT_DB_ALIAS else "/%s" % database}/execute/"
+                                body.append(f"Check the logs at {url}\n")
+                                body_html.append(
+                                    f'Check the logs <a style="font-weight:bold" href="{url}">here</a><br>'
+                                )
+                            body.append("Thanks for using frepple!\n")
+                            body_html.append("Thanks for using frepple!<br>")
+                            sendEmail(
                                 to=correctedRecipients,
-                            ).send()
+                                subject=(
+                                    f"FrePPLe failed executing {schedule.name}"
+                                    if database == DEFAULT_DB_ALIAS
+                                    else f"FrePPLe failed executing {schedule.name} on {database}"
+                                ),
+                                body="\n".join(body),
+                                body_html="<br>".join(body_html),
+                            )
                         except Exception as e:
                             task.message = "Can't send failure e-mail: %s" % e
                             task.save(

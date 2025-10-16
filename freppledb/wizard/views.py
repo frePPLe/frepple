@@ -27,7 +27,6 @@ import json
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core import management
-from django.core.mail import EmailMessage
 from django.db import connections
 from django.http import HttpResponse, HttpResponseServerError
 from django.http import HttpResponseNotAllowed, HttpResponseRedirect
@@ -39,7 +38,8 @@ from django.views.generic.base import TemplateView
 
 from freppledb import __version__
 from freppledb.common.report import getCurrency, getCurrentDate
-from freppledb.common.models import Bucket, BucketDetail, Parameter, Attribute
+from freppledb.common.models import Bucket, BucketDetail, Parameter
+from freppledb.common.utils import sendEmail
 from freppledb.input.models import (
     Location,
     Item,
@@ -1639,16 +1639,12 @@ class SendSurveyMail:
         # Dispatch to the correct method
         try:
             if request.method == "POST":
-                subject = "Survey received from %s : %s" % (
-                    request.build_absolute_uri()[:-23],
-                    request.POST.get("feeling"),
+                sendEmail(
+                    to="devops@frepple.com",
+                    subject="Survey received from %s : %s"
+                    % (request.build_absolute_uri()[:-23], request.POST.get("feeling")),
+                    body=request.POST.get("comments"),
                 )
-                from_email = settings.DEFAULT_FROM_EMAIL
-                message_txt = request.POST.get("comments")
-                email_message = EmailMessage(
-                    subject, message_txt, from_email, ("devops@frepple.com",)
-                )
-                email_message.send()
                 return HttpResponse("OK")
             else:
                 return HttpResponseNotAllowed(["post"])

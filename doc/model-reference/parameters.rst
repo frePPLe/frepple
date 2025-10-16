@@ -55,6 +55,12 @@ plan.administrativeLeadtime          | Specifies an administrative lead time in 
 plan.autoFenceOperations             | The number of working days the solver should wait for a confirmed
                                        replenishment before generating a proposed order.
                                      | Default: 999 (i.e. wait indefinitely)
+plan.move_approved_early             | The planning algorithm by default will leave approved manufacturing at their scheduled
+                                       date. In the Enterprise and Cloud Edition they will be delayed automatically
+                                       to dates where they are feasible.
+                                     | By setting this parameter to true, the algorithm will also try to reschedule
+                                       them to earlier dates if there are earlier requirements.
+                                     | Default: false (for backward compatibility, but switching it to true is recommended).
 plan.deliveryDuration                | The duration (in working hours) for the delivery shipment of a sales order
                                        to the customer.
                                      | Default: 0 (i.e. the sales order due date is treated as the shipping

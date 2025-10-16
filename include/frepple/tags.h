@@ -157,6 +157,7 @@ class Tags {
   static const Keyword minimum_calendar;
   static const Keyword mininventory;
   static const Keyword minshipment;
+  static const Keyword moveApprovedEarly;
   static const Keyword name;
   static const Keyword nolocationcalendar;
   static const Keyword offset;

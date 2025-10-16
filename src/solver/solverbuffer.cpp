@@ -146,7 +146,11 @@ void SolverCreate::solve(const Buffer* b, void* v) {
       break;
     }
 
-  for (auto cur = b->getFlowPlans().begin();; ++cur) {
+  bool increment_cur = false;
+  for (auto cur = b->getFlowPlans().begin();;) {
+    if (increment_cur) ++cur;
+    increment_cur = true;
+
     if (&*cur && cur->getEventType() == 1) {
       const FlowPlan* fplan = static_cast<const FlowPlan*>(&*cur);
       if (!fplan->getOperationPlan()->getActivated() &&
@@ -176,11 +180,84 @@ void SolverCreate::solve(const Buffer* b, void* v) {
       // Is there a shortage at that date?
       // We have different ways to resolve it:
       //  - Don't resolve the shortage, but wait for existing confirmed supply.
+      //  - Move an approved supply early
       //  - Use existing stock and confirmed supply on alternate materials.
       //  - Scan backward for a producer we can combine with to make a
       //    single batch.
       //  - Scan forward for producer we can replace in a single batch.
       //  - Create new supply for the shortage at that date.
+      if (theDelta < -ROUNDING_ERROR &&
+          Plan::instance().getMoveApprovedEarly()) {
+        b->inspect("before approved scan", indentlevel + 2);
+        const FlowPlan* approved_supply = nullptr;
+        for (Buffer::flowplanlist::const_iterator approvedscan = cur;
+             approvedscan != b->getFlowPlans().end(); ++approvedscan) {
+          if (approvedscan->getEventType() == 1 &&
+              approvedscan->getQuantity() > 0 &&
+              approvedscan->getOperationPlan()->getApproved()) {
+            approved_supply = static_cast<const FlowPlan*>(&*approvedscan);
+            if (getLogLevel() > 1 && firstmsg1) {
+              logger << indentlevel << "Moving approved supply early: "
+                     << approved_supply->getOperationPlan() << endl;
+              firstmsg1 = false;
+            }
+            auto before_move = data->getCommandManager()->setBookmark();
+            auto original_indentlevel = indentlevel++;
+            try {
+              // Move approved supply early
+              ++indentlevel;
+              if (approved_supply->getFlow()->hasType<FlowEnd>())
+                data->getCommandManager()->add(new CommandMoveOperationPlan(
+                    approved_supply->getOperationPlan(), Date::infinitePast,
+                    approved_supply->computeFlowToOperationDate(theDate)));
+              else
+                data->getCommandManager()->add(new CommandMoveOperationPlan(
+                    approved_supply->getOperationPlan(),
+                    approved_supply->computeFlowToOperationDate(theDate),
+                    Date::infinitePast));
+              // Ask solver for feasibility check on existing opplan.
+              logger << indentlevel << " after move"
+                     << approved_supply->getOperationPlan() << endl;
+              checkOperation(approved_supply->getOperationPlan(), *data);
+              // If feasible, we can let the buffer scanner continue its job.
+              //       Repeat should not increment cur.   OK
+              // If not feasible we should rollback, and then let the buffer
+              // scanner repeat
+              //       How we do prevent the solver from retrying moving the
+              //       same approved supply again?
+              //       -> allow 1 scan per cur
+              logger << indentlevel << " after check"
+                     << approved_supply->getOperationPlan() << endl;
+              if (approved_supply->getDate() > theDate) {
+                // Move wasn't feasible. Need to disallow new replenishments.
+                data->getCommandManager()->rollback(before_move);
+                if (getLogLevel() > 1 && firstmsg1)
+                  logger << indentlevel
+                         << "Moving approved supply failed. Earliest date is "
+                         << approved_supply->getDate() << endl;
+                // data->state->a_qty = 0;
+                // data->state->a_date = approved_supply->getDate();
+              } else {
+                // Move was feasible
+                if (getLogLevel() > 1 && firstmsg1)
+                  logger << indentlevel << "Moving approved supply succeeded"
+                         << endl;
+                increment_cur = false;
+                cur = prev;
+              }
+              break;
+            } catch (...) {
+              data->getCommandManager()->rollback(before_move);
+            }
+            indentlevel = original_indentlevel;
+          };
+        };
+        if (!increment_cur)
+          // Re-evaluate the situation after a succesfull move
+          continue;
+        b->inspect("after approved scan", indentlevel + 2);
+      }
+
       bool supply_exists_already = false;
       if (theDelta < -ROUNDING_ERROR && autofence && !data->coordination_run) {
         // Solution zero: wait for confirmed supply that is already existing

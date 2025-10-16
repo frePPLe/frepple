@@ -157,6 +157,7 @@ const Keyword Tags::minimum("minimum");
 const Keyword Tags::minimum_calendar("minimum_calendar");
 const Keyword Tags::mininventory("mininventory");
 const Keyword Tags::minshipment("minshipment");
+const Keyword Tags::moveApprovedEarly("moveApprovedEarly");
 const Keyword Tags::name("name");
 const Keyword Tags::nolocationcalendar("nolocationcalendar");
 const Keyword Tags::offset("offset");

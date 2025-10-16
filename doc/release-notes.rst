@@ -7,6 +7,19 @@ Release notes
 This release is scheduled for early November.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+
+.. rubric:: Production planning
+
+- | The solver algorithm has been enhanced to allow pulling approved
+    manufacturing orders, purchase orders and distribution orders
+    early if the material is needed earlier.
+  | In earlier releases we waited for both approved and confirmed supply.
+    Now we wait only for confirmed supply, and reschedule the
+    approved supply.
+  | This feature is disabled by default for backward compatibility.
+    Change the parameter "plan.move_approved_early" to true to activate
+    this feature.
+
 .. rubric:: Demand forecasting
 
 - | Parameter forecast.DeadAfterInactivity has ben redesigned to prevent a forecast

@@ -1487,9 +1487,8 @@ Choose a smiley and share your comments to help us improve frePPLe!"></textarea>
           <tr>
           <td></td>
           <td>
-          <div style="padding-top: 15px">
+          <div class="pt-1">
           <button class="btn btn-primary" disabled id='submit'>Send us feedback</button>
-          <div style="float: right"><a href="https://www.capterra.com/p/132712/Frepple/" target="_blank" class="btn btn-primary">Write a review on capterra.com</a></div>
           </div>
           </td>
           </tr>

@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+from email.mime.image import MIMEImage
 from importlib.util import find_spec
 from io import StringIO
 import math
@@ -163,15 +164,59 @@ def get_databases(includeReporting=False):
         return settings.DATABASES
 
 
-def sendEmail(to, subject, body, body_html=None, **context):
+def sendEmail(to, subject, body, body_html=None, send=True, **context):
+    # Base message
     ctx = Context(context)
-    if getattr(settings, "EMAIL_URL_PREFIX", None):
-        ctx.push()
+    if getattr(settings, "EMAIL_URL_PREFIX", None) and "url" not in context:
+        ctx.push(url=settings.EMAIL_URL_PREFIX)
     msg = EmailMultiAlternatives(
         subject=Template(subject).render(ctx),
         body=Template(body).render(ctx),
         to=to if isinstance(to, (list, tuple)) else (str(to),),
     )
-    if body_html:
-        msg.attach_alternative(Template(body_html).render(ctx), "text/html")
-    msg.send()
+
+    # Attach logo
+    logo_file = os.path.join(settings.FREPPLE_LOGDIR, "frepple.png")
+    if not os.access(logo_file, os.R_OK):
+        logo_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "static",
+            "img",
+            "frepple.png",
+        )
+    with open(logo_file, "rb") as f:
+        logo = MIMEImage(f.read())
+        logo.add_header("Content-ID", "<logo>")
+        logo.add_header("Content-Disposition", "inline", filename="logo.png")
+        msg.attach(logo)
+
+    # Add mail in HTML format
+    if "url" in ctx:
+        logo_html = (
+            f'<a href="{ctx["url"]}" target="_blank">'
+            '<img height="40" style="display:block; width:auto; height:40px" '
+            'src="cid:logo" alt="frePPLe logo">'
+            "</a>"
+        )
+    else:
+        logo_html = (
+            '<img height="40" style="display:block; width:auto; height:40px" '
+            'src="cid:logo" alt="frePPLe logo">'
+        )
+    msg.attach_alternative(
+        "<html>"
+        "<body>"
+        '<div><table width="100%" cellpadding="0" cellspacing="0" border="0">'
+        '<tr><td align="center">'
+        f"{logo_html}"
+        "</td></tr>"
+        "</table></div><div>"
+        f"{Template(body_html or body).render(ctx)}"
+        "</div></body>"
+        "</html>",
+        "text/html",
+    )
+    if send:
+        msg.send()
+    else:
+        return msg

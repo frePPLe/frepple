@@ -12,6 +12,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Parameter forecast.DeadAfterInactivity has ben redesigned to prevent a forecast
     from being set as dead if demand exists in the future.
 
+.. rubric:: User interface
+
+- | The emails sent out by frepple now look much prettier.
+
 9.11.0 (2025-10-03)
 ===================
 

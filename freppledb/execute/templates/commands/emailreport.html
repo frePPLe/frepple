@@ -31,8 +31,7 @@
     </tr>
     {% endfor %}
     <tr>
-        <td style="padding-left:15px; padding-top:10px"><strong>{% trans 'emails'|capfirst %}:</strong>
-        </td>
+        <td style="padding-left:15px; padding-top:10px">{% trans 'emails'|capfirst %}</td>
         <td style="padding-top:10px; padding-left:15px" colspan="3">
         <input type="email" class="form-control" id="emails" name="recipient" multiple value="{{user_email}}">
         </td>

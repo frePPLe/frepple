@@ -39,6 +39,9 @@ from django.contrib import messages
 from freppledb.common.models import User
 from django.db.models.query_utils import Q
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
+
+from ..utils import sendEmail
 
 
 class ResetPasswordRequestView(FormView):
@@ -64,108 +67,47 @@ class ResetPasswordRequestView(FormView):
         form = self.form_class(request.POST)
         if form.is_valid():
             data = form.cleaned_data["email_or_username"]
-        if self.validate_email_address(data) is True:  # uses the method written above
-            """
-            If the input is an valid email address, then the following code will lookup for users associated with that email address. If found then an email will be sent to the address, else an error message will be printed on the screen.
-            """
+        if self.validate_email_address(data):
             associated_users = User.objects.filter(
                 Q(email__iexact=data) | Q(username__iexact=data)
             )
-            if associated_users.exists():
-                for user in associated_users:
-                    c = {
-                        "email": user.email,
-                        "domain": request.META["HTTP_HOST"],
-                        "site_name": request.META["HTTP_HOST"],
-                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                        "user": user,
-                        "token": default_token_generator.make_token(user),
-                        "protocol": "https" if request.is_secure() else "http",
-                    }
-                    subject = loader.render_to_string(
-                        "registration/password_reset_subject.txt", c
-                    )
-                    # Email subject *must not* contain newlines
-                    subject = "".join(subject.splitlines())
-                    from_email = settings.DEFAULT_FROM_EMAIL
-                    message_txt = loader.render_to_string(
-                        "registration/password_reset_email.txt", c
-                    )
-
-                    email_message = EmailMultiAlternatives(
-                        subject, message_txt, from_email, [user.email]
-                    )
-
-                    try:
-                        message_html = loader.render_to_string(
-                            "registration/password_reset_email.html", c
-                        )
-                    except TemplateDoesNotExist:
-                        pass
-                    else:
-                        email_message.attach_alternative(message_html, "text/html")
-                    email_message.send()
-                result = self.form_valid(form)
-                messages.success(
-                    request,
-                    "An email has been sent to "
-                    + data
-                    + ". Please check your inbox to continue resetting your password.",
+        else:
+            associated_users = User.objects.filter(username=data)
+        if associated_users.exists():
+            for user in associated_users:
+                sendEmail(
+                    to=user.email,
+                    subject=_("Password Reset"),
+                    body=_(
+                        "\nDear {{user}},\n\n"
+                        "You're receiving this email because you requested a password reset for your user account.\n\n"
+                        "Please go to the following page and choose a new password:\n"
+                        "   {{url}}{% url 'reset_password_confirm' uidb64=uid token=token %}\n\n"
+                        "Thanks for using frepple!\n\n"
+                    ),
+                    body_html=_(
+                        "Dear {{user}},<br><br>"
+                        "You're receiving this email because you requested a password reset for your user account.<br>"
+                        'Please choose a new password on <a style="font-weight:bold" href="{{url}}{% url "reset_password_confirm" uidb64=uid token=token %}">this page</a><br>'
+                        "<br>Thanks for using frepple!<br><br>"
+                    ),
+                    user=user.username,
+                    url=f"{"https" if request.is_secure() else "http"}://"
+                    f"{request.META["HTTP_HOST"]}",
+                    uid=urlsafe_base64_encode(force_bytes(user.pk)),
+                    token=default_token_generator.make_token(user),
                 )
-                return result
-            result = self.form_invalid(form)
-            messages.error(request, "No user is associated with this email address")
+            result = self.form_valid(form)
+            messages.success(
+                request,
+                "An email has been sent to "
+                + data
+                + ". Please check your inbox to continue resetting your password.",
+            )
             return result
         else:
-            """
-            If the input is an username, then the following code will lookup for users associated with that user. If found then an email will be sent to the user's address, else an error message will be printed on the screen.
-            """
-            associated_users = User.objects.filter(username=data)
-            if associated_users.exists():
-                for user in associated_users:
-                    c = {
-                        "email": user.email,
-                        "domain": request.META["HTTP_HOST"],  # or your domain
-                        "site_name": request.META["HTTP_HOST"],
-                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                        "user": user,
-                        "token": default_token_generator.make_token(user),
-                        "protocol": "https" if request.is_secure() else "http",
-                    }
-                    subject = loader.render_to_string(
-                        "registration/password_reset_subject.txt", c
-                    )
-                    # Email subject *must not* contain newlines
-                    subject = "".join(subject.splitlines())
-                    from_email = settings.DEFAULT_FROM_EMAIL
-                    message_txt = loader.render_to_string(
-                        "registration/password_reset_email.txt", c
-                    )
-
-                    email_message = EmailMultiAlternatives(
-                        subject, message_txt, from_email, [user.email]
-                    )
-
-                    try:
-                        message_html = loader.render_to_string(
-                            "registration/password_reset_email.html", c
-                        )
-                    except TemplateDoesNotExist:
-                        pass
-                    else:
-                        email_message.attach_alternative(message_html, "text/html")
-                    email_message.send()
-                result = self.form_valid(form)
-                messages.success(
-                    request,
-                    "Email has been sent to "
-                    + data
-                    + "'s email address. Please check your inbox to continue resetting your password.",
-                )
-                return result
-            result = self.form_invalid(form)
-            messages.error(request, "This username does not exist in the system.")
-            return result
+            messages.error(request, "No user is associated with this email address")
+            return self.form_invalid(form)
 
 
 class PasswordResetConfirmView(FormView):

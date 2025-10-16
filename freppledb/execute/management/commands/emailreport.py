@@ -32,7 +32,6 @@ from time import localtime, strftime
 from zipfile import ZipFile, ZIP_DEFLATED
 
 from django.core.management.base import BaseCommand, CommandError
-from django.core.mail import EmailMessage
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
@@ -42,7 +41,7 @@ from freppledb.execute.models import Task
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
 from freppledb.common.report import GridReport, sizeof_fmt
-from freppledb.common.utils import get_databases
+from freppledb.common.utils import get_databases, sendEmail
 from freppledb import __version__
 
 
@@ -213,35 +212,56 @@ class Command(BaseCommand):
                 return
 
             # create message
-            message = EmailMessage(
-                subject="Exported reports",
-                body="",
-                from_email=sender,
+            body = ["Attached are your frepple reports.\n"]
+            body_html = ["Attached are your frepple reports.<br>"]
+            if getattr(settings, "EMAIL_URL_PREFIX", None):
+                body.append("You can also download them directly:")
+                body_html.append("You can also download them directly:")
+                for f in correctedReports:
+                    url = (
+                        f"{settings.EMAIL_URL_PREFIX}"
+                        f"{"" if database==DEFAULT_DB_ALIAS else "/%s" % database}"
+                        f"/execute/downloadfromfolder/1/{basename(f)}/"
+                    )
+                    body.append(f"    {url}")
+                    body_html.append(
+                        f'&nbsp;&nbsp;&nbsp;<a href="{url}">{basename(f)}</a>'
+                    )
+            body.append("\nThanks for using frepple!\n")
+            body_html.append("<br>Thanks for using frepple!<br>")
+            message = sendEmail(
                 to=correctedRecipients,
+                subject=(
+                    "Exported reports"
+                    if database == DEFAULT_DB_ALIAS
+                    else f"Exported reports from {database}"
+                ),
+                body="\n".join(body),
+                body_html="<br>".join(body_html),
+                send=False,
             )
 
-            b = BytesIO()
-            with ZipFile(file=b, mode="w", compression=ZIP_DEFLATED) as zf:
-                processedFiles = 0
-                for f in correctedReports:
-                    task.message = "Compressing file %s" % basename(f)
-                    task.status = (
-                        str(int(processedFiles / len(correctedReports) * 90.0)) + "%"
-                    )
+            with BytesIO() as b:
+                with ZipFile(file=b, mode="w", compression=ZIP_DEFLATED) as zf:
+                    processedFiles = 0
+                    for f in correctedReports:
+                        task.message = "Compressing file %s" % basename(f)
+                        task.status = (
+                            str(int(processedFiles / len(correctedReports) * 90.0))
+                            + "%"
+                        )
+                        task.save(using=database)
+                        zf.write(filename=f, arcname=basename(f))
+                        processedFiles = processedFiles + 1
+                    zf.close()
+
+                    # attach zip file
+                    task.status = "90%"
+                    task.message = "Sending email"
                     task.save(using=database)
-                    zf.write(filename=f, arcname=basename(f))
-                    processedFiles = processedFiles + 1
-                zf.close()
-
-                # attach zip file
-                task.status = "90%"
-                task.message = "Sending email"
-                task.save(using=database)
-                message.attach("reports.zip", b.getvalue(), "application/zip")
-                # send email
-                message.send()
-
-            b.close()
+                    message.attach("reports.zip", b.getvalue(), "application/zip")
+                    # send email
+                    message.send()
 
             # Logging message
             task.processid = None
@@ -262,7 +282,6 @@ class Command(BaseCommand):
                 task.processid = None
                 task.save(using=database)
 
-    # accordion template
     title = _("Publish reports by email")
     index = 1800
     help_url = "command-reference.html#emailreport"

@@ -248,8 +248,8 @@ onMounted(() => {
               </tr>
               </thead>
               <tbody>
-              <tr v-for="(row, index) in store.tableRows" :key="index">
-                <td v-if="measures[row].mode_future !== 'edit'"
+              <tr v-for="row in store.tableRows" :key="row">
+                <td v-if="measures[row]['mode_future'] !== 'edit'"
                     style="white-space: nowrap; text-transform: capitalize;">
                   {{ measures[row].label || row }}
                 </td>

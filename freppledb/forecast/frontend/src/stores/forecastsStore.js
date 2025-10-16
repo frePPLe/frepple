@@ -91,20 +91,20 @@ export const useForecastsStore = defineStore('forecasts', {
   getters: {
     measures: () => window.measures,
     preferences(state) {
-      let prefs = window.preferences;
-      if (prefs['rows'] === undefined) {
-        if (state.buckets.length === 0) {
-          state.tableRows = Object.keys(this.measures);
-        } else {
-          const detailDataKeys = Object.keys(state.buckets[0]) || [];
-          const measureKeys = Object.keys(this.measures);
-          console.log(101, detailDataKeys, measureKeys);
-
-          state.tableRows = detailDataKeys.filter(key => measureKeys.includes(key)).sort();
-        }
-      } else {
-        state.tableRows = window.preferences.rows;
-      }
+      const defaultMeasures = [
+        'orderstotal3ago',
+        'orderstotal2ago',
+        'orderstotal1ago',
+        'ordersadjustment1ago',
+        'orderstotal',
+        'ordersadjustment',
+        'forecastbaseline',
+        'forecastoverride',
+        'ordersplanned',
+        'forecastplanned',
+        'forecasttotal',
+      ];
+      state.tableRows = window.preferences['rows'] === undefined ? defaultMeasures : window.preferences['rows'];
       return window.preferences;
     },
     currentBucketName: () => window.currentbucket,

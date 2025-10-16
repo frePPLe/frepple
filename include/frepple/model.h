@@ -8751,6 +8751,8 @@ class Plan : public Plannable, public Object {
    */
   bool individual_pool_resources = false;
 
+  bool move_approved_early = false;
+
   bool suppress_flowplan_creation = false;
 
   bool minimal_before_current_constraints = false;
@@ -8849,6 +8851,10 @@ class Plan : public Plannable, public Object {
   bool getIndividualPoolResources() const { return individual_pool_resources; }
 
   void setIndividualPoolResources(bool b) { individual_pool_resources = b; }
+
+  bool getMoveApprovedEarly() const { return move_approved_early; }
+
+  void setMoveApprovedEarly(bool b) { move_approved_early = b; }
 
   bool getSuppressFlowplanCreation() const {
     return suppress_flowplan_creation;
@@ -8955,6 +8961,9 @@ class Plan : public Plannable, public Object {
     m->addBoolField<Cls>(
         Tags::individualPoolResources, &Cls::getIndividualPoolResources,
         &Cls::setIndividualPoolResources, BOOL_FALSE, DONT_SERIALIZE);
+    m->addBoolField<Plan>(Tags::moveApprovedEarly, &Plan::getMoveApprovedEarly,
+                          &Plan::setMoveApprovedEarly, BOOL_FALSE,
+                          DONT_SERIALIZE);
     m->addBoolField<Cls>(
         Tags::suppressFlowplanCreation, &Cls::getSuppressFlowplanCreation,
         &Cls::setSuppressFlowplanCreation, BOOL_FALSE, DONT_SERIALIZE);

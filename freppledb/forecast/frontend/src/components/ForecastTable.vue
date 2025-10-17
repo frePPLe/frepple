@@ -22,7 +22,7 @@ const handleApiError = (error) => {
   showError.value = true;
 };
 
-const forecastdata = store.buckets;
+const forecastdata = computed(() => store.buckets);
 const measures = store.measures;
 
 // Reactive data
@@ -31,15 +31,15 @@ const outlierString = 'Demand outlier'; // You might want to use i18n here
 
 // Computed properties
 const visibleBuckets = computed(() => {
-  if (!forecastdata) return [];
+  if (!forecastdata.value) return [];
 
   const currentBucketIndex = store.getBucketIndexFromName(store.currentBucketName) || 0;
-  console.log(139, currentBucketIndex, forecastdata.length, store.currentBucketName, forecastdata[currentBucketIndex]);
-  return forecastdata.slice(currentBucketIndex);
+  console.log(37, currentBucketIndex, forecastdata.value.length, store.currentBucketName, forecastdata.value[currentBucketIndex]);
+  return forecastdata.value.slice(currentBucketIndex);
 });
 
 const preselectedIndexes = computed(() => {
-  if (!forecastdata) return [];
+  if (!forecastdata.value) return [];
   store.setPreselectedBucketIndexes();
   return store.preselectedBucketIndexes;
 });
@@ -52,9 +52,9 @@ const formatDate = (dateString) => {
 };
 
 const getBucket = (thisBucket, yearsAgo) => {
-  if (!forecastdata?.[thisBucket]) return undefined;
+  if (!forecastdata.value?.[thisBucket]) return undefined;
 
-  const bucket = forecastdata[thisBucket];
+  const bucket = forecastdata.value[thisBucket];
   const startDate = new Date(bucket.startdate);
   const endDate = new Date(bucket.enddate);
 
@@ -64,7 +64,7 @@ const getBucket = (thisBucket, yearsAgo) => {
       (365 * 24 * 3600 * 1000 * yearsAgo)
   );
 
-  for (const [index, forecastBucket] of forecastdata.entries()) {
+  for (const [index, forecastBucket] of forecastdata.value.entries()) {
     const bucketStart = new Date(forecastBucket.startdate);
     const bucketEnd = new Date(forecastBucket.enddate);
 
@@ -91,23 +91,23 @@ const getCellData = (bucket, row) => {
   // Handle historical measures (1ago, 2ago, 3ago)
   if (measure.name.includes('1ago')) {
     const years1ago = getBucket(bucketIndex, 1);
-    if (years1ago >= 0 && forecastdata[years1ago]) {
+    if (years1ago >= 0 && forecastdata.value[years1ago]) {
       const baseMeasure = getBaseMeasureName(measure.name);
-      value = forecastdata[years1ago][baseMeasure];
+      value = forecastdata.value[years1ago][baseMeasure];
       idx = years1ago;
     }
   } else if (measure.name.includes('2ago')) {
     const years2ago = getBucket(bucketIndex, 2);
-    if (years2ago >= 0 && forecastdata[years2ago]) {
+    if (years2ago >= 0 && forecastdata.value[years2ago]) {
       const baseMeasure = getBaseMeasureName(measure.name);
-      value = forecastdata[years2ago][baseMeasure];
+      value = forecastdata.value[years2ago][baseMeasure];
       idx = years2ago;
     }
   } else if (measure.name.includes('3ago')) {
     const years3ago = getBucket(bucketIndex, 3);
-    if (years3ago >= 0 && forecastdata[years3ago]) {
+    if (years3ago >= 0 && forecastdata.value[years3ago]) {
       const baseMeasure = getBaseMeasureName(measure.name);
-      value = forecastdata[years3ago][baseMeasure];
+      value = forecastdata.value[years3ago][baseMeasure];
       idx = years3ago;
     }
   } else {
@@ -121,11 +121,11 @@ const getCellData = (bucket, row) => {
 
 const onCellFocus = (bucketName, row) => {
   const bucketIndex = store.getBucketIndexFromName(bucketName);
-  store.setEditFormValues("startDate", forecastdata[bucketIndex].startdate.split(' ')[0]);
-  store.setEditFormValues("endDate", forecastdata[bucketIndex].enddate.split(' ')[0]);
+  store.setEditFormValues("startDate", forecastdata.value[bucketIndex].startdate.split(' ')[0]);
+  store.setEditFormValues("endDate", forecastdata.value[bucketIndex].enddate.split(' ')[0]);
   store.setEditFormValues("selectedMeasure", measures[row]);
   store.setEditFormValues("mode", "set");
-  store.setEditFormValues("setTo", forecastdata[bucketIndex][row]);
+  store.setEditFormValues("setTo", forecastdata.value[bucketIndex][row]);
 
   store.setPreselectedBucketIndexes();
 };
@@ -177,11 +177,11 @@ const shouldShowDrilldownLink = (row, bucket) => {
 };
 
 const getDrilldownUrl = (row, bucket) => {
-  if (!forecastdata?.attributes) return '#';
+  if (!forecastdata.value?.attributes) return '#';
 
-  const item = encodeURIComponent(forecastdata.attributes.item?.[0]?.[1] || 'All items');
-  const location = encodeURIComponent(forecastdata.attributes.location?.[0]?.[1] || 'All locations');
-  const customer = encodeURIComponent(forecastdata.attributes.customer?.[0]?.[1] || 'Generic customer');
+  const item = encodeURIComponent(forecastdata.value.attributes.item?.[0]?.[1] || 'All items');
+  const location = encodeURIComponent(forecastdata.value.attributes.location?.[0]?.[1] || 'All locations');
+  const customer = encodeURIComponent(forecastdata.value.attributes.customer?.[0]?.[1] || 'Generic customer');
 
   return `${window.url_prefix || ''}/forecast/demand/?noautofilter&item__name__ico=${item}&location__name__ico=${location}&customer__name__ico=${customer}&due__gte=${bucket.startdate}&due__lt=${bucket.enddate}`;
 };
@@ -197,11 +197,11 @@ const updateCellValue = (bucket, row, event) => {
   // console.log(182, bucket, row, event.target.value);
 
   // Update the bucket data
-  // if (bucketIndex >= 0 && forecastdata[bucketIndex]) {
-  //   forecastdata[bucketIndex][measure] = value ? Number(value) : null;
+  // if (bucketIndex >= 0 && forecastdata.value[bucketIndex]) {
+  //   forecastdata.value[bucketIndex][measure] = value ? Number(value) : null;
   //
   //   // Mark bucket as changed in store
-  //   store.bucketChanges[bucketIndex] = forecastdata[bucketIndex];
+  //   store.bucketChanges[bucketIndex] = forecastdata.value[bucketIndex];
   //   store.hasChanges = true;
   // }
 };
@@ -219,7 +219,7 @@ const showOutlierTooltip = (event) => {
 };
 
 // Watch for data changes
-watch(() => forecastdata, (newData) => {
+watch(() => forecastdata.value, (newData) => {
   if (newData && typeof newData === 'object') {
     // Update grid settings if currency attributes are present
     if (newData.attributes?.hasOwnProperty('currency')) {

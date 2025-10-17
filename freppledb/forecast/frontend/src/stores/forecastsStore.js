@@ -585,6 +585,7 @@ export const useForecastsStore = defineStore('forecasts', {
         if (responseData.value) {
           console.log('Forecast Changes saved', newData);
           this.hasChanges = false;
+          await this.getForecastDetails(this.item.Name, this.location.Name, this.customer.Name);
         } else {
           console.warn('Forecast changes not saved');
         }

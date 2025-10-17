@@ -351,12 +351,6 @@ watch(graphData, () => {
   });
 }, { deep: true });
 
-// watch(() => store.hasChanges, () => {
-//   nextTick(() => {
-//     render();
-//   });
-// });
-
 // Watch for window resize
 onMounted(() => {
   window.addEventListener('resize', handleResize);
@@ -374,6 +368,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div id="forecastgraph" ref="graphContainer" class="forecast-graph-container"></div>
+  <div class="row mb-3">
+    <div class="col">
+       <div id="forecastgraph" ref="graphContainer" style="height: 250px" class="card forecast-graph-container"></div>
+    </div>
+  </div>
 </template>
 

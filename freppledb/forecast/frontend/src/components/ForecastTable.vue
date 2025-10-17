@@ -243,7 +243,7 @@ onMounted(() => {
 
 <template>
   <div class="row mb-3">
-    <div class="col-md-12">
+    <div class="col">
       <div class="panel" id="forecastgrid" style="background-color: transparent;">
         <div class="forecast-grid-container">
           <!-- Row labels table -->

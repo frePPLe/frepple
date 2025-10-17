@@ -19,13 +19,8 @@ const store = useForecastsStore();
 
 const database = computed(() => window.database);
 
-function save(saveAll) {
-  console.log(14, 'save', saveAll);
-
-  // If on the comments tab and there are changes, save the comment
-  if (store.hasChanges) {
-    store.saveForecastChanges();
-  }
+function save() {
+  if (store.hasChanges) store.saveForecastChanges();
 }
 
 function undo() {
@@ -101,7 +96,7 @@ function undo() {
       </div>
     </div>
 
-    <div class="tab-content mt-3">
+    <div class="tab-content mt-3 mb-3">
       <AttributesTab v-if="store.showTab === 'attributes'" />
       <ForecastTab v-if="store.showTab === 'forecast'" />
       <CommentsTab v-if="store.showTab === 'comments'" />

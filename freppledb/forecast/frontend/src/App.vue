@@ -32,7 +32,7 @@ const globalVar = inject('getURLprefix');
 
 <template>
   <main>
-    <div id="controller">
+    <div>
       <div class="row mb-3">
         <ForecastSelection />
       </div>

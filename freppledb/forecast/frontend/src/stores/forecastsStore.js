@@ -57,7 +57,7 @@ export const useForecastsStore = defineStore('forecasts', {
     currentBucket: null,
     preselectedBucketIndexes: [],
     loading: false,
-    error: {title: "", showError: false, message: "", details: "", type: "error"},
+    error: { title: "", showError: false, message: "", details: "", type: "error" },
     dataRowHeight: null,
     showTab: 'forecast',
     bucketChanges: {}, // buckets changed in the UI
@@ -317,7 +317,7 @@ export const useForecastsStore = defineStore('forecasts', {
           return result;
         } else {
           console.warn('⚠️ No data received from API');
-          store.setError({title: "warning", error: null, message: "'⚠️ No data received from API'", details: "", type: "error"})
+          store.setError({ title: "warning", error: null, message: "'⚠️ No data received from API'", details: "", type: "error" })
           return {};
         }
 
@@ -502,40 +502,47 @@ export const useForecastsStore = defineStore('forecasts', {
       }
     },
 
+    logChange: function (bckt, msr, val) {
+      this.buckets[bckt][msr] = val;
+      if (bckt in this.bucketChanges) {
+        this.bucketChanges[bckt][msr] = val;
+      }
+      else {
+        this.bucketChanges[bckt] = {
+          'bucket': this.buckets[bckt].bucket, [msr]: val
+        };
+      }
+    },
+
     applyForecastChanges: function () {
       // Make custom changes to forecast
-      const factor = 1 + this.editForm.increaseByPercent / 100.0;
       const msr = this.editForm.selectedMeasure.name;
-
       for (const bckt of this.getBucketIndexesFromFormDates()) {
-        // console.log('448 bucket.startdate: ', this.buckets[bckt]["startdate"], ' UTC: ', bucketStartDate.getTime(), 'editForm.startDate: ', this.editForm.startDate, ' UTC: ', editFormStartDate.getTime());
-
-        console.log('450 bucket.startdate: ', this.buckets[bckt]["startdate"], 'editForm.startDate: ', this.editForm.startDate);
-
         switch (this.editForm.mode) {
           case "set":
-            this.buckets[bckt][msr] = msr.discrete ? Math.round(this.editForm.setTo) : this.editForm.setTo;
+            this.logChange(bckt, msr,
+              msr.discrete ?
+                Math.round(this.editForm.setTo) :
+                this.editForm.setTo
+            );
             break;
           case "increase":
-            if (msr.name === "forecastoverride") {
-              this.buckets[bckt][msr] =
-                msr.discrete ? Math.round(this.buckets[bckt]["forecasttotal"] + this.editForm.increaseBy) : this.buckets[bckt]["forecasttotal"] + this.editForm.increaseBy;
-            } else {
-              this.buckets[bckt][msr] =
-                msr.discrete ? Math.round(this.buckets[bckt][msr] + this.editForm.increaseBy) : this.buckets[bckt][msr] + this.editForm.increaseBy;
-            }
+            this.logChange(bckt, msr,
+              msr.discrete ?
+                Math.round(this.buckets[bckt][msr.name === "forecastoverride" ? "forecasttotal" : msr] + this.editForm.increaseBy) :
+                this.buckets[bckt][msr.name === "forecastoverride" ? "forecasttotal" : msr] + this.editForm.increaseBy
+            );
             break;
           case "increasePercent":
-            if (msr.name === "forecastoverride") {
-              this.buckets[bckt][msr] =
-                msr.discrete ? Math.round(this.buckets[bckt]["forecasttotal"] * factor) : this.buckets[bckt]["forecasttotal"] * factor;
-            } else {
-              this.buckets[bckt][msr] =
-                msr.discrete ? Math.round(this.buckets[bckt][msr] * factor) : this.buckets[bckt][msr] * factor;
-            }
+            const factor = 1 + this.editForm.increaseByPercent / 100.0;
+            this.logChange(bckt, msr,
+              msr.discrete ?
+                Math.round(this.buckets[bckt][msr.name === "forecastoverride" ? "forecasttotal" : msr] * factor) :
+                this.buckets[bckt][msr.name === "forecastoverride" ? "forecasttotal" : msr] * factor
+            );
             break;
           default:
-            break;
+            return;
         }
 
         if (msr === "forecastoverride") {
@@ -545,12 +552,7 @@ export const useForecastsStore = defineStore('forecasts', {
               this.buckets[bckt]["forecastoverride"] :
               this.buckets[bckt]["forecastbaseline"];
         }
-
-        console.log(486, bckt);
-        this.bucketChanges[bckt] = this.buckets[bckt];
         this.hasChanges = true;
-        console.log(489, toRaw(this.bucketChanges[bckt]));
-
       }
     },
 
@@ -558,12 +560,10 @@ export const useForecastsStore = defineStore('forecasts', {
       console.log('Saving forecast changes');
       this.loading = true;
       this.clearError();
-      const newData = {
+      let newData = {
         item: this.item.Name,
         location: this.location.Name,
         customer: this.customer.Name,
-        comment: this.newComment,
-        commenttype: this.commentType,
         units: this.currentMeasure,
         horizon: this.horizon,
         buckets: Object.values(toRaw(this.bucketChanges)), //list of buckets not a dictionary
@@ -571,6 +571,10 @@ export const useForecastsStore = defineStore('forecasts', {
         forecastmethod: this.forecastAttributes.forecastmethod,
         recalculate: recalculate,
       };
+      if (this.newComment != '') {
+        newData.comment = this.newComment;
+        newData.commenttype = this.commentType;
+      }
       try {
         const result = await forecastService.postForecastDetails(newData);
 
@@ -592,7 +596,7 @@ export const useForecastsStore = defineStore('forecasts', {
 
       } catch (error) {
         console.error('API Error:', error);
-/*
+        /*
         // Create detailed error information uncomment to activate full details
         let details = '';
 
@@ -622,12 +626,12 @@ export const useForecastsStore = defineStore('forecasts', {
         if (error.code) {
           details += `Error Code: ${error.code}\n`;
         }
-*/
+        */
         this.setError({
           title: 'Forecast Update Failed',
           message: 'Unable to apply forecast changes',
           // details: details || error.message,    // to see full trace uncomment this line and comment the next line.
-          details: error.response?.data?.message  || error.message,
+          details: error.response?.data?.message || error.message,
           type: 'error'
         });
       } finally {

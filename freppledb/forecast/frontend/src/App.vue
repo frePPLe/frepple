@@ -9,13 +9,22 @@
 */
 
 <script setup>
+import { inject, computed } from "vue";
 import { useForecastsStore } from './stores/forecastsStore.js';
-
-import {inject} from 'vue';
 import ForecastSelection from "@/components/ForecastSelection.vue";
 import ForecastDetails from "@/components/ForrecastDetails.vue";
+import ErrorDialog from '@common/components/ErrorDialog.vue';
 
 const store = useForecastsStore();
+
+const showErrorDialog = computed({
+  get: () => !!store.error && store.error.showError,
+  set: (value) => {
+    if (!value) {
+      store.error = { showError: false, message: '', details: '', type: 'error', title: '' };
+    }
+  }
+});
 
 const globalVar = inject('getURLprefix');
 
@@ -30,6 +39,15 @@ const globalVar = inject('getURLprefix');
       <div class="row mb-3">
         <ForecastDetails />
       </div>
+      <ErrorDialog
+          v-model="showErrorDialog"
+          :title="store.error?.title || 'Error'"
+          :message="store.error?.message || ''"
+          :details="store.error?.details || ''"
+          :type="store.error?.type || 'error'"
+          :show-details="!!(store.error?.details)"
+      />
     </div>
   </main>
 </template>
+

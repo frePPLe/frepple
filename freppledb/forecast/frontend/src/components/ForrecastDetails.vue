@@ -9,13 +9,14 @@
 */
 
 <script setup lang="js">
+import {computed} from "vue";
 import { useForecastsStore } from '@/stores/forecastsStore';
 import AttributesTab from './AttributesTab.vue';
 import ForecastTab from './ForecastTab.vue';
 import CommentsTab from './CommentsTab.vue';
-import {computed} from "vue";
 
 const store = useForecastsStore();
+
 const database = computed(() => window.database);
 
 function save(saveAll) {
@@ -42,41 +43,41 @@ function undo() {
       <div class="col-auto">
         <div class="form-inline">
           <button
-            id="save"
-            class="btn btn-primary me-1"
-            @click="save(false)"
-            data-bs-toggle="tooltip"
-            :disabled="!store.hasChanges"
-            :class="store.hasChanges ? 'btn-danger' : ''"
-            data-bs-original-title="Save changes to the database">
+              id="save"
+              class="btn btn-primary me-1"
+              @click="save(false)"
+              data-bs-toggle="tooltip"
+              :disabled="!store.hasChanges"
+              :class="store.hasChanges ? 'btn-danger' : ''"
+              data-bs-original-title="Save changes to the database">
             Save
           </button>
           <button
-            id="undo"
-            class="btn btn-primary"
-            @click="undo()"
-            data-bs-toggle="tooltip"
-            :disabled="!store.hasChanges"
-            :class="store.hasChanges ? 'btn-danger' : ''"
-            data-bs-original-title="Undo changes">
+              id="undo"
+              class="btn btn-primary"
+              @click="undo()"
+              data-bs-toggle="tooltip"
+              :disabled="!store.hasChanges"
+              :class="store.hasChanges ? 'btn-danger' : ''"
+              data-bs-original-title="Undo changes">
             Undo
           </button>
         </div>
       </div>
 
       <div class="col">
-      <h1 class="d-inline" v-for="(model, index) in store.currentSequence" :key="model">
-        <span v-if="index > 0">&nbsp;-&nbsp;</span>
-        <span v-if="model==='I'">{{ store.item.Name }}{{ store.item.Description ? " (" + store.item.Description + ")" : "" }}
+        <h1 class="d-inline" v-for="(model, index) in store.currentSequence" :key="model">
+          <span v-if="index > 0">&nbsp;-&nbsp;</span>
+          <span v-if="model==='I'">{{ store.item.Name }}{{ store.item.Description ? " (" + store.item.Description + ")" : "" }}
           <a :href="'/' + database + '/detail/input/item/' + store.item.Name + '/'" onclick.stop=""><span class="fa fa-caret-right"></span></a>
         </span>
-        <span v-if="model==='L'">{{ store.location.Name }}{{ store.location.Description ? " (" + store.location.Description + ")" : ""}}
+          <span v-if="model==='L'">{{ store.location.Name }}{{ store.location.Description ? " (" + store.location.Description + ")" : ""}}
           <a :href="'/' + database + '/detail/input/location/' + store.location.Name + '/'" onclick.stop=""><span class="fa fa-caret-right"></span></a>
         </span>
-        <span v-if="model==='C'">{{ store.customer.Name }}{{ store.customer.Description ?  " (" + store.customer.Description + ")" : "" }}
+          <span v-if="model==='C'">{{ store.customer.Name }}{{ store.customer.Description ?  " (" + store.customer.Description + ")" : "" }}
           <a :href="'/' + database + '/detail/input/customer/' + store.customer.Name + '/'" onclick.stop=""><span class="fa fa-caret-right"></span></a>
         </span>
-      </h1>
+        </h1>
       </div>
 
       <div id="tabs" class="col-auto form-inline">

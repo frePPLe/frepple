@@ -21,7 +21,7 @@
  * @property {string} currentBucket
  * @property {Array} preselectedBucketIndexes
  * @property {boolean} loading
- * @property {string|null} error
+ * @property {Object} error
  * @property {number} dataRowHeight
  * @property {Object} bucketChanges
  * @property {Array} history
@@ -57,7 +57,7 @@ export const useForecastsStore = defineStore('forecasts', {
     currentBucket: null,
     preselectedBucketIndexes: [],
     loading: false,
-    error: null,
+    error: {title: "", showError: false, message: "", details: "", type: "error"},
     dataRowHeight: null,
     showTab: 'attributes',
     bucketChanges: {}, // buckets changed in the UI
@@ -317,6 +317,7 @@ export const useForecastsStore = defineStore('forecasts', {
           return result;
         } else {
           console.warn('⚠️ No data received from API');
+          store.setError({title: "warning", error: null, message: "'⚠️ No data received from API'", details: "", type: "error"})
           return {};
         }
 
@@ -555,7 +556,7 @@ export const useForecastsStore = defineStore('forecasts', {
     async saveForecastChanges(recalculate = false) {
       console.log('Saving forecast changes');
       this.loading = true;
-      this.error = null;
+      this.clearError();
       const newData = {
         item: this.item.Name,
         location: this.location.Name,
@@ -590,12 +591,49 @@ export const useForecastsStore = defineStore('forecasts', {
 
       } catch (error) {
         console.error('API Error:', error);
-        this.error = error.message;
-        throw error;
+/*
+        // Create detailed error information uncomment to activate full details
+        let details = '';
+
+        // Add stack trace if available
+        if (error.stack) {
+          details += `Stack Trace:\n${error.stack}\n\n`;
+        }
+
+        // Add axios response details if available
+        if (error.response) {
+          details += `HTTP Status: ${error.response.status}\n`;
+          details += `Status Text: ${error.response.statusText}\n`;
+          details += `Response Data: ${JSON.stringify(error.response.data, null, 2)}\n`;
+          details += `Response Headers: ${JSON.stringify(error.response.headers, null, 2)}\n\n`;
+        }
+
+        // Add request details if available
+        if (error.config) {
+          details += `Request URL: ${error.config.url}\n`;
+          details += `Request Method: ${error.config.method?.toUpperCase()}\n`;
+          if (error.config.data) {
+            details += `Request Data: ${JSON.stringify(JSON.parse(error.config.data), null, 2)}\n`;
+          }
+        }
+
+        // Add any additional error properties
+        if (error.code) {
+          details += `Error Code: ${error.code}\n`;
+        }
+*/
+        this.setError({
+          title: 'Forecast Update Failed',
+          message: 'Unable to apply forecast changes',
+          // details: details || error.message,    // to see full trace uncomment this line and comment the next line.
+          details: error.response?.data?.message  || error.message,
+          type: 'error'
+        });
       } finally {
         this.loading = false;
       }
     },
+
 
     async savePreferences() {
       this.loading = true;
@@ -625,9 +663,13 @@ export const useForecastsStore = defineStore('forecasts', {
         }
 
       } catch (error) {
-        console.error('API Error:', error);
-        this.error = error.message;
-        throw error;
+        console.log('API Error:', error);
+        this.setError({
+          title: 'Forecast Update Failed',
+          message: 'Unable to apply forecast changes',
+          details: error.response?.data?.message || error.message,
+          type: 'error',
+        });
       } finally {
         this.loading = false;
       }
@@ -636,5 +678,25 @@ export const useForecastsStore = defineStore('forecasts', {
     setShowTab(tab) {
       this.showTab = tab;
     },
-  },
+
+    setError(errorData) {
+      this.error = {
+        showError: true,
+        title: errorData.title || 'Error',
+        message: errorData.message || 'An error occurred',
+        details: errorData.details || '',
+        type: errorData.type || 'error'
+      };
+    },
+
+    clearError() {
+      this.error = {
+        showError: false,
+        message: '',
+        details: '',
+        type: 'error',
+        title: ''
+      };
+    }
+  }
 })

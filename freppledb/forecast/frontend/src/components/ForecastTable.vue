@@ -9,24 +9,14 @@
 */
 
 <script setup>
-import {computed, ref, onMounted, watch} from 'vue';
+import {computed, onMounted, watch} from 'vue';
 import {useForecastsStore} from '../stores/forecastsStore.js';
 
 const store = useForecastsStore();
 
-const showError = ref(true);
-const errorMessage = ref('');
-
-const handleApiError = (error) => {
-  errorMessage.value = error.message;
-  showError.value = true;
-};
-
 const forecastdata = computed(() => store.buckets);
 const measures = store.measures;
 
-// Reactive data
-const currentYear = new Date().getFullYear();
 const outlierString = 'Demand outlier'; // You might want to use i18n here
 
 // Computed properties

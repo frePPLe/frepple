@@ -9,8 +9,9 @@
 */
 
 <script setup>
-import {computed, onMounted, watch} from 'vue';
+import {computed} from 'vue';
 import {useForecastsStore} from '../stores/forecastsStore.js';
+import {isBlank} from "@common/utils.js";
 
 const store = useForecastsStore();
 
@@ -78,7 +79,7 @@ const getCellData = (bucket, row) => {
 
   let value, idx;
 
-  // Handle historical measures (1ago, 2ago, 3ago)
+  // Handle historical measures (1 year ago, 2 years ago, 3 years ago)
   if (measure.name.includes('1ago')) {
     const years1ago = getBucket(bucketIndex, 1);
     if (years1ago >= 0 && forecastdata.value[years1ago]) {
@@ -150,7 +151,14 @@ const isOutlierBucket = (bucket) => bucket["outlier"] === 1;
 const isEditCell = (bucketName, row) => {
   if (!store.editForm.selectedMeasure) return false;
   return preselectedIndexes.value.indexOf(store.getBucketIndexFromName(bucketName)) > -1 && row === store.editForm.selectedMeasure.name;
-}
+};
+
+const isDirtyCell = (bucketName, row) => {
+  if (!store.editForm.selectedMeasure) return false;
+  const bucketIndex = store.getBucketIndexFromName(bucketName).toString();
+  console.log(159, bucketIndex, row, Object.keys(store.bucketChanges), store.bucketChanges[bucketIndex]);
+  return Object.keys(store.bucketChanges).includes(bucketIndex) && store.bucketChanges[bucketIndex][row] !== undefined;
+};
 
 const shouldShowDrilldownLink = (row, bucket) => {
   const value = getCellValue(bucket, row);
@@ -167,33 +175,20 @@ const shouldShowDrilldownLink = (row, bucket) => {
 };
 
 const getDrilldownUrl = (row, bucket) => {
-  if (!forecastdata.value?.attributes) return '#';
+  if (!forecastdata.value) return '#';
 
-  const item = encodeURIComponent(forecastdata.value.attributes.item?.[0]?.[1] || 'All items');
-  const location = encodeURIComponent(forecastdata.value.attributes.location?.[0]?.[1] || 'All locations');
-  const customer = encodeURIComponent(forecastdata.value.attributes.customer?.[0]?.[1] || 'Generic customer');
-
+  const item = encodeURIComponent(store.item.Name || 'All items');
+  const location = encodeURIComponent(store.location.Name || 'All locations');
+  const customer = encodeURIComponent(store.customer.Name || 'Generic customer');
+  // TODO bucket is current bucket but should be 1 year ago if we are showing values from 1 year ago in the table
   return `${window.url_prefix || ''}/forecast/demand/?noautofilter&item__name__ico=${item}&location__name__ico=${location}&customer__name__ico=${customer}&due__gte=${bucket.startdate}&due__lt=${bucket.enddate}`;
 };
 
 const updateCellValue = (bucket, row, event) => {
   const value = event.target.value;
-  const bucketIndex = store.getBucketIndexFromName(bucket.bucket);
   store.setEditFormValues("mode", "set");
   store.setEditFormValues("setTo", value);
   store.applyForecastChanges();
-  // const bucketIndex = visibleBuckets.value.indexOf(bucket);
-  // const measure = getBaseMeasureName(row);
-  // console.log(182, bucket, row, event.target.value);
-
-  // Update the bucket data
-  // if (bucketIndex >= 0 && forecastdata.value[bucketIndex]) {
-  //   forecastdata.value[bucketIndex][measure] = value ? Number(value) : null;
-  //
-  //   // Mark bucket as changed in store
-  //   store.bucketChanges[bucketIndex] = forecastdata.value[bucketIndex];
-  //   store.hasChanges = true;
-  // }
 };
 
 const navigateToDrilldown = (event) => {
@@ -203,32 +198,31 @@ const navigateToDrilldown = (event) => {
   }
 };
 
-const showOutlierTooltip = (event) => {
-  // Handle outlier tooltip
-  // You might want to implement tooltip functionality here
-};
+// const showOutlierTooltip = (event) => {
+//   // Handle outlier tooltip
+// };
 
-// Watch for data changes
-watch(() => forecastdata.value, (newData) => {
-  if (newData && typeof newData === 'object') {
-    // Update grid settings if currency attributes are present
-    if (newData.attributes?.hasOwnProperty('currency')) {
-      // Handle currency formatting
-    }
-  }
-}, {deep: true});
-
-watch(() => grid?.setPristine, (newValue) => {
-  if (newValue === true) {
-    // Handle grid reset
-    grid.setPristine = false;
-  }
-});
-
-// Lifecycle
-onMounted(() => {
-  // Component mounted
-});
+// // Watch for data changes
+// watch(() => forecastdata.value, (newData) => {
+//   if (newData && typeof newData === 'object') {
+//     // Update grid settings if currency attributes are present
+//     if (newData.attributes?.hasOwnProperty('currency')) {
+//       // Handle currency formatting
+//     }
+//   }
+// }, {deep: true});
+//
+// watch(() => grid?.setPristine, (newValue) => {
+//   if (newValue === true) {
+//     // Handle grid reset
+//     grid.setPristine = false;
+//   }
+// });
+//
+// // Lifecycle
+// onMounted(() => {
+//   // Component mounted
+// });
 </script>
 
 <template>
@@ -286,7 +280,7 @@ onMounted(() => {
                     <!-- Editable cell -->
                     <template v-if="measures[row].mode_future === 'edit'">
                       <input
-                          :class="isEditCell(bucket.bucket, row) ? 'edit-cell' : ''"
+                          :class="{'edit-cell' : isEditCell(bucket.bucket, row), 'ng-dirty': isDirtyCell(bucket.bucket, row)}"
                           class="smallpadding"
                           :data-index="bucketIndex"
                           :data-measure="getBaseMeasureName(row)"

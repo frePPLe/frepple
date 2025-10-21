@@ -82,9 +82,6 @@ const showImportDialog = (event) => {
 const showCustomizeGrid = (event) => {
   // event.preventDefault();
 
-  // This would typically call an Angular function, you may need to adapt this
-  // based on how customization is handled in your Vue app
-
   window.showCustomizeGrid();
 };
 
@@ -133,6 +130,7 @@ const saveFavorite = (event) => {
 };
 
 const openFavorite = (favName, event) => {
+  console.log(136, favName);
   // event.preventDefault();
   const currentMeasure = store.preferences.favorites[favName]['measure'];
   const currentSequence = store.preferences.favorites[favName]['sequence'];
@@ -281,8 +279,8 @@ onUnmounted(() => {
             </div>
           </button>
           <ul class="dropdown-menu dropdown-menu-end" id="favoritelist">
-            <li data-ng-repeat="(favname, fav) in preferences.favorites">
-              <a class="dropdown-item" @click="openFavorite(favname, $event)">{{favname}}
+            <li v-for="(favname) in Object.keys(store.preferences.favorites)" :key="fav">
+              <a class="dropdown-item" @click="openFavorite(favName, $event)">{{favname}}
                 <div style="float:right"><span class="fa fa-trash-o" @click="removeFavorite(favname, $event)"></span></div>
               </a>
             </li>

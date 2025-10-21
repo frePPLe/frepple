@@ -156,7 +156,7 @@ const isEditCell = (bucketName, row) => {
 const isDirtyCell = (bucketName, row) => {
   if (!store.editForm.selectedMeasure) return false;
   const bucketIndex = store.getBucketIndexFromName(bucketName).toString();
-  console.log(159, bucketIndex, row, Object.keys(store.bucketChanges), store.bucketChanges[bucketIndex]);
+
   return Object.keys(store.bucketChanges).includes(bucketIndex) && store.bucketChanges[bucketIndex][row] !== undefined;
 };
 

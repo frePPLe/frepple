@@ -1,0 +1,353 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <current>2026-01-01T00:00:00</current>
+    <moveApprovedEarly>true</moveApprovedEarly>
+	
+    <!-- case 1: Move an approved PO early, and it's feasible -->
+    <suppliers>
+        <supplier name="1. Supplier">
+            <itemsuppliers>
+                <itemsupplier>
+                    <item name="1. item"/>
+                    <leadtime>P7D</leadtime>
+                    <priority>2</priority>
+                </itemsupplier>
+            </itemsuppliers>
+        </supplier>
+    </suppliers>
+    <demands>
+        <demand name="1. sales order">
+            <quantity>20</quantity>
+            <minshipment>20</minshipment>
+            <due>2026-02-01T00:00:00</due>
+            <priority>1</priority>
+            <item name="1. item"/>
+            <location name="factory"/>
+            <status>open</status>
+        </demand>
+    </demands>
+    <operationplans>
+        <operationplan ordertype="PO" end="2026-08-01T00:00:00" reference="PO #1" quantity="100" status="approved">
+            <item name="1. item"/>
+            <location name="factory"/>
+            <supplier name="1. Supplier"/>
+        </operationplan>
+    </operationplans>
+
+    <!-- case 2: Move an approved PO early, and it's not feasible -->
+    <suppliers>
+        <supplier name="2. Supplier">
+            <itemsuppliers>
+                <itemsupplier>
+                    <item name="2. item"/>
+                    <leadtime>P7D</leadtime>
+                    <priority>2</priority>
+                </itemsupplier>
+            </itemsuppliers>
+        </supplier>
+    </suppliers>
+    <demands>
+        <demand name="2. sales order">
+            <quantity>20</quantity>
+            <minshipment>20</minshipment>
+            <due>2026-01-01T00:00:00</due>
+            <priority>1</priority>
+            <item name="2. item"/>
+            <location name="factory"/>
+            <status>open</status>
+        </demand>
+    </demands>
+    <operationplans>
+        <operationplan ordertype="PO" end="2026-08-01T00:00:00" reference="PO #2" quantity="100" status="approved">
+            <item name="2. item"/>
+            <location name="factory"/>
+            <supplier name="2. Supplier"/>
+        </operationplan>
+    </operationplans>
+
+    <!-- case 3: Move approved MOs and POs early, and it's feasible -->
+    <suppliers>
+        <supplier name="3. Supplier">
+            <itemsuppliers>
+                <itemsupplier>
+                    <item name="3. component"/>
+                    <leadtime>P7D</leadtime>
+                    <priority>2</priority>
+                </itemsupplier>
+            </itemsuppliers>
+        </supplier>
+    </suppliers>
+    <demands>
+        <demand name="3. sales order">
+            <quantity>20</quantity>
+            <minshipment>20</minshipment>
+            <due>2026-02-01T00:00:00</due>
+            <priority>1</priority>
+            <item name="3. item"/>
+            <location name="factory"/>
+            <status>open</status>
+        </demand>
+    </demands>
+    <operations>
+        <operation name="3. Make item" xsi:type="operation_fixed_time">
+            <item name="3. item"/>
+            <location name="factory"/>
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="3. item subassembly"/>
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+            <duration>P3D</duration>
+        </operation>
+        <operation name="3. Make item subassembly" xsi:type="operation_fixed_time">
+            <item name="3. item subassembly"/>
+            <location name="factory"/>
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="3. component"/>
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+            <duration>P3D</duration>
+        </operation>
+    </operations>
+    <operationplans>
+        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #3" quantity="100" status="approved">
+            <item name="3. component"/>
+            <location name="factory"/>
+            <supplier name="3. Supplier"/>
+        </operationplan>
+        <operationplan ordertype="MO" end="2026-07-20T00:00:00" reference="MO #3" quantity="100" status="approved">
+            <operation name="3. Make item subassembly"/>
+        </operationplan>
+        <operationplan ordertype="MO" end="2026-08-03T00:00:00" reference="MO #3 sub" quantity="100" status="approved">
+            <operation name="3. Make item"/>
+        </operationplan>
+    </operationplans>	
+	
+    <!-- case 4: Move approved MOs and POs early, and it's not feasible -->
+    <suppliers>
+        <supplier name="4. Supplier">
+            <itemsuppliers>
+                <itemsupplier>
+                    <item name="4. component"/>
+                    <leadtime>P7D</leadtime>
+                    <priority>2</priority>
+                </itemsupplier>
+            </itemsuppliers>
+        </supplier>
+    </suppliers>
+    <demands>
+        <demand name="4. sales order">
+            <quantity>20</quantity>
+            <minshipment>20</minshipment>
+            <due>2026-01-01T00:00:00</due>
+            <priority>1</priority>
+            <item name="4. item"/>
+            <location name="factory"/>
+            <status>open</status>
+        </demand>
+    </demands>
+    <operations>
+        <operation name="4. Make item" xsi:type="operation_fixed_time">
+            <item name="4. item"/>
+            <location name="factory"/>
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="4. item subassembly"/>
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+            <duration>P3D</duration>
+        </operation>
+        <operation name="4. Make item subassembly" xsi:type="operation_fixed_time">
+            <item name="4. item subassembly"/>
+            <location name="factory"/>
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="4. component"/>
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+            <loads>
+                <load>
+                    <resource name="4. Resource">
+                        <maximum_calendar name="Capacity">
+                            <buckets>
+                                <bucket start="2026-03-01T00:00:00">
+                                    <value>1</value>
+                                </bucket>
+                            </buckets>
+                        </maximum_calendar>
+                    </resource>
+                </load>
+            </loads>
+            <duration>P3D</duration>
+        </operation>
+    </operations>
+    <operationplans>
+        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #4" quantity="100" status="approved">
+            <item name="4. component"/>
+            <location name="factory"/>
+            <supplier name="4. Supplier"/>
+        </operationplan>
+        <operationplan ordertype="MO" end="2026-07-20T00:00:00" reference="MO #4" quantity="100" status="approved">
+            <operation name="4. Make item subassembly"/>
+        </operationplan>
+        <operationplan ordertype="MO" end="2026-08-03T00:00:00" reference="MO #4 sub" quantity="100" status="approved">
+            <operation name="4. Make item"/>
+        </operationplan>
+    </operationplans>
+    
+    <!-- case 5: Move approved MOs and POs early, and it's not feasible -->
+    <suppliers>
+        <supplier name="5. Supplier">
+            <itemsuppliers>
+                <itemsupplier>
+                    <item name="5. component"/>
+                    <leadtime>P7D</leadtime>
+                    <priority>2</priority>
+                </itemsupplier>
+            </itemsuppliers>
+        </supplier>
+    </suppliers>
+    <demands>
+        <demand name="5. sales order">
+            <quantity>20</quantity>
+            <minshipment>20</minshipment>
+            <due>2026-01-01T00:00:00</due>
+            <priority>1</priority>
+            <item name="5. item"/>
+            <location name="factory"/>
+            <status>open</status>
+        </demand>
+    </demands>
+    <operations>
+        <operation name="5. Make item" xsi:type="operation_fixed_time">
+            <item name="5. item"/>
+            <location name="factory"/>
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="5. item subassembly"/>
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+            <duration>P3D</duration>
+        </operation>
+        <operation name="5. Make item subassembly" xsi:type="operation_fixed_time">
+            <item name="5. item subassembly"/>
+            <location name="factory"/>
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="5. component"/>
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+            <duration>P3D</duration>
+        </operation>
+    </operations>
+    <operationplans>
+        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #5" quantity="100" status="approved">
+            <item name="5. component"/>
+            <location name="factory"/>
+            <supplier name="5. Supplier"/>
+        </operationplan>
+        <operationplan ordertype="MO" end="2026-07-20T00:00:00" reference="MO #5" quantity="100" status="approved">
+            <operation name="5. Make item subassembly"/>
+        </operationplan>
+        <operationplan ordertype="MO" end="2026-08-03T00:00:00" reference="MO #5 sub" quantity="100" status="approved">
+            <operation name="5. Make item"/>
+        </operationplan>
+    </operationplans>
+	
+   <!-- case 6: MO's and PO's don't cover the full quantity. -->
+    <suppliers>
+        <supplier name="6. Supplier">
+            <itemsuppliers>
+                <itemsupplier>
+                    <item name="6. component"/>
+                    <leadtime>P7D</leadtime>
+                    <priority>2</priority>
+                </itemsupplier>
+            </itemsuppliers>
+        </supplier>
+    </suppliers>
+    <demands>
+        <demand name="6. sales order">
+            <quantity>120</quantity>
+            <minshipment>120</minshipment>
+            <due>2026-01-01T00:00:00</due>
+            <priority>1</priority>
+            <item name="6. item"/>
+            <location name="factory"/>
+            <status>open</status>
+        </demand>
+    </demands>
+    <operations>
+        <operation name="6. Make item" xsi:type="operation_fixed_time">
+            <item name="6. item"/>
+            <location name="factory"/>
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="6. item subassembly"/>
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+            <duration>P3D</duration>
+        </operation>
+        <operation name="6. Make item subassembly" xsi:type="operation_fixed_time">
+            <item name="6. item subassembly"/>
+            <location name="factory"/>
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="6. component"/>
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+            <loads>
+                <load>
+                    <resource name="6. Resource">
+                        <maximum_calendar name="Capacity">
+                            <buckets>
+                                <bucket start="2026-03-01T00:00:00">
+                                    <value>1</value>
+                                </bucket>
+                            </buckets>
+                        </maximum_calendar>
+                    </resource>
+                </load>
+            </loads>
+            <duration>P3D</duration>
+        </operation>
+    </operations>
+    <operationplans>
+        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #6" quantity="30" status="approved">
+            <item name="6. component"/>
+            <location name="factory"/>
+            <supplier name="6. Supplier"/>
+        </operationplan>
+        <operationplan ordertype="MO" end="2026-07-20T00:00:00" reference="MO #6" quantity="100" status="approved">
+            <operation name="6. Make item subassembly"/>
+        </operationplan>
+        <operationplan ordertype="MO" end="2026-08-03T00:00:00" reference="MO #6 sub" quantity="100" status="approved">
+            <operation name="6. Make item"/>
+        </operationplan>
+    </operationplans>
+	
+<?python
+
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=99).solve()
+frepple.saveplan("output.1.xml")
+
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+
+print("CREATING FULLY UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
+
+?>
+</plan>

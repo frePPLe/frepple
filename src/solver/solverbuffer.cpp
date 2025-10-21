@@ -278,7 +278,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 !tmp->getOperation()->getName().starts_with("Correction")) {
               if (free_stock > -ROUNDING_ERROR) {
                 // Existing supply covers the complete requirement
-                if (firstmsg1 && data->logConstraints && data->constraints)
+                if (data->logConstraints && data->constraints)
                   data->constraints->push(ProblemAwaitSupply::metadata, b,
                                           theDate, scanner->getDate(),
                                           theDelta);

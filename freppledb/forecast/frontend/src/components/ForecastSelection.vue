@@ -46,6 +46,8 @@ const currentRows = computed(() => {
   return store.tableRows;
 });
 
+const favoriteNames = ref(Object.keys(store.preferences.favorites) || []);
+
 const currentHeight = computed(() => {
   if (store.dataRowHeight === null) {
     store.setCurrentHeight(store.preferences.height || 240);
@@ -120,6 +122,8 @@ const saveFavorite = (event) => {
   if (!('favorites' in store.preferences))
     store.preferences['favorites'] = {};
   const favName = document.querySelector("#favoritename").value;
+  if (favName === '') return;
+  console.log(123, favName, event);
   store.preferences['favorites'][favName] = {
     'measure': store.currentMeasure,
     'sequence': store.currentSequence,
@@ -127,11 +131,13 @@ const saveFavorite = (event) => {
   };
   store.savePreferences();
   window.favorite.check();
+  favoriteNames.value.push(favName);
 };
 
 const openFavorite = (favName, event) => {
   console.log(136, favName);
   // event.preventDefault();
+  if (!(favName in store.preferences.favorites)) return;
   const currentMeasure = store.preferences.favorites[favName]['measure'];
   const currentSequence = store.preferences.favorites[favName]['sequence'];
   const rows = store.preferences.favorites[favName]['rows'];
@@ -144,6 +150,7 @@ const removeFavorite = (favname, event) => {
   // event.preventDefault();
   delete store.preferences.favorites[favname];
   store.savePreferences();
+  favoriteNames.value = favoriteNames.value.filter(f => f !== favname);
 };
 
 // Resize functionality - now updates store dataRowHeight
@@ -177,7 +184,6 @@ const startResize = (e) => {
     document.body.style.userSelect = '';
     document.body.style.cursor = '';
 
-    // Optionally save preferences after resize is complete
     store.savePreferences();
   };
 
@@ -279,8 +285,8 @@ onUnmounted(() => {
             </div>
           </button>
           <ul class="dropdown-menu dropdown-menu-end" id="favoritelist">
-            <li v-for="(favname) in Object.keys(store.preferences.favorites)" :key="fav">
-              <a class="dropdown-item" @click="openFavorite(favName, $event)">{{favname}}
+            <li v-for="favname in favoriteNames" :key="favname">
+              <a class="dropdown-item" @click="openFavorite(favname, $event)">{{favname}}
                 <div style="float:right"><span class="fa fa-trash-o" @click="removeFavorite(favname, $event)"></span></div>
               </a>
             </li>
@@ -288,9 +294,8 @@ onUnmounted(() => {
               <a class="dropdown-item d-flex" >
                 <button
                     id="favoritesave"
-                    @click="saveFavorite"
+                    @click="saveFavorite($event)"
                     type="button"
-                    disabled
                     class="flex-fill btn btn-primary btn-sm me-1 text-capitalize">save</button>
                 <input
                     class="form-control form-control-sm"

@@ -10,7 +10,7 @@
 
 <script setup lang="js">
 import { useForecastsStore } from '@/stores/forecastsStore';
-import {computed, ref, onUnmounted} from "vue";
+import {computed, ref, onUnmounted, toRaw} from "vue";
 import ForecastSelectionCard from "@/components/ForecastSelectionCard.vue";
 
 const store = useForecastsStore();
@@ -38,6 +38,14 @@ const currentSequence = computed(() => {
   return store.currentSequence;
 });
 
+const currentRows = computed(() => {
+  if (store.tableRows === null) {
+    store.tableRows = store.preferences.rows || [];
+    return store.preferences.rows
+  }
+  return store.tableRows;
+});
+
 const currentHeight = computed(() => {
   if (store.dataRowHeight === null) {
     store.setCurrentHeight(store.preferences.height || 240);
@@ -58,6 +66,87 @@ const sortedMeasureList = computed(() => {
     return a.label.localeCompare(b.label);
   });
 });
+
+// Button event handlers
+const showBucket = (event) => window.grid.showBucket();
+
+const showImportDialog = (event) => {
+  // event.preventDefault();
+
+  if (typeof window.url_prefix !== 'undefined') {
+    window.url = window.url_prefix + '/forecast/';
+  }
+  window.import_show('', undefined, true);
+};
+
+const showCustomizeGrid = (event) => {
+  // event.preventDefault();
+
+  // This would typically call an Angular function, you may need to adapt this
+  // based on how customization is handled in your Vue app
+
+  window.showCustomizeGrid();
+};
+
+  // ?? AngularJS code for reference
+  // function savefavorite() {
+  //   if (!('favorites' in $scope.preferences))
+  //     $scope.preferences['favorites'] = {};
+  //   var favName = angular.element(document).find("#favoritename").val();
+  //   $scope.preferences['favorites'][favName] = {
+  //     'measure': $scope.measure,
+  //     'sequence': $scope.sequence,
+  //     'rows': $scope.rows
+  //   };
+  //   savePreferences();
+  //   favorite.check();
+  // }
+  // $scope.savefavorite = savefavorite;
+
+  // function removefavorite(f, $event) {
+  //   delete $scope.preferences.favorites[f];
+  //   savePreferences();
+  //   $event.stopPropagation();
+  // }
+  // $scope.removefavorite = removefavorite;
+
+  // function openfavorite(f, $event) {
+  //   $scope.measure = $scope.preferences.favorites[f]['measure'];
+  //   $scope.sequence = $scope.preferences.favorites[f]['sequence'];
+  //   $scope.rows = $scope.preferences.favorites[f]['rows'];
+  //   $scope.grid.setPristine = true;
+  // }
+  // $scope.openfavorite = openfavorite;
+
+
+const saveFavorite = (event) => {
+  if (!('favorites' in store.preferences))
+    store.preferences['favorites'] = {};
+  const favName = document.querySelector("#favoritename").value;
+  store.preferences['favorites'][favName] = {
+    'measure': store.currentMeasure,
+    'sequence': store.currentSequence,
+    'rows': toRaw(store.tableRows)
+  };
+  store.savePreferences();
+  window.favorite.check();
+};
+
+const openFavorite = (favName, event) => {
+  // event.preventDefault();
+  const currentMeasure = store.preferences.favorites[favName]['measure'];
+  const currentSequence = store.preferences.favorites[favName]['sequence'];
+  const rows = store.preferences.favorites[favName]['rows'];
+  store.setCurrentMeasure(currentMeasure);
+  store.setCurrentSequence(currentSequence);
+  store.tableRows = rows;
+};
+
+const removeFavorite = (favname, event) => {
+  // event.preventDefault();
+  delete store.preferences.favorites[favname];
+  store.savePreferences();
+};
 
 // Resize functionality - now updates store dataRowHeight
 const startResize = (e) => {
@@ -170,37 +259,69 @@ onUnmounted(() => {
       </div>
 
       <div id="toolicons" class="col-auto ms-auto hor-align-right ver-align-middle">
-        <form>
-            <button class="btn btn-sm btn-primary me-1" onclick="grid.showBucket()" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'set time horizon'}">
-                <span class="fa fa-clock-o"></span>
-            </button>
-            <button class="btn btn-sm btn-primary me-1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
-                    data-bs-title="{% trans 'Bookmark your favorite report configurations'}">
-                    <span class="fa fa-star"></span>
-                </div>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end" id="favoritelist">
-                <li data-ng-repeat="(favname, fav) in preferences.favorites">
-                    <a class="dropdown-item" data-ng-click="openfavorite(favname, $event)">{{favname}}
-                        <div style="float:right"><span class="fa fa-trash-o" data-ng-click="removefavorite(favname, $event)"></span></div>
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item d-flex" >
-                        <button id="favoritesave" data-ng-click="savefavorite()" type="button" disabled class="flex-fill btn btn-primary btn-sm me-1 text-capitalize">{% trans 'save'}</button>
-                        <input class="form-control form-control-sm" id="favoritename" oninput="favorite.check()" type="text" size="15">
-                    </a>
-                </li>
-            </ul>
-            <button class="btn btn-sm d-none d-md-inline-block btn-primary me-1" onclick="url = url_prefix + '/forecast/'; import_show('', undefined, true)"
-                    data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-title="Import CSV or Excel file">
-                <span id="csvimport" class="fa fa-arrow-up"></span>
-            </button>
-            <button class="btn btn-sm btn-primary me-1" data-ng-click="showCustomizeGrid()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Customize'}">
-                <span class="fa fa-wrench"></span>
-            </button>
-        </form>
+        <div>
+          <button
+              type="button"
+              class="btn btn-sm btn-primary me-1"
+              @click="showBucket"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="set time horizon">
+            <span class="fa fa-clock-o"></span>
+          </button>
+          <button
+              type="button"
+              class="btn btn-sm btn-primary me-1"
+              data-bs-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false">
+            <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
+                 data-bs-title="Bookmark your favorite report configurations">
+              <span class="fa fa-star"></span>
+            </div>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" id="favoritelist">
+            <li data-ng-repeat="(favname, fav) in preferences.favorites">
+              <a class="dropdown-item" @click="openFavorite(favname, $event)">{{favname}}
+                <div style="float:right"><span class="fa fa-trash-o" @click="removeFavorite(favname, $event)"></span></div>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item d-flex" >
+                <button
+                    id="favoritesave"
+                    @click="saveFavorite"
+                    type="button"
+                    disabled
+                    class="flex-fill btn btn-primary btn-sm me-1 text-capitalize">save</button>
+                <input
+                    class="form-control form-control-sm"
+                    id="favoritename"
+                    @input="checkFavorite"
+                    type="text"
+                    size="15">
+              </a>
+            </li>
+          </ul>
+          <button
+              type="button"
+              class="btn btn-sm d-none d-md-inline-block btn-primary me-1"
+              @click="showImportDialog"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Import CSV or Excel file">
+            <span id="csvimport" class="fa fa-arrow-up"></span>
+          </button>
+          <button
+              type="button"
+              class="btn btn-sm btn-primary me-1"
+              @click="showCustomizeGrid"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              data-bs-title="Customize">
+            <span class="fa fa-wrench"></span>
+          </button>
+        </div>
       </div>
     </div>
 

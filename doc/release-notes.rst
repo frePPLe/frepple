@@ -29,6 +29,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | The emails sent out by frepple now look much prettier.
 
+.. rubric:: Odoo integration
+
+- | 16, 17, 18: Exclude scrap and return locations when calculating the on hand when
+    expiration dates are enabled on the Odoo side.
+
 9.11.0 (2025-10-03)
 ===================
 

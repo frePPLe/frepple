@@ -49,7 +49,7 @@ const currentRows = computed(() => {
   return store.tableRows;
 });
 
-const favoriteNames = ref(Object.keys(store.preferences.favorites) || []);
+const favoriteNames = ref(Object.keys(store.preferences?.favorites ?? {}) || []);
 
 const currentHeight = computed(() => {
   if (store.dataRowHeight === null) {

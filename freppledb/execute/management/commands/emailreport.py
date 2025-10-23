@@ -215,8 +215,8 @@ class Command(BaseCommand):
             body = ["Attached are your frepple reports.\n"]
             body_html = ["Attached are your frepple reports.<br>"]
             if getattr(settings, "EMAIL_URL_PREFIX", None):
-                body.append("You can also download them directly:")
-                body_html.append("You can also download them directly:")
+                body.append("You can download the latest version of these files directly:")
+                body_html.append("You can download the latest version of these files directly:")
                 for f in correctedReports:
                     url = (
                         f"{settings.EMAIL_URL_PREFIX}"

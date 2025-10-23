@@ -558,6 +558,16 @@ h1 small {
     }
 }
 
+// Customize Grid popup
+
+#DroppointRows,
+#Rows {
+    .list-group {
+        border-color: transparent !important;
+        box-shadow: none !important;
+    }
+}
+
 // Circle for the wizard
 
 .circle {
@@ -942,7 +952,7 @@ input[type="date"] {
 .cockpitwidget-lg,
 .cockpitwidget-md,
 .cockpitwidget-sm {
-    min-width: 100%;    
+    min-width: 100%;
 }
 
 @media (min-width: map-get($grid-breakpoints, md)) {

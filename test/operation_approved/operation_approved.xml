@@ -2,7 +2,7 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <current>2026-01-01T00:00:00</current>
     <moveApprovedEarly>true</moveApprovedEarly>
-	
+
     <!-- case 1: Move an approved PO early, and it's feasible -->
     <suppliers>
         <supplier name="1. Supplier">
@@ -124,8 +124,8 @@
         <operationplan ordertype="MO" end="2026-08-03T00:00:00" reference="MO #3 sub" quantity="100" status="approved">
             <operation name="3. Make item"/>
         </operationplan>
-    </operationplans>	
-	
+    </operationplans>
+
     <!-- case 4: Move approved MOs and POs early, and it's not feasible -->
     <suppliers>
         <supplier name="4. Supplier">
@@ -199,7 +199,7 @@
             <operation name="4. Make item"/>
         </operationplan>
     </operationplans>
-    
+
     <!-- case 5: Move approved MOs and POs early, and it's not feasible -->
     <suppliers>
         <supplier name="5. Supplier">
@@ -260,7 +260,7 @@
             <operation name="5. Make item"/>
         </operationplan>
     </operationplans>
-	
+
    <!-- case 6: MO's and PO's don't cover the full quantity. -->
     <suppliers>
         <supplier name="6. Supplier">
@@ -334,7 +334,175 @@
             <operation name="6. Make item"/>
         </operationplan>
     </operationplans>
-	
+
+    <!-- Case 7: Operation dependencies. Feasible rescheduling -->
+    <demands>
+        <demand name="7. project X">
+            <quantity>100</quantity>
+            <minshipment>100</minshipment>
+            <due>2026-02-01T00:00:00</due>
+            <priority>1</priority>
+            <item name="7. item"/>
+            <location name="factory"/>
+            <status>open</status>
+            <operation name="7. project X" xsi:type="operation_fixed_time" duration="P10D">
+                <location name="factory"/>
+                <dependencies>
+                    <dependency>
+                        <blockedby name="7. task X1" xsi:type="operation_fixed_time" duration="P5D">
+                            <location name="factory"/>
+                        </blockedby>
+                    </dependency>
+                    <dependency>
+                        <blockedby name="7. task X2 step 3" xsi:type="operation_fixed_time" duration="P7D">
+                            <location name="factory"/>
+                            <dependencies>
+                                <dependency>
+                                    <blockedby name="7. task X2 step 2" xsi:type="operation_fixed_time" duration="P7D">
+                                        <location name="factory"/>
+                                        <dependencies>
+                                            <dependency>
+                                                <blockedby name="7. task X2 step 1" xsi:type="operation_fixed_time" duration="P5D">
+                                                    <location name="factory"/>
+                                                </blockedby>
+                                            </dependency>
+                                        </dependencies>
+                                    </blockedby>
+                                </dependency>
+                            </dependencies>
+                        </blockedby>
+                    </dependency>
+                </dependencies>
+            </operation>
+        </demand>
+    </demands>
+    <operationplans>
+        <!--operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X1" quantity="100" status="approved">
+            <operation name="7. task X1"/>
+        </operationplan>
+        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X2 step 3" quantity="100" status="approved">
+            <operation name="7. task X2 step 3"/>
+        </operationplan>
+        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X2 step 2" quantity="100" status="approved">
+            <operation name="7. task X2 step 2"/>
+        </operationplan-->
+        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X2 step 1" quantity="100" status="approved">
+            <operation name="7. task X2 step 1"/>
+        </operationplan>
+    </operationplans>
+
+    <!-- Case 8: Operation dependencies. Delayed rescheduling -->
+    <demands>
+        <demand name="8. project X">
+            <quantity>100</quantity>
+            <minshipment>100</minshipment>
+            <due>2026-01-01T00:00:00</due>
+            <priority>1</priority>
+            <item name="8. item"/>
+            <location name="factory"/>
+            <status>open</status>
+            <operation name="8. project X" xsi:type="operation_fixed_time" duration="P10D">
+                <location name="factory"/>
+                <dependencies>
+                    <dependency>
+                        <blockedby name="8. task X1" xsi:type="operation_fixed_time" duration="P5D">
+                            <location name="factory"/>
+                        </blockedby>
+                    </dependency>
+                    <dependency>
+                        <blockedby name="8. task X2 step 3" xsi:type="operation_fixed_time" duration="P7D">
+                            <location name="factory"/>
+                            <dependencies>
+                                <dependency>
+                                    <blockedby name="8. task X2 step 2" xsi:type="operation_fixed_time" duration="P7D">
+                                        <location name="factory"/>
+                                        <dependencies>
+                                            <dependency>
+                                                <blockedby name="8. task X2 step 1" xsi:type="operation_fixed_time" duration="P5D">
+                                                    <location name="factory"/>
+                                                </blockedby>
+                                            </dependency>
+                                        </dependencies>
+                                    </blockedby>
+                                </dependency>
+                            </dependencies>
+                        </blockedby>
+                    </dependency>
+                </dependencies>
+            </operation>
+        </demand>
+    </demands>
+    <operationplans>
+        <!--operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="8. task X1" quantity="100" status="approved">
+            <operation name="8. task X1"/>
+        </operationplan>
+        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="8. task X2 step 3" quantity="100" status="approved">
+            <operation name="8. task X2 step 3"/>
+        </operationplan-->
+        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="8. task X2 step 2" quantity="100" status="approved">
+            <operation name="8. task X2 step 2"/>
+        </operationplan>
+        <!--operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="8. task X2 step 1" quantity="100" status="approved">
+            <operation name="8. task X2 step 1"/>
+        </operationplan-->
+    </operationplans>
+
+    <!-- Case 9: Operation dependencies. Infeasible rescheduling -->
+    <demands>
+        <demand name="9. project X">
+            <quantity>100</quantity>
+            <minshipment>100</minshipment>
+            <due>2026-01-01T00:00:00</due>
+            <priority>1</priority>
+            <item name="9. item"/>
+            <location name="factory"/>
+            <status>open</status>
+            <operation name="9. project X" xsi:type="operation_fixed_time" duration="P10D">
+                <location name="factory"/>
+                <dependencies>
+                    <dependency>
+                        <blockedby name="9. task X1" xsi:type="operation_fixed_time" duration="P5D">
+                            <location name="factory"/>
+                        </blockedby>
+                    </dependency>
+                    <dependency>
+                        <blockedby name="9. task X2 step 3" xsi:type="operation_fixed_time" duration="P7D">
+                            <location name="factory"/>
+                            <dependencies>
+                                <dependency>
+                                    <blockedby name="9. task X2 step 2" xsi:type="operation_fixed_time" duration="P7D">
+                                        <location name="factory"/>
+                                        <dependencies>
+                                            <dependency>
+                                                <blockedby name="9. task X2 step 1" xsi:type="operation_fixed_time" duration="P5D">
+                                                    <location name="factory"/>
+                                                </blockedby>
+                                            </dependency>
+                                        </dependencies>
+                                    </blockedby>
+                                </dependency>
+                            </dependencies>
+                        </blockedby>
+                    </dependency>
+                </dependencies>
+            </operation>
+        </demand>
+    </demands>
+    <operationplans>
+        <operationplan ordertype="MO" end="2026-09-01T00:00:00" reference="9. task X1" quantity="100" status="approved">
+            <operation name="9. task X1"/>
+        </operationplan>
+        <!--operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="9. task X2 step 3" quantity="100" status="approved">
+            <operation name="9. task X2 step 3"/>
+        </operationplan-->
+        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="9. task X2 step 2" quantity="100" status="confirmed">
+            <operation name="9. task X2 step 2"/>
+        </operationplan>
+        <!--operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="9. task X2 step 1" quantity="100" status="approved">
+            <operation name="9. task X2 step 1"/>
+        </operationplan-->
+    </operationplans>
+
 <?python
 
 print("CREATING CONSTRAINED PLAN")

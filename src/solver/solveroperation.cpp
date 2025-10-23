@@ -2345,25 +2345,66 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
         else
           unpegged -= d->getSecond()->getQuantity();
       }
+
+      // Allocate from unpegged quantity
       if (unpegged > ROUNDING_ERROR) {
-        if (o->getEnd() > data.state->q_date && getConstraints() &&
+        Date refuse = Date::infinitePast;
+        auto needed_date = data.state->q_date - dpd->getHardSafetyLeadtime();
+        auto wished_date = needed_date;
+        if (dpd->getSafetyLeadtime() > dpd->getHardSafetyLeadtime())
+          wished_date = data.state->q_date - dpd->getSafetyLeadtime();
+        if (o->getEnd() > needed_date && getConstraints() &&
             data.constrainedPlanning) {
+          if (o->getConfirmed() || ((o->getProposed() || o->getApproved()) &&
+                                    !Plan::instance().getMoveApprovedEarly())) {
+            // We need to wait for this dependency
+            opplan->setStart(o->getEnd());
+            refuse = opplan->getEnd() + dpd->getHardSafetyLeadtime();
+            if (getLogLevel() > 1) {
+              logger << indentlevel << "Waiting for dependency on " << &*o
+                     << endl;
+            }
+          } else if (o->getProposed() || o->getApproved()) {
+            // Try to reschedule the depencency
+            if (getLogLevel() > 1)
+              logger << indentlevel << "Moving dependency early: " << &*o
+                     << endl;
+            auto bm = data.getCommandManager()->setBookmark();
+            data.getCommandManager()->add(new CommandMoveOperationPlan(
+                &*o, Date::infinitePast, wished_date));
+            logger << indentlevel << "   after move " << &*o << endl;
+            checkOperation(&*o, data);
+            logger << indentlevel << "   after check " << &*o << endl;
+            if (o->getEnd() > needed_date) {
+              // Rescheduling wasn't feasible.
+              if (getLogLevel() > 1)
+                logger << indentlevel
+                       << "Moving dependency failed. Earliest "
+                          "date is "
+                       << (o->getEnd() + dpd->getHardSafetyLeadtime()) << endl;
+              refuse = o->getEnd() + dpd->getHardSafetyLeadtime();
+              data.getCommandManager()->rollback(bm);
+            } else {
+              // Rescheduling was feasible
+              if (getLogLevel() > 1)
+                logger << indentlevel << "Moving approved dependency succeeded"
+                       << endl;
+            }
+          }
+        }
+        if (refuse) {
+          // Wait for this predecessor
           a_qty = 0.0;
           incomplete = true;
           if (data.logConstraints && data.constraints)
             data.constraints->push(ProblemAwaitSupply::metadata,
                                    o->getOperation(), opplan->getStart(),
-                                   o->getEnd(), o->getQuantity());
-          opplan->setStart(o->getEnd());
-          data.state->a_date = opplan->getEnd();
-          data.state->a_date += dpd->getHardSafetyLeadtime();
-          matnext = DateRange(data.state->a_date, data.state->a_date);
-          if (getLogLevel() > 1) {
-            logger << indentlevel << "Waiting for available supply on " << &*o
-                   << endl;
-          }
+                                   refuse, o->getQuantity());
+          data.state->a_date = refuse;
+          matnext = DateRange(refuse, refuse);
           return;
         }
+
         // Note: we count on the rollback to undo this allocation if needed
         if (getLogLevel() > 1) {
           logger << indentlevel << "  Allocating from available supply on "

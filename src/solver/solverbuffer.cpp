@@ -222,10 +222,10 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                   logger << indentlevel
                          << "Moving approved supply failed. Earliest date is "
                          << approved_supply->getDate() << endl;
-                if (data->logConstraints && data->constraints)
-                  data->constraints->push(ProblemAwaitSupply::metadata, b,
-                                          theDate, approved_supply->getDate(),
-                                          theDelta);
+                // if (data->logConstraints && data->constraints)
+                //   data->constraints->push(ProblemAwaitSupply::metadata, b,
+                //                           theDate, approved_supply->getDate(),
+                //                           theDelta);
                 if (approved_supply->getDate() < extraSupplyDate &&
                     approved_supply->getDate() > requested_date)
                   extraSupplyDate = approved_supply->getDate();

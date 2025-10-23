@@ -34,10 +34,6 @@ const props = defineProps({
     type: String,
     default: 'error', // 'error', 'warning', 'info'
     validator: (value) => ['error', 'warning', 'info'].includes(value)
-  },
-  showDetails: {
-    type: Boolean,
-    default: false
   }
 });
 
@@ -48,30 +44,6 @@ const emit = defineEmits(['update:modelValue', 'close']);
 const isVisible = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value)
-});
-
-const iconClass = computed(() => {
-  switch (props.type) {
-    case 'warning':
-      return 'fa fa-exclamation-triangle text-warning';
-    case 'info':
-      return 'fa fa-info-circle text-info';
-    case 'error':
-    default:
-      return 'fa fa-exclamation-circle text-danger';
-  }
-});
-
-const headerClass = computed(() => {
-  switch (props.type) {
-    case 'warning':
-      return 'bg-warning text-dark';
-    case 'info':
-      return 'bg-info text-white';
-    case 'error':
-    default:
-      return 'bg-danger text-white';
-  }
 });
 
 // Methods
@@ -97,16 +69,9 @@ const handleBackdropClick = (event) => {
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <!-- Modal Header -->
-        <div class="modal-header" :class="headerClass">
-          <h5 class="modal-title text-capitalize d-flex align-items-center">
-            <span :class="iconClass" class="me-2"></span>
-            {{ title }}
-          </h5>
-          <button type="button"
-                  class="btn-close"
-                  aria-label="Close"
-                  data-bs-dismiss="modal"
-                  @click="closeDialog">
+        <div class="modal-header bg-danger">
+          <h5 class="modal-title">{{ title }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" @click="closeDialog">
           </button>
         </div>
 
@@ -117,13 +82,8 @@ const handleBackdropClick = (event) => {
           </div>
 
           <!-- Error Details (collapsible) -->
-          <div v-if="details && showDetails" class="mt-3">
-            <details>
-              <summary class="text-muted small" style="cursor: pointer;">
-                Show technical details
-              </summary>
-              <pre class="mt-2 p-2 bg-light border rounded small text-muted">{{ details }}</pre>
-            </details>
+          <div v-if="details" class="mt-3">
+            {{ details }}
           </div>
 
           <!-- Slot for custom content -->
@@ -134,9 +94,7 @@ const handleBackdropClick = (event) => {
         <div class="modal-footer">
           <slot name="actions">
             <!-- Default actions -->
-            <button type="button"
-                    class="btn btn-secondary"
-                    @click="closeDialog">
+            <button type="button" class="btn btn-primary" @click="closeDialog">
               Close
             </button>
           </slot>

@@ -33,6 +33,7 @@
  * @property {boolean} currency
  * @property {Object} editForm
  * @property {Array} tableRows
+ * @property {Boolean} showDescription
  */
 
 import { defineStore } from 'pinia';
@@ -86,6 +87,7 @@ export const useForecastsStore = defineStore('forecasts', {
       increaseByPercent: 0.0
     },
     tableRows: [],
+    showDescription: false,
   }),
 
   getters: {
@@ -105,6 +107,8 @@ export const useForecastsStore = defineStore('forecasts', {
         'forecasttotal',
       ];
       state.tableRows = window.preferences['rows'] === undefined ? defaultMeasures : window.preferences['rows'];
+      state.showDescription = window.preferences['showdescription'] === undefined ? false : window.preferences['showdescription'];
+
       return window.preferences;
     },
     currentBucketName: () => window.currentbucket,
@@ -646,6 +650,8 @@ export const useForecastsStore = defineStore('forecasts', {
       // console.log('76 savePreferences ', this.currentSequence, this.currentMeasure, this.dataRowHeight);
       this.preferences.sequence = this.currentSequence;
       this.preferences.measure = this.currentMeasure;
+      this.preferences.showdescription = this.showDescription;
+      this.preferences.rows = this.tableRows;
       // Include height in preferences if it exists
       if (this.dataRowHeight !== null) {
         this.preferences.height = this.dataRowHeight;

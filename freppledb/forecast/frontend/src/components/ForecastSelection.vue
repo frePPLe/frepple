@@ -12,6 +12,7 @@
 import { useForecastsStore } from '@/stores/forecastsStore';
 import {computed, ref, onUnmounted, toRaw} from "vue";
 import ForecastSelectionCard from "@/components/ForecastSelectionCard.vue";
+import CustomizeGrid from "@/components/CustomizeGrid.vue";
 
 const store = useForecastsStore();
 const dict =  {'I':'item', 'L':'location', 'C':'customer'};
@@ -20,6 +21,8 @@ const dict =  {'I':'item', 'L':'location', 'C':'customer'};
 const resizableContainer = ref(null);
 const resizeHandle = ref(null);
 const isResizing = ref(false);
+
+const customizeGridRef = ref(null);
 
 const currentMeasure = computed(() => {
   if (store.currentMeasure === null) {
@@ -82,9 +85,10 @@ const showImportDialog = (event) => {
 };
 
 const showCustomizeGrid = (event) => {
-  // event.preventDefault();
-
-  window.showCustomizeGrid();
+  event.preventDefault();
+  if (customizeGridRef.value) {
+    customizeGridRef.value.showModal();
+  }
 };
 
   // ?? AngularJS code for reference
@@ -346,5 +350,6 @@ onUnmounted(() => {
         @mousedown="startResize"
       ></div>
     </div>
+    <CustomizeGrid ref="customizeGridRef" />
   </div>
 </template>

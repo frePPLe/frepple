@@ -80,7 +80,7 @@ function toggleRowVisibility(rowIndex) {
               <span v-if="row.visible" style="white-space:nowrap">{{row[modelName]}}</span>
             </div>
             <div v-if="row.visible" class="ms-auto d-flex justify-content-end text-start">
-              <span v-if="preferences['showdescription']" class="numbervalues ms-auto text-right">
+              <span v-if="store.showDescription" class="numbervalues ms-auto text-right">
                 {{ row["description"] }}
               </span>
               <span v-for="val in row.values" :key="val.bucketname" class="numbervalues">{{val.value}}</span>

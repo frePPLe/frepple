@@ -811,7 +811,7 @@ var grid = {
       else if (colModel[i].name != "rn" && colModel[i].name != "cb" && colModel[i].counter != null && colModel[i].label != '' && !('alwayshidden' in colModel[i])) {
         if (colModel[i].frozen) maxfrozen = parseInt(i, 10) + 1 - skipped;
         if (!colModel[i].hidden)
-          val0s += '<li id="' + (i) + '"  class="list-group-item" style="cursor: move;">' + colModel[i].label + '</li>';
+          val0s += '<li id="' + (i) + '"  class="list-group-item" style="cursor: move; border: none">' + colModel[i].label + '</li>';
         else
           val0a[colModel[i].label] = i;
       }
@@ -846,7 +846,7 @@ var grid = {
         '</div>' +
         '</div>';
       for (var j in my_cross_idx) {
-        val1s += '<li class="list-group-item" id="' + (1000 + parseInt(my_cross_idx[j], 10)) + '" style="cursor: move;">' + my_cross[my_cross_idx[j]]['name'] + '</li>';
+        val1s += '<li class="list-group-item" id="' + (1000 + parseInt(my_cross_idx[j], 10)) + '" style="cursor: move; border: none">' + my_cross[my_cross_idx[j]]['name'] + '</li>';
       }
       var fieldlist = {};
       for (var j in my_cross) {
@@ -854,7 +854,7 @@ var grid = {
         fieldlist[my_cross[j]['name']] = parseInt(j, 10);
       }
       for (var j of Object.keys(fieldlist).sort())
-        val1a += '<li class="list-group-item" id="' + (1000 + fieldlist[j]) + '" style="cursor: move;">' + j + '</li>';
+        val1a += '<li class="list-group-item" id="' + (1000 + fieldlist[j]) + '" style="cursor: move; border: none">' + j + '</li>';
     }
     else {
       // Add selection of number of frozen columns
@@ -879,11 +879,11 @@ var grid = {
         if (!collapsibleSet.has(collapsibleOption)) {
           collapsibleSet.add(collapsibleOption);
           let collapseIcon = '<i class="fa fa-chevron-right pt-1 float-end" style="cursor: pointer; z-index: 3000; position: relative"></i>';
-          availableoptions += '<li id="' + collapsibleSet.size * 1000 + '" class="list-group-item do-not-drag" style="cursor: pointer" onclick="grid.toggleCollapseSubOptions(\'' + collapsibleOption + '\',' + collapsibleSet.size * 1000 + ')">' + collapsibleOption + ' attributes' + collapseIcon + '</li>';
+          availableoptions += '<li id="' + collapsibleSet.size * 1000 + '" class="list-group-item do-not-drag" style="cursor: pointer; border: none" onclick="grid.toggleCollapseSubOptions(\'' + collapsibleOption + '\',' + collapsibleSet.size * 1000 + ')">' + collapsibleOption + ' attributes' + collapseIcon + '</li>';
         }
-        availableoptions += '<li id="' + val0a[o] + '" type="' + collapsibleOption + '" class="list-group-item ps-4 d-none" style="cursor: move">' + o + '</li>';
+        availableoptions += '<li id="' + val0a[o] + '" type="' + collapsibleOption + '" class="list-group-item ps-4 d-none" style="cursor: move; border: none">' + o + '</li>';
       } else {
-        availableoptions += '<li id="' + val0a[o] + '" class="list-group-item" style="cursor: move">' + o + '</li>';
+        availableoptions += '<li id="' + val0a[o] + '" class="list-group-item" style="cursor: move; border: none">' + o + '</li>';
       }
     }
     row0 = row0.replace('placeholder1', availableoptions);
@@ -1842,7 +1842,6 @@ var grid = {
   },
 
   findOperandLabel(operand) {
-    console.log($.jgrid.locales[$.jgrid.defaults.locale].search.odata);
     for (const i of $.jgrid.locales[$.jgrid.defaults.locale].search.odata)
       if (i.oper == operand) return i.text;
     if (operand == "ico") return gettext("is child of");

@@ -75,9 +75,9 @@ const getModalContent = () => {
               <div class="card">
                 <div class="card-header">${t('Available Cross')}</div>
                 <div class="card-body">
-                  <ul id="available-measures" class="list-group" style="height: 160px; overflow-y: scroll;">
+                  <ul id="available-measures" class="list-group" style="height: 160px; overflow-y: scroll; border: 0px;">
                     ${availableMeasures.value.map(measure =>
-      `<li class="list-group-item" style="cursor: move" data-value="${measure.name}">${measure.label}</li>`
+      `<li class="list-group-item" style="cursor: move; border: 0px;" data-value="${measure.name}">${measure.label}</li>`
   ).join('')}
                   </ul>
                 </div>
@@ -87,9 +87,9 @@ const getModalContent = () => {
               <div class="card">
                 <div class="card-header">${t('Selected Cross')}</div>
                 <div class="card-body">
-                  <ul id="selected-measures" class="list-group" style="height: 160px; overflow-y: scroll;">
+                  <ul id="selected-measures" class="list-group" style="height: 160px; overflow-y: scroll;; border: 0px;">
                     ${selectedMeasures.value.map(measure =>
-      `<li class="list-group-item" style="cursor: move" data-value="${measure.name}">${measure.label}</li>`
+      `<li class="list-group-item" style="cursor: move;; border: 0px;" data-value="${measure.name}">${measure.label}</li>`
   ).join('')}
                   </ul>
                 </div>

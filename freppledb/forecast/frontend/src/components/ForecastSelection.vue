@@ -96,12 +96,13 @@ const saveFavorite = (event) => {
     'rows': toRaw(store.tableRows)
   };
   store.savePreferences();
-  favoriteNames.value.push(favName);
+
+  if (!favoriteNames.value.includes(favName)) {
+    favoriteNames.value.push(favName);
+  }
 };
 
 const openFavorite = (favName, event) => {
-  console.log(136, favName);
-  // event.preventDefault();
   if (!(favName in store.preferences.favorites)) return;
   const currentMeasure = store.preferences.favorites[favName]['measure'];
   const currentSequence = store.preferences.favorites[favName]['sequence'];

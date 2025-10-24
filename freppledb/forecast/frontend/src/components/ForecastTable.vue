@@ -19,14 +19,13 @@ const formatNumber = window.grid.formatNumber;
 const forecastdata = computed(() => store.buckets);
 const measures = store.measures;
 
-const outlierString = 'Demand outlier'; // You might want to use i18n here
+const outlierString = 'Demand outlier';
 
 // Computed properties
 const visibleBuckets = computed(() => {
   if (!forecastdata.value) return [];
 
   const currentBucketIndex = store.getBucketIndexFromName(store.currentBucketName) || 0;
-  console.log(37, currentBucketIndex, forecastdata.value.length, store.currentBucketName, forecastdata.value[currentBucketIndex]);
   return forecastdata.value.slice(currentBucketIndex);
 });
 
@@ -78,7 +77,7 @@ const getCellData = (bucket, row) => {
 
   const bucketIndex = store.getBucketIndexFromName(bucket.bucket);
 
-  let value, idx;
+  let value, idx, outlier;
 
   // Handle historical measures (1 year ago, 2 years ago, 3 years ago)
   if (measure.name.includes('1ago')) {
@@ -87,6 +86,7 @@ const getCellData = (bucket, row) => {
       const baseMeasure = getBaseMeasureName(measure.name);
       value = forecastdata.value[years1ago][baseMeasure];
       idx = years1ago;
+      outlier = forecastdata.value[years1ago]['outlier'];
     }
   } else if (measure.name.includes('2ago')) {
     const years2ago = getBucket(bucketIndex, 2);
@@ -94,6 +94,7 @@ const getCellData = (bucket, row) => {
       const baseMeasure = getBaseMeasureName(measure.name);
       value = forecastdata.value[years2ago][baseMeasure];
       idx = years2ago;
+      outlier = forecastdata.value[years2ago]['outlier'];
     }
   } else if (measure.name.includes('3ago')) {
     const years3ago = getBucket(bucketIndex, 3);
@@ -101,14 +102,15 @@ const getCellData = (bucket, row) => {
       const baseMeasure = getBaseMeasureName(measure.name);
       value = forecastdata.value[years3ago][baseMeasure];
       idx = years3ago;
+      outlier = forecastdata.value[years3ago]['outlier'];
     }
   } else {
-    // Current period measure
     value = bucket[row];
     idx = bucketIndex;
+    outlier = bucket['outlier'];
   }
 
-  return {value, idx};
+  return {value, idx, outlier};
 };
 
 const onCellFocus = (bucketName, row) => {
@@ -139,7 +141,10 @@ const formatCellValue = (value, measure) => {
 
 const isBacklogRow = (row) => row.includes('backlog');
 
-const isOutlierBucket = (bucket) => bucket["outlier"] === 1;
+const isOutlierBucket = (bucket, row) => {
+  const cellData = getCellData(bucket, row, visibleBuckets.value.indexOf(bucket));
+  return cellData.outlier === 1;
+};
 
 const isEditCell = (bucketName, row) => {
   if (!store.editForm.selectedMeasure) return false;
@@ -209,23 +214,6 @@ const navigateToDrilldown = (event) => {
 //   // Handle outlier tooltip
 // };
 
-// // Watch for data changes
-// watch(() => forecastdata.value, (newData) => {
-//   if (newData && typeof newData === 'object') {
-//     // Update grid settings if currency attributes are present
-//     if (newData.attributes?.hasOwnProperty('currency')) {
-//       // Handle currency formatting
-//     }
-//   }
-// }, {deep: true});
-//
-// watch(() => grid?.setPristine, (newValue) => {
-//   if (newValue === true) {
-//     // Handle grid reset
-//     grid.setPristine = false;
-//   }
-// });
-//
 // // Lifecycle
 // onMounted(() => {
 //   // Component mounted
@@ -317,7 +305,7 @@ const navigateToDrilldown = (event) => {
                         </a>
 
                         <!-- Outlier warning -->
-                        <span v-if="isOutlierBucket(bucket)"
+                        <span v-if="isOutlierBucket(bucket, row)"
                               class="fa fa-warning text-danger"
                               :title="outlierString"
                               @mouseover="showOutlierTooltip">

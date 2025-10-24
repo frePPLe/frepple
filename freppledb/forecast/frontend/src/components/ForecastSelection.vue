@@ -134,7 +134,6 @@ const saveFavorite = (event) => {
     'rows': toRaw(store.tableRows)
   };
   store.savePreferences();
-  window.favorite.check();
   favoriteNames.value.push(favName);
 };
 
@@ -309,7 +308,7 @@ onUnmounted(() => {
                     id="favoritesave"
                     @click="saveFavorite($event)"
                     type="button"
-                    class="flex-fill btn btn-primary btn-sm me-1 text-capitalize">save</button>
+                    class="flex-fill btn btn-primary btn-sm me-1 text-capitalize aaa">save</button>
                 <input
                     class="form-control form-control-sm"
                     id="favoritename"

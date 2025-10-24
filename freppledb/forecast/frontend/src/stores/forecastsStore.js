@@ -116,7 +116,6 @@ export const useForecastsStore = defineStore('forecasts', {
 
   actions: {
     async setCurrentMeasure(measure, save = true) {
-      console.log('setCurrentMeasure', this.currentSequence, 'setCurrentMeasure', measure, save);
       if (this.currentMeasure === measure) return;
       this.currentMeasure = measure;
       if (this.currentSequence === null) return;
@@ -131,7 +130,6 @@ export const useForecastsStore = defineStore('forecasts', {
     },
 
     async setCurrentSequence(sequence, save = true) {
-      console.log('setCurrentSequence', sequence, 'setCurrentMeasure', this.currentMeasure, save);
       if (this.currentSequence === sequence) return;
       this.currentSequence = sequence;
       if (this.currentMeasure === null) return;
@@ -149,7 +147,6 @@ export const useForecastsStore = defineStore('forecasts', {
       this.dataRowHeight = height;
       // Update preferences to persist the height
       this.preferences.height = height;
-      console.log('setDataRowHeight', height);
     },
 
     async setItemLocationCustomer(model, objectAttributes, hasChildren, lvl, isExpanded = false) {
@@ -160,14 +157,11 @@ export const useForecastsStore = defineStore('forecasts', {
       this[model].Name = objectName;
       this[model].Description = objectAttributes.Description;
       const modelSequence = this.currentSequence.split("").map(x => (x === 'I' ? 'item' : (x === 'L' ? 'location' : 'customer')));
-      console.log('129 setItemLocationCustomer', model, objectName, hasChildren, isExpanded);
 
       let getTree = false;
       const rootParameters = { item: null, location: null, customer: null };
       const childrenParameters = { item: null, location: null, customer: null };
       for (let m of modelSequence) {
-        console.log(88, model, m, this.currentSequence);
-
         if (getTree) {
           switch (m) {
             case 'item':
@@ -198,20 +192,18 @@ export const useForecastsStore = defineStore('forecasts', {
       }
 
       if (hasChildren) {
-        console.log(95, hasChildren);
         let insertIndex = 0;
         switch (model) {
           case 'item': {
             insertIndex = this.itemTree.findIndex(x => x.item === objectName) + 1;
             newData = await this.getItemtree(childrenParameters['item'], childrenParameters['location'], childrenParameters['customer']);
-            console.log(99, newData);
+
             this.itemTree.splice(insertIndex, 0, ...newData);
 
             if (!Object.prototype.hasOwnProperty.call(this.treeExpansion.item, lvl)) {
               this.treeExpansion.item[lvl] = new Set();
             }
             this.treeExpansion.item[lvl].add(objectName);
-            console.log(117, toRaw(this.treeExpansion))
             break;
           }
           case 'location':
@@ -225,7 +217,6 @@ export const useForecastsStore = defineStore('forecasts', {
             this.treeExpansion.location[lvl].add(objectName);
             break;
           case 'customer':
-            console.log(157, 'case customer');
             insertIndex = this.customerTree.findIndex(x => x.customer === objectName) + 1;
             newData = await this.getCustomertree(childrenParameters['item'], childrenParameters['location'], childrenParameters['customer']);
             this.customerTree.splice(insertIndex, 0, ...newData);
@@ -249,8 +240,6 @@ export const useForecastsStore = defineStore('forecasts', {
       this.error = null;
 
       try {
-        console.log('Calling API with measure:', this.currentMeasure, itemName, locationName, customerName);
-
         // Use the promise-like behavior of the composable
         const result = await forecastService.getItemtree(this.currentMeasure, itemName, locationName, customerName);
 
@@ -293,8 +282,6 @@ export const useForecastsStore = defineStore('forecasts', {
       this.error = null;
 
       try {
-        console.log('Calling API with measure:', this.currentMeasure, itemName, locationName, customerName);
-
         // Use the promise-like behavior of the composable
         const result = await forecastService.getLocationtree(this.currentMeasure, itemName, locationName, customerName);
 
@@ -308,7 +295,6 @@ export const useForecastsStore = defineStore('forecasts', {
 
         if (responseData.value) {
           const result = toRaw(responseData.value);
-          console.log('Data successfully loaded:', this.locationTree);
 
           if (result[0]['lvl'] === 0) {
             this.location.Name = result[0].location;
@@ -335,12 +321,9 @@ export const useForecastsStore = defineStore('forecasts', {
     },
 
     async getCustomertree(itemName = null, locationName = null, customerName = null) {
-
       this.error = null;
 
       try {
-        console.log('Calling API with measure:', this.currentMeasure, itemName, locationName, customerName);
-
         const result = await forecastService.getCustomertree(this.currentMeasure, itemName, locationName, customerName);
 
         const { loading, backendError, responseData } = result;
@@ -352,7 +335,6 @@ export const useForecastsStore = defineStore('forecasts', {
 
         if (responseData.value) {
           const result = toRaw(responseData.value);
-          console.log('Data successfully loaded:', this.customerTree);
 
           if (result[0]['lvl'] === 0) {
             this.customer.Name = result[0].customer;
@@ -378,12 +360,9 @@ export const useForecastsStore = defineStore('forecasts', {
     },
 
     async getForecastDetails(itemName = null, locationName = null, customerName = null) {
-
       this.error = null;
 
       try {
-        console.log('Calling Details measure:', this.currentMeasure, itemName, locationName, customerName);
-
         const result = await forecastService.getForecastDetails(this.currentMeasure, itemName, locationName, customerName);
 
         const { loading, backendError, responseData } = result;
@@ -395,7 +374,6 @@ export const useForecastsStore = defineStore('forecasts', {
 
         if (responseData.value) {
           const result = toRaw(responseData.value);
-          console.log('Details successfully loaded:', result);
 
           this.item.update(result['attributes']['item']);
           this.location.update(result['attributes']['location']);

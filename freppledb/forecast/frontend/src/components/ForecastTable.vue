@@ -180,8 +180,22 @@ const getDrilldownUrl = (row, bucket) => {
   const item = encodeURIComponent(store.item.Name || 'All items');
   const location = encodeURIComponent(store.location.Name || 'All locations');
   const customer = encodeURIComponent(store.customer.Name || 'Generic customer');
-  // TODO bucket is current bucket but should be 1 year ago if we are showing values from 1 year ago in the table
-  return `${window.url_prefix || ''}/forecast/demand/?noautofilter&item__name__ico=${item}&location__name__ico=${location}&customer__name__ico=${customer}&due__gte=${bucket.startdate}&due__lt=${bucket.enddate}`;
+
+  let startdate = bucket.startdate.split("-");
+  let enddate = bucket.enddate.split("-");
+  if (row.endsWith('1ago')) {
+    startdate[0] = parseInt(startdate[0]) - 1;
+    enddate[0] = parseInt(enddate[0]) - 1;
+  } else if (row.endsWith('2ago')) {
+    startdate[0] = parseInt(startdate[0]) - 2;
+    enddate[0] = parseInt(enddate[0]) - 2;
+  } else if (row.endsWith('3ago')) {
+    startdate[0] = parseInt(startdate[0]) - 3;
+    enddate[0] = parseInt(enddate[0]) - 3;
+  }
+  startdate = startdate.join("-");
+  enddate = enddate.join("-");
+  return `${window.url_prefix || ''}/forecast/demand/?noautofilter&item__name__ico=${item}&location__name__ico=${location}&customer__name__ico=${customer}&due__gte=${startdate}&due__lt=${enddate}`;
 };
 
 const updateCellValue = (bucket, row, event) => {

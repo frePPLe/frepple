@@ -251,6 +251,15 @@ onUnmounted(() => {
             <li>
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('CL')">{{ $t(dict['C']) }},&nbsp;{{ $t(dict['L']) }}</a>
             </li>
+            <li>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('I')">{{ $t(dict['I']) }}</a>
+            </li>
+            <li>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('L')">{{ $t(dict['L']) }}</a>
+            </li>
+            <li>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('C')">{{ $t(dict['C']) }}</a>
+            </li>
           </ul>
         </div>
         &nbsp;&nbsp;

@@ -1163,6 +1163,14 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
           break;
         }
       }
+
+      // Loop through the top level dependencies
+      if (data->state->a_qty > 0.0 && !oper->getDependencies().empty()) {
+        bool tmp1 = false;
+        double tmp2;
+        DateRange tmp3;
+        checkDependencies(data->state->curOwnerOpplan, *data, tmp1, tmp2, tmp3);
+      }
     } else {
       // Loop through the steps in sequence
       for (auto e = oper->getSubOperations().rbegin();
@@ -1227,14 +1235,6 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
         data->state->a_qty = flow_qty_fixed + a_qty * flow_qty_per;
       else
         data->state->a_qty = 0.0;
-    }
-
-    // Loop through the top level dependencies
-    if (data->state->a_qty > 0.0 && !oper->getDependencies().empty()) {
-      bool tmp1 = false;
-      double tmp2;
-      DateRange tmp3;
-      checkDependencies(data->state->curOwnerOpplan, *data, tmp1, tmp2, tmp3);
     }
   } catch (...) {
     if (!prev_owner_opplan) data->getCommandManager()->add(a);
@@ -2326,24 +2326,25 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
 
     // Net available quantities from the required quantity.
     data.state->q_qty = opplan->getQuantity() * dpd->getQuantity();
-    auto o = dpd->getBlockedBy()->getOperationPlans();
     auto allocated = 0.0;
-    while (o != OperationPlan::end()) {
+    for (auto e : opplan->getDependencies()) {
+      // Subtract existing allocations
+      if (e->getSecond() == opplan &&
+          e->getFirst()->getOperation() == dpd->getBlockedBy()) {
+        allocated += e->getFirst()->getQuantity();
+      }
+    }
+    auto o = dpd->getBlockedBy()->getOperationPlans();
+    while (o != OperationPlan::end() &&
+           data.state->q_qty > allocated + ROUNDING_ERROR) {
+      // Create new allocations from available supply
       if (opplan->getBatch() && o->getBatch() != opplan->getBatch()) {
-        // No match
         ++o;
         continue;
       }
       auto unpegged = o->getQuantity();
       for (auto d : o->getDependencies()) {
-        if (d->getFirst()->getOperation() != dpd->getOperation() ||
-            d->getSecond()->getOperation() != opplan->getOperation())
-          continue;
-        if (d->getOperationDependency())
-          unpegged -= d->getSecond()->getQuantity() *
-                      d->getOperationDependency()->getQuantity();
-        else
-          unpegged -= d->getSecond()->getQuantity();
+        if (d->getFirst() == &*o) unpegged -= d->getQuantity();
       }
 
       // Allocate from unpegged quantity

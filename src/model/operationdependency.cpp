@@ -227,6 +227,14 @@ OperationPlanDependency::~OperationPlanDependency() {
   if (second) second->dependencies.remove(this);
 }
 
+double OperationPlanDependency::getQuantity() const {
+  // Assumes complete allocation of first or second operationplan
+  if (!first || !second) return 0.0;
+  double p = dpdcy ? second->getQuantity() * dpdcy->getQuantity()
+                   : second->getQuantity();
+  return min(p, first->getQuantity());
+}
+
 bool OperationDependency::checkLoops(const Operation* o,
                                      vector<const Operation*>& path) {
   auto found = find(path.begin(), path.end(), o);
@@ -255,7 +263,9 @@ bool OperationDependency::checkLoops(const Operation* o,
 }
 
 void OperationPlan::matchDependencies(bool log) {
-  if (!getOperation() || getOperation()->getDependencies().empty()) return;
+  if (!getOperation() || getOperation()->getDependencies().empty() ||
+      getCompleted() || getClosed())
+    return;
   if (log) logger << "Scanning dependencies of " << this << endl;
   for (auto dpd : getOperation()->getDependencies()) {
     if (dpd->getBlockedBy() == getOperation()) continue;

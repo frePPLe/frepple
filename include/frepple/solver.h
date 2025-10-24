@@ -900,6 +900,8 @@ class SolverCreate : public Solver {
 
     void setConstraintOwner(Problem::List* v) { constraints = v; }
 
+    void clearDependencies() { dependency_list.clear(); }
+
    private:
     static const int MAXSTATES = 256;
 
@@ -907,7 +909,7 @@ class SolverCreate : public Solver {
      * cluster. This method is only intended to be called from the
      * commit() method.
      */
-    void solveSafetyStock(SolverCreate*);
+    void solveSafetyStock(SolverCreate*, bool);
 
     void maskTemporaryShortages();
 

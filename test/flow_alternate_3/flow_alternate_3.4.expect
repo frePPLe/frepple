@@ -1,5 +1,6 @@
 BUFFER	component A1 @ factory	1971-01-01T00:00:00	1	1
-BUFFER	component A1 @ factory	2020-01-04T00:00:00	-100	-99
+BUFFER	component A1 @ factory	2020-01-04T00:00:00	99	100
+BUFFER	component A1 @ factory	2020-01-04T00:00:00	-100	0
 BUFFER	component A2 @ factory	2020-02-01T00:00:00	500	500
 BUFFER	component B1 @ factory	1971-01-01T00:00:00	5	5
 BUFFER	component B1 @ factory	2020-01-04T00:00:00	95	100
@@ -9,8 +10,9 @@ BUFFER	component C2 @ factory	2020-01-04T00:00:00	-100	400
 BUFFER	product @ factory	2020-01-11T00:00:00	100	100
 BUFFER	product @ factory	2020-01-11T00:00:00	-100	0
 DEMAND	order 1	2020-01-11T00:00:00	100
+OPERATION	Purchase component A1 @ factory from Component supplier	2019-12-28T00:00:00	2020-01-04T00:00:00	99
 OPERATION	Purchase component A2 @ factory from Component supplier	2020-01-27T00:00:00	2020-02-01T00:00:00	500	confirmed
 OPERATION	Purchase component B1 @ factory from Component supplier	2019-12-28T00:00:00	2020-01-04T00:00:00	95
 OPERATION	assembly	2020-01-04T00:00:00	2020-01-11T00:00:00	100
-PROBLEM	material shortage	Buffer 'component A1 @ factory' has material shortage of 99	2020-01-04T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	before current	Operation 'Purchase component A1 @ factory from Component supplier' planned in the past	2019-12-28T00:00:00 / 2020-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase component B1 @ factory from Component supplier' planned in the past	2019-12-28T00:00:00 / 2020-01-01T00:00:00

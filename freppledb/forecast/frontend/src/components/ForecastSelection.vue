@@ -59,13 +59,6 @@ const currentHeight = computed(() => {
   return store.dataRowHeight;
 });
 
-// console.log(29,"ForecastSelection.vue");
-// console.log(30,currentSequence);
-// console.log(31,store.measures);
-// console.log(32,store.preferences);
-// console.log(33,store.currentMeasure);
-// console.log(34,currentHeight);
-
 const sortedMeasureList = computed(() => {
   return Object.values(store.measures).sort((a, b) => {
     return a.label.localeCompare(b.label);
@@ -91,43 +84,12 @@ const showCustomizeGrid = (event) => {
   }
 };
 
-  // ?? AngularJS code for reference
-  // function savefavorite() {
-  //   if (!('favorites' in $scope.preferences))
-  //     $scope.preferences['favorites'] = {};
-  //   var favName = angular.element(document).find("#favoritename").val();
-  //   $scope.preferences['favorites'][favName] = {
-  //     'measure': $scope.measure,
-  //     'sequence': $scope.sequence,
-  //     'rows': $scope.rows
-  //   };
-  //   savePreferences();
-  //   favorite.check();
-  // }
-  // $scope.savefavorite = savefavorite;
-
-  // function removefavorite(f, $event) {
-  //   delete $scope.preferences.favorites[f];
-  //   savePreferences();
-  //   $event.stopPropagation();
-  // }
-  // $scope.removefavorite = removefavorite;
-
-  // function openfavorite(f, $event) {
-  //   $scope.measure = $scope.preferences.favorites[f]['measure'];
-  //   $scope.sequence = $scope.preferences.favorites[f]['sequence'];
-  //   $scope.rows = $scope.preferences.favorites[f]['rows'];
-  //   $scope.grid.setPristine = true;
-  // }
-  // $scope.openfavorite = openfavorite;
-
-
 const saveFavorite = (event) => {
   if (!('favorites' in store.preferences))
     store.preferences['favorites'] = {};
   const favName = document.querySelector("#favoritename").value;
   if (favName === '') return;
-  console.log(123, favName, event);
+
   store.preferences['favorites'][favName] = {
     'measure': store.currentMeasure,
     'sequence': store.currentSequence,

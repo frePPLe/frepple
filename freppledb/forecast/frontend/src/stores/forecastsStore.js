@@ -599,42 +599,9 @@ export const useForecastsStore = defineStore('forecasts', {
         }
 
       } catch (error) {
-        console.error('API Error:', error);
-        /*
-        // Create detailed error information uncomment to activate full details
-        let details = '';
-
-        // Add stack trace if available
-        if (error.stack) {
-          details += `Stack Trace:\n${error.stack}\n\n`;
-        }
-
-        // Add axios response details if available
-        if (error.response) {
-          details += `HTTP Status: ${error.response.status}\n`;
-          details += `Status Text: ${error.response.statusText}\n`;
-          details += `Response Data: ${JSON.stringify(error.response.data, null, 2)}\n`;
-          details += `Response Headers: ${JSON.stringify(error.response.headers, null, 2)}\n\n`;
-        }
-
-        // Add request details if available
-        if (error.config) {
-          details += `Request URL: ${error.config.url}\n`;
-          details += `Request Method: ${error.config.method?.toUpperCase()}\n`;
-          if (error.config.data) {
-            details += `Request Data: ${JSON.stringify(JSON.parse(error.config.data), null, 2)}\n`;
-          }
-        }
-
-        // Add any additional error properties
-        if (error.code) {
-          details += `Error Code: ${error.code}\n`;
-        }
-        */
         this.setError({
-          title: 'Forecast Update Failed',
+          title: 'Error',
           message: 'Unable to apply forecast changes',
-          // details: details || error.message,    // to see full trace uncomment this line and comment the next line.
           details: error.response?.data?.message || error.message,
           type: 'error'
         });
@@ -647,7 +614,6 @@ export const useForecastsStore = defineStore('forecasts', {
     async savePreferences() {
       this.loading = true;
       this.error = null;
-      // console.log('76 savePreferences ', this.currentSequence, this.currentMeasure, this.dataRowHeight);
       this.preferences.sequence = this.currentSequence;
       this.preferences.measure = this.currentMeasure;
       this.preferences.showdescription = this.showDescription;
@@ -674,10 +640,9 @@ export const useForecastsStore = defineStore('forecasts', {
         }
 
       } catch (error) {
-        console.log('API Error:', error);
         this.setError({
-          title: 'Forecast Update Failed',
-          message: 'Unable to apply forecast changes',
+          title: 'Error',
+          message: 'Unable to save preferences',
           details: error.response?.data?.message || error.message,
           type: 'error',
         });

@@ -11,9 +11,10 @@
 <script setup>
 import {computed} from 'vue';
 import {useForecastsStore} from '../stores/forecastsStore.js';
-import {isBlank} from "@common/utils.js";
 
 const store = useForecastsStore();
+
+const formatNumber = window.grid.formatNumber;
 
 const forecastdata = computed(() => store.buckets);
 const measures = store.measures;
@@ -130,18 +131,10 @@ const formatCellValue = (value, measure) => {
   if (value === null || value === undefined) return '';
 
   if (measure.formatter === 'currency') {
-    return `${grid.prefix || ''}${formatNumber(value, 2)}${grid.suffix || ''}`;
+    return `${store.currency[0] || ''}${formatNumber(value, 0)}${store.currency[1] || ''}`;
   }
 
   return formatNumber(value);
-};
-
-const formatNumber = (value, decimals = 0) => {
-  if (value === null || value === undefined) return '';
-  return Number(value).toLocaleString(undefined, {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals
-  });
 };
 
 const isBacklogRow = (row) => row.includes('backlog');
@@ -309,12 +302,12 @@ const navigateToDrilldown = (event) => {
                     <!-- Read-only cell -->
                     <template v-else>
                       <div class="text-center text-nowrap">
-                          <span v-if="isBacklogRow(row) && getCellValue(bucket, row) > 0" class="red">
-                            {{ formatCellValue(getCellValue(bucket, row), measures[row]) }}
-                          </span>
+                        <span v-if="isBacklogRow(row) && getCellValue(bucket, row) > 0" class="red">
+                          {{ formatCellValue(getCellValue(bucket, row), measures[row]) }}
+                        </span>
                         <span v-else>
                             {{ formatCellValue(getCellValue(bucket, row), measures[row]) }}
-                          </span>
+                        </span>
 
                         <!-- Drilldown links -->
                         <a v-if="shouldShowDrilldownLink(row, bucket)"

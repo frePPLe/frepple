@@ -444,8 +444,8 @@ void SolverCreate::SolverData::commit() {
       // Solve for safety stock in buffers.
       constrainedPlanning = (solver->getPlanType() == 1);
       safety_stock_planning = true;
-      solveSafetyStock(solver);
       buffer_solve_shortages_only = false;
+      solveSafetyStock(solver, true);
 
       // Loop through the list of all demands in this planning problem
       safety_stock_planning = false;
@@ -532,6 +532,12 @@ void SolverCreate::SolverData::commit() {
         buffer_solve_shortages_only = tmp_buffer_solve_shortages_only;
       }
       purchase_buffers.clear();
+
+      // Second run to solve for safety stock in buffers.
+      constrainedPlanning = (solver->getPlanType() == 1);
+      safety_stock_planning = true;
+      buffer_solve_shortages_only = false;
+      solveSafetyStock(solver, false);
     }
 
     // Operation batching postprocessing
@@ -579,7 +585,8 @@ void SolverCreate::SolverData::commit() {
     logger << "End solving cluster " << cluster << endl;
 }
 
-void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
+void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver,
+                                                bool first_pass) {
   safety_stock_planning = true;
   if (getLogLevel() > 0)
     logger << "Start safety stock replenishment pass for cluster " << cluster
@@ -589,8 +596,17 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
     if ((buf.getCluster() == cluster || cluster == -1) &&
         !buf.hasType<BufferInfinite>() && buf.getProducingOperation() &&
         (buf.getMinimum() || buf.getMinimumCalendar() ||
-         buf.getFlowPlans().begin() != buf.getFlowPlans().end()))
+         buf.getFlowPlans().begin() != buf.getFlowPlans().end())) {
+      if (!first_pass) {
+        auto last = buf.getFlowPlans().rbegin();
+        if (last != buf.getFlowPlans().end() &&
+            last->getOnhand() >= last->getMin() - ROUNDING_ERROR)
+          // Second pass should only pick up buffers with a remaining safety
+          // stock shortage at the end of the horizon
+          continue;
+      }
       bufs[(buf.getLevel() >= 0) ? buf.getLevel() : 0].push_back(&buf);
+    }
   State* mystate = state;
   for (auto& b_list : bufs)
     for (auto& b : b_list) {

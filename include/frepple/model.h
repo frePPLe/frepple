@@ -1730,6 +1730,8 @@ class OperationPlanDependency : public Object {
 
   OperationDependency* getOperationDependency() const { return dpdcy; }
 
+  double getQuantity() const;
+
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaCategory* metacategory;
   static const MetaClass* metadata;
@@ -2823,10 +2825,10 @@ class OperationPlan : public Object,
   /* Serial number, batch or sales order for MTO production. */
   PooledString batch;
 
+  dependencylist dependencies;
+
   /* Free text description. */
   PooledString remark;
-
-  dependencylist dependencies;
 
   /* Quantity. */
   double quantity = 0.0;
@@ -5498,7 +5500,8 @@ class OperationDelivery : public OperationFixedTime {
 };
 
 inline bool OperationPlan::getHidden() const {
-  if (getOperation() && getOperation()->hasType<OperationInventory>())
+  if (getOperation() && getOperation()->hasType<OperationInventory>() &&
+      !getEnd())
     return true;
   else
     return false;

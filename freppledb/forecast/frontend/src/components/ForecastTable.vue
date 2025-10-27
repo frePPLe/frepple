@@ -209,15 +209,6 @@ const navigateToDrilldown = (event) => {
     window.location.href = href;
   }
 };
-
-// const showOutlierTooltip = (event) => {
-//   // Handle outlier tooltip
-// };
-
-// // Lifecycle
-// onMounted(() => {
-//   // Component mounted
-// });
 </script>
 
 <template>

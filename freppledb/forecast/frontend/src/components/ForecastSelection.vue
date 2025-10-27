@@ -13,6 +13,9 @@ import { useForecastsStore } from '@/stores/forecastsStore';
 import {computed, ref, onUnmounted, toRaw} from "vue";
 import ForecastSelectionCard from "@/components/ForecastSelectionCard.vue";
 import CustomizeGrid from "@/components/CustomizeGrid.vue";
+import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js'
+
+useBootstrapTooltips();
 
 const store = useForecastsStore();
 const dict =  {'I':'item', 'L':'location', 'C':'customer'};

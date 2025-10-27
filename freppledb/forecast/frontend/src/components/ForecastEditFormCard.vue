@@ -2,6 +2,9 @@
 import {ref, computed, onMounted} from "vue";
 import {useForecastsStore} from "@/stores/forecastsStore.js";
 import { isNumeric } from "@common/utils.js";
+import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js'
+
+useBootstrapTooltips();
 
 const store = useForecastsStore();
 

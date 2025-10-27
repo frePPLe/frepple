@@ -12,7 +12,7 @@
 import { inject, computed } from "vue";
 import { useForecastsStore } from './stores/forecastsStore.js';
 import ForecastSelection from "@/components/ForecastSelection.vue";
-import ForecastDetails from "@/components/ForrecastDetails.vue";
+import ForcastDetails from "@/components/ForcastDetails.vue";
 import ErrorDialog from '@common/components/ErrorDialog.vue';
 
 const store = useForecastsStore();
@@ -37,7 +37,7 @@ const globalVar = inject('getURLprefix');
         <ForecastSelection />
       </div>
       <div class="row mb-3">
-        <ForecastDetails />
+        <ForcastDetails />
       </div>
       <ErrorDialog
           v-model="showErrorDialog"

@@ -1,0 +1,42 @@
+/*
+* Copyright (C) 2025 by frePPLe bv
+*
+* All information contained herein is, and remains the property of frePPLe.
+* You are allowed to use and modify the source code, as long as the software is used
+* within your company.
+* You are not allowed to distribute the software, either in the form of source code
+* or in the form of compiled binaries.
+*/
+
+import { onMounted, onUnmounted, ref } from 'vue';
+
+export function useBootstrapTooltips() {
+  const tooltipInstances = ref([]);
+
+  const initTooltips = () => {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipInstances.value = [...tooltipTriggerList].map(tooltipTriggerEl => {
+      return new window.bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  };
+
+  const disposeTooltips = () => {
+    tooltipInstances.value.forEach(tooltip => {
+      tooltip.dispose();
+    });
+    tooltipInstances.value = [];
+  };
+
+  onMounted(() => {
+    initTooltips();
+  });
+
+  onUnmounted(() => {
+    disposeTooltips();
+  });
+
+  return {
+    initTooltips,
+    disposeTooltips
+  };
+}

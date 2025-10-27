@@ -9,11 +9,12 @@
 */
 
 <script setup>
-import { inject, computed } from "vue";
+import { inject, computed, watch, nextTick } from "vue";
 import { useForecastsStore } from './stores/forecastsStore.js';
 import ForecastSelection from "@/components/ForecastSelection.vue";
 import ForcastDetails from "@/components/ForcastDetails.vue";
 import ErrorDialog from '@common/components/ErrorDialog.vue';
+import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js';
 
 const store = useForecastsStore();
 
@@ -27,6 +28,14 @@ const showErrorDialog = computed({
 });
 
 const globalVar = inject('getURLprefix');
+
+const { initTooltips } = useBootstrapTooltips({ autoDispose: false });
+
+// Reinitialize tooltips when tab changes
+watch(() => store.showTab, async () => {
+  await nextTick();
+  initTooltips();
+});
 
 </script>
 

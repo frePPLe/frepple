@@ -17,6 +17,7 @@ export default defineConfig({
       entry: [
         resolve(__dirname, 'src/useBackend.js'),
         resolve(__dirname, 'src/utils.js'),
+        resolve(__dirname, 'src/useBootstrapTooltips.js'),
       ],
       formats: ['es'],
     },

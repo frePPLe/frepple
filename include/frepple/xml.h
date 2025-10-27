@@ -140,7 +140,7 @@ class XMLInput : public DataInput,
   short loglevel = 0;
 
   /* A buffer used for transcoding XML data. */
-  char encodingbuffer[4 * 1024];
+  char encodingbuffer[10240];
 
   /* Handler called when a new element tag is encountered.
    * It pushes a new element on the stack and calls the current handler.

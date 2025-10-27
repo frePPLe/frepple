@@ -63,7 +63,7 @@ char* XMLInput::transcodeUTF8(const XMLCh* xercesChars) {
   XMLSize_t charsEaten;
   XMLSize_t charsReturned = utf8_encoder->transcodeTo(
       xercesChars, xercesc::XMLString::stringLen(xercesChars),
-      (XMLByte*)encodingbuffer, 4 * 1024, charsEaten,
+      (XMLByte*)encodingbuffer, 10240, charsEaten,
       xercesc::XMLTranscoder::UnRep_RepChar);
   encodingbuffer[charsReturned] = 0;
   return encodingbuffer;
@@ -74,7 +74,7 @@ XMLInput::XMLInput() : objects(maxobjects), data(maxdata) {
     xercesc::XMLTransService::Codes resCode;
     utf8_encoder =
         xercesc::XMLPlatformUtils::fgTransService->makeNewTranscoderFor(
-            "UTF-8", resCode, 4 * 1024);
+            "UTF-8", resCode, 10240);
     if (!XMLInput::utf8_encoder)
       logger << "Can't initialize UTF-8 transcoder: reason " << resCode << endl;
   }

@@ -377,15 +377,15 @@
         </demand>
     </demands>
     <operationplans>
-        <!--operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X1" quantity="100" status="approved">
+        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X1" quantity="20" status="approved">
             <operation name="7. task X1"/>
         </operationplan>
-        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X2 step 3" quantity="100" status="approved">
+        <!--operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X2 step 3" quantity="100" status="approved">
             <operation name="7. task X2 step 3"/>
-        </operationplan>
+        </operationplan-->
         <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X2 step 2" quantity="100" status="approved">
             <operation name="7. task X2 step 2"/>
-        </operationplan-->
+        </operationplan>
         <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X2 step 1" quantity="100" status="approved">
             <operation name="7. task X2 step 1"/>
         </operationplan>
@@ -448,6 +448,7 @@
     </operationplans>
 
     <!-- Case 9: Operation dependencies. Infeasible rescheduling -->
+    <!-- Planned quantities are short. -->
     <demands>
         <demand name="9. project X">
             <quantity>100</quantity>
@@ -495,7 +496,7 @@
         <!--operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="9. task X2 step 3" quantity="100" status="approved">
             <operation name="9. task X2 step 3"/>
         </operationplan-->
-        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="9. task X2 step 2" quantity="100" status="confirmed">
+        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="9. task X2 step 2" quantity="90" status="confirmed">
             <operation name="9. task X2 step 2"/>
         </operationplan>
         <!--operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="9. task X2 step 1" quantity="100" status="approved">
@@ -506,6 +507,7 @@
 <?python
 
 print("CREATING CONSTRAINED PLAN")
+# frepple.solver_propagateStatus(loglevel=99).solve()
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=99).solve()
 frepple.saveplan("output.1.xml")
 

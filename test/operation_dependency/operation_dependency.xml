@@ -683,7 +683,7 @@
 					</blockedby>
 				</dependency>
 			</dependencies>
-		</operation>		
+		</operation>
 	</operations>
 	<operationplans>
 		<operationplan reference="MO #1" quantity="1" status="approved" end="2023-03-05T00:00:00">
@@ -791,7 +791,7 @@
 			<priority>1</priority>
 			<item name="11. constrained material and capacity"/>
 			<location name="X"/>
-		</demand>		
+		</demand>
 	</demands>
 
 <?python
@@ -814,6 +814,7 @@ with open("output.1.xml", "wt", encoding='utf-8') as output:
 print("CREATING CONSTRAINED PLAN")
 frepple.saveXMLfile("output.2.xml")
 
+frepple.solver_propagateStatus(loglevel=99).solve()
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=99).solve()
 frepple.saveplan("output.3.xml")
 
@@ -835,12 +836,12 @@ with open("output.7.xml", "wt", encoding='utf-8') as output:
   for opplan in frepple.operationplans():
    for dpd in opplan.blockedby:
       print("%s (%s %s - %s) is blocked by %s (%s %s - %s)" % (
-	    opplan.operation.name, opplan.quantity, opplan.start, opplan.end , 
+	    opplan.operation.name, opplan.quantity, opplan.start, opplan.end ,
 		dpd.first.operation.name, dpd.first.quantity, dpd.first.start, dpd.first.end
 		), file=output)
    for dpd in opplan.blocking:
       print("%s (%s %s - %s) is blocking %s (%s %s - %s)" % (
-	    opplan.operation.name, opplan.quantity, opplan.start, opplan.end , 
+	    opplan.operation.name, opplan.quantity, opplan.start, opplan.end ,
 		dpd.second.operation.name, dpd.second.quantity, dpd.second.start, dpd.second.end
 		), file=output)
 ?>

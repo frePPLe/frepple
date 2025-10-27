@@ -79,8 +79,8 @@ export const useForecastsStore = defineStore('forecasts', {
     currency: [],
     editForm: {
       selectedMeasure: null,
-      startDate: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD for date input
-      endDate: new Date().toISOString().split('T')[0],   // Format as YYYY-MM-DD for date input
+      startDate: "", // new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD for date input
+      endDate: "",   // new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD for date input
       mode: 'set', // 'set', 'increase', or 'increasePercent'
       setTo: 0.0,
       increaseBy: 0.0,

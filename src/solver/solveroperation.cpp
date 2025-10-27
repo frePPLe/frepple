@@ -2287,12 +2287,11 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
 
     // Compute ask date
     data.state->q_date = opplan->getStart();
-    if (dpd->getSafetyLeadtime() &&
-        dpd->getSafetyLeadtime() > dpd->getHardSafetyLeadtime())
-      data.state->q_date -= dpd->getSafetyLeadtime();
-    if (dpd->getHardSafetyLeadtime() &&
-        dpd->getSafetyLeadtime() <= dpd->getHardSafetyLeadtime())
-      data.state->q_date -= dpd->getHardSafetyLeadtime();
+    auto needed_date = data.state->q_date - dpd->getHardSafetyLeadtime();
+    auto wished_date = needed_date;
+    if (dpd->getSafetyLeadtime() > dpd->getHardSafetyLeadtime())
+      wished_date = opplan->getStart() - dpd->getSafetyLeadtime();
+    data.state->q_date = wished_date;
 
     // Check if this is the last time it appears in the dependency list
     auto occurences = data.dependency_list.find(dpd->getBlockedBy());
@@ -2326,6 +2325,7 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
 
     // Net available quantities from the required quantity.
     data.state->q_qty = opplan->getQuantity() * dpd->getQuantity();
+    auto required = data.state->q_qty;
     auto allocated = 0.0;
     for (auto e : opplan->getDependencies()) {
       // Subtract existing allocations
@@ -2336,7 +2336,7 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
     }
     auto o = dpd->getBlockedBy()->getOperationPlans();
     while (o != OperationPlan::end() &&
-           data.state->q_qty > allocated + ROUNDING_ERROR) {
+           required > allocated + ROUNDING_ERROR) {
       // Create new allocations from available supply
       if (opplan->getBatch() && o->getBatch() != opplan->getBatch()) {
         ++o;
@@ -2350,10 +2350,6 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
       // Allocate from unpegged quantity
       if (unpegged > ROUNDING_ERROR) {
         Date refuse = Date::infinitePast;
-        auto needed_date = data.state->q_date - dpd->getHardSafetyLeadtime();
-        auto wished_date = needed_date;
-        if (dpd->getSafetyLeadtime() > dpd->getHardSafetyLeadtime())
-          wished_date = data.state->q_date - dpd->getSafetyLeadtime();
         if (o->getEnd() > needed_date && getConstraints() &&
             data.constrainedPlanning) {
           if (o->getConfirmed() || ((o->getProposed() || o->getApproved()) &&
@@ -2373,9 +2369,7 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
             auto bm = data.getCommandManager()->setBookmark();
             data.getCommandManager()->add(new CommandMoveOperationPlan(
                 &*o, Date::infinitePast, wished_date));
-            logger << indentlevel << "   after move " << &*o << endl;
             checkOperation(&*o, data);
-            logger << indentlevel << "   after check " << &*o << endl;
             if (o->getEnd() > needed_date) {
               // Rescheduling wasn't feasible.
               if (getLogLevel() > 1)
@@ -2413,17 +2407,17 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
         }
         new OperationPlanDependency(&*o, opplan, dpd);
         allocated += unpegged;
-        if (data.state->q_qty < allocated + ROUNDING_ERROR) {
-          allocated = data.state->q_qty;
+        if (required < allocated + ROUNDING_ERROR) {
+          allocated = required;
           break;
         }
       }
       ++o;
     }
 
-    if (data.state->q_qty > allocated + ROUNDING_ERROR) {
+    if (required > allocated + ROUNDING_ERROR) {
       // Plan net required quantity
-      auto orig_q_qty = data.state->q_qty;
+      auto orig_q_qty = required;
       bool repeat = false;
       auto bm = data.getCommandManager()->setBookmark();
       auto prevOwnerOpplan = data.state->curOwnerOpplan;

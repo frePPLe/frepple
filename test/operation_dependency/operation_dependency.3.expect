@@ -167,7 +167,7 @@ DEMAND CONSTRAINT	8. with wip	Operation '8. project X' planned in the past	2022-
 DEMAND CONSTRAINT	8. with wip	Operation '8. task X1' planned in the past	2022-12-27T00:00:00 / 2023-01-01T00:00:00	
 DEMAND CONSTRAINT	8. with wip	Operation '8. task X2 step 3' planned in the past	2022-12-30T00:00:00 / 2023-01-01T00:00:00	
 DEMAND CONSTRAINT	8. with wip	Operation '8. task X2 step 2' planned in the past	2022-12-25T00:00:00 / 2023-01-01T00:00:00	
-DEMAND CONSTRAINT	8. with wip	Operation  '8. task X2 step 1' awaits confirmed supply	2023-01-01T00:00:00 / 2023-03-05T00:00:00	
+DEMAND CONSTRAINT	8. with wip	Operation  '8. task X2 step 1' awaits confirmed supply	2023-03-05T00:00:00 / 2023-03-14T00:00:00	
 DEMAND CONSTRAINT	9. with quantity-per and wip	Operation '9. project X' planned in the past	2022-12-30T00:00:00 / 2023-01-01T00:00:00	
 DEMAND CONSTRAINT	9. with quantity-per and wip	Operation '9. task X1' planned in the past	2022-12-30T00:00:00 / 2023-01-01T00:00:00	
 DEMAND CONSTRAINT	9. with quantity-per and wip	Operation '9. task X2 step 2' planned in the past	2022-12-29T00:00:00 / 2023-01-01T00:00:00	

@@ -37,6 +37,14 @@ watch(() => store.showTab, async () => {
   initTooltips();
 });
 
+// Reinitialize tooltips when buckets change
+watch(() => store.buckets, async (newBuckets) => {
+  if (newBuckets && newBuckets.length > 0) {
+    await nextTick();
+    initTooltips();
+  }
+});
+
 </script>
 
 <template>

@@ -299,7 +299,7 @@ const navigateToDrilldown = (event) => {
                         <span v-if="isOutlierBucket(bucket, row)"
                               class="fa fa-warning text-danger"
                               :title="outlierString"
-                              @mouseover="showOutlierTooltip">
+                              data-bs-toggle="tooltip">
                           </span>
                       </div>
                     </template>

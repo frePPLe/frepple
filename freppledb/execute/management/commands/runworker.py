@@ -23,7 +23,7 @@
 
 from datetime import datetime, timedelta
 import logging
-from multiprocessing import Process
+import multiprocessing
 import operator
 import os
 import shlex
@@ -151,7 +151,7 @@ def runTask(task, database):
                     kwargs[key.strip("--").replace("-", "_")] = val
                 else:
                     args.append(i)
-        child = Process(
+        child = multiprocessing.get_context("spawn").Process(
             target=runCommand,
             args=(task.name, *args),
             kwargs=kwargs,

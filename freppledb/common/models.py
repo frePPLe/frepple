@@ -1522,7 +1522,7 @@ class NotificationFactory:
                                 # down the worker.
                                 time.sleep(5)
         finally:
-            connections.close_all()
+            connections[database].close()
 
     @classmethod
     def join(cls):

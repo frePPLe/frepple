@@ -194,7 +194,7 @@ class RunWebService(PlanTask):
             PlanTaskRegistry.reg.task.save(using=database)
 
         # Close all database connections.
-        connections.close_all()
+        connections[database].close()
         if "FREPPLE_TEST" in os.environ:
             server = get_databases()[database]["TEST"].get("FREPPLE_PORT", None)
         else:

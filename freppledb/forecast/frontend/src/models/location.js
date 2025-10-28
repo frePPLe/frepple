@@ -9,10 +9,7 @@
  */
 
 const REQUIRED_PROPERTIES = {
-  Name: "",
-  Description: "",
-  Category: "",
-  Subcategory: ""
+  Name: ""
 };
 
 export class Location {

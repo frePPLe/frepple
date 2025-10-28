@@ -8,38 +8,19 @@
  * or in the form of compiled binaries.
  */
 
+import {isBlank} from "@common/utils.js";
+
 const REQUIRED_PROPERTIES = {
-  Name: "",
-  Description: "",
-  Category: "",
-  Subcategory: ""
+  Name: ""
 };
 
 export class Customer {
   constructor(data = {}) {
     Object.assign(this, REQUIRED_PROPERTIES);
 
-    Object.assign(this, data);
-  }
-
-  // Get only the required properties
-  getRequiredProperties() {
-    const { name, description, category, subcategory } = this;
-    return { name, description, category, subcategory };
-  }
-
-  // Get all custom/optional properties (everything except the required ones)
-  getCustomProperties() {
-    const result = {};
-    const requiredKeys = Object.keys(REQUIRED_PROPERTIES);
-
-    for (const [key, value] of Object.entries(this)) {
-      if (!requiredKeys.includes(key)) {
-        result[key] = value;
-      }
+    if (!isBlank(data)) {
+      Object.assign(this, data);
     }
-
-    return result;
   }
 
   // Convert to API format - includes all properties
@@ -56,13 +37,6 @@ export class Customer {
   // Clone the item with all its properties
   clone() {
     return new Customer({ ...this });
-  }
-
-  // Check if all required properties are present and valid
-  isValid() {
-    return Object.keys(REQUIRED_PROPERTIES).every(key =>
-      this[key] !== undefined && this[key] !== null
-    );
   }
 
   // Update properties while preserving existing ones

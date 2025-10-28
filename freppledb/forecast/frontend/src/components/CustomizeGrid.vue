@@ -7,6 +7,7 @@ const { t, locale, availableLocales } = useI18n({
   useScope: 'global',  // This is crucial for reactivity
   inheritLocale: true
 });
+
 const store = useForecastsStore();
 
 // Props
@@ -17,10 +18,8 @@ const props = defineProps({
   }
 });
 
-
 const emit = defineEmits(['close']);
 
-// const showDescriptions = ref(store.preferences.showdescription || false);
 const showDescriptions = computed(() => store.showDescription || false);
 
 const availableMeasures = computed(() => {
@@ -77,8 +76,8 @@ const getModalContent = () => {
                 <div class="card-body">
                   <ul id="available-measures" class="list-group" style="height: 160px; overflow-y: scroll; border: 0px;">
                     ${availableMeasures.value.map(measure =>
-      `<li class="list-group-item" style="cursor: move; border: 0px;" data-value="${measure.name}">${measure.label}</li>`
-  ).join('')}
+                        `<li class="list-group-item" style="cursor: move; border: 0px;" data-value="${measure.name}">${measure.label}</li>`
+                    ).join('')}
                   </ul>
                 </div>
               </div>
@@ -89,8 +88,8 @@ const getModalContent = () => {
                 <div class="card-body">
                   <ul id="selected-measures" class="list-group" style="height: 160px; overflow-y: scroll;; border: 0px;">
                     ${selectedMeasures.value.map(measure =>
-      `<li class="list-group-item" style="cursor: move;; border: 0px;" data-value="${measure.name}">${measure.label}</li>`
-  ).join('')}
+                        `<li class="list-group-item" style="cursor: move;; border: 0px;" data-value="${measure.name}">${measure.label}</li>`
+                    ).join('')}
                   </ul>
                 </div>
               </div>

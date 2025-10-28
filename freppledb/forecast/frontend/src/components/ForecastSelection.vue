@@ -9,16 +9,22 @@
 */
 
 <script setup lang="js">
-import { useForecastsStore } from '@/stores/forecastsStore';
 import {computed, ref, onUnmounted, toRaw} from "vue";
+import { useI18n } from 'vue-i18n';
+import { useForecastsStore } from '@/stores/forecastsStore';
 import ForecastSelectionCard from "@/components/ForecastSelectionCard.vue";
 import CustomizeGrid from "@/components/CustomizeGrid.vue";
 import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js'
 
+const { t, locale, availableLocales } = useI18n({
+  useScope: 'global',  // This is crucial for reactivity
+  inheritLocale: true
+});
+
 useBootstrapTooltips();
 
 const store = useForecastsStore();
-const dict =  {'I':'item', 'L':'location', 'C':'customer'};
+const dict =  {'I':  'item', 'L': 'location', 'C': 'customer'};
 
 // Add reactive references for resizing
 const resizableContainer = ref(null);
@@ -177,7 +183,7 @@ onUnmounted(() => {
       <div class="col-auto">
         <div class="dropdown d-inline w-auto">
           <button id="selectseq" :title="$t('Select panel sequence')" class="form-control d-inline w-auto dropdown-toggle text-capitalize" name="sequence" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ dict[currentSequence[0]] }}{{(currentSequence).length > 1 ? "," : ""}}&nbsp;{{ dict[currentSequence[1]] }}{{(currentSequence).length > 2 ? "," : ""}}&nbsp;{{ dict[currentSequence[2]] }}&nbsp;&nbsp;<span class="caret"></span>
+            {{ t(dict[currentSequence[0]]) }}{{(currentSequence).length > 1 ? "," : ""}}&nbsp;{{ t(dict[currentSequence[1]]) }}{{(currentSequence).length > 2 ? "," : ""}}&nbsp;{{ t(dict[currentSequence[2]]) }}&nbsp;&nbsp;<span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
             <li>
@@ -230,11 +236,11 @@ onUnmounted(() => {
         &nbsp;&nbsp;
         <div class="dropdown d-inline w-auto ">
           <button id="selectmeasure" :title="$t('Select panel measure')" class="dropdown-toggle form-control d-inline w-auto text-capitalize" name="measure" :value="measure" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ store.measures[currentMeasure].label }}&nbsp;&nbsp;<span class="caret"></span>
+            {{ t(store.measures[currentMeasure].label) }}&nbsp;&nbsp;<span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
             <li v-for="m in sortedMeasureList" :key="m.name" >
-              <a v-if="!m.computed" href="#" class="dropdown-item text-capitalize" @click="store.setCurrentMeasure(m.name)">{{ m.label }}</a>
+              <a v-if="!m.computed" href="#" class="dropdown-item text-capitalize" @click="store.setCurrentMeasure(m.name)">{{ t(m.label) }}</a>
             </li>
           </ul>
         </div>
@@ -248,7 +254,7 @@ onUnmounted(() => {
               @click="showBucket"
               data-bs-toggle="tooltip"
               data-bs-placement="top"
-              title="set time horizon">
+              :data-bs-title="t('set time horizon')">
             <span class="fa fa-clock-o"></span>
           </button>
           <button
@@ -258,7 +264,7 @@ onUnmounted(() => {
               aria-haspopup="true"
               aria-expanded="false">
             <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
-                 data-bs-title="Bookmark your favorite report configurations">
+                 :data-bs-title="t('Bookmark your favorite report configurations')">
               <span class="fa fa-star"></span>
             </div>
           </button>
@@ -274,7 +280,7 @@ onUnmounted(() => {
                     id="favoritesave"
                     @click="saveFavorite($event)"
                     type="button"
-                    class="flex-fill btn btn-primary btn-sm me-1 text-capitalize aaa">save</button>
+                    class="flex-fill btn btn-primary btn-sm me-1 text-capitalize aaa">{{ t('save') }}</button>
                 <input
                     class="form-control form-control-sm"
                     id="favoritename"
@@ -290,7 +296,7 @@ onUnmounted(() => {
               @click="showImportDialog"
               data-bs-toggle="tooltip"
               data-bs-placement="top"
-              title="Import CSV or Excel file">
+              :data-bs-title="t('Import CSV or Excel file')">
             <span id="csvimport" class="fa fa-arrow-up"></span>
           </button>
           <button
@@ -299,7 +305,7 @@ onUnmounted(() => {
               @click="showCustomizeGrid"
               data-bs-toggle="tooltip"
               data-bs-placement="top"
-              data-bs-title="Customize">
+              :data-bs-title="t('Customize')">
             <span class="fa fa-wrench"></span>
           </button>
         </div>

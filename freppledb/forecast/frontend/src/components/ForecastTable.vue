@@ -10,7 +10,13 @@
 
 <script setup>
 import {computed} from 'vue';
+import {useI18n} from 'vue-i18n';
 import {useForecastsStore} from '../stores/forecastsStore.js';
+
+const { t, locale, availableLocales } = useI18n({
+  useScope: 'global',  // This is crucial for reactivity
+  inheritLocale: true
+});
 
 const store = useForecastsStore();
 
@@ -19,7 +25,7 @@ const formatNumber = window.grid.formatNumber;
 const forecastdata = computed(() => store.buckets);
 const measures = store.measures;
 
-const outlierString = 'Demand outlier';
+const outlierString = t('Demand outlier');
 
 // Computed properties
 const visibleBuckets = computed(() => {

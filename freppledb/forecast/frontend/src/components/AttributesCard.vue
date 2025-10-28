@@ -9,7 +9,13 @@
 */
 
 <script setup>
+import { useI18n } from 'vue-i18n';
 import {useForecastsStore} from "@/stores/forecastsStore.js";
+
+const { t, locale, availableLocales } = useI18n({
+  useScope: 'global',  // This is crucial for reactivity
+  inheritLocale: true
+});
 
 const store = useForecastsStore();
 
@@ -25,15 +31,17 @@ const modelName = (props.panelid === 'I') ? 'item': (props.panelid === 'L') ? 'l
 <template>
   <div class="card">
     <div class="card-header">
-      <h5 class="card-title text-capitalize mb-0" translate=""><span class="">{{ modelName }}</span></h5>
+      <h5 class="card-title text-capitalize mb-0" translate=""><span class="">{{ t(modelName) }}</span></h5>
     </div>
     <div class="card-body">
       <div class="table-responsive">
         <table class="table table-borderless table-sm table-hover">
           <tbody>
             <tr v-for="(value, key) in store[modelName]" :key="key">
-              <td>{{key}}:&nbsp;</td>
-              <td>{{value}}</td>
+              <td v-if="key === 'Name' && (locale === 'en' || locale === 'de')" style="width: 100px; white-space: nowrap;">{{ key }}:</td>
+              <td v-if="key === 'Name' && (locale === 'en' || locale === 'de')">{{value}}</td>
+              <td v-if="key !== 'Name'" style="width: 100px; white-space: nowrap;">{{ key }}:</td>
+              <td v-if="key !== 'Name'">{{value}}</td>
             </tr>
           </tbody>
         </table>

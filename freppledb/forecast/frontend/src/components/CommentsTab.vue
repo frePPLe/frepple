@@ -9,8 +9,14 @@
 */
 
 <script setup lang="js">
+import { useI18n } from 'vue-i18n';
 import { useForecastsStore } from '@/stores/forecastsStore';
 import {debouncedInputHandler} from "@common/utils.js";
+
+const { t, locale, availableLocales } = useI18n({
+  useScope: 'global',  // This is crucial for reactivity
+  inheritLocale: true
+});
 
 const store = useForecastsStore();
 
@@ -35,10 +41,10 @@ const comments1 = [{"user": "admin ()", "lastmodified": "2025-09-25 06:20:14.060
     <div class="row">
       <div class="col">
         <div style="clear: both;">
-          <input type="submit" role="button" id="commentitem" value="new item comment" v-on:click="setCommentType('item')" aria-disabled="false" :class="(store.commentType==='item') ? 'active': 'inactive'" class="btn btn-primary text-capitalize me-1">
-          <input type="submit" role="button" id="commentitemlocation" value="new item-location comment" v-on:click="setCommentType('itemlocation')" aria-disabled="false" :class="(store.commentType==='itemlocation') ? 'active': 'inactive'" class="btn btn-primary text-capitalize me-1">
-          <input type="submit" role="button" id="commentlocation" value="new location comment" v-on:click="setCommentType('location')" aria-disabled="false" :class="(store.commentType==='location') ? 'active': 'inactive'" class="btn btn-primary text-capitalize me-1">
-          <input type="submit" role="button" id="commentcustomer" value="new customer comment" v-on:click="setCommentType('customer')" aria-disabled="false" :class="(store.commentType==='customer') ? 'active': 'inactive'" class="btn btn-primary text-capitalize me-1">
+          <input type="submit" role="button" id="commentitem" :value="t('new item comment')" v-on:click="setCommentType('item')" aria-disabled="false" :class="(store.commentType==='item') ? 'active': 'inactive'" class="btn btn-primary text-capitalize me-1">
+          <input type="submit" role="button" id="commentitemlocation" :value="t('new item-location comment')" v-on:click="setCommentType('itemlocation')" aria-disabled="false" :class="(store.commentType==='itemlocation') ? 'active': 'inactive'" class="btn btn-primary text-capitalize me-1">
+          <input type="submit" role="button" id="commentlocation" :value="t('new location comment')" v-on:click="setCommentType('location')" aria-disabled="false" :class="(store.commentType==='location') ? 'active': 'inactive'" class="btn btn-primary text-capitalize me-1">
+          <input type="submit" role="button" id="commentcustomer" :value="t('new customer comment')" v-on:click="setCommentType('customer')" aria-disabled="false" :class="(store.commentType==='customer') ? 'active': 'inactive'" class="btn btn-primary text-capitalize me-1">
 
           <textarea
             class="form-control mt-2 mb-2"
@@ -48,13 +54,13 @@ const comments1 = [{"user": "admin ()", "lastmodified": "2025-09-25 06:20:14.060
             rows="5"
             v-model="store.newComment"
             @input="handleCommentChange"
-            placeholder="Enter your comment here...">
+            :placeholder="t('Enter your comment here...')">
           </textarea><br>
 
           <div v-if="getComments().length > 0">
             <div :id="'pastcomments'+index" v-for="(record,index) in getComments()" :key="index">
               <hr>
-              <h3>{{record.user}}&nbsp;{{ record.type }}</h3>
+              <h3>{{record.user}}&nbsp;{{ t('record.type') }}</h3>
               <span class="float_right">{{record.lastmodified}}</span>
               <pre>{{ record.comment }}</pre>
             </div>

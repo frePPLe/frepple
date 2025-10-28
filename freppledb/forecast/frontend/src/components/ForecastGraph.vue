@@ -14,7 +14,11 @@ import {ref, watch, onMounted, onUnmounted, nextTick, computed} from 'vue';
 import {useForecastsStore} from "@/stores/forecastsStore.js";
 import { useI18n } from 'vue-i18n';
 
-const { t } = useI18n();
+const { t, locale, availableLocales } = useI18n({
+  useScope: 'global',  // This is crucial for reactivity
+  inheritLocale: true
+});
+
 const store = useForecastsStore();
 const graphContainer = ref(null);
 

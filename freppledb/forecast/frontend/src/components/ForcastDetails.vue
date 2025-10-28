@@ -10,10 +10,18 @@
 
 <script setup lang="js">
 import {computed} from "vue";
+import { useI18n } from 'vue-i18n';
 import { useForecastsStore } from '@/stores/forecastsStore';
 import AttributesTab from './AttributesTab.vue';
 import ForecastTab from './ForecastTab.vue';
 import CommentsTab from './CommentsTab.vue';
+
+const { t, locale, availableLocales } = useI18n({
+  useScope: 'global',  // This is crucial for reactivity
+  inheritLocale: true
+});
+
+console.log(24, locale, availableLocales);
 
 const store = useForecastsStore();
 
@@ -39,23 +47,23 @@ function undo() {
         <div class="form-inline">
           <button
               id="save"
-              class="btn btn-primary me-1"
+              class="btn btn-primary me-1 text-capitalize"
               @click="save(false)"
               data-bs-toggle="tooltip"
               :disabled="!store.hasChanges"
               :class="store.hasChanges ? 'btn-danger' : ''"
               data-bs-original-title="Save changes to the database">
-            Save
+            {{ t('save') }}
           </button>
           <button
               id="undo"
-              class="btn btn-primary"
+              class="btn btn-primary text-capitalize"
               @click="undo()"
               data-bs-toggle="tooltip"
               :disabled="!store.hasChanges"
               :class="store.hasChanges ? 'btn-danger' : ''"
               data-bs-original-title="Undo changes">
-            Undo
+            {{ t('undo') }}
           </button>
         </div>
       </div>
@@ -79,17 +87,17 @@ function undo() {
         <ul class="nav nav-tabs">
           <li class="nav-item" id="attributestab" role="presentation" @click="store.setShowTab('attributes')">
             <a :class="['text-capitalize', {'nav-link': true, 'active': store.showTab === 'attributes'}]" class="text-capitalize nav-link">
-              <span>attributes</span>
+              <span>{{ t('attributes') }}</span>
             </a>
           </li>
           <li class="nav-item" id="forecasttab" role="presentation" @click="store.setShowTab('forecast')">
             <a :class="['text-capitalize', {'nav-link': true, 'active': store.showTab === 'forecast'}]" class="text-capitalize nav-link">
-              <span>forecast</span>
+              <span>{{ t('forecast') }}</span>
             </a>
           </li>
           <li class="nav-item" id="commentstab" role="presentation" @click="store.setShowTab('comments')">
             <a :class="['text-capitalize', {'nav-link': true, 'active': store.showTab === 'comments'}]" class="text-capitalize nav-link">
-              <span>comments</span>
+              <span>{{ t('comments') }}</span>
             </a>
           </li>
         </ul>

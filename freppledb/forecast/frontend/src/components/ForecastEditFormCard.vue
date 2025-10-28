@@ -1,10 +1,16 @@
 <script setup lang="js">
 import {ref, computed, onMounted} from "vue";
+import { useI18n } from 'vue-i18n';
 import {useForecastsStore} from "@/stores/forecastsStore.js";
 import { isNumeric } from "@common/utils.js";
 import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js'
 
 useBootstrapTooltips();
+
+const { t, locale, availableLocales } = useI18n({
+  useScope: 'global',  // This is crucial for reactivity
+  inheritLocale: true
+});
 
 const store = useForecastsStore();
 
@@ -124,16 +130,16 @@ function changeEdit() {
               class="btn btn-primary"
               :disabled="!activateApply"
             >
-              <span class="">Apply</span>
+              <span class="">{{ t('Apply') }}</span>
             </button>
           </td>
           <td>
             <form class="mb-3 pristine valid">
-              Update
+              {{ t('Update') }}
               <div class="dropdown" style="display:inline-block">
                 <button
                   type="button"
-                  class="dropdown-toggle form-control d-inline w-auto"
+                  class="dropdown-toggle form-control d-inline w-auto text-capitalize"
                   data-bs-toggle="dropdown"
                   id="editmeasure"
                   name="editmeasure"
@@ -141,7 +147,7 @@ function changeEdit() {
                   aria-expanded="false"
                   style="min-width:200px"
                 >
-                  {{ store.editForm.selectedMeasure?.label || 'Select measure' }}&nbsp;&nbsp;<span class="caret"></span>
+                  {{ store.editForm.selectedMeasure?.label || t('select measure') }}&nbsp;&nbsp;<span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="editmeasure">
                   <li v-for="m in sortedEditableMeasureList" :key="m.label">
@@ -151,7 +157,7 @@ function changeEdit() {
                   </li>
                 </ul>
               </div>
-              &nbsp;from&nbsp;
+              &nbsp;{{ t('from') }}&nbsp;
               <input
                 id="editstartdate"
                 type="date"
@@ -160,7 +166,7 @@ function changeEdit() {
                 @input="setStartDate"
                 style="background: white !important"
               >
-              &nbsp;till&nbsp;
+              &nbsp;{{ t('till') }}&nbsp;
               <input
                 id="editenddate"
                 type="date"
@@ -180,9 +186,9 @@ function changeEdit() {
                   :checked="store.editForm.mode === 'set'"
                   @change="setEditMode('set')"
                   name="optradio"
-                  value="set"
+                  :value="set"
                 >
-                Set to
+                {{ t('Set to') }}
                 <input
                   type="text"
                   class="form-control d-inline pristine untouched valid empty"
@@ -208,7 +214,7 @@ function changeEdit() {
                   name="optradio"
                   value="increase"
                 >
-                Increase by
+                {{ t('Increase by') }}
                 <input
                   type="text"
                   class="form-control d-inline pristine untouched valid empty"
@@ -234,7 +240,7 @@ function changeEdit() {
                   name="optradio"
                   value="increasePercent"
                 >
-                Increase by
+                {{ t('Increase by') }}
                 <input
                   type="text"
                   class="form-control d-inline pristine untouched valid empty"

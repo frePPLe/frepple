@@ -81,15 +81,15 @@ function toggleRowVisibility(rowIndex) {
             </div>
           </div>
 
-          <div v-for="(row, index) in data" :key="row[modelName]" :class="(row[modelName] === store[modelName].Name) ? 'bg-light' : ''" class="d-flex flex-wrap evtitemrow" v-on:click="selectILCobject(modelName, index)">
-            <div style="overflow:visible;" :style="'padding-left: ' + row.lvl * 13 + 'px'">
+          <div v-for="(row, index) in data" :key="row[modelName]" :class="(row[modelName] === store[modelName].Name) ? 'bg-light' : ''" class="d-flex evtitemrow" v-on:click="selectILCobject(modelName, index)">
+            <div class="overflow-hidden text-nowrap me-3" :style="'padding-left: ' + row.lvl * 13 + 'px'" data-bs-toggle="tooltip" :data-bs-title="row['description']">
               &nbsp;<span v-if="row.children && row.visible" class="fa" :class="row.expanded === 1 ? 'fa-caret-down' : 'fa-caret-right'"></span>
-              <span v-if="row.visible" style="white-space:nowrap">{{row[modelName]}}</span>
+              {{ row.visible ? row[modelName] : '' }}
+              <template v-if="store.showDescription && row['description']">
+                &nbsp;-&nbsp;{{ row["description"] }}
+              </template>
             </div>
             <div v-if="row.visible" class="ms-auto d-flex justify-content-end text-start">
-              <span v-if="store.showDescription" class="numbervalues ms-auto text-right">
-                {{ row["description"] }}
-              </span>
               <span v-for="val in row.values" :key="val.bucketname" class="numbervalues">{{val.value}}</span>
             </div>
           </div>

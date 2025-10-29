@@ -24,7 +24,7 @@ import ForecastTable from "@/components/ForecastTable.vue";
       <div class="col-lg-8 col-md-12 mb-3" style="max-width: 900px">
         <ForecastEditFormCard />
       </div>
-      <div class="col-md-4 col-md-12 mb-3" style="max-width: 400px">
+      <div class="col-md-4 col-md-12 mb-3" style="max-width: 540px">
         <ForecastParametersCard />
       </div>
     </div>

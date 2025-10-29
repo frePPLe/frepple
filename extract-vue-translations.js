@@ -5,6 +5,7 @@ const glob = require('glob');
 
 // Define Vue apps to extract translations from
 const vueApps = [
+  'forecast',
   'quoting',
   // Add other Vue app names here
 ];
@@ -38,9 +39,9 @@ vueApps.forEach(appName => {
     try {
       const content = fs.readFileSync(file, 'utf8');
 
-      // Find all $t('...') and $t("...") calls in the file
-      const tSingleQuoteRegex = /\$t\(\s*'([^']+)'\s*\)/g;
-      const tDoubleQuoteRegex = /\$t\(\s*"([^"]+)"\s*\)/g;
+      // Find all ttt('...') and ttt("...") calls in the file
+      const tSingleQuoteRegex = /ttt\(\s*'([^']+)'\s*\)/g;
+      const tDoubleQuoteRegex = /ttt\(\s*"([^"]+)"\s*\)/g;
 
       let match;
 

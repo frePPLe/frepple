@@ -13,7 +13,7 @@ import {computed} from "vue";
 import { useI18n } from 'vue-i18n';
 import {useForecastsStore} from "@/stores/forecastsStore";
 
-const { t, locale, availableLocales } = useI18n({
+const { t: ttt, locale, availableLocales } = useI18n({
   useScope: 'global',  // This is crucial for reactivity
   inheritLocale: true
 });
@@ -68,7 +68,7 @@ function toggleRowVisibility(rowIndex) {
 <template>
   <div class="card" :style="{'height':  currentHeight - 31 + 'px'}" style="min-height: 100px; max-height: 50vh" :id="modelName + 'panel'">
     <div class="card-header">
-      <h5 class="card-title text-capitalize mb-0" translate=""><span>{{ t(modelName) }}</span></h5>
+      <h5 class="card-title text-capitalize mb-0" translate=""><span>{{ ttt(modelName) }}</span></h5>
     </div>
     <div class="card-body ps-0 pe-0 pt-2 pb-2"  style="overflow: auto">
       <div class="">

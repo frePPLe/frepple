@@ -7,7 +7,7 @@ import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js'
 
 useBootstrapTooltips();
 
-const { t, locale, availableLocales } = useI18n({
+const { t: ttt, locale, availableLocales } = useI18n({
   useScope: 'global',  // This is crucial for reactivity
   inheritLocale: true
 });
@@ -116,7 +116,7 @@ function changeEdit() {
 <template>
   <div class="card">
     <div class="card-header">
-      <h5 class="card-title text-capitalize mb-0"><span class="">edit</span></h5>
+      <h5 class="card-title text-capitalize mb-0"><span class="">{{ttt("edit")}}</span></h5>
     </div>
     <div class="card-body">
       <table>
@@ -130,12 +130,12 @@ function changeEdit() {
               class="btn btn-primary"
               :disabled="!activateApply"
             >
-              <span class="">{{ t('Apply') }}</span>
+              <span class="">{{ ttt('Apply') }}</span>
             </button>
           </td>
           <td>
             <form class="mb-3 pristine valid">
-              {{ t('Update') }}
+              {{ ttt('Update') }}
               <div class="dropdown" style="display:inline-block">
                 <button
                   type="button"
@@ -147,7 +147,7 @@ function changeEdit() {
                   aria-expanded="false"
                   style="min-width:200px"
                 >
-                  {{ store.editForm.selectedMeasure?.label || t('select measure') }}&nbsp;&nbsp;<span class="caret"></span>
+                  {{ store.editForm.selectedMeasure?.label || ttt('select measure') }}&nbsp;&nbsp;<span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="editmeasure">
                   <li v-for="m in sortedEditableMeasureList" :key="m.label">
@@ -157,7 +157,7 @@ function changeEdit() {
                   </li>
                 </ul>
               </div>
-              &nbsp;{{ t('from') }}&nbsp;
+              &nbsp;{{ ttt('from') }}&nbsp;
               <input
                 id="editstartdate"
                 type="date"
@@ -166,7 +166,7 @@ function changeEdit() {
                 @input="setStartDate"
                 style="background: white !important"
               >
-              &nbsp;{{ t('till') }}&nbsp;
+              &nbsp;{{ ttt('till') }}&nbsp;
               <input
                 id="editenddate"
                 type="date"
@@ -188,7 +188,7 @@ function changeEdit() {
                   name="optradio"
                   :value="set"
                 >
-                {{ t('Set to') }}
+                {{ ttt('Set to') }}
                 <input
                   type="text"
                   class="form-control d-inline pristine untouched valid empty"
@@ -214,7 +214,7 @@ function changeEdit() {
                   name="optradio"
                   value="increase"
                 >
-                {{ t('Increase by') }}
+                {{ ttt('Increase by') }}
                 <input
                   type="text"
                   class="form-control d-inline pristine untouched valid empty"
@@ -240,7 +240,7 @@ function changeEdit() {
                   name="optradio"
                   value="increasePercent"
                 >
-                {{ t('Increase by') }}
+                {{ ttt('Increase by') }}
                 <input
                   type="text"
                   class="form-control d-inline pristine untouched valid empty"

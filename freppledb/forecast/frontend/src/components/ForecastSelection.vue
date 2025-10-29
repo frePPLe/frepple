@@ -16,7 +16,7 @@ import ForecastSelectionCard from "@/components/ForecastSelectionCard.vue";
 import CustomizeGrid from "@/components/CustomizeGrid.vue";
 import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js'
 
-const { t, locale, availableLocales } = useI18n({
+const { t: ttt, locale, availableLocales } = useI18n({
   useScope: 'global',  // This is crucial for reactivity
   inheritLocale: true
 });
@@ -25,6 +25,9 @@ useBootstrapTooltips();
 
 const store = useForecastsStore();
 const dict =  {'I':  'item', 'L': 'location', 'C': 'customer'};
+
+// to have this stringes in the translation files
+const dummy = [ttt('item'), ttt('location'), ttt('customer')];
 
 // Add reactive references for resizing
 const resizableContainer = ref(null);
@@ -182,65 +185,65 @@ onUnmounted(() => {
     <div class="row mb-1">
       <div class="col-auto">
         <div class="dropdown d-inline w-auto">
-          <button id="selectseq" :title="$t('Select panel sequence')" class="form-control d-inline w-auto dropdown-toggle text-capitalize" name="sequence" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ t(dict[currentSequence[0]]) }}{{(currentSequence).length > 1 ? "," : ""}}&nbsp;{{ t(dict[currentSequence[1]]) }}{{(currentSequence).length > 2 ? "," : ""}}&nbsp;{{ t(dict[currentSequence[2]]) }}&nbsp;&nbsp;<span class="caret"></span>
+          <button id="selectseq" :title="ttt('Select panel sequence')" class="form-control d-inline w-auto dropdown-toggle text-capitalize" name="sequence" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ ttt(dict[currentSequence[0]]) }}{{(currentSequence).length > 1 ? "," : ""}}&nbsp;{{ ttt(dict[currentSequence[1]]) }}{{(currentSequence).length > 2 ? "," : ""}}&nbsp;{{ ttt(dict[currentSequence[2]]) }}&nbsp;&nbsp;<span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('ILC')">{{ $t(dict['I']) }},&nbsp;{{ $t(dict['L']) }},&nbsp;{{ $t(dict['C']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('ILC')">{{ ttt(dict['I']) }},&nbsp;{{ ttt(dict['L']) }},&nbsp;{{ ttt(dict['C']) }}</a>
             </li>
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('LIC')">{{ $t(dict['L']) }},&nbsp;{{ $t(dict['I']) }},&nbsp;{{ $t(dict['C']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('LIC')">{{ ttt(dict['L']) }},&nbsp;{{ ttt(dict['I']) }},&nbsp;{{ ttt(dict['C']) }}</a>
             </li>
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('CLI')">{{ $t(dict['C']) }},&nbsp;{{ $t(dict['L']) }},&nbsp;{{ $t(dict['I']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('CLI')">{{ ttt(dict['C']) }},&nbsp;{{ ttt(dict['L']) }},&nbsp;{{ ttt(dict['I']) }}</a>
             </li>
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('ICL')">{{ $t(dict['I']) }},&nbsp;{{ $t(dict['C']) }},&nbsp;{{ $t(dict['L']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('ICL')">{{ ttt(dict['I']) }},&nbsp;{{ ttt(dict['C']) }},&nbsp;{{ ttt(dict['L']) }}</a>
             </li>
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('LCI')">{{ $t(dict['L']) }},&nbsp;{{ $t(dict['C']) }},&nbsp;{{ $t(dict['I']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('LCI')">{{ ttt(dict['L']) }},&nbsp;{{ ttt(dict['C']) }},&nbsp;{{ ttt(dict['I']) }}</a>
             </li>
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('CIL')">{{ $t(dict['C']) }},&nbsp;{{ $t(dict['I']) }},&nbsp;{{ $t(dict['L']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('CIL')">{{ ttt(dict['C']) }},&nbsp;{{ ttt(dict['I']) }},&nbsp;{{ ttt(dict['L']) }}</a>
             </li>
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('IL')">{{ $t(dict['I']) }},&nbsp;{{ $t(dict['L']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('IL')">{{ ttt(dict['I']) }},&nbsp;{{ ttt(dict['L']) }}</a>
             </li>
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('LI')">{{ $t(dict['L']) }},&nbsp;{{ $t(dict['I']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('LI')">{{ ttt(dict['L']) }},&nbsp;{{ ttt(dict['I']) }}</a>
             </li>
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('IC')">{{ $t(dict['I']) }},&nbsp;{{ $t(dict['C']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('IC')">{{ ttt(dict['I']) }},&nbsp;{{ ttt(dict['C']) }}</a>
             </li>
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('CI')">{{ $t(dict['C']) }},&nbsp;{{ $t(dict['I']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('CI')">{{ ttt(dict['C']) }},&nbsp;{{ ttt(dict['I']) }}</a>
             </li>
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('LC')">{{ $t(dict['L']) }},&nbsp;{{ $t(dict['C']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('LC')">{{ ttt(dict['L']) }},&nbsp;{{ ttt(dict['C']) }}</a>
             </li>
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('CL')">{{ $t(dict['C']) }},&nbsp;{{ $t(dict['L']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('CL')">{{ ttt(dict['C']) }},&nbsp;{{ ttt(dict['L']) }}</a>
             </li>
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('I')">{{ $t(dict['I']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('I')">{{ ttt(dict['I']) }}</a>
             </li>
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('L')">{{ $t(dict['L']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('L')">{{ ttt(dict['L']) }}</a>
             </li>
             <li>
-              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('C')">{{ $t(dict['C']) }}</a>
+              <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('C')">{{ ttt(dict['C']) }}</a>
             </li>
           </ul>
         </div>
         &nbsp;&nbsp;
         <div class="dropdown d-inline w-auto ">
-          <button id="selectmeasure" :title="$t('Select panel measure')" class="dropdown-toggle form-control d-inline w-auto text-capitalize" name="measure" :value="measure" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ t(store.measures[currentMeasure].label) }}&nbsp;&nbsp;<span class="caret"></span>
+          <button id="selectmeasure" :title="ttt('Select panel measure')" class="dropdown-toggle form-control d-inline w-auto text-capitalize" name="measure" :value="measure" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ttt(store.measures[currentMeasure].label) }}&nbsp;&nbsp;<span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
             <li v-for="m in sortedMeasureList" :key="m.name" >
-              <a v-if="!m.computed" href="#" class="dropdown-item text-capitalize" @click="store.setCurrentMeasure(m.name)">{{ t(m.label) }}</a>
+              <a v-if="!m.computed" href="#" class="dropdown-item text-capitalize" @click="store.setCurrentMeasure(m.name)">{{ttt(m.label) }}</a>
             </li>
           </ul>
         </div>
@@ -254,7 +257,7 @@ onUnmounted(() => {
               @click="showBucket"
               data-bs-toggle="tooltip"
               data-bs-placement="top"
-              :data-bs-title="t('set time horizon')">
+              :data-bs-title="ttt('set time horizon')">
             <span class="fa fa-clock-o"></span>
           </button>
           <button
@@ -264,7 +267,7 @@ onUnmounted(() => {
               aria-haspopup="true"
               aria-expanded="false">
             <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
-                 :data-bs-title="t('Bookmark your favorite report configurations')">
+                 :data-bs-title="ttt('Bookmark your favorite report configurations')">
               <span class="fa fa-star"></span>
             </div>
           </button>
@@ -280,7 +283,7 @@ onUnmounted(() => {
                     id="favoritesave"
                     @click="saveFavorite($event)"
                     type="button"
-                    class="flex-fill btn btn-primary btn-sm me-1 text-capitalize aaa">{{ t('save') }}</button>
+                    class="flex-fill btn btn-primary btn-sm me-1 text-capitalize aaa">{{ttt('save') }}</button>
                 <input
                     class="form-control form-control-sm"
                     id="favoritename"
@@ -296,7 +299,7 @@ onUnmounted(() => {
               @click="showImportDialog"
               data-bs-toggle="tooltip"
               data-bs-placement="top"
-              :data-bs-title="t('Import CSV or Excel file')">
+              :data-bs-title="ttt('Import CSV or Excel file')">
             <span id="csvimport" class="fa fa-arrow-up"></span>
           </button>
           <button
@@ -305,7 +308,7 @@ onUnmounted(() => {
               @click="showCustomizeGrid"
               data-bs-toggle="tooltip"
               data-bs-placement="top"
-              :data-bs-title="t('Customize')">
+              :data-bs-title="ttt('Customize')">
             <span class="fa fa-wrench"></span>
           </button>
         </div>

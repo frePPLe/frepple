@@ -16,7 +16,7 @@ import AttributesTab from './AttributesTab.vue';
 import ForecastTab from './ForecastTab.vue';
 import CommentsTab from './CommentsTab.vue';
 
-const { t, locale, availableLocales } = useI18n({
+const { t: ttt, locale, availableLocales } = useI18n({
   useScope: 'global',  // This is crucial for reactivity
   inheritLocale: true
 });
@@ -53,7 +53,7 @@ function undo() {
               :disabled="!store.hasChanges"
               :class="store.hasChanges ? 'btn-danger' : ''"
               data-bs-original-title="Save changes to the database">
-            {{ t('save') }}
+            {{ ttt('save') }}
           </button>
           <button
               id="undo"
@@ -63,7 +63,7 @@ function undo() {
               :disabled="!store.hasChanges"
               :class="store.hasChanges ? 'btn-danger' : ''"
               data-bs-original-title="Undo changes">
-            {{ t('undo') }}
+            {{ ttt('undo') }}
           </button>
         </div>
       </div>
@@ -87,17 +87,17 @@ function undo() {
         <ul class="nav nav-tabs">
           <li class="nav-item" id="attributestab" role="presentation" @click="store.setShowTab('attributes')">
             <a :class="['text-capitalize', {'nav-link': true, 'active': store.showTab === 'attributes'}]" class="text-capitalize nav-link">
-              <span>{{ t('attributes') }}</span>
+              <span>{{ ttt('attributes') }}</span>
             </a>
           </li>
           <li class="nav-item" id="forecasttab" role="presentation" @click="store.setShowTab('forecast')">
             <a :class="['text-capitalize', {'nav-link': true, 'active': store.showTab === 'forecast'}]" class="text-capitalize nav-link">
-              <span>{{ t('forecast') }}</span>
+              <span>{{ ttt('forecast') }}</span>
             </a>
           </li>
           <li class="nav-item" id="commentstab" role="presentation" @click="store.setShowTab('comments')">
             <a :class="['text-capitalize', {'nav-link': true, 'active': store.showTab === 'comments'}]" class="text-capitalize nav-link">
-              <span>{{ t('comments') }}</span>
+              <span>{{ ttt('comments') }}</span>
             </a>
           </li>
         </ul>

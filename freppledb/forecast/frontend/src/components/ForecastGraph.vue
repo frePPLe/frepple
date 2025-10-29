@@ -14,7 +14,7 @@ import {ref, watch, onMounted, onUnmounted, nextTick, computed} from 'vue';
 import {useForecastsStore} from "@/stores/forecastsStore.js";
 import { useI18n } from 'vue-i18n';
 
-const { t, locale, availableLocales } = useI18n({
+const { t: ttt, locale, availableLocales } = useI18n({
   useScope: 'global',  // This is crucial for reactivity
   inheritLocale: true
 });
@@ -235,21 +235,21 @@ const render = () => {
           const tooltipContent = i >= forecastcurrentbucket
             ? `<div style="text-align:center"><strong>${d.bucket}</strong></div>
                <table style="margin: 5px;">
-                 <tr><td>${t('total orders')}</td><td style="text-align:right">${formatNumber(d.orderstotal || 0)}</td></tr>
-                 <tr><td>${t('open orders')}</td><td style="text-align:right">${formatNumber(d.ordersopen || 0)}</td></tr>
-                 <tr><td>${t('orders adjustment')}</td><td style="text-align:right">${(d.ordersadjustment === null || d.ordersadjustment === undefined) ? '' : formatNumber(d.ordersadjustment)}</td></tr>
-                 <tr><td>${t('forecast baseline')}</td><td style="text-align:right">${formatNumber(d.forecastbaseline || 0)}</td></tr>
-                 <tr><td>${t('forecast override')}</td><td style="text-align:right">${(!Object.prototype.hasOwnProperty.call(d, "forecastoverride") || d.forecastoverride === null || d.forecastoverride === undefined) ? '' : formatNumber(d.forecastoverride)}</td></tr>
-                 <tr><td>${t('forecast total')}</td><td style="text-align:right">${formatNumber(d.forecasttotal || 0)}</td></tr>
-                 <tr><td>${t('forecast net')}</td><td style="text-align:right">${formatNumber(d.forecastnet || 0)}</td></tr>
-                 <tr><td>${t('forecast consumed')}</td><td style="text-align:right">${formatNumber(d.forecastconsumed || 0)}</td></tr>
+                 <tr><td>${ttt('total orders')}</td><td style="text-align:right">${formatNumber(d.orderstotal || 0)}</td></tr>
+                 <tr><td>${ttt('open orders')}</td><td style="text-align:right">${formatNumber(d.ordersopen || 0)}</td></tr>
+                 <tr><td>${ttt('orders adjustment')}</td><td style="text-align:right">${(d.ordersadjustment === null || d.ordersadjustment === undefined) ? '' : formatNumber(d.ordersadjustment)}</td></tr>
+                 <tr><td>${ttt('forecast baseline')}</td><td style="text-align:right">${formatNumber(d.forecastbaseline || 0)}</td></tr>
+                 <tr><td>${ttt('forecast override')}</td><td style="text-align:right">${(!Object.prototype.hasOwnProperty.call(d, "forecastoverride") || d.forecastoverride === null || d.forecastoverride === undefined) ? '' : formatNumber(d.forecastoverride)}</td></tr>
+                 <tr><td>${ttt('forecast total')}</td><td style="text-align:right">${formatNumber(d.forecasttotal || 0)}</td></tr>
+                 <tr><td>${ttt('forecast net')}</td><td style="text-align:right">${formatNumber(d.forecastnet || 0)}</td></tr>
+                 <tr><td>${ttt('forecast consumed')}</td><td style="text-align:right">${formatNumber(d.forecastconsumed || 0)}</td></tr>
                </table>`
             : `<div style="text-align:center"><strong>${d.bucket}</strong></div>
                <table style="margin: 5px;">
-                 <tr><td>${t('total orders')}</td><td style="text-align:right">${formatNumber(d.orderstotal || 0)}</td></tr>
-                 <tr><td>${t('open orders')}</td><td style="text-align:right">${formatNumber(d.ordersopen || 0)}</td></tr>
-                 <tr><td>${t('orders adjustment')}</td><td style="text-align:right">${(d.ordersadjustment === null || d.ordersadjustment === undefined) ? '' : formatNumber(d.ordersadjustment)}</td></tr>
-                 <tr><td>${t('past forecast')}</td><td style="text-align:right">${formatNumber(d.forecastbaseline || 0)}</td></tr>
+                 <tr><td>${ttt('total orders')}</td><td style="text-align:right">${formatNumber(d.orderstotal || 0)}</td></tr>
+                 <tr><td>${ttt('open orders')}</td><td style="text-align:right">${formatNumber(d.ordersopen || 0)}</td></tr>
+                 <tr><td>${ttt('orders adjustment')}</td><td style="text-align:right">${(d.ordersadjustment === null || d.ordersadjustment === undefined) ? '' : formatNumber(d.ordersadjustment)}</td></tr>
+                 <tr><td>${ttt('past forecast')}</td><td style="text-align:right">${formatNumber(d.forecastbaseline || 0)}</td></tr>
                </table>`;
 
           showTooltip(tooltipContent);
@@ -321,10 +321,10 @@ const render = () => {
   // Display legend
   const legend = svg.append("g");
   const codes = [
-    [t("open orders"), "#2B95EC", 1],
-    [t("total orders"), "#8BBA00", 0],
-    [t("forecast total"), "#FF0000", 5],
-    [t("past forecast"), "#FF7B00", 6]
+    [ttt("open orders"), "#2B95EC", 1],
+    [ttt("total orders"), "#8BBA00", 0],
+    [ttt("forecast total"), "#FF0000", 5],
+    [ttt("past forecast"), "#FF7B00", 6]
   ];
 
   let visible = 0;

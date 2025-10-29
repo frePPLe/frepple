@@ -12,7 +12,7 @@
 import { useI18n } from 'vue-i18n';
 import {useForecastsStore} from "@/stores/forecastsStore.js";
 
-const { t, locale, availableLocales } = useI18n({
+const { t: ttt, locale, availableLocales } = useI18n({
   useScope: 'global',  // This is crucial for reactivity
   inheritLocale: true
 });
@@ -31,7 +31,7 @@ const modelName = (props.panelid === 'I') ? 'item': (props.panelid === 'L') ? 'l
 <template>
   <div class="card">
     <div class="card-header">
-      <h5 class="card-title text-capitalize mb-0" translate=""><span class="">{{ t(modelName) }}</span></h5>
+      <h5 class="card-title text-capitalize mb-0" translate=""><span class="">{{ ttt(modelName) }}</span></h5>
     </div>
     <div class="card-body">
       <div class="table-responsive">

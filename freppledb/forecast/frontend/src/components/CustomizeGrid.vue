@@ -3,7 +3,7 @@ import {computed, nextTick, onBeforeUnmount, ref, watch} from 'vue';
 import {useForecastsStore} from '@/stores/forecastsStore';
 import {useI18n} from 'vue-i18n';
 
-const { t, locale, availableLocales } = useI18n({
+const { t: ttt, locale, availableLocales } = useI18n({
   useScope: 'global',  // This is crucial for reactivity
   inheritLocale: true
 });
@@ -65,14 +65,14 @@ const getModalContent = () => {
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">${t("Customize")}</h5>
+          <h5 class="modal-title">${ttt("Customize")}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="customize-close"></button>
         </div>
         <div class="modal-body">
           <div class="row">
             <div class="col-6">
               <div class="card">
-                <div class="card-header">${t('Available Cross')}</div>
+                <div class="card-header">${ttt('Available Cross')}</div>
                 <div class="card-body">
                   <ul id="available-measures" class="list-group" style="height: 160px; overflow-y: scroll; border: 0px;">
                     ${availableMeasures.value.map(measure =>
@@ -84,7 +84,7 @@ const getModalContent = () => {
             </div>
             <div class="col-6">
               <div class="card">
-                <div class="card-header">${t('Selected Cross')}</div>
+                <div class="card-header">${ttt('Selected Cross')}</div>
                 <div class="card-body">
                   <ul id="selected-measures" class="list-group" style="height: 160px; overflow-y: scroll;; border: 0px;">
                     ${selectedMeasures.value.map(measure =>
@@ -98,14 +98,14 @@ const getModalContent = () => {
           <div class="row mt-3">
             <div class="col-12">
               <input class="form-check-input" type="checkbox" id="showdescription" ${store.showDescription ? 'checked' : ''}>
-              <label for="showdescription">&nbsp;&nbsp;${t('Show descriptions')}</label>
+              <label for="showdescription">&nbsp;&nbsp;${ttt('Show descriptions')}</label>
             </div>
           </div>
         </div>
         <div class="modal-footer justify-content-between">
-          <input type="submit" id="cancelCustbutton" role="button" class="btn btn-gray" value="${t('Cancel')}">
-          <input type="submit" id="resetCustbutton" role="button" class="btn btn-primary" value="${t('Reset')}">
-          <input type="submit" id="okCustbutton" role="button" class="btn btn-primary" value="${t('OK')}">
+          <input type="submit" id="cancelCustbutton" role="button" class="btn btn-gray" value="${ttt('Cancel')}">
+          <input type="submit" id="resetCustbutton" role="button" class="btn btn-primary" value="${ttt('Reset')}">
+          <input type="submit" id="okCustbutton" role="button" class="btn btn-primary" value="${ttt('OK')}">
         </div>
       </div>
     </div>

@@ -27,7 +27,7 @@ const showErrorDialog = computed({
   }
 });
 
-const globalVar = inject('getURLprefix');
+// const globalVar = inject('getURLprefix');
 
 const { initTooltips } = useBootstrapTooltips({ autoDispose: false });
 

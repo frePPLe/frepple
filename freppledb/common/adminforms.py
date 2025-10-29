@@ -43,6 +43,7 @@ from django.db.models.fields import (
     DateTimeField,
     TimeField,
     CharField,
+    DurationField,
 )
 from django import forms
 from django.http import HttpResponseRedirect, Http404
@@ -117,7 +118,14 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             ),
         },
         CharField: {"widget": forms.TextInput(attrs={"placeholder": ""})},
+        DurationField: {"widget": forms.TextInput(attrs={"placeholder": ""})},
     }
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        for field in form.base_fields.values():
+            field.widget.attrs["placeholder"] = ""
+        return form
 
     def get_urls(self):
         """

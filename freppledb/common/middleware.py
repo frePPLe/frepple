@@ -47,8 +47,7 @@ from django.utils import translation, timezone
 from django.utils.translation import get_supported_language_variant
 from django.utils.translation import gettext_lazy as _
 
-from freppledb.common.auth import MultiDBBackend
-from freppledb.common.models import Scenario, User, APIKey
+from freppledb.common.models import User, APIKey
 from freppledb.common.utils import get_databases
 
 import logging

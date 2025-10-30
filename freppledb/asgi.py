@@ -35,7 +35,7 @@ from django.db import DEFAULT_DB_ALIAS
 from django.urls import re_path
 
 from django.contrib.auth.models import AnonymousUser
-from freppledb.common.models import User
+from freppledb.common.models import User, APIKey
 from freppledb.common.utils import get_databases
 
 from channels.auth import AuthMiddleware
@@ -127,6 +127,16 @@ def get_user(username=None, email=None, password=None, database=DEFAULT_DB_ALIAS
         return AnonymousUser()
 
 
+@database_sync_to_async
+def get_user_by_apikey(key, database=DEFAULT_DB_ALIAS):
+    try:
+        user = APIKey.findKey(key).user
+        user.switchDatabase(database)
+        return user
+    except Exception:
+        return AnonymousUser()
+
+
 class TokenMiddleware(BaseMiddleware):
     """
     - adds scenario database to the scope
@@ -145,7 +155,8 @@ class TokenMiddleware(BaseMiddleware):
                     if h[0] == b"authorization":
                         auth = h[1].decode("ascii").split()
                         if auth[0].lower() == "bearer":
-                            # JWT webtoken authentication
+                            # JWT webtoken or APIkey authentication
+                            decoded = None
                             for secret in (
                                 getattr(settings, "AUTH_SECRET_KEY", None),
                                 get_databases()[self.database].get(
@@ -169,8 +180,16 @@ class TokenMiddleware(BaseMiddleware):
                                                 email=decoded["email"],
                                                 database=scope["database"],
                                             )
-                                    except jwt.exceptions.InvalidSignatureError:
+                                    except Exception:
                                         continue
+                            if not decoded:
+                                # Try API key authentication
+                                try:
+                                    scope["user"] = await get_user_by_apikey(
+                                        auth[1], database=scope["database"]
+                                    )
+                                except Exception:
+                                    pass
                         elif auth[0].lower() == "basic":
                             # Basic authentication
                             args = (

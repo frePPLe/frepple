@@ -26,8 +26,8 @@ useBootstrapTooltips();
 const store = useForecastsStore();
 const dict =  {'I':  'item', 'L': 'location', 'C': 'customer'};
 
-// to have this stringes in the translation files
-const dummy = [ttt('item'), ttt('location'), ttt('customer')];
+// to have these strings rendered in advance
+const dictLabels = {'I': ttt('item'), 'L': ttt('location'), 'C': ttt('customer')};
 
 // Add reactive references for resizing
 const resizableContainer = ref(null);
@@ -186,7 +186,7 @@ onUnmounted(() => {
       <div class="col-auto">
         <div class="dropdown d-inline w-auto">
           <button id="selectseq" :title="ttt('Select panel sequence')" class="form-control d-inline w-auto dropdown-toggle text-capitalize" name="sequence" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ ttt(dict[currentSequence[0]]) }}{{(currentSequence).length > 1 ? "," : ""}}&nbsp;{{ ttt(dict[currentSequence[1]]) }}{{(currentSequence).length > 2 ? "," : ""}}&nbsp;{{ ttt(dict[currentSequence[2]]) }}&nbsp;&nbsp;<span class="caret"></span>
+            {{ dictLabels[currentSequence[0]] }}{{(currentSequence).length > 1 ? "," : ""}}&nbsp;{{ dictLabels[currentSequence[1]] }}{{(currentSequence).length > 2 ? "," : ""}}&nbsp;{{ dictLabels[currentSequence[2]] }}&nbsp;&nbsp;<span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
             <li>
@@ -266,10 +266,10 @@ onUnmounted(() => {
               data-bs-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false">
-            <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
+            <span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
                  :data-bs-title="ttt('Bookmark your favorite report configurations')">
               <span class="fa fa-star"></span>
-            </div>
+            </span>
           </button>
           <ul class="dropdown-menu dropdown-menu-end" id="favoritelist">
             <li v-for="favname in favoriteNames" :key="favname">

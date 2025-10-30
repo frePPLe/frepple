@@ -67,16 +67,21 @@ function setEditMode(mode) {
   changeEdit();
 }
 
-function setEditValue(field, value) {
-  console.log(63, "setEditValue", field, value);
+import { debouncedInputHandler } from "@common/utils.js";
+
+const setEditValueDebounced = debouncedInputHandler((field, value) => {
   if (value === '') return;
-  if (store.editForm.selectedMeasure.formatter === 'number' || store.editForm.selectedMeasure.formatter === 'currency') {
+  if (store.editForm.selectedMeasure?.formatter === 'number' || store.editForm.selectedMeasure?.formatter === 'currency') {
     validateNumericField(field, value);
     store.setEditFormValues(field, parseFloat(value));
   } else {
     store.setEditFormValues(field, value);
   }
   changeEdit();
+}, 300);
+
+function setEditValue(field, value) {
+  setEditValueDebounced(field, value);
 }
 
 function applyEdit() {

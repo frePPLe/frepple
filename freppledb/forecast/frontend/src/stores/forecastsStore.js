@@ -419,11 +419,27 @@ export const useForecastsStore = defineStore('forecasts', {
     },
 
     async undo() {
+      // Reset comment and forecast attributes
       this.newComment = "";
       this.commentType = "";
       this.forecastAttributes.forecastmethod = this.forecastAttributes.oldForecastmethod;
+
+      // Reset edit form to initial state
+      this.editForm = {
+        selectedMeasure: null,
+        startDate: "",
+        endDate: "",
+        mode: "set",
+        setTo: 0,
+        increaseBy: 0,
+        increaseByPercent: 0
+      };
+
+      // Reset changes
       this.hasChanges = false;
       this.bucketChanges = {};
+
+      // Refresh forecast details from backend
       await this.getForecastDetails(this.item.Name, this.location.Name, this.customer.Name);
     },
 

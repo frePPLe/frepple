@@ -202,11 +202,17 @@ const getDrilldownUrl = (row, bucket) => {
   return `${window.url_prefix || ''}/forecast/demand/?noautofilter&item__name__ico=${item}&location__name__ico=${location}&customer__name__ico=${customer}&due__gte=${startdate}&due__lt=${enddate}`;
 };
 
-const updateCellValue = (bucket, row, event) => {
-  const value = event.target.value;
+import { debouncedInputHandler } from "@common/utils.js";
+
+const updateCellValueDebounced = debouncedInputHandler((bucket, row, value) => {
   store.setEditFormValues("mode", "set");
   store.setEditFormValues("setTo", value);
   store.applyForecastChanges();
+}, 300);
+
+const updateCellValue = (bucket, row, event) => {
+  const value = event.target.value;
+  updateCellValueDebounced(bucket, row, value);
 };
 
 const navigateToDrilldown = (event) => {
@@ -277,7 +283,7 @@ const navigateToDrilldown = (event) => {
                           :data-index="bucketIndex"
                           :data-measure="getBaseMeasureName(row)"
                           type="number"
-                          :value="getCellValue(bucket, row)"
+                          :value="isEditCell(bucket.bucket, row) ? store.editForm.setTo : getCellValue(bucket, row)"
                           :tabindex="rowIndex"
                           @input="updateCellValue(bucket, row, $event)"
                           @focus="onCellFocus(bucket.bucket, row)"

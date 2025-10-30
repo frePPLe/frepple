@@ -33,7 +33,6 @@ const handleCommentChange = debouncedInputHandler(() => {
   store.updateCommentContent(store.newComment);
 }, 300);
 
-const comments1 = [{"user": "admin ()", "lastmodified": "2025-09-25 06:20:14.060816", "comment": "customer comment 0", "type": "customer All customers"}, {"user": "admin ()", "lastmodified": "2025-09-25 06:20:02.677456", "comment": "location comment 0", "type": "location All locations"}, {"user": "admin ()", "lastmodified": "2025-09-25 06:19:54.072498", "comment": "Item-location comment 0", "type": "itemlocation All items @ All locations"}, {"user": "admin ()", "lastmodified": "2025-09-25 06:19:42.209849", "comment": "Item comment 0", "type": "item All items"}];
 </script>
 
 <template>
@@ -60,7 +59,7 @@ const comments1 = [{"user": "admin ()", "lastmodified": "2025-09-25 06:20:14.060
           <div v-if="getComments().length > 0">
             <div :id="'pastcomments'+index" v-for="(record,index) in getComments()" :key="index">
               <hr>
-              <h3>{{record.user}}&nbsp;{{ ttt('record.type') }}</h3>
+              <h3 class="text-capitalize">{{record.user}}&nbsp;-&nbsp;{{ ttt(record.type) }}</h3>
               <span class="float_right">{{record.lastmodified}}</span>
               <pre>{{ record.comment }}</pre>
             </div>

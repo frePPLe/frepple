@@ -37,7 +37,9 @@ const getURLprefix = () => {
 const dateTimeFormat = (input, fmt) => {
   if (!input) return '';
   const date = new Date(input);
-  // Using Intl.DateTimeFormat for modern date formatting
+  return moment(date).format(window.datetimeformat);
+  // TODO Use Intl.DateTimeFormat for modern date formatting
+  /*
   const formatter = new Intl.DateTimeFormat('default', {
     year: 'numeric',
     month: '2-digit',
@@ -47,15 +49,15 @@ const dateTimeFormat = (input, fmt) => {
     second: '2-digit',
   });
   return fmt ? date.toLocaleString() : formatter.format(date);
+  */
 };
-
-function getDjangoTemplateVariable(key, options = { reactive: false }) {
-  return ref(window[key]);
-}
 
 const dateFormat = (input, fmt) => {
   if (!input) return '';
   const date = new Date(input);
+  return moment(date).format(window.dateformat);
+  // TODO Use Intl.DateTimeFormat for modern date formatting
+  /*
   // Using Intl.DateTimeFormat for date-only formatting
   const formatter = new Intl.DateTimeFormat('default', {
     year: 'numeric',
@@ -63,6 +65,13 @@ const dateFormat = (input, fmt) => {
     day: '2-digit',
   });
   return fmt ? date.toLocaleString() : formatter.format(date);
+  */
+};
+
+const timeFormat = (input) => {
+  if (!input) return '';
+  const date = new Date(input);
+  return moment(date).format("HH:mm:ss");
 };
 
 function debouncedInputHandler(func, delay = 300) {
@@ -89,6 +98,6 @@ export {
   getURLprefix,
   dateTimeFormat,
   dateFormat,
-  getDjangoTemplateVariable,
+  timeFormat,
   debouncedInputHandler,
 };

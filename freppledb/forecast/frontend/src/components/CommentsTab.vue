@@ -33,6 +33,13 @@ const handleCommentChange = debouncedInputHandler(() => {
   store.updateCommentContent(store.newComment);
 }, 300);
 
+const translateCommentHeaderString = (commentString) => {
+  const commentParts = commentString.split(' ');
+
+  commentParts[0] = ((commentParts[0] === 'itemlocation') ? ttt('item-location') : ttt(commentParts[0])) + ':';
+  return commentParts.join(' ');
+}
+
 </script>
 
 <template>
@@ -59,7 +66,7 @@ const handleCommentChange = debouncedInputHandler(() => {
           <div v-if="getComments().length > 0">
             <div :id="'pastcomments'+index" v-for="(record,index) in getComments()" :key="index">
               <hr>
-              <h3 class="text-capitalize">{{record.user}}&nbsp;-&nbsp;{{ ttt(record.type) }}</h3>
+              <h3 class="text-capitalize">{{record.user}}&nbsp;-&nbsp;{{ translateCommentHeaderString(record.type) }}</h3>
               <span class="float_right">{{dateTimeFormat(record.lastmodified)}}</span>
               <pre>{{ record.comment }}</pre>
             </div>

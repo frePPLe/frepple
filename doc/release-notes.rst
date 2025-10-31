@@ -20,6 +20,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     Change the parameter "plan.move_approved_early" to true to activate
     this feature.
 
+- | Bug fix: A corner case in the solver algorithm has been solved. When confirmed
+    supply exists after the autofence date, some demands can be planned with extra delays.
+
 .. rubric:: Demand forecasting
 
 - | Parameter forecast.DeadAfterInactivity has ben redesigned to prevent a forecast

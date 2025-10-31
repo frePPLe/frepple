@@ -1710,6 +1710,10 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
   OperationPlanState x;
   Date y;
   bool realfirst = true;
+  if (useDependencies()) {
+    logger << "Warning: Method not supporting operation dependencies yet."
+           << endl;
+  }
   if (e) {
     // Case 1: an end date is specified
     for (auto i = opplan->lastsubopplan; i; i = i->prevsubopplan) {

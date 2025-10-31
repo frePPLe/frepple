@@ -22,21 +22,21 @@ const store = useForecastsStore();
 
 const formatNumber = window.grid.formatNumber;
 
-const forecastdata = computed(() => store.buckets);
+const forecastData = computed(() => store.buckets);
 const measures = store.measures;
 
 const outlierString = ttt('Demand outlier');
 
 // Computed properties
 const visibleBuckets = computed(() => {
-  if (!forecastdata.value) return [];
+  if (!forecastData.value) return [];
 
   const currentBucketIndex = store.getBucketIndexFromName(store.currentBucketName) || 0;
-  return forecastdata.value.slice(currentBucketIndex);
+  return forecastData.value.slice(currentBucketIndex);
 });
 
 const preselectedIndexes = computed(() => {
-  if (!forecastdata.value) return [];
+  if (!forecastData.value) return [];
   store.setPreselectedBucketIndexes();
   return store.preselectedBucketIndexes;
 });
@@ -48,35 +48,6 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString();
 };
 
-const getBucket = (thisBucket, yearsAgo) => {
-  if (!forecastdata.value?.[thisBucket]) return undefined;
-
-  const bucket = forecastdata.value[thisBucket];
-  const startDate = new Date(bucket.startdate);
-  const endDate = new Date(bucket.enddate);
-
-  // Get the date right in the middle between start and end date and subtract years
-  const middleDate = new Date(
-      Math.round(startDate.getTime() + (endDate.getTime() - startDate.getTime()) / 2.0) -
-      (365 * 24 * 3600 * 1000 * yearsAgo)
-  );
-
-  for (const [index, forecastBucket] of forecastdata.value.entries()) {
-    const bucketStart = new Date(forecastBucket.startdate);
-    const bucketEnd = new Date(forecastBucket.enddate);
-
-    if (middleDate >= bucketStart && middleDate < bucketEnd) {
-      return index;
-    }
-  }
-
-  return undefined;
-};
-
-const getBaseMeasureName = (measureName) => {
-  return measureName.replace(/[123]ago$/, '');
-};
-
 const getCellData = (bucket, row) => {
   const measure = measures[row];
   if (!measure) return undefined;
@@ -86,29 +57,29 @@ const getCellData = (bucket, row) => {
   let value, idx, outlier;
 
   // Handle historical measures (1 year ago, 2 years ago, 3 years ago)
-  if (measure.name.includes('1ago')) {
-    const years1ago = getBucket(bucketIndex, 1);
-    if (years1ago >= 0 && forecastdata.value[years1ago]) {
-      const baseMeasure = getBaseMeasureName(measure.name);
-      value = forecastdata.value[years1ago][baseMeasure];
+  if (measure.name.endsWith('1ago')) {
+    const years1ago = store.getBucket(bucketIndex, 1);
+    if (years1ago >= 0 && forecastData.value[years1ago]) {
+      const baseMeasure = store.getBaseMeasureName(measure.name);
+      value = forecastData.value[years1ago][baseMeasure];
       idx = years1ago;
-      outlier = forecastdata.value[years1ago]['outlier'];
+      outlier = forecastData.value[years1ago]['outlier'];
     }
-  } else if (measure.name.includes('2ago')) {
-    const years2ago = getBucket(bucketIndex, 2);
-    if (years2ago >= 0 && forecastdata.value[years2ago]) {
-      const baseMeasure = getBaseMeasureName(measure.name);
-      value = forecastdata.value[years2ago][baseMeasure];
+  } else if (measure.name.endsWith('2ago')) {
+    const years2ago = store.getBucket(bucketIndex, 2);
+    if (years2ago >= 0 && forecastData.value[years2ago]) {
+      const baseMeasure = store.getBaseMeasureName(measure.name);
+      value = forecastData.value[years2ago][baseMeasure];
       idx = years2ago;
-      outlier = forecastdata.value[years2ago]['outlier'];
+      outlier = forecastData.value[years2ago]['outlier'];
     }
-  } else if (measure.name.includes('3ago')) {
-    const years3ago = getBucket(bucketIndex, 3);
-    if (years3ago >= 0 && forecastdata.value[years3ago]) {
-      const baseMeasure = getBaseMeasureName(measure.name);
-      value = forecastdata.value[years3ago][baseMeasure];
+  } else if (measure.name.endsWith('3ago')) {
+    const years3ago = store.getBucket(bucketIndex, 3);
+    if (years3ago >= 0 && forecastData.value[years3ago]) {
+      const baseMeasure = store.getBaseMeasureName(measure.name);
+      value = forecastData.value[years3ago][baseMeasure];
       idx = years3ago;
-      outlier = forecastdata.value[years3ago]['outlier'];
+      outlier = forecastData.value[years3ago]['outlier'];
     }
   } else {
     value = bucket[row];
@@ -121,16 +92,17 @@ const getCellData = (bucket, row) => {
 
 const onCellFocus = (bucketName, row) => {
   const bucketIndex = store.getBucketIndexFromName(bucketName);
-  store.setEditFormValues("startDate", forecastdata.value[bucketIndex].startdate.split(' ')[0]);
-  store.setEditFormValues("endDate", forecastdata.value[bucketIndex].enddate.split(' ')[0]);
+  store.setEditFormValues("startDate", forecastData.value[bucketIndex].startdate.split(' ')[0]);
+  store.setEditFormValues("endDate", forecastData.value[bucketIndex].enddate.split(' ')[0]);
   store.setEditFormValues("selectedMeasure", measures[row]);
   store.setEditFormValues("mode", "set");
-  store.setEditFormValues("setTo", forecastdata.value[bucketIndex][row]);
+  store.setEditFormValues("setTo", forecastData.value[bucketIndex][row]);
 
   store.setPreselectedBucketIndexes();
 };
 
 const getCellValue = (bucket, row) => {
+  if (isDirtyCell(bucket.bucket, row)) return store.bucketChanges[store.getBucketIndexFromName(bucket.bucket)][row];
   const cellData = getCellData(bucket, row, visibleBuckets.value.indexOf(bucket));
   return cellData?.value ?? null;
 };
@@ -179,7 +151,7 @@ const shouldShowDrilldownLink = (row, bucket) => {
 };
 
 const getDrilldownUrl = (row, bucket) => {
-  if (!forecastdata.value) return '#';
+  if (!forecastData.value) return '#';
 
   const item = encodeURIComponent(store.item.Name || 'All items');
   const location = encodeURIComponent(store.location.Name || 'All locations');
@@ -221,6 +193,7 @@ const navigateToDrilldown = (event) => {
     window.location.href = href;
   }
 };
+
 </script>
 
 <template>
@@ -281,7 +254,7 @@ const navigateToDrilldown = (event) => {
                           :class="{'edit-cell' : isEditCell(bucket.bucket, row), 'ng-dirty': isDirtyCell(bucket.bucket, row)}"
                           class="smallpadding"
                           :data-index="bucketIndex"
-                          :data-measure="getBaseMeasureName(row)"
+                          :data-measure="store.getBaseMeasureName(row)"
                           type="number"
                           :value="isEditCell(bucket.bucket, row) ? store.editForm.setTo : getCellValue(bucket, row)"
                           :tabindex="rowIndex"

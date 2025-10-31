@@ -472,6 +472,35 @@ export const useForecastsStore = defineStore('forecasts', {
       return this.buckets.findIndex(bucket => bucket.bucket === bucketName);
     },
 
+    getBucket(thisBucket, yearsAgo) {
+      if (!this.buckets[thisBucket]) return undefined;
+
+      const bucket = this.buckets[thisBucket];
+      const startDate = new Date(bucket.startdate);
+      const endDate = new Date(bucket.enddate);
+
+      // Get the date right in the middle between start and end date and subtract years
+      const middleDate = new Date(
+        Math.round(startDate.getTime() + (endDate.getTime() - startDate.getTime()) / 2.0) -
+        (365 * 24 * 3600 * 1000 * yearsAgo)
+      );
+
+      for (const [index, forecastBucket] of this.buckets.entries()) {
+        const bucketStart = new Date(forecastBucket.startdate);
+        const bucketEnd = new Date(forecastBucket.enddate);
+
+        if (middleDate >= bucketStart && middleDate < bucketEnd) {
+          return index;
+        }
+      }
+
+      return undefined;
+    },
+
+    getBaseMeasureName(measureName) {
+      return measureName.replace(/[123]ago$/, '');
+    },
+
     setEditFormValues(field, value) {
       switch (field) {
         case "selectedMeasure":
@@ -500,16 +529,59 @@ export const useForecastsStore = defineStore('forecasts', {
       }
     },
 
-    logChange: function (bckt, msr, val) {
-      this.buckets[bckt][msr] = val;
+    logChange: function (bckt, measureName, val) {
+      this.buckets[bckt][measureName] = val;
       if (bckt in this.bucketChanges) {
-        this.bucketChanges[bckt][msr] = val;
+        this.bucketChanges[bckt][measureName] = val;
       }
       else {
         this.bucketChanges[bckt] = {
-          'bucket': this.buckets[bckt].bucket, [msr]: val
+          'bucket': this.buckets[bckt].bucket, [measureName]: val
         };
       }
+
+      // Handle historical measures (1 year ago, 2 years ago, 3 years ago)
+      if (measureName.endsWith('1ago')) {
+        const years1ago = this.getBucket(bckt, 1);
+        if (years1ago >= 0 && this.buckets[years1ago]) {
+          const baseMeasure = this.getBaseMeasureName(measureName);
+          if (years1ago in this.bucketChanges) {
+            this.bucketChanges[years1ago][baseMeasure] = val;
+          }
+          else {
+            this.bucketChanges[years1ago] = {
+              'bucket': this.buckets[years1ago].bucket, [baseMeasure]: val
+            };
+          }
+        }
+      } else if (measureName.endsWith('2ago')) {
+        const years2ago = this.getBucket(bckt, 2);
+        if (years2ago >= 0 && this.buckets[years2ago]) {
+          const baseMeasure = this.getBaseMeasureName(measureName);
+          if (years2ago in this.bucketChanges) {
+            this.bucketChanges[years2ago][baseMeasure] = val;
+          }
+          else {
+            this.bucketChanges[years2ago] = {
+              'bucket': this.buckets[years2ago].bucket, [baseMeasure]: val
+            };
+          }
+        }
+      } else if (measureName.endsWith('3ago')) {
+        const years3ago = this.getBucket(bckt, 3);
+        if (years3ago >= 0 && this.buckets[years3ago]) {
+          const baseMeasure = this.getBaseMeasureName(measureName);
+          if (years3ago in this.bucketChanges) {
+            this.bucketChanges[years3ago][baseMeasure] = val;
+          }
+          else {
+            this.bucketChanges[years3ago] = {
+              'bucket': this.buckets[years3ago].bucket, [baseMeasure]: val
+            };
+          }
+        }
+      }
+
     },
 
     applyForecastChanges: function () {
@@ -555,7 +627,6 @@ export const useForecastsStore = defineStore('forecasts', {
     },
 
     async saveForecastChanges(recalculate = false) {
-      console.log('Saving forecast changes');
       this.loading = true;
       this.clearError();
       let newData = {
@@ -573,6 +644,17 @@ export const useForecastsStore = defineStore('forecasts', {
         newData.comment = this.newComment;
         newData.commenttype = this.commentType;
       }
+
+      //remove 1ago, 2ago and 3ago from the data
+      for (const bckt in newData.buckets) {
+        for (const key of Object.keys(newData.buckets[bckt])) {
+          if (key.endsWith('1ago') || key.endsWith('2ago') || key.endsWith('3ago')) {
+            delete newData.buckets[bckt][key];
+          }
+        }
+      }
+      newData.buckets = newData.buckets.filter(x =>  Object.keys(x).length > 1);
+
       try {
         const result = await forecastService.postForecastDetails(newData);
 

@@ -11,7 +11,7 @@
 <script setup lang="js">
 import { useI18n } from 'vue-i18n';
 import { useForecastsStore } from '@/stores/forecastsStore';
-import {debouncedInputHandler} from "@common/utils.js";
+import {debouncedInputHandler, dateTimeFormat} from "@common/utils.js";
 
 const { t: ttt, locale, availableLocales } = useI18n({
   useScope: 'global',  // This is crucial for reactivity
@@ -60,7 +60,7 @@ const handleCommentChange = debouncedInputHandler(() => {
             <div :id="'pastcomments'+index" v-for="(record,index) in getComments()" :key="index">
               <hr>
               <h3 class="text-capitalize">{{record.user}}&nbsp;-&nbsp;{{ ttt(record.type) }}</h3>
-              <span class="float_right">{{record.lastmodified}}</span>
+              <span class="float_right">{{dateTimeFormat(record.lastmodified)}}</span>
               <pre>{{ record.comment }}</pre>
             </div>
           </div>

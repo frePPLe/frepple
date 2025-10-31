@@ -389,7 +389,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                   // Not more supply will ever be found here!
                   plan_date = Date::infiniteFuture;
                 } else if (hasOperationPlans(data->getCommandManager()) ||
-                           next_date <= copy_plan_date + getLazyDelay()) {
+                           next_date < copy_plan_date + getLazyDelay()) {
                   // Oops, we didn't get a proper answer we can use for the next
                   // loop. Print a warning and simply a bit later.
                   plan_date = copy_plan_date + getLazyDelay();

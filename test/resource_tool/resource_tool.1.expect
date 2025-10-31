@@ -166,5 +166,5 @@ DEMAND CONSTRAINT	1.order 3	Operation '1.step 1' planned in the past	2022-12-29T
 DEMAND CONSTRAINT	1.order 5	Operation '1.step 4' planned in the past	2022-12-26T00:00:00 / 2023-01-01T00:00:00	
 DEMAND CONSTRAINT	1.order 5	Operation '1.step 3' planned in the past	2022-12-26T00:00:00 / 2023-01-01T00:00:00	
 DEMAND CONSTRAINT	1.order 5	Operation '1.step 2' planned in the past	2022-12-26T00:00:00 / 2023-01-01T00:00:00	
-DEMAND CONSTRAINT	1.order 5	Operation '1.step 1' planned in the past	2022-12-26T00:00:00 / 2023-01-01T00:00:00	
-DEMAND CONSTRAINT	1.order 5	Resource '1.holder 3' has capacity shortage of 1	2023-02-14T00:00:00 / 2023-02-20T00:00:00	
+DEMAND CONSTRAINT	1.order 5	Resource '1.holder 3' has capacity shortage of 1	2023-02-09T00:00:00 / 2023-02-15T00:00:00	
+DEMAND CONSTRAINT	1.order 5	Operation '1.step 1' planned in the past	2022-12-29T00:00:00 / 2023-01-01T00:00:00	

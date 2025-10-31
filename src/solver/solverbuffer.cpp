@@ -674,6 +674,27 @@ void SolverCreate::solve(const Buffer* b, void* v) {
     data->state->a_date = (extraInventoryDate < extraSupplyDate)
                               ? extraInventoryDate
                               : extraSupplyDate;
+
+    if (extraConfirmedDate == Date::infiniteFuture) {
+      // It is possible there is confirmed supply AFTER the autofence date.
+      // The reply date should never be later that the first confirmed supply.
+      for (Buffer::flowplanlist::const_iterator scanner =
+               b->getFlowPlans().begin();
+           scanner != b->getFlowPlans().end(); ++scanner) {
+        if (scanner->getDate() > requested_date &&
+            scanner->getDate() < data->state->a_date &&
+            scanner->getQuantity() > 0 && scanner->getEventType() == 1) {
+          auto fplan = static_cast<const FlowPlan*>(&*scanner);
+          if (fplan->getOperationPlan()->getActivated()) {
+            extraConfirmedDate = scanner->getDate();
+            if (getLogLevel() > 1)
+              logger << indentlevel << "Adjusting reply date to "
+                     << extraConfirmedDate << endl;
+            break;
+          }
+        }
+      }
+    }
     if (extraConfirmedDate < data->state->a_date)
       data->state->a_date = extraConfirmedDate;
     // Monitor as a constraint if there is no producing operation.

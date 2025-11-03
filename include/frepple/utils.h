@@ -570,13 +570,10 @@ class Duration {
    * number of seconds.
    * Compared to the parse() method it also processes the
    * decimal part of the duration.
-   * @see parse(const char*)
    */
   static double parse2double(const char*);
 
-  /* Write out a double as a time period string.
-   * @see toCharBuffer()
-   */
+  /* Write out a double as a time period string. */
   static void double2CharBuffer(double, char*);
 
   /* The maximum value for a Duration. */
@@ -595,14 +592,11 @@ class Duration {
    * 20 characters is sufficient for even the most longest possible time
    * duration.
    * The output format is described with the string() method.
-   * @see string()
    */
   void toCharBuffer(char*) const;
 };
 
-/* Prints a Duration to the outputstream.
- * @see Duration::string()
- */
+/* Prints a Duration to the outputstream. */
 inline ostream& operator<<(ostream& os, const Duration& t) {
   char str[20];
   t.toCharBuffer(str);
@@ -1182,8 +1176,7 @@ class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data
   static size_t separatorlength;
 };
 
-/* Prints a date range to the outputstream.
- * @see DateRange::string() */
+/* Prints a date range to the outputstream. */
 inline ostream& operator<<(ostream& os, const DateRange& dr) {
   return os << dr.getStart() << DateRange::getSeparator() << dr.getEnd();
 }
@@ -1265,11 +1258,7 @@ class Keyword : public NonCopyable {
   bool operator!=(const Keyword& k) const { return dw != k.dw; }
 };
 
-/* This abstract class is the base class used for callbacks.
- * @see MetaClass::callback
- * @see FunctorStatic
- * @see FunctorInstance
- */
+/* This abstract class is the base class used for callbacks. */
 class Functor : public NonCopyable {
  public:
   /* This is the callback method.
@@ -1532,7 +1521,7 @@ class MetaCategory;
  * being created, changed or deleted.
  * The proper usage is to include the following code snippet in every
  * class:
- * @code
+ *
  *  In the header file:
  *    class X : public Object
  *    {
@@ -1542,10 +1531,10 @@ class MetaCategory;
  *    }
  *  In the implementation file:
  *    const MetaClass *X::metadata;
- * @endcode
+ *
  * Creating a MetaClass object isn't sufficient. It needs to be registered,
  * typically in an initialization method:
- * @code
+ *
  *    void initialize()
  *    {
  *      ...
@@ -1554,8 +1543,6 @@ class MetaCategory;
  * factory_method);
  *      ...
  *    }
- * @endcode
- * @see MetaCategory
  */
 class MetaClass : public NonCopyable {
   friend class MetaCategory;
@@ -1646,14 +1633,11 @@ class MetaClass : public NonCopyable {
 
   /* This method picks up the attribute named "ACTION" from the list and
    * calls the method decodeAction(const XML_Char*) to analyze it.
-   * @see decodeAction(const XML_Char*)
    */
   static Action decodeAction(const DataValueDict&);
 
   /* Sort two metaclass objects. This is used to sort entities on their
    * type information in a stable and platform independent way.
-   * @see operator !=
-   * @see operator ==
    */
   bool operator<(const MetaClass& b) const {
     return typetag->getName() < b.typetag->getName();
@@ -1662,8 +1646,6 @@ class MetaClass : public NonCopyable {
   /* Compare two metaclass objects. We are not always sure that only a
    * single instance of a metadata object exists in the system, and a
    * pointer comparison is therefore not appropriate.
-   * @see operator !=
-   * @see operator <
    */
   bool operator==(const MetaClass& b) const {
     return typetag->getHash() == b.typetag->getHash();
@@ -1672,8 +1654,6 @@ class MetaClass : public NonCopyable {
   /* Compare two metaclass objects. We are not always sure that only a
    * single instance of a metadata object exists in the system, and a
    * pointer comparison is therefore not appropriate.
-   * @see operator ==
-   * @see operator <
    */
   bool operator!=(const MetaClass& b) const {
     return typetag->getHash() != b.typetag->getHash();
@@ -1910,7 +1890,6 @@ class MetaClass : public NonCopyable {
  *    The reader function creates objects for all classes registered with it.
  *  - A group tag used for the grouping objects of the category in the XML
  *    output stream.
- * @see MetaClass
  */
 class MetaCategory : public MetaClass {
   friend class MetaClass;
@@ -2276,12 +2255,10 @@ class Serializer {
    * to it is written, rather than the complete object.
    * You should call this method for all objects in your XML document,
    * except for the root object.
-   * @see writeElementWithHeader(const Keyword&, Object*)
    */
   virtual void writeElement(const Keyword&, const Object*,
                             FieldCategory = BASE);
 
-  /* @see writeElement(const Keyword&, const Object*, mode) */
   void writeElement(const Keyword& t, const Object& o) {
     writeElement(t, &o, forceBase ? BASE : content);
   }
@@ -3679,7 +3656,6 @@ class ThreadGroup : public NonCopyable {
  *
  * Technically, the data structure can be described as a red-black tree
  * with intrusive tree nodes.
- * @see HasName
  */
 class Tree : public NonCopyable {
  public:
@@ -4299,7 +4275,7 @@ class Command {
    * command yet. The execute() method needs to be called explicitly to
    * do so.
    */
-  Command(){};
+  Command() {};
 
   /* This method makes the change permanent.
    * A couple of notes on how this method should be implemented by the
@@ -4317,7 +4293,7 @@ class Command {
    */
   virtual void rollback() {};
 
-  virtual ~Command(){};
+  virtual ~Command() {};
 
   Command* getNext() const { return next; }
 
@@ -5010,7 +4986,6 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
    *   This can be A (for 'add'), C (for 'change'), AC (for 'add_change')
    *   or R (for 'remove').
    *   'add_change' is the default value.
-   * @see HasName
    */
   static Object* reader(const MetaClass* cat, const DataValueDict& in,
                         CommandManager* mgr = nullptr) {
@@ -5617,7 +5592,7 @@ class Association {
     C* last = nullptr;
 
    public:
-    List(){};
+    List() {};
 
     bool empty() const { return first == nullptr; }
   };
@@ -5627,7 +5602,7 @@ class Association {
   class ListA : public List {
    public:
     /* Constructor. */
-    ListA(){};
+    ListA() {};
 
     /* An iterator over the associated objects. */
     class iterator {
@@ -5635,7 +5610,7 @@ class Association {
       C* nodeptr;
 
      public:
-      iterator(C* n) : nodeptr(n){};
+      iterator(C* n) : nodeptr(n) {};
 
       C& operator*() const { return *nodeptr; }
 
@@ -5669,7 +5644,7 @@ class Association {
       C* nodeptr;
 
      public:
-      const_iterator(C* n) : nodeptr(n){};
+      const_iterator(C* n) : nodeptr(n) {};
 
       const C& operator*() const { return *nodeptr; }
 
@@ -5759,7 +5734,7 @@ class Association {
   class ListB : public List {
    public:
     /* Constructor. */
-    ListB(){};
+    ListB() {};
 
     /* An iterator over the associated objects. */
     class iterator {
@@ -5767,7 +5742,7 @@ class Association {
       C* nodeptr;
 
      public:
-      iterator(C* n) : nodeptr(n){};
+      iterator(C* n) : nodeptr(n) {};
 
       C& operator*() const { return *nodeptr; }
 
@@ -5801,7 +5776,7 @@ class Association {
       C* nodeptr;
 
      public:
-      const_iterator(C* n) : nodeptr(n){};
+      const_iterator(C* n) : nodeptr(n) {};
 
       const C& operator*() const { return *nodeptr; }
 
@@ -5902,7 +5877,7 @@ class Association {
 
    public:
     /* Constructor. */
-    Node(){};
+    Node() {};
 
     /* Constructor. */
     Node(A* a, B* b, const ListA& al, const ListB& bl) : ptrA(a), ptrB(b) {
@@ -6880,7 +6855,7 @@ class MetaFieldFunction : public MetaFieldBase {
  public:
   MetaFieldFunction(const Keyword& n, HandlerFunction f,
                     unsigned int c = DONT_SERIALIZE)
-      : MetaFieldBase(n, c), thefunction(f){};
+      : MetaFieldBase(n, c), thefunction(f) {};
 
   virtual void setField(Object* me, const DataValue& el,
                         CommandManager* cmd) const {}
@@ -6902,7 +6877,7 @@ class MetaFieldIterator : public MetaFieldBase {
 
   MetaFieldIterator(const Keyword& g, const Keyword& n,
                     getFunction getfunc = nullptr, unsigned int c = BASE)
-      : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n){};
+      : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n) {};
 
   virtual void setField(Object* me, const DataValue& el,
                         CommandManager* cmd) const {}
@@ -7007,7 +6982,7 @@ class MetaFieldIteratorClass : public MetaFieldBase {
 
   MetaFieldIteratorClass(const Keyword& g, const Keyword& n,
                          getFunction getfunc = nullptr, unsigned int c = BASE)
-      : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n){};
+      : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n) {};
 
   virtual void setField(Object* me, const DataValue& el,
                         CommandManager* cmd) const {}

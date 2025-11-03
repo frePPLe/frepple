@@ -169,7 +169,6 @@ class XMLInput : public DataInput,
   /* Handler called by Xercess when reading a processing instruction. The
    * handler looks up the target in the repository and will call the
    * registered XMLinstruction.
-   * @see XMLinstruction
    */
   void processingInstruction(const XMLCh* const, const XMLCh* const);
 
@@ -190,7 +189,6 @@ class XMLInput : public DataInput,
   /* This is the core parsing function, which triggers the XML parser to
    * start processing the input. It is normally called from the method
    * parse(Object*) once a proper stream has been created.
-   * @see parse(Object*)
    */
   void parse(xercesc::InputSource&, Object*, bool = false);
 
@@ -217,12 +215,12 @@ class XMLInput : public DataInput,
   /* The real parsing job is delegated to subclasses.
    * Subclass can then define the specifics for parsing a flat file,
    * a string, a SOAP message, etc...
-   * @exception RuntimeException Thrown in the following situations:
+   * RuntimeException is thrown in the following situations:
    *    - the XML-document is incorrectly formatted
    *    - the XML-parser librabry can't be initialized
    *    - no memory can be allocated to the xml-parser
-   * @exception DataException Thrown when the data can't be processed
-   *   normally by the objects being created or updated.
+   * DataException is thrown when the data can't be processed
+   * normally by the objects being created or updated.
    */
   virtual void parse(Object* s, bool b = false) {
     throw LogicException("Unreachable code reached");
@@ -233,7 +231,7 @@ class XMLInput : public DataInput,
 class XMLInputString : public XMLInput {
  public:
   /* Default constructor. */
-  XMLInputString(const string& s) : data(s){};
+  XMLInputString(const string& s) : data(s) {};
 
   /* Parse the specified string. */
   void parse(Object* pRoot, bool v = false) {
@@ -267,10 +265,10 @@ class XMLInputFile : public XMLInput {
  public:
   /* Constructor. The argument passed is the name of a
    * file or a directory. */
-  XMLInputFile(const string& s) : filename(s){};
+  XMLInputFile(const string& s) : filename(s) {};
 
   /* Default constructor. */
-  XMLInputFile(){};
+  XMLInputFile() {};
 
   /* Update the name of the file to be processed. */
   void setFileName(const string& s) { filename = s; }
@@ -283,7 +281,7 @@ class XMLInputFile : public XMLInput {
    * flagged as soon as a single file returned a failure. All
    * files in an directory are processed however, regardless of
    * failure with one of the files.
-   * @exception RuntimeException Generated in the following conditions:
+   * RuntimeException generated in the following conditions:
    *    - no input file or directory has been specified.
    *    - read access to the input file is not available
    *    - the program doesn't support reading directories on your platform
@@ -599,7 +597,6 @@ class XMLSerializer : public Serializer {
    * header.
    * You should call this method for the root object of your xml document,
    * and writeElement for all objects nested in it.
-   * @see writeElement(const Keyword&, Object*)
    */
   void writeElementWithHeader(const Keyword& tag, const Object* object);
 
@@ -660,13 +657,10 @@ class XMLSerializer : public Serializer {
 
   /* This string is a null terminated string containing as many spaces as
    * indicated by the m_indent.
-   * @see incIndent, decIndent
    */
   char indentstring[41];
 
-  /* This variable keeps track of the indentation level.
-   * @see incIndent, decIndent
-   */
+  /* This variable keeps track of the indentation level. */
   short int m_nIndent = 0;
 };
 
@@ -675,7 +669,6 @@ class XMLSerializer : public Serializer {
  * Note that an object of this class can write only to a single file. If
  * multiple files are required multiple XMLOutputFile objects will be
  * required too.
- * @see XMLOutput
  */
 class XMLSerializerFile : public XMLSerializer {
  public:
@@ -700,7 +693,6 @@ class XMLSerializerFile : public XMLSerializer {
  * accessed by converting the XMLOutputString object to a string object.
  * This class can consume a lot of memory if large sets of objects are
  * being saved in this way.
- * @see XMLOutput
  */
 class XMLSerializerString : public XMLSerializer {
  public:

@@ -95,7 +95,6 @@ class LibraryModel {
  *
  * Manipulation of instances of this class need to be handled with the
  * methods on the friend class Calendar.
- * @see Calendar
  */
 class CalendarBucket : public Object, public NonCopyable, public HasSource {
   friend class Calendar;
@@ -561,16 +560,13 @@ class Problem : public NonCopyable, public Object {
   /* Constructor.
    * Note that this method can't manipulate the problem container, since
    * the problem objects aren't fully constructed yet.
-   * @see addProblem
    */
   explicit Problem(HasProblems* p = nullptr) : owner(p) { initType(metadata); }
 
   /* Initialize the class. */
   static int initialize();
 
-  /* Destructor.
-   * @see removeProblem
-   */
+  /* Destructor. */
   virtual ~Problem() {}
 
   /* Return the category of the problem. */
@@ -682,7 +678,6 @@ class Problem : public NonCopyable, public Object {
    * subclass. It can't be called from the constructor of the base
    * Problem class, since the object isn't fully created yet and thus
    * misses the proper information used by the compare method.
-   * @see removeProblem
    */
   void addProblem();
 
@@ -693,7 +688,6 @@ class Problem : public NonCopyable, public Object {
    * performance is linear with the number of problems of an entity.
    * This is acceptable since we don't expect entities with a huge amount
    * of problems.
-   * @see addproblem
    */
   void removeProblem();
 
@@ -716,7 +710,6 @@ class Problem : public NonCopyable, public Object {
  * this class.
  *
  * This class is closely related to the Problem class.
- * @see Problem
  */
 class HasProblems {
   friend class Problem::iterator;
@@ -1170,11 +1163,6 @@ class HasLevel {
    * number of operations in the model. The cluster size also has some
    * (limited) impact on the performance: a network with larger cluster
    * size will take longer to analyze.
-   * @exception LogicException Generated when there are too many clusters in
-   *     your model. The maximum limit is USHRT_MAX, i.e. the greatest
-   *     number that can be stored in a variable of type "unsigned short".
-   *     The limit is platform dependent. On 32-bit platforms it will
-   *     typically be 65535.
    */
   static void computeLevels();
 
@@ -1221,7 +1209,6 @@ class HasLevel {
   /* This function should be called when something is changed in the network
    * structure. The notification sets a flag, but does not immediately
    * trigger the recomputation.
-   * @see computeLevels
    */
   static void triggerLazyRecomputation() { recomputeLevels = true; }
 };
@@ -2198,9 +2185,6 @@ class OperationPlan : public Object,
    * necessary to validate input from the user. But when the owner field
    * is set in the solver internally, we can skip validation to keep
    * performance high.
-   * @see Operation::addSubOperationPlan
-   * @see OperationAlternate::addSubOperationPlan
-   * @see OperationRouting::addSubOperationPlan
    */
   void setOwner(OperationPlan* o, bool);
 
@@ -2212,7 +2196,6 @@ class OperationPlan : public Object,
    * E.g. Sub-operationplans of a routing refer to the overall routing
    * operationplan.
    * E.g. An alternate sub-operationplan refers to its parent.
-   * @see getTopOwner
    */
   OperationPlan* getOwner() const { return owner; }
 
@@ -2241,7 +2224,6 @@ class OperationPlan : public Object,
   /* Returns a pointer to the operationplan owning a set of
    * sub-operationplans. There can be multiple levels of suboperations.
    * If no owner exists the method returns the current operationplan.
-   * @see getOwner
    */
   OperationPlan* getTopOwner() const {
     if (owner) {
@@ -2430,13 +2412,11 @@ class OperationPlan : public Object,
    * in the activate method. In exceptional cases the solver already
    * needs to see uncommitted operationplans in the list - eg for the
    * procurement buffer.
-   * @see activate
    */
   void insertInOperationplanList();
 
   /* This method remove the operationplan from the list of all operationplans
    * maintained on the operation.
-   * @see deactivate
    */
   void removeFromOperationplanList();
 
@@ -2694,7 +2674,6 @@ class OperationPlan : public Object,
   /* Updates the operationplan based on the latest information of quantity,
    * date and locked flag.
    * This method will also update parent and child operationplans.
-   * @see resizeFlowLoadPlans
    */
   void update();
 
@@ -2707,9 +2686,7 @@ class OperationPlan : public Object,
    */
   bool assignReference();
 
-  /* Recursive auxilary function for getTotalFlow.
-   * @ see getTotalFlow
-   */
+  /* Recursive auxilary function for getTotalFlow. */
   double getTotalFlowAux(const Buffer*) const;
 
   /* Maintain the operationplan list in sorted order.
@@ -2735,7 +2712,6 @@ class OperationPlan : public Object,
    * method on the operation class instead.
    * Subclasses of the Operation class may use this constructor in their
    * own override of the createOperationPlan method.
-   * @see Operation::createOperationPlan
    */
   OperationPlan() { initType(metadata); }
 
@@ -2763,7 +2739,6 @@ class OperationPlan : public Object,
    * The value of the counter is the first available identifier value that
    * can be used for a new operationplan.
    * The first value is 1, and each operationplan increases it by 1.
-   * @see assignIdentifier()
    */
   static unsigned long counterMin;
   static string referenceMax;
@@ -2797,13 +2772,11 @@ class OperationPlan : public Object,
 
   /* Pointer to the previous operationplan.
    * Operationplans are chained in a doubly linked list for each operation.
-   * @see next
    */
   OperationPlan* prev = nullptr;
 
   /* Pointer to the next operationplan.
    * Operationplans are chained in a doubly linked list for each operation.
-   * @see prev
    */
   OperationPlan* next = nullptr;
 
@@ -3043,12 +3016,6 @@ class Operation : public HasName<Operation>,
    * - the availability calendar of the operation and its location
    * - the availability calendar of all resources loaded by the operation,
    *   plus the availability calendar of their location
-   *
-   * @param[in] thedate  The date from which to start searching.
-   * @param[in] duration The amount of available time we are looking for.
-   * @param[in] forward  The search direction
-   * @param[out] actualduration This variable is updated with the actual
-   *             amount of available time found.
    */
   DateRange calculateOperationTime(const OperationPlan* opplan, Date thedate,
                                    Duration duration, bool forward,
@@ -3060,12 +3027,7 @@ class Operation : public HasName<Operation>,
    * This calculation considers the availability calendars of:
    * - the availability calendar of the operation and its location
    * - the availability calendar of all resources loaded by the operation,
-   *   plus the availability calendar of their location
-   *
-   * @param[in] start  The date from which to start searching.
-   * @param[in] end    The date where to stop searching.
-   * @param[out] actualduration This variable is updated with the actual
-   *             amount of available time found.
+   *   plus the availability calendar of their location.
    */
   DateRange calculateOperationTime(const OperationPlan* opplan, Date start,
                                    Date end, Duration* actualduration = nullptr,
@@ -3310,9 +3272,6 @@ class Operation : public HasName<Operation>,
    * representing a changeover.
    * Operation subclasses can implement their own restrictions on the
    * number and structure of the suboperationplans.
-   * @see OperationAlternate::addSubOperationPlan
-   * @see OperationRouting::addSubOperationPlan
-   * @see OperationSplit::addSubOperationPlan
    */
   virtual void addSubOperationPlan(OperationPlan*, OperationPlan*, bool = true);
 
@@ -3864,7 +3823,6 @@ class OperationFixedTime : public Operation {
    *    operationplan.
    *  - The quantity can be any positive number.
    *  - Locked operationplans can't be updated.
-   * @see Operation::setOperationPlanParameters
    */
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
@@ -3933,8 +3891,6 @@ class OperationTimePer : public Operation {
    *
    * Tricky situations can arise when the minimum size is varying over
    * time, ie min_size_calendar field is used.
-   *
-   * @see Operation::setOperationPlanParameters
    */
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
@@ -4009,7 +3965,6 @@ class OperationRouting : public Operation {
    *  - If both a start and an end date are given, we use only the end date.
    *  - If there are no sub operationplans yet, apply the requested changes
    *    blindly.
-   * @see Operation::setOperationPlanParameters
    */
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
@@ -4095,7 +4050,6 @@ class OperationSplit : public Operation {
    * operationplans:
    *  - Very simple, accept any value. Ignore any lot size constraints
    *    since we use the ones on the sub operationplans.
-   * @see Operation::setOperationPlanParameters
    */
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
@@ -4174,7 +4128,6 @@ class OperationAlternate : public Operation {
    * operationplans:
    *  - Very simple, call the method with the same name on the alternate
    *    suboperationplan.
-   * @see Operation::setOperationPlanParameters
    */
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
@@ -4668,9 +4621,7 @@ class Item : public HasHierarchy<Item>, public HasDescription {
   }
 
  private:
-  /* This is the operation used to satisfy a demand for this item.
-   * @see Demand
-   */
+  /* This is the operation used to satisfy a demand for this item. */
   Operation* deliveryOperation = nullptr;
 
   /* Cost of the item. */
@@ -5403,7 +5354,6 @@ class Buffer : public HasHierarchy<Buffer>,
 
   /* Minimum inventory target.
    * If a minimum calendar is specified this field is ignored.
-   * @see min_cal
    */
   double min_val = 0.0;
 
@@ -6801,7 +6751,6 @@ class Resource : public HasHierarchy<Resource>,
    * To avoid any ambiguity about the current setup of a resource
    * the calculation is based only on the latest *setup end* event
    * before (or at, when the parameter is true) the argument date.
-   * @see LoadPlan::getSetupBefore
    */
   SetupEvent* getSetupAt(Date, OperationPlan* = nullptr) const;
 
@@ -7662,7 +7611,6 @@ class Demand : public HasHierarchy<Demand>,
   /* This fields points to an operation that is to be used to plan the
    * demand. By default, the field is left to nullptr and the demand will then
    * be planned using the delivery operation of its item.
-   * @see Item::getDelivery()
    */
   Operation* getOperation() const {
     if (oper == uninitializedDelivery)
@@ -8596,9 +8544,6 @@ class HasProblems::EntityIterator {
  * over the named entities in a simple and safe way.
  *
  * Objects of this class are returned by the begin() and end() functions.
- * @see Problem::begin()
- * @see Problem::begin(HasProblem*)
- * @see Problem::end()
  */
 class Problem::iterator {
   friend class Problem;
@@ -8965,8 +8910,7 @@ class Plan : public Plannable, public Object {
         Tags::individualPoolResources, &Cls::getIndividualPoolResources,
         &Cls::setIndividualPoolResources, BOOL_FALSE, DONT_SERIALIZE);
     m->addIntField<Plan>(Tags::moveApprovedEarly, &Plan::getMoveApprovedEarly,
-                         &Plan::setMoveApprovedEarly, 0,
-                         DONT_SERIALIZE);
+                         &Plan::setMoveApprovedEarly, 0, DONT_SERIALIZE);
     m->addBoolField<Cls>(
         Tags::suppressFlowplanCreation, &Cls::getSuppressFlowplanCreation,
         &Cls::setSuppressFlowplanCreation, BOOL_FALSE, DONT_SERIALIZE);
@@ -9786,11 +9730,6 @@ class CommandMoveOperationPlan : public Command {
  public:
   /* Constructor.
    * Unlike most other commands the constructor already executes the change.
-   * @param opplanptr Pointer to the operationplan being moved.
-   * @param newStart New start date of the operationplan.
-   * @param newEnd New end date of the operationplan.
-   * @param newQty New quantity of the operationplan.The default is -1,
-   * which indicates to leave the quantity unchanged.
    */
   CommandMoveOperationPlan(OperationPlan* opplanptr, Date newStart, Date newEnd,
                            double newQty = -1.0, bool roundDown = false,
@@ -10069,10 +10008,7 @@ class PeggingDemandIterator : public NonCopyable, public Object {
   }
 };
 
-/* An iterator class to go through all flowplans of an operationplan.
- * @see OperationPlan::beginFlowPlans
- * @see OperationPlan::endFlowPlans
- */
+/* An iterator class to go through all flowplans of an operationplan. */
 class OperationPlan::FlowPlanIterator {
   friend class OperationPlan;
 
@@ -10144,10 +10080,7 @@ inline int OperationPlan::sizeFlowPlans() const {
   return c;
 }
 
-/* An iterator class to go through all loadplans of an operationplan.
- * @see OperationPlan::beginLoadPlans
- * @see OperationPlan::endLoadPlans
- */
+/* An iterator class to go through all loadplans of an operationplan. */
 class OperationPlan::LoadPlanIterator {
   friend class OperationPlan;
 

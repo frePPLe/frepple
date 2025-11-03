@@ -14,7 +14,7 @@
   </buffers>
   <flows>
     <flow xsi:type="flow_end">
-      <operation name="purchase material" duration="P9D">
+      <operation name="purchase material" duration="P0D">
         <priority>1</priority>
       </operation>
       <buffer name="buffer material" />
@@ -28,9 +28,9 @@
     <flow xsi:type="flow_start">
       <operation name="make item" />
       <buffer name="buffer material" />
-      <quantity>-2</quantity>
+      <quantity>-1</quantity>
     </flow>
-    <flow xsi:type="flow_start">
+     <flow xsi:type="flow_start">
       <operation name="delivery item" />
       <buffer name="buffer item" />
       <quantity>-1</quantity>
@@ -50,7 +50,7 @@
   <operationplans>
     <operationplan id="1001">
       <operation name="purchase material"/>
-      <start>2009-01-01T00:00:00</start>
+      <start>2009-01-10T00:00:00</start>
       <end>2009-01-10T00:00:00</end>
       <quantity>200</quantity>
       <status>confirmed</status>

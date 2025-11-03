@@ -831,6 +831,8 @@ class SolverCreate : public Solver {
     bool has_bucketized_resources = false;
 
     bool forceAccept = false;
+
+    OperationPlan* keepAssignments = nullptr;
   };
 
   /* This class is a helper class of the SolverCreate class.

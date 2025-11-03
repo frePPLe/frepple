@@ -2,7 +2,7 @@
  *                                                                         *
  * Copyright (C) 2007-2015 by frePPLe bv                                   *
  *                                                                         *
-* Permission is hereby granted, free of charge, to any person obtaining   *
+ * Permission is hereby granted, free of charge, to any person obtaining   *
  * a copy of this software and associated documentation files (the         *
  * "Software"), to deal in the Software without restriction, including     *
  * without limitation the rights to use, copy, modify, merge, publish,     *
@@ -83,8 +83,10 @@ void SolverCreate::chooseResource(
   }
 
   if ((!l->getSkill() && !l->getResource()->isGroup()) ||
-      lplan->getConfirmed()) {
-    // CASE 1: No skill involved, and no aggregate resource either
+      lplan->getConfirmed() ||
+      lplan->getOperationPlan() != data->state->keepAssignments) {
+    // CASE 1: No skill involved, no aggregate resource and not forced to keep
+    // the current resource assignments
     lplan->getResource()->solve(*this, v);
     return;
   }

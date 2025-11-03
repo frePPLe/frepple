@@ -527,9 +527,7 @@ class loadParameter(LoadTask):
                     elif rec[0] == "plan.deliveryDuration":
                         frepple.settings.deliveryduration = float(rec[1]) * 3600
                     elif rec[0] == "plan.move_approved_early":
-                        frepple.settings.moveApprovedEarly = (
-                            str(rec[1]).lower() == "true"
-                        )
+                        frepple.settings.moveApprovedEarly = int(rec[1])
                 current_set = False
                 if "loadplan" in os.environ and last_current_date:
                     try:

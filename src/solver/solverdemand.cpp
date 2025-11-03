@@ -234,6 +234,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             data->state->q_qty = plan_qty;
             data->state->q_qty_min = minshipment;
             data->state->forceAccept = false;
+            data->state->keepAssignments = nullptr;
             data->state->q_date = plan_date;
             data->constraints = &(const_cast<Demand*>(l)->getConstraints());
             data->state->curDemand = const_cast<Demand*>(l);

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <current>2026-01-01T00:00:00</current>
-    <moveApprovedEarly>true</moveApprovedEarly>
+    <moveApprovedEarly>0</moveApprovedEarly>
 
     <!-- case 1: Move an approved PO early, and it's feasible -->
     <suppliers>
@@ -149,6 +149,52 @@
             <status>open</status>
         </demand>
     </demands>
+    <resources>
+        <resource name="4. Resource A">
+            <owner name="4. Resource"/>
+            <location name="factory"/>
+            <maximum_calendar name="4. Capacity A">
+                <buckets>
+                    <bucket start="2026-03-08T00:00:00">
+                        <value>1</value>
+                    </bucket>
+                </buckets>
+            </maximum_calendar>
+        </resource>
+        <resource name="4. Resource B">
+            <owner name="4. Resource"/>
+            <location name="factory"/>
+            <maximum_calendar name="4. Capacity B">
+                <buckets>
+                    <bucket start="2026-03-01T00:00:00">
+                        <value>1</value>
+                    </bucket>
+                </buckets>
+            </maximum_calendar>
+        </resource>
+        <resource name="4. Resource C">
+            <owner name="4. Resource"/>
+            <location name="factory"/>
+            <maximum_calendar name="4. Capacity C">
+                <buckets>
+                    <bucket start="2026-03-01T00:00:00">
+                        <value>1</value>
+                    </bucket>
+                </buckets>
+            </maximum_calendar>
+        </resource>
+        <resource name="4. Resource D">
+            <owner name="4. Resource"/>
+            <location name="factory"/>
+            <maximum_calendar name="4. Capacity D">
+                <buckets>
+                    <bucket start="2026-03-01T00:00:00">
+                        <value>1</value>
+                    </bucket>
+                </buckets>
+            </maximum_calendar>
+        </resource>
+    </resources>
     <operations>
         <operation name="4. Make item" xsi:type="operation_fixed_time">
             <item name="4. item"/>
@@ -173,14 +219,8 @@
             <loads>
                 <load>
                     <resource name="4. Resource">
-                        <maximum_calendar name="Capacity">
-                            <buckets>
-                                <bucket start="2026-03-01T00:00:00">
-                                    <value>1</value>
-                                </bucket>
-                            </buckets>
-                        </maximum_calendar>
                     </resource>
+                    <search>MINPENALTY</search>
                 </load>
             </loads>
             <duration>P3D</duration>
@@ -386,7 +426,7 @@
         <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X2 step 2" quantity="100" status="approved">
             <operation name="7. task X2 step 2"/>
         </operationplan>
-        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X2 step 1" quantity="100" status="approved">
+        <operationplan ordertype="MO" end="2026-07-26T00:00:00" reference="7. task X2 step 1" quantity="100" status="approved">
             <operation name="7. task X2 step 1"/>
         </operationplan>
     </operationplans>
@@ -506,18 +546,67 @@
 
 <?python
 
-print("CREATING CONSTRAINED PLAN")
+remember = []
+for opplan in frepple.operationplans():
+    if opplan.status == 'approved' and not isinstance(opplan.operation, frepple.operation_routing):
+        remember.append((opplan, opplan.end,))
+
+#
+# OPTION 1: Moving in keeping current assignments
+#
+frepple.settings.moveApprovedEarly = 1
+
+print("CREATING CONSTRAINED PLAN - 1")
 # frepple.solver_propagateStatus(loglevel=99).solve()
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=99).solve()
 frepple.saveplan("output.1.xml")
 
-print("CREATING UNCONSTRAINED PLAN")
+print("CREATING UNCONSTRAINED PLAN - 1")
 frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
 
-print("CREATING FULLY UNCONSTRAINED PLAN")
+print("CREATING FULLY UNCONSTRAINED PLAN - 1")
 frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
 frepple.saveplan("output.3.xml")
 
+#
+# OPTION 2: Moving in and re-evaluate the resource assignments
+#
+frepple.settings.moveApprovedEarly = 2
+for opplan, end in remember:
+   opplan.end = end
+
+print("CREATING CONSTRAINED PLAN - 2")
+# frepple.solver_propagateStatus(loglevel=99).solve()
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=99).solve()
+frepple.saveplan("output.4.xml")
+
+print("CREATING UNCONSTRAINED PLAN - 2")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.5.xml")
+
+print("CREATING FULLY UNCONSTRAINED PLAN - 2")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
+frepple.saveplan("output.6.xml")
+
+#
+# OPTION 0: Do not move early
+#
+frepple.settings.moveApprovedEarly = 0
+for opplan, end in remember:
+    opplan.end = end
+
+print("CREATING CONSTRAINED PLAN - 0")
+# frepple.solver_propagateStatus(loglevel=99).solve()
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=99).solve()
+frepple.saveplan("output.7.xml")
+
+print("CREATING UNCONSTRAINED PLAN - 0")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.8.xml")
+
+print("CREATING FULLY UNCONSTRAINED PLAN - 0")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
+frepple.saveplan("output.9.xml")
 ?>
 </plan>

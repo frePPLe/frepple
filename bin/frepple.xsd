@@ -1268,7 +1268,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         <xsd:element name="detectproblems" type="xsd:boolean" />
         <xsd:element name="calendar" type="calendar" />
         <xsd:element name="individualPoolResources" type="xsd:boolean" />
-        <xsd:element name="moveApprovedEarly" type="xsd:boolean" />
+        <xsd:element name="moveApprovedEarly" type="xsd:int" />
         <xsd:element name="suppressFlowplanCreation" type="xsd:boolean" />
         <xsd:element name="minimalBeforeCurrentConstraints" type="xsd:boolean" />
         <!-- OBJECT LISTS -->

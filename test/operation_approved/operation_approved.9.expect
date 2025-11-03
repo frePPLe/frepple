@@ -1,0 +1,138 @@
+BUFFER	1. item @ factory	2026-02-01T00:00:00	20	20
+BUFFER	1. item @ factory	2026-02-01T00:00:00	-20	0
+BUFFER	1. item @ factory	2026-08-01T00:00:00	100	100
+BUFFER	2. item @ factory	2026-01-01T00:00:00	20	20
+BUFFER	2. item @ factory	2026-01-01T00:00:00	-20	0
+BUFFER	2. item @ factory	2026-08-01T00:00:00	100	100
+BUFFER	3. component @ factory	2026-01-26T00:00:00	20	20
+BUFFER	3. component @ factory	2026-01-26T00:00:00	-20	0
+BUFFER	3. component @ factory	2026-07-01T00:00:00	100	100
+BUFFER	3. component @ factory	2026-07-17T00:00:00	-100	0
+BUFFER	3. item @ factory	2026-02-01T00:00:00	20	20
+BUFFER	3. item @ factory	2026-02-01T00:00:00	-20	0
+BUFFER	3. item @ factory	2026-08-03T00:00:00	100	100
+BUFFER	3. item subassembly @ factory	2026-01-29T00:00:00	20	20
+BUFFER	3. item subassembly @ factory	2026-01-29T00:00:00	-20	0
+BUFFER	3. item subassembly @ factory	2026-07-20T00:00:00	100	100
+BUFFER	3. item subassembly @ factory	2026-07-31T00:00:00	-100	0
+BUFFER	4. component @ factory	2025-12-26T00:00:00	20	20
+BUFFER	4. component @ factory	2025-12-26T00:00:00	-20	0
+BUFFER	4. component @ factory	2026-07-01T00:00:00	100	100
+BUFFER	4. component @ factory	2026-07-17T00:00:00	-100	0
+BUFFER	4. item @ factory	2026-01-01T00:00:00	20	20
+BUFFER	4. item @ factory	2026-01-01T00:00:00	-20	0
+BUFFER	4. item @ factory	2026-08-03T00:00:00	100	100
+BUFFER	4. item subassembly @ factory	2025-12-29T00:00:00	20	20
+BUFFER	4. item subassembly @ factory	2025-12-29T00:00:00	-20	0
+BUFFER	4. item subassembly @ factory	2026-07-20T00:00:00	100	100
+BUFFER	4. item subassembly @ factory	2026-07-31T00:00:00	-100	0
+BUFFER	5. component @ factory	2025-12-26T00:00:00	20	20
+BUFFER	5. component @ factory	2025-12-26T00:00:00	-20	0
+BUFFER	5. component @ factory	2026-07-01T00:00:00	100	100
+BUFFER	5. component @ factory	2026-07-17T00:00:00	-100	0
+BUFFER	5. item @ factory	2026-01-01T00:00:00	20	20
+BUFFER	5. item @ factory	2026-01-01T00:00:00	-20	0
+BUFFER	5. item @ factory	2026-08-03T00:00:00	100	100
+BUFFER	5. item subassembly @ factory	2025-12-29T00:00:00	20	20
+BUFFER	5. item subassembly @ factory	2025-12-29T00:00:00	-20	0
+BUFFER	5. item subassembly @ factory	2026-07-20T00:00:00	100	100
+BUFFER	5. item subassembly @ factory	2026-07-31T00:00:00	-100	0
+BUFFER	6. component @ factory	2025-12-26T00:00:00	120	120
+BUFFER	6. component @ factory	2025-12-26T00:00:00	-120	0
+BUFFER	6. component @ factory	2026-07-01T00:00:00	30	30
+BUFFER	6. component @ factory	2026-07-17T00:00:00	70	100
+BUFFER	6. component @ factory	2026-07-17T00:00:00	-100	0
+BUFFER	6. item @ factory	2026-01-01T00:00:00	120	120
+BUFFER	6. item @ factory	2026-01-01T00:00:00	-120	0
+BUFFER	6. item @ factory	2026-08-03T00:00:00	100	100
+BUFFER	6. item subassembly @ factory	2025-12-29T00:00:00	120	120
+BUFFER	6. item subassembly @ factory	2025-12-29T00:00:00	-120	0
+BUFFER	6. item subassembly @ factory	2026-07-20T00:00:00	100	100
+BUFFER	6. item subassembly @ factory	2026-07-31T00:00:00	-100	0
+DEMAND	1. sales order	2026-02-01T00:00:00	20
+DEMAND	2. sales order	2026-01-01T00:00:00	20
+DEMAND	3. sales order	2026-02-01T00:00:00	20
+DEMAND	4. sales order	2026-01-01T00:00:00	20
+DEMAND	5. sales order	2026-01-01T00:00:00	20
+DEMAND	6. sales order	2026-01-01T00:00:00	120
+DEMAND	7. project X	2026-02-01T00:00:00	100
+DEMAND	8. project X	2026-01-01T00:00:00	100
+DEMAND	9. project X	2026-01-01T00:00:00	100
+RESOURCE	4. Resource A	2025-12-26T00:00:00	1	1
+RESOURCE	4. Resource A	2025-12-29T00:00:00	-1	0
+RESOURCE	4. Resource B	2026-07-17T00:00:00	1	1
+RESOURCE	4. Resource B	2026-07-20T00:00:00	-1	0
+RESOURCE	6. Resource	2025-12-26T00:00:00	1	1
+RESOURCE	6. Resource	2025-12-29T00:00:00	-1	0
+RESOURCE	6. Resource	2026-07-17T00:00:00	1	1
+RESOURCE	6. Resource	2026-07-20T00:00:00	-1	0
+OPERATION	3. Make item	2026-01-29T00:00:00	2026-02-01T00:00:00	20
+OPERATION	3. Make item	2026-07-31T00:00:00	2026-08-03T00:00:00	100	approved
+OPERATION	3. Make item subassembly	2026-01-26T00:00:00	2026-01-29T00:00:00	20
+OPERATION	3. Make item subassembly	2026-07-17T00:00:00	2026-07-20T00:00:00	100	approved
+OPERATION	4. Make item	2025-12-29T00:00:00	2026-01-01T00:00:00	20
+OPERATION	4. Make item	2026-07-31T00:00:00	2026-08-03T00:00:00	100	approved
+OPERATION	4. Make item subassembly	2025-12-26T00:00:00	2025-12-29T00:00:00	20
+OPERATION	4. Make item subassembly	2026-07-17T00:00:00	2026-07-20T00:00:00	100	approved
+OPERATION	5. Make item	2025-12-29T00:00:00	2026-01-01T00:00:00	20
+OPERATION	5. Make item	2026-07-31T00:00:00	2026-08-03T00:00:00	100	approved
+OPERATION	5. Make item subassembly	2025-12-26T00:00:00	2025-12-29T00:00:00	20
+OPERATION	5. Make item subassembly	2026-07-17T00:00:00	2026-07-20T00:00:00	100	approved
+OPERATION	6. Make item	2025-12-29T00:00:00	2026-01-01T00:00:00	120
+OPERATION	6. Make item	2026-07-31T00:00:00	2026-08-03T00:00:00	100	approved
+OPERATION	6. Make item subassembly	2025-12-26T00:00:00	2025-12-29T00:00:00	120
+OPERATION	6. Make item subassembly	2026-07-17T00:00:00	2026-07-20T00:00:00	100	approved
+OPERATION	7. project X	2026-01-22T00:00:00	2026-02-01T00:00:00	100
+OPERATION	7. task X1	2026-01-17T00:00:00	2026-01-22T00:00:00	80
+OPERATION	7. task X1	2026-07-27T00:00:00	2026-08-01T00:00:00	20	approved
+OPERATION	7. task X2 step 1	2026-07-21T00:00:00	2026-07-26T00:00:00	100	approved
+OPERATION	7. task X2 step 2	2026-07-25T00:00:00	2026-08-01T00:00:00	100	approved
+OPERATION	7. task X2 step 3	2026-01-15T00:00:00	2026-01-22T00:00:00	100
+OPERATION	8. project X	2025-12-22T00:00:00	2026-01-01T00:00:00	100
+OPERATION	8. task X1	2025-12-17T00:00:00	2025-12-22T00:00:00	100
+OPERATION	8. task X2 step 2	2026-07-25T00:00:00	2026-08-01T00:00:00	100	approved
+OPERATION	8. task X2 step 3	2025-12-15T00:00:00	2025-12-22T00:00:00	100
+OPERATION	9. project X	2025-12-22T00:00:00	2026-01-01T00:00:00	100
+OPERATION	9. task X1	2026-08-27T00:00:00	2026-09-01T00:00:00	100	approved
+OPERATION	9. task X2 step 1	2025-12-03T00:00:00	2025-12-08T00:00:00	10
+OPERATION	9. task X2 step 2	2025-12-08T00:00:00	2025-12-15T00:00:00	10
+OPERATION	9. task X2 step 2	2026-07-25T00:00:00	2026-08-01T00:00:00	90	confirmed
+OPERATION	9. task X2 step 3	2025-12-15T00:00:00	2025-12-22T00:00:00	100
+OPERATION	Purchase 1. item @ factory from 1. Supplier	2026-01-25T00:00:00	2026-02-01T00:00:00	20
+OPERATION	Purchase 1. item @ factory from 1. Supplier	2026-07-25T00:00:00	2026-08-01T00:00:00	100	approved
+OPERATION	Purchase 2. item @ factory from 2. Supplier	2025-12-25T00:00:00	2026-01-01T00:00:00	20
+OPERATION	Purchase 2. item @ factory from 2. Supplier	2026-07-25T00:00:00	2026-08-01T00:00:00	100	approved
+OPERATION	Purchase 3. component @ factory from 3. Supplier	2026-01-19T00:00:00	2026-01-26T00:00:00	20
+OPERATION	Purchase 3. component @ factory from 3. Supplier	2026-06-24T00:00:00	2026-07-01T00:00:00	100	approved
+OPERATION	Purchase 4. component @ factory from 4. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	20
+OPERATION	Purchase 4. component @ factory from 4. Supplier	2026-06-24T00:00:00	2026-07-01T00:00:00	100	approved
+OPERATION	Purchase 5. component @ factory from 5. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	20
+OPERATION	Purchase 5. component @ factory from 5. Supplier	2026-06-24T00:00:00	2026-07-01T00:00:00	100	approved
+OPERATION	Purchase 6. component @ factory from 6. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	120
+OPERATION	Purchase 6. component @ factory from 6. Supplier	2026-06-24T00:00:00	2026-07-01T00:00:00	30	approved
+OPERATION	Purchase 6. component @ factory from 6. Supplier	2026-07-10T00:00:00	2026-07-17T00:00:00	70
+PROBLEM	overload	Resource '4. Resource A' has capacity shortage of 1	2025-12-26T00:00:00 / 2025-12-29T00:00:00
+PROBLEM	overload	Resource '6. Resource' has capacity shortage of 1	2025-12-26T00:00:00 / 2025-12-29T00:00:00
+PROBLEM	before current	Operation '4. Make item' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
+PROBLEM	before current	Operation '4. Make item subassembly' planned in the past	2025-12-26T00:00:00 / 2025-12-29T00:00:00
+PROBLEM	before current	Operation '5. Make item' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
+PROBLEM	before current	Operation '5. Make item subassembly' planned in the past	2025-12-26T00:00:00 / 2025-12-29T00:00:00
+PROBLEM	before current	Operation '6. Make item' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
+PROBLEM	before current	Operation '6. Make item subassembly' planned in the past	2025-12-26T00:00:00 / 2025-12-29T00:00:00
+PROBLEM	precedence	Operation '7. project X' starts before preceding operation ends	2026-02-01T00:00:00 / 2026-02-01T00:00:00
+PROBLEM	precedence	Operation '7. task X2 step 2' starts before preceding operation ends	2026-08-01T00:00:00 / 2026-08-01T00:00:00
+PROBLEM	precedence	Operation '7. task X2 step 3' starts before preceding operation ends	2026-01-22T00:00:00 / 2026-01-22T00:00:00
+PROBLEM	before current	Operation '8. project X' planned in the past	2025-12-22T00:00:00 / 2026-01-01T00:00:00
+PROBLEM	before current	Operation '8. task X1' planned in the past	2025-12-17T00:00:00 / 2025-12-22T00:00:00
+PROBLEM	before current	Operation '8. task X2 step 3' planned in the past	2025-12-15T00:00:00 / 2025-12-22T00:00:00
+PROBLEM	precedence	Operation '8. task X2 step 3' starts before preceding operation ends	2025-12-22T00:00:00 / 2025-12-22T00:00:00
+PROBLEM	before current	Operation '9. project X' planned in the past	2025-12-22T00:00:00 / 2026-01-01T00:00:00
+PROBLEM	precedence	Operation '9. project X' starts before preceding operation ends	2026-01-01T00:00:00 / 2026-01-01T00:00:00
+PROBLEM	before current	Operation '9. task X2 step 1' planned in the past	2025-12-03T00:00:00 / 2025-12-08T00:00:00
+PROBLEM	before current	Operation '9. task X2 step 2' planned in the past	2025-12-08T00:00:00 / 2025-12-15T00:00:00
+PROBLEM	before current	Operation '9. task X2 step 3' planned in the past	2025-12-15T00:00:00 / 2025-12-22T00:00:00
+PROBLEM	precedence	Operation '9. task X2 step 3' starts before preceding operation ends	2025-12-22T00:00:00 / 2025-12-22T00:00:00
+PROBLEM	before current	Operation 'Purchase 2. item @ factory from 2. Supplier' planned in the past	2025-12-25T00:00:00 / 2026-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase 4. component @ factory from 4. Supplier' planned in the past	2025-12-19T00:00:00 / 2025-12-26T00:00:00
+PROBLEM	before current	Operation 'Purchase 5. component @ factory from 5. Supplier' planned in the past	2025-12-19T00:00:00 / 2025-12-26T00:00:00
+PROBLEM	before current	Operation 'Purchase 6. component @ factory from 6. Supplier' planned in the past	2025-12-19T00:00:00 / 2025-12-26T00:00:00

@@ -1,7 +1,6 @@
 packages:
-  - freppledb/common
-  - freppledb/forecast
-  - freppledb/input
-  - freppledb/planingboard
-  - freppledb/operationplan
-  - freppledb/quoting
+  - freppledb/common/frontend
+  - freppledb/forecast/frontend
+
+onlyBuiltDependencies:
+  - esbuild

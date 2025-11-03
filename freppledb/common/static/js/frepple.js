@@ -3202,8 +3202,9 @@ function hideModal(id) {
 //----------------------------------------------------------------------------
 
 function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlabel) {
+  console.log(3200, title, paragraph, multiple);
   var xhr = { abort: function () { } };
-
+  console.log(3202, title, paragraph, multiple);
   hideModal('timebuckets');
   $.jgrid.hideModal("#searchmodfbox_grid");
   var modalcontent = '<div class="modal-dialog modal-lg">' +
@@ -3255,6 +3256,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
     '</div>' +
     '</div>';
   $('#popup').html(modalcontent);
+  console.log(3254, modalcontent);
   showModal('popup');
 
   if (title !== '') {

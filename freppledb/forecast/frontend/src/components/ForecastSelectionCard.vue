@@ -1,0 +1,100 @@
+/*
+* Copyright (C) 2025 by frePPLe bv
+*
+* All information contained herein is, and remains the property of frePPLe.
+* You are allowed to use and modify the source code, as long as the software is used
+* within your company.
+* You are not allowed to distribute the software, either in the form of source code
+* or in the form of compiled binaries.
+*/
+
+<script setup lang="js">
+import {computed} from "vue";
+import { useI18n } from 'vue-i18n';
+import {useForecastsStore} from "@/stores/forecastsStore";
+
+const { t: ttt, locale, availableLocales } = useI18n({
+  useScope: 'global',  // This is crucial for reactivity
+  inheritLocale: true
+});
+
+const store = useForecastsStore();
+
+const props = defineProps({
+  panelid: {
+    type: String,
+    default: null
+  }
+});
+
+const preferences = computed(() => store.preferences);
+const data = computed(() => (props.panelid === 'I') ? store.itemTree: (props.panelid === 'L') ? store.locationTree: store.customerTree);
+const modelName = (props.panelid === 'I') ? 'item': (props.panelid === 'L') ? 'location': 'customer';
+const currentHeight = computed(() => (store.dataRowHeight || 240));
+
+function selectILCobject(model, rowIndex) {
+  // console.log(19, data.value[rowIndex][model], 'children: ', data.value[rowIndex]['children'],'model: ', model, 'expanded: ', data.value[rowIndex].expanded === 0);
+
+  store.setItemLocationCustomer(model, {Name: data.value[rowIndex][model], Description: data.value[rowIndex]['description']}, data.value[rowIndex]['children'], data.value[rowIndex]['lvl'],data.value[rowIndex].expanded === 0);
+  if (data.value[rowIndex]['children']) {
+    toggleRowVisibility(rowIndex);
+  }
+
+}
+
+function toggleRowVisibility(rowIndex) {
+  // Should this be moved to the store? We are manipulating store values directly.
+  // console.log(29, 'toggleRowVisibility', rowIndex, 'data: ', data.value[rowIndex], 'expanded: ', data.value[rowIndex].expanded === 1, 'children: ', data.value[rowIndex]['children'])
+  data.value[rowIndex].expanded = data.value[rowIndex].expanded === 1 ? 0 : 1;
+  const isExpanded = data.value[rowIndex].expanded === 1;
+  let lineCount = 0;
+  for (let i = rowIndex+1; i < data.value.length; i++) {
+    if (data.value[i].lvl < data.value[rowIndex].lvl+1) break;
+    if ((data.value[i].lvl > data.value[rowIndex].lvl+1) && isExpanded) continue;
+    if (isExpanded) {
+      data.value[i].visible = isExpanded;
+    } else {
+      lineCount++;
+    }
+  }
+  if (lineCount > 0) {
+    // data is in sync with the store... this splice will change the tree data in the store
+    data.value.splice(rowIndex+1, lineCount);
+  }
+}
+
+</script>
+
+<template>
+  <div class="card" :style="{'height':  currentHeight - 31 + 'px'}" style="min-height: 100px; max-height: 50vh" :id="modelName + 'panel'">
+    <div class="card-header">
+      <h5 class="card-title text-capitalize mb-0" translate=""><span>{{ ttt(modelName) }}</span></h5>
+    </div>
+    <div class="card-body ps-0 pe-0 pt-2 pb-2"  style="overflow: auto">
+      <div class="">
+        <div :id="modelName + 'table'">
+          <div class="d-flex w-100">
+            <div class="w-100 d-flex justify-content-end text-start">
+              <span v-for="bucketname in store.treeBuckets" :key="bucketname" class="numbervalues">
+                <strong><small>{{ bucketname }}</small></strong>
+              </span>
+            </div>
+          </div>
+
+          <div v-for="(row, index) in data" :key="row[modelName]" :class="(row[modelName] === store[modelName].Name) ? 'bg-light' : ''" class="d-flex evtitemrow" v-on:click="selectILCobject(modelName, index)">
+            <div class="overflow-hidden text-nowrap me-3" :style="'padding-left: ' + row.lvl * 13 + 'px'" data-bs-toggle="tooltip" :data-bs-title="row['description']">
+              &nbsp;<span v-if="row.children && row.visible" class="fa" :class="row.expanded === 1 ? 'fa-caret-down' : 'fa-caret-right'"></span>
+              {{ row.visible ? row[modelName] : '' }}
+              <template v-if="store.showDescription && row['description']">
+                &nbsp;-&nbsp;{{ row["description"] }}
+              </template>
+            </div>
+            <div v-if="row.visible" class="ms-auto d-flex justify-content-end text-start">
+              <span v-for="val in row.values" :key="val.bucketname" class="numbervalues">{{val.value}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

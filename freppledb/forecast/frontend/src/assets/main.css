@@ -1,0 +1,6 @@
+/*
+All styling should come from in order of priority:
+- the bootstrap themes.  Just generate html with the right classes.
+- inline styles if no bootstrap class is around.
+- only exceptionally we want vue level classes.
+*/

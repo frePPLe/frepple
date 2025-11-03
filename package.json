@@ -57,7 +57,7 @@
     "sass": "1.77.6",
     "vue-i18n": "^9.14.4",
     "vue-i18n-extract": "^2.0.7",
-    "vite": "^6.2.4",
+    "vite": "^6.4.1",
     "vite-plugin-vue-devtools": "^7.7.2"
   },
   "repository": {

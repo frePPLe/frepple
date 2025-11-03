@@ -25,6 +25,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Demand forecasting
 
+- | A number of minor usability enhancements have been added to the forecast editor.
+  | The javascript frontend of this screen was migrated to the Vue framework.
+
 - | Parameter forecast.DeadAfterInactivity has ben redesigned to prevent a forecast
     from being set as dead if demand exists in the future.
 

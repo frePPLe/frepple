@@ -1,0 +1,22 @@
+Upstream pegging of operationplan with id 1003 with quantity 100.0 of 'delivery item':
+	0	1003	delivery item	100.0
+	1	1002	make item	100.0
+	2	1001	purchase material	200.0
+Downstream pegging of operationplan with id 1003 with quantity 100.0 of 'delivery item':
+	0	1003	delivery item	100.0
+Upstream pegging of operationplan with id 1002 with quantity 100.0 of 'make item':
+	0	1002	make item	100.0
+	1	1001	purchase material	200.0
+Downstream pegging of operationplan with id 1002 with quantity 100.0 of 'make item':
+	0	1002	make item	100.0
+	1	1003	delivery item	100.0
+Upstream pegging of operationplan with id 1001 with quantity 200.0 of 'purchase material':
+	0	1001	purchase material	200.0
+Downstream pegging of operationplan with id 1001 with quantity 200.0 of 'purchase material':
+	0	1001	purchase material	200.0
+	1	1002	make item	100.0
+	2	1003	delivery item	100.0
+Pegging of demand order item with quantity 100.0:
+	0	1003	delivery item	100.0	2009-01-10 00:00:00	2009-01-10 00:00:00
+	1	1002	make item	100.0	2009-01-05 00:00:00	2009-01-05 00:00:00
+	2	1001	purchase material	200.0	2009-01-01 00:00:00	2009-01-10 00:00:00

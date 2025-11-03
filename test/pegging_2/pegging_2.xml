@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Verify the pegging with negative onhand</name>
+  <current>2009-01-01T00:00:00</current>
+  <buffers>
+    <buffer name="buffer item">
+      <item name="item" />
+      <producing name="make item" />
+    </buffer>
+    <buffer name="buffer material">
+      <item name="material" />
+      <producing name="purchase material" />
+    </buffer>
+  </buffers>
+  <flows>
+    <flow xsi:type="flow_end">
+      <operation name="purchase material" duration="P9D">
+        <priority>1</priority>
+      </operation>
+      <buffer name="buffer material" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="make item" />
+      <buffer name="buffer item" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="make item" />
+      <buffer name="buffer material" />
+      <quantity>-2</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="delivery item" />
+      <buffer name="buffer item" />
+      <quantity>-1</quantity>
+    </flow>
+  </flows>
+  <demands>
+    <demand name="order item">
+      <quantity>100</quantity>
+      <minshipment>100</minshipment>
+      <due>2009-01-10T00:00:00</due>
+      <item name="item" />
+      <operation name="delivery item">
+        <duration>P0D</duration>
+      </operation>
+    </demand>
+  </demands>
+  <operationplans>
+    <operationplan id="1001">
+      <operation name="purchase material"/>
+      <start>2009-01-01T00:00:00</start>
+      <end>2009-01-10T00:00:00</end>
+      <quantity>200</quantity>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan id="1002">
+      <operation name="make item"/>
+      <start>2009-01-05T00:00:00</start>
+      <end>2009-01-05T00:00:00</end>
+      <quantity>100</quantity>
+      <status>confirmed</status>
+    </operationplan>
+  </operationplans>
+
+<?python
+frepple.solver_mrp(constraints=15,loglevel=1,autofence=86400*999).solve()
+with open("output.1.xml","wt") as output:
+  for opplan in frepple.operationplans():
+    print ("Upstream pegging of operationplan with id %s with quantity %s of '%s':" % (
+      opplan.id, opplan.quantity, opplan.operation.name
+      ), file=output)
+    for j in opplan.pegging_upstream:
+      print("\t%s\t%s\t%s\t%s" % (
+        j.level, j.operationplan.id,
+        j.operationplan.operation.name, j.quantity
+        ), file=output)
+    print ("Downstream pegging of operationplan with id %s with quantity %s of '%s':" % (
+      opplan.id, opplan.quantity, opplan.operation.name
+      ), file=output)
+    for j in opplan.pegging_downstream:
+      print("\t%s\t%s\t%s\t%s" % (
+        j.level, j.operationplan.id,
+        j.operationplan.operation.name, j.quantity
+        ), file=output)
+  for dmd in frepple.demands():
+    print ("Pegging of demand %s with quantity %s:" % (dmd.name, dmd.quantity), file=output)
+    for j in dmd.pegging:
+      print("\t%s\t%s\t%s\t%s\t%s\t%s" % (
+        j.level, j.operationplan.id,
+        j.operationplan.operation.name, j.quantity, j.operationplan.start, j.operationplan.end
+        ), file=output)
+?>
+
+</plan>

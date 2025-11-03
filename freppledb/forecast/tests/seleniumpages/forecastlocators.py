@@ -34,7 +34,7 @@ class ForecastTableLocators(object):
     FORECAST_OVERRIDE_CELLS = (By.CSS_SELECTOR, 'input[tabindex="7"]')
     FORECAST_OVERRIDE_STARTDATE = (
         By.CSS_SELECTOR,
-        'input[data-ng-model="edit_startdate"]',
+        'input[id="editstartdate"]',
     )
-    FORECAST_OVERRIDE_ENDDATE = (By.CSS_SELECTOR, 'input[data-ng-model="edit_enddate"]')
-    FORECAST_OVERRIDE_SET_INPUT = (By.CSS_SELECTOR, 'input[data-ng-model="edit_set"]')
+    FORECAST_OVERRIDE_ENDDATE = (By.CSS_SELECTOR, 'input[id="editenddate"]')
+    FORECAST_OVERRIDE_SET_INPUT = (By.CSS_SELECTOR, 'input[id="editset"]')

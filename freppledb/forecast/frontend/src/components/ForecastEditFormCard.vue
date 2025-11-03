@@ -195,6 +195,7 @@ function changeEdit() {
                 >
                 {{ ttt('Set to') }}
                 <input
+                  id="editset"
                   type="text"
                   class="form-control d-inline pristine untouched valid empty"
                   :class="{ 'is-invalid': validationErrors.setTo }"

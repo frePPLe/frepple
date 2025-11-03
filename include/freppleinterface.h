@@ -143,7 +143,6 @@ DECLARE_EXPORT(void) FreppleLog(const char*);
  * status instead.
  *
  * Use this function when calling the library from C or VB applications.
- * @see FreppleInitialize
  */
 DECLARE_EXPORT(int) FreppleWrapperInitialize();
 
@@ -151,7 +150,6 @@ DECLARE_EXPORT(int) FreppleWrapperInitialize();
  * status instead.
  *
  * Use this function when calling the library from C or VB applications.
- * @see FreppleReadXMLData
  */
 DECLARE_EXPORT(int) FreppleWrapperReadXMLData(char*, bool, bool);
 
@@ -159,7 +157,6 @@ DECLARE_EXPORT(int) FreppleWrapperReadXMLData(char*, bool, bool);
  * status instead.
  *
  * Use this function when calling the library from C or VB applications.
- * @see FreppleReadXMLFile
  */
 DECLARE_EXPORT(int) FreppleWrapperReadXMLFile(const char*, bool, bool);
 
@@ -167,7 +164,6 @@ DECLARE_EXPORT(int) FreppleWrapperReadXMLFile(const char*, bool, bool);
  * status instead.
  *
  * Use this function when calling the library from C or VB applications.
- * @see FreppleReadPythonFile
  */
 DECLARE_EXPORT(int) FreppleWrapperReadPythonFile(const char*);
 
@@ -175,7 +171,6 @@ DECLARE_EXPORT(int) FreppleWrapperReadPythonFile(const char*);
  * status instead.
  *
  * Use this function when calling the library from C or VB applications.
- * @see FreppleSaveFile
  */
 DECLARE_EXPORT(int) FreppleWrapperSaveFile(char*);
 
@@ -183,7 +178,6 @@ DECLARE_EXPORT(int) FreppleWrapperSaveFile(char*);
  * status instead.
  *
  * Use this function when calling the library from C or VB applications.
- * @see FreppleExit
  */
 DECLARE_EXPORT(int) FreppleWrapperExit();
 

@@ -215,8 +215,16 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                     approved_supply->computeFlowToOperationDate(theDate),
                     Date::infinitePast));
               // Ask solver for feasibility check on existing opplan.
+              auto prevKeepAssignments = data->state->keepAssignments;
+              data->state->keepAssignments =
+                  Plan::instance().getMoveApprovedEarly() == 1
+                      ? approved_supply->getOperationPlan()
+                      : nullptr;
               checkOperation(approved_supply->getOperationPlan(), *data);
-              if (approved_supply->getDate() > theDate) {
+              data->state->keepAssignments = prevKeepAssignments;
+              if (approved_supply->getDate() > theDate &&
+                  approved_supply->getQuantity() > 0.0 &&
+                  data->state->a_qty > 0.0) {
                 // Move wasn't feasible. Need to disallow new replenishments.
                 if (getLogLevel() > 1)
                   logger << indentlevel
@@ -224,7 +232,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                          << approved_supply->getDate() << endl;
                 // if (data->logConstraints && data->constraints)
                 //   data->constraints->push(ProblemAwaitSupply::metadata, b,
-                //                           theDate, approved_supply->getDate(),
+                //                           theDate,
+                //                           approved_supply->getDate(),
                 //                           theDelta);
                 if (approved_supply->getDate() < extraSupplyDate &&
                     approved_supply->getDate() > requested_date)

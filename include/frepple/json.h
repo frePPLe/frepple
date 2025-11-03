@@ -594,13 +594,10 @@ class JSONSerializer : public Serializer {
 
   /* This string is a null terminated string containing as many spaces as
    * indicated by the m_nIndent.
-   * @see incIndent, decIndent
    */
   char indentstring[41];
 
-  /* This variable keeps track of the indentation level.
-   * @see incIndent, decIndent
-   */
+  /* This variable keeps track of the indentation level. */
   short int m_nIndent = 0;
 
   /* Increment indentation level in the formatted output. */
@@ -872,7 +869,7 @@ class JSONInput : public NonCopyable, public DataInput {
 class JSONInputString : public JSONInput {
  public:
   /* Default constructor. */
-  JSONInputString(char* s) : data(s){};
+  JSONInputString(char* s) : data(s) {};
 
   /* Parse the specified string. */
   void parse(Object* pRoot) { JSONInput::parse(pRoot, data); }
@@ -896,10 +893,10 @@ class JSONInputFile : public JSONInput {
  public:
   /* Constructor. The argument passed is the name of a
    * file or a directory. */
-  JSONInputFile(const string& s) : filename(s){};
+  JSONInputFile(const string& s) : filename(s) {};
 
   /* Default constructor. */
-  JSONInputFile(){};
+  JSONInputFile() {};
 
   /* Update the name of the file to be processed. */
   void setFileName(const string& s) { filename = s; }
@@ -912,7 +909,7 @@ class JSONInputFile : public JSONInput {
    * flagged as soon as a single file returned a failure. All
    * files in an directory are processed however, regardless of
    * failure with one of the files.
-   * @exception RuntimeException Generated in the following conditions:
+   * RuntimeException is generated in the following conditions:
    *    - no input file or directory has been specified.
    *    - read access to the input file is not available
    *    - the program doesn't support reading directories on your platform

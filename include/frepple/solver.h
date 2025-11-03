@@ -248,7 +248,6 @@ class SolverCreate : public Solver {
    *  - This method simply passes on the request to the referenced buffer.
    *    It is called from a solve(Operation*) method and passes on the
    *    control to a solve(Buffer*) method.
-   * @see checkOperationMaterial
    */
   void solve(const Flow*, void* = nullptr);
 
@@ -296,7 +295,6 @@ class SolverCreate : public Solver {
    *    With the current model structure it could easily be avoided (and
    *    thus gain a bit in performance), but we wanted to include it anyway
    *    to make the solver as generic and future-proof as possible.
-   * @see checkOperationCapacity
    */
   void solve(const Load*, void* = nullptr);
 
@@ -315,7 +313,6 @@ class SolverCreate : public Solver {
    *     2) Minimum shipment quantity
    * This method is normally called from within the main solve method, but
    * it can also be called independently to plan a certain demand.
-   * @see solve
    */
   void solve(const Demand*, void* = nullptr);
 
@@ -831,12 +828,13 @@ class SolverCreate : public Solver {
     bool has_bucketized_resources = false;
 
     bool forceAccept = false;
+
+    OperationPlan* keepAssignments = nullptr;
   };
 
   /* This class is a helper class of the SolverCreate class.
    *
    * It stores the solver state maintained by each solver thread.
-   * @see SolverCreate
    */
   class SolverData {
     friend class SolverCreate;
@@ -877,8 +875,6 @@ class SolverCreate : public Solver {
      *      planning loop will simply move on to the next demand.
      *      In this way, an error in a part of the model doesn't ruin the
      *      complete plan.
-     * @see demand_comparison
-     * @see next_cluster
      */
     void commit();
 

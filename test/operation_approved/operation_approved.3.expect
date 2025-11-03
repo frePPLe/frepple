@@ -40,8 +40,8 @@ DEMAND	6. sales order	2026-01-01T00:00:00	120
 DEMAND	7. project X	2026-02-01T00:00:00	100
 DEMAND	8. project X	2026-01-01T00:00:00	100
 DEMAND	9. project X	2026-01-01T00:00:00	100
-RESOURCE	4. Resource	2025-12-26T00:00:00	1	1
-RESOURCE	4. Resource	2025-12-29T00:00:00	-1	0
+RESOURCE	4. Resource D	2025-12-26T00:00:00	1	1
+RESOURCE	4. Resource D	2025-12-29T00:00:00	-1	0
 RESOURCE	6. Resource	2025-12-26T00:00:00	1	1
 RESOURCE	6. Resource	2025-12-26T00:00:00	1	2
 RESOURCE	6. Resource	2025-12-29T00:00:00	-1	1
@@ -79,7 +79,7 @@ OPERATION	Purchase 4. component @ factory from 4. Supplier	2025-12-19T00:00:00	2
 OPERATION	Purchase 5. component @ factory from 5. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	100	approved
 OPERATION	Purchase 6. component @ factory from 6. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	90
 OPERATION	Purchase 6. component @ factory from 6. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	30	approved
-PROBLEM	overload	Resource '4. Resource' has capacity shortage of 1	2025-12-26T00:00:00 / 2025-12-29T00:00:00
+PROBLEM	overload	Resource '4. Resource D' has capacity shortage of 1	2025-12-26T00:00:00 / 2025-12-29T00:00:00
 PROBLEM	overload	Resource '6. Resource' has capacity shortage of 2	2025-12-26T00:00:00 / 2025-12-29T00:00:00
 PROBLEM	before current	Operation '4. Make item' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
 PROBLEM	before current	Operation '4. Make item subassembly' planned in the past	2025-12-26T00:00:00 / 2025-12-29T00:00:00

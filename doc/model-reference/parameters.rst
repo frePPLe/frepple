@@ -58,9 +58,13 @@ plan.autoFenceOperations             | The number of working days the solver sho
 plan.move_approved_early             | The planning algorithm by default will leave approved manufacturing at their scheduled
                                        date. In the Enterprise and Cloud Edition they will be delayed automatically
                                        to dates where they are feasible.
-                                     | By setting this parameter to true, the algorithm will also try to reschedule
+                                     | By setting this parameter to true, the algorithm can also try to reschedule
                                        them to earlier dates if there are earlier requirements.
-                                     | Default: false (for backward compatibility, but switching it to true is recommended).
+                                     | This parameter has thre possible values:
+                                     | - 0: Inactive. Don't move approved operationplans early. This is the default.
+                                     | - 1: Active, and preserve existing resource assignments.
+                                     | - 2: Active, and re-evaluate all resource assignments.
+plan.capacityBufferPercentage       | Percentage of extra capacity to be added to all resources.
 plan.deliveryDuration                | The duration (in working hours) for the delivery shipment of a sales order
                                        to the customer.
                                      | Default: 0 (i.e. the sales order due date is treated as the shipping

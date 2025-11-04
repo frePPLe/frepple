@@ -2054,11 +2054,9 @@ void OperationRouting::addSubOperationPlan(OperationPlan* parent,
     // We verify that the new operationplan is a valid step in the routing.
     // The child element is inserted at the right place in the list.
     // Search if an existing operationplan matches
-    bool ok = false;
     OperationPlan* subopplan = parent->firstsubopplan;
     for (; subopplan; subopplan = subopplan->nextsubopplan)
       if (subopplan->getOperation() == child->getOperation()) {
-        ok = true;
         break;
       }
 
@@ -2069,10 +2067,7 @@ void OperationRouting::addSubOperationPlan(OperationPlan* parent,
         if (subopplan &&
             (*rtgstep)->getOperation() == subopplan->getOperation())
           subopplan = subopplan->nextsubopplan;
-        if ((*rtgstep)->getOperation() == child->getOperation()) {
-          ok = true;
-          break;
-        }
+        if ((*rtgstep)->getOperation() == child->getOperation()) break;
       }
     }
 

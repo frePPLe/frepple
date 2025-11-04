@@ -1024,6 +1024,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
   thread_local static DatabaseReader db(dbconnection);
   thread_local static DatabasePreparedStatement stmt;
   thread_local static short mode = 0;
+  thread_local static vector<DateRange> dates;
 
   for (short attempts = 0; attempts <= 1; ++attempts) try {
       if (!mode) {
@@ -1068,7 +1069,6 @@ ForecastData::ForecastData(const ForecastBase* f) {
       }
 
       // One-of building of forecast bucket dates
-      thread_local static vector<DateRange> dates;
       if (dates.empty()) {
         Date prevDate;
         Date hrzn_start =
@@ -1086,10 +1086,12 @@ ForecastData::ForecastData(const ForecastBase* f) {
       }
 
       // Create buckets
-      short cnt = 0;
-      buckets.reserve(dates.size());
-      for (auto b : dates)
-        buckets.emplace_back(f, b.getStart(), b.getEnd(), cnt++, mode == 2);
+      if (buckets.empty()) {
+        short cnt = 0;
+        buckets.reserve(dates.size());
+        for (auto b : dates)
+          buckets.emplace_back(f, b.getStart(), b.getEnd(), cnt++, mode == 2);
+      }
 
       if (mode == 2) {
         // Reading forecast data from a database connection
@@ -1150,10 +1152,10 @@ ForecastData::ForecastData(const ForecastBase* f) {
 
         // We need to reset the dirty flag on all buckets:
         clearDirty();
-
-        // Successful execution
-        return;
       }
+
+      // Successfully completed
+      return;
     } catch (DatabaseBadConnection) {
       // Try again with a new connection
       mode = 0;
@@ -1346,6 +1348,9 @@ void ForecastData::flush() {
         // commit the transaction
         DatabaseResult(db, stmt_end);
       }
+
+      // Successful execution
+      return;
     } catch (DatabaseBadConnection) {
       // Try again with a new connection
       mode = 0;

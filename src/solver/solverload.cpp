@@ -84,8 +84,8 @@ void SolverCreate::chooseResource(
 
   if ((!l->getSkill() && !l->getResource()->isGroup()) ||
       lplan->getConfirmed() ||
-      lplan->getOperationPlan() != data->state->keepAssignments) {
-    // CASE 1: No skill involved, no aggregate resource and not forced to keep
+      lplan->getOperationPlan() == data->state->keepAssignments) {
+    // CASE 1: No skill involved, no aggregate resource and forced to keep
     // the current resource assignments
     lplan->getResource()->solve(*this, v);
     return;

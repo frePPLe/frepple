@@ -15,16 +15,16 @@ BUFFER	3. item subassembly @ factory	2026-01-29T00:00:00	20	20
 BUFFER	3. item subassembly @ factory	2026-01-29T00:00:00	-20	0
 BUFFER	3. item subassembly @ factory	2026-07-20T00:00:00	100	100
 BUFFER	3. item subassembly @ factory	2026-07-31T00:00:00	-100	0
-BUFFER	4. component @ factory	2026-03-08T00:00:00	20	20
-BUFFER	4. component @ factory	2026-03-08T00:00:00	-20	0
+BUFFER	4. component @ factory	2026-03-01T00:00:00	20	20
+BUFFER	4. component @ factory	2026-03-01T00:00:00	-20	0
 BUFFER	4. component @ factory	2026-07-01T00:00:00	100	100
-BUFFER	4. component @ factory	2026-07-17T00:00:00	-100	0
-BUFFER	4. item @ factory	2026-03-14T00:00:00	20	20
-BUFFER	4. item @ factory	2026-03-14T00:00:00	-20	0
+BUFFER	4. component @ factory	2026-07-28T00:00:00	-100	0
+BUFFER	4. item @ factory	2026-03-07T00:00:00	20	20
+BUFFER	4. item @ factory	2026-03-07T00:00:00	-20	0
 BUFFER	4. item @ factory	2026-08-03T00:00:00	100	100
-BUFFER	4. item subassembly @ factory	2026-03-11T00:00:00	20	20
-BUFFER	4. item subassembly @ factory	2026-03-11T00:00:00	-20	0
-BUFFER	4. item subassembly @ factory	2026-07-20T00:00:00	100	100
+BUFFER	4. item subassembly @ factory	2026-03-04T00:00:00	20	20
+BUFFER	4. item subassembly @ factory	2026-03-04T00:00:00	-20	0
+BUFFER	4. item subassembly @ factory	2026-07-31T00:00:00	100	100
 BUFFER	4. item subassembly @ factory	2026-07-31T00:00:00	-100	0
 BUFFER	5. component @ factory	2026-01-08T00:00:00	20	20
 BUFFER	5. component @ factory	2026-01-08T00:00:00	-20	0
@@ -52,16 +52,16 @@ BUFFER	6. item subassembly @ factory	2026-07-31T00:00:00	-100	0
 DEMAND	1. sales order	2026-02-01T00:00:00	20
 DEMAND	2. sales order	2026-01-08T00:00:00	20
 DEMAND	3. sales order	2026-02-01T00:00:00	20
-DEMAND	4. sales order	2026-03-14T00:00:00	20
+DEMAND	4. sales order	2026-03-07T00:00:00	20
 DEMAND	5. sales order	2026-01-14T00:00:00	20
 DEMAND	6. sales order	2026-03-07T00:00:00	120
 DEMAND	7. project X	2026-08-18T00:00:00	100
 DEMAND	8. project X	2026-08-18T00:00:00	100
 DEMAND	9. project X	2026-09-11T00:00:00	100
-RESOURCE	4. Resource A	2026-03-08T00:00:00	1	1
-RESOURCE	4. Resource A	2026-03-11T00:00:00	-1	0
-RESOURCE	4. Resource B	2026-07-17T00:00:00	1	1
-RESOURCE	4. Resource B	2026-07-20T00:00:00	-1	0
+RESOURCE	4. Resource D	2026-03-01T00:00:00	1	1
+RESOURCE	4. Resource D	2026-03-04T00:00:00	-1	0
+RESOURCE	4. Resource D	2026-07-28T00:00:00	1	1
+RESOURCE	4. Resource D	2026-07-31T00:00:00	-1	0
 RESOURCE	6. Resource	2026-03-01T00:00:00	1	1
 RESOURCE	6. Resource	2026-03-04T00:00:00	-1	0
 RESOURCE	6. Resource	2026-07-17T00:00:00	1	1
@@ -70,10 +70,11 @@ OPERATION	3. Make item	2026-01-29T00:00:00	2026-02-01T00:00:00	20
 OPERATION	3. Make item	2026-07-31T00:00:00	2026-08-03T00:00:00	100	approved
 OPERATION	3. Make item subassembly	2026-01-26T00:00:00	2026-01-29T00:00:00	20
 OPERATION	3. Make item subassembly	2026-07-17T00:00:00	2026-07-20T00:00:00	100	approved
-OPERATION	4. Make item	2026-03-11T00:00:00	2026-03-14T00:00:00	20
+OPERATION	4. Make item	2026-03-04T00:00:00	2026-03-07T00:00:00	20
 OPERATION	4. Make item	2026-07-31T00:00:00	2026-08-03T00:00:00	100	approved
-OPERATION	4. Make item subassembly	2026-03-08T00:00:00	2026-03-11T00:00:00	20
-OPERATION	4. Make item subassembly	2026-07-17T00:00:00	2026-07-20T00:00:00	100	approved
+OPERATION	4. Make item subassembly	2026-03-01T00:00:00	2026-03-04T00:00:00	20
+OPERATION	4. Make item subassembly	2026-07-17T00:00:00	2026-07-20T00:00:00	0	approved
+OPERATION	4. Make item subassembly	2026-07-28T00:00:00	2026-07-31T00:00:00	100
 OPERATION	5. Make item	2026-01-11T00:00:00	2026-01-14T00:00:00	20
 OPERATION	5. Make item	2026-07-31T00:00:00	2026-08-03T00:00:00	100	approved
 OPERATION	5. Make item subassembly	2026-01-08T00:00:00	2026-01-11T00:00:00	20
@@ -104,7 +105,7 @@ OPERATION	Purchase 2. item @ factory from 2. Supplier	2026-01-01T00:00:00	2026-0
 OPERATION	Purchase 2. item @ factory from 2. Supplier	2026-07-25T00:00:00	2026-08-01T00:00:00	100	approved
 OPERATION	Purchase 3. component @ factory from 3. Supplier	2026-01-19T00:00:00	2026-01-26T00:00:00	20
 OPERATION	Purchase 3. component @ factory from 3. Supplier	2026-06-24T00:00:00	2026-07-01T00:00:00	100	approved
-OPERATION	Purchase 4. component @ factory from 4. Supplier	2026-03-01T00:00:00	2026-03-08T00:00:00	20
+OPERATION	Purchase 4. component @ factory from 4. Supplier	2026-02-22T00:00:00	2026-03-01T00:00:00	20
 OPERATION	Purchase 4. component @ factory from 4. Supplier	2026-06-24T00:00:00	2026-07-01T00:00:00	100	approved
 OPERATION	Purchase 5. component @ factory from 5. Supplier	2026-01-01T00:00:00	2026-01-08T00:00:00	20
 OPERATION	Purchase 5. component @ factory from 5. Supplier	2026-06-24T00:00:00	2026-07-01T00:00:00	100	approved
@@ -113,7 +114,7 @@ OPERATION	Purchase 6. component @ factory from 6. Supplier	2026-06-24T00:00:00	2
 OPERATION	Purchase 6. component @ factory from 6. Supplier	2026-07-10T00:00:00	2026-07-17T00:00:00	70
 PROBLEM	precedence	Operation '7. task X2 step 2' starts before preceding operation ends	2026-08-01T00:00:00 / 2026-08-01T00:00:00
 PROBLEM	late	20 units of demand '2. sales order' planned up to 7.0 days after its due date	2026-01-01T00:00:00 / 2026-01-08T00:00:00
-PROBLEM	late	20 units of demand '4. sales order' planned up to 72.0 days after its due date	2026-01-01T00:00:00 / 2026-03-14T00:00:00
+PROBLEM	late	20 units of demand '4. sales order' planned up to 65.0 days after its due date	2026-01-01T00:00:00 / 2026-03-07T00:00:00
 PROBLEM	late	20 units of demand '5. sales order' planned up to 13.0 days after its due date	2026-01-01T00:00:00 / 2026-01-14T00:00:00
 PROBLEM	late	120 units of demand '6. sales order' planned up to 65.0 days after its due date	2026-01-01T00:00:00 / 2026-03-07T00:00:00
 PROBLEM	late	100 units of demand '7. project X' planned up to 198.0 days after its due date	2026-02-01T00:00:00 / 2026-08-18T00:00:00
@@ -122,7 +123,7 @@ PROBLEM	late	100 units of demand '9. project X' planned up to 253.0 days after i
 DEMAND CONSTRAINT	2. sales order	Operation 'Purchase 2. item @ factory from 2. Supplier' planned in the past	2025-12-25T00:00:00 / 2026-01-01T00:00:00	
 DEMAND CONSTRAINT	4. sales order	Operation '4. Make item' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00	
 DEMAND CONSTRAINT	4. sales order	Operation '4. Make item subassembly' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00	
-DEMAND CONSTRAINT	4. sales order	Resource '4. Resource A' has capacity shortage of 1	2026-01-01T00:00:00 / 2026-01-04T00:00:00	
+DEMAND CONSTRAINT	4. sales order	Resource '4. Resource' has capacity shortage of 1	2026-01-01T00:00:00 / 2026-01-04T00:00:00	
 DEMAND CONSTRAINT	5. sales order	Operation '5. Make item' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00	
 DEMAND CONSTRAINT	5. sales order	Operation '5. Make item subassembly' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00	
 DEMAND CONSTRAINT	5. sales order	Operation 'Purchase 5. component @ factory from 5. Supplier' planned in the past	2025-12-25T00:00:00 / 2026-01-01T00:00:00	

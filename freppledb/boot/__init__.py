@@ -123,7 +123,7 @@ def add_extra_model_fields(sender, **kwargs):
             )
         elif fieldtype == "jsonb":
             field = models.JSONField(
-                default="{}", null=True, blank=True, editable=editable
+                default=dict, null=True, blank=True, editable=editable
             )
         elif fieldtype.startswith("foreignkey:"):
             field = models.ForeignKey(

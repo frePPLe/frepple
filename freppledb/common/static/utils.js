@@ -1,37 +1,42 @@
-import { ref as i } from "vue";
-const s = (t) => t == null, m = (t) => t && typeof t == "object", u = (t) => s(t) || Array.isArray(t) && t.length === 0 || m(t) && Object.keys(t).length === 0 || typeof t == "string" && t.trim().length === 0, a = (t) => t === "" || t === null || t === void 0 ? !1 : !isNaN(parseFloat(t)) && isFinite(t), l = () => {
-  const t = i(window.database);
+import { ref as o } from "vue";
+const s = (t) => t == null, m = (t) => t && typeof t == "object", f = (t) => s(t) || Array.isArray(t) && t.length === 0 || m(t) && Object.keys(t).length === 0 || typeof t == "string" && t.trim().length === 0, u = (t) => t === "" || t === null || t === void 0 ? !1 : !isNaN(parseFloat(t)) && isFinite(t), l = () => {
+  const t = o(window.database);
   return t.value === "default" ? "" : `/${t.value}`;
 }, d = (t, n) => {
   if (!t) return "";
   const e = new Date(t);
   return moment(e).format(window.datetimeformat);
-}, p = (t, n) => {
+};
+function p(t, n = { reactive: !1 }) {
+  return o(window[t]);
+}
+const w = (t, n) => {
   if (!t) return "";
   const e = new Date(t);
   return moment(e).format(window.dateformat);
-}, w = (t) => {
+}, y = (t) => {
   if (!t) return "";
   const n = new Date(t);
   return moment(n).format("HH:mm:ss");
 };
-function y(t, n = 300) {
+function b(t, n = 300) {
   let e;
   return function(...r) {
-    const o = () => {
+    const i = () => {
       e = null, t.apply(this, r);
     };
-    clearTimeout(e), e = setTimeout(o, n), e || t.apply(this, r);
+    clearTimeout(e), e = setTimeout(i, n), e || t.apply(this, r);
   };
 }
 export {
-  p as dateFormat,
+  w as dateFormat,
   d as dateTimeFormat,
-  y as debouncedInputHandler,
+  b as debouncedInputHandler,
+  p as getDjangoTemplateVariable,
   l as getURLprefix,
-  u as isBlank,
+  f as isBlank,
   s as isEmpty,
-  a as isNumeric,
+  u as isNumeric,
   m as isObject,
-  w as timeFormat
+  y as timeFormat
 };

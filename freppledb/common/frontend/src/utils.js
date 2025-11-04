@@ -52,6 +52,10 @@ const dateTimeFormat = (input, fmt) => {
   */
 };
 
+function getDjangoTemplateVariable(key, options = { reactive: false }) {
+  return ref(window[key]);
+}
+
 const dateFormat = (input, fmt) => {
   if (!input) return '';
   const date = new Date(input);
@@ -99,5 +103,6 @@ export {
   dateTimeFormat,
   dateFormat,
   timeFormat,
+  getDjangoTemplateVariable,
   debouncedInputHandler,
 };

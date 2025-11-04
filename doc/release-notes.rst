@@ -35,6 +35,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | The emails sent out by frepple now look much prettier.
 
+- | The *planned net forecast* link in the forecast report is now pointing to the delivery
+    report, filtered for the selected bucket.
+
 .. rubric:: Odoo integration
 
 - | 16, 17, 18: Exclude scrap and return locations when calculating the on hand when

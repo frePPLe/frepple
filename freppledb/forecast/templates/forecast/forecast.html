@@ -436,14 +436,12 @@ function crosses (cellvalue, options, rowdata)
 	        break;
 	      case "forecastplanned":
 	      case "forecastplannedvalue":
-	        if (cellvalue[1] === 1 && cellvalue[cross_idx[i]] != 0.0)
-	          result += '<a href="{{request.prefix}}/data/input/deliveryorder/?noautofilter' +
-	            '&amp;item=' +  admin_escape(rowdata['item']) +
-	            '&amp;location=' +  admin_escape(rowdata['location']) +
-	            '&amp;cust=' +  admin_escape(rowdata['customer']) +
-	            '&amp;o=5a&amp;enddate__gte='+ options['colModel']['startdate'] +
-	            '&amp;enddate__lt='+ options['colModel']['enddate'] +
-	            '&amp;orders=False" tabindex="-1">&nbsp;<span class="fa fa-caret-right"></span></a>';
+	        if (cellvalue[1] === 1 && cellvalue[cross_idx[i]] != 0.0 && rowdata["hasForecastRecord"] == "True")
+	          result += '<a href="{{request.prefix}}/demandpegging/forecast/' +
+            admin_escape(rowdata['forecast']) + '/?noautofilter' +
+            '&amp;startdate='+ options['colModel']['startdate'] +
+	          '&amp;enddate='+ options['colModel']['enddate'] +
+	          '" tabindex="-1">&nbsp;<span class="fa fa-caret-right"></span></a>';
 	        break;
 	      }
         if (cross[cross_idx[i]].editable)

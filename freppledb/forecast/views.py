@@ -1227,8 +1227,13 @@ class PeggingReport(pegging.ReportByDemand):
 
     @classmethod
     def getBucketsQuery(reportclass, *args):
+        date_subquery = (
+            f"and enddate >= '{reportclass.startdate}' and enddate < '{reportclass.enddate}'"
+            if hasattr(reportclass, "startdate")
+            else ""
+        )
         return (
-            """
+            f"""
             with demand as (
                 select min(due) as due,
                 jsonb_build_object(
@@ -1242,6 +1247,7 @@ class PeggingReport(pegging.ReportByDemand):
                     ) AS plan
                         FROM operationplan
                         WHERE type = 'DLVR' and forecast = %s
+                        {date_subquery}
                         group by forecast
                 ),
                 cte as (
@@ -1303,8 +1309,13 @@ class PeggingReport(pegging.ReportByDemand):
         basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(
             with_col_aliases=False
         )
+        date_subquery = (
+            f"and enddate >= '{reportclass.startdate}' and enddate < '{reportclass.enddate}'"
+            if hasattr(reportclass, "startdate")
+            else ""
+        )
         return (
-            """
+            f"""
           with demand as (
                 select min(due) as due,
                 jsonb_build_object(
@@ -1318,6 +1329,7 @@ class PeggingReport(pegging.ReportByDemand):
                     ) AS plan
                         FROM operationplan
                         WHERE type = 'DLVR' and forecast = %s
+                        {date_subquery}
                         group by forecast
                 ),
           cte as (
@@ -1418,7 +1430,7 @@ class PeggingReport(pegging.ReportByDemand):
             operationplan.supplier_id,
             operationplan.origin_id,
             operationplan.criticality,
-            operationplan.demand_id,
+            operationplan.forecast,
             extract(epoch from operationplan.delay), -- 20
             pegging.required_quantity,
             operationplan.batch,
@@ -1456,13 +1468,24 @@ class PeggingReport(pegging.ReportByDemand):
             item.description,
             coalesce(operationplan.location_id, operationplan.destination_id),
             operationplan.supplier_id, operationplan.origin_id,
-            operationplan.criticality, operationplan.demand_id,
+            operationplan.criticality, operationplan.forecast,
             extract(epoch from operationplan.delay), ops.rownum, pegging.required_quantity,
             pegging.path
           order by pegging.rownum
           """,
             baseparams,
         )
+
+    @classmethod
+    def initialize(reportclass, request, *args):
+        startdate = request.GET.get("startdate")
+        if startdate:
+            reportclass.startdate = startdate
+            reportclass.enddate = request.GET.get("enddate")
+        else:
+            if hasattr(reportclass, "startdate"):
+                delattr(reportclass, "startdate")
+                delattr(reportclass, "enddate")
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):

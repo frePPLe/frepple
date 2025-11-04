@@ -1024,126 +1024,141 @@ ForecastData::ForecastData(const ForecastBase* f) {
   thread_local static DatabaseReader db(dbconnection);
   thread_local static DatabasePreparedStatement stmt;
   thread_local static short mode = 0;
-  if (!mode) {
-    if (dbconnection.empty())
-      // Mode 1: Not connected to a database
-      mode = 1;
-    else {
-      // Mode 2: Connected to a database
-      mode = 2;
 
-      // We use a single, dedicated database connection for this
-      stringstream str;
-      str << "select extract(epoch from startdate), extract(epoch from "
-             "enddate)";
-      for (auto msr = ForecastMeasure::begin(); msr != ForecastMeasure::end();
-           ++msr) {
-        if (msr->getStored()) str << ", " << msr->getName();
-      }
-      str << " from forecastplan";
-      auto partition = f->getForecastPartition();
-      if (partition != -1) str << "_" << partition;
-      str << " where item_id = $1::text and location_id = $2::text "
-             "and customer_id = $3::text "
-             "and enddate >= $4::timestamp and startdate <= $5::timestamp "
-             "order by startdate";
-      try {
-        stmt = DatabasePreparedStatement(db, "Read forecastplan values",
-                                         str.str(), 5);
-        auto currentdate = Plan::instance().getFcstCurrent();
-        stmt.setArgument(
-            3, currentdate - Duration(86400L * f->getHorizonHistory()));
-        stmt.setArgument(
-            4, currentdate + Duration(86400L * f->getHorizonFuture()));
-      } catch (exception& e) {
-        logger << "Error creating prepared statement: " << e.what() << endl;
-        db.closeConnection();
-      } catch (...) {
-        logger << "Error creating prepared statement" << endl;
-        db.closeConnection();
-      }
-    }
-  }
-
-  // One-of building of forecast bucket dates
-  thread_local static vector<DateRange> dates;
-  if (dates.empty()) {
-    Date prevDate;
-    Date hrzn_start =
-        Plan::instance().getFcstCurrent() -
-        Duration(ForecastBase::getHorizonHistoryStatic() * 86400L);
-    Date hrzn_end = Plan::instance().getCurrent() +
-                    Duration(ForecastBase::getHorizonFutureStatic() * 86400L);
-    for (Calendar::EventIterator i(Forecast::getCalendar_static());
-         prevDate <= hrzn_end; prevDate = i.getDate(), ++i) {
-      if (prevDate && i.getDate() > hrzn_start &&
-          i.getDate() != Date::infiniteFuture)
-        dates.push_back(DateRange(prevDate, i.getDate()));
-    }
-  }
-
-  // Create buckets
-  short cnt = 0;
-  buckets.reserve(dates.size());
-  for (auto b : dates)
-    buckets.emplace_back(f, b.getStart(), b.getEnd(), cnt++, mode == 2);
-
-  if (mode == 2) {
-    // Reading forecast data from a database connection
-    stmt.setArgument(0, f->getForecastItem()->getName());
-    stmt.setArgument(1, f->getForecastLocation()->getName());
-    stmt.setArgument(2, f->getForecastCustomer()->getName());
-    DatabaseResult res(db, stmt);
-    auto totalRows = res.countRows();
-    auto bckiter = buckets.begin();
-    for (int i = 0; i < totalRows; ++i) {
-      // Find the matching forecastbucketdata object
-      Date st(res.getValueLong(i, 0));
-      Date nd(res.getValueLong(i, 1));
-      while (bckiter != buckets.end() && bckiter->getStart() < st)
-        // missing record in the database, which is perfectly ok
-        ++bckiter;
-      if (bckiter == buckets.end()) {
-        logger << "Time buckets not aligned: got " << st << ", " << nd << endl;
-        throw DataException("Forecastplan buckets not matching calendar");
-      }
-      if (bckiter->getStart() != st || bckiter->getEnd() != nd) {
-        logger << "Time buckets not aligned: got " << st << ", " << nd
-               << " and expected " << bckiter->getStart() << ", "
-               << bckiter->getEnd() << endl;
-        throw DataException("Forecastplan buckets not matching calendar");
-      }
-
-      // Read the measures
-      int fieldcounter = 1;
-      for (auto msr = ForecastMeasure::begin(); msr != ForecastMeasure::end();
-           ++msr) {
-        if (!msr->getStored()) continue;
-        auto val = res.getValueDoubleOrNull(i, ++fieldcounter);
-        if (!val.second) {
-          if (val.first != msr->getDefault())
-            bckiter->setValue(false, nullptr, &*msr, val.first);
-          else
-            bckiter->removeValue(false, nullptr, &*msr);
-        }
-      }
-
-      // Update the supply side
-      if (bckiter->getEnd() > Plan::instance().getFcstCurrent() &&
-          f->getPlanned()) {
-        auto tmp = Measures::forecastnet->getValue(*bckiter);
-        if (tmp)
-          bckiter->getOrCreateForecastBucket()->setQuantity(tmp);
+  for (short attempts = 0; attempts <= 1; ++attempts) try {
+      if (!mode) {
+        if (dbconnection.empty())
+          // Mode 1: Not connected to a database
+          mode = 1;
         else {
-          auto fcstbckt = bckiter->getOrCreateForecastBucket();
-          if (fcstbckt) bckiter->getOrCreateForecastBucket()->setQuantity(0.0);
+          // Mode 2: Connected to a database
+          mode = 2;
+
+          // We use a single, dedicated database connection for this
+          stringstream str;
+          str << "select extract(epoch from startdate), extract(epoch from "
+                 "enddate)";
+          for (auto msr = ForecastMeasure::begin();
+               msr != ForecastMeasure::end(); ++msr) {
+            if (msr->getStored()) str << ", " << msr->getName();
+          }
+          str << " from forecastplan";
+          auto partition = f->getForecastPartition();
+          if (partition != -1) str << "_" << partition;
+          str << " where item_id = $1::text and location_id = $2::text "
+                 "and customer_id = $3::text "
+                 "and enddate >= $4::timestamp and startdate <= $5::timestamp "
+                 "order by startdate";
+          try {
+            stmt = DatabasePreparedStatement(db, "Read forecastplan values",
+                                             str.str(), 5);
+            auto currentdate = Plan::instance().getFcstCurrent();
+            stmt.setArgument(
+                3, currentdate - Duration(86400L * f->getHorizonHistory()));
+            stmt.setArgument(
+                4, currentdate + Duration(86400L * f->getHorizonFuture()));
+          } catch (exception& e) {
+            logger << "Error creating prepared statement: " << e.what() << endl;
+            db.closeConnection();
+          } catch (...) {
+            logger << "Error creating prepared statement" << endl;
+            db.closeConnection();
+          }
         }
       }
-    }
 
-    // We need to reset the dirty flag on all buckets:
-    clearDirty();
-  }
+      // One-of building of forecast bucket dates
+      thread_local static vector<DateRange> dates;
+      if (dates.empty()) {
+        Date prevDate;
+        Date hrzn_start =
+            Plan::instance().getFcstCurrent() -
+            Duration(ForecastBase::getHorizonHistoryStatic() * 86400L);
+        Date hrzn_end =
+            Plan::instance().getCurrent() +
+            Duration(ForecastBase::getHorizonFutureStatic() * 86400L);
+        for (Calendar::EventIterator i(Forecast::getCalendar_static());
+             prevDate <= hrzn_end; prevDate = i.getDate(), ++i) {
+          if (prevDate && i.getDate() > hrzn_start &&
+              i.getDate() != Date::infiniteFuture)
+            dates.push_back(DateRange(prevDate, i.getDate()));
+        }
+      }
+
+      // Create buckets
+      short cnt = 0;
+      buckets.reserve(dates.size());
+      for (auto b : dates)
+        buckets.emplace_back(f, b.getStart(), b.getEnd(), cnt++, mode == 2);
+
+      if (mode == 2) {
+        // Reading forecast data from a database connection
+
+        stmt.setArgument(0, f->getForecastItem()->getName());
+        stmt.setArgument(1, f->getForecastLocation()->getName());
+        stmt.setArgument(2, f->getForecastCustomer()->getName());
+        DatabaseResult res(db, stmt);
+
+        auto totalRows = res.countRows();
+        auto bckiter = buckets.begin();
+        for (int i = 0; i < totalRows; ++i) {
+          // Find the matching forecastbucketdata object
+          Date st(res.getValueLong(i, 0));
+          Date nd(res.getValueLong(i, 1));
+          while (bckiter != buckets.end() && bckiter->getStart() < st)
+            // missing record in the database, which is perfectly ok
+            ++bckiter;
+          if (bckiter == buckets.end()) {
+            logger << "Time buckets not aligned: got " << st << ", " << nd
+                   << endl;
+            throw DataException("Forecastplan buckets not matching calendar");
+          }
+          if (bckiter->getStart() != st || bckiter->getEnd() != nd) {
+            logger << "Time buckets not aligned: got " << st << ", " << nd
+                   << " and expected " << bckiter->getStart() << ", "
+                   << bckiter->getEnd() << endl;
+            throw DataException("Forecastplan buckets not matching calendar");
+          }
+
+          // Read the measures
+          int fieldcounter = 1;
+          for (auto msr = ForecastMeasure::begin();
+               msr != ForecastMeasure::end(); ++msr) {
+            if (!msr->getStored()) continue;
+            auto val = res.getValueDoubleOrNull(i, ++fieldcounter);
+            if (!val.second) {
+              if (val.first != msr->getDefault())
+                bckiter->setValue(false, nullptr, &*msr, val.first);
+              else
+                bckiter->removeValue(false, nullptr, &*msr);
+            }
+          }
+
+          // Update the supply side
+          if (bckiter->getEnd() > Plan::instance().getFcstCurrent() &&
+              f->getPlanned()) {
+            auto tmp = Measures::forecastnet->getValue(*bckiter);
+            if (tmp)
+              bckiter->getOrCreateForecastBucket()->setQuantity(tmp);
+            else {
+              auto fcstbckt = bckiter->getOrCreateForecastBucket();
+              if (fcstbckt)
+                bckiter->getOrCreateForecastBucket()->setQuantity(0.0);
+            }
+          }
+        }
+
+        // We need to reset the dirty flag on all buckets:
+        clearDirty();
+
+        // Successful execution
+        return;
+      }
+    } catch (DatabaseBadConnection) {
+      // Try again with a new connection
+      mode = 0;
+      db = DatabaseReader(dbconnection);
+    }
 }
 
 void ForecastData::clearDirty() const {
@@ -1179,159 +1194,166 @@ void ForecastData::flush() {
            << fcst->getForecastCustomer() << endl;
   }
 
-  try {
-    auto dbconnection = Plan::instance().getDBconnection();
-    thread_local static DatabaseReader db(dbconnection);
-    thread_local static DatabasePreparedStatement stmt;
-    thread_local static DatabasePreparedStatement stmt_begin;
-    thread_local static DatabasePreparedStatement stmt_end;
-    thread_local static short mode = 0;
-    if (mode == 0) {
-      // We use a single, dedicated database connection for this
-      if (dbconnection.empty())
-        mode = 1;
-      else {
-        mode = 2;
-        try {
-          stringstream str;
-          str << "with cte (st, nd";
-          for (auto msr = ForecastMeasure::begin();
-               msr != ForecastMeasure::end(); ++msr) {
-            if (msr->getStored()) str << ", " << msr->getName();
-          }
-          str << ") as ( values ";
-          int argcounter = 0;
-          for (short r = 0; r < 10; ++r) {
-            str << "($" << ++argcounter << ", $" << ++argcounter;
+  auto dbconnection = Plan::instance().getDBconnection();
+  thread_local static DatabaseReader db(dbconnection);
+  thread_local static DatabasePreparedStatement stmt;
+  thread_local static DatabasePreparedStatement stmt_begin;
+  thread_local static DatabasePreparedStatement stmt_end;
+  thread_local static short mode = 0;
+  for (short attempts = 0; attempts <= 1; ++attempts) try {
+      if (mode == 0) {
+        // We use a single, dedicated database connection for this
+        if (dbconnection.empty())
+          mode = 1;
+        else {
+          mode = 2;
+          try {
+            stringstream str;
+            str << "with cte (st, nd";
             for (auto msr = ForecastMeasure::begin();
                  msr != ForecastMeasure::end(); ++msr) {
-              if (msr->getStored()) str << ", $" << ++argcounter << "::numeric";
+              if (msr->getStored()) str << ", " << msr->getName();
             }
-            if (r < 9)
-              str << "),";
-            else
-              str << ")";
+            str << ") as ( values ";
+            int argcounter = 0;
+            for (short r = 0; r < 10; ++r) {
+              str << "($" << ++argcounter << ", $" << ++argcounter;
+              for (auto msr = ForecastMeasure::begin();
+                   msr != ForecastMeasure::end(); ++msr) {
+                if (msr->getStored())
+                  str << ", $" << ++argcounter << "::numeric";
+              }
+              if (r < 9)
+                str << "),";
+              else
+                str << ")";
+            }
+            str << ") insert into forecastplan";
+            auto partition = ForecastBase::getForecastPartitionStatic();
+            if (partition != -1) str << "_" << partition;
+            str << " as fcstplan "
+                   "(item_id,location_id,customer_id,startdate,enddate";
+            for (auto msr = ForecastMeasure::begin();
+                 msr != ForecastMeasure::end(); ++msr) {
+              if (msr->getStored()) str << ", " << msr->getName();
+            }
+            str << ") select $" << (argcounter + 1) << ", $" << (argcounter + 2)
+                << ", $" << (argcounter + 3) << ",st::timestamp, nd::timestamp";
+            for (auto msr = ForecastMeasure::begin();
+                 msr != ForecastMeasure::end(); ++msr) {
+              if (msr->getStored()) str << ", " << msr->getName();
+            }
+            str << " from cte where st is not null "
+                   "on conflict(item_id, location_id, customer_id, "
+                   "startdate) "
+                   "do update set ";
+            bool first = true;
+            for (auto msr = ForecastMeasure::begin();
+                 msr != ForecastMeasure::end(); ++msr) {
+              if (!msr->getStored()) continue;
+              if (first)
+                first = false;
+              else
+                str << ", ";
+              str << msr->getName() << " = excluded." << msr->getName();
+            }
+            str << " where ";
+            first = true;
+            for (auto msr = ForecastMeasure::begin();
+                 msr != ForecastMeasure::end(); ++msr) {
+              if (!msr->getStored()) continue;
+              if (first)
+                first = false;
+              else
+                str << " or ";
+              str << "fcstplan." << msr->getName()
+                  << " is distinct from excluded." << msr->getName();
+            }
+            stmt = DatabasePreparedStatement(db, "forecastplan_write",
+                                             str.str(), argcounter + 3);
+            stmt_begin = DatabasePreparedStatement(db, "begin_trx", "begin");
+            stmt_end = DatabasePreparedStatement(db, "commit_trx", "commit");
+          } catch (exception& e) {
+            logger << "Error creating forecastplan export:" << endl;
+            logger << e.what() << endl;
+            db.closeConnection();
+          } catch (...) {
+            db.closeConnection();
           }
-          str << ") insert into forecastplan";
-          auto partition = ForecastBase::getForecastPartitionStatic();
-          if (partition != -1) str << "_" << partition;
-          str << " as fcstplan "
-                 "(item_id,location_id,customer_id,startdate,enddate";
-          for (auto msr = ForecastMeasure::begin();
-               msr != ForecastMeasure::end(); ++msr) {
-            if (msr->getStored()) str << ", " << msr->getName();
-          }
-          str << ") select $" << (argcounter + 1) << ", $" << (argcounter + 2)
-              << ", $" << (argcounter + 3) << ",st::timestamp, nd::timestamp";
-          for (auto msr = ForecastMeasure::begin();
-               msr != ForecastMeasure::end(); ++msr) {
-            if (msr->getStored()) str << ", " << msr->getName();
-          }
-          str << " from cte where st is not null "
-                 "on conflict(item_id, location_id, customer_id, startdate) "
-                 "do update set ";
-          bool first = true;
-          for (auto msr = ForecastMeasure::begin();
-               msr != ForecastMeasure::end(); ++msr) {
-            if (!msr->getStored()) continue;
-            if (first)
-              first = false;
-            else
-              str << ", ";
-            str << msr->getName() << " = excluded." << msr->getName();
-          }
-          str << " where ";
-          first = true;
-          for (auto msr = ForecastMeasure::begin();
-               msr != ForecastMeasure::end(); ++msr) {
-            if (!msr->getStored()) continue;
-            if (first)
-              first = false;
-            else
-              str << " or ";
-            str << "fcstplan." << msr->getName()
-                << " is distinct from excluded." << msr->getName();
-          }
-          stmt = DatabasePreparedStatement(db, "forecastplan_write", str.str(),
-                                           argcounter + 3);
-          stmt_begin = DatabasePreparedStatement(db, "begin_trx", "begin");
-          stmt_end = DatabasePreparedStatement(db, "commit_trx", "commit");
-        } catch (exception& e) {
-          logger << "Error creating forecastplan export:" << endl;
-          logger << e.what() << endl;
-          db.closeConnection();
-        } catch (...) {
-          db.closeConnection();
         }
       }
-    }
 
-    if (mode == 2) {
-      // start a transaction
-      DatabaseResult(db, stmt_begin);
-      bool first = true;
-      int argcount = -1;
-      auto argmax = stmt.getArgs();
-      for (auto& i : buckets) {
-        if (!i.isDirty()) continue;
-        if (first) {
-          if (!i.getForecast()->getForecastItem() ||
-              !i.getForecast()->getForecastLocation() ||
-              !i.getForecast()->getForecastCustomer())
-            break;
-          stmt.setArgument(argmax - 3,
-                           i.getForecast()->getForecastItem()->getName());
-          stmt.setArgument(argmax - 2,
-                           i.getForecast()->getForecastLocation()->getName());
-          stmt.setArgument(argmax - 1,
-                           i.getForecast()->getForecastCustomer()->getName());
-          first = false;
-        }
-        stmt.setArgument(++argcount, i.getStart());
-        stmt.setArgument(++argcount, i.getEnd());
-        for (auto msr = ForecastMeasure::begin(); msr != ForecastMeasure::end();
-             ++msr) {
-          if (!msr->getStored()) continue;
-          auto t = i.getValueAndFound(*msr);
-          stmt.setArgument(
-              ++argcount,
-              t.second ? to_string(round(t.first * 1e8) / 1e8) : "");
-        }
+      if (mode == 2) {
+        // start a transaction
+        DatabaseResult(db, stmt_begin);
+        bool first = true;
+        int argcount = -1;
+        auto argmax = stmt.getArgs();
+        for (auto& i : buckets) {
+          if (!i.isDirty()) continue;
+          if (first) {
+            if (!i.getForecast()->getForecastItem() ||
+                !i.getForecast()->getForecastLocation() ||
+                !i.getForecast()->getForecastCustomer())
+              break;
+            stmt.setArgument(argmax - 3,
+                             i.getForecast()->getForecastItem()->getName());
+            stmt.setArgument(argmax - 2,
+                             i.getForecast()->getForecastLocation()->getName());
+            stmt.setArgument(argmax - 1,
+                             i.getForecast()->getForecastCustomer()->getName());
+            first = false;
+          }
+          stmt.setArgument(++argcount, i.getStart());
+          stmt.setArgument(++argcount, i.getEnd());
+          for (auto msr = ForecastMeasure::begin();
+               msr != ForecastMeasure::end(); ++msr) {
+            if (!msr->getStored()) continue;
+            auto t = i.getValueAndFound(*msr);
+            stmt.setArgument(
+                ++argcount,
+                t.second ? to_string(round(t.first * 1e8) / 1e8) : "");
+          }
 
-        if (argcount >= argmax - 4) {
-          // All records in prepared statements are full now
+          if (argcount >= argmax - 4) {
+            // All records in prepared statements are full now
+            try {
+              DatabaseResult(db, stmt);
+            } catch (exception& e) {
+              logger << "Exception caught when saving a forecast: " << e.what()
+                     << endl;
+              DatabaseStatement rollback("rollback");
+              db.executeSQL(rollback);
+              DatabaseResult(db, stmt_begin);
+            }
+            argcount = -1;
+          }
+          i.clearDirty();
+        }
+        if (argcount > 0) {
+          while (argcount < argmax - 4) stmt.setArgument(++argcount, "");
           try {
             DatabaseResult(db, stmt);
           } catch (exception& e) {
             logger << "Exception caught when saving a forecast: " << e.what()
                    << endl;
+            // Roll back current transaction, and start a new one
             DatabaseStatement rollback("rollback");
             db.executeSQL(rollback);
             DatabaseResult(db, stmt_begin);
           }
-          argcount = -1;
         }
-        i.clearDirty();
+        // commit the transaction
+        DatabaseResult(db, stmt_end);
       }
-      if (argcount > 0) {
-        while (argcount < argmax - 4) stmt.setArgument(++argcount, "");
-        try {
-          DatabaseResult(db, stmt);
-        } catch (exception& e) {
-          logger << "Exception caught when saving a forecast: " << e.what()
-                 << endl;
-          // Roll back current transaction, and start a new one
-          DatabaseStatement rollback("rollback");
-          db.executeSQL(rollback);
-          DatabaseResult(db, stmt_begin);
-        }
-      }
-      // commit the transaction
-      DatabaseResult(db, stmt_end);
+    } catch (DatabaseBadConnection) {
+      // Try again with a new connection
+      mode = 0;
+      db = DatabaseReader(dbconnection);
+    } catch (exception& e) {
+      logger << "Exception caught when saving a forecast: " << e.what() << endl;
+      break;
     }
-  } catch (exception& e) {
-    logger << "Exception caught when saving a forecast: " << e.what() << endl;
-  }
 }
 
 ForecastBucket* ForecastBucketData::getOrCreateForecastBucket() const {

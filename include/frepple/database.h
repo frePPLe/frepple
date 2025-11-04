@@ -74,7 +74,7 @@ class DatabaseStatement : public DatabaseStatementBase {
 
  public:
   /* Constructor. */
-  DatabaseStatement(const string& s) : sql(s), args(0){};
+  DatabaseStatement(const string& s) : sql(s), args(0) {};
 
   DatabaseStatement(const string& s, const string& a1) : sql(s), args(1) {
     arg[0] = a1;
@@ -335,7 +335,7 @@ class DatabaseTransaction : public DatabaseStatementBase {
 
  public:
   /* Constructor. */
-  DatabaseTransaction(){};
+  DatabaseTransaction() {};
 
   /* Add a statement to the list. */
   void pushStatement(DatabaseStatementBase* p) { statements.push_back(p); }
@@ -367,6 +367,22 @@ class DatabaseReader : public NonCopyable {
   DatabaseReader(const string& c) : connectionstring(c) {}
 
   ~DatabaseReader();
+
+  DatabaseReader(DatabaseReader&& o) noexcept {
+    connectionstring = o.connectionstring;
+    conn = o.conn;
+    o.conn = nullptr;
+  }
+
+  DatabaseReader& operator=(DatabaseReader&& o) noexcept {
+    if (this != &o) {
+      connectionstring = o.connectionstring;
+      if (conn) PQfinish(conn);
+      conn = o.conn;
+      o.conn = nullptr;
+    }
+    return *this;
+  };
 
   /* Execute a command query that doesn't return a result. */
   void executeSQL(DatabaseStatement&);
@@ -401,7 +417,7 @@ class DatabasePreparedStatement : public DatabaseStatementBase {
   friend ostream& operator<<(ostream&, const DatabasePreparedStatement&);
 
  public:
-  DatabasePreparedStatement(){};
+  DatabasePreparedStatement() {};
 
   DatabasePreparedStatement(DatabaseReader& db, const string& stmtName,
                             const string& sql, int argcount = 0)
@@ -461,6 +477,11 @@ inline ostream& operator<<(ostream& os, const DatabasePreparedStatement& stmt) {
   return os;
 }
 
+class DatabaseBadConnection : public RuntimeException {
+ public:
+  DatabaseBadConnection() : RuntimeException("Bad database connection") {}
+};
+
 /* A wrapper around the PGresult class to avoid memory leaks. */
 class DatabaseResult : public NonCopyable {
  public:
@@ -473,6 +494,10 @@ class DatabaseResult : public NonCopyable {
   /* Constructor which runs a prepared statement. */
   DatabaseResult(DatabaseReader& db, DatabasePreparedStatement& stmt) {
     res = stmt.execute(db.getConnection());
+    if (PQstatus(db.getConnection()) == CONNECTION_BAD) {
+      PQclear(res);
+      throw DatabaseBadConnection();
+    }
     if (PQresultStatus(res) != PGRES_TUPLES_OK &&
         PQresultStatus(res) != PGRES_COMMAND_OK) {
       stringstream o;

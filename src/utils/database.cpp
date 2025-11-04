@@ -73,6 +73,10 @@ void DatabaseReader::executeSQL(DatabaseStatement& stmt) {
 
 DatabaseResult::DatabaseResult(DatabaseReader& db, DatabaseStatement& stmt) {
   res = stmt.execute(db.getConnection());
+  if (PQstatus(db.getConnection()) == CONNECTION_BAD) {
+    PQclear(res);
+    throw DatabaseBadConnection();
+  }
   if (PQresultStatus(res) != PGRES_TUPLES_OK) {
     stringstream o;
     o << "Database error: " << db.getError() << endl

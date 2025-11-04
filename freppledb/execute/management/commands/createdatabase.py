@@ -21,6 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+import sys
+
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
@@ -120,20 +122,30 @@ class Command(BaseCommand):
 
                     # Confirm the destruction of the database
                     if options["interactive"]:
-                        confirm = input(
-                            "\nThe database %s is about to be IRREVERSIBLY destroyed and recreated.\n"
-                            "ALL data currently in the database will be lost.\n"
-                            "Are you sure you want to do this?\n"
-                            "\n"
-                            "Type 'yes' to continue, or 'no' to cancel: "
-                            % database_name.upper()
-                        )
-                        if confirm != "yes":
-                            print(
-                                "Skipping drop and create of database %s"
+                        if (
+                            sys.stdin.isatty()
+                            and sys.stdout.isatty()
+                            and sys.stderr.isatty()
+                        ):
+                            confirm = input(
+                                "\nThe database %s is about to be IRREVERSIBLY destroyed and recreated.\n"
+                                "ALL data currently in the database will be lost.\n"
+                                "Are you sure you want to do this?\n"
+                                "\n"
+                                "Type 'yes' to continue, or 'no' to cancel: "
                                 % database_name.upper()
                             )
-                            continue
+                            if confirm != "yes":
+                                print(
+                                    "Skipping drop and create of database %s"
+                                    % database_name.upper()
+                                )
+                                continue
+                        else:
+                            raise CommandError(
+                                f"Database {database_name.upper()} will be dropped and data will be lost. "
+                                "Use the --noinput option to force the deletion."
+                            )
 
                     # Drop the database
                     try:

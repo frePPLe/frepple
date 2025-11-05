@@ -942,7 +942,7 @@ input[type="date"] {
 .cockpitwidget-lg,
 .cockpitwidget-md,
 .cockpitwidget-sm {
-    min-width: 100%;    
+    min-width: 100%;
 }
 
 @media (min-width: map-get($grid-breakpoints, md)) {
@@ -966,4 +966,8 @@ input[type="date"] {
         flex: 3;
     }
 
+}
+
+.sentence-capitalize::first-letter {
+    text-transform: uppercase;
 }

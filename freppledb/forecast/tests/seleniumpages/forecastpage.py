@@ -75,7 +75,7 @@ class ForecastTablePage(TablePage):
     def update_forecast_override_time_range(
         self, inputfield, monthsadded, overridevalue
     ):
-        input_field = inputfield.get_attribute("data-ng-model")
+        input_field = inputfield.get_attribute("id")
 
         def newdategenerator(olddate, monthsadded):
             old = datetime.strptime(olddate, "%Y-%m-%d")

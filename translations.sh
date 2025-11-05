@@ -1,4 +1,4 @@
-!/usr/bin/env bash
+#!/usr/bin/env bash
 
 # Utility script to maintain translations.
 #
@@ -21,7 +21,14 @@ translations_extract() {
   # Extract Django strings
   cd "$SCRIPT_DIR/freppledb"
   "$SCRIPT_DIR/frepplectl.py" makemessages --ignore node_modules --no-wrap -a -d django
-  "$SCRIPT_DIR/frepplectl.py" makemessages --ignore node_modules "--ignore=*bootstrap.js" "--ignore=*.min.js" --no-wrap -a -d djangojs
+  "$SCRIPT_DIR/frepplectl.py" makemessages --no-wrap -a -d djangojs \
+      "--ignore=node_modules" \
+      "--ignore=*jquery*js" \
+      "--ignore=*main.js" \
+      "--ignore=*frontend*.js" \
+      "--ignore=*bootstrap.js" \
+      "--ignore=*grid.locale*" \
+      "--ignore=*.min.js"
   cd -
 
   # Extract Vue strings

@@ -52,7 +52,7 @@ function undo() {
               data-bs-toggle="tooltip"
               :disabled="!store.hasChanges"
               :class="store.hasChanges ? 'btn-danger' : ''"
-              data-bs-original-title="Save changes to the database">
+              :data-bs-original-title="ttt('Save changes')">
             {{ ttt('save') }}
           </button>
           <button
@@ -62,8 +62,8 @@ function undo() {
               data-bs-toggle="tooltip"
               :disabled="!store.hasChanges"
               :class="store.hasChanges ? 'btn-danger' : ''"
-              data-bs-original-title="Undo changes">
-            {{ ttt('undo') }}
+              :data-bs-original-title="ttt('Undo changes')">
+            {{ ttt('Undo') }}
           </button>
         </div>
       </div>

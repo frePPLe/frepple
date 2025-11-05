@@ -78,7 +78,11 @@ class ForecastTablePage(TablePage):
         input_field = inputfield.get_attribute("id")
 
         def newdategenerator(olddate, monthsadded):
-            old = datetime.strptime(olddate, "%Y-%m-%d")
+            # Use today's date if the date string is empty
+            if not olddate or olddate.strip() == '':
+                old = datetime.now()
+            else:
+                old = datetime.strptime(olddate, "%Y-%m-%d")
 
             new = (
                 old + mainDate.timedelta(days=(monthsadded * 31))

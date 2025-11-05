@@ -41,13 +41,17 @@ def getPostgresVersion():
     Find a PostgreSQL client that matches your database instance version.
     If an exact match isn't found, try higher numbers.
     """
-    v = math.floor(connections[DEFAULT_DB_ALIAS].pg_version / 10000)
-    while True:
+    server = math.floor(connections[DEFAULT_DB_ALIAS].pg_version / 10000)
+    server = 19
+    clients = set()
+    for v in range(14, 23):
         if os.path.isdir(f"/usr/lib/postgresql/{v}/bin"):
-            return v
-        v += 1
-        if v > 20:
-            raise Exception("No client found for your PostgreSQL version")
+            if v >= server:
+                return v
+            clients.add(str(v))
+    raise Exception(
+        f"You are using postgres version {server}. Frepple only supports versions {', '.join(clients)}"
+    )
 
 
 def forceWsgiReload():

@@ -42,7 +42,6 @@ def getPostgresVersion():
     If an exact match isn't found, try higher numbers.
     """
     server = math.floor(connections[DEFAULT_DB_ALIAS].pg_version / 10000)
-    server = 19
     clients = set()
     for v in range(14, 23):
         if os.path.isdir(f"/usr/lib/postgresql/{v}/bin"):

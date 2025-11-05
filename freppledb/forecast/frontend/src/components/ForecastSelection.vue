@@ -39,7 +39,6 @@ const customizeGridRef = ref(null);
 const currentMeasure = computed(() => {
   if (store.currentMeasure === null) {
     store.setCurrentMeasure(store.preferences.measure || 'nodata', false);
-    // console.log(19, store.preferences.measure, ' measures: ',store.measures);
     return store.preferences.measure || 'nodata'
   }
   return store.currentMeasure;

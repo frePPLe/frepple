@@ -224,7 +224,6 @@ const savePreferences = (callback) => {
     hideModal();
     if (callback) callback();
   }).catch(error => {
-    console.error('Error saving preferences:', error);
     hideModal();
     if (callback) callback();
   });

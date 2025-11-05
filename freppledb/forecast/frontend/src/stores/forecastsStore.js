@@ -653,7 +653,7 @@ export const useForecastsStore = defineStore('forecasts', {
           }
         }
       }
-      newData.buckets = newData.buckets.filter(x =>  Object.keys(x).length > 1);
+      newData.buckets = newData.buckets.filter(x => Object.keys(x).length > 1);
 
       try {
         const result = await forecastService.postForecastDetails(newData);
@@ -667,7 +667,6 @@ export const useForecastsStore = defineStore('forecasts', {
         }
 
         if (responseData.value) {
-          console.log('Forecast Changes saved', newData);
           await this.undo()
         } else {
           console.warn('Forecast changes not saved');
@@ -708,9 +707,7 @@ export const useForecastsStore = defineStore('forecasts', {
           throw new Error(backendError.value.message || 'API Error');
         }
 
-        if (responseData.value) {
-          console.log('Preferences saved', this.preferences);
-        } else {
+        if (!responseData.value) {
           console.warn('Preferences not saved');
         }
 

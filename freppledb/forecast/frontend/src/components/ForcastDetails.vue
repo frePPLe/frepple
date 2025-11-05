@@ -21,8 +21,6 @@ const { t: ttt, locale, availableLocales } = useI18n({
   inheritLocale: true
 });
 
-console.log(24, locale, availableLocales);
-
 const store = useForecastsStore();
 
 const database = computed(() => window.database);
@@ -32,8 +30,6 @@ function save() {
 }
 
 function undo() {
-  console.log(14, 'undo');
-
   if (store.hasChanges) {
     store.undo();
   }

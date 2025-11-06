@@ -3392,6 +3392,7 @@
 {"model":"common.parameter","fields": {"name":"plan.rotateResources","value":"true","description":"When set to true, the algorithm will better distribute the demand across alternate suboperations instead of using the preferred operation"}},
 {"model":"common.parameter","fields": {"name":"plan.webservice","value":"true","description":"Specifies whether to use the web service or not"}},
 {"model":"common.parameter","fields": {"name":"plan.solver","value":"distribution","description":"Selects the solver to generate the plan. Possible choices are \"heuristic\" and \"distribution\"."}},
+{"pk": "plan.move_approved_early", "model":"common.parameter","fields": {"value": "0", "description": "Control rescheduling approved orders early. Values: 0 (inactive, default), 1 (active preserving existing resource assignments, 2 (active replanning resource assignments)"}},
 {"model":"common.parameter", "fields": {"name": "plan.fixBrokenSupplyPath", "value":"true", "description":"Creates item supplier records with Unknown supplier to fix broken supply path. Default is true."}},
 {"model":"common.parameter", "fields": {"name":"plan.individualPoolResources","value":"false","description":"When set to true, an operation-resource record with quantity N is interpreted as 'find N member resources of size 1' instead of 'find a member resource with size N'"}},
 {"model":"common.parameter","fields": {"name":"currency","value":"$","description":"Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"}},

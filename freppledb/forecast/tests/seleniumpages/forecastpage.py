@@ -73,7 +73,7 @@ class ForecastTablePage(TablePage):
         return inputfield
 
     def update_forecast_override_time_range(
-        self, inputfield, monthsadded, overridevalue
+            self, inputfield, monthsadded, overridevalue
     ):
         input_field = inputfield.get_attribute("id")
 
@@ -100,9 +100,13 @@ class ForecastTablePage(TablePage):
 
         if "start" in input_field:
             tonewdate = newdategenerator(oldany, monthsadded)
-            fromnewdate = datetime.strptime(
-                self.get_startdate_input().get_attribute("value"), "%Y-%m-%d"
-            )
+
+            # Get startdate value and handle empty case
+            startdate_value = self.get_startdate_input().get_attribute("value")
+            if not startdate_value or startdate_value.strip() == '':
+                fromnewdate = datetime.now()
+            else:
+                fromnewdate = datetime.strptime(startdate_value, "%Y-%m-%d")
 
             daterange = tonewdate - fromnewdate
             timerange = round(daterange.days / 30) + 1
@@ -111,9 +115,13 @@ class ForecastTablePage(TablePage):
             )
         else:
             fromnewdate = newdategenerator(oldany, monthsadded)
-            tonewdate = datetime.strptime(
-                self.get_enddate_input().get_attribute("value"), "%Y-%m-%d"
-            )
+
+            # Get enddate value and handle empty case
+            enddate_value = self.get_enddate_input().get_attribute("value")
+            if not enddate_value or enddate_value.strip() == '':
+                tonewdate = datetime.now()
+            else:
+                tonewdate = datetime.strptime(enddate_value, "%Y-%m-%d")
 
             daterange = tonewdate - fromnewdate
             timerange = round(daterange.days / 30) + 1

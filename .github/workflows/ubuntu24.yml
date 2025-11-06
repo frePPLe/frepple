@@ -72,7 +72,7 @@ jobs:
           export POSTGRES_HOST=localhost
           export POSTGRES_PORT=5432
           export FREPPLE_DATE_STYLE="day-month-year"
-          ./test/runtest.py --regression
+          ./test/runtest.py
           ./frepplectl.py test freppledb --verbosity=2
 
       - name: Test uninstalling apps
@@ -166,7 +166,7 @@ jobs:
         if: failure()
         uses: dawidd6/action-send-mail@v4
         with:
-          connection_url: ${{secrets.MAIL_CONNECTION}}  
+          connection_url: ${{secrets.MAIL_CONNECTION}}
           secure: false
           subject: "Github action failure: Failure Community Edition"
           from: '"frepple devops" <devops@frepple.com>'
@@ -175,4 +175,3 @@ jobs:
             Please check the logs at https://github.com/frePPLe/frepple/actions/runs/${{ github.run_id }}
           html_body: |
             <p>Please check <a href="https://github.com/frePPLe/frepple/actions/runs/${{ github.run_id }}">the logs</a>.</p>
-            

@@ -1,9 +1,0 @@
-<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <current>2009-01-01T00:00:00</current>
-<?python
-frepple.readXMLfile("input.xml",False)
-frepple.solver_mrp(constraints=15).solve()
-frepple.saveXMLfile("output.xml")
-#frepple.printsize()
-?>
-</plan>

@@ -78,9 +78,6 @@ def usage():
         With the following options:
           -d  --debug:
              Verbose output of the test.
-          -r  --regression:
-             Run only the tests that are relevant for a regression test.
-             The full test suite also includes some extra tests for testing other aspects.
           -e  --exclude:'
              Skip a specific test from the suite.
              This option can be specified multiple times.
@@ -106,24 +103,11 @@ def runTestSuite():
 
     try:
         opts, args = getopt.getopt(
-            sys.argv[1:], "dvhre:", ["debug", "help", "regression", "exclude="]
+            sys.argv[1:], "dvhre:", ["debug", "help", "exclude="]
         )
     except getopt.GetoptError:
         usage()
         sys.exit(1)
-    for o, a in opts:
-        if o in ("-r", "--regression"):
-            # THE HARD_CODED TESTS LISTED HERE ARE SKIPPED WHEN RUNNING A REGRESSION TEST.
-            # These test verify other aspects of the application or broken, unsupported features.
-            excluded = [
-                "xml_remote",
-                "scalability_1",
-                "scalability_2",
-                "scalability_3",
-                "jobshop",
-                "forecast_6",
-            ]
-            break
     for o, a in opts:
         if o in ("-d", "--debug"):
             debug = True

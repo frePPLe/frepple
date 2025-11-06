@@ -1,8 +1,0 @@
-<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<?python
-frepple.readXMLfile("input.xml",False)
-frepple.solver_mrp(constraints=0).solve()
-frepple.saveXMLfile("output.xml")
-#frepple.printsize()
-?>
-</plan>

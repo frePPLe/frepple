@@ -21,7 +21,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     this feature.
 
 - | Bug fix: A corner case in the solver algorithm has been solved. When confirmed
-    supply exists after the autofence date, some demands can be planned with extra delays.
+    supply exists after the autofence date, some demands could be planned with extra delays.
 
 .. rubric:: Demand forecasting
 

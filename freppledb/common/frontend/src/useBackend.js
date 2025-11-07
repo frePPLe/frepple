@@ -166,7 +166,6 @@ export function usePostBackendData(inputValue, inputData, headers={}) {
       headers: headers
     })
     .then(response => {
-      console.log(response.statusText);
       responseData.value = response.data;
       loading.value = false;
       return { loading, backendError, responseData };

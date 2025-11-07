@@ -587,30 +587,44 @@ export const useForecastsStore = defineStore('forecasts', {
     applyForecastChanges: function () {
       // Make custom changes to forecast
       const msr = this.editForm.selectedMeasure.name;
+      const newMSR = (msr === "forecastoverride") ? "forecasttotal" : msr;
+      const isDiscrete = this.editForm.selectedMeasure.discrete;
       for (const bckt of this.getBucketIndexesFromFormDates()) {
         switch (this.editForm.mode) {
           case "set":
             this.logChange(bckt, msr,
-              msr.discrete ?
+              isDiscrete ?
                 Math.round(this.editForm.setTo) :
                 this.editForm.setTo
             );
             break;
-          case "increase":
-            this.logChange(bckt, msr,
-              msr.discrete ?
-                Math.round(this.buckets[bckt][msr.name === "forecastoverride" ? "forecasttotal" : msr] + this.editForm.increaseBy) :
-                this.buckets[bckt][msr.name === "forecastoverride" ? "forecasttotal" : msr] + this.editForm.increaseBy
+          case "increase": {
+            this.logChange(bckt, newMSR,
+              isDiscrete ?
+                Math.round(this.buckets[bckt][newMSR] + this.editForm.increaseBy) :
+                this.buckets[bckt][newMSR] + this.editForm.increaseBy
             );
+            if (msr === "forecastoverride") {
+              this.logChange(bckt, "forecastoverride",
+                this.buckets[bckt][newMSR]
+              );
+            }
             break;
-          case "increasePercent":
+          }
+          case "increasePercent": {
             const factor = 1 + this.editForm.increaseByPercent / 100.0;
-            this.logChange(bckt, msr,
-              msr.discrete ?
-                Math.round(this.buckets[bckt][msr.name === "forecastoverride" ? "forecasttotal" : msr] * factor) :
-                this.buckets[bckt][msr.name === "forecastoverride" ? "forecasttotal" : msr] * factor
+            this.logChange(bckt, newMSR,
+              isDiscrete ?
+                Math.round(this.buckets[bckt][newMSR] * factor) :
+                this.buckets[bckt][newMSR] * factor
             );
+            if (msr === "forecastoverride") {
+              this.logChange(bckt, "forecastoverride",
+                this.buckets[bckt][newMSR]
+              );
+            }
             break;
+          }
           default:
             return;
         }

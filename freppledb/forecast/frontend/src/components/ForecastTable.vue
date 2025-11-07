@@ -9,7 +9,7 @@
 */
 
 <script setup>
-import {computed} from 'vue';
+import {computed, nextTick, watch} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {useForecastsStore} from '../stores/forecastsStore.js';
 
@@ -186,6 +186,22 @@ const updateCellValue = (bucket, row, event) => {
   const value = event.target.value;
   updateCellValueDebounced(bucket, row, value);
 };
+
+// Add this watcher to force input field updates when bucketChanges are updated
+watch(() => JSON.stringify(store.bucketChanges), () => {
+  // Force Vue to update the DOM for all affected inputs
+  nextTick(() => {
+    const inputs = document.querySelectorAll('input.ng-dirty');
+    inputs.forEach(input => {
+      const bucketIndex = input.getAttribute('data-index');
+      const measure = input.getAttribute('data-measure');
+      if (bucketIndex && measure &&
+          store.bucketChanges[store.getBucketIndexFromName(visibleBuckets.value[bucketIndex].bucket)]) {
+        input.value = store.bucketChanges[store.getBucketIndexFromName(visibleBuckets.value[bucketIndex].bucket)][measure] || input.value;
+      }
+    });
+  });
+});
 
 const navigateToDrilldown = (event) => {
   const href = event.target.closest('a')?.getAttribute('href');

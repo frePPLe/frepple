@@ -155,7 +155,7 @@
             <location name="factory"/>
             <maximum_calendar name="4. Capacity A">
                 <buckets>
-                    <bucket start="2026-03-08T00:00:00">
+                    <bucket start="2026-03-01T00:00:00">
                         <value>1</value>
                     </bucket>
                 </buckets>
@@ -557,7 +557,6 @@ for opplan in frepple.operationplans():
 frepple.settings.moveApprovedEarly = 1
 
 print("CREATING CONSTRAINED PLAN - 1")
-# frepple.solver_propagateStatus(loglevel=99).solve()
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=99).solve()
 frepple.saveplan("output.1.xml")
 

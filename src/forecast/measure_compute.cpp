@@ -166,7 +166,9 @@ void ForecastMeasureComputed::compileMeasures() {
   }
 
   for (auto& m : all()) {
-    if (m.isTemporary() || !m.hasType<ForecastMeasureComputed>()) continue;
+    if (m.isTemporary() || (!m.hasType<ForecastMeasureComputed>() &&
+                            !m.hasType<ForecastMeasureComputedPlanned>()))
+      continue;
     auto c = static_cast<ForecastMeasureComputed*>(&m);
 
     // Compile the compute-expression

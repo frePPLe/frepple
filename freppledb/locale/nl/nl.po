@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2024-12-17 14:51+0100\n"
+"PO-Revision-Date: 2025-11-05 16:59+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -7690,7 +7690,7 @@ msgstr "{{ aggregatedoperationplans.count }} geselecteerd"
 msgid "{{m.label}}"
 msgstr "{{m.label}}"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1609
+#: freppledb/planningboard/static/planningboard/planningboard.html:1623
 msgid ""
 "An operation gets the color of the category of the item it produces.<br>\n"
 "                        The item categories should be filled in the item "
@@ -7702,7 +7702,7 @@ msgstr ""
 "De item categorien worden in de producttabel ingevuld.\n"
 "<br><br>"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1641
+#: freppledb/planningboard/static/planningboard/planningboard.html:1655
 msgid ""
 "An operation gets the color of the subcategory of the item it produces.<br>\n"
 "                        The item subcategories should be filled in the item "
@@ -7714,7 +7714,7 @@ msgstr ""
 "The product subcategorien worden in de producttabel ingegevuld.\n"
 "<br><br>"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1551
+#: freppledb/planningboard/static/planningboard/planningboard.html:1565
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
@@ -7723,23 +7723,27 @@ msgstr ""
 "verkooporders.\n"
 "<br><br>"
 
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:73
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:77
 msgid "Assign an extra resource"
 msgstr "Toekennen van een extra resource"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1544
+#: freppledb/planningboard/static/planningboard/planningboard.html:1558
 msgid "Due date color setup"
 msgstr "Setup kleuren voor leverdata"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1392
-#: freppledb/planningboard/static/planningboard/planningboard.html:1427
-#: freppledb/planningboard/static/planningboard/planningboard.html:1454
+#: freppledb/planningboard/static/planningboard/planningboard.html:1406
+#: freppledb/planningboard/static/planningboard/planningboard.html:1441
+#: freppledb/planningboard/static/planningboard/planningboard.html:1468
 msgid "Enter name"
 msgstr "Type de naam"
 
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:76
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:80
 msgid "Remove this resource"
 msgstr "Verwijder deze resource"
+
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:65
+msgid "There is no demand requiring this supply."
+msgstr "Er is geen vraag naar deze supply."
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:75
 msgid "View end events"
@@ -7757,8 +7761,8 @@ msgstr "Toon start en einddata"
 msgid "View start events"
 msgstr "Toon startdata"
 
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:48
-#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:231
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:52
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:233
 msgid "consumed proposed"
 msgstr "geconsumeerd voorgesteld"
 
@@ -7774,15 +7778,15 @@ msgstr "downstream operaties"
 msgid "export to {{erp}} failed"
 msgstr "exporteren naar {{erp}} mislukt"
 
-#: freppledb/input/static/operationplandetail/downstreamoperationplans.html:18
+#: freppledb/input/static/operationplandetail/downstreamoperationplans.html:19
 msgid "no downstream information"
 msgstr "geen downstream informatie"
 
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:37
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:40
 msgid "no inventory information"
 msgstr "geen stockinformatie"
 
-#: freppledb/input/static/operationplandetail/upstreamoperationplans.html:18
+#: freppledb/input/static/operationplandetail/upstreamoperationplans.html:19
 msgid "no upstream information"
 msgstr "geen upstream informatie"
 
@@ -7790,8 +7794,8 @@ msgstr "geen upstream informatie"
 msgid "plus"
 msgstr "plus"
 
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:51
-#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:219
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:55
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:221
 msgid "produced proposed"
 msgstr "geproduceerd voorgesteld"
 
@@ -7799,7 +7803,6 @@ msgstr "geproduceerd voorgesteld"
 msgid "selected"
 msgstr "geselecteerd"
 
-#: freppledb/forecast/static/forecast/forecast.html:62
 #: freppledb/planningboard/static/planningboard/planningboard.html:87
 msgid "set time horizon"
 msgstr "instellen tijdshorizon"
@@ -7820,3 +7823,30 @@ msgstr "upstream operaties"
 #: freppledb/input/static/operationplandetail/month.html:13
 msgid "week number"
 msgstr "weeknummer"
+
+msgid "select measure"
+msgstr "selecteer measure"
+
+msgid "Set to"
+msgstr "Update naar"
+
+msgid "Increase by"
+msgstr "Vermeerder met"
+
+msgid "Save changes"
+msgstr "Sla wijzigingen op"
+
+msgid "item-location"
+msgstr "item-locatie"
+
+msgid "Enter your comment here..."
+msgstr "Geef je commentaar hier..."
+
+msgid "selected quote"
+msgstr "geselecteerde quote"
+
+msgid "current value"
+msgstr "huidige waarde"
+
+msgid "no plan yet"
+msgstr "nog geen plan"

@@ -7638,7 +7638,7 @@ msgstr "{{ aggregatedoperationplans.count }}  seleccionados"
 msgid "{{m.label}}"
 msgstr "{{m.label}}"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1609
+#: freppledb/planningboard/static/planningboard/planningboard.html:1623
 msgid ""
 "An operation gets the color of the category of the item it produces.<br>\n"
 "                        The item categories should be filled in the item "
@@ -7646,7 +7646,7 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1641
+#: freppledb/planningboard/static/planningboard/planningboard.html:1655
 msgid ""
 "An operation gets the color of the subcategory of the item it produces.<br>\n"
 "                        The item subcategories should be filled in the item "
@@ -7654,17 +7654,13 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1551
+#: freppledb/planningboard/static/planningboard/planningboard.html:1565
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:319
-msgid "Apply"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:73
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:77
 msgid "Assign an extra resource"
 msgstr ""
 
@@ -7672,28 +7668,22 @@ msgstr ""
 msgid "Automatically resolve infeasiblities in the plan"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1544
+#: freppledb/planningboard/static/planningboard/planningboard.html:1558
 msgid "Due date color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1392
-#: freppledb/planningboard/static/planningboard/planningboard.html:1427
-#: freppledb/planningboard/static/planningboard/planningboard.html:1454
+#: freppledb/planningboard/static/planningboard/planningboard.html:1406
+#: freppledb/planningboard/static/planningboard/planningboard.html:1441
+#: freppledb/planningboard/static/planningboard/planningboard.html:1468
 msgid "Enter name"
 msgstr ""
 
-#: freppledb/quoting/static/quoting/quoting.html:30
-#: freppledb/quoting/static/quoting/quoting.html:43
-#: freppledb/quoting/static/quoting/quoting.html:56
-msgid "Enter your search terms"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:76
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:80
 msgid "Remove this resource"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:49
-msgid "Select panel measure"
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:65
+msgid "There is no demand requiring this supply."
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:75
@@ -7712,8 +7702,8 @@ msgstr ""
 msgid "View start events"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:48
-#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:231
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:52
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:233
 msgid "consumed proposed"
 msgstr ""
 
@@ -7733,27 +7723,27 @@ msgstr ""
 msgid "export to {{erp}} failed"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:28
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:31
 msgid "network status"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/downstreamoperationplans.html:18
+#: freppledb/input/static/operationplandetail/downstreamoperationplans.html:19
 msgid "no downstream information"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:37
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:40
 msgid "no inventory information"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:52
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:56
 msgid "no network information"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:54
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:58
 msgid "no supply information"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/upstreamoperationplans.html:18
+#: freppledb/input/static/operationplandetail/upstreamoperationplans.html:19
 msgid "no upstream information"
 msgstr ""
 
@@ -7761,8 +7751,8 @@ msgstr ""
 msgid "plus"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:51
-#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:219
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:55
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:221
 msgid "produced proposed"
 msgstr ""
 
@@ -7774,14 +7764,13 @@ msgstr ""
 msgid "selected"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:62
 #: freppledb/planningboard/static/planningboard/planningboard.html:87
 msgid "set time horizon"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:472
-#: freppledb/planningboard/static/planningboard/planningboard.html:632
-#: freppledb/planningboard/static/planningboard/planningboard.html:761
+#: freppledb/planningboard/static/planningboard/planningboard.html:477
+#: freppledb/planningboard/static/planningboard/planningboard.html:642
+#: freppledb/planningboard/static/planningboard/planningboard.html:771
 msgid "setup end"
 msgstr ""
 
@@ -7794,11 +7783,11 @@ msgstr ""
 msgid "stock"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:28
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:31
 msgid "supply information"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:33
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:39
 msgid "types"
 msgstr ""
 
@@ -7808,4 +7797,47 @@ msgstr ""
 
 #: freppledb/input/static/operationplandetail/month.html:13
 msgid "week number"
+msgstr ""
+
+msgid "Select panel measure"
+msgstr ""
+
+msgid "Apply"
+msgstr ""
+
+#, fuzzy
+msgid "select measure"
+msgstr "medida de sobrescritura"
+
+msgid "Set to"
+msgstr ""
+
+msgid "Increase by"
+msgstr ""
+
+#, fuzzy
+msgid "Save changes"
+msgstr "guardar cambios"
+
+#, fuzzy
+msgid "item-location"
+msgstr "ubicación"
+
+#, fuzzy
+msgid "Enter your comment here..."
+msgstr "Introduzca un valor completo."
+
+#, fuzzy
+msgid "selected quote"
+msgstr "Opciones seleccionadas"
+
+#, fuzzy
+msgid "current value"
+msgstr "valor del punto de repedido"
+
+#, fuzzy
+msgid "no plan yet"
+msgstr "Aún no hay plan"
+
+msgid "Enter your search terms"
 msgstr ""

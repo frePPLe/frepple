@@ -7377,7 +7377,7 @@ msgstr "{{ aggregatedoperationplans.count }} selecionado"
 msgid "{{m.label}}"
 msgstr "{{m.label}}"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1609
+#: freppledb/planningboard/static/planningboard/planningboard.html:1623
 msgid ""
 "An operation gets the color of the category of the item it produces.<br>\n"
 "                        The item categories should be filled in the item "
@@ -7385,7 +7385,7 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1641
+#: freppledb/planningboard/static/planningboard/planningboard.html:1655
 msgid ""
 "An operation gets the color of the subcategory of the item it produces.<br>\n"
 "                        The item subcategories should be filled in the item "
@@ -7393,17 +7393,13 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1551
+#: freppledb/planningboard/static/planningboard/planningboard.html:1565
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:319
-msgid "Apply"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:73
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:77
 msgid "Assign an extra resource"
 msgstr ""
 
@@ -7411,28 +7407,22 @@ msgstr ""
 msgid "Automatically resolve infeasiblities in the plan"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1544
+#: freppledb/planningboard/static/planningboard/planningboard.html:1558
 msgid "Due date color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1392
-#: freppledb/planningboard/static/planningboard/planningboard.html:1427
-#: freppledb/planningboard/static/planningboard/planningboard.html:1454
+#: freppledb/planningboard/static/planningboard/planningboard.html:1406
+#: freppledb/planningboard/static/planningboard/planningboard.html:1441
+#: freppledb/planningboard/static/planningboard/planningboard.html:1468
 msgid "Enter name"
 msgstr ""
 
-#: freppledb/quoting/static/quoting/quoting.html:30
-#: freppledb/quoting/static/quoting/quoting.html:43
-#: freppledb/quoting/static/quoting/quoting.html:56
-msgid "Enter your search terms"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:76
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:80
 msgid "Remove this resource"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:49
-msgid "Select panel measure"
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:65
+msgid "There is no demand requiring this supply."
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:75
@@ -7451,20 +7441,20 @@ msgstr ""
 msgid "View start events"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:284
+#: freppledb/planningboard/static/planningboard/planningboard.html:285
 msgid "approved: {{aggregatedoperationplans.status.approved }}"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:293
+#: freppledb/planningboard/static/planningboard/planningboard.html:297
 msgid "closed: {{aggregatedoperationplans.status.closed }}"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:290
+#: freppledb/planningboard/static/planningboard/planningboard.html:293
 msgid "completed: {{aggregatedoperationplans.status.completed }}"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:48
-#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:231
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:52
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:233
 msgid "consumed proposed"
 msgstr ""
 
@@ -7484,38 +7474,38 @@ msgstr ""
 msgid "export to {{erp}} failed"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1037
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1038
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1050
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1051
 msgid "hour"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1045
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1046
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1058
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1059
 msgid "minute"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/src/module.js:63
 #: freppledb/planningboard/static/planningboard/src/module.js:67
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1016
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1020
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1041
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1042
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1029
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1033
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1054
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1055
 msgid "minutes"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:28
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:31
 msgid "network status"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/downstreamoperationplans.html:18
+#: freppledb/input/static/operationplandetail/downstreamoperationplans.html:19
 msgid "no downstream information"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:37
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:40
 msgid "no inventory information"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:52
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:56
 msgid "no network information"
 msgstr ""
 
@@ -7524,11 +7514,11 @@ msgstr ""
 msgid "no selection"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:54
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:58
 msgid "no supply information"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/upstreamoperationplans.html:18
+#: freppledb/input/static/operationplandetail/upstreamoperationplans.html:19
 msgid "no upstream information"
 msgstr ""
 
@@ -7536,8 +7526,8 @@ msgstr ""
 msgid "plus"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:51
-#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:219
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:55
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:221
 msgid "produced proposed"
 msgstr ""
 
@@ -7545,23 +7535,19 @@ msgstr ""
 msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
 msgstr ""
 
-#: freppledb/quoting/static/quoting/quoting.html:8
-msgid "quote form"
-msgstr ""
-
 #: freppledb/planningboard/static/planningboard/planningboard.html:81
 msgid "remove all rows"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1052
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1053
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1065
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1066
 msgid "second"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/src/module.js:65
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1018
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1049
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1050
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1031
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1062
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1063
 msgid "seconds"
 msgstr ""
 
@@ -7569,14 +7555,13 @@ msgstr ""
 msgid "selected"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:62
 #: freppledb/planningboard/static/planningboard/planningboard.html:87
 msgid "set time horizon"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:472
-#: freppledb/planningboard/static/planningboard/planningboard.html:632
-#: freppledb/planningboard/static/planningboard/planningboard.html:761
+#: freppledb/planningboard/static/planningboard/planningboard.html:477
+#: freppledb/planningboard/static/planningboard/planningboard.html:642
+#: freppledb/planningboard/static/planningboard/planningboard.html:771
 msgid "setup end"
 msgstr ""
 
@@ -7589,11 +7574,11 @@ msgstr ""
 msgid "stock"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:28
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:31
 msgid "supply information"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:33
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:39
 msgid "types"
 msgstr ""
 
@@ -7603,4 +7588,50 @@ msgstr ""
 
 #: freppledb/input/static/operationplandetail/month.html:13
 msgid "week number"
+msgstr ""
+
+msgid "Select panel measure"
+msgstr ""
+
+msgid "Apply"
+msgstr ""
+
+#, fuzzy
+msgid "select measure"
+msgstr "medida de substituição"
+
+msgid "Set to"
+msgstr ""
+
+msgid "Increase by"
+msgstr ""
+
+#, fuzzy
+msgid "Save changes"
+msgstr "guardar alterações"
+
+#, fuzzy
+msgid "item-location"
+msgstr "localização"
+
+#, fuzzy
+msgid "Enter your comment here..."
+msgstr "Insira um valor completo."
+
+#, fuzzy
+msgid "selected quote"
+msgstr "Opções selecionadas"
+
+#, fuzzy
+msgid "current value"
+msgstr "inventário actual"
+
+#, fuzzy
+msgid "no plan yet"
+msgstr "Ainda não existe plano"
+
+msgid "quote form"
+msgstr ""
+
+msgid "Enter your search terms"
 msgstr ""

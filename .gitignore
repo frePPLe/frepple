@@ -8,6 +8,8 @@
 /test/*/output.*.xml
 .vs
 
+.*Zone.Identifier
+
 # Executables
 *.exe
 *.dll

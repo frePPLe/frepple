@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2025-10-28 11:03+0100\n"
+"PO-Revision-Date: 2025-11-05 17:33+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -3309,7 +3309,7 @@ msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:7
 msgid "Run a sequence of tasks."
-msgstr "exécuter une sequence de tâches"
+msgstr "Exécuter une sequence de tâches"
 
 #: execute/templates/commands/scheduletasks.html:15
 msgid "next scheduled run"
@@ -4358,7 +4358,7 @@ msgstr "renseignement"
 
 #: input/models/demand.py:26 input/views/sales.py:544
 msgid "quote"
-msgstr "citation"
+msgstr "devis"
 
 #: input/models/demand.py:27 input/views/sales.py:549
 msgid "open"
@@ -4392,7 +4392,7 @@ msgstr "Date d’échéance de la commande"
 #: input/models/demand.py:79
 msgid "Status of the demand. Only \"open\" and \"quote\" demands are planned"
 msgstr ""
-"Statut de la demande. Seules les demandes \"ouvertes\" et \"citation\" sont "
+"Statut de la demande. Seules les demandes \"ouvertes\" et \"devis\" sont "
 "planifiées"
 
 #: input/models/demand.py:116 input/views/sales.py:357
@@ -6919,7 +6919,7 @@ msgstr "Editeur de plan"
 
 #: quoting/views.py:36
 msgid "quotes"
-msgstr "citations"
+msgstr "devis"
 
 #: reportmanager/models.py:22
 #: reportmanager/templates/reportmanager/reportmanager.html:211
@@ -7640,7 +7640,7 @@ msgstr "sous-catégorie"
 
 #: freppledb/quoting/static/quoting/quoting.html:8
 msgid "quote form"
-msgstr "citation"
+msgstr "feuille de devis"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:59
 msgid "remove row"
@@ -7678,7 +7678,7 @@ msgstr "{{ aggregatedoperationplans.count }} sélectionné"
 msgid "{{m.label}}"
 msgstr "{{m.label}}"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1609
+#: freppledb/planningboard/static/planningboard/planningboard.html:1623
 msgid ""
 "An operation gets the color of the category of the item it produces.<br>\n"
 "                        The item categories should be filled in the item "
@@ -7691,7 +7691,7 @@ msgstr ""
 "dans la table article.\n"
 "                        <br><br>"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1641
+#: freppledb/planningboard/static/planningboard/planningboard.html:1655
 msgid ""
 "An operation gets the color of the subcategory of the item it produces.<br>\n"
 "                        The item subcategories should be filled in the item "
@@ -7704,7 +7704,7 @@ msgstr ""
 "renseignées dans la table article.\n"
 "                        <br><br>"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1551
+#: freppledb/planningboard/static/planningboard/planningboard.html:1565
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
@@ -7713,11 +7713,7 @@ msgstr ""
 "due.\n"
 "                        <br><br>"
 
-#: freppledb/forecast/static/forecast/forecast.html:319
-msgid "Apply"
-msgstr "Appliquer"
-
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:73
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:77
 msgid "Assign an extra resource"
 msgstr "Assigner une ressource supplémentaire"
 
@@ -7725,23 +7721,23 @@ msgstr "Assigner une ressource supplémentaire"
 msgid "Automatically resolve infeasiblities in the plan"
 msgstr "Résoudre automatiquement les infaisabilités du plan"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1544
+#: freppledb/planningboard/static/planningboard/planningboard.html:1558
 msgid "Due date color setup"
 msgstr "Configuration de la couleur de la date d'échéance"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1392
-#: freppledb/planningboard/static/planningboard/planningboard.html:1427
-#: freppledb/planningboard/static/planningboard/planningboard.html:1454
+#: freppledb/planningboard/static/planningboard/planningboard.html:1406
+#: freppledb/planningboard/static/planningboard/planningboard.html:1441
+#: freppledb/planningboard/static/planningboard/planningboard.html:1468
 msgid "Enter name"
 msgstr "Entrer le nom"
 
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:76
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:80
 msgid "Remove this resource"
 msgstr "Supprimer cette ressource"
 
-#: freppledb/forecast/static/forecast/forecast.html:49
-msgid "Select panel measure"
-msgstr "Sélectionner le panneau des mesures"
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:65
+msgid "There is no demand requiring this supply."
+msgstr "Ancune demande ne requiert ce réapprovisionnement."
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:75
 msgid "View end events"
@@ -7759,16 +7755,16 @@ msgstr "Afficher les événements de début et de fin"
 msgid "View start events"
 msgstr "Afficher les événements de début"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:293
+#: freppledb/planningboard/static/planningboard/planningboard.html:297
 msgid "closed: {{aggregatedoperationplans.status.closed }}"
 msgstr "fermé: {{aggregatedoperationplans.status.closed }}"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:287
+#: freppledb/planningboard/static/planningboard/planningboard.html:289
 msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
 msgstr "confirmé: {{aggregatedoperationplans.status.confirmed }}"
 
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:48
-#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:231
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:52
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:233
 msgid "consumed proposed"
 msgstr "consommé proposé"
 
@@ -7788,11 +7784,11 @@ msgstr "Exporter en fichier Excel"
 msgid "export to {{erp}} failed"
 msgstr "L'export vers {{erp}} a échoué"
 
-#: freppledb/input/static/operationplandetail/downstreamoperationplans.html:18
+#: freppledb/input/static/operationplandetail/downstreamoperationplans.html:19
 msgid "no downstream information"
 msgstr "Aucune information en aval"
 
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:37
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:40
 msgid "no inventory information"
 msgstr "aucune information d'inventaire"
 
@@ -7801,7 +7797,7 @@ msgstr "aucune information d'inventaire"
 msgid "no selection"
 msgstr "aucune sélection"
 
-#: freppledb/input/static/operationplandetail/upstreamoperationplans.html:18
+#: freppledb/input/static/operationplandetail/upstreamoperationplans.html:19
 msgid "no upstream information"
 msgstr "aucune information en amont"
 
@@ -7809,8 +7805,8 @@ msgstr "aucune information en amont"
 msgid "plus"
 msgstr "plus"
 
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:51
-#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:219
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:55
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:221
 msgid "produced proposed"
 msgstr "produit proposé"
 
@@ -7826,7 +7822,6 @@ msgstr "Suppromer toutes les lignes"
 msgid "selected"
 msgstr "sélectionné"
 
-#: freppledb/forecast/static/forecast/forecast.html:62
 #: freppledb/planningboard/static/planningboard/planningboard.html:87
 msgid "set time horizon"
 msgstr "Régler l'horizon de temps"
@@ -7847,3 +7842,36 @@ msgstr "opérations en amont"
 #: freppledb/input/static/operationplandetail/month.html:13
 msgid "week number"
 msgstr "numéro de semaine"
+
+msgid "Select panel measure"
+msgstr "Sélectionner le panneau des mesures"
+
+msgid "Apply"
+msgstr "Appliquer"
+
+msgid "select measure"
+msgstr "Sélectionner une mesure"
+
+msgid "Set to"
+msgstr "Positionner à"
+
+msgid "Increase by"
+msgstr "Augmenter de"
+
+msgid "Save changes"
+msgstr "Enregistrer les modifications"
+
+msgid "item-location"
+msgstr "article-emplacement"
+
+msgid "Enter your comment here..."
+msgstr "Entrez vos commentaires ici..."
+
+msgid "selected quote"
+msgstr "devis sélectionné"
+
+msgid "current value"
+msgstr "valeur actuelle"
+
+msgid "no plan yet"
+msgstr "Pas de plan"

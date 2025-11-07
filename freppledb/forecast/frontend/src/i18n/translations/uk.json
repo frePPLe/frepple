@@ -39,7 +39,9 @@
   "Set to": "Set to",
   "Increase by": "Increase by",
   "edit": "змінити",
-  "undo": "undo",
+  "Save changes": "зберегти зміни",
+  "Undo changes": "скасувати зміни",
+  "Undo": "Скасувати",
   "attributes": "атрибути",
   "forecast": "прогноз",
   "comments": "коментарі",
@@ -49,10 +51,10 @@
   "Cancel": "Скасувати",
   "Reset": "Скидання",
   "OK": "OK",
+  "item-location": "місце розташування",
   "new item comment": "новий елемент коментаря",
   "new item-location comment": "новий коментар до місця розташування",
   "new location comment": "новий коментар про місцезнаходження",
   "new customer comment": "new customer comment",
-  "Enter your comment here...": "Введіть значення повністю.",
-  "record.type": "Тип замовлення"
+  "Enter your comment here...": "Введіть значення повністю."
 }

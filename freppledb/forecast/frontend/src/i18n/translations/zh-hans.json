@@ -38,8 +38,10 @@
   "till": "直至",
   "Set to": "Set to",
   "Increase by": "Increase by",
-  "edit": "可编辑的",
-  "undo": "undo",
+  "edit": "edit",
+  "Save changes": "保存更改",
+  "Undo changes": "取消更改",
+  "Undo": "撤销",
   "attributes": "属性",
   "forecast": "预测",
   "comments": "评论",
@@ -49,10 +51,10 @@
   "Cancel": "取消",
   "Reset": "重置",
   "OK": "确定",
+  "item-location": "地点",
   "new item comment": "新产品的注释",
   "new item-location comment": "新产品-地点的注释",
   "new location comment": "新地点的注释",
   "new customer comment": "新客户的注释",
-  "Enter your comment here...": "请输入完整的值。",
-  "record.type": "订单类型"
+  "Enter your comment here...": "请输入完整的值。"
 }

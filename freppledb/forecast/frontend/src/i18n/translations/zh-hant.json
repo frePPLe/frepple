@@ -39,7 +39,9 @@
   "Set to": "Set to",
   "Increase by": "Increase by",
   "edit": "edit",
-  "undo": "undo",
+  "Save changes": "保存更改",
+  "Undo changes": "取消更改",
+  "Undo": "撤銷",
   "attributes": "屬性",
   "forecast": "预报",
   "comments": "評論",
@@ -49,10 +51,10 @@
   "Cancel": "取消",
   "Reset": "重置",
   "OK": "確定",
+  "item-location": "地點",
   "new item comment": "新產品的註釋",
   "new item-location comment": "新產品-地點的註釋",
   "new location comment": "新地點的註釋",
   "new customer comment": "新客戶的註釋",
-  "Enter your comment here...": "請輸入完整的值。",
-  "record.type": "訂單類型"
+  "Enter your comment here...": "請輸入完整的值。"
 }

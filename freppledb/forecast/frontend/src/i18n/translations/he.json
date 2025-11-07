@@ -39,7 +39,9 @@
   "Set to": "Set to",
   "Increase by": "Increase by",
   "edit": "edit",
-  "undo": "undo",
+  "Save changes": "שמור שינויים",
+  "Undo changes": "אל תשמור את השינויים",
+  "Undo": "בטל",
   "attributes": "תכונות",
   "forecast": "תחזית",
   "comments": "תגובות",
@@ -49,10 +51,10 @@
   "Cancel": "בטל",
   "Reset": "אפס",
   "OK": "OK",
+  "item-location": "מיקום",
   "new item comment": "תגובה חדשה על פריט",
   "new item-location comment": "תגובה חדשה על פריט-מיקום",
   "new location comment": "תגובה חדשה על מיקום",
   "new customer comment": "תגובה חדשה של לקוח",
-  "Enter your comment here...": "הכנס את מונחי החיפוש",
-  "record.type": "סוג הזמנה"
+  "Enter your comment here...": "הכנס את מונחי החיפוש"
 }

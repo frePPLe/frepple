@@ -39,7 +39,9 @@
   "Set to": "Set to",
   "Increase by": "Increase by",
   "edit": "modifier",
-  "undo": "undo",
+  "Save changes": "enregistrer les modifications",
+  "Undo changes": "Annuler les modifications",
+  "Undo": "Annuler",
   "attributes": "attributs",
   "forecast": "prévision",
   "comments": "commentaires",
@@ -49,10 +51,10 @@
   "Cancel": "Annuler",
   "Reset": "Réinitialiser",
   "OK": "OK",
+  "item-location": "emplacement",
   "new item comment": "nouveau commentaire pièce",
   "new item-location comment": "nouveau commentaire emplacement-pièce",
   "new location comment": "nouveau commentaire emplacement",
   "new customer comment": "nouveau commentaire client",
-  "Enter your comment here...": "Entrez vos termes de recherche",
-  "record.type": "Type de commande"
+  "Enter your comment here...": "Entrez vos termes de recherche"
 }

@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2024-12-17 14:58+0100\n"
+"PO-Revision-Date: 2025-10-28 11:03+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.8\n"
 
 #: abc_classification/attributes.py:19
 msgid "ABC class"
@@ -3873,7 +3873,7 @@ msgstr "méthode de prévisoin sélectionnée"
 #: output/templates/output/demand_forecast.html:145 output/views/demand.py:77
 #: output/views/demand.py:302
 msgid "sales orders"
-msgstr "demandes client"
+msgstr "commandes client"
 
 #: forecast/widget.py:32
 msgid "Show the value of all sales order and forecast"
@@ -5184,7 +5184,7 @@ msgstr "expédiés à partir de %(loc)s entre %(date1)s et %(date2)s"
 #: input/views/inventory.py:1072 input/views/manufacturing.py:2057
 #: input/views/purchasing.py:914 shelflife/views.py:225 shelflife/views.py:514
 msgid "total cost"
-msgstr "coût totale"
+msgstr "coût total"
 
 #: input/views/inventory.py:1079 input/views/manufacturing.py:2065
 #: input/views/purchasing.py:921 shelflife/views.py:232 shelflife/views.py:522

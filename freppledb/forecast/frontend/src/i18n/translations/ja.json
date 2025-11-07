@@ -39,7 +39,9 @@
   "Set to": "Set to",
   "Increase by": "Increase by",
   "edit": "編集",
-  "undo": "undo",
+  "Save changes": "変更を保存",
+  "Undo changes": "変更を元に戻す",
+  "Undo": "元に戻す",
   "attributes": "属性",
   "forecast": "予測",
   "comments": "コメント",
@@ -49,10 +51,10 @@
   "Cancel": "キャンセル",
   "Reset": "リセット",
   "OK": "OK",
+  "item-location": "地域",
   "new item comment": "新規項目コメント",
   "new item-location comment": "新規商品ロケーションコメント",
   "new location comment": "新規ロケーションコメント",
   "new customer comment": "new customer comment",
-  "Enter your comment here...": "すべての値を入力してください。",
-  "record.type": "オーダータイプ"
+  "Enter your comment here...": "すべての値を入力してください。"
 }

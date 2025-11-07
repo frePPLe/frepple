@@ -39,7 +39,9 @@
   "Set to": "Set to",
   "Increase by": "Increase by",
   "edit": "edit",
-  "undo": "undo",
+  "Save changes": "spremite promjene",
+  "Undo changes": "Poništavanje promjena",
+  "Undo": "Poništi",
   "attributes": "Atributi",
   "forecast": "prognoza",
   "comments": "Komentar",
@@ -49,10 +51,10 @@
   "Cancel": "Odustani",
   "Reset": "Poništi",
   "OK": "OK",
+  "item-location": "lokacija",
   "new item comment": "Komentar novog artikla",
   "new item-location comment": "Komentar novog artikla-lokacije",
   "new location comment": "Komentar nove lokacije",
   "new customer comment": "new customer comment",
-  "Enter your comment here...": "Unesite kompletnu vrijednost.",
-  "record.type": "Vrsta narudžbe"
+  "Enter your comment here...": "Unesite kompletnu vrijednost."
 }

@@ -39,7 +39,9 @@
   "Set to": "Set to",
   "Increase by": "Increase by",
   "edit": "изменить",
-  "undo": "undo",
+  "Save changes": "сохранить изменения",
+  "Undo changes": "отменить изменения",
+  "Undo": "Отменить",
   "attributes": "атрибуты",
   "forecast": "прогноз",
   "comments": "комментарии",
@@ -49,10 +51,10 @@
   "Cancel": "Отмена",
   "Reset": "Сброс",
   "OK": "OK",
+  "item-location": "местоположение",
   "new item comment": "по товарной позиции",
   "new item-location comment": "по месоположению запаса",
   "new location comment": "по местоположению",
   "new customer comment": "по клиенту",
-  "Enter your comment here...": "Введите условия поиска",
-  "record.type": "тип заказа"
+  "Enter your comment here...": "Введите условия поиска"
 }

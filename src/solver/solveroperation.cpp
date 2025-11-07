@@ -2335,8 +2335,7 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
       }
     }
     auto o = dpd->getBlockedBy()->getOperationPlans();
-    while (o != OperationPlan::end() &&
-           required > allocated + ROUNDING_ERROR) {
+    while (o != OperationPlan::end() && required > allocated + ROUNDING_ERROR) {
       // Create new allocations from available supply
       if (opplan->getBatch() && o->getBatch() != opplan->getBatch()) {
         ++o;
@@ -2358,13 +2357,13 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
             opplan->setStart(o->getEnd());
             refuse = opplan->getEnd() + dpd->getHardSafetyLeadtime();
             if (getLogLevel() > 1) {
-              logger << indentlevel << "Waiting for dependency on " << &*o
+              logger << indentlevel << "  Waiting for dependency on " << &*o
                      << endl;
             }
           } else if (o->getProposed() || o->getApproved()) {
             // Try to reschedule the depencency
             if (getLogLevel() > 1)
-              logger << indentlevel << "Moving dependency early: " << &*o
+              logger << indentlevel << "  Moving dependency early: " << &*o
                      << endl;
             auto bm = data.getCommandManager()->setBookmark();
             data.getCommandManager()->add(new CommandMoveOperationPlan(
@@ -2374,7 +2373,7 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
               // Rescheduling wasn't feasible.
               if (getLogLevel() > 1)
                 logger << indentlevel
-                       << "Moving dependency failed. Earliest "
+                       << "  Moving dependency failed. Earliest "
                           "date is "
                        << (o->getEnd() + dpd->getHardSafetyLeadtime()) << endl;
               refuse = o->getEnd() + dpd->getHardSafetyLeadtime();
@@ -2382,8 +2381,8 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
             } else {
               // Rescheduling was feasible
               if (getLogLevel() > 1)
-                logger << indentlevel << "Moving approved dependency succeeded"
-                       << endl;
+                logger << indentlevel
+                       << "  Moving approved dependency succeeded" << endl;
             }
           }
         }

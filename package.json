@@ -54,7 +54,7 @@
     "po2json": "^0.4.5",
     "prettier": "^3.6.2",
     "sass": "1.77.6",
-    "vite": "^6.4.4",
+    "vite": "^6.4.0",
     "vite-plugin-vue-devtools": "^7.7.7",
     "vue-eslint-parser": "~10.0.0",
     "vue-i18n": "^9.14.5",

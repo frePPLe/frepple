@@ -1012,8 +1012,7 @@ inline ostream& operator<<(ostream& os, const DateDetail& d) {
  * The start and end dates are always such that the start date is less than
  * or equal to the end date.
  */
-class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data
-                 // format.
+class DateRange
 {
  public:
   /* Constructor with specified start and end dates.

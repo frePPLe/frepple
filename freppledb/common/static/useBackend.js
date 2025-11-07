@@ -1838,7 +1838,7 @@ function pr(e, t = {}) {
 function hr(e, t, n = {}) {
   const r = L(e), s = N(null), i = N(null), o = N(!0), c = M.post(r, L(t), {
     headers: n
-  }).then((f) => (console.log(f.statusText), i.value = f.data, o.value = !1, { loading: o, backendError: s, responseData: i })).catch((f) => (s.value = f, o.value = !1, { loading: o, backendError: s, responseData: i }));
+  }).then((f) => (i.value = f.data, o.value = !1, { loading: o, backendError: s, responseData: i })).catch((f) => (s.value = f, o.value = !1, { loading: o, backendError: s, responseData: i }));
   return {
     loading: o,
     backendError: s,

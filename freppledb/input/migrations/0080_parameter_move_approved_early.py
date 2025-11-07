@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
             insert into common_parameter (name, value, lastmodified, description)
             values (
               'plan.move_approved_early', '0', now(),
-              'Control rescheduling approved orders early. Values: 0 (inactive, default), 1 (active preserving existing resource assignments, 2 (active replanning resource assignments)'
+              'Controls rescheduling approved orders early. Values: 0 (inactive, default), 1 (active preserving existing resource assignments, 2 (active replanning resource assignments)'
               )
             on conflict (name) do nothing
             """,

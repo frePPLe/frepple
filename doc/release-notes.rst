@@ -43,6 +43,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 16, 17, 18: Exclude scrap and return locations when calculating the on hand when
     expiration dates are enabled on the Odoo side.
 
+- | 17, 18: Bug fix when synchronizing odoo users to frepple in multi-company setups.
+  | The connector did not consider the allowed company of the users, resulting in
+    users getting access to frepple data they shouldn't have access to.
+
 9.11.0 (2025-10-03)
 ===================
 

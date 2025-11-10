@@ -231,7 +231,7 @@ PyObject *savePlan(PyObject *self, PyObject *args) {
       Problem::iterator i = gdem.getConstraints().begin();
       while (Problem *prob = i.next()) {
         textoutput << "DEMAND CONSTRAINT\t" << gdem << '\t'
-                   << prob->getDescription() << '\t' << prob->getDates() << '\t'
+                   << prob->getDescription() << '\t' << prob->getDates()
                    << endl;
       }
     }

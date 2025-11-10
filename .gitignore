@@ -10,6 +10,8 @@
 
 .*Zone.Identifier
 
+.*Zone.Identifier
+
 # Executables
 *.exe
 *.dll

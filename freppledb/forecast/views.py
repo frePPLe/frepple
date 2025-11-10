@@ -1497,7 +1497,14 @@ class PeggingReport(pegging.ReportByDemand):
             request.session["lasttab"] = "detail"
             return {
                 "active_tab": "detail",
-                "title": force_str(Forecast._meta.verbose_name) + " " + args[0],
+                "title": force_str(Forecast._meta.verbose_name)
+                + " "
+                + args[0]
+                + (
+                    f" from {reportclass.startdate} until {reportclass.enddate}"
+                    if hasattr(reportclass, "startdate")
+                    else ""
+                ),
                 "post_title": _("plan detail"),
                 "model": Forecast,
             }

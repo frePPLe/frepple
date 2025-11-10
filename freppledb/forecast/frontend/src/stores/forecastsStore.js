@@ -659,10 +659,14 @@ export const useForecastsStore = defineStore('forecasts', {
         newData.commenttype = this.commentType;
       }
 
-      //remove 1ago, 2ago and 3ago from the data
+      //remove 1ago, 2ago, 3ago, forecast total and non-editable measures from the data
       for (const bckt in newData.buckets) {
         for (const key of Object.keys(newData.buckets[bckt])) {
+          if (key == 'bucket') continue;
           if (key.endsWith('1ago') || key.endsWith('2ago') || key.endsWith('3ago')) {
+            delete newData.buckets[bckt][key];
+          }
+          if (measures[key]["editable"] != undefined && measures[key]["editable"] === false) {
             delete newData.buckets[bckt][key];
           }
         }

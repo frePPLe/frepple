@@ -242,7 +242,6 @@ void SolverCreate::SolverData::pop(bool copy_answer) {
     prevstate->a_penalty = state->a_penalty;
     prevstate->a_cost = state->a_cost;
     prevstate->forceAccept = state->forceAccept;
-    prevstate->keepAssignments = state->keepAssignments;
   }
   --state;
   --prevstate;

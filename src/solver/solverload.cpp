@@ -249,7 +249,7 @@ void SolverCreate::chooseResource(
       double deltaPenalty = data->state->a_penalty - beforePenalty;
       // Message
       if (loglevel > 1)
-        logger << indentlevel << "Operation '" << l->getOperation()
+        logger << indentlevel << "  Operation '" << l->getOperation()
                << "' evaluates alternate '" << res << "': cost " << deltaCost
                << ", penalty " << deltaPenalty << endl;
       data->state->a_cost = beforeCost;
@@ -282,7 +282,7 @@ void SolverCreate::chooseResource(
         bestAlternateQuantity = lplan->getOperationPlan()->getQuantity();
       }
     } else if (loglevel > 1)
-      logger << indentlevel << "Operation '" << l->getOperation()
+      logger << indentlevel << "  Operation '" << l->getOperation()
              << "' evaluates alternate '" << lplan->getResource()
              << "': not available before " << data->state->a_date << endl;
 
@@ -295,7 +295,7 @@ void SolverCreate::chooseResource(
   // Not a single resource has the appropriate skills. You're joking?
   if (!qualified_resource_exists) {
     stringstream s;
-    s << "No subresource of '" << l->getResource() << "' has the skill '"
+    s << "  No subresource of '" << l->getResource() << "' has the skill '"
       << l->getSkill() << "' required for operation '" << l->getOperation()
       << "'";
     throw DataException(s.str());

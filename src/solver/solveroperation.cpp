@@ -481,7 +481,7 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
   // - There can be more efficient resources in the pool
   // - Other resources in the pool can have a lower setup time
   LoadPlan* setuploadplan = nullptr;
-  if (extra) {
+  if (extra && data.state->keepAssignments != opplan) {
     // First, switch all pools to their most efficient resource
     for (auto ldplan = opplan->beginLoadPlans();
          ldplan != opplan->endLoadPlans(); ++ldplan) {

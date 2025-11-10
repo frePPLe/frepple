@@ -205,39 +205,39 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             auto original_indentlevel = indentlevel++;
             try {
               // Move approved supply early
+              auto newDate =
+                  approved_supply->computeFlowToOperationDate(theDate);
               if (approved_supply->getFlow()->hasType<FlowEnd>())
                 data->getCommandManager()->add(new CommandMoveOperationPlan(
                     approved_supply->getOperationPlan(), Date::infinitePast,
-                    approved_supply->computeFlowToOperationDate(theDate)));
+                    newDate));
               else
                 data->getCommandManager()->add(new CommandMoveOperationPlan(
-                    approved_supply->getOperationPlan(),
-                    approved_supply->computeFlowToOperationDate(theDate),
+                    approved_supply->getOperationPlan(), newDate,
                     Date::infinitePast));
               // Ask solver for feasibility check on existing opplan.
-              auto prevKeepAssignments = data->state->keepAssignments;
+              data->push(approved_supply->getOperationPlan()->getQuantity(),
+                         newDate);
               data->state->keepAssignments =
                   Plan::instance().getMoveApprovedEarly() == 1
                       ? approved_supply->getOperationPlan()
                       : nullptr;
               checkOperation(approved_supply->getOperationPlan(), *data);
-              data->state->keepAssignments = prevKeepAssignments;
-              if (approved_supply->getDate() > theDate &&
-                  approved_supply->getQuantity() > 0.0 &&
-                  data->state->a_qty > 0.0) {
+              if (  // data->state->a_date > theDate ||
+                    //  approved_supply->getQuantity()
+                    //  < ROUNDING_ERROR ||
+                  data->state->a_qty <= ROUNDING_ERROR) {
                 // Move wasn't feasible. Need to disallow new replenishments.
                 if (getLogLevel() > 1)
                   logger << indentlevel
-                         << "Moving approved supply failed. Earliest date is "
-                         << approved_supply->getDate() << endl;
-                // if (data->logConstraints && data->constraints)
-                //   data->constraints->push(ProblemAwaitSupply::metadata, b,
-                //                           theDate,
-                //                           approved_supply->getDate(),
-                //                           theDelta);
-                if (approved_supply->getDate() < extraSupplyDate &&
-                    approved_supply->getDate() > requested_date)
-                  extraSupplyDate = approved_supply->getDate();
+                         << "Moving approved supply failed: Earliest date is "
+                         << data->state->a_date << endl;
+                if (data->state->a_date > requested_date) {
+                  if (data->state->a_date < extraSupplyDate)
+                    extraSupplyDate = data->state->a_date;
+                  if (data->state->a_date < extraConfirmedDate)
+                    extraConfirmedDate = data->state->a_date;
+                }
                 data->getCommandManager()->rollback(before_move);
                 supply_exists_already = true;
                 tried_requested_date = true;  // Disables an extra supply check
@@ -250,6 +250,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 increment_cur = false;
                 cur = prev;
               }
+              data->pop();
               indentlevel = original_indentlevel;
               break;
             } catch (...) {

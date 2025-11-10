@@ -5,7 +5,7 @@
         "editor.formatOnSaveMode": "file"
     },
     "esbonio.sphinx.confDir": "",
-    "files.associations": {
-        "*.log": "yaml"
+    "[log]": {
+        "editor.foldingStrategy": "indentation"
     }
 }

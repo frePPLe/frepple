@@ -78,11 +78,20 @@ class ForecastTablePage(TablePage):
         input_field = inputfield.get_attribute("id")
 
         def newdategenerator(olddate, monthsadded):
-            # Use today's date if the date string is empty
-            if not olddate or olddate.strip() == '':
+            try:
+                if not olddate or olddate.strip() == '':
+                    old = datetime.now()
+                else:
+                    # Try parsing with time
+                    try:
+                        old = datetime.strptime(olddate, "%Y-%m-%d %H:%M:%S")
+                    except ValueError:
+                        try:
+                            old = datetime.strptime(olddate, "%Y-%m-%d")
+                        except ValueError:
+                            old = datetime.now()
+            except ValueError as e:
                 old = datetime.now()
-            else:
-                old = datetime.strptime(olddate, "%Y-%m-%d")
 
             new = (
                 old + mainDate.timedelta(days=(monthsadded * 31))
@@ -93,7 +102,6 @@ class ForecastTablePage(TablePage):
             return new
 
         timerange = 0
-
         oldany = inputfield.get_attribute("value")
 
         fromnewdate, tonewdate = None, None
@@ -103,10 +111,20 @@ class ForecastTablePage(TablePage):
 
             # Get startdate value and handle empty case
             startdate_value = self.get_startdate_input().get_attribute("value")
-            if not startdate_value or startdate_value.strip() == '':
+            try:
+                if not startdate_value or startdate_value.strip() == '':
+                    fromnewdate = datetime.now()
+                else:
+                    try:
+                        fromnewdate = datetime.strptime(startdate_value, "%Y-%m-%d %H:%M:%S")
+                    except ValueError:
+                        try:
+                            fromnewdate = datetime.strptime(startdate_value, "%Y-%m-%d")
+                        except ValueError:
+                            print(f"Warning: Could not parse start date '{startdate_value}', using current date")
+                            fromnewdate = datetime.now()
+            except Exception as e:
                 fromnewdate = datetime.now()
-            else:
-                fromnewdate = datetime.strptime(startdate_value, "%Y-%m-%d")
 
             daterange = tonewdate - fromnewdate
             timerange = round(daterange.days / 30) + 1
@@ -118,10 +136,21 @@ class ForecastTablePage(TablePage):
 
             # Get enddate value and handle empty case
             enddate_value = self.get_enddate_input().get_attribute("value")
-            if not enddate_value or enddate_value.strip() == '':
+            try:
+                if not enddate_value or enddate_value.strip() == '':
+                    tonewdate = datetime.now()
+                else:
+                    try:
+                        tonewdate = datetime.strptime(enddate_value, "%Y-%m-%d %H:%M:%S")
+                    except ValueError:
+                        try:
+                            tonewdate = datetime.strptime(enddate_value, "%Y-%m-%d")
+                        except ValueError:
+                            print(f"Warning: Could not parse end date '{enddate_value}', using current date")
+                            tonewdate = datetime.now()
+            except Exception as e:
+                print(f"Error parsing end date: {e}")
                 tonewdate = datetime.now()
-            else:
-                tonewdate = datetime.strptime(enddate_value, "%Y-%m-%d")
 
             daterange = tonewdate - fromnewdate
             timerange = round(daterange.days / 30) + 1

@@ -67,9 +67,9 @@ export const useForecastsStore = defineStore('forecasts', {
     commentType: '',
     newComment: '',
     hasChanges: false,
-    horizon: 'week',
+    horizon: 'month',
     buckets: [], // buckets arriving from backend
-    horizonbuckets: 'week',
+    horizonbuckets: 'month',
     forecastAttributes: {
       "oldForecastmethod": "aggregated",
       "forecastmethod": "",
@@ -92,6 +92,26 @@ export const useForecastsStore = defineStore('forecasts', {
 
   getters: {
     measures: () => window.measures,
+    bucketsperyear(state) {
+      const bucketsPerYear = window.bucketsperyear[0].bucketcount;
+      console.log(97, bucketsPerYear);
+
+      switch (bucketsPerYear) {
+        case 12:
+          state.horizonbuckets = 'month';
+          break;
+        case 4:
+          state.horizonbuckets = 'quarter';
+          break;
+        case 1:
+          state.horizonbuckets = 'year';
+          break;
+        case 'default':
+          state.horizonbuckets = 'week';
+          break;
+      }
+    },
+
     preferences(state) {
       const defaultMeasures = [
         'orderstotal3ago',

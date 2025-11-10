@@ -40,7 +40,7 @@ let isDirty = computed(() => (detaildata.value.oldForecastmethod !== detaildata.
 <!--          Vue dynamic class does not play well with bootstrap dropdown (could be a version specific issue?) so I used a dynamic style instead-->
               <button :style="isDirty ? 'background-color: #ff5252 !important; box-shadow: none !important;' : ''" class="dropdown-toggle form-control d-inline w-auto text-capitalize" name="forecastmethod" id="forecastmethodbutton" aria-expanded="false" type="button" data-bs-toggle="dropdown"
                       data-bs-auto-close="true" :title="ttt('Select forecast method, only possible at single item/location/customer level')">
-                {{ detaildata.forecastmethod === 'movingaverage' ? ttt('Moving average') : ttt(detaildata.forecastmethod) }}&nbsp;&nbsp;
+                {{ ttt(detaildata.forecastmethod) }}&nbsp;&nbsp;
               </button>
               <ul :class="(detaildata.forecastmethod === 'aggregate') ? 'd-none' : ''" class="dropdown-menu" aria-labelledby="forecastmethodbutton">
                 <li v-on:click="store.setForecastMethod('automatic')">
@@ -58,7 +58,7 @@ let isDirty = computed(() => (detaildata.value.oldForecastmethod !== detaildata.
                 <li v-on:click=" store.setForecastMethod('intermittent')">
                   <a class="dropdown-item text-capitalize" id="intermittent" href="#" data-bs-dismiss="dropdown"><span>{{ ttt('Intermittent') }}</span></a>
                 </li>
-                <li v-on:click="store.setForecastMethod('movingaverage')">
+                <li v-on:click="store.setForecastMethod('moving average')">
                   <a class="dropdown-item text-capitalize" id="movingaverage" href="#" data-bs-dismiss="dropdown"><span>{{ ttt('Moving average') }}</span></a>
                 </li>
                 <li v-on:click="store.setForecastMethod('manual')">

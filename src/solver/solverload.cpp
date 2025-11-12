@@ -295,7 +295,7 @@ void SolverCreate::chooseResource(
   // Not a single resource has the appropriate skills. You're joking?
   if (!qualified_resource_exists) {
     stringstream s;
-    s << "  No subresource of '" << l->getResource() << "' has the skill '"
+    s << "No subresource of '" << l->getResource() << "' has the skill '"
       << l->getSkill() << "' required for operation '" << l->getOperation()
       << "'";
     throw DataException(s.str());

@@ -136,4 +136,4 @@ PROBLEM	before current	Operation '2. make item 2' planned in the past	2020-12-21
 PROBLEM	before current	Operation '3. make item 1' planned in the past	2020-12-31T00:00:00 / 2021-01-01T00:00:00
 PROBLEM	before current	Operation '3. make item 2' planned in the past	2020-12-21T00:00:00 / 2021-01-01T00:00:00
 PROBLEM	unplanned	Demand '3. order 3' is not planned	2021-02-01T00:00:00 / 2021-02-01T00:00:00
-DEMAND CONSTRAINT	3. order 3	Error: No subresource of '3. operator pool' has the skill '3. nobody can do this' required for operation '3. make item 3'	2021-02-01T00:00:00 / 2021-02-01T00:00:00	
+DEMAND CONSTRAINT	3. order 3	Error: No subresource of '3. operator pool' has the skill '3. nobody can do this' required for operation '3. make item 3'	2021-02-01T00:00:00 / 2021-02-01T00:00:00

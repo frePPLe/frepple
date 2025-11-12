@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+from datetime import date
 import itertools
 import json
 
@@ -41,11 +42,13 @@ from django.http import (
 )
 from django.shortcuts import render
 from django.utils.encoding import force_str
+from django.utils.safestring import mark_safe
 from django.utils.text import capfirst, format_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import View
 
 from freppledb.boot import getAttributeFields, getAttributes
+from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.forecast.models import Forecast, ForecastPlan, Measure, ForecastPlanView
 from freppledb.common.models import Parameter, Comment, Bucket
 from freppledb.common.report import (
@@ -1478,14 +1481,41 @@ class PeggingReport(pegging.ReportByDemand):
 
     @classmethod
     def initialize(reportclass, request, *args):
-        startdate = request.GET.get("startdate")
-        if startdate:
-            reportclass.startdate = startdate
-            reportclass.enddate = request.GET.get("enddate")
-        else:
-            if hasattr(reportclass, "startdate"):
-                delattr(reportclass, "startdate")
-                delattr(reportclass, "enddate")
+        reportclass.startdate = request.GET.get("startdate")
+        if reportclass.startdate:
+            try:
+                reportclass.startdate = parseLocalizedDateTime(
+                    reportclass.startdate
+                ).date()
+            except:
+                pass
+        if not reportclass.startdate:
+            reportclass.startdate = getCurrentDate(
+                request.database, lastplan=True
+            ).date()
+        reportclass.enddate = request.GET.get("enddate")
+        if reportclass.enddate:
+            try:
+                reportclass.enddate = parseLocalizedDateTime(reportclass.enddate).date()
+            except:
+                pass
+        if not reportclass.enddate:
+            with connections[request.database].cursor() as cursor:
+                cursor.execute(
+                    """
+                    select enddate
+                    from common_bucketdetail
+                    inner join common_parameter p
+                      on p.name = 'forecast.calendar'
+                      and common_bucketdetail.bucket_id = p.value
+                    where enddate > %s
+                    order by enddate
+                    offset 2   -- Show only 3 buckets in the future by default
+                    limit 1
+                    """,
+                    (reportclass.startdate,),
+                )
+                reportclass.enddate = cursor.fetchone()[0].date()
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
@@ -1497,15 +1527,13 @@ class PeggingReport(pegging.ReportByDemand):
             request.session["lasttab"] = "detail"
             return {
                 "active_tab": "detail",
-                "title": force_str(Forecast._meta.verbose_name)
-                + " "
-                + args[0]
-                + (
-                    f" from {reportclass.startdate} until {reportclass.enddate}"
-                    if hasattr(reportclass, "startdate")
-                    else ""
+                "title": force_str(Forecast._meta.verbose_name) + " " + args[0],
+                "post_title": mark_safe(
+                    f"{_("plan detail for delivery between")}&nbsp;"
+                    f'<input id="fromdate" type="date" class="form-control w-auto d-inline" value="{reportclass.startdate.strftime("%Y-%m-%d")}">'
+                    f'&nbsp;{_("and")}&nbsp;'
+                    f'<input id="todate" type="date" class="form-control w-auto d-inline" value="{reportclass.enddate.strftime("%Y-%m-%d")}">'
                 ),
-                "post_title": _("plan detail"),
                 "model": Forecast,
             }
         else:

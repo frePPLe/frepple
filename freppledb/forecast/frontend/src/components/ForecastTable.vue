@@ -272,7 +272,7 @@ const navigateToDrilldown = (event) => {
                           :data-index="bucketIndex"
                           :data-measure="store.getBaseMeasureName(row)"
                           type="number"
-                          :value="isEditCell(bucket.bucket, row) ? store.editForm.setTo : getCellValue(bucket, row)"
+                          :value="getCellValue(bucket, row)"
                           :tabindex="rowIndex"
                           @input="updateCellValue(bucket, row, $event)"
                           @focus="onCellFocus(bucket.bucket, row)"

@@ -1,6 +1,11 @@
 BUFFER	1. item @ factory	2026-02-01T00:00:00	20	20
 BUFFER	1. item @ factory	2026-02-01T00:00:00	-20	0
 BUFFER	1. item @ factory	2026-08-01T00:00:00	100	100
+BUFFER	10. item @ factory	2026-01-01T00:00:00	20	20
+BUFFER	10. item @ factory	2026-01-01T00:00:00	-20	0
+BUFFER	10. item @ factory	2026-07-01T00:00:00	5	5
+BUFFER	10. item @ factory	2026-08-01T00:00:00	4	9
+BUFFER	10. item @ factory	2026-09-01T00:00:00	3	12
 BUFFER	2. item @ factory	2026-01-01T00:00:00	20	20
 BUFFER	2. item @ factory	2026-01-01T00:00:00	-20	0
 BUFFER	2. item @ factory	2026-08-01T00:00:00	100	100
@@ -50,6 +55,7 @@ BUFFER	6. item subassembly @ factory	2025-12-29T00:00:00	-120	0
 BUFFER	6. item subassembly @ factory	2026-07-20T00:00:00	100	100
 BUFFER	6. item subassembly @ factory	2026-07-31T00:00:00	-100	0
 DEMAND	1. sales order	2026-02-01T00:00:00	20
+DEMAND	10. sales order	2026-01-01T00:00:00	20
 DEMAND	2. sales order	2026-01-01T00:00:00	20
 DEMAND	3. sales order	2026-02-01T00:00:00	20
 DEMAND	4. sales order	2026-01-01T00:00:00	20
@@ -100,6 +106,10 @@ OPERATION	9. task X2 step 2	2026-07-25T00:00:00	2026-08-01T00:00:00	90	confirmed
 OPERATION	9. task X2 step 3	2025-12-15T00:00:00	2025-12-22T00:00:00	100
 OPERATION	Purchase 1. item @ factory from 1. Supplier	2026-01-25T00:00:00	2026-02-01T00:00:00	20
 OPERATION	Purchase 1. item @ factory from 1. Supplier	2026-07-25T00:00:00	2026-08-01T00:00:00	100	approved
+OPERATION	Purchase 10. item @ factory from 10. Supplier	2025-12-25T00:00:00	2026-01-01T00:00:00	20
+OPERATION	Purchase 10. item @ factory from 10. Supplier	2026-06-24T00:00:00	2026-07-01T00:00:00	5	approved
+OPERATION	Purchase 10. item @ factory from 10. Supplier	2026-07-25T00:00:00	2026-08-01T00:00:00	4	approved
+OPERATION	Purchase 10. item @ factory from 10. Supplier	2026-08-25T00:00:00	2026-09-01T00:00:00	3	approved
 OPERATION	Purchase 2. item @ factory from 2. Supplier	2025-12-25T00:00:00	2026-01-01T00:00:00	20
 OPERATION	Purchase 2. item @ factory from 2. Supplier	2026-07-25T00:00:00	2026-08-01T00:00:00	100	approved
 OPERATION	Purchase 3. component @ factory from 3. Supplier	2026-01-19T00:00:00	2026-01-26T00:00:00	20
@@ -132,6 +142,7 @@ PROBLEM	before current	Operation '9. task X2 step 1' planned in the past	2025-12
 PROBLEM	before current	Operation '9. task X2 step 2' planned in the past	2025-12-08T00:00:00 / 2025-12-15T00:00:00
 PROBLEM	before current	Operation '9. task X2 step 3' planned in the past	2025-12-15T00:00:00 / 2025-12-22T00:00:00
 PROBLEM	precedence	Operation '9. task X2 step 3' starts before preceding operation ends	2025-12-22T00:00:00 / 2025-12-22T00:00:00
+PROBLEM	before current	Operation 'Purchase 10. item @ factory from 10. Supplier' planned in the past	2025-12-25T00:00:00 / 2026-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase 2. item @ factory from 2. Supplier' planned in the past	2025-12-25T00:00:00 / 2026-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase 4. component @ factory from 4. Supplier' planned in the past	2025-12-19T00:00:00 / 2025-12-26T00:00:00
 PROBLEM	before current	Operation 'Purchase 5. component @ factory from 5. Supplier' planned in the past	2025-12-19T00:00:00 / 2025-12-26T00:00:00

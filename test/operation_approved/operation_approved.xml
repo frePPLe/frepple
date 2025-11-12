@@ -544,6 +544,47 @@
         </operationplan-->
     </operationplans>
 
+    <!-- case 10: Mutliple PO to move -->
+    <suppliers>
+        <supplier name="10. Supplier">
+            <itemsuppliers>
+                <itemsupplier>
+                    <item name="10. item"/>
+                    <leadtime>P7D</leadtime>
+                    <priority>2</priority>
+                </itemsupplier>
+            </itemsuppliers>
+        </supplier>
+    </suppliers>
+    <demands>
+        <demand name="10. sales order">
+            <quantity>20</quantity>
+            <minshipment>20</minshipment>
+            <due>2026-01-01T00:00:00</due>
+            <priority>1</priority>
+            <item name="10. item"/>
+            <location name="factory"/>
+            <status>open</status>
+        </demand>
+    </demands>
+    <operationplans>
+        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #10-1" quantity="5" status="approved">
+            <item name="10. item"/>
+            <location name="factory"/>
+            <supplier name="10. Supplier"/>
+        </operationplan>
+        <operationplan ordertype="PO" end="2026-08-01T00:00:00" reference="PO #10-2" quantity="4" status="approved">
+            <item name="10. item"/>
+            <location name="factory"/>
+            <supplier name="10. Supplier"/>
+        </operationplan>
+		<operationplan ordertype="PO" end="2026-09-01T00:00:00" reference="PO #10-3" quantity="3" status="approved">
+            <item name="10. item"/>
+            <location name="factory"/>
+            <supplier name="10. Supplier"/>
+        </operationplan>
+    </operationplans>
+
 <?python
 
 remember = []

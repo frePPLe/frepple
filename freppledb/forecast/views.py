@@ -1223,6 +1223,7 @@ class ConstraintReport(constraint.BaseReport):
 
 
 class PeggingReport(pegging.ReportByDemand):
+    template = "forecast/pegging.html"
     detailmodel = Forecast
     detail_post_title = _("plan detail")
     help_url = "user-interface/plan-analysis/demand-gantt-report.html"
@@ -1516,6 +1517,12 @@ class PeggingReport(pegging.ReportByDemand):
                     (reportclass.startdate,),
                 )
                 reportclass.enddate = cursor.fetchone()[0].date()
+        elif reportclass.startdate > reportclass.enddate:
+            # Assure start is before the end
+            reportclass.startdate, reportclass.enddate = (
+                reportclass.enddate,
+                reportclass.startdate,
+            )
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):

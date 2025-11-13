@@ -1,0 +1,24 @@
+{% extends "output/pegging.html" %}
+{% load i18n %}
+
+{% block extrahead %}{{block.super}}
+<script>
+$(function() {
+  $("#fromdate, #todate").change(function(){
+    console.log(window.location, $("#fromdate").val(), $("#todate").val());
+    const url = new URL(window.location);
+    const fromdate = $("#fromdate").val();
+    const todate = $("#todate").val();
+
+    if (fromdate) url.searchParams.set("startdate", fromdate);
+    else url.searchParams.delete("startdate");
+
+    if (todate) url.searchParams.set("enddate", todate);
+    else url.searchParams.delete("enddate");
+
+    window.location = url.toString();
+  });
+});
+</script>
+{% endblock %}
+

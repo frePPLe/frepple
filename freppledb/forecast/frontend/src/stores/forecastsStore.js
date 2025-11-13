@@ -551,6 +551,7 @@ export const useForecastsStore = defineStore('forecasts', {
 
     logChange: function (bckt, measureName, val) {
       this.buckets[bckt][measureName] = val;
+      if (val == "") val = window.measures[measureName].defaultvalue;
       if (bckt in this.bucketChanges) {
         this.bucketChanges[bckt][measureName] = val;
       }
@@ -652,7 +653,8 @@ export const useForecastsStore = defineStore('forecasts', {
         if (msr === "forecastoverride") {
           this.buckets[bckt]["forecasttotal"] =
             (this.buckets[bckt]["forecastoverride"] !== -1
-              && this.buckets[bckt]["forecastoverride"] != null) ?
+              && this.buckets[bckt]["forecastoverride"] != null
+              && this.buckets[bckt]["forecastoverride"] != "") ?
               this.buckets[bckt]["forecastoverride"] :
               this.buckets[bckt]["forecastbaseline"];
         }

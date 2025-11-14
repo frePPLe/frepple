@@ -1,32 +1,17 @@
 #
-# Copyright (C) 2023 by frePPLe bv
+# Copyright (C) 2025 by frePPLe bv
 #
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including
-# without limitation the rights to use, copy, modify, merge, publish,
-# distribute, sublicense, and/or sell copies of the Software, and to
-# permit persons to whom the Software is furnished to do so, subject to
-# the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# All information contained herein is, and remains the property of frePPLe.
+# You are allowed to use and modify the source code, as long as the software is used
+# within your company.
+# You are not allowed to distribute the software, either in the form of source code
+# or in the form of compiled binaries.
 #
 
 import os
 import time
 import unittest
-from datetime import datetime, timedelta
 
-from selenium.webdriver.common.keys import Keys
 from django.conf import settings
 from django.core import management
 from django.db import DEFAULT_DB_ALIAS, connections
@@ -64,7 +49,7 @@ class ForecastEditorScreen(SeleniumTest):
         forecast_table_page = ForecastTablePage(self.driver, ForecastEditorScreen)
         forecast_table_page.login()
 
-        # Open forecast editor page
+        # Open purchase order screen
         forecast_table_page.go_to_target_page_by_menu("Sales", "forecast/editor")
 
         # months are numbered from 1 to n
@@ -75,7 +60,6 @@ class ForecastEditorScreen(SeleniumTest):
         forecast_table_page.click_save_forecast()
         time.sleep(1)
 
-        # Verify the initial override was set correctly
         with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
             cursor.execute(
                 """
@@ -88,38 +72,23 @@ class ForecastEditorScreen(SeleniumTest):
             )
             self.assertEqual(cursor.fetchone()[0], newQuantity)
 
-        # Set the start date
-        today_date = datetime.now()
-        today_str = today_date.strftime("%Y-%m-%d")
-
-        # trigger change event in the browser
-        start_date_input = forecast_table_page.get_startdate_input()
-        forecast_table_page.driver.execute_script(
-            """
-            arguments[0].value = arguments[1];
-            arguments[0].dispatchEvent(new Event('change', { bubbles: true }));
-            arguments[0].dispatchEvent(new Event('input', { bubbles: true }));
-            """,
-            start_date_input,
-            today_str,
+                # months are numbered from 1 to n
+        forecast_table_page.set_value_target_override_cell(
+            1, 0
         )
-        time.sleep(0.5)
 
         frominput = forecast_table_page.get_startdate_input()
-        print(f"Start date value before update: {frominput.get_attribute('value')}")
 
-        newstartdate, newenddate, timerange = forecast_table_page.update_forecast_override_time_range(
+        # monthsadded represent months added from the first month on if its value is n the range size is n+1
+        (
+            newstartdate,
+            newenddate,
+            timerange,
+        ) = forecast_table_page.update_forecast_override_time_range(
             frominput, monthsadded=months_to_add, overridevalue=200
         )
+        time.sleep(1)
 
-        print(f"After update: start={newstartdate}, end={newenddate}, timerange={timerange}")
-
-        # **CRITICAL: Select a measure from the dropdown before applying**
-        # This is required for the Vue form to enable the Apply button
-        forecast_table_page.select_measure_from_dropdown()
-        time.sleep(0.5)
-
-        # Verify the start and end dates are updated correctly in the UI
         self.assertEqual(
             newstartdate.strftime("%Y-%m-%d"),
             forecast_table_page.get_startdate_input().get_attribute("value"),
@@ -135,37 +104,15 @@ class ForecastEditorScreen(SeleniumTest):
             newstartdate, newenddate, "start date and enddate must be different"
         )
 
-        # Apply and save the changes
         forecast_table_page.click_apply_override_forecast_edit_button()
         time.sleep(1)
-
-        # Debug: check what happened after apply button click
-        print("Checking forecast override data after apply button...")
-        with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
-            cursor.execute(
-                """
-                select startdate, forecastoverride
-                from forecastplan
-                where item_id = (select name from item where lvl = 0)
-                  and location_id = (select name from location where lvl = 0)
-                  and customer_id = (select name from customer where lvl = 0)
-                  and forecastoverride > 0
-                order by startdate
-                """
-            )
-            rows = cursor.fetchall()
-            print(f"Found {len(rows)} records with overrides:")
-            for row in rows:
-                print(f"  {row[0]}: override={row[1]}")
-
         forecast_table_page.click_save_forecast()
-        time.sleep(2)
+        time.sleep(1)
 
-        # Verify the number of records with forecast override equals the timerange
         with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
             cursor.execute(
                 """
-                select count(*), sum(forecastoverride)
+                select count(forecastoverride)
                 from forecastplan
                 where item_id = (select name from item where lvl = 0)
                   and location_id = (select name from location where lvl = 0)
@@ -173,7 +120,5 @@ class ForecastEditorScreen(SeleniumTest):
                   and forecastoverride > 0
                 """
             )
-            count, total_override = cursor.fetchone()
-            print(f"Final state - Expected timerange: {timerange}, Got count: {count}, Total override value: {total_override}")
 
-            self.assertEqual(count, timerange, f"Expected {timerange} records with override, got {count}")
+            self.assertEqual(cursor.fetchone()[0], timerange)

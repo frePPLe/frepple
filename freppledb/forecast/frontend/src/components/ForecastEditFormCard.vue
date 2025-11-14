@@ -7,6 +7,7 @@ import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js'
 
 useBootstrapTooltips();
 
+// eslint-disable-next-line no-unused-vars
 const { t: ttt, locale, availableLocales } = useI18n({
   useScope: 'global',  // This is crucial for reactivity
   inheritLocale: true
@@ -210,7 +211,7 @@ function changeEdit() {
               </div>
             </div>
 
-            <div v-if="store.editForm.selectedMeasure && (store.editForm.selectedMeasure.formatter == 'number' || store.editForm.selectedMeasure.formatter == 'currency')" class="radio mb-3">
+            <div v-if="store.editForm.selectedMeasure.formatter == 'number' || store.editForm.selectedMeasure.formatter == 'currency'" class="radio mb-3">
               <label>
                 <input
                   class="form-check-input nodirty align-text-bottom pristine untouched valid not-empty"
@@ -236,7 +237,7 @@ function changeEdit() {
               </div>
             </div>
 
-            <div v-if="store.editForm.selectedMeasure && (store.editForm.selectedMeasure.formatter == 'number' || store.editForm.selectedMeasure.formatter == 'currency')" class="radio mb-3">
+            <div v-if="store.editForm.selectedMeasure.formatter == 'number' || store.editForm.selectedMeasure.formatter == 'currency'" class="radio mb-3">
               <label>
                 <input
                   class="form-check-input nodirty align-text-bottom pristine untouched valid not-empty"

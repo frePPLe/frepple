@@ -327,7 +327,7 @@ export const useForecastsStore = defineStore('forecasts', {
           return result;
         } else {
           console.warn('⚠️ No data received from API');
-          store.setError({ title: "warning", error: null, message: "'⚠️ No data received from API'", details: "", type: "error" })
+          this.setError({ title: "warning", error: null, message: "'⚠️ No data received from API'", details: "", type: "error" })
           return {};
         }
 
@@ -446,7 +446,7 @@ export const useForecastsStore = defineStore('forecasts', {
 
       // Reset edit form to initial state
       this.editForm = {
-        selectedMeasure: null,
+        selectedMeasure: this.editForm.selectedMeasure,
         startDate: "",
         endDate: "",
         mode: "set",
@@ -688,6 +688,7 @@ export const useForecastsStore = defineStore('forecasts', {
           if (key.endsWith('1ago') || key.endsWith('2ago') || key.endsWith('3ago')) {
             delete newData.buckets[bckt][key];
           }
+          // eslint-disable-next-line no-undef
           if (measures[key]["editable"] != undefined && measures[key]["editable"] === false) {
             delete newData.buckets[bckt][key];
           }

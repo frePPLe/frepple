@@ -47,6 +47,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | Earlier releases activated frepple access only in the default company of an odoo user.
   | Now we activate the frepple access in all allowed companies of an odoo user.
 
+- | 17, 18: Bug fix for the due date quoting module in multi-company setups.
+  | The quote message was sent to the frepple instance of the user's default company.
+    It should be sent to the frepple instance of the sales order's company instead.
+
 9.11.0 (2025-10-03)
 ===================
 

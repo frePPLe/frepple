@@ -1,12 +1,14 @@
 Release notes
 -------------
 
-9.12.0 (Upcoming release)
+9.13.0 (Upcoming release)
 ========================
 
 This release is scheduled for early November.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+9.12.0 (2025-11-14)
+===================
 
 .. rubric:: Production planning
 

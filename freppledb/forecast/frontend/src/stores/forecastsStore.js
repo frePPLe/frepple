@@ -551,7 +551,6 @@ export const useForecastsStore = defineStore('forecasts', {
 
     logChange: function (bckt, measureName, val) {
       this.buckets[bckt][measureName] = val;
-      if (val == "") val = window.measures[measureName].defaultvalue;
       if (bckt in this.bucketChanges) {
         this.bucketChanges[bckt][measureName] = val;
       }
@@ -665,13 +664,20 @@ export const useForecastsStore = defineStore('forecasts', {
     async saveForecastChanges(recalculate = false) {
       this.loading = true;
       this.clearError();
+      let payload = Object.values(toRaw(this.bucketChanges));
+      payload.forEach(obj => {
+        Object.keys(obj).forEach(key => {
+          if (window.measures.hasOwnProperty(key) && (obj[key] === '' || obj[key] == undefined))
+            obj[key] = window.measures[key].defaultvalue;
+        });
+      });
       let newData = {
         item: this.item.Name,
         location: this.location.Name,
         customer: this.customer.Name,
         units: this.currentMeasure,
         horizon: this.horizon,
-        buckets: Object.values(toRaw(this.bucketChanges)), //list of buckets not a dictionary
+        buckets: payload,
         horizonbuckets: this.horizonbuckets,
         forecastmethod: this.forecastAttributes.forecastmethod,
         recalculate: recalculate,

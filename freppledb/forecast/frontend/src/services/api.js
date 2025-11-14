@@ -55,7 +55,7 @@ export const api = {
     };
 
     const { loading, backendError, responseData } = await usePostBackendData(
-      'http://' + window.location.host + '/' + endpoint,
+      window.location.protocol + '//' + window.location.host + '/' + endpoint,
       data,
       { ...defaultHeaders, ...options }
     );
@@ -75,7 +75,7 @@ export const api = {
     };
 
     const { loading, backendError, responseData } = await useGetBackendData(
-      'http://' + window.location.host + '/' + endpoint,
+      window.location.protocol + '//' + window.location.host + '/' + endpoint,
       { ...defaultHeaders, ...options }
     );
 

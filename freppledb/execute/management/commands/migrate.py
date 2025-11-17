@@ -26,6 +26,8 @@ from django.core.management.commands.migrate import Command as StdCommand
 from django.db import connections
 from django.db.utils import DEFAULT_DB_ALIAS
 
+from freppledb.common.models import Scenario
+
 
 class Command(StdCommand):
     def create_parser(self, prog_name, subcommand, **kwargs):
@@ -46,6 +48,7 @@ class Command(StdCommand):
             super().handle(*args, **options)
             return
 
+        Scenario.syncWithSettings()
         try:
             with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
                 cursor.execute(

@@ -418,7 +418,7 @@ class Scenario(models.Model):
             with transaction.atomic(savepoint=False):
                 dbs = [i for i, j in get_databases().items() if j["NAME"]]
                 scs = []
-                for sc in Scenario.objects.using(DEFAULT_DB_ALIAS):
+                for sc in Scenario.objects.using(DEFAULT_DB_ALIAS).only("name"):
                     if sc.name not in dbs:
                         sc.delete()
                     else:

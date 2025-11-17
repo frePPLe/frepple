@@ -32,7 +32,7 @@ from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
 from freppledb.execute.models import Task
-from freppledb.common.models import User
+from freppledb.common.models import User, Scenario
 from freppledb.common.utils import get_databases, getPostgresVersion
 from freppledb import __version__
 
@@ -134,3 +134,6 @@ class Command(BaseCommand):
             + [f"--dbname={get_databases()[database]["NAME"]}", dumpfile],
             env=env,
         )
+
+        # Assure the common_scenario table is valid
+        Scenario.syncWithSettings()

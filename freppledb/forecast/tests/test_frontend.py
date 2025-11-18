@@ -21,11 +21,10 @@ from freppledb.common.tests.seleniumsetup import SeleniumTest, noSelenium
 from freppledb.forecast.tests.seleniumpages.forecastpage import ForecastTablePage
 
 
-# @unittest.skipUnless(
-#     "freppledb.forecast" in settings.INSTALLED_APPS, "App not activated"
-# )
-# @unittest.skipIf(noSelenium, "selenium not installed")
-@unittest.skip("Test update missed the release deadline")
+@unittest.skipUnless(
+    "freppledb.forecast" in settings.INSTALLED_APPS, "App not activated"
+)
+@unittest.skipIf(noSelenium, "selenium not installed")
 class ForecastEditorScreen(SeleniumTest):
     fixtures = ["manufacturing_demo"]
 
@@ -72,10 +71,8 @@ class ForecastEditorScreen(SeleniumTest):
             )
             self.assertEqual(cursor.fetchone()[0], newQuantity)
 
-                # months are numbered from 1 to n
-        forecast_table_page.set_value_target_override_cell(
-            1, 0
-        )
+            # months are numbered from 1 to n
+        forecast_table_page.set_value_target_override_cell(1, 0)
 
         frominput = forecast_table_page.get_startdate_input()
 

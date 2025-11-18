@@ -1360,6 +1360,7 @@ class ExportForecast(PlanTask):
         if cluster == -1:
             with connections[database].cursor() as cursor:
                 cursor.execute("REFRESH MATERIALIZED VIEW forecastreport_view")
+                cursor.execute("vacuum analyze forecastreport_view")
 
 
 @PlanTaskRegistry.register

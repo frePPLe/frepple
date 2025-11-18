@@ -896,6 +896,7 @@ class ForecastPlan(models.Model):
         # refresh materialized view in case new combinations have been added
         with connections[database].cursor() as cursor:
             cursor.execute("REFRESH MATERIALIZED VIEW forecastreport_view")
+            cursor.execute("vacuum analyze forecastreport_view")
 
     @staticmethod
     def refreshTableColumns(database=DEFAULT_DB_ALIAS):

@@ -223,3 +223,17 @@ def sendEmail(to, subject, body, body_html=None, send=True, **context):
         msg.send()
     else:
         return msg
+
+
+def vacuumAnalyze(cursor):
+    """
+    This method runs vacuum analyze on all tables in the public schema.
+    """
+    cursor.execute(
+        """
+        select schemaname || '.' || tablename
+        from pg_tables
+        where schemaname = 'public'
+        """
+    )
+    cursor.execute(f"vacuum analyze {", ".join(t[0] for t in cursor)}")

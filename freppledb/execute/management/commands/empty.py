@@ -38,7 +38,7 @@ from freppledb.execute.models import Task
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
 from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS
-from freppledb.common.utils import get_databases
+from freppledb.common.utils import get_databases, vacuumAnalyze
 import freppledb.input.models as inputmodels
 from freppledb import __version__
 
@@ -260,6 +260,7 @@ class Command(BaseCommand):
                     tables.add("forecastplan")
                 if "forecastplan" in tables:
                     cursor.execute("refresh materialized view forecastreport_view")
+                    cursor.execute("vacuum analyze forecastreport_view")
             if "demand" in tables and "out_constraint" not in tables:
                 tables.add("out_constraint")
             if (
@@ -317,6 +318,9 @@ class Command(BaseCommand):
                     cursor.execute("update common_user set horizonbuckets = null")
                 for stmt in connections[database].ops.sql_flush(no_style(), tables):
                     cursor.execute(stmt)
+
+            # Keep the database healthy
+            vacuumAnalyze(cursor)
 
             # Task update
             task.status = "Done"

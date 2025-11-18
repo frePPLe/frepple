@@ -35,6 +35,7 @@ from freppledb.boot import getAttributes
 from freppledb.common.models import Parameter
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.common.report import getCurrentDate
+from freppledb.common.utils import vacuumAnalyze
 from freppledb.input.models import (
     Resource,
     Item,
@@ -325,7 +326,7 @@ class checkDatabaseHealth(CheckTask):
                 )
                 logger.info(f"Deleted {cursor.rowcount} old comments")
 
-            cursor.execute("vacuum analyze")
+            vacuumAnalyze(cursor)
             logger.info(f"Analyzed database")
 
 

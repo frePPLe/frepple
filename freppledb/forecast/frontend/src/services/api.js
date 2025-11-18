@@ -14,11 +14,11 @@ import { usePostBackendData, useGetBackendData, getCsrfToken } from '@common/use
 export const api = {
   async wspost(endpoint, data, options = {}) {
     const defaultHeaders = {
-      'Authorization': 'Bearer ' + service_token
+      'Authorization': 'Bearer ' + window.service_token
     };
 
     const { loading, backendError, responseData } = await usePostBackendData(
-      service_url + endpoint,
+      window.service_url + endpoint,
       data,
       { ...defaultHeaders, ...options }
     );
@@ -32,11 +32,11 @@ export const api = {
 
   async wsget(endpoint, options = {}) {
     const defaultHeaders = {
-      'Authorization': 'Bearer ' + service_token
+      'Authorization': 'Bearer ' + window.service_token
     };
 
     const { loading, backendError, responseData } = await useGetBackendData(
-      service_url + endpoint,
+      window.service_url + endpoint,
       { ...defaultHeaders, ...options }
     );
 
@@ -55,7 +55,7 @@ export const api = {
     };
 
     const { loading, backendError, responseData } = await usePostBackendData(
-      window.location.protocol + '//' + window.location.host + '/' + endpoint,
+      window.location.protocol + '//' + window.location.host + window.url_prefix + '/' + endpoint,
       data,
       { ...defaultHeaders, ...options }
     );
@@ -75,7 +75,7 @@ export const api = {
     };
 
     const { loading, backendError, responseData } = await useGetBackendData(
-      window.location.protocol + '//' + window.location.host + '/' + endpoint,
+      window.location.protocol + '//' + window.location.host + window.url_prefix + '/' + endpoint,
       { ...defaultHeaders, ...options }
     );
 

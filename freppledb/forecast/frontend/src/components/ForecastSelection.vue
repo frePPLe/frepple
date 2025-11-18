@@ -76,6 +76,8 @@ const sortedMeasureList = computed(() => {
   });
 });
 
+const itemUnlocked = window.location.pathname.split('/editor/')[1] === "";
+
 // Button event handlers
 const showBucket = (event) => window.grid.showBucket();
 
@@ -191,46 +193,46 @@ onUnmounted(() => {
             <li>
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('ILC')">{{ ttt(dict['I']) }},&nbsp;{{ ttt(dict['L']) }},&nbsp;{{ ttt(dict['C']) }}</a>
             </li>
-            <li>
+            <li v-if="itemUnlocked">
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('LIC')">{{ ttt(dict['L']) }},&nbsp;{{ ttt(dict['I']) }},&nbsp;{{ ttt(dict['C']) }}</a>
             </li>
-            <li>
+            <li v-if="itemUnlocked">
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('CLI')">{{ ttt(dict['C']) }},&nbsp;{{ ttt(dict['L']) }},&nbsp;{{ ttt(dict['I']) }}</a>
             </li>
             <li>
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('ICL')">{{ ttt(dict['I']) }},&nbsp;{{ ttt(dict['C']) }},&nbsp;{{ ttt(dict['L']) }}</a>
             </li>
-            <li>
+            <li v-if="itemUnlocked">
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('LCI')">{{ ttt(dict['L']) }},&nbsp;{{ ttt(dict['C']) }},&nbsp;{{ ttt(dict['I']) }}</a>
             </li>
-            <li>
+            <li v-if="itemUnlocked">
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('CIL')">{{ ttt(dict['C']) }},&nbsp;{{ ttt(dict['I']) }},&nbsp;{{ ttt(dict['L']) }}</a>
             </li>
             <li>
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('IL')">{{ ttt(dict['I']) }},&nbsp;{{ ttt(dict['L']) }}</a>
             </li>
-            <li>
+            <li v-if="itemUnlocked">
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('LI')">{{ ttt(dict['L']) }},&nbsp;{{ ttt(dict['I']) }}</a>
             </li>
             <li>
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('IC')">{{ ttt(dict['I']) }},&nbsp;{{ ttt(dict['C']) }}</a>
             </li>
-            <li>
+            <li v-if="itemUnlocked">
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('CI')">{{ ttt(dict['C']) }},&nbsp;{{ ttt(dict['I']) }}</a>
             </li>
-            <li>
+            <li v-if="itemUnlocked">
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('LC')">{{ ttt(dict['L']) }},&nbsp;{{ ttt(dict['C']) }}</a>
             </li>
-            <li>
+            <li v-if="itemUnlocked">
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('CL')">{{ ttt(dict['C']) }},&nbsp;{{ ttt(dict['L']) }}</a>
             </li>
             <li>
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('I')">{{ ttt(dict['I']) }}</a>
             </li>
-            <li>
+            <li v-if="itemUnlocked">
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('L')">{{ ttt(dict['L']) }}</a>
             </li>
-            <li>
+            <li v-if="itemUnlocked">
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('C')">{{ ttt(dict['C']) }}</a>
             </li>
           </ul>

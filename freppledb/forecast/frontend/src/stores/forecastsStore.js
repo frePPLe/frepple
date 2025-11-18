@@ -129,23 +129,60 @@ export const useForecastsStore = defineStore('forecasts', {
       state.tableRows = window.preferences['rows'] === undefined ? defaultMeasures : window.preferences['rows'];
       state.showDescription = window.preferences['showdescription'] === undefined ? false : window.preferences['showdescription'];
 
+      const rawItemName = window.location.pathname.split('/editor/')[1];
+      if (rawItemName !== "") {
+        state.currentSequence = "ILC"
+      }
+
       return window.preferences;
     },
     currentBucketName: () => window.currentbucket,
   },
 
   actions: {
+    createFilteredRoot(itemName) {
+      const newRoot = {
+        "item": itemName,
+        "description": null,
+        "values": [
+          {"bucketname": this.treeBuckets[0], "value": toRaw(this.itemTree).map(x => x.values[0].value).reduce((prev, curr)=> curr= prev+curr)},
+          {"bucketname": this.treeBuckets[1], "value": toRaw(this.itemTree).map(x => x.values[1].value).reduce((prev, curr)=> curr= prev+curr)},
+          {"bucketname": this.treeBuckets[2], "value": toRaw(this.itemTree).map(x => x.values[2].value).reduce((prev, curr)=> curr= prev+curr)}
+        ],
+        "lvl": 0,
+        "children": true,
+        "visible": true,
+        "expanded": 0
+      };
+
+      return newRoot
+    },
     async setCurrentMeasure(measure, save = true) {
       if (this.currentMeasure === measure) return;
       this.currentMeasure = measure;
       if (this.currentSequence === null) return;
-      this.itemTree = await this.getItemtree();
-      this.itemTree[0].expanded = 1;
-      this.locationTree = await this.getLocationtree();
-      this.locationTree[0].expanded = 1;
-      this.customerTree = await this.getCustomertree();
-      this.customerTree[0].expanded = 1;
-      await this.getForecastDetails();
+
+      const rawItemName = window.location.pathname.split('/editor/')[1];
+      if (rawItemName !== "") {
+        const itemName = decodeURIComponent(window.admin_unescape(rawItemName)).replace('/', '');
+        this.itemTree = await this.getItemtree(itemName, null, null);
+        this.itemTree.unshift(this.createFilteredRoot(itemName));
+        this.itemTree[0].expanded = 1;
+        this.itemTree[0].lvl = this.itemTree[1].lvl - 1;
+        this.locationTree = await this.getLocationtree(itemName, null, null);
+        this.locationTree[0].expanded = 1;
+        this.customerTree = await this.getCustomertree(itemName, null, null);
+        this.customerTree[0].expanded = 1;
+        await this.getForecastDetails(itemName, null, null);
+      } else {
+        this.itemTree = await this.getItemtree();
+        this.itemTree[0].expanded = 1;
+        this.locationTree = await this.getLocationtree();
+        this.locationTree[0].expanded = 1;
+        this.customerTree = await this.getCustomertree();
+        this.customerTree[0].expanded = 1;
+        await this.getForecastDetails();
+      }
       if (save) await this.savePreferences();
     },
 
@@ -153,13 +190,27 @@ export const useForecastsStore = defineStore('forecasts', {
       if (this.currentSequence === sequence) return;
       this.currentSequence = sequence;
       if (this.currentMeasure === null) return;
-      this.itemTree = await this.getItemtree();
-      this.itemTree[0].expanded = 1;
-      this.locationTree = await this.getLocationtree();
-      this.locationTree[0].expanded = 1;
-      this.customerTree = await this.getCustomertree();
-      this.customerTree[0].expanded = 1;
-      await this.getForecastDetails();
+
+      const rawItemName = window.location.pathname.split('/editor/')[1];
+      if (rawItemName !== "") {
+        const itemName = decodeURIComponent(window.admin_unescape(rawItemName)).replace('/', '');
+        this.itemTree = await this.getItemtree(itemName, null, null);
+        this.itemTree.unshift(this.createFilteredRoot(itemName));
+        this.itemTree[0].expanded = 1;
+        this.locationTree = await this.getLocationtree(itemName, null, null);
+        this.locationTree[0].expanded = 1;
+        this.customerTree = await this.getCustomertree(itemName, null, null);
+        this.customerTree[0].expanded = 1;
+        await this.getForecastDetails(itemName, null, null);
+      } else {
+        this.itemTree = await this.getItemtree();
+        this.itemTree[0].expanded = 1;
+        this.locationTree = await this.getLocationtree();
+        this.locationTree[0].expanded = 1;
+        this.customerTree = await this.getCustomertree();
+        this.customerTree[0].expanded = 1;
+        await this.getForecastDetails();
+      }
       if (save) await this.savePreferences();
     },
 
@@ -396,6 +447,9 @@ export const useForecastsStore = defineStore('forecasts', {
           const result = toRaw(responseData.value);
 
           this.item.update(result['attributes']['item']);
+          // set the description in the item selection card in the top of the screen in case it is null (url as filter)
+          if (this.itemTree[0].item === this.item.Name) this.itemTree[0].description = result['attributes']['item'].filter(x => x[0] === 'Description')[0][1];
+
           this.location.update(result['attributes']['location']);
           this.customer.update(result['attributes']['customer']);
           this.comments = result['comments'];

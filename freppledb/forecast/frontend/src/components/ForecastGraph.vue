@@ -152,7 +152,7 @@ const render = () => {
       domainX.push(item.bucket);
       bucketnamelength = Math.max(item.bucket.length, bucketnamelength);
       filteredGraphData.push(item);
-      if (item.currentbucket) {
+      if (window.currentbucket == item.bucket) {
         forecastcurrentbucket += parseInt(i);
       }
     }
@@ -249,7 +249,7 @@ const render = () => {
                  <tr><td>${ttt('total orders')}</td><td style="text-align:right">${formatNumber(d.orderstotal || 0)}</td></tr>
                  <tr><td>${ttt('open orders')}</td><td style="text-align:right">${formatNumber(d.ordersopen || 0)}</td></tr>
                  <tr><td>${ttt('orders adjustment')}</td><td style="text-align:right">${(d.ordersadjustment === null || d.ordersadjustment === undefined) ? '' : formatNumber(d.ordersadjustment)}</td></tr>
-                 <tr><td>${ttt('past forecast')}</td><td style="text-align:right">${formatNumber(d.forecastbaseline || 0)}</td></tr>
+                 <tr><td>${ttt('past forecast')}</td><td style="text-align:right">${formatNumber(d.forecasttotal || 0)}</td></tr>
                </table>`;
 
           showTooltip(tooltipContent);

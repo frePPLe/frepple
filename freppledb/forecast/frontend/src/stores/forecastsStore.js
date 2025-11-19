@@ -182,7 +182,7 @@ export const useForecastsStore = defineStore('forecasts', {
 
       const rawItemName = window.location.pathname.split('/editor/')[1];
       if (rawItemName !== "") {
-        const itemName = decodeURIComponent(window.admin_unescape(rawItemName)).replace('/', '');
+        const itemName = decodeURIComponent(window.admin_unescape(rawItemName.replace(/\/$/, "")));
         // Implement first a check to see if the next in the tree is a child or if there is even a next
         // this.itemTree[0].lvl = this.itemTree[1].lvl - 1;
         this.locationTree = await this.getLocationtree(itemName, null, null);

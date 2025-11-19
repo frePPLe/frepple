@@ -34,6 +34,7 @@
  * @property {Object} editForm
  * @property {Array} tableRows
  * @property {Boolean} showDescription
+ * @property {Boolean} isItemFilteredUrLeaf
  */
 
 import { defineStore } from 'pinia';
@@ -88,13 +89,13 @@ export const useForecastsStore = defineStore('forecasts', {
     },
     tableRows: [],
     showDescription: false,
+    isItemFilteredUrlLeaf: false,
   }),
 
   getters: {
     measures: () => window.measures,
     bucketsperyear(state) {
       const bucketsPerYear = window.bucketsperyear[0].bucketcount;
-      console.log(97, bucketsPerYear);
 
       switch (bucketsPerYear) {
         case 12:
@@ -144,16 +145,33 @@ export const useForecastsStore = defineStore('forecasts', {
       const newRoot = {
         "item": itemName,
         "description": null,
-        "values": [
-          {"bucketname": this.treeBuckets[0], "value": toRaw(this.itemTree).map(x => x.values[0].value).reduce((prev, curr)=> curr= prev+curr)},
-          {"bucketname": this.treeBuckets[1], "value": toRaw(this.itemTree).map(x => x.values[1].value).reduce((prev, curr)=> curr= prev+curr)},
-          {"bucketname": this.treeBuckets[2], "value": toRaw(this.itemTree).map(x => x.values[2].value).reduce((prev, curr)=> curr= prev+curr)}
-        ],
+        "values": [],
         "lvl": 0,
-        "children": true,
+        "children": false,
         "visible": true,
         "expanded": 0
       };
+      if (toRaw(this.itemTree).length > 0) {
+        newRoot.values = [
+          {
+            "bucketname": this.treeBuckets[0],
+            "value": toRaw(this.itemTree).map(x => x.values[0].value).reduce((prev, curr) => curr = prev + curr)
+          },
+          {
+            "bucketname": this.treeBuckets[1],
+            "value": toRaw(this.itemTree).map(x => x.values[1].value).reduce((prev, curr) => curr = prev + curr)
+          },
+          {
+            "bucketname": this.treeBuckets[2],
+            "value": toRaw(this.itemTree).map(x => x.values[2].value).reduce((prev, curr) => curr = prev + curr)
+          }
+        ];
+        newRoot.children = true;
+      } else if (toRaw(this.locationTree).length > 0) {
+        newRoot.values = toRaw(this.locationTree)[0].values;
+      } else if (toRaw(this.customerTree).length > 0) {
+        newRoot.values = toRaw(this.customerTree)[0].values;
+      }
 
       return newRoot
     },
@@ -165,14 +183,15 @@ export const useForecastsStore = defineStore('forecasts', {
       const rawItemName = window.location.pathname.split('/editor/')[1];
       if (rawItemName !== "") {
         const itemName = decodeURIComponent(window.admin_unescape(rawItemName)).replace('/', '');
-        this.itemTree = await this.getItemtree(itemName, null, null);
-        this.itemTree.unshift(this.createFilteredRoot(itemName));
-        this.itemTree[0].expanded = 1;
-        this.itemTree[0].lvl = this.itemTree[1].lvl - 1;
+        // Implement first a check to see if the next in the tree is a child or if there is even a next
+        // this.itemTree[0].lvl = this.itemTree[1].lvl - 1;
         this.locationTree = await this.getLocationtree(itemName, null, null);
         this.locationTree[0].expanded = 1;
         this.customerTree = await this.getCustomertree(itemName, null, null);
         this.customerTree[0].expanded = 1;
+        this.itemTree = await this.getItemtree(itemName, null, null);
+        this.itemTree.unshift(this.createFilteredRoot(itemName));
+        this.itemTree[0].expanded = 1;
         await this.getForecastDetails(itemName, null, null);
       } else {
         this.itemTree = await this.getItemtree();
@@ -324,7 +343,13 @@ export const useForecastsStore = defineStore('forecasts', {
 
         if (responseData.value) {
           const result = toRaw(responseData.value);
-          this.treeBuckets = result[0].values.map(x => x['bucketname']);
+
+          // special case where url filters a leaf itemtree element
+          if (result.length === 0) {
+            return result;
+          } else {
+            this.treeBuckets = result[0].values.map(x => x['bucketname']);
+          }
 
           if (result[0]['lvl'] === 0) {
             this.item.Name = result[0].item;
@@ -367,6 +392,8 @@ export const useForecastsStore = defineStore('forecasts', {
         if (responseData.value) {
           const result = toRaw(responseData.value);
 
+          if (result.length > 0) this.treeBuckets = result[0].values.map(x => x['bucketname']);
+
           if (result[0]['lvl'] === 0) {
             this.location.Name = result[0].location;
             if (result[0]['children']) {
@@ -406,6 +433,8 @@ export const useForecastsStore = defineStore('forecasts', {
 
         if (responseData.value) {
           const result = toRaw(responseData.value);
+
+          if (result.length > 0) this.treeBuckets = result[0].values.map(x => x['bucketname']);
 
           if (result[0]['lvl'] === 0) {
             this.customer.Name = result[0].customer;

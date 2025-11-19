@@ -212,7 +212,7 @@ export const useForecastsStore = defineStore('forecasts', {
 
       const rawItemName = window.location.pathname.split('/editor/')[1];
       if (rawItemName !== "") {
-        const itemName = decodeURIComponent(window.admin_unescape(rawItemName)).replace('/', '');
+        const itemName = decodeURIComponent(window.admin_unescape(rawItemName.replace(/\/$/, "")));
         this.itemTree = await this.getItemtree(itemName, null, null);
         this.itemTree.unshift(this.createFilteredRoot(itemName));
         this.itemTree[0].expanded = 1;

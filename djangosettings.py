@@ -91,7 +91,7 @@ DATABASES = {
         # Make sure this role has properly restricted permissions!
         # When left unspecified, SQL statements run with the full read-write
         # permissions of the user specified above. Which can be handy, but is not secure.
-        "SQL_ROLE": None,  # "report_role",
+        "SQL_ROLE": "report_role",
         "SECRET_WEBTOKEN_KEY": SECRET_KEY,
         # Port for the frepple web service
         "FREPPLE_PORT": f"127.0.0.1:{i+8002}",

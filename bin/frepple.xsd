@@ -1095,6 +1095,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <xsd:element name="reference" type="xsd:normalizedString" />
       <xsd:element name="batch" type="xsd:normalizedString" />
 	  <xsd:element name="remark" type="xsd:normalizedString" />
+	  <xsd:element name="info" type="xsd:normalizedString" />
       <xsd:element name="operation" type="operation" />
       <xsd:element name="demand" type="demand" />
       <xsd:element name="start" type="xsd:dateTime" />
@@ -1126,6 +1127,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <xsd:attribute name="reference" type="xsd:normalizedString" />
     <xsd:attribute name="batch" type="xsd:normalizedString" />
     <xsd:attribute name="remark" type="xsd:normalizedString" />
+	<xsd:attribute name="info" type="xsd:normalizedString" />
     <xsd:attribute name="start" type="xsd:dateTime" />
     <xsd:attribute name="end" type="xsd:dateTime" />
     <xsd:attribute name="quantity" type="positiveDouble" />

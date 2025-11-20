@@ -1012,8 +1012,7 @@ inline ostream& operator<<(ostream& os, const DateDetail& d) {
  * The start and end dates are always such that the start date is less than
  * or equal to the end date.
  */
-class DateRange
-{
+class DateRange {
  public:
   /* Constructor with specified start and end dates.
    * If the start date is later than the end date parameter, the
@@ -5178,6 +5177,11 @@ class PooledString {
   /* Return the character at a certain position in the string, or \0 if not
    * found. */
   const char& at(size_t pos) const { return ptr ? ptr->at(pos) : nullchar; }
+
+  /* Returns true if the argument is found in the string. */
+  bool contains(const string& c) const {
+    return ptr ? (ptr->find(c) != string::npos) : false;
+  }
 
   /* Return the first character in the string. Or \0 if the string is empty. */
   const char& front() const { return ptr ? ptr->front() : nullchar; }

@@ -1802,6 +1802,7 @@ void OperationPlan::propagateStatus(bool log) {
        subopplan = subopplan->nextsubopplan)
     if (subopplan->getStatus() != mystatus) {
       subopplan->setStatus(mystatus);
+      subopplan->appendInfo("Status propagated from parent");
       subopplan->propagateStatus(log);
     }
 
@@ -1837,6 +1838,7 @@ void OperationPlan::propagateStatus(bool log) {
           logger << "    Changing status of previous routing step " << prev
                  << endl;
         }
+        prev->appendInfo("Status propagated from following step");
         prev->setStatus(mystatus);
       }
     // Assure that the parent routing gets at least the status approved
@@ -1848,6 +1850,8 @@ void OperationPlan::propagateStatus(bool log) {
       if (!subopplan->getClosed()) all_steps_closed = false;
     }
     if (all_steps_closed && !getOwner()->getClosed()) {
+      getOwner()->appendInfo(
+          "Status changed to closed because all steps are closed");
       getOwner()->flags |= STATUS_CONFIRMED + STATUS_CLOSED;
       getOwner()->flags &= ~(STATUS_APPROVED + STATUS_COMPLETED);
       if (log) {
@@ -1858,6 +1862,8 @@ void OperationPlan::propagateStatus(bool log) {
         logger << "    Marking routing as closed " << getOwner() << endl;
       }
     } else if (all_steps_completed && !getOwner()->getCompleted()) {
+      getOwner()->appendInfo(
+          "Status changed to completed because all steps are completed");
       getOwner()->flags |= STATUS_CONFIRMED + STATUS_COMPLETED;
       getOwner()->flags &= ~(STATUS_APPROVED + STATUS_CLOSED);
       if (log) {
@@ -1870,7 +1876,11 @@ void OperationPlan::propagateStatus(bool log) {
     } else if (getOwner()->getProposed()) {
       for (auto subopplan = getOwner()->firstsubopplan; subopplan;
            subopplan = subopplan->nextsubopplan)
-        if (subopplan->getProposed()) subopplan->setApproved(true);
+        if (subopplan->getProposed()) {
+          subopplan->appendInfo("Setting status to approved");
+          subopplan->setApproved(true);
+        }
+      getOwner()->appendInfo("Setting status to approved");
       getOwner()->flags |= STATUS_APPROVED;
       getOwner()->flags &=
           ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
@@ -1932,6 +1942,8 @@ void OperationPlan::propagateStatus(bool log) {
                   ? flpln->getOperationPlan()->getStart()
                   : myflpln->getDate(),
               myflpln->getDate());
+          flpln->getOperationPlan()->appendInfo(
+              "Changed end date to keep the inventory positive");
           closed_balance += flpln->getQuantity();
           if (closed_balance >= -ROUNDING_ERROR) break;
         }
@@ -1951,6 +1963,8 @@ void OperationPlan::propagateStatus(bool log) {
                      << endl;
             }
             flpln->getOperationPlan()->setStatus(mystatus);
+            flpln->getOperationPlan()->appendInfo(
+                "Changed status to keep the inventory positive");
             closed_balance += flpln->getQuantity();
             if (closed_balance >= -ROUNDING_ERROR) break;
           }
@@ -1967,6 +1981,8 @@ void OperationPlan::propagateStatus(bool log) {
                 logger << "      Changing status of "
                        << flpln->getOperationPlan() << endl;
               }
+              flpln->getOperationPlan()->appendInfo(
+                  "Changed status to keep the inventory positive");
               flpln->getOperationPlan()->setStatus(mystatus);
               closed_balance += flpln->getQuantity();
               if (closed_balance >= -ROUNDING_ERROR) break;
@@ -1984,6 +2000,8 @@ void OperationPlan::propagateStatus(bool log) {
                   logger << "      Changing status of "
                          << flpln->getOperationPlan() << endl;
                 }
+                flpln->getOperationPlan()->appendInfo(
+                    "Changed status to keep the inventory positive");
                 flpln->getOperationPlan()->setStatus(mystatus);
                 closed_balance += flpln->getQuantity();
                 if (closed_balance >= -ROUNDING_ERROR) break;
@@ -2849,6 +2867,13 @@ void OperationPlan::setResetResources(bool b) {
     delete tmp;
   }
   firstloadplan = nullptr;
+}
+
+void OperationPlan::appendInfo(const string& s) {
+  if (info.empty())
+    info = s;
+  else if (!info.contains(s))
+    info = PooledString(static_cast<string>(info) + "\n" + s);
 }
 
 }  // namespace frepple

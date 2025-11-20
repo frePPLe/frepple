@@ -1,120 +1,1653 @@
-BUFFER	1. item @ factory	2026-02-01T00:00:00	100	100
-BUFFER	1. item @ factory	2026-02-01T00:00:00	-20	80
-BUFFER	10. item @ factory	2026-01-08T00:00:00	8	8
-BUFFER	10. item @ factory	2026-01-08T00:00:00	5	13
-BUFFER	10. item @ factory	2026-01-08T00:00:00	4	17
-BUFFER	10. item @ factory	2026-01-08T00:00:00	3	20
-BUFFER	10. item @ factory	2026-01-08T00:00:00	-20	0
-BUFFER	2. item @ factory	2026-01-08T00:00:00	100	100
-BUFFER	2. item @ factory	2026-01-08T00:00:00	-20	80
-BUFFER	3. component @ factory	2026-01-26T00:00:00	100	100
-BUFFER	3. component @ factory	2026-01-26T00:00:00	-100	0
-BUFFER	3. item @ factory	2026-02-01T00:00:00	100	100
-BUFFER	3. item @ factory	2026-02-01T00:00:00	-20	80
-BUFFER	3. item subassembly @ factory	2026-01-29T00:00:00	100	100
-BUFFER	3. item subassembly @ factory	2026-01-29T00:00:00	-100	0
-BUFFER	4. component @ factory	2026-03-01T00:00:00	100	100
-BUFFER	4. component @ factory	2026-03-01T00:00:00	-100	0
-BUFFER	4. item @ factory	2026-03-07T00:00:00	100	100
-BUFFER	4. item @ factory	2026-03-07T00:00:00	-20	80
-BUFFER	4. item subassembly @ factory	2026-03-04T00:00:00	100	100
-BUFFER	4. item subassembly @ factory	2026-03-04T00:00:00	-100	0
-BUFFER	5. component @ factory	2026-01-08T00:00:00	100	100
-BUFFER	5. component @ factory	2026-01-08T00:00:00	-100	0
-BUFFER	5. item @ factory	2026-01-14T00:00:00	100	100
-BUFFER	5. item @ factory	2026-01-14T00:00:00	-20	80
-BUFFER	5. item subassembly @ factory	2026-01-11T00:00:00	100	100
-BUFFER	5. item subassembly @ factory	2026-01-11T00:00:00	-100	0
-BUFFER	6. component @ factory	2026-03-01T00:00:00	30	30
-BUFFER	6. component @ factory	2026-03-01T00:00:00	-20	10
-BUFFER	6. component @ factory	2026-03-04T00:00:00	90	100
-BUFFER	6. component @ factory	2026-03-04T00:00:00	-100	0
-BUFFER	6. item @ factory	2026-03-10T00:00:00	100	100
-BUFFER	6. item @ factory	2026-03-10T00:00:00	20	120
-BUFFER	6. item @ factory	2026-03-10T00:00:00	-120	0
-BUFFER	6. item subassembly @ factory	2026-03-04T00:00:00	20	20
-BUFFER	6. item subassembly @ factory	2026-03-07T00:00:00	100	120
-BUFFER	6. item subassembly @ factory	2026-03-07T00:00:00	-20	100
-BUFFER	6. item subassembly @ factory	2026-03-07T00:00:00	-100	0
-DEMAND	1. sales order	2026-02-01T00:00:00	20
-DEMAND	10. sales order	2026-01-08T00:00:00	20
-DEMAND	2. sales order	2026-01-08T00:00:00	20
-DEMAND	3. sales order	2026-02-01T00:00:00	20
-DEMAND	4. sales order	2026-03-07T00:00:00	20
-DEMAND	5. sales order	2026-01-14T00:00:00	20
-DEMAND	6. sales order	2026-03-10T00:00:00	120
-DEMAND	7. project X	2026-02-01T00:00:00	100
-DEMAND	8. project X	2026-01-30T00:00:00	100
-DEMAND	9. project X	2026-08-18T00:00:00	100
-RESOURCE	4. Resource D	2026-03-01T00:00:00	1	1
-RESOURCE	4. Resource D	2026-03-04T00:00:00	-1	0
-RESOURCE	6. Resource	2026-03-01T00:00:00	1	1
-RESOURCE	6. Resource	2026-03-04T00:00:00	1	2
-RESOURCE	6. Resource	2026-03-04T00:00:00	-1	1
-RESOURCE	6. Resource	2026-03-07T00:00:00	-1	0
-OPERATION	3. Make item	2026-01-29T00:00:00	2026-02-01T00:00:00	100	approved
-OPERATION	3. Make item subassembly	2026-01-26T00:00:00	2026-01-29T00:00:00	100	approved
-OPERATION	4. Make item	2026-03-04T00:00:00	2026-03-07T00:00:00	100	approved
-OPERATION	4. Make item subassembly	2026-03-01T00:00:00	2026-03-04T00:00:00	100	approved
-OPERATION	5. Make item	2026-01-11T00:00:00	2026-01-14T00:00:00	100	approved
-OPERATION	5. Make item subassembly	2026-01-08T00:00:00	2026-01-11T00:00:00	100	approved
-OPERATION	6. Make item	2026-03-07T00:00:00	2026-03-10T00:00:00	100	approved
-OPERATION	6. Make item	2026-03-07T00:00:00	2026-03-10T00:00:00	20
-OPERATION	6. Make item subassembly	2026-03-01T00:00:00	2026-03-04T00:00:00	20
-OPERATION	6. Make item subassembly	2026-03-04T00:00:00	2026-03-07T00:00:00	100	approved
-OPERATION	7. project X	2026-01-22T00:00:00	2026-02-01T00:00:00	100
-OPERATION	7. task X1	2026-01-17T00:00:00	2026-01-22T00:00:00	80
-OPERATION	7. task X1	2026-01-17T00:00:00	2026-01-22T00:00:00	20	approved
-OPERATION	7. task X2 step 1	2026-07-21T00:00:00	2026-07-26T00:00:00	100	approved
-OPERATION	7. task X2 step 2	2026-01-08T00:00:00	2026-01-15T00:00:00	100	approved
-OPERATION	7. task X2 step 3	2026-01-15T00:00:00	2026-01-22T00:00:00	100
-OPERATION	8. project X	2026-01-20T00:00:00	2026-01-30T00:00:00	100
-OPERATION	8. task X1	2026-01-15T00:00:00	2026-01-20T00:00:00	100
-OPERATION	8. task X2 step 1	2026-01-01T00:00:00	2026-01-06T00:00:00	100
-OPERATION	8. task X2 step 2	2026-01-06T00:00:00	2026-01-13T00:00:00	100	approved
-OPERATION	8. task X2 step 3	2026-01-13T00:00:00	2026-01-20T00:00:00	100
-OPERATION	9. project X	2026-08-08T00:00:00	2026-08-18T00:00:00	100
-OPERATION	9. task X1	2026-08-03T00:00:00	2026-08-08T00:00:00	100	approved
-OPERATION	9. task X2 step 1	2026-07-20T00:00:00	2026-07-25T00:00:00	10
-OPERATION	9. task X2 step 2	2026-07-25T00:00:00	2026-08-01T00:00:00	90	confirmed
-OPERATION	9. task X2 step 2	2026-07-25T00:00:00	2026-08-01T00:00:00	10
-OPERATION	9. task X2 step 3	2026-08-01T00:00:00	2026-08-08T00:00:00	100
-OPERATION	Purchase 1. item @ factory from 1. Supplier	2026-01-25T00:00:00	2026-02-01T00:00:00	100	approved
-OPERATION	Purchase 10. item @ factory from 10. Supplier	2026-01-01T00:00:00	2026-01-08T00:00:00	8
-OPERATION	Purchase 10. item @ factory from 10. Supplier	2026-01-01T00:00:00	2026-01-08T00:00:00	5	approved
-OPERATION	Purchase 10. item @ factory from 10. Supplier	2026-01-01T00:00:00	2026-01-08T00:00:00	4	approved
-OPERATION	Purchase 10. item @ factory from 10. Supplier	2026-01-01T00:00:00	2026-01-08T00:00:00	3	approved
-OPERATION	Purchase 2. item @ factory from 2. Supplier	2026-01-01T00:00:00	2026-01-08T00:00:00	100	approved
-OPERATION	Purchase 3. component @ factory from 3. Supplier	2026-01-19T00:00:00	2026-01-26T00:00:00	100	approved
-OPERATION	Purchase 4. component @ factory from 4. Supplier	2026-02-22T00:00:00	2026-03-01T00:00:00	100	approved
-OPERATION	Purchase 5. component @ factory from 5. Supplier	2026-01-01T00:00:00	2026-01-08T00:00:00	100	approved
-OPERATION	Purchase 6. component @ factory from 6. Supplier	2026-02-22T00:00:00	2026-03-01T00:00:00	30	approved
-OPERATION	Purchase 6. component @ factory from 6. Supplier	2026-02-25T00:00:00	2026-03-04T00:00:00	90
-PROBLEM	precedence	Operation '7. task X2 step 2' starts before preceding operation ends	2026-01-15T00:00:00 / 2026-01-15T00:00:00
-PROBLEM	late	20 units of demand '10. sales order' planned up to 7.0 days after its due date	2026-01-01T00:00:00 / 2026-01-08T00:00:00
-PROBLEM	late	20 units of demand '2. sales order' planned up to 7.0 days after its due date	2026-01-01T00:00:00 / 2026-01-08T00:00:00
-PROBLEM	late	20 units of demand '4. sales order' planned up to 65.0 days after its due date	2026-01-01T00:00:00 / 2026-03-07T00:00:00
-PROBLEM	late	20 units of demand '5. sales order' planned up to 13.0 days after its due date	2026-01-01T00:00:00 / 2026-01-14T00:00:00
-PROBLEM	late	120 units of demand '6. sales order' planned up to 68.0 days after its due date	2026-01-01T00:00:00 / 2026-03-10T00:00:00
-PROBLEM	late	100 units of demand '8. project X' planned up to 29.0 days after its due date	2026-01-01T00:00:00 / 2026-01-30T00:00:00
-PROBLEM	late	100 units of demand '9. project X' planned up to 229.0 days after its due date	2026-01-01T00:00:00 / 2026-08-18T00:00:00
-DEMAND CONSTRAINT	10. sales order	Operation 'Purchase 10. item @ factory from 10. Supplier' planned in the past	2025-12-25T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	2. sales order	Operation 'Purchase 2. item @ factory from 2. Supplier' planned in the past	2025-12-25T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	4. sales order	Operation '4. Make item' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	4. sales order	Operation '4. Make item subassembly' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	4. sales order	Resource '4. Resource' has capacity shortage of 1	2026-01-01T00:00:00 / 2026-01-04T00:00:00
-DEMAND CONSTRAINT	5. sales order	Operation '5. Make item' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	5. sales order	Operation '5. Make item subassembly' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	5. sales order	Operation 'Purchase 5. component @ factory from 5. Supplier' planned in the past	2025-12-25T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	6. sales order	Operation '6. Make item' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	6. sales order	Operation '6. Make item subassembly' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	6. sales order	Resource '6. Resource' has capacity shortage of 1	2026-01-01T00:00:00 / 2026-01-04T00:00:00
-DEMAND CONSTRAINT	8. project X	Operation '8. project X' planned in the past	2025-12-22T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	8. project X	Operation '8. task X1' planned in the past	2025-12-27T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	8. project X	Operation '8. task X2 step 3' planned in the past	2025-12-30T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	8. project X	Operation '8. task X2 step 2' planned in the past	2025-12-25T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	8. project X	Operation '8. task X2 step 1' planned in the past	2025-12-27T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	9. project X	Operation '9. project X' planned in the past	2025-12-22T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	9. project X	Operation '9. task X1' planned in the past	2025-12-27T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	9. project X	Operation '9. task X2 step 3' planned in the past	2025-12-30T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	9. project X	Operation  '9. task X2 step 2' awaits confirmed supply	2026-08-01T00:00:00 / 2026-08-08T00:00:00
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<current>2026-01-01T00:00:00</current>
+	<fcst_current>2026-01-01T00:00:00</fcst_current>
+	<locations>
+		<location>
+			<name>factory</name>
+		</location>
+	</locations>
+	<suppliers>
+		<supplier>
+			<name>1. Supplier</name>
+		</supplier>
+		<supplier>
+			<name>10. Supplier</name>
+		</supplier>
+		<supplier>
+			<name>2. Supplier</name>
+		</supplier>
+		<supplier>
+			<name>3. Supplier</name>
+		</supplier>
+		<supplier>
+			<name>4. Supplier</name>
+		</supplier>
+		<supplier>
+			<name>5. Supplier</name>
+		</supplier>
+		<supplier>
+			<name>6. Supplier</name>
+		</supplier>
+	</suppliers>
+	<calendars>
+		<calendar>
+			<name>4. Capacity A</name>
+			<buckets>
+				<bucket>
+					<start>2026-03-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar>
+			<name>4. Capacity B</name>
+			<buckets>
+				<bucket>
+					<start>2026-03-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar>
+			<name>4. Capacity C</name>
+			<buckets>
+				<bucket>
+					<start>2026-03-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar>
+			<name>4. Capacity D</name>
+			<buckets>
+				<bucket>
+					<start>2026-03-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar>
+			<name>Capacity</name>
+			<buckets>
+				<bucket>
+					<start>2026-03-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+	</calendars>
+	<resources>
+		<resource>
+			<name>4. Resource</name>
+		</resource>
+		<resource>
+			<name>4. Resource A</name>
+			<owner>
+				<name>4. Resource</name>
+			</owner>
+			<maximum_calendar>
+				<name>4. Capacity A</name>
+			</maximum_calendar>
+			<location>
+				<name>factory</name>
+			</location>
+		</resource>
+		<resource>
+			<name>4. Resource B</name>
+			<owner>
+				<name>4. Resource</name>
+			</owner>
+			<maximum_calendar>
+				<name>4. Capacity B</name>
+			</maximum_calendar>
+			<location>
+				<name>factory</name>
+			</location>
+		</resource>
+		<resource>
+			<name>4. Resource C</name>
+			<owner>
+				<name>4. Resource</name>
+			</owner>
+			<maximum_calendar>
+				<name>4. Capacity C</name>
+			</maximum_calendar>
+			<location>
+				<name>factory</name>
+			</location>
+		</resource>
+		<resource>
+			<name>4. Resource D</name>
+			<owner>
+				<name>4. Resource</name>
+			</owner>
+			<maximum_calendar>
+				<name>4. Capacity D</name>
+			</maximum_calendar>
+			<location>
+				<name>factory</name>
+			</location>
+		</resource>
+		<resource>
+			<name>6. Resource</name>
+			<maximum_calendar>
+				<name>Capacity</name>
+			</maximum_calendar>
+		</resource>
+	</resources>
+	<items>
+		<item>
+			<name>1. item</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>1. Supplier</name>
+					</supplier>
+					<leadtime>P7D</leadtime>
+					<priority>2</priority>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>10. item</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>10. Supplier</name>
+					</supplier>
+					<leadtime>P7D</leadtime>
+					<priority>2</priority>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>2. item</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>2. Supplier</name>
+					</supplier>
+					<leadtime>P7D</leadtime>
+					<priority>2</priority>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>3. component</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>3. Supplier</name>
+					</supplier>
+					<leadtime>P7D</leadtime>
+					<priority>2</priority>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>3. item</name>
+		</item>
+		<item>
+			<name>3. item subassembly</name>
+		</item>
+		<item>
+			<name>4. component</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>4. Supplier</name>
+					</supplier>
+					<leadtime>P7D</leadtime>
+					<priority>2</priority>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>4. item</name>
+		</item>
+		<item>
+			<name>4. item subassembly</name>
+		</item>
+		<item>
+			<name>5. component</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>5. Supplier</name>
+					</supplier>
+					<leadtime>P7D</leadtime>
+					<priority>2</priority>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>5. item</name>
+		</item>
+		<item>
+			<name>5. item subassembly</name>
+		</item>
+		<item>
+			<name>6. component</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>6. Supplier</name>
+					</supplier>
+					<leadtime>P7D</leadtime>
+					<priority>2</priority>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>6. item</name>
+		</item>
+		<item>
+			<name>6. item subassembly</name>
+		</item>
+		<item>
+			<name>7. item</name>
+		</item>
+		<item>
+			<name>8. item</name>
+		</item>
+		<item>
+			<name>9. item</name>
+		</item>
+	</items>
+	<buffers>
+		<buffer>
+			<name>1. item @ factory</name>
+			<item>
+				<name>1. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>10. item @ factory</name>
+			<item>
+				<name>10. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>2. item @ factory</name>
+			<item>
+				<name>2. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>3. component @ factory</name>
+			<item>
+				<name>3. component</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>3. item @ factory</name>
+			<producing>
+				<name>3. Make item</name>
+			</producing>
+			<item>
+				<name>3. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>3. item subassembly @ factory</name>
+			<producing>
+				<name>3. Make item subassembly</name>
+			</producing>
+			<item>
+				<name>3. item subassembly</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>4. component @ factory</name>
+			<item>
+				<name>4. component</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>4. item @ factory</name>
+			<producing>
+				<name>4. Make item</name>
+			</producing>
+			<item>
+				<name>4. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>4. item subassembly @ factory</name>
+			<producing>
+				<name>4. Make item subassembly</name>
+			</producing>
+			<item>
+				<name>4. item subassembly</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>5. component @ factory</name>
+			<item>
+				<name>5. component</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>5. item @ factory</name>
+			<producing>
+				<name>5. Make item</name>
+			</producing>
+			<item>
+				<name>5. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>5. item subassembly @ factory</name>
+			<producing>
+				<name>5. Make item subassembly</name>
+			</producing>
+			<item>
+				<name>5. item subassembly</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>6. component @ factory</name>
+			<item>
+				<name>6. component</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>6. item @ factory</name>
+			<producing>
+				<name>6. Make item</name>
+			</producing>
+			<item>
+				<name>6. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>6. item subassembly @ factory</name>
+			<producing>
+				<name>6. Make item subassembly</name>
+			</producing>
+			<item>
+				<name>6. item subassembly</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+	</buffers>
+	<operations>
+		<operation>
+			<name>3. Make item</name>
+			<item>
+				<name>3. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>3. item subassembly</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>3. item</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P3D</duration>
+		</operation>
+		<operation>
+			<name>3. Make item subassembly</name>
+			<item>
+				<name>3. item subassembly</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>3. component</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>3. item subassembly</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P3D</duration>
+		</operation>
+		<operation>
+			<name>4. Make item</name>
+			<item>
+				<name>4. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>4. item subassembly</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>4. item</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P3D</duration>
+		</operation>
+		<operation>
+			<name>4. Make item subassembly</name>
+			<item>
+				<name>4. item subassembly</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>4. Resource</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>4. component</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>4. item subassembly</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P3D</duration>
+		</operation>
+		<operation>
+			<name>5. Make item</name>
+			<item>
+				<name>5. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>5. item subassembly</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>5. item</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P3D</duration>
+		</operation>
+		<operation>
+			<name>5. Make item subassembly</name>
+			<item>
+				<name>5. item subassembly</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>5. component</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>5. item subassembly</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P3D</duration>
+		</operation>
+		<operation>
+			<name>6. Make item</name>
+			<item>
+				<name>6. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>6. item subassembly</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>6. item</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P3D</duration>
+		</operation>
+		<operation>
+			<name>6. Make item subassembly</name>
+			<item>
+				<name>6. item subassembly</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>6. Resource</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>6. component</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>6. item subassembly</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P3D</duration>
+		</operation>
+		<operation>
+			<name>7. project X</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>7. task X1</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>7. task X2 step 3</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P10D</duration>
+		</operation>
+		<operation>
+			<name>7. task X1</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>7. task X2 step 1</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>7. task X2 step 2</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>7. task X2 step 1</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>7. task X2 step 3</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>7. task X2 step 2</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>8. project X</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>8. task X1</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>8. task X2 step 3</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P10D</duration>
+		</operation>
+		<operation>
+			<name>8. task X1</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>8. task X2 step 1</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>8. task X2 step 2</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>8. task X2 step 1</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>8. task X2 step 3</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>8. task X2 step 2</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>9. project X</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>9. task X1</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>9. task X2 step 3</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P10D</duration>
+		</operation>
+		<operation>
+			<name>9. task X1</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>9. task X2 step 1</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>9. task X2 step 2</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>9. task X2 step 1</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>9. task X2 step 3</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>9. task X2 step 2</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P7D</duration>
+		</operation>
+	</operations>
+	<demands>
+		<demand>
+			<name>1. sales order</name>
+			<quantity>20</quantity>
+			<item>
+				<name>1. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2026-02-01T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>20</minshipment>
+		</demand>
+		<demand>
+			<name>10. sales order</name>
+			<quantity>20</quantity>
+			<item>
+				<name>10. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2026-01-01T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>20</minshipment>
+		</demand>
+		<demand>
+			<name>2. sales order</name>
+			<quantity>20</quantity>
+			<item>
+				<name>2. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2026-01-01T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>20</minshipment>
+		</demand>
+		<demand>
+			<name>3. sales order</name>
+			<quantity>20</quantity>
+			<item>
+				<name>3. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2026-02-01T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>20</minshipment>
+		</demand>
+		<demand>
+			<name>4. sales order</name>
+			<quantity>20</quantity>
+			<item>
+				<name>4. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2026-01-01T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>20</minshipment>
+		</demand>
+		<demand>
+			<name>5. sales order</name>
+			<quantity>20</quantity>
+			<item>
+				<name>5. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2026-01-01T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>20</minshipment>
+		</demand>
+		<demand>
+			<name>6. sales order</name>
+			<quantity>120</quantity>
+			<item>
+				<name>6. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2026-01-01T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>120</minshipment>
+		</demand>
+		<demand>
+			<name>7. project X</name>
+			<quantity>100</quantity>
+			<item>
+				<name>7. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<operation>
+				<name>7. project X</name>
+			</operation>
+			<due>2026-02-01T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>100</minshipment>
+		</demand>
+		<demand>
+			<name>8. project X</name>
+			<quantity>100</quantity>
+			<item>
+				<name>8. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<operation>
+				<name>8. project X</name>
+			</operation>
+			<due>2026-01-01T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>100</minshipment>
+		</demand>
+		<demand>
+			<name>9. project X</name>
+			<quantity>100</quantity>
+			<item>
+				<name>9. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<operation>
+				<name>9. project X</name>
+			</operation>
+			<due>2026-01-01T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>100</minshipment>
+		</demand>
+	</demands>
+	<operationplans>
+		<operationplan>
+			<reference>MO #3 sub</reference>
+			<operation>
+				<name>3. Make item</name>
+			</operation>
+			<start>2026-01-29T00:00:00</start>
+			<end>2026-02-01T00:00:00</end>
+			<quantity>100</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+		</operationplan>
+		<operationplan>
+			<reference>MO #3</reference>
+			<operation>
+				<name>3. Make item subassembly</name>
+			</operation>
+			<start>2026-01-26T00:00:00</start>
+			<end>2026-01-29T00:00:00</end>
+			<quantity>100</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+		</operationplan>
+		<operationplan>
+			<reference>MO #4 sub</reference>
+			<operation>
+				<name>4. Make item</name>
+			</operation>
+			<start>2025-12-29T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>100</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+		</operationplan>
+		<operationplan>
+			<reference>MO #4</reference>
+			<operation>
+				<name>4. Make item subassembly</name>
+			</operation>
+			<start>2025-12-26T00:00:00</start>
+			<end>2025-12-29T00:00:00</end>
+			<quantity>100</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+		</operationplan>
+		<operationplan>
+			<reference>MO #5 sub</reference>
+			<operation>
+				<name>5. Make item</name>
+			</operation>
+			<start>2025-12-29T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>100</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+		</operationplan>
+		<operationplan>
+			<reference>MO #5</reference>
+			<operation>
+				<name>5. Make item subassembly</name>
+			</operation>
+			<start>2025-12-26T00:00:00</start>
+			<end>2025-12-29T00:00:00</end>
+			<quantity>100</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+		</operationplan>
+		<operationplan>
+			<reference>MO #6 sub</reference>
+			<operation>
+				<name>6. Make item</name>
+			</operation>
+			<start>2025-12-29T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>100</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+		</operationplan>
+		<operationplan>
+			<reference>10</reference>
+			<operation>
+				<name>6. Make item</name>
+			</operation>
+			<start>2025-12-29T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>20</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>MO #6</reference>
+			<operation>
+				<name>6. Make item subassembly</name>
+			</operation>
+			<start>2025-12-26T00:00:00</start>
+			<end>2025-12-29T00:00:00</end>
+			<quantity>100</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>11</reference>
+			<operation>
+				<name>6. Make item subassembly</name>
+			</operation>
+			<start>2025-12-26T00:00:00</start>
+			<end>2025-12-29T00:00:00</end>
+			<quantity>20</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>12</reference>
+			<operation>
+				<name>7. project X</name>
+			</operation>
+			<demand>
+				<name>7. project X</name>
+			</demand>
+			<start>2026-01-22T00:00:00</start>
+			<end>2026-02-01T00:00:00</end>
+			<quantity>100</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>13</reference>
+			<operation>
+				<name>7. task X1</name>
+			</operation>
+			<start>2026-01-17T00:00:00</start>
+			<end>2026-01-22T00:00:00</end>
+			<quantity>80</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>7. task X1</reference>
+			<operation>
+				<name>7. task X1</name>
+			</operation>
+			<start>2026-01-17T00:00:00</start>
+			<end>2026-01-22T00:00:00</end>
+			<quantity>20</quantity>
+			<status>approved</status>
+		</operationplan>
+		<operationplan>
+			<reference>7. task X2 step 1</reference>
+			<operation>
+				<name>7. task X2 step 1</name>
+			</operation>
+			<start>2026-01-03T00:00:00</start>
+			<end>2026-01-08T00:00:00</end>
+			<quantity>100</quantity>
+			<status>approved</status>
+		</operationplan>
+		<operationplan>
+			<reference>7. task X2 step 2</reference>
+			<operation>
+				<name>7. task X2 step 2</name>
+			</operation>
+			<start>2026-01-08T00:00:00</start>
+			<end>2026-01-15T00:00:00</end>
+			<quantity>100</quantity>
+			<status>approved</status>
+		</operationplan>
+		<operationplan>
+			<reference>14</reference>
+			<operation>
+				<name>7. task X2 step 3</name>
+			</operation>
+			<start>2026-01-15T00:00:00</start>
+			<end>2026-01-22T00:00:00</end>
+			<quantity>100</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>15</reference>
+			<operation>
+				<name>8. project X</name>
+			</operation>
+			<demand>
+				<name>8. project X</name>
+			</demand>
+			<start>2025-12-22T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>100</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>16</reference>
+			<operation>
+				<name>8. task X1</name>
+			</operation>
+			<start>2025-12-17T00:00:00</start>
+			<end>2025-12-22T00:00:00</end>
+			<quantity>100</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>8. task X2 step 2</reference>
+			<operation>
+				<name>8. task X2 step 2</name>
+			</operation>
+			<start>2026-01-06T00:00:00</start>
+			<end>2026-01-13T00:00:00</end>
+			<quantity>100</quantity>
+			<status>approved</status>
+		</operationplan>
+		<operationplan>
+			<reference>17</reference>
+			<operation>
+				<name>8. task X2 step 3</name>
+			</operation>
+			<start>2025-12-15T00:00:00</start>
+			<end>2025-12-22T00:00:00</end>
+			<quantity>100</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>18</reference>
+			<operation>
+				<name>9. project X</name>
+			</operation>
+			<demand>
+				<name>9. project X</name>
+			</demand>
+			<start>2025-12-22T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>100</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>9. task X1</reference>
+			<operation>
+				<name>9. task X1</name>
+			</operation>
+			<start>2026-08-03T00:00:00</start>
+			<end>2026-08-08T00:00:00</end>
+			<quantity>100</quantity>
+			<status>approved</status>
+		</operationplan>
+		<operationplan>
+			<reference>19</reference>
+			<operation>
+				<name>9. task X2 step 1</name>
+			</operation>
+			<start>2025-12-03T00:00:00</start>
+			<end>2025-12-08T00:00:00</end>
+			<quantity>10</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>20</reference>
+			<operation>
+				<name>9. task X2 step 2</name>
+			</operation>
+			<start>2025-12-08T00:00:00</start>
+			<end>2025-12-15T00:00:00</end>
+			<quantity>10</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>9. task X2 step 2</reference>
+			<operation>
+				<name>9. task X2 step 2</name>
+			</operation>
+			<start>2026-07-25T00:00:00</start>
+			<end>2026-08-01T00:00:00</end>
+			<quantity>90</quantity>
+			<status>confirmed</status>
+		</operationplan>
+		<operationplan>
+			<reference>21</reference>
+			<operation>
+				<name>9. task X2 step 3</name>
+			</operation>
+			<start>2025-12-15T00:00:00</start>
+			<end>2025-12-22T00:00:00</end>
+			<quantity>100</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>PO #1</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase 1. item @ factory from 1. Supplier</name>
+			</operation>
+			<start>2026-01-25T00:00:00</start>
+			<end>2026-02-01T00:00:00</end>
+			<quantity>100</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>1. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>1. Supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>22</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase 10. item @ factory from 10. Supplier</name>
+			</operation>
+			<start>2025-12-25T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>8</quantity>
+			<feasible>false</feasible>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>10. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>10. Supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>PO #10-1</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase 10. item @ factory from 10. Supplier</name>
+			</operation>
+			<start>2025-12-25T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>5</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>10. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>10. Supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>PO #10-2</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase 10. item @ factory from 10. Supplier</name>
+			</operation>
+			<start>2025-12-25T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>4</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>10. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>10. Supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>PO #10-3</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase 10. item @ factory from 10. Supplier</name>
+			</operation>
+			<start>2025-12-25T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>3</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>10. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>10. Supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>PO #2</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase 2. item @ factory from 2. Supplier</name>
+			</operation>
+			<start>2025-12-25T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>100</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>2. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>2. Supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>PO #3</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase 3. component @ factory from 3. Supplier</name>
+			</operation>
+			<start>2026-01-19T00:00:00</start>
+			<end>2026-01-26T00:00:00</end>
+			<quantity>100</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>3. component</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>3. Supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>PO #4</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase 4. component @ factory from 4. Supplier</name>
+			</operation>
+			<start>2025-12-19T00:00:00</start>
+			<end>2025-12-26T00:00:00</end>
+			<quantity>100</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>4. component</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>4. Supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>PO #5</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase 5. component @ factory from 5. Supplier</name>
+			</operation>
+			<start>2025-12-19T00:00:00</start>
+			<end>2025-12-26T00:00:00</end>
+			<quantity>100</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>5. component</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>5. Supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>23</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase 6. component @ factory from 6. Supplier</name>
+			</operation>
+			<start>2025-12-19T00:00:00</start>
+			<end>2025-12-26T00:00:00</end>
+			<quantity>90</quantity>
+			<feasible>false</feasible>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>6. component</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>6. Supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>PO #6</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase 6. component @ factory from 6. Supplier</name>
+			</operation>
+			<start>2025-12-19T00:00:00</start>
+			<end>2025-12-26T00:00:00</end>
+			<quantity>30</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>6. component</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>6. Supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>24</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship 1. item @ factory</name>
+				<buffer>
+					<name>1. item @ factory</name>
+					<item>
+						<name>1. item</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>1. sales order</name>
+			</demand>
+			<start>2026-02-01T00:00:00</start>
+			<end>2026-02-01T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>1. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>25</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship 10. item @ factory</name>
+				<buffer>
+					<name>10. item @ factory</name>
+					<item>
+						<name>10. item</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>10. sales order</name>
+			</demand>
+			<start>2026-01-01T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>10. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>26</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship 2. item @ factory</name>
+				<buffer>
+					<name>2. item @ factory</name>
+					<item>
+						<name>2. item</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>2. sales order</name>
+			</demand>
+			<start>2026-01-01T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>2. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>27</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship 3. item @ factory</name>
+				<buffer>
+					<name>3. item @ factory</name>
+					<item>
+						<name>3. item</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>3. sales order</name>
+			</demand>
+			<start>2026-02-01T00:00:00</start>
+			<end>2026-02-01T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>3. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>28</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship 4. item @ factory</name>
+				<buffer>
+					<name>4. item @ factory</name>
+					<item>
+						<name>4. item</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>4. sales order</name>
+			</demand>
+			<start>2026-01-01T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>4. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>29</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship 5. item @ factory</name>
+				<buffer>
+					<name>5. item @ factory</name>
+					<item>
+						<name>5. item</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>5. sales order</name>
+			</demand>
+			<start>2026-01-01T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>5. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>30</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship 6. item @ factory</name>
+				<buffer>
+					<name>6. item @ factory</name>
+					<item>
+						<name>6. item</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>6. sales order</name>
+			</demand>
+			<start>2026-01-01T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>120</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>6. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+	</operationplans>
+</plan>

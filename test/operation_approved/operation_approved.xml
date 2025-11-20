@@ -609,6 +609,8 @@ print("CREATING FULLY UNCONSTRAINED PLAN - 1")
 frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
 frepple.saveplan("output.3.xml")
 
+frepple.saveXMLfile("output.4.xml")
+
 #
 # OPTION 2: Moving in and re-evaluate the resource assignments
 #
@@ -619,15 +621,15 @@ for opplan, end in remember:
 print("CREATING CONSTRAINED PLAN - 2")
 # frepple.solver_propagateStatus(loglevel=99).solve()
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=99).solve()
-frepple.saveplan("output.4.xml")
+frepple.saveplan("output.5.xml")
 
 print("CREATING UNCONSTRAINED PLAN - 2")
 frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
-frepple.saveplan("output.5.xml")
+frepple.saveplan("output.6.xml")
 
 print("CREATING FULLY UNCONSTRAINED PLAN - 2")
 frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
-frepple.saveplan("output.6.xml")
+frepple.saveplan("output.7.xml")
 
 #
 # OPTION 0: Do not move early
@@ -639,14 +641,14 @@ for opplan, end in remember:
 print("CREATING CONSTRAINED PLAN - 0")
 # frepple.solver_propagateStatus(loglevel=99).solve()
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=99).solve()
-frepple.saveplan("output.7.xml")
+frepple.saveplan("output.8.xml")
 
 print("CREATING UNCONSTRAINED PLAN - 0")
 frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
-frepple.saveplan("output.8.xml")
+frepple.saveplan("output.9.xml")
 
 print("CREATING FULLY UNCONSTRAINED PLAN - 0")
 frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
-frepple.saveplan("output.9.xml")
+frepple.saveplan("output.10.xml")
 ?>
 </plan>

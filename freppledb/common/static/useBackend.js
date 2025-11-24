@@ -1769,8 +1769,8 @@ const {
   mergeConfig: fr
 } = w, M = w.create({
   withCredentials: !0,
-  timeout: 5e3,
-  // Add a timeout of 5 seconds
+  timeout: 18e4,
+  // Add a timeout of 3 minutes
   headers: {
     "Content-Type": "application/json"
   }

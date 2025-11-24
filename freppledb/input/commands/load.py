@@ -2455,8 +2455,8 @@ class loadOperationPlans(LoadTask):
                         order by resource_id
                     ),
                     coalesce(dmd.name, null), remark,
-                    plan->>'info' as info,
-                    coalesce(forecast.name, null), operationplan.due
+                    plan->>'info' as info
+                    {", coalesce(forecast.name, null), operationplan.due" if with_fcst else ""}
                     {attrsql}
                     FROM operationplan
                     INNER JOIN (select reference

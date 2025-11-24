@@ -348,11 +348,11 @@ class MultiDBMiddleware:
             if (
                 not request.scenario
                 and not request.user.is_anonymous
-                and (
+                and not (
                     # Some urls are always accepted in the default scenario, even if the user isn't marked active there
                     request.database == DEFAULT_DB_ALIAS
                     and request.path
-                    not in (
+                    in (
                         "/data/login/",
                         "/accounts/logout/",
                         "/data/logout/",

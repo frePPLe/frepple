@@ -2266,91 +2266,53 @@ class loadOperationPlans(LoadTask):
                     attrsql = ""
 
                 starttime = time()
-                if with_fcst:
-                    cursor.execute(
-                        """
-                        SELECT
-                        operationplan.operation_id, operationplan.reference, operationplan.quantity,
-                        case when operationplan.plan ? 'setupend'
-                           then (operationplan.plan->>'setupend')::timestamp
-                           else operationplan.startdate
-                           end, operationplan.enddate, operationplan.status, operationplan.source,
-                        operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
-                        operationplan.item_id, operationplan.location_id, operationplan.batch, operationplan.quantity_completed,
-                        array(
-                            select resource_id
-                            from operationplanresource
-                            where operationplan_id = operationplan.reference
-                            order by resource_id
-                        ),
-                        case when operationplan.plan ? 'setupoverride'
-                          then (operationplan.plan->>'setupoverride')::integer
-                        end,
-                        coalesce(dmd.name, null),
-                        remark,
-                        coalesce(forecast.name, null), operationplan.due
-                        %s
-                        FROM operationplan
-                        LEFT OUTER JOIN (select name from demand
-                        where demand.status is null or demand.status in ('open', 'quote')
-                        ) dmd
-                        on dmd.name = operationplan.demand_id
-                        LEFT OUTER JOIN (select name from forecast) forecast
-                        on forecast.name = operationplan.forecast
-                        WHERE operationplan.owner_id IS NULL
-                        and operationplan.quantity >= 0 and operationplan.status <> 'closed'
-                        %s%s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
-                        and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
-                        and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
-                        ORDER BY operationplan.reference ASC
-                        """
-                        % (attrsql, filter_and, confirmed_filter)
-                    )
-                else:
-                    cursor.execute(
-                        """
-                        SELECT
-                        operationplan.operation_id, operationplan.reference, operationplan.quantity,
-                        case when operationplan.plan ? 'setupend'
-                           then (operationplan.plan->>'setupend')::timestamp
-                           else operationplan.startdate
-                           end, operationplan.enddate, operationplan.status, operationplan.source,
-                        operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
-                        operationplan.item_id, operationplan.location_id, operationplan.batch, operationplan.quantity_completed,
-                        array(
-                            select resource_id
-                            from operationplanresource
-                            where operationplan_id = operationplan.reference
-                            order by resource_id
-                        ),
-                        case when operationplan.plan ? 'setupoverride'
-                          then (operationplan.plan->>'setupoverride')::integer
-                        end,
-                        coalesce(dmd.name, null),
-                        remark
-                        %s
-                        FROM operationplan
-                        LEFT OUTER JOIN (select name from demand
-                        where demand.status is null or demand.status in ('open', 'quote')
-                        ) dmd
-                        on dmd.name = operationplan.demand_id
-                        WHERE operationplan.owner_id IS NULL
-                        and operationplan.quantity >= 0 and operationplan.status <> 'closed'
-                        %s%s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
-                        and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
-                        and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
-                        ORDER BY operationplan.reference ASC
-                        """
-                        % (attrsql, filter_and, confirmed_filter)
-                    )
+                cursor.execute(
+                    f"""
+                    SELECT
+                    operationplan.operation_id, operationplan.reference, operationplan.quantity,
+                    case when operationplan.plan ? 'setupend'
+                        then (operationplan.plan->>'setupend')::timestamp
+                        else operationplan.startdate
+                        end, operationplan.enddate, operationplan.status, operationplan.source,
+                    operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
+                    operationplan.item_id, operationplan.location_id, operationplan.batch, operationplan.quantity_completed,
+                    array(
+                        select resource_id
+                        from operationplanresource
+                        where operationplan_id = operationplan.reference
+                        order by resource_id
+                    ),
+                    case when operationplan.plan ? 'setupoverride'
+                        then (operationplan.plan->>'setupoverride')::integer
+                    end,
+                    coalesce(dmd.name, null),
+                    remark,
+                    plan->>'info' as info
+                    {", coalesce(forecast.name, null), operationplan.due" if with_fcst else ""}
+                    {attrsql}
+                    FROM operationplan
+                    LEFT OUTER JOIN (select name from demand
+                    where demand.status is null or demand.status in ('open', 'quote')
+                    ) dmd
+                    on dmd.name = operationplan.demand_id
+                    {"LEFT OUTER JOIN (select name from forecast) forecast "
+                        "on forecast.name = operationplan.forecast" if with_fcst else ""}
+                    WHERE operationplan.owner_id IS NULL
+                    and operationplan.quantity >= 0 and operationplan.status <> 'closed'
+                    {filter_and} {confirmed_filter} and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
+                    and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
+                    and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
+                    ORDER BY operationplan.reference ASC
+                    """
+                )
                 for i in cursor:
                     try:
                         if i[17]:
                             dmd = frepple.demand(name=i[17])
-                        elif with_fcst and i[19] and i[20]:
+                        elif with_fcst and i[20] and i[21]:
                             dmd = frepple.demand_forecastbucket(
-                                forecast=frepple.demand_forecast(name=i[19]),
-                                start=i[20],
+                                forecast=frepple.demand_forecast(name=i[20]),
+                                start=i[21],
                             )
                         else:
                             dmd = None
@@ -2369,6 +2331,7 @@ class loadOperationPlans(LoadTask):
                                 quantity_completed=i[14],
                                 resources=i[15],
                                 remark=i[18],
+                                info=i[19],
                             )
                             if opplan:
                                 if i[5] == "confirmed":
@@ -2399,6 +2362,7 @@ class loadOperationPlans(LoadTask):
                                 create=create_flag,
                                 batch=i[13],
                                 remark=i[18],
+                                info=i[19],
                             )
                             if opplan and i[5] == "confirmed":
                                 if not consume_capacity:
@@ -2419,6 +2383,7 @@ class loadOperationPlans(LoadTask):
                                 create=create_flag,
                                 batch=i[13],
                                 remark=i[18],
+                                info=i[19],
                             )
                             if opplan:
                                 if i[5] == "confirmed":
@@ -2446,6 +2411,7 @@ class loadOperationPlans(LoadTask):
                                 create=create_flag,
                                 batch=i[13],
                                 remark=i[18],
+                                info=i[19],
                             )
                             if opplan:
                                 if i[5] == "confirmed":
@@ -2462,7 +2428,7 @@ class loadOperationPlans(LoadTask):
                             continue
 
                         if opplan:
-                            idx = 21 if with_fcst else 19
+                            idx = 22 if with_fcst else 20
                             for a in getAttributes(OperationPlan):
                                 setattr(opplan, a[0], i[idx])
                                 idx += 1
@@ -2473,93 +2439,51 @@ class loadOperationPlans(LoadTask):
                         logger.error("**** %s ****" % e)
         with transaction.atomic(using=database):
             with connections[database].chunked_cursor() as cursor:
-                if with_fcst:
-                    cursor.execute(
-                        """
-                        SELECT
-                        operationplan.operation_id, operationplan.reference, operationplan.quantity,
-                        case when operationplan.plan ? 'setupend'
-                           then (operationplan.plan->>'setupend')::timestamp
-                           else operationplan.startdate
-                           end, operationplan.enddate, operationplan.status,
-                        operationplan.owner_id, operationplan.source, operationplan.batch,
-                        array(
-                            select resource_id
-                            from operationplanresource
-                            where operationplan_id = operationplan.reference
-                            order by resource_id
-                        ),
-                        coalesce(dmd.name, null), remark, coalesce(forecast.name, null), operationplan.due %s
-                        FROM operationplan
-                        INNER JOIN (select reference
-                        from operationplan %s
-                        ) opplan_parent
-                        on operationplan.owner_id = opplan_parent.reference
-                        LEFT OUTER JOIN (select name from demand
-                        where demand.status is null or demand.status in ('open', 'quote')
-                        ) dmd
-                        on dmd.name = operationplan.demand_id
-                        LEFT OUTER JOIN (select name from forecast) forecast
-                        on forecast.name = operationplan.forecast
-                        WHERE operationplan.quantity >= 0
-                        and (
-                          operationplan.status <> 'closed'
-                          or exists (
-                            select 1 from operationplan as parent_opplan
-                            where parent_opplan.reference = operationplan.owner_id
-                            and parent_opplan.status <> 'closed'
-                            )
+                cursor.execute(
+                    f"""
+                    SELECT
+                    operationplan.operation_id, operationplan.reference, operationplan.quantity,
+                    case when operationplan.plan ? 'setupend'
+                        then (operationplan.plan->>'setupend')::timestamp
+                        else operationplan.startdate
+                        end, operationplan.enddate, operationplan.status,
+                    operationplan.owner_id, operationplan.source, operationplan.batch,
+                    array(
+                        select resource_id
+                        from operationplanresource
+                        where operationplan_id = operationplan.reference
+                        order by resource_id
+                    ),
+                    coalesce(dmd.name, null), remark,
+                    plan->>'info' as info
+                    {", coalesce(forecast.name, null), operationplan.due" if with_fcst else ""}
+                    {attrsql}
+                    FROM operationplan
+                    INNER JOIN (select reference
+                    from operationplan {parent_filter}
+                    ) opplan_parent
+                    on operationplan.owner_id = opplan_parent.reference
+                    LEFT OUTER JOIN (select name from demand
+                    where demand.status is null or demand.status in ('open', 'quote')
+                    ) dmd
+                    on dmd.name = operationplan.demand_id
+                    {"LEFT OUTER JOIN (select name from forecast) forecast "
+                    "on forecast.name = operationplan.forecast" if with_fcst else ""}
+                    WHERE operationplan.quantity >= 0
+                    and (
+                        operationplan.status <> 'closed'
+                        or exists (
+                        select 1 from operationplan as parent_opplan
+                        where parent_opplan.reference = operationplan.owner_id
+                        and parent_opplan.status <> 'closed'
                         )
-                        %s and operationplan.type = 'MO'
-                        and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
-                        and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
-                        ORDER BY operationplan.reference ASC
-                        """
-                        % (attrsql, parent_filter, filter_and)
                     )
-                else:
-                    cursor.execute(
-                        """
-                        SELECT
-                        operationplan.operation_id, operationplan.reference, operationplan.quantity,
-                        case when operationplan.plan ? 'setupend'
-                           then (operationplan.plan->>'setupend')::timestamp
-                           else operationplan.startdate
-                           end, operationplan.enddate, operationplan.status,
-                        operationplan.owner_id, operationplan.source, operationplan.batch,
-                        array(
-                            select resource_id
-                            from operationplanresource
-                            where operationplan_id = operationplan.reference
-                            order by resource_id
-                        ),
-                        coalesce(dmd.name, null),
-                        remark %s
-                        FROM operationplan
-                        INNER JOIN (select reference
-                        from operationplan %s
-                        ) opplan_parent
-                        on operationplan.owner_id = opplan_parent.reference
-                        LEFT OUTER JOIN (select name from demand
-                        where demand.status is null or demand.status in ('open', 'quote')
-                        ) dmd
-                        on dmd.name = operationplan.demand_id
-                        WHERE operationplan.quantity >= 0
-                        and (
-                          operationplan.status <> 'closed'
-                          or exists (
-                            select 1 from operationplan as parent_opplan
-                            where parent_opplan.reference = operationplan.owner_id
-                            and parent_opplan.status <> 'closed'
-                            )
-                        )
-                        %s and operationplan.type = 'MO'
-                        and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
-                        and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
-                        ORDER BY operationplan.reference ASC
-                        """
-                        % (attrsql, parent_filter, filter_and)
-                    )
+                    {filter_and} and operationplan.type = 'MO'
+                    and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
+                    and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
+                    ORDER BY operationplan.reference ASC
+                    """
+                )
                 for i in cursor:
                     try:
                         cnt_mo += 1
@@ -2574,6 +2498,7 @@ class loadOperationPlans(LoadTask):
                             batch=i[8],
                             resources=i[9],
                             remark=i[11],
+                            info=i[12],
                         )
                         if opplan:
                             if i[5] == "confirmed":
@@ -2594,12 +2519,12 @@ class loadOperationPlans(LoadTask):
                                     )
                             if i[10]:
                                 opplan.demand = frepple.demand(name=i[10])
-                            elif with_fcst and i[12] and i[13]:
+                            elif with_fcst and i[13] and i[14]:
                                 opplan.demand = frepple.forecastbucket(
-                                    forecast=frepple.demand_forecast(name=i[12]),
-                                    start=i[13],
+                                    forecast=frepple.demand_forecast(name=i[13]),
+                                    start=i[14],
                                 )
-                            idx = 14 if with_fcst else 12
+                            idx = 15 if with_fcst else 13
                             for a in getAttributes(OperationPlan):
                                 setattr(opplan, a[0], i[idx])
                                 idx += 1

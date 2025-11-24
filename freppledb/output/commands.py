@@ -558,6 +558,8 @@ class ExportOperationPlans(PlanTask):
                 else []
             ),
         }
+        if opplan.info:
+            pln["info"] = opplan.info
         if not opplan.feasible:
             pln["feasible"] = False
         if opplan.setupend != opplan.start:

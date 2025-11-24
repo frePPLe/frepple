@@ -223,10 +223,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                       ? approved_supply->getOperationPlan()
                       : nullptr;
               checkOperation(approved_supply->getOperationPlan(), *data);
-              if (  // data->state->a_date > theDate ||
-                    //  approved_supply->getQuantity()
-                    //  < ROUNDING_ERROR ||
-                  data->state->a_qty <= ROUNDING_ERROR) {
+              if (data->state->a_qty <= ROUNDING_ERROR) {
                 // Move wasn't feasible. Need to disallow new replenishments.
                 if (getLogLevel() > 1)
                   logger << indentlevel
@@ -248,6 +245,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                   logger << indentlevel << "Moving approved supply succeeded"
                          << endl;
                 increment_cur = false;
+                approved_supply->getOperationPlan()->appendInfo(
+                    "Moved early to meet earlier requirement");
                 cur = prev;
               }
               data->pop();

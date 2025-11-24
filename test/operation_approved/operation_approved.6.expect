@@ -25,8 +25,9 @@ BUFFER	5. item @ factory	2026-01-01T00:00:00	100	100
 BUFFER	5. item @ factory	2026-01-01T00:00:00	-20	80
 BUFFER	5. item subassembly @ factory	2025-12-29T00:00:00	100	100
 BUFFER	5. item subassembly @ factory	2025-12-29T00:00:00	-100	0
-BUFFER	6. component @ factory	2025-12-26T00:00:00	90	90
-BUFFER	6. component @ factory	2025-12-26T00:00:00	30	120
+BUFFER	6. component @ factory	2025-12-26T00:00:00	70	70
+BUFFER	6. component @ factory	2025-12-26T00:00:00	30	100
+BUFFER	6. component @ factory	2025-12-26T00:00:00	20	120
 BUFFER	6. component @ factory	2025-12-26T00:00:00	-20	100
 BUFFER	6. component @ factory	2025-12-26T00:00:00	-100	0
 BUFFER	6. item @ factory	2026-01-01T00:00:00	100	100
@@ -87,8 +88,9 @@ OPERATION	Purchase 2. item @ factory from 2. Supplier	2025-12-25T00:00:00	2026-0
 OPERATION	Purchase 3. component @ factory from 3. Supplier	2026-01-19T00:00:00	2026-01-26T00:00:00	100	approved
 OPERATION	Purchase 4. component @ factory from 4. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	100	approved
 OPERATION	Purchase 5. component @ factory from 5. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	100	approved
-OPERATION	Purchase 6. component @ factory from 6. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	90
+OPERATION	Purchase 6. component @ factory from 6. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	70
 OPERATION	Purchase 6. component @ factory from 6. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	30	approved
+OPERATION	Purchase 6. component @ factory from 6. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	20
 PROBLEM	overload	Resource '4. Resource D' has capacity shortage of 1	2025-12-26T00:00:00 / 2025-12-29T00:00:00
 PROBLEM	overload	Resource '6. Resource' has capacity shortage of 2	2025-12-26T00:00:00 / 2025-12-29T00:00:00
 PROBLEM	before current	Operation '4. Make item' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
@@ -117,5 +119,6 @@ PROBLEM	before current	Operation 'Purchase 10. item @ factory from 10. Supplier'
 PROBLEM	before current	Operation 'Purchase 2. item @ factory from 2. Supplier' planned in the past	2025-12-25T00:00:00 / 2026-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase 4. component @ factory from 4. Supplier' planned in the past	2025-12-19T00:00:00 / 2025-12-26T00:00:00
 PROBLEM	before current	Operation 'Purchase 5. component @ factory from 5. Supplier' planned in the past	2025-12-19T00:00:00 / 2025-12-26T00:00:00
+PROBLEM	before current	Operation 'Purchase 6. component @ factory from 6. Supplier' planned in the past	2025-12-19T00:00:00 / 2025-12-26T00:00:00
 PROBLEM	before current	Operation 'Purchase 6. component @ factory from 6. Supplier' planned in the past	2025-12-19T00:00:00 / 2025-12-26T00:00:00
 PROBLEM	before current	Operation 'Purchase 6. component @ factory from 6. Supplier' planned in the past	2025-12-19T00:00:00 / 2025-12-26T00:00:00

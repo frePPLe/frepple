@@ -1919,6 +1919,16 @@ class OperationPlan : public Object,
 
   void setRemark(const PooledString& s) { remark = s; }
 
+  PooledString getInfo() const { return info; }
+
+  const string& getInfoString() const { return info; }
+
+  void setInfo(const string& s) { info = s; }
+
+  void setInfo(const PooledString& s) { info = s; }
+
+  void appendInfo(const string& s);
+
   /* Shortcut method to the cluster. */
   int getCluster() const;
 
@@ -2559,6 +2569,8 @@ class OperationPlan : public Object,
                               "");
     m->addStringRefField<Cls>(Tags::remark, &Cls::getRemarkString,
                               &Cls::setRemark, "");
+    m->addStringRefField<Cls>(Tags::info, &Cls::getInfoString, &Cls::setInfo,
+                              "");
     // Default of -999 to enforce serializing the value if it is 0
     m->addIntField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr, -999,
                         PLAN);
@@ -2812,6 +2824,12 @@ class OperationPlan : public Object,
   /* Flags on the operationplan: status, consumematerial, consumecapacity,
    * infeasible. */
   unsigned short flags = 0;
+
+  /* Free text description, similar to the remark field.
+   * The difference is that this field is intended to be populated by the
+   * planning algorithm rather than the user.
+   */
+  PooledString info;
 
   /* Hidden, static field to store the location during import. */
   static Location* loc;

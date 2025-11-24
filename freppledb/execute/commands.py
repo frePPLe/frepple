@@ -102,6 +102,13 @@ class MakePlanFeasible(PlanTask):
         # Determine log level
         loglevel = int(Parameter.getValue("plan.loglevel", database, 0))
 
+        # Clear previous info messages
+        if "supply" in os.environ:
+            for oper in frepple.operations():
+                for opplan in oper.operationplans:
+                    if opplan.info:
+                        opplan.info = ""
+
         # Propagate the operationplan status
         logger.info("Propagating work-in-progress status information")
         frepple.solver_propagateStatus(loglevel=loglevel).solve()

@@ -293,7 +293,6 @@ rect.opplan {
 {% block tabs %}{% if args %}{% tabs model %}{% endif %}{% endblock %}
 
 {% block actions %}
-  TEMPLATE FOR VUE
   {% if reportkey == "freppledb.input.views.manufacturing.ManufacturingOrderList" %}<div class="btn-group" role="group">
     <button id="showTop" type="button" class="btn btn-sm btn-outline-primary{% if noautofilter or "showTop" not in preferences or preferences.showTop %} active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display top level"|capfirst|force_escape %}">
       <svg width="100%" height="1.2em" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">

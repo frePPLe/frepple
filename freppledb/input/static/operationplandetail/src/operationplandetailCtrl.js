@@ -334,7 +334,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
 
   function refreshstatus(value) {
     if (value !== 'no_action' && value !== 'erp_incr_export') {
-      $scope.$apply(function () { 
+      $scope.$apply(function () {
         $scope.operationplan.status = value;
       });
     }
@@ -356,47 +356,9 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
 
   function setMode(m) {
     function innerFunction() {
-      PreferenceSvc.save("mode", m);
-      $scope.$apply(function () {
-        $scope.operationplan = null;
-        $scope.mode = m;
+      PreferenceSvc.save("mode", m, function () {
+        window.location.reload();
       });
-      if (m == "gantt")
-        $("#zoomin, #zoomout").removeClass("d-none");
-      else
-        $("#zoomin, #zoomout").addClass("d-none");
-      angular.element('#controller').scope().$broadcast('changeMode', m);
-      if (m == 'kanban') {
-        $("#gridmode, #calendarmode, #ganttmode").removeClass("active");
-        $("#kanbanmode").addClass("active");
-        mode = "kanban";
-        $scope.loadKanbanData();
-      }
-      else if (m == 'gantt') {
-        $("#gridmode, #calendarmode, #kanbanmode").removeClass("active");
-        $("#ganttmode").addClass("active");
-        mode = "gantt";
-        $scope.loadGanttData();
-      }
-      else if (m.startsWith('calendar')) {
-        $("#kanbanmode, #gridmode, #ganttmode").removeClass("active");
-        $("#calendarmode").addClass("active");
-        mode = m;
-        // No need to call loadCalendarData since it's triggered automatically with the above $apply
-      }
-      else {
-        $("#kanbanmode, #calendarmode, #ganttmode").removeClass("active");
-        $("#gridmode").addClass("active");
-        mode = "grid";
-        angular.element(document).find("#grid").jqGrid("GridUnload");
-        // $("#jqgrid").jqGrid('setGridParam', {datatype:'json'}).trigger('reloadGrid');
-
-        // We could deallocate the kanban cards, but that can be slow.
-        // $scope.kanbanoperationplans = {};
-        initialfilter = thefilter;
-        displayGrid(true);
-      }
-      setHeights();
     }
 
     var save_button = angular.element(document).find("#save");

@@ -99,13 +99,14 @@ class TaskScheduler:
                     .only("next_run")
                     .first()
                 )
-                if t:
+                waiting_for = (t.next_run - now).total_seconds() if t else 0
+                if waiting_for > 0:
                     cur_schedule = self.sched.get(db.name, None)
                     if cur_schedule and cur_schedule["time"] > t.next_run:
                         cur_schedule["timer"].cancel()
                     self.sched[db.name] = {
                         "timer": Timer(
-                            (t.next_run - now).total_seconds(),
+                            waiting_for,
                             self._tasklauncher,
                             kwargs={"database": db.name},
                         ),

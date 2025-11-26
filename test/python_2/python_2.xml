@@ -25,7 +25,7 @@ def printmodel():
     print("start exporting the problems")
     print("\nProblems:", file=out)
     for i in frepple.problems():
-      print(i.entity, i.name, i.start, i.end, i.description, i.weight, file=out)
+      print(i.entity, i.name, i.start, i.end, i.description, file=out)
 
     print("start exporting the operation plans")
     print("\nOperationplans:", file=out)

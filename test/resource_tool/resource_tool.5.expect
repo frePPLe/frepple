@@ -93,10 +93,3 @@ PROBLEM	overload	Resource '1.holder 1' has capacity shortage of 1	2022-12-23T00:
 PROBLEM	overload	Resource '1.holder 1' has capacity shortage of 1	2023-01-03T00:00:00 / 2023-02-01T00:00:00
 PROBLEM	overload	Resource '1.operator A' has capacity shortage of 1	2022-12-23T00:00:00 / 2023-01-01T00:00:00
 PROBLEM	overload	Resource '1.operator A' has capacity shortage of 1	2023-01-03T00:00:00 / 2023-02-01T00:00:00
-PROBLEM	before current	Operation '1.step 1' planned in the past	2022-12-12T00:00:00 / 2022-12-16T00:00:00
-PROBLEM	before current	Operation '1.step 1' planned in the past	2022-12-23T00:00:00 / 2022-12-31T00:00:00
-PROBLEM	before current	Operation '1.step 2' planned in the past	2022-12-16T00:00:00 / 2022-12-20T00:00:00
-PROBLEM	before current	Operation '1.step 2' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-PROBLEM	before current	Operation '1.step 3' planned in the past	2022-12-20T00:00:00 / 2022-12-24T00:00:00
-PROBLEM	before current	Operation '1.step 4' planned in the past	2022-12-24T00:00:00 / 2022-12-28T00:00:00
-PROBLEM	before current	Operation '1.step 5' planned in the past	2022-12-28T00:00:00 / 2023-01-01T00:00:00

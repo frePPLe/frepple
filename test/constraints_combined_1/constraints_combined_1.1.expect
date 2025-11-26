@@ -58,14 +58,14 @@ BUFFER	thread @ factory 1	2009-01-07T00:00:00	-3	400
 BUFFER	thread @ factory 1	2009-01-12T00:00:00	-3	397
 BUFFER	thread @ factory 1	2009-01-12T01:00:00	-72	325
 BUFFER	thread @ factory 1	2009-01-13T10:00:00	-45	280
-DEMAND	Demand 1	2009-01-16T01:00:00	15
-DEMAND	Demand 1	2009-01-15T01:00:00	24
-DEMAND	Demand 1	2009-01-14T01:00:00	1
-DEMAND	Demand 1	2009-01-10T00:00:00	10
-DEMAND	Demand 1	2009-01-09T01:00:00	1
-DEMAND	Demand 1	2009-01-08T01:00:00	24
-DEMAND	Demand 1	2009-01-07T01:00:00	24
-DEMAND	Demand 1	2009-01-06T01:00:00	1
+DEMAND	Demand 1	2009-01-16T01:00:00	15	later than 2009-01-01T00:00:00
+DEMAND	Demand 1	2009-01-15T01:00:00	24	later than 2009-01-01T00:00:00
+DEMAND	Demand 1	2009-01-14T01:00:00	1	later than 2009-01-01T00:00:00
+DEMAND	Demand 1	2009-01-10T00:00:00	10	later than 2009-01-01T00:00:00
+DEMAND	Demand 1	2009-01-09T01:00:00	1	later than 2009-01-01T00:00:00
+DEMAND	Demand 1	2009-01-08T01:00:00	24	later than 2009-01-01T00:00:00
+DEMAND	Demand 1	2009-01-07T01:00:00	24	later than 2009-01-01T00:00:00
+DEMAND	Demand 1	2009-01-06T01:00:00	1	later than 2009-01-01T00:00:00
 RESOURCE	pack in factory 1	2009-01-02T01:00:00	1	1
 RESOURCE	pack in factory 1	2009-01-05T01:00:00	1	2
 RESOURCE	pack in factory 1	2009-01-05T01:00:00	-1	1
@@ -130,10 +130,9 @@ OPERATION	Purchase ink @ factory 1	2009-01-01T00:00:00	2009-01-10T00:00:00	50
 OPERATION	Purchase ink @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	100	confirmed
 OPERATION	Purchase ink @ factory 1	2009-01-02T10:00:00	2009-01-13T10:00:00	50
 OPERATION	Purchase thread @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	500	confirmed
-PROBLEM	late	100 units of demand 'Demand 1' planned up to 15.0 days after its due date	2009-01-01T00:00:00 / 2009-01-16T01:00:00
-DEMAND CONSTRAINT	Demand 1	Operation 'Deliver product from factory 1 - 1 day' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	Demand 1	Operation 'Pack product @ factory 1' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	Demand 1	Operation 'Make fabric @ factory 1' planned in the past	2008-12-27T20:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	Demand 1	Resource 'pack in factory 1' has capacity shortage of 1	2009-01-02T01:00:00 / 2009-01-05T01:00:00	
-DEMAND CONSTRAINT	Demand 1	Resource 'weave in factory 1' has capacity shortage of 1	2009-01-02T22:00:00 / 2009-01-07T01:00:00	
-DEMAND CONSTRAINT	Demand 1	Operation 'Purchase ink @ factory 1' planned in the past	2008-12-29T01:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	Demand 1	Operation 'Deliver product from factory 1 - 1 day' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	Demand 1	Operation 'Pack product @ factory 1' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	Demand 1	Operation 'Make fabric @ factory 1' planned in the past	2008-12-27T20:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	Demand 1	Resource 'pack in factory 1' has capacity shortage of 1	2009-01-02T01:00:00 / 2009-01-05T01:00:00
+DEMAND CONSTRAINT	Demand 1	Resource 'weave in factory 1' has capacity shortage of 1	2009-01-02T22:00:00 / 2009-01-07T01:00:00
+DEMAND CONSTRAINT	Demand 1	Operation 'Purchase ink @ factory 1' planned in the past	2008-12-29T01:00:00 / 2009-01-01T00:00:00

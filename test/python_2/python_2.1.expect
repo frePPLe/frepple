@@ -4,7 +4,6 @@ product group has owner None
 product group has member end item
 
 Problems:
-demand unplanned 2009-01-04 08:00:00 2009-01-04 08:00:00 Demand 'order 3' is not planned 10.0
 
 Operationplans:
 1 delivery end item 10.0 2009-01-03 08:00:00 2009-01-04 08:00:00 order 2

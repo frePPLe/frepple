@@ -31,21 +31,23 @@ BUFFER	3. item 1 @ factory	2021-01-02T00:00:00	-10	0
 BUFFER	4. item 1 @ factory	2021-02-02T04:48:00	2	2
 BUFFER	4. item 1 @ factory	2021-02-02T12:00:00	2	4
 BUFFER	4. item 1 @ factory	2021-02-04T00:00:00	2	6
-DEMAND	1. order 1	2021-01-02T00:00:00	10
-DEMAND	1. order 2	2021-01-12T00:00:00	10
+DEMAND	1. order 1	2021-01-02T00:00:00	10	later than 2021-01-01T00:00:00
+DEMAND	1. order 2	2021-01-12T00:00:00	10	later than 2021-01-01T00:00:00
 DEMAND	1. order 3	2021-02-01T00:00:00	10
 DEMAND	1. order 4	2021-02-01T00:00:00	10
 DEMAND	1. order 5	2021-02-02T00:00:00	10
-DEMAND	2. order 1	2021-01-02T00:00:00	10
-DEMAND	2. order 2	2021-01-13T00:00:00	10
+DEMAND	2. order 1	2021-01-02T00:00:00	10	later than 2021-01-01T00:00:00
+DEMAND	2. order 2	2021-01-13T00:00:00	10	later than 2021-01-01T00:00:00
 DEMAND	2. order 3	2021-02-01T00:00:00	10
 DEMAND	2. order 4	2021-02-01T00:00:00	10
-DEMAND	2. order 5	2021-02-09T00:00:00	1
-DEMAND	2. order 5	2021-02-07T00:00:00	1
-DEMAND	2. order 5	2021-02-05T00:00:00	1
-DEMAND	2. order 5	2021-02-03T00:00:00	1
+DEMAND	2. order 5	2021-02-09T00:00:00	1	later than 2021-02-02T00:00:00
+DEMAND	2. order 5	2021-02-07T00:00:00	1	later than 2021-02-02T00:00:00
+DEMAND	2. order 5	2021-02-05T00:00:00	1	later than 2021-02-02T00:00:00
+DEMAND	2. order 5	2021-02-03T00:00:00	1	later than 2021-02-02T00:00:00
 DEMAND	2. order 5	2021-02-02T00:00:00	6
-DEMAND	3. order 1	2021-01-02T00:00:00	10
+DEMAND	3. order 1	2021-01-02T00:00:00	10	later than 2021-01-01T00:00:00
+DEMAND	3. order 2	planned 10 units short
+DEMAND	3. order 3	planned 10 units short
 RESOURCE	1. operator B	2021-01-01T00:00:00	1	1
 RESOURCE	1. operator B	2021-01-12T00:00:00	-1	0
 RESOURCE	1. operator C	2021-01-01T00:00:00	1	1
@@ -150,14 +152,6 @@ OPERATION	4. make item 1	2021-02-01T00:00:00	2021-02-02T12:00:00	2	approved
 OPERATION	4. make item 1	2021-02-01T00:00:00	2021-02-04T00:00:00	2	approved
 PROBLEM	overload	Resource '4. machine' has capacity shortage of 2	2021-02-01T00:00:00 / 2021-02-02T12:00:00
 PROBLEM	overload	Resource '4. operator B' has capacity shortage of 1	2021-02-01T00:00:00 / 2021-02-02T04:48:00
-PROBLEM	late	10 units of demand '1. order 1' planned up to 1.0 days after its due date	2021-01-01T00:00:00 / 2021-01-02T00:00:00
-PROBLEM	late	10 units of demand '1. order 2' planned up to 11.0 days after its due date	2021-01-01T00:00:00 / 2021-01-12T00:00:00
-PROBLEM	late	10 units of demand '2. order 1' planned up to 1.0 days after its due date	2021-01-01T00:00:00 / 2021-01-02T00:00:00
-PROBLEM	late	10 units of demand '2. order 2' planned up to 12.0 days after its due date	2021-01-01T00:00:00 / 2021-01-13T00:00:00
-PROBLEM	late	4 units of demand '2. order 5' planned up to 7.0 days after its due date	2021-02-02T00:00:00 / 2021-02-09T00:00:00
-PROBLEM	late	10 units of demand '3. order 1' planned up to 1.0 days after its due date	2021-01-01T00:00:00 / 2021-01-02T00:00:00
-PROBLEM	unplanned	Demand '3. order 2' is not planned	2021-01-01T00:00:00 / 2021-01-01T00:00:00
-PROBLEM	unplanned	Demand '3. order 3' is not planned	2021-02-01T00:00:00 / 2021-02-01T00:00:00
 DEMAND CONSTRAINT	1. order 1	Operation '1. make item 1' planned in the past	2020-12-31T00:00:00 / 2021-01-01T00:00:00
 DEMAND CONSTRAINT	1. order 2	Operation '1. make item 2' planned in the past	2020-12-21T00:00:00 / 2021-01-01T00:00:00
 DEMAND CONSTRAINT	2. order 1	Operation '2. make item 1' planned in the past	2020-12-31T00:00:00 / 2021-01-01T00:00:00

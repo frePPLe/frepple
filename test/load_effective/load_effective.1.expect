@@ -39,8 +39,8 @@ DEMAND	2. order 3	2009-01-15T00:00:00	1
 DEMAND	2. order 4	2009-01-15T00:00:00	13
 DEMAND	3. order 1	2009-01-26T00:00:00	3
 DEMAND	3. order 2	2009-01-18T00:00:00	1
-DEMAND	3. order 3	2009-01-29T00:00:00	1
-DEMAND	3. order 4	2009-01-31T00:00:00	1
+DEMAND	3. order 3	2009-01-29T00:00:00	1	later than 2009-01-26T00:00:00
+DEMAND	3. order 4	2009-01-31T00:00:00	1	later than 2009-01-26T00:00:00
 RESOURCE	1. Resource	2009-01-10T00:00:00	2	2
 RESOURCE	1. Resource	2009-01-10T00:00:00	2	4
 RESOURCE	1. Resource	2009-01-13T00:00:00	2	6
@@ -78,9 +78,7 @@ OPERATION	3. make end item	2009-01-03T00:00:00	2009-01-26T00:00:00	3
 OPERATION	3. make end item	2009-01-07T00:00:00	2009-01-18T00:00:00	1
 OPERATION	3. make end item	2009-01-18T00:00:00	2009-01-29T00:00:00	1
 OPERATION	3. make end item	2009-01-20T00:00:00	2009-01-31T00:00:00	1
-PROBLEM	late	1 units of demand '3. order 3' planned up to 3.0 days after its due date	2009-01-26T00:00:00 / 2009-01-29T00:00:00
-PROBLEM	late	1 units of demand '3. order 4' planned up to 5.0 days after its due date	2009-01-26T00:00:00 / 2009-01-31T00:00:00
-DEMAND CONSTRAINT	3. order 3	Operation '3. make end item' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	3. order 3	Resource '3. Resource' has capacity shortage of 2	2009-01-15T00:00:00 / 2009-01-26T00:00:00	
-DEMAND CONSTRAINT	3. order 4	Operation '3. make end item' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	3. order 4	Resource '3. Resource' has capacity shortage of 2	2009-01-15T00:00:00 / 2009-01-26T00:00:00	
+DEMAND CONSTRAINT	3. order 3	Operation '3. make end item' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 3	Resource '3. Resource' has capacity shortage of 2	2009-01-15T00:00:00 / 2009-01-26T00:00:00
+DEMAND CONSTRAINT	3. order 4	Operation '3. make end item' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 4	Resource '3. Resource' has capacity shortage of 2	2009-01-15T00:00:00 / 2009-01-26T00:00:00

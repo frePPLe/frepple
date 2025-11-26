@@ -8,5 +8,3 @@ RESOURCE	Resource C	2008-12-31T00:00:00	-1	0
 OPERATION	deliver end item	2008-12-31T00:00:00	2009-01-01T00:00:00	1
 OPERATION	make end item	2008-12-29T00:00:00	2008-12-31T00:00:00	1
 PROBLEM	overload	Resource 'Resource A' has capacity shortage of 0.5	2008-12-29T00:00:00 / 2008-12-31T00:00:00
-PROBLEM	before current	Operation 'deliver end item' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'make end item' planned in the past	2008-12-29T00:00:00 / 2008-12-31T00:00:00

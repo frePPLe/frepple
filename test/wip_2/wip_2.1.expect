@@ -38,4 +38,3 @@ PROBLEM	material shortage	Buffer 'comp B @ prod2' has material shortage of 4	202
 PROBLEM	invalid data	No replenishment defined for 'comp C @ prod2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'comp C @ prod2' has material shortage of 2	2022-01-07T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'consumed item @ prod' has material shortage of 777	2019-01-01T00:00:01 / 2019-03-05T00:00:00
-PROBLEM	before current	Operation 'prod' planned in the past	2017-12-08T00:00:00 / 2019-01-01T00:00:00

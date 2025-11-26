@@ -4,12 +4,11 @@ BUFFER	item 1 @ factory	2022-04-01T00:00:00	100	80
 BUFFER	item 1 @ factory	2022-04-01T00:00:00	-80	0
 BUFFER	item 1 @ factory	2022-04-10T00:00:00	100	100
 BUFFER	item 1 @ factory	2022-04-10T00:00:00	-70	30
-DEMAND	order for item 1	2022-04-10T00:00:00	70
-DEMAND	order for item 1	2022-04-01T00:00:00	80
+DEMAND	order for item 1	2022-04-10T00:00:00	70	later than 2022-01-30T00:00:00
+DEMAND	order for item 1	2022-04-01T00:00:00	80	later than 2022-01-30T00:00:00
 OPERATION	Purchase item 1 @ factory from Supplier of component A	2022-03-25T00:00:00	2022-04-01T00:00:00	100	confirmed
 OPERATION	Purchase item 1 @ factory from Supplier of component A	2022-04-03T00:00:00	2022-04-10T00:00:00	100	confirmed
 OPERATION	consume item 1	2022-02-02T00:00:00	2022-02-07T00:00:00	10	confirmed
 OPERATION	consume item 1	2022-03-03T00:00:00	2022-03-08T00:00:00	10	confirmed
 PROBLEM	material shortage	Buffer 'item 1 @ factory' has material shortage of 20	2022-02-02T00:00:00 / 2022-04-01T00:00:00
-PROBLEM	late	150 units of demand 'order for item 1' planned up to 70.0 days after its due date	2022-01-30T00:00:00 / 2022-04-10T00:00:00
-DEMAND CONSTRAINT	order for item 1	Buffer 'item 1 @ factory' awaits confirmed supply	2022-01-30T00:00:00 / 2022-04-01T00:00:00	
+DEMAND CONSTRAINT	order for item 1	Buffer 'item 1 @ factory' awaits confirmed supply	2022-01-30T00:00:00 / 2022-04-01T00:00:00

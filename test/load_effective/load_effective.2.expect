@@ -74,6 +74,3 @@ OPERATION	3. make end item	2008-12-30T00:00:00	2009-01-10T00:00:00	1
 OPERATION	3. make end item	2008-12-30T00:00:00	2009-01-10T00:00:00	1
 OPERATION	3. make end item	2009-01-03T00:00:00	2009-01-26T00:00:00	3
 OPERATION	3. make end item	2009-01-07T00:00:00	2009-01-18T00:00:00	1
-PROBLEM	before current	Operation '2. make end item' planned in the past	2008-12-29T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation '3. make end item' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation '3. make end item' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00

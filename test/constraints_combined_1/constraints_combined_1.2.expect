@@ -30,8 +30,3 @@ OPERATION	Purchase ink @ factory 1	2008-12-18T20:00:00	2008-12-25T20:00:00	200
 OPERATION	Purchase ink @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	100	confirmed
 OPERATION	Purchase thread @ factory 1	2008-12-11T20:00:00	2008-12-25T20:00:00	500
 OPERATION	Purchase thread @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	500	confirmed
-PROBLEM	before current	Operation 'Deliver product from factory 1 - 1 day' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Make fabric @ factory 1' planned in the past	2008-12-25T20:00:00 / 2008-12-30T00:00:00
-PROBLEM	before current	Operation 'Pack product @ factory 1' planned in the past	2008-12-30T00:00:00 / 2008-12-31T00:00:00
-PROBLEM	before current	Operation 'Purchase ink @ factory 1' planned in the past	2008-12-18T20:00:00 / 2008-12-25T20:00:00
-PROBLEM	before current	Operation 'Purchase thread @ factory 1' planned in the past	2008-12-11T20:00:00 / 2008-12-25T20:00:00

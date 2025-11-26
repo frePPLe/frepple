@@ -31,11 +31,9 @@ namespace frepple {
 bool Plannable::anyChange = false;
 bool Plannable::computationBusy = false;
 const MetaCategory* Problem::metadata;
-const MetaClass *ProblemMaterialShortage::metadata, *ProblemExcess::metadata,
-    *ProblemShort::metadata, *ProblemEarly::metadata, *ProblemLate::metadata,
-    *ProblemInvalidData::metadata, *ProblemDemandNotPlanned::metadata,
-    *ProblemPrecedence::metadata, *ProblemBeforeFence::metadata,
-    *ProblemBeforeCurrent::metadata, *ProblemCapacityUnderload::metadata,
+const MetaClass *ProblemMaterialShortage::metadata,
+    *ProblemInvalidData::metadata, *ProblemPrecedence::metadata,
+    *ProblemBeforeFence::metadata, *ProblemBeforeCurrent::metadata,
     *ProblemCapacityOverload::metadata, *ProblemAwaitSupply::metadata,
     *ProblemSyncDemand::metadata;
 
@@ -50,19 +48,8 @@ int Problem::initialize() {
   ProblemMaterialShortage::metadata =
       MetaClass::registerClass<ProblemMaterialShortage>(
           "problem", "material shortage", true);
-  ProblemExcess::metadata =
-      MetaClass::registerClass<ProblemExcess>("problem", "excess", true);
-  ProblemShort::metadata =
-      MetaClass::registerClass<ProblemShort>("problem", "short", true);
-  ProblemEarly::metadata =
-      MetaClass::registerClass<ProblemEarly>("problem", "early", true);
-  ProblemLate::metadata =
-      MetaClass::registerClass<ProblemLate>("problem", "late", true);
   ProblemInvalidData::metadata = MetaClass::registerClass<ProblemInvalidData>(
       "problem", "invalid data", true);
-  ProblemDemandNotPlanned::metadata =
-      MetaClass::registerClass<ProblemDemandNotPlanned>("problem", "unplanned",
-                                                        true);
   ProblemPrecedence::metadata = MetaClass::registerClass<ProblemPrecedence>(
       "problem", "precedence", true);
   ProblemBeforeFence::metadata = MetaClass::registerClass<ProblemBeforeFence>(
@@ -74,9 +61,6 @@ int Problem::initialize() {
       "problem", "await supply", true);
   ProblemSyncDemand::metadata = MetaClass::registerClass<ProblemSyncDemand>(
       "problem", "sync demand", true);
-  ProblemCapacityUnderload::metadata =
-      MetaClass::registerClass<ProblemCapacityUnderload>("problem", "underload",
-                                                         true);
   ProblemCapacityOverload::metadata =
       MetaClass::registerClass<ProblemCapacityOverload>("problem", "overload",
                                                         true);

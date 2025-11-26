@@ -16,5 +16,3 @@ OPERATION	make end item	2008-12-26T00:00:00	2009-01-02T00:00:00	7
 OPERATION	make end item	2009-01-03T00:00:00	2009-01-10T00:00:00	14
 OPERATION	make subassembly	2008-12-30T00:00:00	2009-01-03T00:00:00	6
 PROBLEM	invalid data	No replenishment defined for 'Raw material @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	before current	Operation 'make end item' planned in the past	2008-12-26T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'make subassembly' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00

@@ -89,5 +89,4 @@ class Report(GridReport):
         GridFieldText("description", title=_("description"), editable=False, width=350),
         GridFieldDateTime("startdate", title=_("start date"), editable=False),
         GridFieldDateTime("enddate", title=_("end date"), editable=False),
-        GridFieldNumber("weight", title=_("weight"), editable=False),
     )

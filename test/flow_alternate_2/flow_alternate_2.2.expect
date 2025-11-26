@@ -18,4 +18,3 @@ DEMAND	order 1	2009-01-04T00:00:00	10
 OPERATION	Purchase C4 @ factory from Component supplier	2008-12-24T00:00:00	2009-01-03T00:00:00	5
 OPERATION	assembly	2009-01-03T00:00:00	2009-01-04T00:00:00	5
 OPERATION	assembly	2009-01-03T00:00:00	2009-01-04T00:00:00	5
-PROBLEM	before current	Operation 'Purchase C4 @ factory from Component supplier' planned in the past	2008-12-24T00:00:00 / 2009-01-01T00:00:00

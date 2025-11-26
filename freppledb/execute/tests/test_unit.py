@@ -85,7 +85,7 @@ class execute_with_commands(TransactionTestCase):
         management.call_command(
             "runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply"
         )
-        self.assertGreater(output.models.Problem.objects.count(), 8)
+        self.assertEqual(output.models.Problem.objects.count(), 2)
         self.assertGreater(input.models.OperationPlanMaterial.objects.count(), 400)
         self.assertGreater(input.models.OperationPlanResource.objects.count(), 20)
         self.assertGreater(input.models.OperationPlan.objects.count(), 300)

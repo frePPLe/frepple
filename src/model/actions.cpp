@@ -33,11 +33,11 @@ namespace frepple {
 // READ XML INPUT FILE
 //
 
-PyObject *readXMLfile(PyObject *self, PyObject *args) {
+PyObject* readXMLfile(PyObject* self, PyObject* args) {
   // Pick up arguments
-  char *filename = nullptr;
+  char* filename = nullptr;
   int validate(1), validate_only(0);
-  PyObject *userexit = nullptr;
+  PyObject* userexit = nullptr;
   if (!PyArg_ParseTuple(args, "|siiO:readXMLfile", &filename, &validate,
                         &validate_only, &userexit))
     return nullptr;
@@ -82,11 +82,11 @@ PyObject *readXMLfile(PyObject *self, PyObject *args) {
 // READ XML INPUT STRING
 //
 
-PyObject *readXMLdata(PyObject *self, PyObject *args) {
+PyObject* readXMLdata(PyObject* self, PyObject* args) {
   // Pick up arguments
-  char *data;
+  char* data;
   int validate(1), validate_only(0), loglevel(0);
-  PyObject *userexit = nullptr;
+  PyObject* userexit = nullptr;
   if (!PyArg_ParseTuple(args, "s|iiiO:readXMLdata", &data, &validate,
                         &validate_only, &loglevel, &userexit))
     return nullptr;
@@ -120,10 +120,10 @@ PyObject *readXMLdata(PyObject *self, PyObject *args) {
 // SAVE MODEL TO XML
 //
 
-PyObject *saveXMLfile(PyObject *self, PyObject *args) {
+PyObject* saveXMLfile(PyObject* self, PyObject* args) {
   // Pick up arguments
-  char *filename;
-  char *content = nullptr;
+  char* filename;
+  char* content = nullptr;
   if (!PyArg_ParseTuple(args, "s|s:saveXMLfile", &filename, &content))
     return nullptr;
 
@@ -159,9 +159,9 @@ PyObject *saveXMLfile(PyObject *self, PyObject *args) {
 // SAVE PLAN SUMMARY TO TEXT FILE
 //
 
-PyObject *savePlan(PyObject *self, PyObject *args) {
+PyObject* savePlan(PyObject* self, PyObject* args) {
   // Pick up arguments
-  const char *filename = "plan.out";
+  const char* filename = "plan.out";
   if (!PyArg_ParseTuple(args, "s:saveplan", &filename)) return nullptr;
 
   // Free Python interpreter for other threads
@@ -174,9 +174,9 @@ PyObject *savePlan(PyObject *self, PyObject *args) {
     textoutput.open(filename, ios::out);
 
     // Write the buffer summary
-    for (auto &buf : Buffer::all()) {
+    for (auto& buf : Buffer::all()) {
       if (buf.getHidden()) continue;
-      for (auto &oo : buf.getFlowPlans())
+      for (auto& oo : buf.getFlowPlans())
         if (oo.getEventType() == 1 && oo.getQuantity() != 0.0) {
           auto oh = round(oo.getOnhand() * 1000) / 1000;
           if (fabs(oh) < ROUNDING_ERROR) oh = 0.0;
@@ -186,17 +186,35 @@ PyObject *savePlan(PyObject *self, PyObject *args) {
     }
 
     // Write the demand summary
-    for (auto &gdem : Demand::all()) {
-      const Demand::OperationPlanList &deli = gdem.getDelivery();
-      for (auto &pp : deli)
+    for (auto& gdem : Demand::all()) {
+      const Demand::OperationPlanList& deli = gdem.getDelivery();
+      double planned = 0.0;
+      for (auto& pp : deli) {
         textoutput << "DEMAND\t" << gdem << '\t' << pp->getEnd() << '\t'
-                   << pp->getQuantity() << endl;
+                   << pp->getQuantity();
+        if (pp->getEnd() > gdem.getDue())
+          textoutput << "\tlater than " << gdem.getDue();
+        else if (pp->getEnd() < gdem.getDue())
+          textoutput << "\tearlier than " << gdem.getDue();
+        textoutput << endl;
+        planned += pp->getQuantity();
+      }
+      if (gdem.getStatus() != Demand::STATUS_CLOSED &&
+          gdem.getStatus() != Demand::STATUS_CANCELED) {
+        auto delta = planned - gdem.getQuantity();
+        if (delta < -ROUNDING_ERROR)
+          textoutput << "DEMAND\t" << gdem << "\tplanned " << -delta
+                     << " units short" << endl;
+        else if (delta > ROUNDING_ERROR)
+          textoutput << "DEMAND\t" << gdem << "\tplanned " << delta
+                     << " units too much" << endl;
+      }
     }
 
     // Write the resource summary
-    for (auto &gres : Resource::all()) {
+    for (auto& gres : Resource::all()) {
       if (gres.getHidden()) continue;
-      for (auto &qq : gres.getLoadPlans())
+      for (auto& qq : gres.getLoadPlans())
         if (qq.getEventType() == 1 && qq.getQuantity() != 0.0) {
           textoutput << "RESOURCE\t" << gres << '\t' << qq.getDate() << '\t'
                      << qq.getQuantity() << '\t'
@@ -221,15 +239,15 @@ PyObject *savePlan(PyObject *self, PyObject *args) {
 
     // Write the problem summary.
     Problem::iterator gprob;
-    while (Problem *p = gprob.next()) {
+    while (Problem* p = gprob.next()) {
       textoutput << "PROBLEM\t" << p->getType().type << '\t'
                  << p->getDescription() << '\t' << p->getDates() << endl;
     }
 
     // Write the constraint summary
-    for (auto &gdem : Demand::all()) {
+    for (auto& gdem : Demand::all()) {
       Problem::iterator i = gdem.getConstraints().begin();
-      while (Problem *prob = i.next()) {
+      while (Problem* prob = i.next()) {
         textoutput << "DEMAND CONSTRAINT\t" << gdem << '\t'
                    << prob->getDescription() << '\t' << prob->getDates()
                    << endl;
@@ -254,13 +272,13 @@ PyObject *savePlan(PyObject *self, PyObject *args) {
 // MOVE OPERATIONPLAN
 //
 
-CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan *o)
+CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan* o)
     : opplan(o), state(o) {
   if (!o) return;
 
   // Construct a subcommand for all suboperationplans
   for (OperationPlan::iterator x(o); x != o->end(); ++x) {
-    CommandMoveOperationPlan *n = new CommandMoveOperationPlan(&*x);
+    CommandMoveOperationPlan* n = new CommandMoveOperationPlan(&*x);
     n->owner = this;
     if (firstCommand) {
       n->next = firstCommand;
@@ -270,7 +288,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan *o)
   }
 }
 
-CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan *o,
+CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan* o,
                                                    Date newstart, Date newend,
                                                    double newQty,
                                                    bool roundDown, bool later)
@@ -285,7 +303,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan *o,
 
   // Construct a subcommand for all suboperationplans
   for (OperationPlan::iterator x(o); x != o->end(); ++x) {
-    CommandMoveOperationPlan *n = new CommandMoveOperationPlan(&*x);
+    CommandMoveOperationPlan* n = new CommandMoveOperationPlan(&*x);
     n->owner = this;
     if (firstCommand) {
       n->next = firstCommand;
@@ -297,8 +315,8 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan *o,
 
 void CommandMoveOperationPlan::restore(bool del) {
   // Restore all suboperationplans and (optionally) delete the subcommands
-  for (auto *c = firstCommand; c;) {
-    CommandMoveOperationPlan *tmp = static_cast<CommandMoveOperationPlan *>(c);
+  for (auto* c = firstCommand; c;) {
+    CommandMoveOperationPlan* tmp = static_cast<CommandMoveOperationPlan*>(c);
     tmp->restore(del);
     c = c->next;
     if (del) delete tmp;
@@ -312,7 +330,7 @@ void CommandMoveOperationPlan::restore(bool del) {
 // DELETE OPERATIONPLAN
 //
 
-CommandDeleteOperationPlan::CommandDeleteOperationPlan(OperationPlan *o)
+CommandDeleteOperationPlan::CommandDeleteOperationPlan(OperationPlan* o)
     : opplan(o) {
   // Validate input
   if (!o) return;
@@ -324,7 +342,7 @@ CommandDeleteOperationPlan::CommandDeleteOperationPlan(OperationPlan *o)
   }
 
   // Deletion of all suboperationplans in this
-  stack<OperationPlan *> to_delete;
+  stack<OperationPlan*> to_delete;
   to_delete.push(opplan->getTopOwner());
   while (!to_delete.empty()) {
     // Pick up the top of the stack
@@ -339,7 +357,7 @@ CommandDeleteOperationPlan::CommandDeleteOperationPlan(OperationPlan *o)
 
     // Push child operationplans on the stack
     OperationPlan::iterator x(tmp);
-    while (OperationPlan *i = x.next()) to_delete.push(i);
+    while (OperationPlan* i = x.next()) to_delete.push(i);
   }
 }
 
@@ -347,9 +365,9 @@ CommandDeleteOperationPlan::CommandDeleteOperationPlan(OperationPlan *o)
 // DELETE MODEL
 //
 
-PyObject *eraseModel(PyObject *self, PyObject *args) {
+PyObject* eraseModel(PyObject* self, PyObject* args) {
   // Pick up arguments
-  PyObject *obj = nullptr;
+  PyObject* obj = nullptr;
   if (!PyArg_ParseTuple(args, "|O:erase", &obj)) return nullptr;
 
   // Validate the argument
@@ -397,7 +415,7 @@ PyObject *eraseModel(PyObject *self, PyObject *args) {
 // PRINT MODEL SIZE
 //
 
-PyObject *printModelSize(PyObject *self, PyObject *args) {
+PyObject* printModelSize(PyObject* self, PyObject* args) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
 
@@ -427,9 +445,9 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Locations
     memsize = 0;
     size_t countItemDistributions(0), memItemDistributions(0);
-    for (auto &l : Location::all()) {
+    for (auto& l : Location::all()) {
       memsize += l.getSize();
-      for (auto &rs : l.getDistributions()) {
+      for (auto& rs : l.getDistributions()) {
         ++countItemDistributions;
         memItemDistributions += rs.getSize();
       }
@@ -440,21 +458,21 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
 
     // Customers
     memsize = 0;
-    for (auto &c : Customer::all()) memsize += c.getSize();
+    for (auto& c : Customer::all()) memsize += c.getSize();
     logger << "Customer              \t" << Customer::size() << "\t" << memsize
            << endl;
     total += memsize;
 
     // Suppliers
     memsize = 0;
-    for (auto &c : Supplier::all()) memsize += c.getSize();
+    for (auto& c : Supplier::all()) memsize += c.getSize();
     logger << "Supplier              \t" << Supplier::size() << "\t" << memsize
            << endl;
     total += memsize;
 
     // Buffers
     memsize = 0;
-    for (auto &b : Buffer::all()) memsize += b.getSize();
+    for (auto& b : Buffer::all()) memsize += b.getSize();
     logger << "Buffer                \t" << Buffer::size() << "\t" << memsize
            << endl;
     total += memsize;
@@ -462,10 +480,10 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Setup matrices
     memsize = 0;
     size_t countSetupRules(0), memSetupRules(0);
-    for (auto &s : SetupMatrix::all()) {
+    for (auto& s : SetupMatrix::all()) {
       memsize += s.getSize();
       SetupMatrixRule::iterator iter = s.getRules();
-      while (SetupMatrixRule *sr = iter.next()) {
+      while (SetupMatrixRule* sr = iter.next()) {
         ++countSetupRules;
         memSetupRules += sr->getSize();
       }
@@ -479,7 +497,7 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
 
     // Resources
     memsize = 0;
-    for (auto &r : Resource::all()) memsize += r.getSize();
+    for (auto& r : Resource::all()) memsize += r.getSize();
     logger << "Resource              \t" << Resource::size() << "\t" << memsize
            << endl;
     total += memsize;
@@ -487,10 +505,10 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Skills and resourceskills
     size_t countResourceSkills(0), memResourceSkills(0);
     memsize = 0;
-    for (auto &sk : Skill::all()) {
+    for (auto& sk : Skill::all()) {
       memsize += sk.getSize();
       Skill::resourcelist::const_iterator iter = sk.getResources();
-      while (ResourceSkill *r = iter.next()) {
+      while (ResourceSkill* r = iter.next()) {
         ++countResourceSkills;
         memResourceSkills += r->getSize();
       }
@@ -527,7 +545,7 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Calendars and calendar buckets
     memsize = 0;
     size_t countBuckets(0), memBuckets(0);
-    for (auto &cl : Calendar::all()) {
+    for (auto& cl : Calendar::all()) {
       memsize += cl.getSize();
       for (auto bckt = cl.getBuckets(); bckt != CalendarBucket::iterator::end();
            ++bckt) {
@@ -545,9 +563,9 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Items
     memsize = 0;
     size_t countItemSuppliers(0), memItemSuppliers(0);
-    for (auto &i : Item::all()) {
+    for (auto& i : Item::all()) {
       memsize += i.getSize();
-      for (auto &is : i.getSuppliers()) {
+      for (auto& is : i.getSuppliers()) {
         ++countItemSuppliers;
         memItemSuppliers += is.getSize();
       }
@@ -563,10 +581,10 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Demands
     memsize = 0;
     size_t c_count = 0, c_memsize = 0;
-    for (auto &dm : Demand::all()) {
+    for (auto& dm : Demand::all()) {
       memsize += dm.getSize();
       Problem::iterator cstrnt_iter(dm.getConstraints().begin());
-      while (Problem *cstrnt = cstrnt_iter.next()) {
+      while (Problem* cstrnt = cstrnt_iter.next()) {
         ++c_count;
         c_memsize += cstrnt->getSize();
       }
@@ -604,7 +622,7 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Problems
     memsize = count = 0;
     Problem::iterator piter;
-    while (Problem *pr = piter.next()) {
+    while (Problem* pr = piter.next()) {
       ++count;
       memsize += pr->getSize();
     }

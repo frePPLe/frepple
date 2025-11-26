@@ -37,6 +37,7 @@ DEMAND	2. order 4	2021-02-01T00:00:00	10
 DEMAND	2. order 5	2021-02-02T00:00:00	10
 DEMAND	3. order 1	2021-01-01T00:00:00	10
 DEMAND	3. order 2	2021-01-01T00:00:00	10
+DEMAND	3. order 3	planned 10 units short
 RESOURCE	1. operator D	2021-01-31T00:00:00	1	1
 RESOURCE	1. operator D	2021-02-01T00:00:00	-1	0
 RESOURCE	1. operator E	2021-01-09T00:00:00	1	1
@@ -129,11 +130,4 @@ PROBLEM	overload	Resource '2. operator C' has capacity shortage of 4	2020-12-21T
 PROBLEM	overload	Resource '3. operator A' has capacity shortage of 2	2020-12-21T00:00:00 / 2021-01-01T00:00:00
 PROBLEM	overload	Resource '4. machine' has capacity shortage of 2	2021-02-01T00:00:00 / 2021-02-02T12:00:00
 PROBLEM	overload	Resource '4. operator B' has capacity shortage of 1	2021-02-01T00:00:00 / 2021-02-02T04:48:00
-PROBLEM	before current	Operation '1. make item 1' planned in the past	2020-12-31T00:00:00 / 2021-01-01T00:00:00
-PROBLEM	before current	Operation '1. make item 2' planned in the past	2020-12-21T00:00:00 / 2021-01-01T00:00:00
-PROBLEM	before current	Operation '2. make item 1' planned in the past	2020-12-31T00:00:00 / 2021-01-01T00:00:00
-PROBLEM	before current	Operation '2. make item 2' planned in the past	2020-12-21T00:00:00 / 2021-01-01T00:00:00
-PROBLEM	before current	Operation '3. make item 1' planned in the past	2020-12-31T00:00:00 / 2021-01-01T00:00:00
-PROBLEM	before current	Operation '3. make item 2' planned in the past	2020-12-21T00:00:00 / 2021-01-01T00:00:00
-PROBLEM	unplanned	Demand '3. order 3' is not planned	2021-02-01T00:00:00 / 2021-02-01T00:00:00
 DEMAND CONSTRAINT	3. order 3	Error: No subresource of '3. operator pool' has the skill '3. nobody can do this' required for operation '3. make item 3'	2021-02-01T00:00:00 / 2021-02-01T00:00:00

@@ -46,17 +46,18 @@ BUFFER	4. item level 4 @ factory	2009-01-08T00:00:00	24	24
 BUFFER	4. item level 4 @ factory	2009-01-08T00:00:00	-24	0
 BUFFER	4. item level 4 @ factory	2009-01-11T00:00:00	6	6
 BUFFER	4. item level 4 @ factory	2009-01-18T00:00:00	-6	0
-DEMAND	1. order 1	2009-01-08T00:00:00	6
+DEMAND	1. order 1	2009-01-08T00:00:00	6	later than 2009-01-05T00:00:00
 DEMAND	1. order 2	2009-01-10T00:00:00	6
 DEMAND	1. order 3	2009-01-31T00:00:00	6
-DEMAND	2. order 1	2009-01-08T00:00:00	6
+DEMAND	2. order 1	2009-01-08T00:00:00	6	later than 2009-01-05T00:00:00
 DEMAND	2. order 2	2009-01-10T00:00:00	6
 DEMAND	2. order 3	2009-01-31T00:00:00	6
-DEMAND	3. order 1	2009-01-08T00:00:00	6
-DEMAND	3. order 2	2009-01-18T00:00:00	2
+DEMAND	3. order 1	2009-01-08T00:00:00	6	later than 2009-01-05T00:00:00
+DEMAND	3. order 2	2009-01-18T00:00:00	2	later than 2009-01-10T00:00:00
 DEMAND	3. order 2	2009-01-10T00:00:00	4
 DEMAND	3. order 3	2009-01-31T00:00:00	3
-DEMAND	4. order 1	2009-01-29T00:00:00	6
+DEMAND	3. order 3	planned 3 units short
+DEMAND	4. order 1	2009-01-29T00:00:00	6	later than 2009-01-05T00:00:00
 DEMAND	4. order 2	2009-02-01T00:00:00	6
 DEMAND	4. order 3	2009-02-08T00:00:00	6
 DEMAND	4. order 4	2009-02-16T00:00:00	6
@@ -82,19 +83,13 @@ OPERATION	4. make item level 3	2009-01-18T00:00:00	2009-01-25T00:00:00	6
 OPERATION	4. make item level 4	2009-01-01T00:00:00	2009-01-08T00:00:00	24
 OPERATION	4. make item level 4	2009-01-04T00:00:00	2009-01-11T00:00:00	6
 PROBLEM	invalid data	No replenishment defined for '3. raw material @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	late	6 units of demand '1. order 1' planned up to 3.0 days after its due date	2009-01-05T00:00:00 / 2009-01-08T00:00:00
-PROBLEM	late	6 units of demand '2. order 1' planned up to 3.0 days after its due date	2009-01-05T00:00:00 / 2009-01-08T00:00:00
-PROBLEM	late	6 units of demand '3. order 1' planned up to 3.0 days after its due date	2009-01-05T00:00:00 / 2009-01-08T00:00:00
-PROBLEM	late	2 units of demand '3. order 2' planned up to 8.0 days after its due date	2009-01-10T00:00:00 / 2009-01-18T00:00:00
-PROBLEM	short	Demand '3. order 3' planned 3 units short	2009-01-31T00:00:00 / 2009-01-31T00:00:00
-PROBLEM	late	6 units of demand '4. order 1' planned up to 24.0 days after its due date	2009-01-05T00:00:00 / 2009-01-29T00:00:00
-DEMAND CONSTRAINT	1. order 1	Operation '1. make item' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	2. order 1	Operation '2. make item' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	3. order 1	Operation '3. make item' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	3. order 2	Operation '3. make item' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	3. order 2	Buffer '3. raw material @ factory' has material shortage of 2	2009-01-01T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	3. order 3	Buffer '3. raw material @ factory' has material shortage of 3	2009-01-17T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	4. order 1	Operation '4. make item level 1' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	4. order 1	Operation '4. make item level 2' planned in the past	2008-12-18T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	4. order 1	Operation '4. make item level 3' planned in the past	2008-12-18T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	4. order 1	Operation '4. make item level 4' planned in the past	2008-12-18T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	1. order 1	Operation '1. make item' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	2. order 1	Operation '2. make item' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 1	Operation '3. make item' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 2	Operation '3. make item' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 2	Buffer '3. raw material @ factory' has material shortage of 2	2009-01-01T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	3. order 3	Buffer '3. raw material @ factory' has material shortage of 3	2009-01-17T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	4. order 1	Operation '4. make item level 1' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	4. order 1	Operation '4. make item level 2' planned in the past	2008-12-18T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	4. order 1	Operation '4. make item level 3' planned in the past	2008-12-18T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	4. order 1	Operation '4. make item level 4' planned in the past	2008-12-18T00:00:00 / 2009-01-01T00:00:00

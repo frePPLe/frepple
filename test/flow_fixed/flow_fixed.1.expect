@@ -83,8 +83,8 @@ BUFFER	6. end item	2013-02-19T00:00:00	2	8
 BUFFER	6. end item	2013-02-19T00:00:00	-7	1
 DEMAND	1. order 1	2013-01-20T00:00:00	100
 DEMAND	1. order 2	2013-02-07T00:00:00	10
-DEMAND	1. order 3	2013-03-03T00:00:00	50
-DEMAND	2. order 1	2013-01-27T00:00:00	10
+DEMAND	1. order 3	2013-03-03T00:00:00	50	later than 2013-02-20T00:00:00
+DEMAND	2. order 1	2013-01-27T00:00:00	10	later than 2013-01-20T00:00:00
 DEMAND	2. order 2	2013-02-07T00:00:00	5
 DEMAND	2. order 3	2013-02-20T00:00:00	7
 DEMAND	3. order 1	2013-01-20T00:00:00	10
@@ -196,7 +196,5 @@ OPERATION	6. make end item - alternate 1	2013-02-17T00:00:00	2013-02-19T00:00:00
 OPERATION	6. make end item - alternate 1	2013-02-17T00:00:00	2013-02-19T00:00:00	1
 OPERATION	6. make end item - alternate 1	2013-02-17T00:00:00	2013-02-19T00:00:00	1
 PROBLEM	invalid data	No replenishment defined for '1. fixed consumption item'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	late	50 units of demand '1. order 3' planned up to 11.0 days after its due date	2013-02-20T00:00:00 / 2013-03-03T00:00:00
-PROBLEM	late	10 units of demand '2. order 1' planned up to 7.0 days after its due date	2013-01-20T00:00:00 / 2013-01-27T00:00:00
-DEMAND CONSTRAINT	1. order 3	Buffer '1. fixed consumption item' has material shortage of 2	2013-02-18T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	2. order 1	Operation '2. deliver co-product' planned before fence	2013-01-19T00:00:00 / 2013-01-26T00:00:00	
+DEMAND CONSTRAINT	1. order 3	Buffer '1. fixed consumption item' has material shortage of 2	2013-02-18T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	2. order 1	Operation '2. deliver co-product' planned before fence	2013-01-19T00:00:00 / 2013-01-26T00:00:00

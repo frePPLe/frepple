@@ -374,5 +374,3 @@ PROBLEM	material shortage	Buffer 'first consumed by 16 - MO/DE/2025-00321 @ manu
 PROBLEM	invalid data	No replenishment defined for 'second consumed by 16 - MO/DE/2025-00321 @ manufacturing plant'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'second consumed by 16 - MO/DE/2025-00321 @ manufacturing plant' has material shortage of 5	2025-08-20T07:15:07 / 2030-12-31T00:00:00
 PROBLEM	overload	Resource 'Creepy secondary pool 4' has capacity shortage of 1	2025-03-24T23:00:00 / 2025-03-25T01:00:00
-PROBLEM	before current	Operation 'Purchase In1 @ Loc from Component supplier' planned in the past	2013-12-31T00:00:00 / 2013-12-31T00:00:00
-PROBLEM	before current	Operation 'Purchase In2 @ Loc from Component supplier' planned in the past	2013-12-31T00:00:00 / 2013-12-31T00:00:00

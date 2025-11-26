@@ -135,5 +135,3 @@ PROBLEM	material shortage	Buffer '3. unavailable component @ warehouse' has mate
 PROBLEM	invalid data	No replenishment defined for 'item 5 @ warehouse'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'item 5 @ warehouse' has material shortage of 10	2009-01-31T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	overload	Resource 'Resource 1 A' has capacity shortage of 1	2008-12-17T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'make item 1 with routing A step 1' planned in the past	2008-12-14T00:00:00 / 2008-12-17T00:00:00
-PROBLEM	before current	Operation 'make item 1 with routing A step 2' planned in the past	2008-12-17T00:00:00 / 2009-01-01T00:00:00

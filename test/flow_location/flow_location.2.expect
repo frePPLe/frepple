@@ -18,6 +18,3 @@ OPERATION	Purchase 1. component from location B @ 1. location B from Supplier of
 OPERATION	Purchase 1. component from location B @ 1. location B from Supplier of components	2025-02-19T00:00:00	2025-03-01T00:00:00	10
 OPERATION	Purchase 1. component from location C @ 1. location C from Supplier of components	2024-12-16T00:00:00	2024-12-31T00:00:00	100
 OPERATION	Purchase 1. component from location C @ 1. location C from Supplier of components	2025-02-14T00:00:00	2025-03-01T00:00:00	10
-PROBLEM	before current	Operation '1. multi-location operation' planned in the past	2024-12-31T00:00:00 / 2025-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase 1. component from location B @ 1. location B from Supplier of components' planned in the past	2024-12-21T00:00:00 / 2024-12-31T00:00:00
-PROBLEM	before current	Operation 'Purchase 1. component from location C @ 1. location C from Supplier of components' planned in the past	2024-12-16T00:00:00 / 2024-12-31T00:00:00

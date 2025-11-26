@@ -1,6 +1,7 @@
 BUFFER	STCK1	1971-01-01T00:00:00	100	100
 BUFFER	STCK1	2009-01-13T00:00:00	-12	88
 DEMAND	 แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่	2009-01-27T00:00:00	12
+DEMAND	 แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่	planned 2 units too much
 RESOURCE	resource 1	2009-01-13T00:00:00	1	1
 RESOURCE	resource 1	2009-01-20T00:00:00	-1	0
 OPERATION	operation 1	2009-01-13T00:00:00	2009-01-27T00:00:00	12
@@ -8,4 +9,3 @@ OPERATION	operation 1 step1	2009-01-13T00:00:00	2009-01-20T00:00:00	12
 OPERATION	operation 1 step2	2009-01-20T00:00:00	2009-01-27T00:00:00	12
 PROBLEM	invalid data	No replenishment defined for 'STCK1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	overload	Resource 'resource 1' has capacity shortage of 1	2009-01-13T00:00:00 / 2009-01-20T00:00:00
-PROBLEM	excess	Demand ' แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่' planned 2 units excess	2009-01-27T00:00:00 / 2009-01-27T00:00:00

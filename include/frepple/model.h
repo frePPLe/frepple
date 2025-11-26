@@ -594,12 +594,6 @@ class Problem : public NonCopyable, public Object {
    */
   virtual bool isFeasible() const = 0;
 
-  /* Returns a double number reflecting the magnitude of the problem. This
-   * allows us to focus on the significant problems and filter out the
-   * small ones.
-   */
-  virtual double getWeight() const = 0;
-
   PyObject* str() const { return PythonData(getDescription()); }
 
   /* Returns an iterator to the very first problem. The iterator can be
@@ -654,8 +648,6 @@ class Problem : public NonCopyable, public Object {
                          Date::infinitePast, MANDATORY);
     m->addDateField<Cls>(Tags::end, &Cls::getEnd, nullptr, Date::infiniteFuture,
                          MANDATORY);
-    m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight, nullptr, 0.0,
-                           MANDATORY);
     m->addStringField<Cls>(Tags::entity, &Cls::getEntity, nullptr, "",
                            DONT_SERIALIZE);
     m->addPointerField<Cls, Object>(Tags::owner, &Cls::getOwner, nullptr,
@@ -745,7 +737,7 @@ class HasProblems {
    *  - AND, problem detection is enabled for this object
    *  - AND, the object has changed since the last problem computation
    */
-  virtual void updateProblems() = 0;
+  virtual void updateProblems() {};
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
@@ -7593,10 +7585,7 @@ class Demand : public HasHierarchy<Demand>,
   /* Updates the priority of the forecast.
    * Lower numbers indicate a higher priority level.
    */
-  virtual void setPriority(int i) {
-    prio = i;
-    setChanged();
-  }
+  virtual void setPriority(int i) { prio = i; }
 
   /* Returns the item/product being requested. */
   Item* getItem() const { return it; }
@@ -7615,7 +7604,6 @@ class Demand : public HasHierarchy<Demand>,
       HasLevel::triggerLazyRecomputation();
     }
     loc = l;
-    setChanged();
   }
 
   /* Update the location where the demand is shipped from.
@@ -7641,7 +7629,6 @@ class Demand : public HasHierarchy<Demand>,
   virtual void setOperation(Operation* o) {
     if (oper == o) return;
     oper = o;
-    setChanged();
   }
 
   virtual Duration getDeliveryDuration() { return DefaultDeliveryDuration; }
@@ -7718,7 +7705,6 @@ class Demand : public HasHierarchy<Demand>,
       logger << "Warning: Demand status not recognized" << endl;
       return;
     }
-    setChanged();
   }
 
   /* Return the status as a string. */
@@ -7762,7 +7748,6 @@ class Demand : public HasHierarchy<Demand>,
       logger << "Warning: Demand status not recognized" << endl;
       return;
     }
-    setChanged();
   }
 
   PooledString getBatch() const { return batch; }
@@ -7804,10 +7789,7 @@ class Demand : public HasHierarchy<Demand>,
   virtual Date getDue() const { return dueDate; }
 
   /* Updates the due date of the demand. */
-  virtual void setDue(Date d) {
-    dueDate = d;
-    setChanged();
-  }
+  virtual void setDue(Date d) { dueDate = d; }
 
   /* Returns the customer. */
   Customer* getCustomer() const { return cust; }
@@ -7817,7 +7799,6 @@ class Demand : public HasHierarchy<Demand>,
     if (cust) cust->decNumberOfDemands();
     cust = c;
     if (cust) cust->incNumberOfDemands();
-    setChanged();
   }
 
   /* Return a reference to the constraint list. */
@@ -7887,7 +7868,7 @@ class Demand : public HasHierarchy<Demand>,
   }
 
   /* Recompute the problems. */
-  virtual void updateProblems();
+  virtual void updateProblems() {}
 
   /* Specifies whether of not this demand is to be hidden from
    * serialization. The default value is false. */
@@ -8121,7 +8102,6 @@ class DemandGroup : public Demand {
       logger << "Warning: Demand policy not recognized" << endl;
       return;
     }
-    setChanged();
   }
 
   virtual int getCluster() const {
@@ -9009,10 +8989,6 @@ class ProblemBeforeCurrent : public Problem {
                 : static_cast<OperationPlan*>(getOwner())->getConfirmed();
   }
 
-  double getWeight() const {
-    return oper ? qty : static_cast<OperationPlan*>(getOwner())->getQuantity();
-  }
-
   explicit ProblemBeforeCurrent(OperationPlan* o, bool add = true)
       : Problem(o) {
     if (add) addProblem();
@@ -9081,10 +9057,6 @@ class ProblemBeforeFence : public Problem {
 
   bool isFeasible() const { return true; }
 
-  double getWeight() const {
-    return oper ? qty : static_cast<OperationPlan*>(getOwner())->getQuantity();
-  }
-
   explicit ProblemBeforeFence(OperationPlan* o, bool add = true) : Problem(o) {
     if (add) addProblem();
   }
@@ -9148,8 +9120,6 @@ class ProblemAwaitSupply : public Problem {
 
   bool isFeasible() const { return true; }
 
-  double getWeight() const { return qty; }
-
   explicit ProblemAwaitSupply(Buffer* b, Date st, Date nd, double q)
       : Problem(b), dates(st, nd), qty(q), for_buffer(true) {}
 
@@ -9196,8 +9166,6 @@ class ProblemSyncDemand : public Problem {
 
   bool isFeasible() const { return true; }
 
-  double getWeight() const { return 1; }
-
   explicit ProblemSyncDemand(Demand* b, Date st, Date nd, double q)
       : synced_with(b), dates(st, nd) {}
 
@@ -9238,11 +9206,6 @@ class ProblemPrecedence : public Problem {
 
   bool isFeasible() const { return false; }
 
-  /* The weight of the problem is equal to the duration in days. */
-  double getWeight() const {
-    return static_cast<double>(getDates().getDuration()) / 86400;
-  }
-
   explicit ProblemPrecedence(OperationPlan* o, bool add = true) : Problem(o) {
     if (add) addProblem();
   }
@@ -9268,135 +9231,6 @@ class ProblemPrecedence : public Problem {
   static const MetaClass* metadata;
 };
 
-/* A Problem of this class is created in the model when a new demand is
- * brought in the system, but it hasn't been planned yet.
- *
- * As a special case, a demand with a requested quantity of 0.0 doesn't create
- * this type of problem.
- */
-class ProblemDemandNotPlanned : public Problem {
- public:
-  string getDescription() const {
-    return string("Demand '") + getDemand()->getName() + "' is not planned";
-  }
-
-  bool isFeasible() const { return false; }
-
-  double getWeight() const { return getDemand()->getQuantity(); }
-
-  explicit ProblemDemandNotPlanned(Demand* d, bool add = true) : Problem(d) {
-    if (add) addProblem();
-  }
-
-  ~ProblemDemandNotPlanned() { removeProblem(); }
-
-  string getEntity() const { return "demand"; }
-
-  const DateRange getDates() const {
-    return DateRange(getDemand()->getDue(), getDemand()->getDue());
-  }
-
-  Object* getOwner() const { return static_cast<Demand*>(owner); }
-
-  Demand* getDemand() const { return static_cast<Demand*>(owner); }
-
-  /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
-
-  /* Storing metadata on this class. */
-  static const MetaClass* metadata;
-};
-
-/* A problem of this class is created when a demand is satisfied later
- * than the accepted tolerance after its due date.
- */
-class ProblemLate : public Problem {
- public:
-  string getDescription() const;
-  bool isFeasible() const { return true; }
-
-  /* The weight is quantity that is delivered late.
-   * It doesn't matter how much it is delayed.
-   */
-  double getWeight() const {
-    double tmp = getDemand()->getQuantity();
-    for (auto dlvr = getDemand()->getDelivery().begin();
-         dlvr != getDemand()->getDelivery().end(); ++dlvr)
-      if ((*dlvr)->getEnd() <= getDemand()->getDue())
-        tmp -= (*dlvr)->getQuantity();
-    return tmp;
-  }
-
-  /* Constructor. */
-  explicit ProblemLate(Demand* d, bool add = true) : Problem(d) {
-    if (add) addProblem();
-  }
-
-  /* Destructor. */
-  ~ProblemLate() { removeProblem(); }
-
-  const DateRange getDates() const {
-    assert(getDemand() && !getDemand()->getDelivery().empty());
-    return DateRange(getDemand()->getDue(),
-                     getDemand()->getLatestDelivery()->getEnd());
-  }
-
-  Demand* getDemand() const { return static_cast<Demand*>(getOwner()); }
-
-  string getEntity() const { return "demand"; }
-
-  Object* getOwner() const { return static_cast<Demand*>(owner); }
-
-  /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
-
-  /* Storing metadata on this class. */
-  static const MetaClass* metadata;
-};
-
-/* A problem of this class is created when a demand is planned earlier
- * than the accepted tolerance before its due date.
- */
-class ProblemEarly : public Problem {
- public:
-  string getDescription() const;
-
-  bool isFeasible() const { return true; }
-
-  double getWeight() const {
-    assert(getDemand() && !getDemand()->getDelivery().empty());
-    return static_cast<double>(
-               DateRange(getDemand()->getDue(),
-                         getDemand()->getEarliestDelivery()->getEnd())
-                   .getDuration()) /
-           86400;
-  }
-
-  explicit ProblemEarly(Demand* d, bool add = true) : Problem(d) {
-    if (add) addProblem();
-  }
-
-  ~ProblemEarly() { removeProblem(); }
-
-  string getEntity() const { return "demand"; }
-
-  Object* getOwner() const { return static_cast<Demand*>(owner); }
-
-  const DateRange getDates() const {
-    assert(getDemand() && !getDemand()->getDelivery().empty());
-    return DateRange(getDemand()->getDue(),
-                     getDemand()->getEarliestDelivery()->getEnd());
-  }
-
-  Demand* getDemand() const { return static_cast<Demand*>(getOwner()); }
-
-  /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
-
-  /* Storing metadata on this class. */
-  static const MetaClass* metadata;
-};
-
 /* A Problem of this class is created in the model when a data exception
  * prevents planning of certain objects
  */
@@ -9405,8 +9239,6 @@ class ProblemInvalidData : public Problem {
   string getDescription() const { return description; }
 
   bool isFeasible() const { return false; }
-
-  double getWeight() const { return qty; }
 
   explicit ProblemInvalidData(HasProblems* o, const string& d, const string& e,
                               Date st, Date nd, double q, bool add = true)
@@ -9445,90 +9277,6 @@ class ProblemInvalidData : public Problem {
   double qty;
 };
 
-/* A problem of this class is created when a demand is planned for less
- * than the requested quantity.
- */
-class ProblemShort : public Problem {
- public:
-  string getDescription() const {
-    ostringstream ch;
-    ch << "Demand '" << getDemand()->getName() << "' planned "
-       << (getDemand()->getQuantity() - getDemand()->getPlannedQuantity())
-       << " units short";
-    return ch.str();
-  }
-
-  bool isFeasible() const { return true; }
-
-  double getWeight() const {
-    return getDemand()->getQuantity() - getDemand()->getPlannedQuantity();
-  }
-
-  explicit ProblemShort(Demand* d, bool add = true) : Problem(d) {
-    if (add) addProblem();
-  }
-
-  ~ProblemShort() { removeProblem(); }
-
-  string getEntity() const { return "demand"; }
-
-  const DateRange getDates() const {
-    return DateRange(getDemand()->getDue(), getDemand()->getDue());
-  }
-
-  Object* getOwner() const { return static_cast<Demand*>(owner); }
-
-  Demand* getDemand() const { return static_cast<Demand*>(owner); }
-
-  /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
-
-  /* Storing metadata on this class. */
-  static const MetaClass* metadata;
-};
-
-/* A problem of this class is created when a demand is planned for more
- * than the requested quantity.
- */
-class ProblemExcess : public Problem {
- public:
-  string getDescription() const {
-    ostringstream ch;
-    ch << "Demand '" << getDemand()->getName() << "' planned "
-       << (getDemand()->getPlannedQuantity() - getDemand()->getQuantity())
-       << " units excess";
-    return ch.str();
-  }
-
-  bool isFeasible() const { return true; }
-
-  double getWeight() const {
-    return getDemand()->getPlannedQuantity() - getDemand()->getQuantity();
-  }
-
-  explicit ProblemExcess(Demand* d, bool add = true) : Problem(d) {
-    if (add) addProblem();
-  }
-
-  string getEntity() const { return "demand"; }
-
-  Object* getOwner() const { return static_cast<Demand*>(owner); }
-
-  ~ProblemExcess() { removeProblem(); }
-
-  const DateRange getDates() const {
-    return DateRange(getDemand()->getDue(), getDemand()->getDue());
-  }
-
-  Demand* getDemand() const { return static_cast<Demand*>(getOwner()); }
-
-  /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
-
-  /* Storing metadata on this class. */
-  static const MetaClass* metadata;
-};
-
 /* A problem of this class is created when a resource is being
  * overloaded during a certain period of time.
  */
@@ -9537,8 +9285,6 @@ class ProblemCapacityOverload : public Problem {
   string getDescription() const;
 
   bool isFeasible() const { return false; }
-
-  double getWeight() const { return qty; }
 
   ProblemCapacityOverload(Resource* r, Date st, Date nd, double q,
                           bool add = true)
@@ -9570,46 +9316,6 @@ class ProblemCapacityOverload : public Problem {
   DateRange dr;
 };
 
-/* A problem of this class is created when a resource is loaded below
- * its minimum during a certain period of time.
- */
-class ProblemCapacityUnderload : public Problem {
- public:
-  string getDescription() const;
-
-  bool isFeasible() const { return true; }
-
-  double getWeight() const { return qty; }
-
-  ProblemCapacityUnderload(Resource* r, DateRange d, double q, bool add = true)
-      : Problem(r), qty(q), dr(d) {
-    if (add) addProblem();
-  }
-
-  ~ProblemCapacityUnderload() { removeProblem(); }
-
-  string getEntity() const { return "capacity"; }
-
-  Object* getOwner() const { return static_cast<Resource*>(owner); }
-
-  const DateRange getDates() const { return dr; }
-
-  Resource* getResource() const { return static_cast<Resource*>(getOwner()); }
-
-  /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
-
-  /* Storing metadata on this class. */
-  static const MetaClass* metadata;
-
- private:
-  /* Underload quantity. */
-  double qty;
-
-  /* The daterange of the problem. */
-  DateRange dr;
-};
-
 /* A problem of this class is created when a buffer is having a
  * material shortage during a certain period of time.
  */
@@ -9618,8 +9324,6 @@ class ProblemMaterialShortage : public Problem {
   string getDescription() const;
 
   bool isFeasible() const { return false; }
-
-  double getWeight() const { return qty; }
 
   ProblemMaterialShortage(Buffer* b, Date st, Date nd, double q,
                           bool add = true)

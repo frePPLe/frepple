@@ -88,5 +88,3 @@ OPERATION	Purchase crude @ Site from FRN	2023-06-23T14:00:00	2023-06-24T14:00:00
 OPERATION	Purchase crude @ Site from FRN	2023-07-23T04:00:00	2023-07-24T04:00:00	10
 OPERATION	Purchase crude @ Site from FRN	2023-08-21T12:00:00	2023-08-22T12:00:00	48
 OPERATION	Purchase crude @ Site from FRN	2023-09-22T08:00:00	2023-09-23T08:00:00	20
-PROBLEM	before current	Operation 'Production' planned in the past	2022-08-23T08:00:00 / 2022-08-25T00:00:00
-PROBLEM	before current	Operation 'Purchase crude @ Site from FRN' planned in the past	2022-08-22T08:00:00 / 2022-08-23T08:00:00

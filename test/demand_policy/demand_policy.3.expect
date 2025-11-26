@@ -44,14 +44,15 @@ DEMAND	order D	2009-01-05T00:00:00	20
 DEMAND	order E	2009-01-05T00:00:00	20
 DEMAND	order F	2009-01-05T00:00:00	20
 DEMAND	order G	2009-01-05T00:00:00	30
+DEMAND	order G	planned 10 units too much
 DEMAND	order H1	2009-01-05T00:00:00	20
 DEMAND	order H2	2009-01-06T00:00:00	20
 DEMAND	order H3	2009-01-05T00:00:00	20
 DEMAND	order I1	2009-01-05T00:00:00	20
-DEMAND	order I2	2009-01-05T00:00:00	20
+DEMAND	order I2	2009-01-05T00:00:00	20	earlier than 2009-01-06T00:00:00
 DEMAND	order I3	2009-01-05T00:00:00	20
 DEMAND	order J1	2009-01-05T00:00:00	20
-DEMAND	order J2	2009-01-05T00:00:00	20
+DEMAND	order J2	2009-01-05T00:00:00	20	earlier than 2009-01-06T00:00:00
 DEMAND	order J3	2009-01-05T00:00:00	20
 OPERATION	Purchase item H1 @ factory from Supplier for H	2008-12-22T00:00:00	2009-01-05T00:00:00	20
 OPERATION	Purchase item H2 @ factory from Supplier for H	2008-12-31T00:00:00	2009-01-06T00:00:00	20
@@ -83,15 +84,3 @@ PROBLEM	invalid data	No replenishment defined for 'buffer F @ factory'	1971-01-0
 PROBLEM	material shortage	Buffer 'buffer F @ factory' has material shortage of 5	2009-01-05T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'buffer G @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'buffer G @ factory' has material shortage of 15	2009-01-05T00:00:00 / 2009-01-10T00:00:00
-PROBLEM	before current	Operation 'Purchase item H1 @ factory from Supplier for H' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase item H2 @ factory from Supplier for H' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase item H3 @ factory from Supplier for H' planned in the past	2008-12-06T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase item I1 @ factory from Supplier for I' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase item I2 @ factory from Supplier for I' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase item I3 @ factory from Supplier for I' planned in the past	2008-12-06T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase item J1 @ factory from Supplier for J' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase item J2 @ factory from Supplier for J' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase item J3 @ factory from Supplier for J' planned in the past	2008-12-06T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	excess	Demand 'order G' planned 10 units excess	2009-01-05T00:00:00 / 2009-01-05T00:00:00
-PROBLEM	early	Demand 'order I2' planned P1D before its due date	2009-01-05T00:00:00 / 2009-01-06T00:00:00
-PROBLEM	early	Demand 'order J2' planned P1D before its due date	2009-01-05T00:00:00 / 2009-01-06T00:00:00

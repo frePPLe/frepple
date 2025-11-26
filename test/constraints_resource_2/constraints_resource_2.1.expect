@@ -4,6 +4,7 @@ BUFFER	end item	2009-01-03T09:00:00	10	10
 BUFFER	end item	2009-01-03T09:00:00	-10	0
 DEMAND	order 1	2009-01-04T09:00:00	10
 DEMAND	order 2	2009-01-04T08:00:00	10
+DEMAND	order 3	planned 10 units short
 RESOURCE	Resource	2009-01-01T09:00:00	1	1
 RESOURCE	Resource	2009-01-02T09:00:00	1	2
 RESOURCE	Resource	2009-01-02T09:00:00	-1	1
@@ -12,6 +13,5 @@ OPERATION	delivery end item	2009-01-03T08:00:00	2009-01-04T08:00:00	10
 OPERATION	delivery end item	2009-01-03T09:00:00	2009-01-04T09:00:00	10
 OPERATION	make end item	2009-01-01T09:00:00	2009-01-02T09:00:00	10
 OPERATION	make end item	2009-01-02T09:00:00	2009-01-03T09:00:00	10
-PROBLEM	unplanned	Demand 'order 3' is not planned	2009-01-04T08:00:00 / 2009-01-04T08:00:00
-DEMAND CONSTRAINT	order 3	Operation 'make end item' planned in the past	2008-12-31T09:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	order 3	Resource 'Resource' has capacity shortage of 1	2009-01-02T08:00:00 / 2009-01-03T08:00:00	
+DEMAND CONSTRAINT	order 3	Operation 'make end item' planned in the past	2008-12-31T09:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order 3	Resource 'Resource' has capacity shortage of 1	2009-01-02T08:00:00 / 2009-01-03T08:00:00

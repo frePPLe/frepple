@@ -81,6 +81,3 @@ OPERATION	supply 2	2024-04-24T00:00:00	2024-05-01T00:00:00	30
 OPERATION	supply 2	2024-06-24T00:00:00	2024-07-01T00:00:00	22
 OPERATION	supply 2	2024-08-25T00:00:00	2024-09-01T00:00:00	22
 OPERATION	supply 2	2024-10-25T00:00:00	2024-11-01T00:00:00	22
-PROBLEM	before current	Operation 'Purchase item 3 @ factory from Supplier of item 3' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00
-PROBLEM	before current	Operation 'supply 1' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00
-PROBLEM	before current	Operation 'supply 2' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00

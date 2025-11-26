@@ -258,7 +258,6 @@ def printModel(filename):
                 i.description,
                 i.start,
                 i.end,
-                i.weight,
                 file=output,
             )
 

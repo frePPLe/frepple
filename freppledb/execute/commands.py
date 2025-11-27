@@ -58,7 +58,7 @@ class UpdateLastCurrentDate(PlanTask):
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        return -1 if "loadplan" in os.environ else 0.1
+        return -1 if "loadplan" in os.environ or "noexport" in os.environ else 0.1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):

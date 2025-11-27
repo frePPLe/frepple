@@ -856,7 +856,7 @@ class ExportStaticForecast(PlanTask):
 
     @classmethod
     def getWeight(cls, exportstatic=False, **kwargs):
-        return 1 if exportstatic else -1
+        return 1 if exportstatic and "noexportstatic" not in os.environ else -1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1240,7 +1240,9 @@ class ExportForecastMetrics(PlanTask):
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, cluster=-1, **kwargs):
-        if "fcst" in os.environ or ("loadplan" in os.environ and cluster != -1):
+        if (
+            "fcst" in os.environ or ("loadplan" in os.environ and cluster != -1)
+        ) and "noexport" not in os.environ:
             if not Parameter.getValue("forecast.calendar", database, None):
                 return -1
             else:
@@ -1330,8 +1332,10 @@ class ExportForecast(PlanTask):
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        if ("fcst" in os.environ or "supply" in os.environ) and Parameter.getValue(
-            "forecast.calendar", database, None
+        if (
+            ("fcst" in os.environ or "supply" in os.environ)
+            and Parameter.getValue("forecast.calendar", database, None)
+            and "noexport" not in os.environ
         ):
             return 1
         else:
@@ -1371,8 +1375,10 @@ class ExportOutlierCount(PlanTask):
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        if "fcst" in os.environ and Parameter.getValue(
-            "forecast.calendar", database, None
+        if (
+            "fcst" in os.environ
+            and Parameter.getValue("forecast.calendar", database, None)
+            and "noexport" not in os.environ
         ):
             return 1
         else:

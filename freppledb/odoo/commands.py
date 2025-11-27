@@ -98,13 +98,11 @@ class OdooReadData(PlanTask):
                                     "(source is null or source<>'odoo_%s')" % cls.mode
                                 )
                             stdLoad.description += " - non-odoo source"
-                    PlanTaskRegistry.addArguments(
-                        exportstatic=True, source="odoo_%s" % i
-                    )
+                    PlanTaskRegistry.addArguments(source="odoo_%s" % i)
                 else:
-                    PlanTaskRegistry.addArguments(
-                        exportstatic=True, source="odoo_%s" % i, skipLoad=True
-                    )
+                    PlanTaskRegistry.addArguments(source="odoo_%s" % i, skipLoad=True)
+                if "noexportstatic" not in os.environ:
+                    PlanTaskRegistry.addArguments(exportstatic=True)
                 return 1
         return -1
 
@@ -435,3 +433,20 @@ class OdooDeltaChangeSource(PlanTask):
             logger.info(
                 "Updated source field of %d sales order records" % (cursor.rowcount,)
             )
+
+
+@PlanTaskRegistry.register
+class OdooSendRecommendations(PlanTask):
+
+    description = "Publish recommendations to Odoo"
+    sequence = 540
+
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        return 1 if "odoo_write_1" in os.environ else -1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
+        print("generating recommendations to Odoo")

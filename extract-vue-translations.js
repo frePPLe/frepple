@@ -7,6 +7,7 @@ const glob = require('glob');
 const vueApps = [
   'forecast',
   'quoting',
+  'input',
   // Add other Vue app names here
 ];
 

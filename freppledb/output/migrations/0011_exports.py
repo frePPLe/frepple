@@ -80,8 +80,7 @@ class Migration(migrations.Migration):
                     'select
                        entity, owner, name, description,
                        to_char(startdate,''%s HH24:MI:SS'') as startdate,
-                       to_char(enddate,''%s HH24:MI:SS'') as enddate,
-                       weight
+                       to_char(enddate,''%s HH24:MI:SS'') as enddate
                      from out_problem
                      where name <> ''material excess''
                      order by entity, name, startdate

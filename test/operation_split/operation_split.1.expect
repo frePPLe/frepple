@@ -62,11 +62,11 @@ BUFFER	item 4 @ location 4	2014-01-12T00:00:00	40	40
 BUFFER	item 4 @ location 4	2014-01-12T00:00:00	-40	0
 BUFFER	item 4 @ location 4	2014-01-22T00:00:00	160	160
 BUFFER	item 4 @ location 4	2014-01-22T00:00:00	-160	0
-DEMAND	order 1 for item 1	2014-01-16T00:00:00	100
-DEMAND	order 1 for item 2	2014-01-16T00:00:00	200
+DEMAND	order 1 for item 1	2014-01-16T00:00:00	100	later than 2014-01-01T00:00:00
+DEMAND	order 1 for item 2	2014-01-16T00:00:00	200	later than 2014-01-01T00:00:00
 DEMAND	order 1 for item 3	2014-07-01T00:00:00	100
-DEMAND	order 1 for item 4	2014-01-22T00:00:00	160
-DEMAND	order 1 for item 4	2014-01-12T00:00:00	40
+DEMAND	order 1 for item 4	2014-01-22T00:00:00	160	later than 2014-01-01T00:00:00
+DEMAND	order 1 for item 4	2014-01-12T00:00:00	40	later than 2014-01-01T00:00:00
 DEMAND	order 2 for item 3	2014-08-01T00:00:00	100
 DEMAND	order 3 for item 3	2014-09-01T00:00:00	100
 DEMAND	order 4 for item 3	2014-10-01T00:00:00	100
@@ -168,19 +168,16 @@ OPERATION	make item 4 option B	2014-01-07T00:00:00	2014-01-12T00:00:00	10
 OPERATION	make item 4 option B	2014-01-17T00:00:00	2014-01-22T00:00:00	30
 OPERATION	make item 4 option C	2014-01-02T00:00:00	2014-01-12T00:00:00	10
 OPERATION	make item 4 option C	2014-01-12T00:00:00	2014-01-22T00:00:00	30
-PROBLEM	late	100 units of demand 'order 1 for item 1' planned up to 15.0 days after its due date	2014-01-01T00:00:00 / 2014-01-16T00:00:00
-PROBLEM	late	200 units of demand 'order 1 for item 2' planned up to 15.0 days after its due date	2014-01-01T00:00:00 / 2014-01-16T00:00:00
-PROBLEM	late	200 units of demand 'order 1 for item 4' planned up to 21.0 days after its due date	2014-01-01T00:00:00 / 2014-01-22T00:00:00
-DEMAND CONSTRAINT	order 1 for item 1	Operation 'make item 1 option C' planned in the past	2013-12-22T00:00:00 / 2014-01-01T00:00:00	
-DEMAND CONSTRAINT	order 1 for item 1	Operation 'Purchase component 1 for option C @ location 1 from My supplier' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00	
-DEMAND CONSTRAINT	order 1 for item 1	Operation 'Purchase component 1 for option A @ location 1 from My supplier' planned in the past	2013-12-28T00:00:00 / 2014-01-01T00:00:00	
-DEMAND CONSTRAINT	order 1 for item 1	Resource 'Resource 1 A+B' has capacity shortage of 1	2014-01-09T00:00:00 / 2014-01-12T00:00:00	
-DEMAND CONSTRAINT	order 1 for item 2	Operation 'make item 2 option C' planned in the past	2013-12-22T00:00:00 / 2014-01-01T00:00:00	
-DEMAND CONSTRAINT	order 1 for item 2	Operation 'Purchase component 2 for option C @ location 2 from My supplier' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00	
-DEMAND CONSTRAINT	order 1 for item 2	Operation 'Purchase component 2 for option A @ location 2 from My supplier' planned in the past	2013-12-28T00:00:00 / 2014-01-01T00:00:00	
-DEMAND CONSTRAINT	order 1 for item 2	Resource 'Resource 2 A+B' has capacity shortage of 1	2014-01-09T00:00:00 / 2014-01-12T00:00:00	
-DEMAND CONSTRAINT	order 1 for item 4	Operation 'make item 4 option C' planned in the past	2013-12-22T00:00:00 / 2014-01-01T00:00:00	
-DEMAND CONSTRAINT	order 1 for item 4	Operation 'Purchase component 4 for option C @ location 4 from My supplier' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00	
-DEMAND CONSTRAINT	order 1 for item 4	Operation 'Purchase component 4 for option A @ location 4 from My supplier' planned in the past	2013-12-28T00:00:00 / 2014-01-01T00:00:00	
-DEMAND CONSTRAINT	order 1 for item 4	Resource 'Resource 4 A+B' has capacity shortage of 1	2014-01-09T00:00:00 / 2014-01-12T00:00:00	
-DEMAND CONSTRAINT	order 1 for item 4	Resource 'Resource 4 C' has capacity shortage of 1	2014-01-02T00:00:00 / 2014-01-12T00:00:00	
+DEMAND CONSTRAINT	order 1 for item 1	Operation 'make item 1 option C' planned in the past	2013-12-22T00:00:00 / 2014-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 for item 1	Operation 'Purchase component 1 for option C @ location 1 from My supplier' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 for item 1	Operation 'Purchase component 1 for option A @ location 1 from My supplier' planned in the past	2013-12-28T00:00:00 / 2014-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 for item 1	Resource 'Resource 1 A+B' has capacity shortage of 1	2014-01-09T00:00:00 / 2014-01-12T00:00:00
+DEMAND CONSTRAINT	order 1 for item 2	Operation 'make item 2 option C' planned in the past	2013-12-22T00:00:00 / 2014-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 for item 2	Operation 'Purchase component 2 for option C @ location 2 from My supplier' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 for item 2	Operation 'Purchase component 2 for option A @ location 2 from My supplier' planned in the past	2013-12-28T00:00:00 / 2014-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 for item 2	Resource 'Resource 2 A+B' has capacity shortage of 1	2014-01-09T00:00:00 / 2014-01-12T00:00:00
+DEMAND CONSTRAINT	order 1 for item 4	Operation 'make item 4 option C' planned in the past	2013-12-22T00:00:00 / 2014-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 for item 4	Operation 'Purchase component 4 for option C @ location 4 from My supplier' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 for item 4	Operation 'Purchase component 4 for option A @ location 4 from My supplier' planned in the past	2013-12-28T00:00:00 / 2014-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 for item 4	Resource 'Resource 4 A+B' has capacity shortage of 1	2014-01-09T00:00:00 / 2014-01-12T00:00:00
+DEMAND CONSTRAINT	order 1 for item 4	Resource 'Resource 4 C' has capacity shortage of 1	2014-01-02T00:00:00 / 2014-01-12T00:00:00

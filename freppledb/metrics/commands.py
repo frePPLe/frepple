@@ -66,8 +66,8 @@ class GetPlanMetrics(PlanTask):
 
                 cursor.execute(
                     """
-                    create temporary table item_hierarchy (parent character varying(300),
-                                                           child character varying(300));
+                    create temporary table item_hierarchy (parent character varying,
+                                                           child character varying);
 
                     insert into item_hierarchy
                     select parent.name, item.name from item

@@ -22,46 +22,47 @@ BUFFER	6. buffer	2017-01-24T11:00:00	-1	1
 BUFFER	6. buffer	2017-01-29T00:00:00	-1	0
 DEMAND	1. order 1	2009-01-14T00:00:00	6
 DEMAND	1. order 2	2009-01-12T12:00:00	6
-DEMAND	1. order 3	2009-01-10T00:00:00	6
-DEMAND	1. order 4	2009-01-10T00:00:00	6
+DEMAND	1. order 3	2009-01-10T00:00:00	6	earlier than 2009-01-11T12:00:00
+DEMAND	1. order 4	2009-01-10T00:00:00	6	earlier than 2009-01-10T12:00:00
 DEMAND	1. order 5	2009-01-08T00:00:00	6
 DEMAND	1. order 6	2009-01-14T00:00:00	6
 DEMAND	1. order 7	2009-01-28T00:00:00	6
 DEMAND	1. order 8	2009-01-14T00:00:00	6
-DEMAND	2. order 1	2009-01-12T00:00:00	6
-DEMAND	2. order 2	2009-01-12T00:00:00	6
+DEMAND	2. order 1	2009-01-12T00:00:00	6	earlier than 2009-01-14T00:00:00
+DEMAND	2. order 2	2009-01-12T00:00:00	6	earlier than 2009-01-12T12:00:00
 DEMAND	2. order 3	2009-01-11T12:00:00	6
-DEMAND	2. order 4	2009-01-11T00:00:00	6
-DEMAND	2. order 5	2009-01-11T00:00:00	6
-DEMAND	2. order 7	2009-01-21T00:00:00	6
-DEMAND	2. order 8	2009-01-22T00:00:00	6
+DEMAND	2. order 4	2009-01-11T00:00:00	6	later than 2009-01-10T12:00:00
+DEMAND	2. order 5	2009-01-11T00:00:00	6	later than 2009-01-08T00:00:00
+DEMAND	2. order 6	planned 6 units short
+DEMAND	2. order 7	2009-01-21T00:00:00	6	later than 2009-01-04T00:00:00
+DEMAND	2. order 8	2009-01-22T00:00:00	6	earlier than 2009-01-28T00:00:00
 DEMAND	3. order 1	2009-01-14T00:00:00	1
 DEMAND	3. order 2	2009-01-12T12:00:00	1
-DEMAND	3. order 3	2009-01-10T00:00:00	1
-DEMAND	3. order 4	2009-01-10T00:00:00	1
+DEMAND	3. order 3	2009-01-10T00:00:00	1	earlier than 2009-01-11T12:00:00
+DEMAND	3. order 4	2009-01-10T00:00:00	1	earlier than 2009-01-10T12:00:00
 DEMAND	3. order 5	2009-01-08T00:00:00	1
 DEMAND	3. order 6	2009-01-14T00:00:00	10
 DEMAND	3. order 7	2009-01-28T00:00:00	20
 DEMAND	3. order 8	2009-01-14T00:00:00	20
-DEMAND	4. order 1	2009-01-12T00:00:00	1
-DEMAND	4. order 2	2009-01-12T00:00:00	1
-DEMAND	4. order 3	2009-01-12T00:00:00	1
-DEMAND	4. order 4	2009-01-12T00:00:00	1
-DEMAND	4. order 5	2009-01-12T00:00:00	1
-DEMAND	4. order 6	2009-01-12T00:00:00	1
-DEMAND	4. order 6	2009-01-12T00:00:00	1
-DEMAND	4. order 6	2009-01-12T00:00:00	1
-DEMAND	4. order 6	2009-01-12T00:00:00	1
-DEMAND	4. order 6	2009-01-12T00:00:00	1
-DEMAND	4. order 6	2009-01-12T00:00:00	1
-DEMAND	4. order 6	2009-01-12T00:00:00	1
-DEMAND	4. order 6	2009-01-12T00:00:00	1
-DEMAND	4. order 6	2009-01-12T00:00:00	1
-DEMAND	4. order 6	2009-01-12T00:00:00	1
-DEMAND	4. order 7	2009-01-12T00:00:00	1
-DEMAND	4. order 7	2009-01-12T00:00:00	1
-DEMAND	4. order 7	2009-01-12T00:00:00	1
-DEMAND	4. order 8	2009-01-22T00:00:00	3
+DEMAND	4. order 1	2009-01-12T00:00:00	1	earlier than 2009-01-14T00:00:00
+DEMAND	4. order 2	2009-01-12T00:00:00	1	earlier than 2009-01-12T12:00:00
+DEMAND	4. order 3	2009-01-12T00:00:00	1	later than 2009-01-11T12:00:00
+DEMAND	4. order 4	2009-01-12T00:00:00	1	later than 2009-01-10T12:00:00
+DEMAND	4. order 5	2009-01-12T00:00:00	1	later than 2009-01-08T00:00:00
+DEMAND	4. order 6	2009-01-12T00:00:00	1	earlier than 2009-01-14T00:00:00
+DEMAND	4. order 6	2009-01-12T00:00:00	1	earlier than 2009-01-14T00:00:00
+DEMAND	4. order 6	2009-01-12T00:00:00	1	earlier than 2009-01-14T00:00:00
+DEMAND	4. order 6	2009-01-12T00:00:00	1	earlier than 2009-01-14T00:00:00
+DEMAND	4. order 6	2009-01-12T00:00:00	1	earlier than 2009-01-14T00:00:00
+DEMAND	4. order 6	2009-01-12T00:00:00	1	earlier than 2009-01-14T00:00:00
+DEMAND	4. order 6	2009-01-12T00:00:00	1	earlier than 2009-01-14T00:00:00
+DEMAND	4. order 6	2009-01-12T00:00:00	1	earlier than 2009-01-14T00:00:00
+DEMAND	4. order 6	2009-01-12T00:00:00	1	earlier than 2009-01-14T00:00:00
+DEMAND	4. order 6	2009-01-12T00:00:00	1	earlier than 2009-01-14T00:00:00
+DEMAND	4. order 7	2009-01-12T00:00:00	1	later than 2009-01-04T00:00:00
+DEMAND	4. order 7	2009-01-12T00:00:00	1	later than 2009-01-04T00:00:00
+DEMAND	4. order 7	2009-01-12T00:00:00	1	later than 2009-01-04T00:00:00
+DEMAND	4. order 8	2009-01-22T00:00:00	3	earlier than 2009-01-28T00:00:00
 DEMAND	5. order 1	2009-01-14T00:00:00	1
 DEMAND	5. order 2	2009-01-12T12:00:00	1
 DEMAND	5. order 3	2009-01-11T12:00:00	1
@@ -160,27 +161,4 @@ OPERATION	6. Make item	2017-01-10T10:00:00	2017-01-23T11:00:00	1
 OPERATION	6. Make item	2017-01-16T10:00:00	2017-01-24T11:00:00	1
 OPERATION	6. Make item	2017-01-16T10:00:00	2017-01-24T11:00:00	1
 PROBLEM	overload	Resource '5. resource' has capacity shortage of 4	2008-12-21T00:00:00 / 2009-01-13T00:00:00
-PROBLEM	before current	Operation '1. Deliver item 20 days' planned in the past	2008-12-23T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation '3. Deliver item' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation '5. Make item' planned in the past	2008-12-21T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation '5. Make item' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	early	Demand '1. order 3' planned P1DT12H before its due date	2009-01-10T00:00:00 / 2009-01-11T12:00:00
-PROBLEM	early	Demand '1. order 4' planned PT12H before its due date	2009-01-10T00:00:00 / 2009-01-10T12:00:00
-PROBLEM	early	Demand '2. order 1' planned P2D before its due date	2009-01-12T00:00:00 / 2009-01-14T00:00:00
-PROBLEM	early	Demand '2. order 2' planned PT12H before its due date	2009-01-12T00:00:00 / 2009-01-12T12:00:00
-PROBLEM	late	6 units of demand '2. order 4' planned up to 0.5 days after its due date	2009-01-10T12:00:00 / 2009-01-11T00:00:00
-PROBLEM	late	6 units of demand '2. order 5' planned up to 3.0 days after its due date	2009-01-08T00:00:00 / 2009-01-11T00:00:00
-PROBLEM	unplanned	Demand '2. order 6' is not planned	2009-01-14T00:00:00 / 2009-01-14T00:00:00
-PROBLEM	late	6 units of demand '2. order 7' planned up to 17.0 days after its due date	2009-01-04T00:00:00 / 2009-01-21T00:00:00
-PROBLEM	early	Demand '2. order 8' planned P6D before its due date	2009-01-22T00:00:00 / 2009-01-28T00:00:00
-PROBLEM	early	Demand '3. order 3' planned P1DT12H before its due date	2009-01-10T00:00:00 / 2009-01-11T12:00:00
-PROBLEM	early	Demand '3. order 4' planned PT12H before its due date	2009-01-10T00:00:00 / 2009-01-10T12:00:00
-PROBLEM	early	Demand '4. order 1' planned P2D before its due date	2009-01-12T00:00:00 / 2009-01-14T00:00:00
-PROBLEM	early	Demand '4. order 2' planned PT12H before its due date	2009-01-12T00:00:00 / 2009-01-12T12:00:00
-PROBLEM	late	1 units of demand '4. order 3' planned up to 0.5 days after its due date	2009-01-11T12:00:00 / 2009-01-12T00:00:00
-PROBLEM	late	1 units of demand '4. order 4' planned up to 1.5 days after its due date	2009-01-10T12:00:00 / 2009-01-12T00:00:00
-PROBLEM	late	1 units of demand '4. order 5' planned up to 4.0 days after its due date	2009-01-08T00:00:00 / 2009-01-12T00:00:00
-PROBLEM	early	Demand '4. order 6' planned P2D before its due date	2009-01-12T00:00:00 / 2009-01-14T00:00:00
-PROBLEM	late	3 units of demand '4. order 7' planned up to 8.0 days after its due date	2009-01-04T00:00:00 / 2009-01-12T00:00:00
-PROBLEM	early	Demand '4. order 8' planned P6D before its due date	2009-01-22T00:00:00 / 2009-01-28T00:00:00
 PROBLEM	invalid data	No available time found on operation '2. Deliver item 10 days'	1971-01-01T00:00:00 / 2030-12-31T00:00:00

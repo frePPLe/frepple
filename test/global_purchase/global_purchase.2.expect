@@ -46,14 +46,3 @@ OPERATION	Ship item A from DC2 to WH4	2015-12-22T00:00:00	2016-01-01T00:00:00	10
 OPERATION	Ship item B from DC2 to WH3	2015-12-22T00:00:00	2016-01-01T00:00:00	10
 OPERATION	Ship item B from DC2 to WH4	2015-11-21T00:00:00	2015-12-01T00:00:00	40
 OPERATION	Ship item B from DC2 to WH4	2015-12-22T00:00:00	2016-01-01T00:00:00	10
-PROBLEM	before current	Operation 'Purchase item A @ DC1 from Supplier 1' planned in the past	2015-11-02T00:00:00 / 2016-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase item A @ DC2 from Supplier 1' planned in the past	2015-10-23T00:00:00 / 2015-12-22T00:00:00
-PROBLEM	before current	Operation 'Purchase item A @ WH6 from Supplier 1' planned in the past	2015-11-02T00:00:00 / 2016-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase item B @ DC1 from Supplier 1' planned in the past	2015-11-02T00:00:00 / 2016-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase item B @ DC2 from Supplier 1' planned in the past	2015-09-22T00:00:00 / 2015-11-21T00:00:00
-PROBLEM	before current	Operation 'Purchase item B @ WH6 from Supplier 1' planned in the past	2015-11-02T00:00:00 / 2016-01-01T00:00:00
-PROBLEM	before current	Operation 'Ship item A from DC2 to WH3' planned in the past	2015-12-22T00:00:00 / 2016-01-01T00:00:00
-PROBLEM	before current	Operation 'Ship item A from DC2 to WH4' planned in the past	2015-12-22T00:00:00 / 2016-01-01T00:00:00
-PROBLEM	before current	Operation 'Ship item B from DC2 to WH3' planned in the past	2015-12-22T00:00:00 / 2016-01-01T00:00:00
-PROBLEM	before current	Operation 'Ship item B from DC2 to WH4' planned in the past	2015-11-21T00:00:00 / 2015-12-01T00:00:00
-PROBLEM	before current	Operation 'Ship item B from DC2 to WH4' planned in the past	2015-12-22T00:00:00 / 2016-01-01T00:00:00

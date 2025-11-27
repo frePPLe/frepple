@@ -12,7 +12,7 @@ BUFFER	subassembly @ factory	2009-01-03T00:00:00	2	10
 BUFFER	subassembly @ factory	2009-01-03T00:00:00	2	12
 BUFFER	subassembly @ factory	2009-01-03T00:00:00	2	14
 BUFFER	subassembly @ factory	2009-01-03T00:00:00	-14	0
-DEMAND	order 1	2009-01-09T00:00:00	7
+DEMAND	order 1	2009-01-09T00:00:00	7	later than 2009-01-03T00:00:00
 DEMAND	order 2	2009-01-11T00:00:00	14
 OPERATION	delivery end item	2009-01-08T00:00:00	2009-01-09T00:00:00	7
 OPERATION	delivery end item	2009-01-10T00:00:00	2009-01-11T00:00:00	14
@@ -22,5 +22,4 @@ OPERATION	make subassembly	2009-01-01T00:00:00	2009-01-03T00:00:00	2
 OPERATION	make subassembly	2009-01-01T00:00:00	2009-01-03T00:00:00	2
 OPERATION	make subassembly	2009-01-01T00:00:00	2009-01-03T00:00:00	2
 PROBLEM	invalid data	No replenishment defined for 'Raw material @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	late	7 units of demand 'order 1' planned up to 6.0 days after its due date	2009-01-03T00:00:00 / 2009-01-09T00:00:00
-DEMAND CONSTRAINT	order 1	Operation 'make end item' planned in the past	2008-12-26T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1	Operation 'make end item' planned in the past	2008-12-26T00:00:00 / 2009-01-01T00:00:00

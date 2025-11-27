@@ -15,9 +15,3 @@ OPERATION	level 3A	2013-12-24T18:00:00	2013-12-26T12:00:00	3
 OPERATION	level 3B	2013-12-25T00:00:00	2013-12-26T12:00:00	3
 OPERATION	level 4A	2013-12-22T15:00:00	2013-12-24T18:00:00	3
 OPERATION	level 4B	2013-12-24T21:00:00	2013-12-25T00:00:00	3
-PROBLEM	before current	Operation 'level 1' planned in the past	2013-12-29T00:00:00 / 2014-01-01T00:00:00
-PROBLEM	before current	Operation 'level 2' planned in the past	2013-12-26T12:00:00 / 2013-12-29T00:00:00
-PROBLEM	before current	Operation 'level 3A' planned in the past	2013-12-24T18:00:00 / 2013-12-26T12:00:00
-PROBLEM	before current	Operation 'level 3B' planned in the past	2013-12-25T00:00:00 / 2013-12-26T12:00:00
-PROBLEM	before current	Operation 'level 4A' planned in the past	2013-12-22T15:00:00 / 2013-12-24T18:00:00
-PROBLEM	before current	Operation 'level 4B' planned in the past	2013-12-24T21:00:00 / 2013-12-25T00:00:00

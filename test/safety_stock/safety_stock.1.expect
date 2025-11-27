@@ -14,8 +14,8 @@ BUFFER	end item 3 A @ factory	2009-01-05T00:00:00	30	30
 BUFFER	end item 3 A @ factory	2009-01-05T00:00:00	-20	10
 BUFFER	end item 3 B @ factory	2009-01-09T00:00:00	20	20
 BUFFER	end item 3 C @ factory	2009-01-05T00:00:00	51	51
-DEMAND	order 1 - item 1	2009-01-04T00:00:00	10
-DEMAND	order 1 - item 2	2009-01-04T00:00:00	10
+DEMAND	order 1 - item 1	2009-01-04T00:00:00	10	later than 2009-01-02T00:00:00
+DEMAND	order 1 - item 2	2009-01-04T00:00:00	10	later than 2009-01-02T00:00:00
 DEMAND	order 2 - item 1	2009-02-15T00:00:00	10
 DEMAND	order 2 - item 2	2009-02-15T00:00:00	10
 DEMAND	order 3 - item 1	2009-03-15T00:00:00	10
@@ -38,7 +38,5 @@ OPERATION	make end item 2	2009-03-05T00:00:00	2009-03-05T00:00:00	10
 PROBLEM	material shortage	Buffer 'end item 3 A @ factory' has material shortage of 10	2009-01-01T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	material shortage	Buffer 'end item 3 B @ factory' has material shortage of 20	2009-01-01T00:00:00 / 2009-01-09T00:00:00
 PROBLEM	material shortage	Buffer 'end item 3 C @ factory' has material shortage of 20	2009-01-01T00:00:00 / 2009-01-05T00:00:00
-PROBLEM	late	10 units of demand 'order 1 - item 1' planned up to 2.0 days after its due date	2009-01-02T00:00:00 / 2009-01-04T00:00:00
-PROBLEM	late	10 units of demand 'order 1 - item 2' planned up to 2.0 days after its due date	2009-01-02T00:00:00 / 2009-01-04T00:00:00
-DEMAND CONSTRAINT	order 1 - item 1	Operation 'delivery end item 1' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	order 1 - item 2	Operation 'delivery end item 2' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1 - item 1	Operation 'delivery end item 1' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 - item 2	Operation 'delivery end item 2' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00

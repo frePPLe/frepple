@@ -38,23 +38,24 @@ BUFFER	constraint buffer 3	2009-01-15T00:00:00	1000	1000
 BUFFER	constraint buffer 3	2009-01-15T00:00:00	-192	808
 BUFFER	constraint buffer 4	2009-01-15T00:00:00	1000	1000
 BUFFER	constraint buffer 4	2009-01-15T00:00:00	-196	804
-DEMAND	order for item 1	2009-01-18T00:00:00	10
-DEMAND	order for item 1	2009-01-18T00:00:00	10
-DEMAND	order for item 1	2009-01-18T00:00:00	10
-DEMAND	order for item 1	2009-01-18T00:00:00	10
-DEMAND	order for item 1	2009-01-18T00:00:00	5
-DEMAND	order for item 1	2009-01-11T00:00:00	10
-DEMAND	order for item 1	2009-01-11T00:00:00	10
-DEMAND	order for item 1	2009-01-11T00:00:00	10
-DEMAND	order for item 1	2009-01-11T00:00:00	10
-DEMAND	order for item 1	2009-01-11T00:00:00	10
+DEMAND	order for item 1	2009-01-18T00:00:00	10	later than 2009-01-10T00:00:00
+DEMAND	order for item 1	2009-01-18T00:00:00	10	later than 2009-01-10T00:00:00
+DEMAND	order for item 1	2009-01-18T00:00:00	10	later than 2009-01-10T00:00:00
+DEMAND	order for item 1	2009-01-18T00:00:00	10	later than 2009-01-10T00:00:00
+DEMAND	order for item 1	2009-01-18T00:00:00	5	later than 2009-01-10T00:00:00
+DEMAND	order for item 1	2009-01-11T00:00:00	10	later than 2009-01-10T00:00:00
+DEMAND	order for item 1	2009-01-11T00:00:00	10	later than 2009-01-10T00:00:00
+DEMAND	order for item 1	2009-01-11T00:00:00	10	later than 2009-01-10T00:00:00
+DEMAND	order for item 1	2009-01-11T00:00:00	10	later than 2009-01-10T00:00:00
+DEMAND	order for item 1	2009-01-11T00:00:00	10	later than 2009-01-10T00:00:00
 DEMAND	order for item 1	2009-01-10T00:00:00	5
-DEMAND	order for item 2	2009-01-18T00:00:00	25
-DEMAND	order for item 2	2009-01-11T00:00:00	50
+DEMAND	order for item 2	2009-01-18T00:00:00	25	later than 2009-01-10T00:00:00
+DEMAND	order for item 2	2009-01-11T00:00:00	50	later than 2009-01-10T00:00:00
 DEMAND	order for item 2	2009-01-10T00:00:00	5
-DEMAND	order for item 3	2009-01-16T00:00:00	95
+DEMAND	order for item 2	planned 20 units short
+DEMAND	order for item 3	2009-01-16T00:00:00	95	later than 2009-01-10T00:00:00
 DEMAND	order for item 3	2009-01-10T00:00:00	5
-DEMAND	order for item 4	2009-01-16T00:00:00	95
+DEMAND	order for item 4	2009-01-16T00:00:00	95	later than 2009-01-10T00:00:00
 DEMAND	order for item 4	2009-01-10T00:00:00	5
 OPERATION	delivery 1	2009-01-09T00:00:00	2009-01-10T00:00:00	5
 OPERATION	delivery 1	2009-01-10T00:00:00	2009-01-11T00:00:00	10
@@ -94,12 +95,7 @@ PROBLEM	invalid data	No replenishment defined for 'constraint buffer 1'	1971-01-
 PROBLEM	invalid data	No replenishment defined for 'constraint buffer 2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'constraint buffer 3'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'constraint buffer 4'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	late	95 units of demand 'order for item 1' planned up to 8.0 days after its due date	2009-01-10T00:00:00 / 2009-01-18T00:00:00
-PROBLEM	late	75 units of demand 'order for item 2' planned up to 8.0 days after its due date	2009-01-10T00:00:00 / 2009-01-18T00:00:00
-PROBLEM	short	Demand 'order for item 2' planned 20 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
-PROBLEM	late	95 units of demand 'order for item 3' planned up to 6.0 days after its due date	2009-01-10T00:00:00 / 2009-01-16T00:00:00
-PROBLEM	late	95 units of demand 'order for item 4' planned up to 6.0 days after its due date	2009-01-10T00:00:00 / 2009-01-16T00:00:00
-DEMAND CONSTRAINT	order for item 1	Buffer 'constraint buffer 1' has material shortage of 14	2009-01-09T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order for item 2	Buffer 'constraint buffer 2' has material shortage of 194	2009-01-09T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order for item 3	Buffer 'constraint buffer 3' has material shortage of 194	2009-01-09T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order for item 4	Buffer 'constraint buffer 4' has material shortage of 194	2009-01-09T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order for item 1	Buffer 'constraint buffer 1' has material shortage of 14	2009-01-09T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order for item 2	Buffer 'constraint buffer 2' has material shortage of 194	2009-01-09T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order for item 3	Buffer 'constraint buffer 3' has material shortage of 194	2009-01-09T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order for item 4	Buffer 'constraint buffer 4' has material shortage of 194	2009-01-09T00:00:00 / 2030-12-31T00:00:00

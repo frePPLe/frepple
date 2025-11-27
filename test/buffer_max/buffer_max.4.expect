@@ -47,9 +47,9 @@ BUFFER	item 3 @ factory	2024-10-01T00:00:00	-11	30
 BUFFER	item 3 @ factory	2024-11-01T00:00:00	-11	19
 BUFFER	item 3 @ factory	2024-12-01T00:00:00	22	41
 BUFFER	item 3 @ factory	2024-12-01T00:00:00	-11	30
-DEMAND	SO #1 for item 2	2024-04-01T00:00:00	9
+DEMAND	SO #1 for item 2	2024-04-01T00:00:00	9	later than 2024-01-01T00:00:00
 DEMAND	SO #1 for item 2	2024-01-01T00:00:00	2
-DEMAND	SO #1 for item 3	2024-04-01T00:00:00	9
+DEMAND	SO #1 for item 3	2024-04-01T00:00:00	9	later than 2024-01-01T00:00:00
 DEMAND	SO #1 for item 3	2024-01-01T00:00:00	2
 DEMAND	SO #10 for item 2	2024-10-01T00:00:00	11
 DEMAND	SO #10 for item 3	2024-10-01T00:00:00	11
@@ -96,7 +96,5 @@ OPERATION	supply 2	2024-11-24T00:00:00	2024-12-01T00:00:00	11
 PROBLEM	material shortage	Buffer 'item 1 @ factory' has material shortage of 8	2024-01-01T00:00:00 / 2024-03-01T00:00:00
 PROBLEM	material shortage	Buffer 'item 2 @ factory' has material shortage of 10	2024-01-01T00:00:00 / 2024-02-01T00:00:00
 PROBLEM	material shortage	Buffer 'item 3 @ factory' has material shortage of 10	2024-01-01T00:00:00 / 2024-02-01T00:00:00
-PROBLEM	late	9 units of demand 'SO #1 for item 2' planned up to 91.0 days after its due date	2024-01-01T00:00:00 / 2024-04-01T00:00:00
-PROBLEM	late	9 units of demand 'SO #1 for item 3' planned up to 91.0 days after its due date	2024-01-01T00:00:00 / 2024-04-01T00:00:00
-DEMAND CONSTRAINT	SO #1 for item 2	Buffer 'item 2 @ factory' awaits confirmed supply	2024-01-01T00:00:00 / 2024-04-01T00:00:00	
-DEMAND CONSTRAINT	SO #1 for item 3	Buffer 'item 3 @ factory' awaits confirmed supply	2024-01-01T00:00:00 / 2024-04-01T00:00:00	
+DEMAND CONSTRAINT	SO #1 for item 2	Buffer 'item 2 @ factory' awaits confirmed supply	2024-01-01T00:00:00 / 2024-04-01T00:00:00
+DEMAND CONSTRAINT	SO #1 for item 3	Buffer 'item 3 @ factory' awaits confirmed supply	2024-01-01T00:00:00 / 2024-04-01T00:00:00

@@ -182,11 +182,3 @@ OPERATION	production 4	2021-04-25T20:00:00	2021-05-01T00:00:00	100
 OPERATION	production 4	2021-06-01T00:00:00	2021-06-01T00:00:00	100	approved
 PROBLEM	overload	Resource 'resource 2' has capacity shortage of 1	2020-12-01T00:00:00 / 2020-12-03T14:00:00
 PROBLEM	overload	Resource 'resource 4' has capacity shortage of 1	2020-12-01T00:00:00 / 2020-12-03T14:00:00
-PROBLEM	before current	Operation 'production 1' planned in the past	2020-12-05T00:00:00 / 2021-01-01T00:00:00
-PROBLEM	before current	Operation 'production 1' planned in the past	2020-12-06T00:00:00 / 2020-12-10T00:00:00
-PROBLEM	before current	Operation 'production 2' planned in the past	2020-12-03T14:00:00 / 2021-01-01T00:00:00
-PROBLEM	before current	Operation 'production 2' planned in the past	2020-12-01T00:00:00 / 2020-12-03T14:00:00
-PROBLEM	before current	Operation 'production 3' planned in the past	2020-12-05T00:00:00 / 2021-01-01T00:00:00
-PROBLEM	before current	Operation 'production 3' planned in the past	2020-12-06T00:00:00 / 2020-12-10T00:00:00
-PROBLEM	before current	Operation 'production 4' planned in the past	2020-12-03T14:00:00 / 2021-01-01T00:00:00
-PROBLEM	before current	Operation 'production 4' planned in the past	2020-12-01T00:00:00 / 2020-12-03T14:00:00

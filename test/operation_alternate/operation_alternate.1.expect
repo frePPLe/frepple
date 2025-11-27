@@ -52,13 +52,15 @@ BUFFER	item 4 @ warehouse	2009-02-10T00:00:00	-10	0
 DEMAND	2. item SO1	2009-01-20T00:00:00	3
 DEMAND	2. item SO2	2009-02-20T00:00:00	15
 DEMAND	2. item SO3	2009-03-20T00:00:00	30
-DEMAND	3. SO1	2009-03-23T00:00:00	10
+DEMAND	3. SO1	2009-03-23T00:00:00	10	later than 2009-01-21T00:00:00
 DEMAND	4. SO1	2009-01-21T00:00:00	10
 DEMAND	5. item SO1	2009-01-20T00:00:00	300
 DEMAND	item 2 SO1	2009-01-31T00:00:00	10
-DEMAND	item 4 SO1	2009-02-10T00:00:00	10
+DEMAND	item 3 SO1	planned 10 units short
+DEMAND	item 4 SO1	2009-02-10T00:00:00	10	later than 2009-01-31T00:00:00
+DEMAND	item 5 SO1	planned 10 units short
 DEMAND	order prio 1 for item 1	2009-01-11T00:00:00	20
-DEMAND	order prio 2 for item 1	2009-01-05T00:00:00	10
+DEMAND	order prio 2 for item 1	2009-01-05T00:00:00	10	later than 2009-01-02T00:00:00
 RESOURCE	4. machine	2009-01-20T14:00:00	1	1
 RESOURCE	4. machine	2009-01-20T15:00:00	1	2
 RESOURCE	4. machine	2009-01-20T15:00:00	-1	1
@@ -124,13 +126,8 @@ OPERATION	delivery 1	2009-01-04T00:00:00	2009-01-05T00:00:00	10
 OPERATION	delivery 1	2009-01-10T00:00:00	2009-01-11T00:00:00	20
 PROBLEM	invalid data	No replenishment defined for '3. unavailable component @ warehouse'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'item 5 @ warehouse'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	late	10 units of demand '3. SO1' planned up to 61.0 days after its due date	2009-01-21T00:00:00 / 2009-03-23T00:00:00
-PROBLEM	unplanned	Demand 'item 3 SO1' is not planned	2009-01-31T00:00:00 / 2009-01-31T00:00:00
-PROBLEM	late	10 units of demand 'item 4 SO1' planned up to 10.0 days after its due date	2009-01-31T00:00:00 / 2009-02-10T00:00:00
-PROBLEM	unplanned	Demand 'item 5 SO1' is not planned	2009-01-31T00:00:00 / 2009-01-31T00:00:00
-PROBLEM	late	10 units of demand 'order prio 2 for item 1' planned up to 3.0 days after its due date	2009-01-02T00:00:00 / 2009-01-05T00:00:00
-DEMAND CONSTRAINT	3. SO1	Buffer '3. unavailable component @ warehouse' has material shortage of 10	2009-01-20T23:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	item 3 SO1	Operation 'Purchase item 3 @ warehouse from MySupplier' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	item 4 SO1	Operation 'Purchase item 4 @ warehouse from MySupplier valid from 2009-02-10T00:00:00' planned before fence	2009-01-31T00:00:00 / 2009-02-10T00:00:00	
-DEMAND CONSTRAINT	item 5 SO1	Buffer 'item 5 @ warehouse' has material shortage of 10	2009-01-31T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order prio 2 for item 1	Operation 'make item 1 with routing A step 2' planned in the past	2008-12-17T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	3. SO1	Buffer '3. unavailable component @ warehouse' has material shortage of 10	2009-01-20T23:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	item 3 SO1	Operation 'Purchase item 3 @ warehouse from MySupplier' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	item 4 SO1	Operation 'Purchase item 4 @ warehouse from MySupplier valid from 2009-02-10T00:00:00' planned before fence	2009-01-31T00:00:00 / 2009-02-10T00:00:00
+DEMAND CONSTRAINT	item 5 SO1	Buffer 'item 5 @ warehouse' has material shortage of 10	2009-01-31T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 2 for item 1	Operation 'make item 1 with routing A step 2' planned in the past	2008-12-17T00:00:00 / 2009-01-01T00:00:00

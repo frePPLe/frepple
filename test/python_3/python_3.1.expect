@@ -126,5 +126,5 @@ Echoing operationplans:
         make item 10.0 2009-02-22 09:00:00 2009-03-01 09:00:00
 
 Printing problems
-  Problem: material invalid data No replenishment defined for 'buffer1' 1971-01-01 00:00:00 2030-12-31 00:00:00 1.0
-  Problem: material invalid data No replenishment defined for 'buffer2' 1971-01-01 00:00:00 2030-12-31 00:00:00 1.0
+  Problem: material invalid data No replenishment defined for 'buffer1' 1971-01-01 00:00:00 2030-12-31 00:00:00
+  Problem: material invalid data No replenishment defined for 'buffer2' 1971-01-01 00:00:00 2030-12-31 00:00:00

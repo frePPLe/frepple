@@ -37,4 +37,3 @@ OPERATION	3. make end item	2009-03-19T00:00:00	2009-03-20T00:00:00	100
 PROBLEM	invalid data	No replenishment defined for '2. component A @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer '2. component A @ factory' has material shortage of 20	2008-12-31T00:00:00 / 2009-02-12T00:00:00
 PROBLEM	invalid data	No replenishment defined for '2. component B @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	before current	Operation '2. make end item' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00

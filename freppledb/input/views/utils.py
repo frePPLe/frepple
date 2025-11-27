@@ -2184,6 +2184,8 @@ class OperationPlanDetail(View):
                     }
                 if hasattr(opplan, "remark"):
                     res["remark"] = getattr(opplan, "remark", None)
+                if "info" in getattr(opplan, "plan", {}):
+                    res["info"] = opplan.plan["info"]
 
                 # Information on materials
                 if view_OpplanMaterial:

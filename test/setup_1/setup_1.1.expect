@@ -41,4 +41,3 @@ OPERATION	make red product	2009-01-23T00:00:00	2009-01-30T00:00:00	3
 OPERATION	make red product	2009-01-27T00:00:00	2009-01-30T00:00:00	3
 OPERATION	make white product	2009-01-27T00:00:00	2009-02-01T00:00:00	3
 PROBLEM	overload	Resource 'Painting line' has capacity shortage of 2	2009-01-27T00:00:00 / 2009-01-30T00:00:00
-PROBLEM	before current	Operation 'make black product' planned in the past	2008-12-28T00:00:00 / 2009-01-01T00:00:00

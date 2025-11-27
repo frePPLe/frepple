@@ -5,19 +5,15 @@ BUFFER	subassembly @ factory	2019-12-28T00:00:00	-5	10
 BUFFER	subassembly @ factory	2019-12-28T00:00:00	-10	0
 BUFFER	subassembly @ factory	2020-01-16T00:00:00	5	5
 BUFFER	subassembly @ factory	2020-01-16T00:00:00	-5	0
-DEMAND	order 1	2020-01-04T00:00:00	10
-DEMAND	order 2	2020-01-23T00:00:00	5
-DEMAND	order 2	2020-01-04T00:00:00	5
+DEMAND	order 1	2020-01-04T00:00:00	10	later than 2019-12-01T00:00:00
+DEMAND	order 2	2020-01-23T00:00:00	5	later than 2019-12-01T00:00:00
+DEMAND	order 2	2020-01-04T00:00:00	5	later than 2019-12-01T00:00:00
 OPERATION	Purchase component @ factory from component supplier	2020-01-11T00:00:00	2020-01-11T00:00:00	5
 OPERATION	make end item	2019-12-28T00:00:00	2020-01-04T00:00:00	10
 OPERATION	make end item	2019-12-28T00:00:00	2020-01-04T00:00:00	5
 OPERATION	make end item	2020-01-16T00:00:00	2020-01-23T00:00:00	5
 OPERATION	make subassembly	2020-01-11T00:00:00	2020-01-16T00:00:00	5
-PROBLEM	before current	Operation 'make end item' planned in the past	2019-12-28T00:00:00 / 2020-01-01T00:00:00
-PROBLEM	before current	Operation 'make end item' planned in the past	2019-12-28T00:00:00 / 2020-01-01T00:00:00
-PROBLEM	late	10 units of demand 'order 1' planned up to 34.0 days after its due date	2019-12-01T00:00:00 / 2020-01-04T00:00:00
-PROBLEM	late	10 units of demand 'order 2' planned up to 53.0 days after its due date	2019-12-01T00:00:00 / 2020-01-23T00:00:00
-DEMAND CONSTRAINT	order 1	Operation 'make end item' planned before fence	2019-11-24T00:00:00 / 2019-12-28T00:00:00	
-DEMAND CONSTRAINT	order 2	Operation 'make end item' planned before fence	2019-11-24T00:00:00 / 2019-12-28T00:00:00	
-DEMAND CONSTRAINT	order 2	Operation 'make subassembly' planned before fence	2019-12-23T00:00:00 / 2020-01-05T00:00:00	
-DEMAND CONSTRAINT	order 2	Operation 'Purchase component @ factory from component supplier' planned before fence	2020-01-05T00:00:00 / 2020-01-11T00:00:00	
+DEMAND CONSTRAINT	order 1	Operation 'make end item' planned before fence	2019-11-24T00:00:00 / 2019-12-28T00:00:00
+DEMAND CONSTRAINT	order 2	Operation 'make end item' planned before fence	2019-11-24T00:00:00 / 2019-12-28T00:00:00
+DEMAND CONSTRAINT	order 2	Operation 'make subassembly' planned before fence	2019-12-23T00:00:00 / 2020-01-05T00:00:00
+DEMAND CONSTRAINT	order 2	Operation 'Purchase component @ factory from component supplier' planned before fence	2020-01-05T00:00:00 / 2020-01-11T00:00:00

@@ -10,5 +10,3 @@ RESOURCE	2. Resource	2008-06-23T00:00:00	1	1
 RESOURCE	2. Resource	2009-01-10T00:00:00	-1	0
 OPERATION	1. make end item	2008-08-17T00:00:00	2009-03-06T00:00:00	201
 OPERATION	2. make end item	2008-06-23T00:00:00	2009-01-10T00:00:00	201
-PROBLEM	before current	Operation '1. make end item' planned in the past	2008-08-17T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation '2. make end item' planned in the past	2008-06-23T00:00:00 / 2009-01-01T00:00:00

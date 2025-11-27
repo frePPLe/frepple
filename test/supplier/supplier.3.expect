@@ -66,13 +66,4 @@ OPERATION	Purchase Component E @ warehouse from Supplier of component E	2015-01-
 OPERATION	Purchase Component E @ warehouse from Supplier of component E	2015-01-16T00:00:00	2015-02-06T00:00:00	100
 PROBLEM	invalid data	No replenishment defined for 'Component D @ warehouse'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'Component D @ warehouse' has material shortage of 190	2015-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	before current	Operation 'Purchase Component A @ warehouse from Supplier of components A and B' planned in the past	2014-12-18T00:00:00 / 2015-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase Component B @ warehouse from Supplier of component B' planned in the past	2014-12-18T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	invalid data	Purchase order 'PO #1' on unauthorized supplier 	1971-01-01T00:00:00 / 2015-06-06T00:00:00
-PROBLEM	before current	Operation 'Purchase Component C @ warehouse from Supplier of component C' planned in the past	2014-12-11T00:00:00 / 2015-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase Component E @ warehouse from Supplier of component E' planned in the past	2014-12-06T00:00:00 / 2014-12-27T00:00:00
-PROBLEM	before current	Operation 'Purchase Component E @ warehouse from Supplier of component E' planned in the past	2014-12-10T00:00:00 / 2014-12-31T00:00:00
-PROBLEM	before current	Operation 'Purchase Component E @ warehouse from Supplier of component E' planned in the past	2014-12-14T00:00:00 / 2015-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase Component E @ warehouse from Supplier of component E' planned in the past	2014-12-18T00:00:00 / 2015-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase Component E @ warehouse from Supplier of component E' planned in the past	2014-12-22T00:00:00 / 2015-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase Component E @ warehouse from Supplier of component E' planned in the past	2014-12-26T00:00:00 / 2015-01-01T00:00:00

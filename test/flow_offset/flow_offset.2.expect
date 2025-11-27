@@ -102,25 +102,3 @@ OPERATION	Purchase 9. component 2 @ 9. factory from 9. supplier	2019-12-18T00:00
 PROBLEM	material shortage	Buffer '5. end item @ 5. factory' has material shortage of 1	2020-01-03T00:00:00 / 2020-01-03T09:00:00
 PROBLEM	material shortage	Buffer '6. end item @ 6. factory' has material shortage of 1	2020-01-03T00:00:00 / 2020-01-03T09:00:00
 PROBLEM	material shortage	Buffer '8. end item @ 8. factory' has material shortage of 10	2020-01-10T00:00:00 / 2020-01-13T00:00:00
-PROBLEM	before current	Operation '1. produce end item' planned in the past	2019-12-22T09:00:00 / 2019-12-30T17:00:00
-PROBLEM	before current	Operation '1. produce intermediate item' planned in the past	2019-12-18T09:00:00 / 2019-12-19T09:00:00
-PROBLEM	before current	Operation '2. produce end item' planned in the past	2019-12-18T09:00:00 / 2019-12-30T17:00:00
-PROBLEM	before current	Operation '2. produce intermediate item' planned in the past	2019-12-12T09:00:00 / 2019-12-13T09:00:00
-PROBLEM	before current	Operation '3. produce end item' planned in the past	2019-12-22T09:00:00 / 2019-12-30T17:00:00
-PROBLEM	before current	Operation '3. produce intermediate item' planned in the past	2019-12-18T09:00:00 / 2019-12-19T09:00:00
-PROBLEM	before current	Operation '4. produce end item' planned in the past	2019-12-18T09:00:00 / 2019-12-30T17:00:00
-PROBLEM	before current	Operation '4. produce intermediate item' planned in the past	2019-12-12T09:00:00 / 2019-12-13T09:00:00
-PROBLEM	before current	Operation '5. produce end item' planned in the past	2019-12-28T09:00:00 / 2020-01-01T00:00:00
-PROBLEM	before current	Operation '5. produce intermediate item' planned in the past	2019-12-28T09:00:00 / 2019-12-29T09:00:00
-PROBLEM	before current	Operation '6. produce end item' planned in the past	2019-12-28T09:00:00 / 2020-01-01T00:00:00
-PROBLEM	before current	Operation '6. produce intermediate item' planned in the past	2019-12-28T09:00:00 / 2019-12-29T09:00:00
-PROBLEM	before current	Operation '8. produce end item - alt 1' planned in the past	2019-12-01T00:00:00 / 2020-01-01T00:00:00
-PROBLEM	before current	Operation '9. produce end item' planned in the past	2019-12-26T00:00:00 / 2019-12-29T00:00:00
-PROBLEM	before current	Operation 'Purchase 1. raw material @ 1. factory from 1. supplier' planned in the past	2019-12-11T09:00:00 / 2019-12-18T09:00:00
-PROBLEM	before current	Operation 'Purchase 2. raw material @ 2. factory from 2. supplier' planned in the past	2019-12-05T09:00:00 / 2019-12-12T09:00:00
-PROBLEM	before current	Operation 'Purchase 3. raw material @ 3. factory from 3. supplier' planned in the past	2019-12-10T09:00:00 / 2019-12-17T09:00:00
-PROBLEM	before current	Operation 'Purchase 4. raw material @ 4. factory from 4. supplier' planned in the past	2019-12-04T09:00:00 / 2019-12-11T09:00:00
-PROBLEM	before current	Operation 'Purchase 5. raw material @ 5. factory from 5. supplier' planned in the past	2019-12-21T09:00:00 / 2019-12-28T09:00:00
-PROBLEM	before current	Operation 'Purchase 6. raw material @ 6. factory from 6. supplier' planned in the past	2019-12-22T09:00:00 / 2019-12-29T09:00:00
-PROBLEM	before current	Operation 'Purchase 9. component 1 @ 9. factory from 9. supplier' planned in the past	2019-12-26T00:00:00 / 2019-12-26T00:00:00
-PROBLEM	before current	Operation 'Purchase 9. component 2 @ 9. factory from 9. supplier' planned in the past	2019-12-18T00:00:00 / 2019-12-28T00:00:00

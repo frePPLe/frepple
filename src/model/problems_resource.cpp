@@ -53,35 +53,14 @@ void Resource::updateProblems() {
       curMin = iter->getMin();
 
     // Only consider the last loadplan for a certain date
-    const TimeLine<LoadPlan>::Event *f = &*(iter++);
+    const TimeLine<LoadPlan>::Event* f = &*(iter++);
     if (iter != loadplans.end() && iter->getDate() == f->getDate()) continue;
-
-    // Check against minimum target
-    double delta = f->getOnhand() - curMin;
-    if (delta < -ROUNDING_ERROR) {
-      if (!shortageProblem) {
-        shortageProblemStart = f->getDate();
-        shortageQty = delta;
-        shortageProblem = true;
-      } else if (delta < shortageQty)
-        // New shortage qty
-        shortageQty = delta;
-    } else {
-      if (shortageProblem) {
-        // New problem now ends
-        if (f->getDate() != shortageProblemStart)
-          new ProblemCapacityUnderload(
-              this, DateRange(shortageProblemStart, f->getDate()),
-              -shortageQty);
-        shortageProblem = false;
-      }
-    }
 
     // Note that theoretically we can have a minimum and a maximum problem for
     // the same moment in time.
 
     // Check against maximum target
-    delta = f->getOnhand() - curMax;
+    auto delta = f->getOnhand() - curMax;
     if (delta > ROUNDING_ERROR) {
       if (!excessProblem) {
         excessProblemStart = f->getDate();
@@ -105,12 +84,6 @@ void Resource::updateProblems() {
   if (excessProblem)
     new ProblemCapacityOverload(this, excessProblemStart, Date::infiniteFuture,
                                 excessQty);
-
-  // The shortage lasts till the end of the horizon...
-  if (shortageProblem)
-    new ProblemCapacityUnderload(
-        this, DateRange(shortageProblemStart, Date::infiniteFuture),
-        -shortageQty);
 }
 
 void ResourceBuckets::updateProblems() {
@@ -138,12 +111,6 @@ void ResourceBuckets::updateProblems() {
   // Evaluate the final bucket
   if (load < -ROUNDING_ERROR)
     new ProblemCapacityOverload(this, startdate, Date::infiniteFuture, -load);
-}
-
-string ProblemCapacityUnderload::getDescription() const {
-  ostringstream ch;
-  ch << "Resource '" << getResource() << "' has excess capacity of " << qty;
-  return ch.str();
 }
 
 string ProblemCapacityOverload::getDescription() const {

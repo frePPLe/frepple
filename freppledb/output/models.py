@@ -35,7 +35,6 @@ class Problem(models.Model):
     description = models.CharField(_("description"))
     startdate = models.DateTimeField(_("start date"), db_index=True)
     enddate = models.DateTimeField(_("end date"), db_index=True)
-    weight = models.DecimalField(_("weight"), max_digits=20, decimal_places=8)
 
     def __str__(self):
         return str(self.description)
@@ -61,7 +60,6 @@ class Constraint(models.Model):
     description = models.CharField(_("description"))
     startdate = models.DateTimeField(_("start date"), db_index=True)
     enddate = models.DateTimeField(_("end date"), db_index=True)
-    weight = models.DecimalField(_("weight"), max_digits=20, decimal_places=8)
 
     def __str__(self):
         return str(self.demand) + " " + str(self.description)

@@ -51,10 +51,8 @@
 <problem>
 	<name>invalid data</name>
 	<description>No replenishment defined for &apos;buffer1&apos;</description>
-	<weight>1</weight>
 </problem>
 <problem>
 	<name>invalid data</name>
 	<description>No replenishment defined for &apos;buffer2&apos;</description>
-	<weight>1</weight>
 </problem>

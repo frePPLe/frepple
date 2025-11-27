@@ -81,7 +81,6 @@ void Demand::setQuantity(double f) {
 
   // Update the quantity
   qty = f;
-  setChanged();
 }
 
 Demand::~Demand() {
@@ -126,9 +125,6 @@ void Demand::deleteOperationPlans(bool deleteLocked, CommandManager* cmds) {
       // Delete immediately
       delete candidate;
   }
-
-  // Mark the demand as being changed, so the problems can be redetected
-  setChanged();
 }
 
 void Demand::removeDelivery(OperationPlan* o) {
@@ -145,7 +141,6 @@ void Demand::removeDelivery(OperationPlan* o) {
 
   // Remove from the list
   deli.remove(o);
-  setChanged();
 }
 
 const Demand::OperationPlanList& Demand::getDelivery() const {
@@ -182,9 +177,6 @@ void Demand::addDelivery(OperationPlan* o) {
 
   // Add to the list of delivery operationplans.
   deli.push_front(o);
-
-  // Mark the demand as being changed, so the problems can be redetected
-  setChanged();
 
   // Create link between operationplan and demand
   o->setDemand(this);

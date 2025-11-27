@@ -35,9 +35,3 @@ OPERATION	assembly	2008-12-29T00:00:00	2009-01-04T00:00:00	5
 OPERATION	assembly	2009-01-01T00:00:00	2009-01-04T00:00:00	2
 OPERATION	assembly	2009-01-01T00:00:00	2009-01-04T00:00:00	2
 OPERATION	assembly	2009-01-02T00:00:00	2009-01-04T00:00:00	1
-PROBLEM	before current	Operation 'Purchase component A @ factory from Component supplier' planned in the past	2008-12-22T00:00:00 / 2008-12-29T00:00:00
-PROBLEM	before current	Operation 'Purchase component A @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase component A @ factory from Component supplier' planned in the past	2008-12-26T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase component C @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase component C @ factory from Component supplier' planned in the past	2008-12-26T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-29T00:00:00 / 2009-01-01T00:00:00

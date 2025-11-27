@@ -378,14 +378,13 @@ class ExportProblems(PlanTask):
                 )
             ):
                 entity = "forecast"
-            yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+            yield "%s\v%s\v%s\v%s\v%s\v%s\n" % (
                 clean_value(entity),
                 clean_value(i.name),
                 clean_value(owner.name),
                 clean_value(i.description),
                 str(i.start),
                 str(i.end),
-                round(i.weight, 8),
             )
 
     @classmethod
@@ -403,7 +402,6 @@ class ExportProblems(PlanTask):
                     "description",
                     "startdate",
                     "enddate",
-                    "weight",
                 ),
                 size=1024,
                 sep="\v",
@@ -432,7 +430,7 @@ class ExportConstraints(PlanTask):
                 continue
             for i in d.constraints:
                 try:
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         (
                             clean_value(d.name)
                             if isinstance(d, frepple.demand_default)
@@ -454,7 +452,6 @@ class ExportConstraints(PlanTask):
                         clean_value(i.description),
                         str(i.start),
                         str(i.end),
-                        round(i.weight, 8),
                     )
                 except Exception:
                     print("Error exporting constraint of demand '%s': %s" % (d.name, i))
@@ -477,7 +474,6 @@ class ExportConstraints(PlanTask):
                     "description",
                     "startdate",
                     "enddate",
-                    "weight",
                 ),
                 size=1024,
                 sep="\v",

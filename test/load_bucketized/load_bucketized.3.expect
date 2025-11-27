@@ -135,19 +135,3 @@ OPERATION	6. make end item	2018-09-11T23:59:59	2018-09-17T23:59:59	30
 OPERATION	6. make end item	2018-09-18T23:59:59	2018-09-24T23:59:59	30
 OPERATION	6. make end item	2018-09-25T00:00:00	2018-10-01T00:00:00	30
 PROBLEM	overload	Resource '3. Resource' has capacity shortage of 180	2017-12-23T00:00:00 / 2017-12-25T00:00:00
-PROBLEM	before current	Operation '1. make end item' planned in the past	2017-12-15T23:59:59 / 2017-12-21T23:59:59
-PROBLEM	before current	Operation '1. make end item' planned in the past	2017-12-22T23:59:59 / 2017-12-29T23:59:59
-PROBLEM	before current	Operation '1. make end item' planned in the past	2017-12-26T00:00:00 / 2018-01-01T00:00:00
-PROBLEM	before current	Operation '2. make end item' planned in the past	2017-12-15T23:59:59 / 2017-12-21T23:59:59
-PROBLEM	before current	Operation '2. make end item' planned in the past	2017-12-22T23:59:59 / 2017-12-29T23:59:59
-PROBLEM	before current	Operation '2. make end item' planned in the past	2017-12-26T00:00:00 / 2018-01-01T00:00:00
-PROBLEM	before current	Operation '3. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00
-PROBLEM	before current	Operation '4. make end item' planned in the past	2017-12-16T23:59:59 / 2017-12-22T23:59:59
-PROBLEM	before current	Operation '4. make end item' planned in the past	2017-12-22T23:59:59 / 2017-12-29T23:59:59
-PROBLEM	before current	Operation '4. make end item' planned in the past	2017-12-26T00:00:00 / 2018-01-01T00:00:00
-PROBLEM	before current	Operation '5. make end item' planned in the past	2017-12-11T23:59:59 / 2017-12-17T23:59:59
-PROBLEM	before current	Operation '5. make end item' planned in the past	2017-12-18T23:59:59 / 2017-12-24T23:59:59
-PROBLEM	before current	Operation '5. make end item' planned in the past	2017-12-24T23:59:59 / 2017-12-31T23:59:59
-PROBLEM	before current	Operation '6. make end item' planned in the past	2017-12-12T23:59:59 / 2017-12-18T23:59:59
-PROBLEM	before current	Operation '6. make end item' planned in the past	2017-12-19T23:59:59 / 2017-12-26T23:59:59
-PROBLEM	before current	Operation '6. make end item' planned in the past	2017-12-26T00:00:00 / 2018-01-01T00:00:00

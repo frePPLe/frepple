@@ -1163,7 +1163,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <xsd:element name="description" type="xsd:normalizedString" minOccurs="0" />
       <xsd:element name="start" type="xsd:dateTime" minOccurs="0" />
       <xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
-      <xsd:element name="weight" type="xsd:double" minOccurs="0" />
     </xsd:sequence>
   </xsd:complexType>
 

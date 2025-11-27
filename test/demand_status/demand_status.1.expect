@@ -8,9 +8,11 @@ BUFFER	item 6A @ factory	2025-06-05T00:00:00	1	1
 BUFFER	item 6A @ factory	2025-06-05T00:00:00	-1	0
 BUFFER	item 6B @ factory	2025-06-05T00:00:00	1	1
 BUFFER	item 6B @ factory	2025-06-05T00:00:00	-1	0
-DEMAND	order 1 - open	2025-01-08T00:00:00	1
+DEMAND	order 1 - open	2025-01-08T00:00:00	1	later than 2025-01-05T00:00:00
 DEMAND	order 3 - quote	2025-03-05T00:00:00	1
+DEMAND	order 4 - inquiry	planned 1 units short
 DEMAND	order 5A	2025-05-05T00:00:00	1
+DEMAND	order 5B	planned 1 units short
 DEMAND	order 6A	2025-06-05T00:00:00	1
 DEMAND	order 6B	2025-06-05T00:00:00	1
 OPERATION	Purchase item 1 @ factory from Magic Supplier	2025-01-01T00:00:00	2025-01-08T00:00:00	1
@@ -18,7 +20,4 @@ OPERATION	Purchase item 3 @ factory from Magic Supplier	2025-02-26T00:00:00	2025
 OPERATION	Purchase item 5A @ factory from Magic Supplier	2025-04-28T00:00:00	2025-05-05T00:00:00	1
 OPERATION	Purchase item 6A @ factory from Magic Supplier	2025-05-29T00:00:00	2025-06-05T00:00:00	1
 OPERATION	Purchase item 6B @ factory from Magic Supplier	2025-05-29T00:00:00	2025-06-05T00:00:00	1
-PROBLEM	late	1 units of demand 'order 1 - open' planned up to 3.0 days after its due date	2025-01-05T00:00:00 / 2025-01-08T00:00:00
-PROBLEM	unplanned	Demand 'order 4 - inquiry' is not planned	2025-04-05T00:00:00 / 2025-04-05T00:00:00
-PROBLEM	unplanned	Demand 'order 5B' is not planned	2025-05-05T00:00:00 / 2025-05-05T00:00:00
-DEMAND CONSTRAINT	order 1 - open	Operation 'Purchase item 1 @ factory from Magic Supplier' planned in the past	2024-12-29T00:00:00 / 2025-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1 - open	Operation 'Purchase item 1 @ factory from Magic Supplier' planned in the past	2024-12-29T00:00:00 / 2025-01-01T00:00:00

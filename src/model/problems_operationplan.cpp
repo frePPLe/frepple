@@ -39,26 +39,9 @@ void Operation::updateProblems() {
 
 void OperationPlan::updateProblems() {
   // A flag for each problem type that may need to be created
-  bool needsBeforeCurrent(false);
-  bool needsBeforeFence(false);
   bool needsPrecedence(false);
 
   if (!getCompleted() && !getClosed()) {
-    if (!firstsubopplan) {
-      // Avoid duplicating problems on child and owner operationplans
-      // Check if a BeforeCurrent or BeforeFence problem is required.
-      // Note that we either detect of beforeCurrent or a beforeFence problem,
-      // never both simultaneously.
-      if (getConfirmed()) {
-        if (getEnd() < Plan::instance().getCurrent()) needsBeforeCurrent = true;
-      } else {
-        if (getStart() < Plan::instance().getCurrent())
-          needsBeforeCurrent = true;
-        else if (getProposed() && getStart() < oper->getFence(this))
-          needsBeforeFence = true;
-      }
-    }
-
     if (dependencies.empty()) {
       // Note: 1 second grace period to avoid rounding issues
       // TODO hard safety time not considered for the precedence problem
@@ -91,17 +74,7 @@ void OperationPlan::updateProblems() {
     // concentrated. However, a drawback of this design is that a new problem
     // subclass will also require a new demand subclass. I think such a link
     // is acceptable.
-    if (typeid(curprob) == typeid(ProblemBeforeCurrent)) {
-      if (needsBeforeCurrent)
-        needsBeforeCurrent = false;
-      else if (this == curprob.getOwner())
-        delete &curprob;
-    } else if (typeid(curprob) == typeid(ProblemBeforeFence)) {
-      if (needsBeforeFence)
-        needsBeforeFence = false;
-      else if (this == curprob.getOwner())
-        delete &curprob;
-    } else if (typeid(curprob) == typeid(ProblemPrecedence)) {
+    if (typeid(curprob) == typeid(ProblemPrecedence)) {
       if (needsPrecedence)
         needsPrecedence = false;
       else if (this == curprob.getOwner())
@@ -110,8 +83,6 @@ void OperationPlan::updateProblems() {
   }
 
   // Create the problems that are required but aren't existing yet.
-  if (needsBeforeCurrent) new ProblemBeforeCurrent(this);
-  if (needsBeforeFence) new ProblemBeforeFence(this);
   if (needsPrecedence) new ProblemPrecedence(this);
 }
 

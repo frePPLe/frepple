@@ -66,4 +66,3 @@ PROBLEM	material shortage	Buffer '6. item @ factory' has material shortage of 10
 PROBLEM	material shortage	Buffer '7. item @ factory' has material shortage of 10	2024-02-01T00:00:00 / 2024-03-01T00:00:00
 PROBLEM	material shortage	Buffer '8. item @ factory' has material shortage of 10	2024-07-01T00:00:00 / 2024-08-01T00:00:00
 PROBLEM	material shortage	Buffer '9. item @ factory' has material shortage of 10	2024-02-01T00:00:00 / 2024-03-01T00:00:00
-PROBLEM	before current	Operation 'Purchase 3. item @ factory from 3. Supplier' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00

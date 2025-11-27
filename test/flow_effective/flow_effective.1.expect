@@ -22,8 +22,9 @@ BUFFER	3. end item @ factory	2009-03-20T00:00:00	-100	0
 DEMAND	1. order 1	2009-01-20T00:00:00	10
 DEMAND	1. order 2	2009-02-02T00:00:00	10
 DEMAND	1. order 3	2009-02-20T00:00:00	10
-DEMAND	2. order 1	2009-02-02T00:00:00	10
-DEMAND	2. order 1	2009-01-02T00:00:00	10
+DEMAND	2. order 1	2009-02-02T00:00:00	10	later than 2009-01-01T00:00:00
+DEMAND	2. order 1	2009-01-02T00:00:00	10	later than 2009-01-01T00:00:00
+DEMAND	2. order 1	planned 10 units short
 DEMAND	3. order 1	2009-01-20T00:00:00	100
 DEMAND	3. order 2	2009-02-20T00:00:00	100
 DEMAND	3. order 3	2009-03-20T00:00:00	100
@@ -41,8 +42,6 @@ OPERATION	3. make end item	2009-02-19T00:00:00	2009-02-20T00:00:00	125
 OPERATION	3. make end item	2009-03-19T00:00:00	2009-03-20T00:00:00	100
 PROBLEM	invalid data	No replenishment defined for '2. component A @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for '2. component B @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	late	20 units of demand '2. order 1' planned up to 32.0 days after its due date	2009-01-01T00:00:00 / 2009-02-02T00:00:00
-PROBLEM	short	Demand '2. order 1' planned 10 units short	2009-01-01T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	2. order 1	Operation '2. make end item' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	2. order 1	Buffer '2. component A @ factory' has material shortage of 20	2009-01-01T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	2. order 1	Buffer '2. component B @ factory' has material shortage of 10	2009-02-01T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	2. order 1	Operation '2. make end item' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	2. order 1	Buffer '2. component A @ factory' has material shortage of 20	2009-01-01T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	2. order 1	Buffer '2. component B @ factory' has material shortage of 10	2009-02-01T00:00:00 / 2030-12-31T00:00:00

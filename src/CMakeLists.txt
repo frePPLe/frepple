@@ -52,7 +52,6 @@ add_library(model STATIC
   "model/plan.cpp"
   "model/problem.cpp"
   "model/problems_buffer.cpp"
-  "model/problems_demand.cpp"
   "model/problems_operationplan.cpp"
   "model/problems_resource.cpp"
   "model/resource.cpp"

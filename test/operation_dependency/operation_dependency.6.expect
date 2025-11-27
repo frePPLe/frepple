@@ -21,7 +21,7 @@ BUFFER	11. material 4 @ factory	2022-12-28T00:00:00	-2	0
 BUFFER	11. material 5 @ X	2022-12-29T00:00:00	2	2
 BUFFER	11. material 5 @ X	2022-12-29T00:00:00	-2	0
 DEMAND	1. order	2023-05-01T00:00:00	5
-DEMAND	10. constrained material and capacity	2023-02-23T00:00:00	1
+DEMAND	10. constrained material and capacity	2023-02-23T00:00:00	1	later than 2023-01-01T00:00:00
 DEMAND	11. constrained material and capacity	2023-01-01T00:00:00	1
 DEMAND	2. project	2023-01-01T00:00:00	1
 DEMAND	3. constrained project	2023-01-01T00:00:00	1
@@ -118,54 +118,5 @@ OPERATION	Purchase 11. material 3 @ factory from 11. supplier	2022-11-27T00:00:0
 OPERATION	Purchase 11. material 4 @ factory from 11. supplier	2022-11-18T00:00:00	2022-12-28T00:00:00	2
 OPERATION	Purchase 11. material 5 @ X from 10. supplier	2022-11-09T00:00:00	2022-12-29T00:00:00	2
 PROBLEM	overload	Resource '11. Resource' has capacity shortage of 1	2022-12-29T00:00:00 / 2022-12-30T00:00:00
-PROBLEM	before current	Operation '11. constrained material and capacity' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-PROBLEM	before current	Operation '11. task 1' planned in the past	2022-12-30T00:00:00 / 2022-12-31T00:00:00
-PROBLEM	before current	Operation '11. task 2' planned in the past	2022-12-29T00:00:00 / 2022-12-30T00:00:00
-PROBLEM	before current	Operation '11. task 3' planned in the past	2022-12-29T00:00:00 / 2022-12-30T00:00:00
-PROBLEM	before current	Operation '11. task 4a' planned in the past	2022-12-27T00:00:00 / 2022-12-28T00:00:00
-PROBLEM	before current	Operation '11. task 4b' planned in the past	2022-12-27T00:00:00 / 2022-12-28T00:00:00
-PROBLEM	before current	Operation '11. task 4c' planned in the past	2022-12-28T00:00:00 / 2022-12-29T00:00:00
-PROBLEM	before current	Operation '11. task 5' planned in the past	2022-12-26T00:00:00 / 2022-12-27T00:00:00
-PROBLEM	before current	Operation '2. project X' planned in the past	2022-12-22T00:00:00 / 2023-01-01T00:00:00
-PROBLEM	before current	Operation '2. task X1' planned in the past	2022-12-17T00:00:00 / 2022-12-22T00:00:00
-PROBLEM	before current	Operation '2. task X2 step 1' planned in the past	2022-12-03T00:00:00 / 2022-12-08T00:00:00
-PROBLEM	before current	Operation '2. task X2 step 2' planned in the past	2022-12-08T00:00:00 / 2022-12-15T00:00:00
-PROBLEM	before current	Operation '2. task X2 step 3' planned in the past	2022-12-15T00:00:00 / 2022-12-22T00:00:00
-PROBLEM	before current	Operation '3. project X' planned in the past	2022-12-22T00:00:00 / 2023-01-01T00:00:00
-PROBLEM	before current	Operation '3. task X1' planned in the past	2022-12-07T00:00:00 / 2022-12-12T00:00:00
-PROBLEM	before current	Operation '3. task X2 step 1' planned in the past	2022-11-13T00:00:00 / 2022-11-18T00:00:00
-PROBLEM	before current	Operation '3. task X2 step 2' planned in the past	2022-11-28T00:00:00 / 2022-12-05T00:00:00
-PROBLEM	before current	Operation '3. task X2 step 3' planned in the past	2022-12-15T00:00:00 / 2022-12-22T00:00:00
-PROBLEM	before current	Operation '4. project X' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-PROBLEM	before current	Operation '4. task X1' planned in the past	2022-12-16T00:00:00 / 2022-12-31T00:00:00
-PROBLEM	before current	Operation '4. task X2' planned in the past	2022-12-24T00:00:00 / 2022-12-31T00:00:00
-PROBLEM	before current	Operation '4. task X3' planned in the past	2022-12-11T00:00:00 / 2022-12-16T00:00:00
-PROBLEM	before current	Operation '5. project X' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-PROBLEM	before current	Operation '5. task X1' planned in the past	2022-12-24T00:00:00 / 2022-12-31T00:00:00
-PROBLEM	before current	Operation '5. task X2' planned in the past	2022-12-16T00:00:00 / 2022-12-31T00:00:00
-PROBLEM	before current	Operation '5. task X3' planned in the past	2022-12-11T00:00:00 / 2022-12-16T00:00:00
-PROBLEM	before current	Operation '7. task 1' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-PROBLEM	before current	Operation '7. task 2' planned in the past	2022-12-30T00:00:00 / 2022-12-31T00:00:00
-PROBLEM	before current	Operation '7. task 3' planned in the past	2022-12-30T00:00:00 / 2022-12-31T00:00:00
-PROBLEM	before current	Operation '7. task 4a' planned in the past	2022-12-28T00:00:00 / 2022-12-29T00:00:00
-PROBLEM	before current	Operation '7. task 4b' planned in the past	2022-12-28T00:00:00 / 2022-12-29T00:00:00
-PROBLEM	before current	Operation '7. task 4c' planned in the past	2022-12-29T00:00:00 / 2022-12-30T00:00:00
-PROBLEM	before current	Operation '7. task 5' planned in the past	2022-12-27T00:00:00 / 2022-12-28T00:00:00
-PROBLEM	before current	Operation '8. project X' planned in the past	2022-12-22T00:00:00 / 2023-01-01T00:00:00
-PROBLEM	before current	Operation '8. task X1' planned in the past	2022-12-17T00:00:00 / 2022-12-22T00:00:00
-PROBLEM	before current	Operation '8. task X2 step 2' planned in the past	2022-12-08T00:00:00 / 2022-12-15T00:00:00
 PROBLEM	precedence	Operation '8. task X2 step 2' starts before preceding operation ends	2022-12-15T00:00:00 / 2022-12-15T00:00:00
-PROBLEM	before current	Operation '8. task X2 step 3' planned in the past	2022-12-15T00:00:00 / 2022-12-22T00:00:00
-PROBLEM	before current	Operation '9. project X' planned in the past	2022-12-30T00:00:00 / 2023-01-01T00:00:00
-PROBLEM	before current	Operation '9. task X1' planned in the past	2022-12-28T00:00:00 / 2022-12-30T00:00:00
-PROBLEM	before current	Operation '9. task X2 step 1' planned in the past	2022-12-22T00:00:00 / 2022-12-25T00:00:00
-PROBLEM	before current	Operation '9. task X2 step 2' planned in the past	2022-12-25T00:00:00 / 2022-12-28T00:00:00
-PROBLEM	before current	Operation '9. task X2 step 2' planned in the past	2022-12-29T00:00:00 / 2023-01-01T00:00:00
-PROBLEM	before current	Operation '9. task X2 step 3' planned in the past	2022-12-28T00:00:00 / 2022-12-30T00:00:00
 PROBLEM	precedence	Operation '9. task X2 step 3' starts before preceding operation ends	2022-12-30T00:00:00 / 2022-12-30T00:00:00
-PROBLEM	before current	Operation 'Purchase 11. material 1 @ X from 11. supplier' planned in the past	2022-12-20T00:00:00 / 2022-12-30T00:00:00
-PROBLEM	before current	Operation 'Purchase 11. material 2 @ X from 11. supplier' planned in the past	2022-12-06T00:00:00 / 2022-12-26T00:00:00
-PROBLEM	before current	Operation 'Purchase 11. material 3 @ factory from 11. supplier' planned in the past	2022-11-27T00:00:00 / 2022-12-27T00:00:00
-PROBLEM	before current	Operation 'Purchase 11. material 4 @ factory from 11. supplier' planned in the past	2022-11-18T00:00:00 / 2022-12-28T00:00:00
-PROBLEM	before current	Operation 'Purchase 11. material 5 @ X from 10. supplier' planned in the past	2022-11-09T00:00:00 / 2022-12-29T00:00:00
-PROBLEM	late	1 units of demand '10. constrained material and capacity' planned up to 53.0 days after its due date	2023-01-01T00:00:00 / 2023-02-23T00:00:00

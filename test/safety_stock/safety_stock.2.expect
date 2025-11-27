@@ -39,11 +39,3 @@ OPERATION	make end item 1	2009-02-12T00:00:00	2009-02-12T00:00:00	10
 OPERATION	make end item 2	2008-12-23T00:00:00	2008-12-23T00:00:00	10
 OPERATION	make end item 2	2009-02-05T00:00:00	2009-02-05T00:00:00	10
 OPERATION	make end item 2	2009-03-05T00:00:00	2009-03-05T00:00:00	10
-PROBLEM	before current	Operation 'Purchase end item 3 C @ factory from Component supplier' planned in the past	2008-12-28T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'buy end item 3' planned in the past	2008-12-24T00:00:00 / 2008-12-28T00:00:00
-PROBLEM	before current	Operation 'buy end item 3' planned in the past	2008-12-28T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'delivery end item 1' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'delivery end item 2' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'end item 3 from A to B' planned in the past	2008-12-28T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'make end item 1' planned in the past	2008-12-30T00:00:00 / 2008-12-30T00:00:00
-PROBLEM	before current	Operation 'make end item 2' planned in the past	2008-12-23T00:00:00 / 2008-12-23T00:00:00

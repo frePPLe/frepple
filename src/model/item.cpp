@@ -98,9 +98,6 @@ void Demand::setItem(Item* i) {
 
   // Trigger level calculation
   HasLevel::triggerLazyRecomputation();
-
-  // Mark as changed
-  setChanged();
 }
 
 Date Item::findEarliestPurchaseOrder(const PooledString& batch) const {

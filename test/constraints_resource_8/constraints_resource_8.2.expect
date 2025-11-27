@@ -309,4 +309,3 @@ PROBLEM	overload	Resource '2. Resource 4' has capacity shortage of 3	2020-07-18T
 PROBLEM	overload	Resource '2. Resource 5' has capacity shortage of 3	2020-07-20T00:00:00 / 2020-07-30T00:00:00
 PROBLEM	overload	Resource '2. Resource 6' has capacity shortage of 3	2020-07-30T00:00:00 / 2020-08-01T00:00:00
 PROBLEM	overload	Resource '3. Resource 6' has capacity shortage of 3	2020-07-30T00:00:00 / 2020-08-01T00:00:00
-PROBLEM	before current	Operation 'Purchase 3. item 5 @ factory from 3. Supplier' planned in the past	2019-06-26T00:00:00 / 2020-01-01T00:00:00

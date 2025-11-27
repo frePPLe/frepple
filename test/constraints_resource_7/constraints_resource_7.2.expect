@@ -44,11 +44,11 @@ BUFFER	6. end item @ 6. factory	2019-02-15T00:00:00	28	80
 BUFFER	6. end item @ 6. factory	2019-02-15T00:00:00	-80	0
 DEMAND	1. order 1	2019-07-15T00:00:00	2
 DEMAND	1. order 2	2018-11-11T00:00:00	2
-DEMAND	2. order 1	2019-07-12T00:00:00	2
-DEMAND	2. order 2	2018-11-09T00:00:00	2
-DEMAND	3. order 1	2019-07-12T00:00:00	20
-DEMAND	3. order 2	2019-03-29T00:00:00	1
-DEMAND	3. order 3	2018-11-09T00:00:00	10
+DEMAND	2. order 1	2019-07-12T00:00:00	2	earlier than 2019-07-15T00:00:00
+DEMAND	2. order 2	2018-11-09T00:00:00	2	earlier than 2018-11-11T00:00:00
+DEMAND	3. order 1	2019-07-12T00:00:00	20	earlier than 2019-07-15T00:00:00
+DEMAND	3. order 2	2019-03-29T00:00:00	1	earlier than 2019-04-01T00:00:00
+DEMAND	3. order 3	2018-11-09T00:00:00	10	earlier than 2018-11-11T00:00:00
 DEMAND	4. order 1	2019-03-01T00:00:00	95
 DEMAND	5. order 1	2019-04-08T00:00:00	10
 DEMAND	5. order 2	2019-03-27T00:00:00	4
@@ -147,11 +147,3 @@ PROBLEM	overload	Resource '6. Resource B' has capacity shortage of 2	2019-01-28T
 PROBLEM	overload	Resource '6. Resource B' has capacity shortage of 2	2019-02-04T00:00:00 / 2019-02-09T00:00:00
 PROBLEM	overload	Resource '6. Resource B' has capacity shortage of 20	2019-02-11T00:00:00 / 2019-02-16T00:00:00
 PROBLEM	overload	Resource '6. Resource C' has capacity shortage of 80	1971-01-01T00:00:00 / 2019-05-01T00:00:00
-PROBLEM	before current	Operation '1. make end item' planned in the past	2018-09-12T00:00:00 / 2018-11-11T00:00:00
-PROBLEM	before current	Operation '2. make end item' planned in the past	2018-09-04T00:00:00 / 2018-11-09T00:00:00
-PROBLEM	before current	Operation '3. make end item' planned in the past	2018-10-17T00:00:00 / 2018-11-09T00:00:00
-PROBLEM	early	Demand '2. order 1' planned P3D before its due date	2019-07-12T00:00:00 / 2019-07-15T00:00:00
-PROBLEM	early	Demand '2. order 2' planned P2D before its due date	2018-11-09T00:00:00 / 2018-11-11T00:00:00
-PROBLEM	early	Demand '3. order 1' planned P3D before its due date	2019-07-12T00:00:00 / 2019-07-15T00:00:00
-PROBLEM	early	Demand '3. order 2' planned P3D before its due date	2019-03-29T00:00:00 / 2019-04-01T00:00:00
-PROBLEM	early	Demand '3. order 3' planned P2D before its due date	2018-11-09T00:00:00 / 2018-11-11T00:00:00

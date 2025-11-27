@@ -36,18 +36,18 @@ BUFFER	9. item @ factory	2024-01-01T00:00:00	-10	40
 BUFFER	9. item @ factory	2024-02-01T00:00:00	-40	0
 BUFFER	9. item @ factory	2024-03-01T00:00:00	1000	1000
 BUFFER	9. item @ factory	2024-03-01T00:00:00	-10	990
-DEMAND	1. sales order	2024-02-01T00:00:00	20
-DEMAND	2. sales order	2024-02-01T00:00:00	100
-DEMAND	2. sales order	2024-01-08T00:00:00	100
-DEMAND	3. sales order	2024-01-08T00:00:00	200
-DEMAND	4. sales order	2024-02-01T00:00:00	100
-DEMAND	4. sales order	2024-01-08T00:00:00	100
-DEMAND	5. sales order	2024-02-01T00:00:00	200
+DEMAND	1. sales order	2024-02-01T00:00:00	20	later than 2024-01-01T00:00:00
+DEMAND	2. sales order	2024-02-01T00:00:00	100	later than 2024-01-01T00:00:00
+DEMAND	2. sales order	2024-01-08T00:00:00	100	later than 2024-01-01T00:00:00
+DEMAND	3. sales order	2024-01-08T00:00:00	200	later than 2024-01-01T00:00:00
+DEMAND	4. sales order	2024-02-01T00:00:00	100	later than 2024-01-01T00:00:00
+DEMAND	4. sales order	2024-01-08T00:00:00	100	later than 2024-01-01T00:00:00
+DEMAND	5. sales order	2024-02-01T00:00:00	200	later than 2024-01-01T00:00:00
 DEMAND	6. sales order	2024-01-01T00:00:00	20
-DEMAND	7. sales order	2024-03-01T00:00:00	10
+DEMAND	7. sales order	2024-03-01T00:00:00	10	later than 2024-01-01T00:00:00
 DEMAND	7. sales order	2024-01-01T00:00:00	10
 DEMAND	8. sales order	2024-01-01T00:00:00	20
-DEMAND	9. sales order	2024-03-01T00:00:00	10
+DEMAND	9. sales order	2024-03-01T00:00:00	10	later than 2024-01-01T00:00:00
 DEMAND	9. sales order	2024-01-01T00:00:00	10
 OPERATION	6. Consume	2024-07-01T00:00:00	2024-07-01T00:00:00	40	confirmed
 OPERATION	6. Manufacturing	2024-06-26T00:00:00	2024-07-01T00:00:00	10
@@ -70,19 +70,12 @@ OPERATION	Purchase 4. item @ factory from 4. Supplier	2024-08-25T00:00:00	2024-0
 OPERATION	Purchase 5. item @ factory from 5. Supplier	2024-01-25T00:00:00	2024-02-01T00:00:00	100
 OPERATION	Purchase 5. item @ factory from 5. Supplier	2024-01-25T00:00:00	2024-02-01T00:00:00	100	confirmed
 OPERATION	Purchase 5. item @ factory from 5. Supplier	2024-08-25T00:00:00	2024-09-01T00:00:00	300	confirmed
-PROBLEM	late	20 units of demand '1. sales order' planned up to 31.0 days after its due date	2024-01-01T00:00:00 / 2024-02-01T00:00:00
-PROBLEM	late	200 units of demand '2. sales order' planned up to 31.0 days after its due date	2024-01-01T00:00:00 / 2024-02-01T00:00:00
-PROBLEM	late	200 units of demand '3. sales order' planned up to 7.0 days after its due date	2024-01-01T00:00:00 / 2024-01-08T00:00:00
-PROBLEM	late	200 units of demand '4. sales order' planned up to 31.0 days after its due date	2024-01-01T00:00:00 / 2024-02-01T00:00:00
-PROBLEM	late	200 units of demand '5. sales order' planned up to 31.0 days after its due date	2024-01-01T00:00:00 / 2024-02-01T00:00:00
-PROBLEM	late	10 units of demand '7. sales order' planned up to 60.0 days after its due date	2024-01-01T00:00:00 / 2024-03-01T00:00:00
-PROBLEM	late	10 units of demand '9. sales order' planned up to 60.0 days after its due date	2024-01-01T00:00:00 / 2024-03-01T00:00:00
-DEMAND CONSTRAINT	1. sales order	Buffer '1. item @ factory' awaits confirmed supply	2024-01-01T00:00:00 / 2024-02-01T00:00:00	
-DEMAND CONSTRAINT	2. sales order	Operation 'Purchase 2. item @ factory from 2. Supplier' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00	
-DEMAND CONSTRAINT	2. sales order	Buffer '2. item @ factory' awaits confirmed supply	2024-01-08T00:00:00 / 2024-02-01T00:00:00	
-DEMAND CONSTRAINT	3. sales order	Operation 'Purchase 3. item @ factory from 3. Supplier' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00	
-DEMAND CONSTRAINT	4. sales order	Operation 'Purchase 4. item @ factory from 4. Supplier' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00	
-DEMAND CONSTRAINT	4. sales order	Buffer '4. item @ factory' awaits confirmed supply	2024-01-08T00:00:00 / 2024-02-01T00:00:00	
-DEMAND CONSTRAINT	5. sales order	Buffer '5. item @ factory' awaits confirmed supply	2024-01-01T00:00:00 / 2024-02-01T00:00:00	
-DEMAND CONSTRAINT	7. sales order	Buffer '7. item @ factory' awaits confirmed supply	2024-02-01T00:00:00 / 2024-03-01T00:00:00	
-DEMAND CONSTRAINT	9. sales order	Buffer '9. item @ factory' awaits confirmed supply	2024-02-01T00:00:00 / 2024-03-01T00:00:00	
+DEMAND CONSTRAINT	1. sales order	Buffer '1. item @ factory' awaits confirmed supply	2024-01-01T00:00:00 / 2024-02-01T00:00:00
+DEMAND CONSTRAINT	2. sales order	Operation 'Purchase 2. item @ factory from 2. Supplier' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00
+DEMAND CONSTRAINT	2. sales order	Buffer '2. item @ factory' awaits confirmed supply	2024-01-08T00:00:00 / 2024-02-01T00:00:00
+DEMAND CONSTRAINT	3. sales order	Operation 'Purchase 3. item @ factory from 3. Supplier' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00
+DEMAND CONSTRAINT	4. sales order	Operation 'Purchase 4. item @ factory from 4. Supplier' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00
+DEMAND CONSTRAINT	4. sales order	Buffer '4. item @ factory' awaits confirmed supply	2024-01-08T00:00:00 / 2024-02-01T00:00:00
+DEMAND CONSTRAINT	5. sales order	Buffer '5. item @ factory' awaits confirmed supply	2024-01-01T00:00:00 / 2024-02-01T00:00:00
+DEMAND CONSTRAINT	7. sales order	Buffer '7. item @ factory' awaits confirmed supply	2024-02-01T00:00:00 / 2024-03-01T00:00:00
+DEMAND CONSTRAINT	9. sales order	Buffer '9. item @ factory' awaits confirmed supply	2024-02-01T00:00:00 / 2024-03-01T00:00:00

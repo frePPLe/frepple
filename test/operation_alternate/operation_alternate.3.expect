@@ -137,6 +137,3 @@ PROBLEM	invalid data	No replenishment defined for 'item 5 @ warehouse'	1971-01-0
 PROBLEM	material shortage	Buffer 'item 5 @ warehouse' has material shortage of 10	2009-01-31T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	overload	Resource '4. machine' has capacity shortage of 9	2009-01-20T23:00:00 / 2009-01-21T00:00:00
 PROBLEM	overload	Resource 'Resource 1 B' has capacity shortage of 2	2008-11-30T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase item 3 @ warehouse from MySupplier' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'make item 1 with routing B' planned in the past	2008-11-30T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'make item 1 with routing B' planned in the past	2008-12-11T00:00:00 / 2009-01-01T00:00:00

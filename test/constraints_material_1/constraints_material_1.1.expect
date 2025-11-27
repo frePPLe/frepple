@@ -27,11 +27,15 @@ DEMAND	order prio 2 for item 2	2009-01-11T00:00:00	10
 DEMAND	order prio 2 for item 3	2009-01-11T00:00:00	10
 DEMAND	order prio 2 for item 4	2009-01-22T00:00:00	8
 DEMAND	order prio 3 for item 1	2009-01-12T00:00:00	5
+DEMAND	order prio 3 for item 1	planned 5 units short
 DEMAND	order prio 3 for item 2	2009-01-05T00:00:00	5
-DEMAND	order prio 3 for item 3	2009-01-20T00:00:00	2
+DEMAND	order prio 3 for item 2	planned 5 units short
+DEMAND	order prio 3 for item 3	2009-01-20T00:00:00	2	later than 2009-01-05T00:00:00
 DEMAND	order prio 3 for item 3	2009-01-05T00:00:00	5
-DEMAND	order prio 3 for item 4	2009-01-20T00:00:00	2
+DEMAND	order prio 3 for item 3	planned 3 units short
+DEMAND	order prio 3 for item 4	2009-01-20T00:00:00	2	later than 2009-01-05T00:00:00
 DEMAND	order prio 3 for item 4	2009-01-05T00:00:00	2
+DEMAND	order prio 3 for item 4	planned 6 units short
 OPERATION	supply 1	2009-01-01T00:00:00	2009-01-01T00:00:00	12	confirmed
 OPERATION	supply 2	2009-01-01T00:00:00	2009-01-01T00:00:00	25	confirmed
 OPERATION	supply 3	2009-01-01T00:00:00	2009-01-01T00:00:00	25	confirmed
@@ -42,13 +46,7 @@ PROBLEM	invalid data	No replenishment defined for 'item 1 @ factory'	1971-01-01T
 PROBLEM	invalid data	No replenishment defined for 'item 2 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'item 3 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'item 4 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	short	Demand 'order prio 3 for item 1' planned 5 units short	2009-01-12T00:00:00 / 2009-01-12T00:00:00
-PROBLEM	short	Demand 'order prio 3 for item 2' planned 5 units short	2009-01-05T00:00:00 / 2009-01-05T00:00:00
-PROBLEM	late	2 units of demand 'order prio 3 for item 3' planned up to 15.0 days after its due date	2009-01-05T00:00:00 / 2009-01-20T00:00:00
-PROBLEM	short	Demand 'order prio 3 for item 3' planned 3 units short	2009-01-05T00:00:00 / 2009-01-05T00:00:00
-PROBLEM	late	2 units of demand 'order prio 3 for item 4' planned up to 15.0 days after its due date	2009-01-05T00:00:00 / 2009-01-20T00:00:00
-PROBLEM	short	Demand 'order prio 3 for item 4' planned 6 units short	2009-01-05T00:00:00 / 2009-01-05T00:00:00
-DEMAND CONSTRAINT	order prio 3 for item 1	Buffer 'item 1 @ factory' has material shortage of 5	2009-01-12T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order prio 3 for item 2	Buffer 'item 2 @ factory' has material shortage of 5	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order prio 3 for item 3	Buffer 'item 3 @ factory' has material shortage of 5	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order prio 3 for item 4	Buffer 'item 4 @ factory' has material shortage of 8	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order prio 3 for item 1	Buffer 'item 1 @ factory' has material shortage of 5	2009-01-12T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 3 for item 2	Buffer 'item 2 @ factory' has material shortage of 5	2009-01-05T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 3 for item 3	Buffer 'item 3 @ factory' has material shortage of 5	2009-01-05T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 3 for item 4	Buffer 'item 4 @ factory' has material shortage of 8	2009-01-05T00:00:00 / 2030-12-31T00:00:00

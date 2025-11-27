@@ -52,18 +52,18 @@ BUFFER	6. end item @ factory	2018-09-24T23:59:59	30	60
 BUFFER	6. end item @ factory	2018-10-01T00:00:00	30	90
 BUFFER	6. end item @ factory	2018-10-01T00:00:00	-90	0
 DEMAND	1. order 1	2018-10-01T00:00:00	90
-DEMAND	1. order 2	2018-01-19T00:00:00	90
+DEMAND	1. order 2	2018-01-19T00:00:00	90	later than 2018-01-01T00:00:00
 DEMAND	2. order 1	2018-10-01T00:00:00	90
-DEMAND	2. order 2	2018-01-21T00:00:00	90
+DEMAND	2. order 2	2018-01-21T00:00:00	90	later than 2018-01-01T00:00:00
 DEMAND	3. order 1	2018-10-01T00:00:00	90
-DEMAND	3. order 2	2018-01-21T00:00:00	90
+DEMAND	3. order 2	2018-01-21T00:00:00	90	later than 2018-01-01T00:00:00
 DEMAND	4. order 1	2018-10-01T00:00:00	90
-DEMAND	4. order 2	2018-01-22T00:00:00	90
+DEMAND	4. order 2	2018-01-22T00:00:00	90	later than 2018-01-01T00:00:00
 DEMAND	5. order 1	2018-10-01T00:00:00	90
-DEMAND	5. order 2	2018-01-17T00:00:00	90
+DEMAND	5. order 2	2018-01-17T00:00:00	90	later than 2018-01-01T00:00:00
 DEMAND	5. order 3	2018-05-01T00:00:00	1
 DEMAND	6. order 1	2018-10-01T00:00:00	90
-DEMAND	6. order 2	2018-01-18T00:00:00	90
+DEMAND	6. order 2	2018-01-18T00:00:00	90	later than 2018-01-01T00:00:00
 DEMAND	6. order 3	2018-05-01T00:00:00	1
 RESOURCE	1. Resource	2018-01-05T23:59:59	-60	0
 RESOURCE	1. Resource	2018-01-12T23:59:59	-60	0
@@ -143,20 +143,14 @@ OPERATION	6. make end item	2018-04-29T20:00:00	2018-05-01T00:00:00	1
 OPERATION	6. make end item	2018-09-11T23:59:59	2018-09-17T23:59:59	30
 OPERATION	6. make end item	2018-09-18T23:59:59	2018-09-24T23:59:59	30
 OPERATION	6. make end item	2018-09-25T00:00:00	2018-10-01T00:00:00	30
-PROBLEM	late	90 units of demand '1. order 2' planned up to 18.0 days after its due date	2018-01-01T00:00:00 / 2018-01-19T00:00:00
-PROBLEM	late	90 units of demand '2. order 2' planned up to 20.0 days after its due date	2018-01-01T00:00:00 / 2018-01-21T00:00:00
-PROBLEM	late	90 units of demand '3. order 2' planned up to 20.0 days after its due date	2018-01-01T00:00:00 / 2018-01-21T00:00:00
-PROBLEM	late	90 units of demand '4. order 2' planned up to 21.0 days after its due date	2018-01-01T00:00:00 / 2018-01-22T00:00:00
-PROBLEM	late	90 units of demand '5. order 2' planned up to 16.0 days after its due date	2018-01-01T00:00:00 / 2018-01-17T00:00:00
-PROBLEM	late	90 units of demand '6. order 2' planned up to 17.0 days after its due date	2018-01-01T00:00:00 / 2018-01-18T00:00:00
-DEMAND CONSTRAINT	1. order 2	Operation '1. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	
-DEMAND CONSTRAINT	1. order 2	Resource '1. Resource' has capacity shortage of 12	2018-01-16T00:00:00 / 2018-01-18T00:00:00	
-DEMAND CONSTRAINT	2. order 2	Operation '2. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	
-DEMAND CONSTRAINT	2. order 2	Resource '2. Resource' has capacity shortage of 120	2018-01-06T00:00:00 / 2018-01-17T00:00:00	
-DEMAND CONSTRAINT	3. order 2	Operation '3. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	
-DEMAND CONSTRAINT	3. order 2	Resource '3. Resource' has capacity shortage of 120	2018-01-06T00:00:00 / 2018-01-17T00:00:00	
-DEMAND CONSTRAINT	4. order 2	Operation '4. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	
-DEMAND CONSTRAINT	4. order 2	Resource '4. Resource' has capacity shortage of 60	2018-01-11T00:00:00 / 2018-01-17T00:00:00	
-DEMAND CONSTRAINT	5. order 2	Operation '5. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	
-DEMAND CONSTRAINT	6. order 2	Operation '6. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	
-DEMAND CONSTRAINT	6. order 2	Resource '6. Resource' has capacity shortage of 60	2018-01-11T00:00:00 / 2018-01-17T00:00:00	
+DEMAND CONSTRAINT	1. order 2	Operation '1. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	1. order 2	Resource '1. Resource' has capacity shortage of 12	2018-01-16T00:00:00 / 2018-01-18T00:00:00
+DEMAND CONSTRAINT	2. order 2	Operation '2. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	2. order 2	Resource '2. Resource' has capacity shortage of 120	2018-01-06T00:00:00 / 2018-01-17T00:00:00
+DEMAND CONSTRAINT	3. order 2	Operation '3. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 2	Resource '3. Resource' has capacity shortage of 120	2018-01-06T00:00:00 / 2018-01-17T00:00:00
+DEMAND CONSTRAINT	4. order 2	Operation '4. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	4. order 2	Resource '4. Resource' has capacity shortage of 60	2018-01-11T00:00:00 / 2018-01-17T00:00:00
+DEMAND CONSTRAINT	5. order 2	Operation '5. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	6. order 2	Operation '6. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	6. order 2	Resource '6. Resource' has capacity shortage of 60	2018-01-11T00:00:00 / 2018-01-17T00:00:00

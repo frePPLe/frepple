@@ -65,11 +65,3 @@ OPERATION	make item 4	2018-01-18T06:00:00	2018-02-01T00:00:00	10
 OPERATION	make item 4	2018-02-15T06:00:00	2018-03-01T00:00:00	10
 OPERATION	make item 4	2021-02-18T00:00:00	2021-03-01T00:00:00	10
 PROBLEM	overload	Resource 'Resource 3A' has capacity shortage of 3	2017-12-22T20:00:00 / 2018-01-01T00:00:00
-PROBLEM	before current	Operation 'make item 1' planned in the past	2017-12-30T21:20:00 / 2018-01-01T00:00:00
-PROBLEM	before current	Operation 'make item 2' planned in the past	2017-12-22T20:00:00 / 2018-01-01T00:00:00
-PROBLEM	before current	Operation 'make item 3' planned in the past	2017-12-22T20:00:00 / 2018-01-01T00:00:00
-PROBLEM	before current	Operation 'make item 3' planned in the past	2017-12-22T20:00:00 / 2018-01-01T00:00:00
-PROBLEM	before current	Operation 'make item 3' planned in the past	2017-12-22T20:00:00 / 2018-01-01T00:00:00
-PROBLEM	before current	Operation 'make item 3' planned in the past	2017-12-22T20:00:00 / 2018-01-01T00:00:00
-PROBLEM	before current	Operation 'make item 4' planned in the past	1971-01-01T00:00:00 / 2017-01-01T00:00:00
-PROBLEM	before current	Operation 'make item 4' planned in the past	2017-12-10T00:00:00 / 2018-01-01T00:00:00

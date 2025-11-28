@@ -23,6 +23,9 @@
 from datetime import datetime
 import base64
 import gzip
+import jwt
+import requests
+import time
 
 from html.parser import HTMLParser
 import os
@@ -35,6 +38,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from django.utils.http import urlencode
 from django.utils.translation import get_supported_language_variant
+from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import Parameter, User
 from freppledb.common.commands import (
@@ -43,6 +47,7 @@ from freppledb.common.commands import (
     PlanTaskParallel,
     PlanTaskSequence,
 )
+from freppledb.common.utils import get_databases
 from freppledb.input.commands import (
     LoadTask,
     loadOperationPlans,
@@ -72,6 +77,12 @@ class OdooReadData(PlanTask):
 
     description = "Load Odoo data"
     sequence = 70
+
+    label = (
+        "odoo_read_1",
+        _("Import Odoo data"),
+        _("Collect all planning-relevant data from Odoo."),
+    )
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -142,50 +153,61 @@ class OdooReadData(PlanTask):
         ).strip()
         odoo_delta = Parameter.getValue("odoo.delta", database, "999")
 
-        # Set the environment variable FREPPLE_ODOO_DEBUGFILE if you want frePPLe
-        # to read that file rather than the data at url.
-        debugFile = os.environ.get("FREPPLE_ODOO_DEBUGFILE", False)
-
-        ok = True
-        if not odoo_user and not debugFile:
-            logger.error("Missing or invalid parameter odoo.user")
-            ok = False
-        if not odoo_password and not debugFile:
-            logger.error("Missing or invalid parameter odoo.password")
-            ok = False
-        if not odoo_url and not debugFile:
-            logger.error("Missing or invalid parameter odoo.url")
-            ok = False
-        if not odoo_company and not debugFile:
-            logger.error("Missing or invalid parameter odoo.company")
-            ok = False
-        if not ok and not debugFile:
-            raise Exception("Odoo connector not configured correctly")
-
-        # Connect to the odoo URL to GET data
-        try:
-            loglevel = int(Parameter.getValue("odoo.loglevel", database, "0"))
-        except Exception:
-            loglevel = 0
-
-        with connections[database].cursor() as cursor:
-            cursor.execute(
-                """
-                select coalesce(max(reference::bigint), 0) as max_reference
-                from operationplan
-                where reference ~ '^[0-9]*$'
-                and char_length(reference) <= 9
-                """
-            )
-            d = cursor.fetchone()
-            frepple.settings.id = d[0] + 1
-
         # Disable the automatic creation of inventory consumption & production until we have
         # read all odoo data. When odoo data is available we don't create extra ones
         # but take the odoo data as input.
         frepple.settings.suppressFlowplanCreation = True
 
-        if not debugFile:
+        # Set the environment variable ODOO_FOLDER if you want frePPLe
+        # to read that file rather than the data at url.
+        odoo_input = os.environ.get("ODOO_FOLDER", None)
+        if odoo_input:
+            # MODE 1: read data from a file
+            odoo_input = os.path.join(odoo_input, "odoo_data.xml")
+            if not os.access(odoo_input, os.F_OK | os.R_OK):
+                raise Exception(f"Missing odoo input data file {odoo_input}")
+
+            # Parse XML data file
+            with open(odoo_input, encoding="utf-8") as f:
+                frepple.readXMLdata(
+                    f.read().translate({ord(i): None for i in "\f\v\b"}), False, False
+                )
+        else:
+            # MODE 2: read data from a URL
+            ok = True
+            if not odoo_user:
+                logger.error("Missing or invalid parameter odoo.user")
+                ok = False
+            if not odoo_password:
+                logger.error("Missing or invalid parameter odoo.password")
+                ok = False
+            if not odoo_url:
+                logger.error("Missing or invalid parameter odoo.url")
+                ok = False
+            if not odoo_company:
+                logger.error("Missing or invalid parameter odoo.company")
+                ok = False
+            if not ok:
+                raise Exception("Odoo connector not configured correctly")
+
+            # Connect to the odoo URL to GET data
+            try:
+                loglevel = int(Parameter.getValue("odoo.loglevel", database, "0"))
+            except Exception:
+                loglevel = 0
+
+            with connections[database].cursor() as cursor:
+                cursor.execute(
+                    """
+                    select coalesce(max(reference::bigint), 0) as max_reference
+                    from operationplan
+                    where reference ~ '^[0-9]*$'
+                    and char_length(reference) <= 9
+                    """
+                )
+                d = cursor.fetchone()
+                frepple.settings.id = d[0] + 1
+
             args = {
                 "language": odoo_language,
                 "company": odoo_company,
@@ -255,32 +277,26 @@ class OdooReadData(PlanTask):
                     )
                 raise e
 
-        else:
-            # Parse XML data file
-            with open(debugFile, encoding="utf-8") as f:
-                frepple.readXMLdata(
-                    f.read().translate({ord(i): None for i in "\f\v\b"}), False, False
-                )
-
         # All predefined inventory detail records are now loaded.
         # We now create any missing ones.
         frepple.settings.suppressFlowplanCreation = False
 
         # Freeze the date of the extract (in memory and in database)
         frepple.settings.current = datetime.now()
-        with connections[database].cursor() as cursor:
-            cursor.execute(
-                """
-                insert into common_parameter
-                (name, value) values ('currentdate', %s)
-                on conflict(name)
-                do update set value = excluded.value
-                """,
-                (frepple.settings.current.strftime("%Y-%m-%d %H:%M:%S"),),
-            )
+        if "noexportstatic" not in os.environ:
+            with connections[database].cursor() as cursor:
+                cursor.execute(
+                    """
+                    insert into common_parameter
+                    (name, value) values ('currentdate', %s)
+                    on conflict(name)
+                    do update set value = excluded.value
+                    """,
+                    (frepple.settings.current.strftime("%Y-%m-%d %H:%M:%S"),),
+                )
 
         # Synchronize users
-        if hasattr(frepple.settings, "users"):
+        if hasattr(frepple.settings, "users") and "noexportstatic" not in os.environ:
             try:
                 odoo_group, created = Group.objects.using(database).get_or_create(
                     name="Odoo users"
@@ -439,14 +455,159 @@ class OdooDeltaChangeSource(PlanTask):
 class OdooSendRecommendations(PlanTask):
 
     description = "Publish recommendations to Odoo"
-    sequence = 540
+    sequence = 900
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         return 1 if "odoo_write_1" in os.environ else -1
 
+    label = (
+        "odoo_write_1",
+        _("Send recommendations to Odoo"),
+        _("Analyze the plan and send a set of recommended actions back to Odoo."),
+    )
+
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
-        print("generating recommendations to Odoo")
+        # Retrieve odoo metadata for callback
+        odoo_folder = os.environ.get("ODOO_FOLDER", settings.FREPPLE_LOGDIR)
+        if odoo_folder:
+            try:
+                # Mode 1
+                with open(
+                    os.path.join(odoo_folder, "odoo_config.json"), "r", encoding="utf-8"
+                ) as f:
+                    odoo_config = json.load(f)
+            except Exception:
+                odoo_config = None
+
+        if not odoo_config:
+            odoo_config = {
+                "odoo_db": (
+                    getattr(settings, "ODOO_DB", {}).get(database, "")
+                    or Parameter.getValue("odoo.db", database, "")
+                ).strip(),
+                "odoo_company": (
+                    getattr(settings, "ODOO_COMPANY", {}).get(database, "")
+                    or Parameter.getValue("odoo.company", database, "")
+                ).strip(),
+                "odoo_user": (
+                    getattr(settings, "ODOO_USER", {}).get(database, "")
+                    or Parameter.getValue("odoo.user", database, "")
+                ).strip(),
+                "odoo_password": (
+                    getattr(settings, "ODOO_PASSWORDS", {}).get(database, "")
+                    or Parameter.getValue("odoo.password", database, "")
+                ).strip(),
+                "odoo_url": (
+                    getattr(settings, "ODOO_URL", {}).get(database, "")
+                    or Parameter.getValue("odoo.url", database, "")
+                ).strip(),
+            }
+            odoo_config["token"] = jwt.encode(
+                {"exp": round(time.time()) + 600, "user": odoo_config["odoo_user"]},
+                get_databases()[database].get(
+                    "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
+                ),
+                algorithm="HS256",
+            )
+            if not odoo_config["odoo_url"].endswith("/"):
+                odoo_config["odoo_url"] = odoo_config["odoo_url"] + "/"
+            if (
+                not odoo_config["odoo_db"]
+                or not odoo_config["odoo_company"]
+                or not odoo_config["odoo_user"]
+                or not odoo_config["odoo_password"]
+                or not odoo_config["odoo_url"]
+            ):
+                raise Exception("Invalid configuration parameters")
+
+        # Write recommendations to a flat file.
+        recommendations = os.path.join(odoo_folder, "odoo_recommendations.json")
+        with open(recommendations, "w", encoding="utf-8") as f:
+            print("{", file=f)
+            print(
+                f'"description": "frepple output v{frepple.version} at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}", ',
+                file=f,
+            )
+            print('"recommendations": [', file=f)
+            first = True
+            for rec in cls.OdooRecommendations(**odoo_config):
+                if first:
+                    print(json.dumps(rec), file=f)
+                    first = False
+                else:
+                    print(f"{json.dumps(rec)},", file=f)
+            print("]}", file=f)
+
+        # Send the recommendations to back to odoo
+        print("Sending recommendations to odoo")
+        with open(recommendations, "rb") as f:
+            response = requests.post(
+                f"{odoo_config["odoo_url"]}frepple/recommendations/",
+                files={
+                    "recommendations.json": (
+                        "recommendations.json",
+                        f,
+                        "application/json",
+                    )
+                },
+            )
+            if response.status_code == 200:
+                print("Success")
+            else:
+                print(f"Failure: {response.status_code} {response.text}")
+                raise Exception("Error sending recommendations to odoo")
+
+    class OdooRecommendations:
+
+        def __init__(self, **kwargs):
+            for k, v in kwargs.items():
+                setattr(self, k, v)
+
+        def __iter__(self):
+            yield from self.generatePurchaseRecommendations()
+            yield from self.generateManufacturingRecommendations()
+            yield from self.generateSalesOrderRecommendations()
+
+        def generatePurchaseRecommendations(self):
+
+            yield {
+                "type": "purchase",
+                "owner": "owner1",
+                "description": "PO recommendation1",
+            }
+            yield {
+                "type": "purchase",
+                "owner": "owner2",
+                "description": "PO recommendation2",
+            }
+            print("Generated 2 purchase recommendations")
+
+        def generateManufacturingRecommendations(self):
+            yield {
+                "type": "manufacturing",
+                "owner": "owner1",
+                "description": "MO recommendation1",
+            }
+            yield {
+                "type": "manufacturing",
+                "owner": "owner2",
+                "description": "MO recommendation2",
+            }
+            print("Generated 2 MO recommendations")
+
+        def generateSalesOrderRecommendations(self):
+            yield {
+                "type": "sales",
+                "owner": "owner1",
+                "description": "SO recommendation1",
+            }
+            yield {
+                "type": "sales",
+                "owner": "owner2",
+                "description": "SO recommendation2",
+            }
+            print("Generated 2 SO recommendations")

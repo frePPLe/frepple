@@ -153,7 +153,6 @@ class Tags {
   static const Keyword maxlateness;
   static const Keyword maxbucketcapacity;
   static const Keyword members;
-  static const Keyword minimalBeforeCurrentConstraints;
   static const Keyword minimum;
   static const Keyword minimum_calendar;
   static const Keyword mininventory;

@@ -216,6 +216,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
 
         // Main planning loop for a sales order line
         ++indentlevel;
+        bool hasOverdueConstraint = false;
         do {    // Loop over global-purchasing locations
           do {  // Multiple plan iterations
             // Message
@@ -226,6 +227,13 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             // Store the last command in the list, in order to undo the
             // following commands if required.
             auto loopcommand = data->getCommandManager()->setBookmark();
+
+            // Add overdue constraint
+            if (l->getDue() < Plan::instance().getCurrent() &&
+                !hasOverdueConstraint) {
+              l->getConstraints().push(new ConstraintOverdueDemand(l, false));
+              hasOverdueConstraint = true;
+            }
 
             // Plan the demand by asking the delivery operation to plan
             double q_qty = plan_qty;

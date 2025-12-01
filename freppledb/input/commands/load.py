@@ -494,7 +494,7 @@ class loadParameter(LoadTask):
                     where name in (
                        'currentdate', 'last_currentdate',
                        'COMPLETED.allow_future', 'WIP.produce_full_quantity',
-                       'plan.individualPoolResources', 'plan.minimalBeforeCurrentConstraints',
+                       'plan.individualPoolResources',
                        'plan.autoFenceOperations', 'plan.deliveryDuration',
                        'plan.move_approved_early'
                        )
@@ -517,10 +517,6 @@ class loadParameter(LoadTask):
                         )
                     elif rec[0] == "plan.individualPoolResources":
                         frepple.settings.individualPoolResources = (
-                            str(rec[1]).lower() == "true"
-                        )
-                    elif rec[0] == "plan.minimalBeforeCurrentConstraints":
-                        frepple.settings.minimalBeforeCurrentConstraints = (
                             str(rec[1]).lower() == "true"
                         )
                     elif rec[0] == "plan.autoFenceOperations":

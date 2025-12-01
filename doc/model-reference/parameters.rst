@@ -74,11 +74,6 @@ plan.individualPoolResources         | Defines the behavior of aggregate resourc
                                        can mean either:
                                      | - Find a member resource with size N. Value false, default.
                                      | - Find N member resources of size 1. Value true.
-plan.minimalBeforeCurrentConstraints | By default the "why short or late" list for a sales order can include
-                                       many operations as lead-time and release-fence constraints.
-                                     | When setting this option to true, we will limit the list to show only
-                                       the most constraining operation. This make the list easier to interpret
-                                       by users.
 plan.loglevel                        | Controls the verbosity of the planning log file.
                                      | Accepted values are 0 (silent – default), 1 (minimal) and 2 (verbose).
 plan.minimumdelay                    | Specifies a minimum delay the algorithm applies when the requested

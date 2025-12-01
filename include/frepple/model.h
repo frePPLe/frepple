@@ -8701,8 +8701,6 @@ class Plan : public Plannable, public Object {
 
   bool suppress_flowplan_creation = false;
 
-  bool minimal_before_current_constraints = false;
-
   string timezone;
 
   /* Pointer to the singleton plan object. */
@@ -8739,11 +8737,11 @@ class Plan : public Plannable, public Object {
   /* Returns the current date of the plan. */
   Date getCurrent() const { return cur_Date; }
 
-  /* Updates the current date of the plan. This method can be relatively
-   * heavy in a plan where operationplans already exist, since the
-   * detection for BeforeCurrent problems needs to be rerun.
-   */
-  void setCurrent(Date);
+  /* Updates the current date of the plan. */
+  void setCurrent(Date d) {
+    cur_Date = d;
+    if (!fcst_cur_Date) fcst_cur_Date = d;
+  }
 
   /* Returns the current date of the plan for the forecast solver. */
   Date getFcstCurrent() const { return fcst_cur_Date; }
@@ -8807,14 +8805,6 @@ class Plan : public Plannable, public Object {
   }
 
   void setSuppressFlowplanCreation(bool b);
-
-  bool getMinimalBeforeCurrentConstraints() const {
-    return minimal_before_current_constraints;
-  }
-
-  void setMinimalBeforeCurrentConstraints(bool b) {
-    minimal_before_current_constraints = b;
-  }
 
   void setLogFile(const string& s) { Environment::setLogFile(s); }
 
@@ -8912,10 +8902,6 @@ class Plan : public Plannable, public Object {
     m->addBoolField<Cls>(
         Tags::suppressFlowplanCreation, &Cls::getSuppressFlowplanCreation,
         &Cls::setSuppressFlowplanCreation, BOOL_FALSE, DONT_SERIALIZE);
-    m->addBoolField<Cls>(Tags::minimalBeforeCurrentConstraints,
-                         &Cls::getMinimalBeforeCurrentConstraints,
-                         &Cls::setMinimalBeforeCurrentConstraints, BOOL_FALSE,
-                         DONT_SERIALIZE);
     m->addStringField<Cls>(Tags::timezone, &Cls::getTimeZone, &Cls::setTimeZone,
                            "", DONT_SERIALIZE);
     Plannable::registerFields<Plan>(m);
@@ -8995,7 +8981,7 @@ class ProblemBeforeCurrent : public Problem {
   }
 
   explicit ProblemBeforeCurrent(Operation* o, Date st, Date nd, double q)
-      : oper(o), start(st), end(nd), qty(q) {}
+      : oper(o), start(st), end(nd) {}
 
   ~ProblemBeforeCurrent() { removeProblem(); }
 
@@ -9023,7 +9009,6 @@ class ProblemBeforeCurrent : public Problem {
     oper = o;
     start = st;
     end = nd;
-    qty = q;
   }
 
   /* Return a reference to the metadata structure. */
@@ -9036,7 +9021,6 @@ class ProblemBeforeCurrent : public Problem {
   Operation* oper = nullptr;
   Date start;
   Date end;
-  double qty = 0;
 };
 
 /* A problem of this class is created when an operationplan is being
@@ -9062,7 +9046,7 @@ class ProblemBeforeFence : public Problem {
   }
 
   explicit ProblemBeforeFence(Operation* o, Date st, Date nd, double q)
-      : oper(o), start(st), end(nd), qty(q) {}
+      : oper(o), start(st), end(nd) {}
 
   ~ProblemBeforeFence() { removeProblem(); }
 
@@ -9087,7 +9071,6 @@ class ProblemBeforeFence : public Problem {
     oper = o;
     start = st;
     end = nd;
-    qty = q;
   }
 
   /* Return a reference to the metadata structure. */
@@ -9100,7 +9083,6 @@ class ProblemBeforeFence : public Problem {
   Operation* oper = nullptr;
   Date start;
   Date end;
-  double qty = 0.0;
 };
 
 /* An instance of this class is used to flag constraints where a
@@ -9353,6 +9335,201 @@ class ProblemMaterialShortage : public Problem {
 
   /* The daterange of the problem. */
   DateRange dr;
+};
+
+class ConstraintPurchasingLeadTime : public Problem {
+ public:
+  string getDescription() const {
+    ostringstream ch;
+    ch << "Operation '" << static_cast<Operation*>(getOwner())
+       << "' planned before fence";
+    return ch.str();
+  }
+
+  bool isFeasible() const { return false; }
+
+  explicit ConstraintPurchasingLeadTime(Operation* o, Date st, Date nd)
+      : Problem(o), start(st), end(nd) {}
+
+  ~ConstraintPurchasingLeadTime() { removeProblem(); }
+
+  string getEntity() const { return "operation"; }
+
+  Object* getOwner() const { return static_cast<Operation*>(owner); }
+
+  const DateRange getDates() const { return DateRange(start, end); }
+
+  void update(Operation* o, Date st, Date nd, double q) {
+    owner = o;
+    start = st;
+    end = nd;
+  }
+
+  /* Return a reference to the metadata structure. */
+  const MetaClass& getType() const { return *metadata; }
+
+  /* Storing metadata on this class. */
+  static const MetaClass* metadata;
+
+ private:
+  Date start;
+  Date end;
+};
+
+class ConstraintManufacturingLeadTime : public Problem {
+ public:
+  string getDescription() const {
+    ostringstream ch;
+    ch << "Operation '"
+       << (oper ? oper
+                : static_cast<OperationPlan*>(getOwner())->getOperation())
+       << "' planned before fence";
+    return ch.str();
+  }
+
+  bool isFeasible() const { return true; }
+
+  explicit ConstraintManufacturingLeadTime(OperationPlan* o, bool add = true)
+      : Problem(o) {
+    if (add) addProblem();
+  }
+
+  explicit ConstraintManufacturingLeadTime(Operation* o, Date st, Date nd,
+                                           double q)
+      : oper(o), start(st), end(nd) {}
+
+  ~ConstraintManufacturingLeadTime() { removeProblem(); }
+
+  string getEntity() const { return "operation"; }
+
+  Object* getOwner() const {
+    return oper ? static_cast<Object*>(oper)
+                : static_cast<OperationPlan*>(owner);
+  }
+
+  const DateRange getDates() const {
+    if (oper) return DateRange(start, end);
+    OperationPlan* o = static_cast<OperationPlan*>(owner);
+    auto tmp = o->getOperation()->getFence(o);
+    if (o->getEnd() > tmp)
+      return DateRange(o->getStart(), tmp);
+    else
+      return o->getDates();
+  }
+
+  void update(Operation* o, Date st, Date nd, double q) {
+    oper = o;
+    start = st;
+    end = nd;
+  }
+
+  /* Return a reference to the metadata structure. */
+  const MetaClass& getType() const { return *metadata; }
+
+  /* Storing metadata on this class. */
+  static const MetaClass* metadata;
+
+ private:
+  Operation* oper = nullptr;
+  Date start;
+  Date end;
+};
+
+class ConstraintDistributionLeadTime : public Problem {
+ public:
+  string getDescription() const {
+    ostringstream ch;
+    ch << "Operation '"
+       << (oper ? oper
+                : static_cast<OperationPlan*>(getOwner())->getOperation())
+       << "' planned before fence";
+    return ch.str();
+  }
+
+  bool isFeasible() const { return true; }
+
+  explicit ConstraintDistributionLeadTime(OperationPlan* o, bool add = true)
+      : Problem(o) {
+    if (add) addProblem();
+  }
+
+  explicit ConstraintDistributionLeadTime(Operation* o, Date st, Date nd,
+                                          double q)
+      : oper(o), start(st), end(nd) {}
+
+  ~ConstraintDistributionLeadTime() { removeProblem(); }
+
+  string getEntity() const { return "operation"; }
+
+  Object* getOwner() const {
+    return oper ? static_cast<Object*>(oper)
+                : static_cast<OperationPlan*>(owner);
+  }
+
+  const DateRange getDates() const {
+    if (oper) return DateRange(start, end);
+    OperationPlan* o = static_cast<OperationPlan*>(owner);
+    auto tmp = o->getOperation()->getFence(o);
+    if (o->getEnd() > tmp)
+      return DateRange(o->getStart(), tmp);
+    else
+      return o->getDates();
+  }
+
+  void update(Operation* o, Date st, Date nd, double q) {
+    oper = o;
+    start = st;
+    end = nd;
+  }
+
+  /* Return a reference to the metadata structure. */
+  const MetaClass& getType() const { return *metadata; }
+
+  /* Storing metadata on this class. */
+  static const MetaClass* metadata;
+
+ private:
+  Operation* oper = nullptr;
+  Date start;
+  Date end;
+};
+
+class ConstraintOverdueDemand : public Problem {
+ public:
+  string getDescription() const { return "Demand is overdue"; }
+
+  bool isFeasible() const { return true; }
+
+  explicit ConstraintOverdueDemand(Demand* o, bool add = true) : Problem(o) {
+    if (add) addProblem();
+  }
+
+  ~ConstraintOverdueDemand() { removeProblem(); }
+
+  Object* getOwner() const { return static_cast<Demand*>(owner); }
+
+  string getEntity() const { return "demand"; }
+
+  const DateRange getDates() const {
+    return DateRange(static_cast<Demand*>(owner)->getDue(),
+                     Plan::instance().getCurrent());
+  }
+
+  void update(Demand* d, Date st, Date nd, double q) {
+    owner = d;
+    start = st;
+    end = nd;
+  }
+
+  /* Return a reference to the metadata structure. */
+  const MetaClass& getType() const { return *metadata; }
+
+  /* Storing metadata on this class. */
+  static const MetaClass* metadata;
+
+ private:
+  Date start;
+  Date end;
 };
 
 /* This command is used to create an operationplan.

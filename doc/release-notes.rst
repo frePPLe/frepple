@@ -4,7 +4,7 @@ Release notes
 9.13.0 (Upcoming release)
 ========================
 
-This release is scheduled for early November.
+This release is scheduled for mid January 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Production planning
@@ -18,6 +18,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     operations before the fence.
   | The user interface provides enough alternatives to identify and review
     these.
+
+- | The logic to create the "why short or late" information has been
+    refactored to be easier to understand.
 
 .. rubric:: Odoo integration
 

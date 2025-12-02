@@ -477,14 +477,14 @@ class OdooSendRecommendations(PlanTask):
             try:
                 # Mode 1
                 with open(
-                    os.path.join(odoo_folder, "odoo_config.json"), "r", encoding="utf-8"
+                    os.path.join(odoo_folder, "metadata.json"), "r", encoding="utf-8"
                 ) as f:
-                    odoo_config = json.load(f)
+                    metadata = json.load(f)
             except Exception:
-                odoo_config = None
+                metadata = None
 
-        if not odoo_config:
-            odoo_config = {
+        if not metadata:
+            metadata = {
                 "odoo_db": (
                     getattr(settings, "ODOO_DB", {}).get(database, "")
                     or Parameter.getValue("odoo.db", database, "")
@@ -506,21 +506,21 @@ class OdooSendRecommendations(PlanTask):
                     or Parameter.getValue("odoo.url", database, "")
                 ).strip(),
             }
-            odoo_config["token"] = jwt.encode(
-                {"exp": round(time.time()) + 600, "user": odoo_config["odoo_user"]},
+            metadata["token"] = jwt.encode(
+                {"exp": round(time.time()) + 600, "user": metadata["odoo_user"]},
                 get_databases()[database].get(
                     "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
                 ),
                 algorithm="HS256",
             )
-            if not odoo_config["odoo_url"].endswith("/"):
-                odoo_config["odoo_url"] = odoo_config["odoo_url"] + "/"
+            if not metadata["odoo_url"].endswith("/"):
+                metadata["odoo_url"] = metadata["odoo_url"] + "/"
             if (
-                not odoo_config["odoo_db"]
-                or not odoo_config["odoo_company"]
-                or not odoo_config["odoo_user"]
-                or not odoo_config["odoo_password"]
-                or not odoo_config["odoo_url"]
+                not metadata["odoo_db"]
+                or not metadata["odoo_company"]
+                or not metadata["odoo_user"]
+                or not metadata["odoo_password"]
+                or not metadata["odoo_url"]
             ):
                 raise Exception("Invalid configuration parameters")
 
@@ -534,7 +534,7 @@ class OdooSendRecommendations(PlanTask):
             )
             print('"recommendations": [', file=f)
             first = True
-            for rec in cls.OdooRecommendations(**odoo_config):
+            for rec in cls.OdooRecommendations(**metadata):
                 if first:
                     print(json.dumps(rec), file=f)
                     first = False
@@ -546,7 +546,8 @@ class OdooSendRecommendations(PlanTask):
         print("Sending recommendations to odoo")
         with open(recommendations, "rb") as f:
             response = requests.post(
-                f"{odoo_config["odoo_url"]}frepple/recommendations/",
+                f"{metadata["odoo_url"]}frepple/recommendations/",
+                headers={"Authorization": f"Bearer {metadata['token']}"},
                 files={
                     "recommendations.json": (
                         "recommendations.json",

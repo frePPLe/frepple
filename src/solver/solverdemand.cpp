@@ -230,7 +230,8 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
 
             // Add overdue constraint
             if (l->getDue() < Plan::instance().getCurrent() &&
-                !hasOverdueConstraint) {
+                !hasOverdueConstraint && isConstrained() &&
+                (getConstraints() & (MFG_LEADTIME + PO_LEADTIME)) > 0) {
               l->getConstraints().push(new ConstraintOverdueDemand(l, false));
               hasOverdueConstraint = true;
             }

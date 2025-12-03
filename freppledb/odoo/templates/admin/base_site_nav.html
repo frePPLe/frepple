@@ -1,0 +1,26 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n odoo %}
+
+{% block extra_user_context %}
+{% odooContext as odoo_context %}
+{% if not odoo_context.db or not odoo_context.url %}
+    <li class="navbar-item" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom"
+        style="position:relative" data-bs-title="{% trans "No odoo connection configured yet" %}" data-bs-offset="0,7">
+        <a class="nav-link" href="{{request.prefix}}/data/common/parameter/?noautofilter&name__contains=odoo">
+            <span class="fa-stack">
+                <i class="fa fa-database fa-stack-1x"></i>
+                <i class="fa fa-ban fa-stack-1x text-danger"></i>
+            </span>
+        </a>
+        &nbsp;&nbsp;
+    </li>
+{% else %}
+    <li class="navbar-item" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom"
+        style="position:relative" data-bs-offset="0,7"
+        data-bs-title="{% blocktrans with company=odoo_context.company db=odoo_context.db url=odoo_context.url %}Odoo connection<br>for company {{company}}<br>to database {{db}}{% endblocktrans %}">
+        <a class="nav-link" href="{{odoo_context.url}}" target="_blank">
+            <i style="font-size: 1.5em" class="fa fa-database"></i>
+        </a>
+    </li>
+{% endif %}
+{% endblock %}

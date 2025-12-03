@@ -1,4 +1,3 @@
-
 /*
 * Copyright (C) 2025 by frePPLe bv
 *
@@ -9,373 +8,415 @@
 * or in the form of compiled binaries.
 */
 
-<script setup>
-import {ref, watch, onMounted, onUnmounted, nextTick, computed} from 'vue';
-import {useForecastsStore} from "@/stores/forecastsStore.js";
+<script setup lang="js">
+import { computed, onMounted, watch, ref, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useOperationplansStore } from "@/stores/operationplansStore.js";
 
-const { t: ttt, locale, availableLocales } = useI18n({
-  useScope: 'global',  // This is crucial for reactivity
+const { t: ttt, n: formatNumber } = useI18n({
+  useScope: 'global',
   inheritLocale: true
 });
 
-const store = useForecastsStore();
-const graphContainer = ref(null);
+const store = useOperationplansStore();
 
-// Create a computed property that tracks both buckets and bucketChanges
-const graphData = computed(() => {
-  const buckets = store.buckets;
-  // eslint-disable-next-line
-  const changes = store.bucketChanges; // just to make sure changes are caught
-
-  return buckets;
+const props = defineProps({
+  widget: {
+    type: Array,
+    default: () => []
+  }
 });
 
-const rows = store.tableRows;
-const d3 = window.d3;
+const graphContainer = ref(null);
+const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
 
-// Window resize handler
-let resizeTimeout = null;
-const handleResize = () => {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(() => {
-    render();
-  }, 100);
-};
+const inventoryReport = computed(() => {
+  return store.operationplan?.inventoryreport || [];
+});
 
-// Get first bucket based on rows configuration
-const getFirstBucket = () => {
-  if (!graphData.value || graphData.value.length === 0) return null;
+const hasInventoryReport = computed(() => {
+  return inventoryReport.value.length > 0;
+});
 
-  let nyearsago;
-  if (rows.includes("orderstotal3ago") || rows.includes("ordersadjustment3ago") ||
-    rows.includes("ordersadjustmentvalue3ago") || rows.includes("ordersadjustmentvalue3ago")) {
-    // Show all buckets
-    return graphData.value[0].bucket;
-  } else if (rows.includes("orderstotal2ago") || rows.includes("ordersadjustment2ago") ||
-    rows.includes("ordersadjustmentvalue2ago") || rows.includes("ordersadjustmentvalue2ago")) {
-    nyearsago = 2;
-  } else if (rows.includes("orderstotal1ago") || rows.includes("ordersadjustment1ago") ||
-    rows.includes("ordersadjustmentvalue1ago") || rows.includes("ordersadjustmentvalue1ago")) {
-    nyearsago = 1;
-  } else {
-    // Show only future periods - assuming currentbucket is available globally
-    return window.currentbucket || graphData.value[0].bucket;
+// Get URL prefix
+const urlPrefix = computed(() => window.url_prefix || '');
+
+// Admin escape function
+function adminEscape(str) {
+  if (typeof window.admin_escape === 'function') {
+    return window.admin_escape(str);
+  }
+  return encodeURIComponent(str);
+}
+
+// Draw the D3 inventory graph
+function drawGraph() {
+  if (!hasInventoryReport.value || !graphContainer.value) return;
+
+  const d3 = window.d3;
+  if (!d3) {
+    console.error('D3 is not loaded');
+    return;
   }
 
-  // First find the index of the current bucket
-  let currentfcstbucket = null;
-  for (const item of graphData.value) {
-    if (item.bucket === (window.currentbucket || graphData.value[0].bucket)) {
-      currentfcstbucket = item;
-      break;
-    }
-  }
+  const timebuckets = inventoryReport.value;
 
-  if (!currentfcstbucket) return graphData.value[0].bucket;
+  // Clear existing SVG
+  d3.select(graphContainer.value).selectAll('*').remove();
 
-  const startdate = new Date(currentfcstbucket.startdate);
-  const enddate = new Date(currentfcstbucket.enddate);
-  // Get the date right in the middle between start and end date and remove 365*nyearsago milliseconds
-  const middledate = new Date(-365 * 24 * 3600 * 1000 * nyearsago +
-    Math.round(startdate.getTime() + (enddate.getTime() - startdate.getTime()) / 2.0));
+  // Calculate dimensions
+  const operationplanCard = document.querySelector('#attributes-operationplan .card-body');
+  const margin = { top: 10, right: 10, bottom: 30, left: 40 };
+  const width = Math.max((operationplanCard?.offsetWidth || 600) - margin.left - margin.right, 0);
+  const height = (operationplanCard?.offsetHeight || 400) - margin.top - margin.bottom;
 
-  for (const item of graphData.value) {
-    const bucketStart = new Date(item.startdate.substring(0, 10));
-    const bucketEnd = new Date(item.enddate.substring(0, 10));
-    if (middledate >= bucketStart && middledate < bucketEnd) {
-      return item.bucket;
-    }
-  }
-
-  return graphData.value[0].bucket;
-};
-
-const formatNumber = (value) => {
-  if (window.grid && window.grid.formatNumber) {
-    return window.grid.formatNumber(value);
-  }
-  return value?.toLocaleString() || '';
-};
-
-const showTooltip = (content) => {
-  if (window.graph && window.graph.showTooltip) {
-    window.graph.showTooltip(content);
-  }
-};
-
-const hideTooltip = () => {
-  if (window.graph && window.graph.hideTooltip) {
-    window.graph.hideTooltip();
-  }
-};
-
-const moveTooltip = () => {
-  if (window.graph && window.graph.moveTooltip) {
-    window.graph.moveTooltip();
-  }
-};
-
-// Main render function
-const render = () => {
-  if (!graphData.value || !graphContainer.value || graphData.value.length === 0) return;
-
-  const margin = {
-    top: 0,
-    right: 130,
-    bottom: 30,
-    left: 50
-  };
-
-  const containerWidth = graphContainer.value.clientWidth;
-  const containerHeight = graphContainer.value.clientHeight || 400;
-  const width = containerWidth - margin.left - margin.right;
-  const height = containerHeight - margin.top - margin.bottom;
-
-  if (width <= 0 || height <= 0) return;
-
-  const firstBucket = getFirstBucket();
-
-  // Define X-axis
-  const domainX = [];
+  // Build X-axis domain
+  const domain_x = [];
   let bucketnamelength = 0;
-  let forecastcurrentbucket = 0;
-  let showBucket = false;
-  const filteredGraphData = [];
-
-  graphData.value.forEach((item, i) => {
-    if (!showBucket && item.bucket === firstBucket) {
-      forecastcurrentbucket -= parseInt(i);
-      showBucket = true;
-    }
-    if (showBucket) {
-      domainX.push(item.bucket);
-      bucketnamelength = Math.max(item.bucket.length, bucketnamelength);
-      filteredGraphData.push(item);
-      if (window.currentbucket == item.bucket) {
-        forecastcurrentbucket += parseInt(i);
-      }
-    }
-  });
-
-  if (filteredGraphData.length === 0) return;
+  for (const bucket of timebuckets) {
+    domain_x.push(bucket[0]);
+    bucketnamelength = Math.max(bucket[0].length, bucketnamelength);
+  }
 
   const x = d3.scale.ordinal()
-    .domain(domainX)
-    .rangeRoundBands([0, width], 0);
-  const xWidth = x.rangeBand();
+      .domain(domain_x)
+      .rangeRoundBands([0, width], 0);
+  const x_width = x.rangeBand();
 
-  // Define Y-axis
-  const y = d3.scale.linear().rangeRound([height, 0]);
+  // Build data and find min/max
+  let max_y = 0;
+  let min_y = 0;
+  const data = [];
 
-  // Clear existing content
-  d3.select(graphContainer.value).selectAll("*").remove();
-
-  const svg = d3.select(graphContainer.value)
-    .append("svg")
-    .attr("class", "graphcell")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
-
-  // Get the maxima of the values
-  let maxY = 0;
-  let minY = 0;
-
-  filteredGraphData.forEach(tmp => {
-    const ordersTotal = tmp.orderstotal || 0;
-    const ordersAdjustment = tmp.ordersadjustment || 0;
-    const forecastTotal = tmp.forecasttotal || 0;
-
-    if (ordersTotal + ordersAdjustment > maxY) {
-      maxY = ordersTotal + ordersAdjustment;
-    }
-    if (forecastTotal > maxY) {
-      maxY = forecastTotal;
-    }
-    if (ordersTotal < minY) {
-      minY = ordersTotal;
-    }
-    if (forecastTotal < minY) {
-      minY = forecastTotal;
-    }
-  });
-
-  // Update the scale of the Y-axis by looking for the max value
-  y.domain([minY, maxY]);
-  const Yzero = y(0);
-
-  svg.selectAll("g")
-    .data(filteredGraphData)
-    .enter()
-    .append("g")
-    .attr("transform", d => `translate(${x(d.bucket)},0)`)
-    .each(function(d, i) {
-      const bucket = d3.select(this);
-
-      // Draw open orders bar
-      const ordersOpen = d.ordersopen || 0;
-      if (ordersOpen > 0) {
-        const myY = y(ordersOpen);
-        bucket.append("rect")
-          .attr("width", xWidth)
-          .attr("height", Yzero - myY)
-          .attr("x", xWidth / 2)
-          .attr("y", myY)
-          .style("fill", "#2B95EC");
-      }
-
-      // Draw hovering tooltip
-      bucket.append("rect")
-        .attr("height", height)
-        .attr("width", xWidth)
-        .attr("fill-opacity", 0)
-        .on("mouseenter", function(d) {
-          const tooltipContent = i >= forecastcurrentbucket
-            ? `<div style="text-align:center"><strong>${d.bucket}</strong></div>
-               <table style="margin: 5px;">
-                 <tr><td>${ttt('total orders')}</td><td style="text-align:right">${formatNumber(d.orderstotal || 0)}</td></tr>
-                 <tr><td>${ttt('open orders')}</td><td style="text-align:right">${formatNumber(d.ordersopen || 0)}</td></tr>
-                 <tr><td>${ttt('orders adjustment')}</td><td style="text-align:right">${(d.ordersadjustment === null || d.ordersadjustment === undefined) ? '' : formatNumber(d.ordersadjustment)}</td></tr>
-                 <tr><td>${ttt('forecast baseline')}</td><td style="text-align:right">${formatNumber(d.forecastbaseline || 0)}</td></tr>
-                 <tr><td>${ttt('forecast override')}</td><td style="text-align:right">${(!Object.prototype.hasOwnProperty.call(d, "forecastoverride") || d.forecastoverride === null || d.forecastoverride === undefined) ? '' : formatNumber(d.forecastoverride)}</td></tr>
-                 <tr><td>${ttt('forecast total')}</td><td style="text-align:right">${formatNumber(d.forecasttotal || 0)}</td></tr>
-                 <tr><td>${ttt('forecast net')}</td><td style="text-align:right">${formatNumber(d.forecastnet || 0)}</td></tr>
-                 <tr><td>${ttt('forecast consumed')}</td><td style="text-align:right">${formatNumber(d.forecastconsumed || 0)}</td></tr>
-               </table>`
-            : `<div style="text-align:center"><strong>${d.bucket}</strong></div>
-               <table style="margin: 5px;">
-                 <tr><td>${ttt('total orders')}</td><td style="text-align:right">${formatNumber(d.orderstotal || 0)}</td></tr>
-                 <tr><td>${ttt('open orders')}</td><td style="text-align:right">${formatNumber(d.ordersopen || 0)}</td></tr>
-                 <tr><td>${ttt('orders adjustment')}</td><td style="text-align:right">${(d.ordersadjustment === null || d.ordersadjustment === undefined) ? '' : formatNumber(d.ordersadjustment)}</td></tr>
-                 <tr><td>${ttt('past forecast')}</td><td style="text-align:right">${formatNumber(d.forecasttotal || 0)}</td></tr>
-               </table>`;
-
-          showTooltip(tooltipContent);
-        })
-        .on("mouseleave", hideTooltip)
-        .on("mousemove", moveTooltip);
+  for (const bctk of timebuckets) {
+    data.push({
+      bucket: bctk[0],
+      startinv: bctk[4],
+      safetystock: bctk[5],
+      consumed_total: bctk[6],
+      consumed_proposed: bctk[7],
+      consumed_confirmed: bctk[8],
+      produced_total: bctk[9],
+      produced_proposed: bctk[10],
+      produced_confirmed: bctk[11],
+      endinv: bctk[12],
+      buffer: store.operationplan?.buffer,
+      startdate: bctk[1],
+      enddate: bctk[2]
     });
 
-  // Create D3 lines - orders
-  let line = d3.svg.line()
-    .x(d => x(d.bucket) + xWidth / 2)
-    .y(d => y(Math.max(0, (d.orderstotal || 0) + (d.ordersadjustment || 0))));
+    // Find min and max (skip first 4 elements)
+    const slicedbucket = bctk.slice(4);
+    const tmp_min = Math.min(...slicedbucket);
+    const tmp_max = Math.max(...slicedbucket);
+    if (tmp_min < min_y) min_y = tmp_min;
+    if (tmp_max > max_y) max_y = tmp_max;
+  }
 
-  svg.append("svg:path")
-    .attr('class', 'graphline')
-    .attr("stroke", "#8BBA00")
-    .attr("d", line(filteredGraphData));
+  // Create Y-axis
+  const y = d3.scale.linear()
+      .domain([min_y, max_y])
+      .rangeRound([height, 0]);
+  const y_zero = y(0);
 
-  // Create D3 lines - total forecast
-  line = d3.svg.line()
-    .x(d => x(d.bucket) + xWidth / 2)
-    .y((d, i) => y((i >= forecastcurrentbucket) ? (d.forecasttotal || 0) : 0));
+  // Create SVG
+  const svg = d3.select(graphContainer.value)
+      .append('svg')
+      .attr('class', 'graphcell')
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
 
-  svg.append("svg:path")
-    .attr('class', 'graphline')
-    .attr("stroke", "#FF0000")
-    .attr("d", line(filteredGraphData));
+  // Draw bars for each bucket
+  svg.selectAll('g')
+      .data(data)
+      .enter()
+      .append('g')
+      .attr('transform', d => `translate(${x(d.bucket)},0)`)
+      .each(function(d) {
+        const bucket = d3.select(this);
 
-  // Create D3 lines - past forecast
-  line = d3.svg.line()
-    .x(d => x(d.bucket) + xWidth / 2)
-    .y((d, i) => y((i < forecastcurrentbucket) ? (d.forecasttotal || 0) : 0));
+        // Draw produced bars
+        if (d.produced_total > 0) {
+          const y_top = y(d.produced_total);
+          const y_top_low = y(d.produced_confirmed);
 
-  svg.append("svg:path")
-    .attr('class', 'graphline')
-    .attr("stroke", "#FF7B00")
-    .attr("d", line(filteredGraphData));
+          if (d.produced_confirmed > 0) {
+            bucket.append('rect')
+                .attr('width', x_width / 2)
+                .attr('height', y_zero - y_top_low)
+                .attr('x', x_width / 2)
+                .attr('y', y_top_low)
+                .style('fill', '#113C5E');
+          }
 
-  // Display Y-Axis
+          if (d.produced_proposed > 0) {
+            bucket.append('rect')
+                .attr('width', x_width / 2)
+                .attr('height', y_top_low - y_top)
+                .attr('x', x_width / 2)
+                .attr('y', y_top)
+                .style('fill', '#2B95EC');
+          }
+        }
+
+        // Draw consumed bars
+        if (d.consumed_total > 0) {
+          const y_top = y(d.consumed_total);
+          const y_top_low = y(d.consumed_confirmed);
+
+          if (d.consumed_confirmed > 0) {
+            bucket.append('rect')
+                .attr('width', x_width / 2)
+                .attr('height', y_zero - y_top_low)
+                .attr('y', y_top_low)
+                .style('fill', '#7B5E08');
+          }
+
+          if (d.consumed_proposed > 0) {
+            bucket.append('rect')
+                .attr('width', x_width / 2)
+                .attr('height', y_top_low - y_top)
+                .attr('y', y_top)
+                .style('fill', '#F6BD0F');
+          }
+        }
+
+        // Draw background rectangle with gradient for safety stock visualization
+        bucket.append('rect')
+            .attr('height', height)
+            .attr('width', x_width)
+            .attr('fill-opacity', d => {
+              if (d.startinv >= 0 && (d.startinv >= d.safetystock || d.safetystock === 0)) {
+                return 0;
+              }
+              return 0.2;
+            })
+            .attr('fill', d => {
+              let gradient_idx;
+              if (d.startinv < 0) {
+                gradient_idx = 0;
+              } else if (d.startinv >= d.safetystock || d.safetystock === 0) {
+                return null;
+              } else {
+                gradient_idx = Math.round(d.startinv / d.safetystock * 165);
+              }
+
+              // Create gradient if it doesn't exist
+              const gradId = `gradient_${gradient_idx}`;
+              let grad = d3.select(`#${gradId}`);
+              if (grad.empty()) {
+                const newgrad = d3.select('#gradients')
+                    .append('linearGradient')
+                    .attr('id', gradId)
+                    .attr('x1', 0)
+                    .attr('x2', 0)
+                    .attr('y1', 0)
+                    .attr('y2', 1);
+
+                newgrad.append('stop')
+                    .attr('offset', '0%')
+                    .attr('stop-color', 'white')
+                    .attr('stop-opacity', 1);
+                newgrad.append('stop')
+                    .attr('offset', '40%')
+                    .attr('stop-color', `rgb(255,${gradient_idx},0)`)
+                    .attr('stop-opacity', 1);
+                newgrad.append('stop')
+                    .attr('offset', '60%')
+                    .attr('stop-color', `rgb(255,${gradient_idx},0)`)
+                    .attr('stop-opacity', 1);
+                newgrad.append('stop')
+                    .attr('offset', '100%')
+                    .attr('stop-color', 'white')
+                    .attr('stop-opacity', 0);
+              }
+              return `url(#${gradId})`;
+            })
+            .on('click', d => {
+              if (d3.event.defaultPrevented || (d.produced_total === 0 && d.consumed_total === 0)) return;
+              d3.select('#tooltip').style('display', 'none');
+              window.location = `${urlPrefix.value}/data/input/operationplanmaterial/buffer/${adminEscape(d.buffer)}/?noautofilter&flowdate__gte=${d.startdate}&flowdate__lt=${d.enddate}`;
+              d3.event.stopPropagation();
+            })
+            .on('mouseenter', d => {
+              const tiptext = `
+            <div style="text-align:center; font-weight:bold">${d.bucket}</div>
+            <table>
+              <tr><td class="text-capitalize pe-3">${ttt('start inventory')}</td><td class="text-end">${formatNumber(d.startinv)}</td></tr>
+              <tr><td class="text-capitalize pe-3">${ttt('produced total')}</td><td class="text-end">+&nbsp;${formatNumber(d.produced_total)}</td></tr>
+              <tr><td class="text-capitalize pe-3 px-3">${ttt('produced proposed')}</td><td class="text-end">${formatNumber(d.produced_proposed)}</td></tr>
+              <tr><td class="text-capitalize pe-3 px-3">${ttt('produced confirmed')}</td><td class="text-end">${formatNumber(d.produced_confirmed)}</td></tr>
+              <tr><td class="text-capitalize pe-3">${ttt('consumed total')}</td><td class="text-end">-&nbsp;${formatNumber(d.consumed_total)}</td></tr>
+              <tr><td class="text-capitalize pe-3 px-3">${ttt('consumed proposed')}</td><td class="text-end">${formatNumber(d.consumed_proposed)}</td></tr>
+              <tr><td class="text-capitalize pe-3 px-3">${ttt('consumed confirmed')}</td><td class="text-end">${formatNumber(d.consumed_confirmed)}</td></tr>
+              <tr><td class="text-capitalize pe-3">${ttt('end inventory')}</td><td class="text-end">=&nbsp;${formatNumber(d.endinv)}</td></tr>
+              <tr><td class="text-capitalize pe-3">${ttt('safety stock')}</td><td class="text-end">${formatNumber(d.safetystock)}</td></tr>
+            </table>
+          `;
+              if (window.graph?.showTooltip) {
+                window.graph.showTooltip(tiptext);
+              }
+            })
+            .on('mouseleave', () => {
+              if (window.graph?.hideTooltip) {
+                window.graph.hideTooltip();
+              }
+            })
+            .on('mousemove', () => {
+              if (window.graph?.moveTooltip) {
+                window.graph.moveTooltip();
+              }
+            });
+      });
+
+  // Draw Y-axis
   const yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-    .tickFormat(d3.format("s"));
+      .scale(y)
+      .orient('left')
+      .tickFormat(d3.format('s'));
+  svg.append('g')
+      .attr('class', 'y axis')
+      .call(yAxis);
 
-  svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis);
+  // Draw zero line if needed
+  if (min_y < 0 && max_y > 0) {
+    svg.append('line')
+        .attr('x1', 0)
+        .attr('x2', width)
+        .attr('y1', y(0))
+        .attr('y2', y(0))
+        .attr('stroke-width', 1)
+        .attr('stroke', 'black')
+        .attr('shape-rendering', 'crispEdges');
+  }
 
-  // Display X-axis for a single forecast
-  const nth = Math.ceil(filteredGraphData.length / width * bucketnamelength * 10);
+  // Draw start inventory line
+  const line = d3.svg.line()
+      .x(d => x(d.bucket) + x_width / 2)
+      .y(d => y(d.startinv));
+  svg.append('path')
+      .attr('class', 'graphline')
+      .attr('stroke', '#8BBA00')
+      .attr('d', line(data));
+
+  // Draw safety stock line
+  const safetyLine = d3.svg.line()
+      .x(d => x(d.bucket) + x_width / 2)
+      .y(d => y(d.safetystock));
+  svg.append('path')
+      .attr('class', 'graphline')
+      .attr('stroke', '#FF0000')
+      .attr('d', safetyLine(data));
+
+  // Draw X-axis
+  const nth = Math.ceil(timebuckets.length / width * bucketnamelength * 10);
   const myticks = [];
-
-  filteredGraphData.forEach((item, i) => {
-    if (i % nth === 0) {
-      myticks.push(item.bucket);
-    }
-  });
-
+  for (let i = 0; i < timebuckets.length; i++) {
+    if (i % nth === 0) myticks.push(timebuckets[i][0]);
+  }
   const xAxis = d3.svg.axis()
-    .scale(x)
-    .tickValues(myticks)
-    .orient("bottom");
+      .scale(x)
+      .tickValues(myticks)
+      .orient('bottom');
+  svg.append('g')
+      .attr('class', 'x axis')
+      .attr('transform', `translate(0,${height})`)
+      .call(xAxis);
+}
 
-  svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", `translate(0,${height})`)
-    .call(xAxis);
+// Save column configuration on collapse/expand
+function onCollapseToggle() {
+  if (typeof window.grid !== 'undefined' && window.grid.saveColumnConfiguration) {
+    window.grid.saveColumnConfiguration();
+  }
+}
 
-  // Display legend
-  const legend = svg.append("g");
-  const codes = [
-    [ttt("open orders"), "#2B95EC", 1],
-    [ttt("total orders"), "#8BBA00", 0],
-    [ttt("forecast total"), "#FF0000", 5],
-    [ttt("past forecast"), "#FF7B00", 6]
-  ];
-
-  let visible = 0;
-  codes.forEach((code) => {
-    legend.append("rect")
-      .attr("x", width + 82)
-      .attr("width", 18)
-      .attr("height", 18)
-      .style("fill", code[1])
-      .attr("transform", `translate(0,${visible * 20 + 10})`);
-
-    legend.append("text")
-      .attr("x", width + 76)
-      .attr("y", 9)
-      .attr("dy", ".35em")
-      .style("text-anchor", "end")
-      .text(code[0])
-      .attr("transform", `translate(0,${visible * 20 + 10})`);
-
-    visible += 1;
-  });
-};
-
-// Watch for data changes from store.buckets and store.bucketChanges
-watch(graphData, () => {
-  nextTick(() => {
-    render();
-  });
-}, { deep: true });
-
-// Watch for window resize
-onMounted(() => {
-  window.addEventListener('resize', handleResize);
-  nextTick(() => {
-    render();
-  });
+// Watch for changes and redraw
+watch([() => store.operationplan?.id, () => inventoryReport.value.length], async () => {
+  if (hasInventoryReport.value) {
+    await nextTick();
+    drawGraph();
+  }
 });
 
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize);
-  if (resizeTimeout) {
-    clearTimeout(resizeTimeout);
+onMounted(async () => {
+  // Set up Bootstrap collapse listeners
+  const collapseElement = document.getElementById('widget_inventorygraph');
+  if (collapseElement) {
+    collapseElement.addEventListener('shown.bs.collapse', onCollapseToggle);
+    collapseElement.addEventListener('hidden.bs.collapse', onCollapseToggle);
+  }
+
+  // Draw initial graph
+  if (hasInventoryReport.value) {
+    await nextTick();
+    drawGraph();
   }
 });
 </script>
 
 <template>
-  <div class="row mb-3">
-    <div class="col">
-       <div id="forecastgraph" ref="graphContainer" style="height: 250px" class="card forecast-graph-container"></div>
+  <div>
+    <div
+        class="card-header d-flex align-items-center"
+        data-bs-toggle="collapse"
+        data-bs-target="#widget_inventorygraph"
+        aria-expanded="false"
+        aria-controls="widget_inventorygraph"
+    >
+      <h5 class="card-title text-capitalize fs-5 me-auto">
+        {{ ttt('inventory') }}
+      </h5>
+      <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
+    </div>
+
+    <div
+        id="widget_inventorygraph"
+        class="card-body collapse overflow-hidden"
+        :class="{ 'show': !isCollapsed }"
+    >
+      <table class="table table-sm table-borderless">
+        <tbody>
+        <tr>
+          <td role="gridcell" aria-describedby="grid_graph">
+            <div ref="graphContainer" class="graph"></div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
 
+<style scoped>
+.widget-handle {
+  cursor: move;
+}
+
+.card-header {
+  cursor: pointer;
+}
+
+.graph {
+  min-height: 300px;
+}
+
+:deep(.graphline) {
+  fill: none;
+  stroke-width: 2px;
+}
+
+:deep(.axis path),
+:deep(.axis line) {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+:deep(.axis text) {
+  font-family: sans-serif;
+  font-size: 11px;
+}
+</style>

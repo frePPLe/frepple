@@ -50,7 +50,7 @@ class TruncatePlan(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if "supply" in os.environ:
+        if "supply" in os.environ and "noexport" not in os.environ:
             return 1
         else:
             return -1
@@ -321,7 +321,7 @@ class ShowPlanStats(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if "supply" in os.environ:
+        if "supply" in os.environ and "noexport" not in os.environ:
             return 0.01
         else:
             return -1
@@ -352,7 +352,7 @@ class ExportProblems(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if "supply" in os.environ:
+        if "supply" in os.environ  and "noexport" not in os.environ:
             return 1
         else:
             return -1
@@ -416,7 +416,7 @@ class ExportConstraints(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if "supply" in os.environ:
+        if "supply" in os.environ and "noexport" not in os.environ:
             return 1
         else:
             return -1
@@ -488,7 +488,7 @@ class ExportOperationPlans(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if "supply" in os.environ or kwargs.get("exportstatic", False):
+        if ("supply" in os.environ or kwargs.get("exportstatic", False))  and "noexport" not in os.environ:
             return 1
         else:
             return -1
@@ -1178,7 +1178,7 @@ class ExportOperationPlanMaterials(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if "supply" in os.environ or kwargs.get("exportstatic", False):
+        if ("supply" in os.environ or kwargs.get("exportstatic", False))  and "noexport" not in os.environ:
             return 1
         else:
             return -1
@@ -1264,7 +1264,7 @@ class ComputePeriodOfCover(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if "supply" in os.environ:
+        if "supply" in os.environ and "noexport" not in os.environ:
             return 1
         else:
             return -1
@@ -1374,7 +1374,7 @@ class ExportOperationPlanResources(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if "supply" in os.environ or kwargs.get("exportstatic", False):
+        if ("supply" in os.environ or kwargs.get("exportstatic", False))  and "noexport" not in os.environ:
             return 1
         else:
             return -1
@@ -1452,7 +1452,7 @@ class ExportResourcePlans(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if "supply" in os.environ:
+        if "supply" in os.environ and "noexport" not in os.environ:
             return 1
         else:
             return -1
@@ -1548,7 +1548,7 @@ class ExportPegging(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if "supply" in os.environ:
+        if "supply" in os.environ and "noexport" not in os.environ:
             return 1
         else:
             return -1
@@ -1586,45 +1586,3 @@ class ExportPegging(PlanTask):
                     cls.getDemandPlan(cluster=cluster, demands=demands),
                     page_size=200,
                 )
-
-
-@PlanTaskRegistry.register
-class ExportPlanToFile(PlanTask):
-    """
-    Inactive task.
-    """
-
-    description = "Export plan to CSV files"
-    sequence = 500
-
-    @staticmethod
-    def getWeight(**kwargs):
-        return -1
-
-    @staticmethod
-    def run(database=DEFAULT_DB_ALIAS, **kwargs):
-        from freppledb.execute.export_file_plan import exportfrepple
-
-        exportfrepple()
-
-
-@PlanTaskRegistry.register
-class ExportPlanToXML(PlanTask):
-    """
-    Inactive task.
-    """
-
-    description = "Export plan to an XML file"
-    sequence = 600
-
-    @staticmethod
-    def getWeight(**kwargs):
-        return -1
-
-    @staticmethod
-    def run(database=DEFAULT_DB_ALIAS, **kwargs):
-        import frepple
-
-        frepple.saveXMLfile("output.1.xml", "BASE")
-        # frepple.saveXMLfile("output.2.xml","PLAN")
-        # frepple.saveXMLfile("output.3.xml","PLANDETAIL")

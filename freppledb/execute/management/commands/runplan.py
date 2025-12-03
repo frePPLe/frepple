@@ -323,14 +323,6 @@ class Command(BaseCommand):
             if "DJANGO_SETTINGS_MODULE" not in os.environ:
                 os.environ["DJANGO_SETTINGS_MODULE"] = "freppledb.settings"
             os.environ["PYTHONPATH"] = os.path.normpath(settings.FREPPLE_APP)
-            libdir = os.path.join(os.path.normpath(settings.FREPPLE_HOME), "lib")
-            if os.path.isdir(libdir):
-                # Folders used by the Windows version
-                os.environ["PYTHONPATH"] += os.pathsep + libdir
-                if os.path.isfile(os.path.join(libdir, "library.zip")):
-                    os.environ["PYTHONPATH"] += os.pathsep + os.path.join(
-                        libdir, "library.zip"
-                    )
 
             if options["background"] or options["daemon"]:
                 # Execute as background process on Windows

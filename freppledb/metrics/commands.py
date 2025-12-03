@@ -40,7 +40,7 @@ class GetPlanMetrics(PlanTask):
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        if "supply" in os.environ:
+        if "supply" in os.environ and "noexport" not in os.environ:
             return 1
         else:
             return -1
@@ -75,43 +75,63 @@ class GetPlanMetrics(PlanTask):
 
                     create index on item_hierarchy (child);
 
-                    create temporary table out_problem_tmp
-                    as
-                    select item.name as item_id, out_problem.name, out_problem.weight, out_problem.weight*coalesce(item.cost,0) as weight_cost
-                     from out_problem
-                    inner join demand on demand.name = out_problem.owner
-                    inner join item on item.name = demand.item_id
-                    where out_problem.name in ('unplanned', 'late')
-                    and out_problem.startdate < %s;
+                    create temporary table demand_late_unplanned as
+                    with dmd_late_unplanned as (
+                      select
+                        demand.name,
+                        demand.item_id,
+                        demand.quantity,
+                        sum(case when demand.due < operationplan.enddate then operationplan.quantity end) as late_quantity,
+                        sum(operationplan.quantity) as planned_quantity
+                      from demand
+                      left outer join operationplan on operationplan.demand_id = demand.name
+                      where demand.status = 'open'
+                        and demand.due < %s
+                      group by demand.name
+                    )
+                    select
+                      item_id,
+                      sum(case when late_quantity is not null then 1 end) as late_count,
+                      sum(late_quantity) as late_quantity,
+                      sum(late_quantity * coalesce(item.cost, 0)) as late_cost,
+                      sum(case when planned_quantity is null then 1 end) as unplanned_count,
+                      sum(case when planned_quantity is null then quantity end) as unplanned_quantity,
+                      sum(case when planned_quantity is null then quantity * coalesce(item.cost, 0) end) as unplanned_cost
+                    from dmd_late_unplanned
+                    inner join item
+                      on item_id = item.name
+                    group by item_id
                     """,
                     (window,),
                 )
 
-                if "freppledb.forecast" in settings.INSTALLED_APPS:
-                    cursor.execute(
-                        """
-                        insert into out_problem_tmp
-                        select item.name as item_id, out_problem.name, out_problem.weight, out_problem.weight*coalesce(item.cost) from out_problem
-                        inner join forecast on forecast.name = left(out_problem.owner, -13)
-                        inner join item on item.name = forecast.item_id
-                        where out_problem.name in ('unplanned', 'late')
-                        and out_problem.startdate < %s;
-                       """,
-                        (window,),
-                    )
+                # TODO REFACTOR TO WORK WITHOUT OUT_PROBLEM TABLE
+                # if "freppledb.forecast" in settings.INSTALLED_APPS:
+                #     cursor.execute(
+                #         """
+                #         insert into out_problem_tmp
+                #         select item.name as item_id, out_problem.name, out_problem.weight, out_problem.weight*coalesce(item.cost) from out_problem
+                #         inner join forecast on forecast.name = left(out_problem.owner, -13)
+                #         inner join item on item.name = forecast.item_id
+                #         where out_problem.name in ('unplanned', 'late')
+                #         and out_problem.startdate < %s;
+                #        """,
+                #         (window,),
+                #     )
 
                 cursor.execute(
                     """
                     create temporary table metrics as
                     select item.name as item_id,
-                    coalesce(sum(case when out_problem_tmp.name = 'late' then 1 end),0) as latedemandcount,
-                    coalesce(sum(case when out_problem_tmp.name = 'late' then out_problem_tmp.weight end),0) as latedemandquantity,
-                    coalesce(sum(case when out_problem_tmp.name = 'late' then out_problem_tmp.weight_cost end),0) as latedemandvalue,
-                    coalesce(sum(case when out_problem_tmp.name = 'unplanned' then 1 end),0) as unplanneddemandcount,
-                    coalesce(sum(case when out_problem_tmp.name = 'unplanned' then out_problem_tmp.weight end),0) as unplanneddemandquantity,
-                    coalesce(sum(case when out_problem_tmp.name = 'unplanned' then out_problem_tmp.weight_cost end),0) as unplanneddemandvalue
+                    coalesce(sum(late_count),0) as latedemandcount,
+                    coalesce(sum(late_quantity),0) as latedemandquantity,
+                    coalesce(sum(late_cost),0) as latedemandvalue,
+                    coalesce(sum(unplanned_count),0) as unplanneddemandcount,
+                    coalesce(sum(unplanned_quantity),0) as unplanneddemandquantity,
+                    coalesce(sum(unplanned_cost),0) as unplanneddemandvalue
                     from item
-                    left outer join out_problem_tmp on out_problem_tmp.item_id = item.name
+                    left outer join demand_late_unplanned
+                      on demand_late_unplanned.item_id = item.name
                     where item.lft = item.rght - 1
                     group by item.name;
 
@@ -128,7 +148,7 @@ class GetPlanMetrics(PlanTask):
                     from item_hierarchy
                     left outer join metrics on item_hierarchy.child = metrics.item_id
                     group by parent;
-                """
+                    """
                 )
 
                 cursor.execute(
@@ -148,13 +168,13 @@ class GetPlanMetrics(PlanTask):
                     or item.unplanneddemandcount is distinct from metrics.unplanneddemandcount
                     or item.unplanneddemandquantity is distinct from metrics.unplanneddemandquantity
                     or item.unplanneddemandvalue is distinct from metrics.unplanneddemandvalue);
-                """
+                    """
                 )
 
                 cursor.execute(
                     """
                     drop table item_hierarchy;
-                    drop table out_problem_tmp;
+                    drop table demand_late_unplanned;
                     drop table metrics;
                     """
                 )

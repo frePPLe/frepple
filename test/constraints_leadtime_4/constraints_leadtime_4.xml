@@ -100,7 +100,6 @@ print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=13, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
 print("CREATING UNCONSTRAINED PLAN")
-frepple.settings.minimalBeforeCurrentConstraints = True
 frepple.solver_mrp(plantype=1, constraints=13, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
 ?>

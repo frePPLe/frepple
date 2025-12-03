@@ -26,6 +26,7 @@ from datetime import datetime
 from html.parser import HTMLParser
 import json
 import jwt
+import os
 import time
 from urllib.request import urlopen, HTTPError, Request, URLError
 from xml.sax.saxutils import quoteattr
@@ -34,7 +35,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseNotAllowed
 from django.utils.translation import gettext_lazy as _
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 
 from freppledb.input.models import (
     PurchaseOrder,
@@ -44,6 +45,8 @@ from freppledb.input.models import (
 )
 from freppledb.common.models import Parameter
 from freppledb.common.utils import get_databases
+from freppledb.execute.models import Task
+from freppledb.execute.management.commands.runworker import launchWorker
 
 import logging
 
@@ -453,3 +456,55 @@ def Upload(request):
     except Exception as e:
         logger.error(e)
         return HttpResponseServerError("Internal server error on frepple side")
+
+
+@csrf_exempt
+def SubmittedFromOdoo(request):
+    try:
+        # Note that the middleware assures authentication with JWT or bearer
+        # authorization header additional to the check below.
+        if request.method != "POST":
+            return HttpResponseNotAllowed("Only POST requests are allowed")
+
+        # Create output folder
+        outputfolder = os.path.join(
+            settings.FREPPLE_LOGDIR, "data", request.database, "odoo"
+        )
+        if not os.path.isdir(outputfolder):
+            try:
+                os.makedirs(outputfolder)
+            except Exception:
+                pass
+
+        for filename, uploadedfile in request.FILES.items():
+            if filename == "metadata":
+                # Store the attached metadata file.
+                parsed_data = json.loads(uploadedfile.read().decode("utf-8"))
+                with open(
+                    os.path.join(outputfolder, "metadata.json"), "w", encoding="utf-8"
+                ) as outfile:
+                    json.dump(parsed_data, outfile, indent=4)
+            elif filename == "datafile":
+                # Store the attached data file.
+                with open(
+                    os.path.join(outputfolder, "odoodata.json.gz"), "wb"
+                ) as outfile:
+                    for chunk in uploadedfile.chunks():
+                        outfile.write(chunk)
+
+        # Launch runplan asynchronously with correct arguments.
+        Task(
+            name="runplan",
+            submitted=datetime.now(),
+            status="Waiting",
+            user=request.user,
+            arguments="--constraint=po_lt,mfg_lt,capa --plantype=1 "
+            "--env=odoo_read_1,fcst,supply,nowebservice,noexportstatic,noexport,odoo_write_1",
+        ).save(using=request.database)
+        launchWorker(database=request.database)
+
+        # Success
+        return HttpResponse("Job received successfully. We'll process it shortly.")
+    except Exception as e:
+        print(f"Rejected odoo job submission: {e}")
+        return HttpResponseServerError(e)

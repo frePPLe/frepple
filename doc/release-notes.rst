@@ -4,7 +4,7 @@ Release notes
 9.13.0 (Upcoming release)
 ========================
 
-This release is scheduled for early November.
+This release is scheduled for mid January 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Production planning
@@ -18,6 +18,24 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     operations before the fence.
   | The user interface provides enough alternatives to identify and review
     these.
+
+- | The logic to create the "why short or late" information has been
+    refactored to be easier to understand.
+
+.. rubric:: Odoo integration
+
+- | Added support for odoo 19.
+  | The connector is still experimental and for testing purposes only.
+  | With odoo 19 the connector has been refactored into a real next-generation.
+
+  | Please see .... for more details.
+  |    OR
+  | Here is short list of the main changes:
+      - ...
+
+- | It's now possible to run the odoo import as part of the plan generation.
+  | In practice, you'll always run the plan righ after the import, isn't it?
+    So, we made it now a checkbox in the plan generation options.
 
 9.12.0 (2025-11-14)
 ===================

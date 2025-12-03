@@ -98,6 +98,7 @@ OPERATION	make item 4	2018-02-15T06:00:00	2018-03-01T00:00:00	10
 OPERATION	make item 4	2021-02-18T00:00:00	2021-03-01T00:00:00	10
 DEMAND CONSTRAINT	item 4 - order 1	Operation 'make item 4' planned in the past	2017-12-10T00:00:00 / 2018-01-01T00:00:00
 DEMAND CONSTRAINT	item 4 - order 1	Resource 'Resource 4' has capacity shortage of 1	2018-01-01T00:00:00 / 2018-01-23T00:00:00
+DEMAND CONSTRAINT	item 4 - order 5	Demand is overdue	2017-01-01T00:00:00 / 2018-01-01T00:00:00
 DEMAND CONSTRAINT	item 4 - order 5	Operation 'Ship item 4 @ factory' planned in the past	2017-01-01T00:00:00 / 2018-01-01T00:00:00
 DEMAND CONSTRAINT	item 4 - order 5	Operation 'make item 4' planned in the past	2017-12-10T00:00:00 / 2018-01-01T00:00:00
 DEMAND CONSTRAINT	order 1	Operation 'make item 1' planned in the past	2017-12-30T21:20:00 / 2018-01-01T00:00:00

@@ -171,7 +171,7 @@ class OdooTest(TransactionTestCase):
             Demand.objects.all()
             .filter(item__name__in=frepple_items, status="open")
             .count(),
-            {16: 1, 17: 10, 18: 9}[odoo_version],
+            {16: 1, 17: 10, 18: 9, 19: 10}[odoo_version],
         )
 
         if odoo_version >= 15:

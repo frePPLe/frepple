@@ -34,7 +34,7 @@ class archiveData(PlanTask):
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        if "supply" in os.environ:
+        if "supply" in os.environ and "noexport" not in os.environ:
             return 1
         else:
             return -1

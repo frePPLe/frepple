@@ -20,7 +20,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-from datetime import datetime
+from datetime import datetime, timedelta
 import base64
 import gzip
 import jwt
@@ -539,7 +539,7 @@ class OdooSendRecommendations(PlanTask):
                     print(json.dumps(rec), file=f)
                     first = False
                 else:
-                    print(f"{json.dumps(rec)},", file=f)
+                    print(f",{json.dumps(rec)}", file=f)
             print("]}", file=f)
 
         # Send the recommendations to back to odoo
@@ -575,17 +575,55 @@ class OdooSendRecommendations(PlanTask):
 
         def generatePurchaseRecommendations(self):
 
-            yield {
-                "type": "purchase",
-                "owner": "owner1",
-                "description": "PO recommendation1",
-            }
-            yield {
-                "type": "purchase",
-                "owner": "owner2",
-                "description": "PO recommendation2",
-            }
-            print("Generated 2 purchase recommendations")
+            import frepple
+
+            po_count = 0
+            for i in frepple.operations():
+                if not isinstance(i, frepple.operation_itemsupplier):
+                    continue
+                for j in i.operationplans:
+                    # We are sending the proposed POs within the lead time of the item
+                    if (
+                        not j.status == "proposed"
+                        or not j.item.source == "odoo_1"
+                        or not j.supplier.source == "odoo_1"
+                        or j.start
+                        > frepple.settings.current + timedelta(seconds=i.duration)
+                    ):
+                        continue
+
+                    sales_orders = []
+                    forecast = []
+                    # Get the demand linked to that PO
+                    for p in j.pegging_demand:
+                        if isinstance(
+                            p.demand,
+                            (frepple.demand_forecastbucket, frepple.demand_forecast),
+                        ):
+                            forecast.append(p.demand.name)
+                        else:
+                            sales_orders.append(p.demand.name)
+                    description = ""
+                    if sales_orders:
+                        description = (
+                            f"Required for sales orders {",".join(sales_orders)}"
+                        )
+                    if forecast:
+                        description = f"{description}{"\n" if sales_orders else ""}Required for forecast {",".join(forecast)}"
+                    po_count += 1
+                    if not description:
+                        description = "Stock replenishment"
+                    yield {
+                        "type": "purchase",
+                        "supplier_id": int(j.supplier.name.rsplit(" ", 1)[1]),
+                        "product_id": int(j.item.subcategory.split(",")[1]),
+                        "startdate": j.start.isoformat(),
+                        "enddate": j.end.isoformat(),
+                        "quantity": j.quantity,
+                        "description": description,
+                    }
+
+            print(f"Generated {po_count} purchase recommendations")
 
         def generateManufacturingRecommendations(self):
             yield {

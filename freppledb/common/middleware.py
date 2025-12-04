@@ -27,6 +27,7 @@ import ipaddress
 import jwt
 import re
 import threading
+from urllib.parse import urlencode
 from warnings import warn
 
 from django.conf import settings
@@ -227,7 +228,18 @@ class MultiDBMiddleware:
                                     secret,
                                     algorithms=["HS256"],
                                 )
-                            except jwt.exceptions.InvalidTokenError:
+                            except jwt.exceptions.ExpiredSignatureError:
+                                # Expired tokens need to redirect to the login page
+                                params = request.GET.copy()
+                                if "webtoken" in params:
+                                    del params["webtoken"]
+                                next = f"{request.prefix}{request.path}"
+                                if params:
+                                    next += f"?{params.urlencode()}"
+                                return HttpResponseRedirect(
+                                    f"/data/login/?{urlencode({"next": next})}"
+                                )
+                            except jwt.exceptions.InvalidTokenError as e:
                                 pass
                     if decoded:
                         # Authenticated with a valid JWT token

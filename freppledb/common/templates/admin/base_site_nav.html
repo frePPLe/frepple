@@ -16,7 +16,7 @@ $(function() {
 <nav id="nav-menu-header" class="navbar navbar-expand-lg navbar-light bg-light">
 	<div class="container-fluid">
 
-          {% if not request.session.navbar %}
+          {% if not request.session.navbar or request.session.branding %}
 	      <a href="{{request.prefix}}/" class="navbar-brand">
           {% block branding %}{{ block.super }}{% endblock %}
           </a>
@@ -98,14 +98,15 @@ $(function() {
 
       {% if user.is_authenticated and user.is_staff %}
 	  <div id="nav-menu-end" class="collapse navbar-collapse">
-	  {% if not request.session.navbar %}
+	  {% if not request.session.navbar or request.session.branding %}
       <ul class="nav navbar-nav ms-auto">
+        {% block extra_user_context %}{% endblock %}
         <li class="navbar-item" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom"
           style="position:relative" data-bs-title="{% trans "No unread messages" %}" data-bs-offset="0,7">
           <a class="nav-link" href="{{request.prefix}}/inbox/">
             <i id="messages" style="font-size: 1.5em" class="fa fa-envelope-open-o" aria-hidden="true"></i>
             <span class="position-absolute top-20 start-50 translate-middle badge rounded-pill bg-danger" aria-hidden="true"></span>
-			&nbsp;&nbsp;
+            &nbsp;&nbsp;
           </a>
         </li>
 		<li class="navbar-item dropdown">

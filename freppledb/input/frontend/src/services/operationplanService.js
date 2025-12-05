@@ -12,41 +12,14 @@
 import { api } from './api.js';
 
 export const operationplanService = {
-  // async getItemtree(measure, item =null, location =null, customer=null) {
-  //   let additional = "";
-  //   if (item) additional += "&item=" + window.admin_escape(item);
-  //   if (location) additional += "&location=" + window.admin_escape(location);
-  //   if (customer) additional += "&customer=" + window.admin_escape(customer);
-  //   return api.get('forecast/itemtree/?measure=' + measure + additional);
-  // },
-  //
-  // async getLocationtree(measure, item =null, location =null, customer=null) {
-  //   let additional = "";
-  //   if (item) additional += "&item=" + window.admin_escape(item);
-  //   if (location) additional += "&location=" + window.admin_escape(location);
-  //   if (customer) additional += "&customer=" + window.admin_escape(customer);
-  //   return api.get('forecast/locationtree/?measure=' + measure + additional);
-  // },
-  //
-  // async getCustomertree(measure, item =null, location =null, customer=null) {
-  //   let additional = "";
-  //   if (item) additional += "&item=" + window.admin_escape(item);
-  //   if (location) additional += "&location=" + window.admin_escape(location);
-  //   if (customer) additional += "&customer=" + window.admin_escape(customer);
-  //   return api.get('forecast/customertree/?measure=' + measure + additional);
-  // },
-  //
-  // async getForecastDetails(measure, item =null, location =null, customer=null) {
-  //   let additional = "";
-  //   if (item) additional += "&item=" + window.admin_escape(item);
-  //   if (location) additional += "&location=" + window.admin_escape(location);
-  //   if (customer) additional += "&customer=" + window.admin_escape(customer);
-  //   return api.get('forecast/detail/?measure=' + measure + additional);
-  // },
-  //
-  // async postForecastDetails(postData) {
-  //   return api.wspost('forecast/detail/', postData );
-  // },
+  async getOperationplanDetails(params) {
+    console.log(21, params);
+    return api.get('operationplan/?reference=' + params.reference, {});
+  },
+
+  async postOperationplanDetails(postData) {
+    return api.wspost('operationplan/', postData );
+  },
 
   async savePreferences(preferencesData) {
     return api.post('settings/', preferencesData );

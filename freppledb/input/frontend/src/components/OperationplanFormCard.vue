@@ -11,7 +11,7 @@
 <script setup lang="js">
 import {ref, computed, onMounted} from "vue";
 import { useI18n } from 'vue-i18n';
-import {useForecastsStore} from "@/stores/forecastsStore.js";
+import {useOperationplansStore} from "@/stores/operationplansStore.js";
 import { isNumeric } from "@common/utils.js";
 import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js'
 
@@ -23,7 +23,7 @@ const { t: ttt, locale, availableLocales } = useI18n({
   inheritLocale: true
 });
 
-const store = useForecastsStore();
+const store = useOperationplansStore();
 
 let activateApply = ref(false);
 

@@ -9,7 +9,7 @@
 */
 
 <script setup lang="js">
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
 import OperationplanFormCard from '@/components/OperationplanFormCard.vue';
@@ -38,9 +38,23 @@ const rowlimiterrormodal = ref(false);
 const modalcallback = ref({ resolve: () => {} });
 
 function save() {
-  if (store.hasChanges) store.saveOperationplanChanges();
+  if (store.hasChanges) {
+    store.saveOperationplanChanges()
+      .catch(error => {
+        console.error('Failed to save operation plan:', error);
+        // Show error notification to user
+        store.error = {
+          title: 'Save Failed',
+          showError: true,
+          message: 'There was an error saving your changes.',
+          details: error.message || 'Unknown error',
+          type: 'error'
+        };
+      });
+  }
 }
 
+// Enhanced undo method
 function undo() {
   if (store.hasChanges) {
     store.undo();
@@ -77,10 +91,22 @@ function shouldShowWidget(widgetName) {
     'upstreamoperationplans': () => store.operationplan.upstreamoperationplans !== undefined,
   };
 
+  // Special handling for certain widgets
   return widgetName === 'operationplan' ||
       widgetName === 'operationdemandpegging' ||
       (widgetConditions[widgetName] && widgetConditions[widgetName]());
 }
+
+onMounted(() => {
+  if (!store.operationplan) {
+    store.loadOperationplans(1391);
+  }
+});
+
+onUnmounted(() => {
+  store.resetTemporaryState();
+});
+
 </script>
 
 <template>
@@ -101,8 +127,9 @@ function shouldShowWidget(widgetName) {
         >
           <component
               :is="getWidgetComponent(widget[0])"
-              v-if="getWidgetComponent(widget[0])"
-              :widget="widget"
+              :operationplan="store.operationplan"
+              :is-loading="store.loading"
+              :error="store.error"
           />
         </div>
       </div>
@@ -139,7 +166,7 @@ function shouldShowWidget(widgetName) {
         </div>
 
         <div v-if="!databaseerrormodal && rowlimiterrormodal" class="modal-body">
-          <p>{{ ttt('The Gantt chart is limited to {{rowlimit}} rows.') }}</p>
+          <p>{{ ttt('The Gantt chart is limited to ' + rowlimit + ' rows.') }}</p>
           <p>{{ ttt('Please be patient, the chart may take some time to complete.') }}</p>
         </div>
 

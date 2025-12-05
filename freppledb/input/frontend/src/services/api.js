@@ -68,6 +68,7 @@ export const api = {
   },
 
   async get(endpoint, options = {}) {
+    console.log('71 options: ', options);
     const defaultHeaders = {
       'X-Requested-With': 'XMLHttpRequest',
       'X-CSRFToken': getCsrfToken(),

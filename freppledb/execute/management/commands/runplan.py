@@ -142,6 +142,13 @@ class Command(BaseCommand):
             default=False,
             help="Run the planning engine as a daemon process for which we don't need to wait (default = False)",
         )
+        if "freppledb.odoo" in settings.INSTALLED_APPS:
+            parser.add_argument(
+                "--odoo_folder",
+                dest="odoo_folder",
+                default=None,
+                help="A folder where to keep odoo data files",
+            )
 
     def handle(self, **options):
         # Set the server timezone to the TIME_ZONE parameter of djangosettings
@@ -239,6 +246,8 @@ class Command(BaseCommand):
                     os.environ[label[0]] = "1"
             if "loadplan" in os.environ:
                 del os.environ["loadplan"]
+            if "odoo_folder" in os.environ:
+                del os.environ["odoo_folder"]
             for i in range(5):
                 v = f"odoo_read_{i}"
                 if v in os.environ:
@@ -269,6 +278,11 @@ class Command(BaseCommand):
                 task.arguments += " --daemon"
             if "cluster" in options:
                 task.arguments += " --cluster=%s" % options["cluster"]
+            if (
+                options.get("odoo_folder", None)
+                and "freppledb.odoo" in settings.INSTALLED_APPS
+            ):
+                task.arguments += f" --odoo_folder={options["odoo_folder"]}"
 
             # Log task
             # Different from the other tasks the frepple engine will write the processid
@@ -316,6 +330,11 @@ class Command(BaseCommand):
                 + os.pathsep
                 + settings.FREPPLE_APP
             )
+            if (
+                options.get("odoo_folder", None)
+                and "freppledb.odoo" in settings.INSTALLED_APPS
+            ):
+                os.environ["ODOO_FOLDER"] = options["odoo_folder"]
             if os.path.isfile(os.path.join(settings.FREPPLE_HOME, "libfrepple.so")):
                 os.environ["LD_LIBRARY_PATH"] = settings.FREPPLE_HOME
             if "DJANGO_SETTINGS_MODULE" not in os.environ:

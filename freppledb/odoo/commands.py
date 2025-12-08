@@ -57,6 +57,14 @@ from freppledb.input.commands import (
 logger = logging.getLogger(__name__)
 
 
+def getOdooFolder(database):
+    if "ODOO_FOLDER" in os.environ:
+        folder = os.environ["ODOO_FOLDER"]
+    else:
+        folder = os.path.join(settings.FREPPLE_LOGDIR, "data", database, "odoo")
+    return folder
+
+
 @PlanTaskRegistry.register
 class OdooReadData(PlanTask):
     """
@@ -160,20 +168,45 @@ class OdooReadData(PlanTask):
 
         # Set the environment variable ODOO_FOLDER if you want frePPLe
         # to read that file rather than the data at url.
-        odoo_input = os.environ.get("ODOO_FOLDER", None)
-        if odoo_input:
-            # MODE 1: read data from a file
-            odoo_input = os.path.join(odoo_input, "odoo_data.xml")
-            if not os.access(odoo_input, os.F_OK | os.R_OK):
-                raise Exception(f"Missing odoo input data file {odoo_input}")
-
-            # Parse XML data file
-            with open(odoo_input, encoding="utf-8") as f:
+        odoo_folder = getOdooFolder(database)
+        if os.access(os.path.join(odoo_folder, "odoodata.xml"), os.F_OK | os.R_OK):
+            # MODE 1: read XML data from a file
+            with open(os.path.join(odoo_folder, "odoodata.xml"), encoding="utf-8") as f:
                 frepple.readXMLdata(
                     f.read().translate({ord(i): None for i in "\f\v\b"}), False, False
                 )
+        elif os.access(os.path.join(odoo_folder, "odoodata.xml.gz"), os.F_OK | os.R_OK):
+            # MODE 2: read XML data from a compressed file
+            with gzip.open(
+                os.path.join(odoo_folder, "odoodata.xml.gz"),
+                mode="rt",
+                encoding="utf-8",
+            ) as f:
+                frepple.readXMLdata(
+                    f.read().translate({ord(i): None for i in "\f\v\b"}), False, False
+                )
+        elif os.access(os.path.join(odoo_folder, "odoodata.json"), os.F_OK | os.R_OK):
+            # MODE 3: read JSON data from a file
+            with open(
+                os.path.join(odoo_folder, "odoodata.json"), encoding="utf-8"
+            ) as f:
+                frepple.readJSONdata(
+                    f.read().translate({ord(i): None for i in "\f\v\b"})
+                )
+        elif os.access(
+            os.path.join(odoo_folder, "odoodata.json.gz"), os.F_OK | os.R_OK
+        ):
+            # MODE 4: read JSON data from a compressed file
+            with gzip.open(
+                os.path.join(odoo_folder, "odoodata.json.gz"),
+                mode="rt",
+                encoding="utf-8",
+            ) as f:
+                frepple.readJSONdata(
+                    f.read().translate({ord(i): None for i in "\f\v\b"})
+                )
         else:
-            # MODE 2: read data from a URL
+            # MODE 5: read data from a URL
             ok = True
             if not odoo_user:
                 logger.error("Missing or invalid parameter odoo.user")
@@ -236,7 +269,7 @@ class OdooReadData(PlanTask):
                 )
                 request.add_header("Accept-Encoding", "gzip")
 
-                # Download and parse XML data
+                # Download and parse data
                 with urlopen(request) as response:
                     if response.info().get("Content-Encoding") == "gzip":
                         data = gzip.decompress(response.read()).decode(
@@ -247,9 +280,17 @@ class OdooReadData(PlanTask):
                     if loglevel:
                         print("Data receive from odoo:")
                         print(data)
-                    frepple.readXMLdata(
-                        data.translate({ord(i): None for i in "\f\v\b"}), False, False
-                    )
+
+                    if response.info().get("Content-Type") == "application/json":
+                        frepple.readJSONdata(
+                            f.read().translate({ord(i): None for i in "\f\v\b"})
+                        )
+                    else:
+                        frepple.readXMLdata(
+                            data.translate({ord(i): None for i in "\f\v\b"}),
+                            False,
+                            False,
+                        )
 
             except HTTPError as e:
                 print("Error during connection with odoo")
@@ -471,11 +512,10 @@ class OdooSendRecommendations(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
-        # Retrieve odoo metadata for callback
-        odoo_folder = os.environ.get("ODOO_FOLDER", settings.FREPPLE_LOGDIR)
+        odoo_folder = getOdooFolder(database)
         if odoo_folder:
             try:
-                # Mode 1
+                # Mode 1:  Retrieve odoo metadata for callback
                 with open(
                     os.path.join(odoo_folder, "metadata.json"), "r", encoding="utf-8"
                 ) as f:
@@ -484,6 +524,7 @@ class OdooSendRecommendations(PlanTask):
                 metadata = None
 
         if not metadata:
+            # Mode 2: Build metadata from parameters
             metadata = {
                 "odoo_db": (
                     getattr(settings, "ODOO_DB", {}).get(database, "")
@@ -513,8 +554,6 @@ class OdooSendRecommendations(PlanTask):
                 ),
                 algorithm="HS256",
             )
-            if not metadata["odoo_url"].endswith("/"):
-                metadata["odoo_url"] = metadata["odoo_url"] + "/"
             if (
                 not metadata["odoo_db"]
                 or not metadata["odoo_company"]
@@ -523,24 +562,47 @@ class OdooSendRecommendations(PlanTask):
                 or not metadata["odoo_url"]
             ):
                 raise Exception("Invalid configuration parameters")
+        if not metadata["odoo_url"].endswith("/"):
+            metadata["odoo_url"] += "/"
+        try:
+            loglevel = int(Parameter.getValue("odoo.loglevel", database, "0"))
+        except Exception:
+            loglevel = 0
+        metadata["loglevel"] = loglevel
+
+        # Try to create the upload if doesn't exist yet
+        if not os.path.isdir(odoo_folder):
+            try:
+                os.makedirs(odoo_folder)
+            except Exception:
+                raise Exception("Error creating folder for recommendations")
 
         # Write recommendations to a flat file.
         recommendations = os.path.join(odoo_folder, "odoo_recommendations.json")
         with open(recommendations, "w", encoding="utf-8") as f:
+            o = f'"description": "frepple output v{frepple.version} at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}",'
             print("{", file=f)
-            print(
-                f'"description": "frepple output v{frepple.version} at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}", ',
-                file=f,
-            )
+            print(o, file=f)
             print('"recommendations": [', file=f)
+            if loglevel:
+                print("{")
+                print(o)
+                print('"recommendations": [')
             first = True
             for rec in cls.OdooRecommendations(**metadata):
+                o = json.dumps(rec)
                 if first:
-                    print(json.dumps(rec), file=f)
+                    print(o, file=f)
+                    if loglevel:
+                        print(o)
                     first = False
                 else:
-                    print(f",{json.dumps(rec)}", file=f)
+                    print(f",{o}", file=f)
+                    if loglevel:
+                        print(f",{o}")
             print("]}", file=f)
+            if loglevel:
+                print("]}")
 
         # Send the recommendations to back to odoo
         print("Sending recommendations to odoo")
@@ -558,6 +620,11 @@ class OdooSendRecommendations(PlanTask):
             )
             if response.status_code == 200:
                 print("Success")
+            elif response.status_code == 404:
+                print(
+                    "Your odoo instance can't receive recommendations.\n"
+                    "This is only possible with the connector odoo 19 onwards."
+                )
             else:
                 print(f"Failure: {response.status_code} {response.text}")
                 raise Exception("Error sending recommendations to odoo")
@@ -622,8 +689,8 @@ class OdooSendRecommendations(PlanTask):
                         "quantity": j.quantity,
                         "description": description,
                     }
-
-            print(f"Generated {po_count} purchase recommendations")
+            if not self.loglevel:
+                print(f"Generated {po_count} purchase recommendations")
 
         def generateManufacturingRecommendations(self):
             yield {
@@ -636,7 +703,8 @@ class OdooSendRecommendations(PlanTask):
                 "owner": "owner2",
                 "description": "MO recommendation2",
             }
-            print("Generated 2 MO recommendations")
+            if not self.loglevel:
+                print("Generated 2 MO recommendations")
 
         def generateSalesOrderRecommendations(self):
             yield {
@@ -649,4 +717,5 @@ class OdooSendRecommendations(PlanTask):
                 "owner": "owner2",
                 "description": "SO recommendation2",
             }
-            print("Generated 2 SO recommendations")
+            if not self.loglevel:
+                print("Generated 2 SO recommendations")

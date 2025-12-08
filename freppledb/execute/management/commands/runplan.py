@@ -145,10 +145,8 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         # Set the server timezone to the TIME_ZONE parameter of djangosettings
-        # unsupported by windows
-        if not os.name == "nt":
-            os.environ["TZ"] = settings.TIME_ZONE
-            time.tzset()
+        os.environ["TZ"] = settings.TIME_ZONE
+        time.tzset()
 
         # Pick up the options
         now = datetime.now()
@@ -325,27 +323,9 @@ class Command(BaseCommand):
             os.environ["PYTHONPATH"] = os.path.normpath(settings.FREPPLE_APP)
 
             if options["background"] or options["daemon"]:
-                # Execute as background process on Windows
-                if os.name == "nt":
-                    startupinfo = subprocess.STARTUPINFO()
-                    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-                    subprocess.Popen(
-                        ["frepple", cmd],
-                        creationflags=0x08000000,
-                        startupinfo=startupinfo,
-                    )
-                else:
-                    # Execute as background process on Linux
-                    subprocess.Popen(["frepple", cmd], preexec_fn=setlimits)
+                subprocess.Popen(["frepple", cmd], preexec_fn=setlimits)
             else:
-                if os.name == "nt":
-                    # Execute in foreground on Windows
-                    startupinfo = subprocess.STARTUPINFO()
-                    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-                    ret = subprocess.call(["frepple", cmd], startupinfo=startupinfo)
-                else:
-                    # Execute in foreground on Linux
-                    ret = subprocess.call(["frepple", cmd], preexec_fn=setlimits)
+                ret = subprocess.call(["frepple", cmd], preexec_fn=setlimits)
                 if ret != 0 and ret != 2:
                     # Return code 0 is a successful run
                     # Return code is 2 is a run cancelled by a user. That's shown in the status field.

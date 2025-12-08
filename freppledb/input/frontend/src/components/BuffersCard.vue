@@ -64,7 +64,8 @@ function getWidgetComponent(widgetName) {
 }
 
 function shouldShowWidget(widgetName) {
-  if (!store.operationplan || store.operationplan.id === -1) return false;
+  console.log(store.operationplans);
+  if ( store.operationplans.length !== 1) return false;
 
   const widgetConditions = {
     'inventorygraph': () => store.operationplan.inventoryreport !== undefined,

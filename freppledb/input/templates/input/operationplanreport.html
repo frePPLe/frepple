@@ -364,7 +364,7 @@ displayGrid({% if preferences.mode != "kanban" and preferences.mode != "gantt" a
 
 {% block extra_grid %}
 
-onSelectRow: function(rowid) {
+onSelectRow: function(rowid, status) {
   const event = new CustomEvent('singleSelect', {
     detail: {
       execute: 'displayInfo',
@@ -372,16 +372,17 @@ onSelectRow: function(rowid) {
     }
   });
   document.getElementById('app').dispatchEvent(event);
+  console.log('singleSelect ', rowid, status);
 },
-onSelectAll: function(aRowids,status){
-  const event = new CustomEvent('singleSelect', {
+onSelectAll: function(aRowids, status){
+  const event = new CustomEvent('allSelect', {
     detail: {
       execute: 'displayInfo',
-      name: rowid
+      name: aRowids
     }
   });
   document.getElementById('app').dispatchEvent(event);
-  // if ($("#actions").length) $("#actions1").prop('disabled', !status);
+  console.log('allSelect', aRowids, status);
 },
 beforeSaveCell: function(rowid, cellname, value, iRow, iCol) {
   var selection = $(this).jqGrid('getGridParam','selarrrow');

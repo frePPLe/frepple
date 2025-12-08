@@ -8,7 +8,8 @@
  * or in the form of compiled binaries.
  */
 
-import {operationplanService} from "@/services/operationplanService.js";
+import {toRaw} from "vue";
+import {operationplanService} from "@/services/operationplanService.js";7
 
 /**
  * @typedef {Object} OperationplansState
@@ -18,9 +19,9 @@ import {operationplanService} from "@/services/operationplanService.js";
  * @property {string} groupingdir - Grouping direction: 'asc' or 'desc'
  * @property {boolean} showTop - Show top level operations
  * @property {boolean} showChildren - Show child level operations
- * @property {Array} operationplans - List of operation plans
- * @property {Object} selectedOperationplan - Currently selected operationplan
- * @property {Array} selectedOperationplans - Multiple selected operationplans
+ * @property {Array} operationplan - single operationplans
+ * @property {Array} operationplans - object with operationplans with id as key // {id: operationplan}
+ * @property {Array} selectedOperationplans - Multiple selected operationplans   // list of ids
  * @property {boolean} loading - Loading state
  * @property {Object} error - Error state
  * @property {number} dataRowHeight - Row height for table
@@ -31,19 +32,19 @@ import {operationplanService} from "@/services/operationplanService.js";
  * @property {Date} viewend - End date of current view
  * @property {Date} currentdate - Current date
  * @property {string} currentFilter - Current search/filter
+ * @property {string} sidx
+ * @property {string} sord
+ * @property {string} width
+ * @property {string} detailWidth
  */
 
-let aaa = [
-  'sidx', 'sord',
-  'width']
-
 import { defineStore } from 'pinia';
-
 
 export const useOperationplansStore = defineStore('operationplans', {
   state: () => ({
     // Data
-    operationplans: [],
+    operationplan: {},
+    operationplans: {},
     selectedOperationplans: [],
 
     // Preferences
@@ -94,7 +95,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     isGanttMode: () => this.mode === 'gantt',
     isCalendarMode: () => this.mode.startsWith('calendar'),
 
-    hasSelected: () => !!this.selectedOperationplan || this.selectedOperationplans.length > 0,
+    hasSelected: () => !!this.selectedOperationplans || Object.keys(this.operationplans).length > 0,
 
     getPreferences(state) {
       state.preferences = window.preferences;
@@ -115,6 +116,7 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     // Data management actions
     async loadOperationplans(reference) {
+      if (!reference) return;
       this.loading = true;
       this.error.showError = false;
 
@@ -124,8 +126,11 @@ export const useOperationplansStore = defineStore('operationplans', {
         });
 
         // Update the store with the fetched data
-        this.operationplans = response.data.results;
-        print(128,  response.data.results, roRaw( response.data.results));
+        console.log( '128: ', toRaw( response.responseData.value));
+        const operationplan = toRaw( response.responseData.value);
+        const operationplanReference = operationplan.reference;
+        this.operationplan = toRaw( response.responseData.value)[0];
+        this.operationplans[operationplanReference] = operationplan;
       } catch (error) {
         this.error = {
           title: 'Failed to load operation plans',
@@ -136,22 +141,6 @@ export const useOperationplansStore = defineStore('operationplans', {
         };
       } finally {
         this.loading = false;
-      }
-    },
-
-    // Selection actions
-    selectOperationplan(operationplan) {
-      this.selectedOperationplan = operationplan;
-      this.selectedOperationplans = operationplan ? [operationplan] : [];
-    },
-
-    toggleSelectOperationplan(operationplan) {
-      const index = this.selectedOperationplans.findIndex(op => op.id === operationplan.id);
-
-      if (index === -1) {
-        this.selectedOperationplans.push(operationplan);
-      } else {
-        this.selectedOperationplans.splice(index, 1);
       }
     },
 
@@ -173,11 +162,6 @@ export const useOperationplansStore = defineStore('operationplans', {
     // Preferences actions
     setPreference(key, value) {
       this.preferences[key] = value;
-    },
-
-    updatePreferences() {
-      // Save preferences to localStorage or backend
-      localStorage.setItem('operationplansPreferences', JSON.stringify(this.preferences));
     },
 
     // Column management actions
@@ -202,47 +186,6 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     setCurrentDate(date) {
       this.currentdate = date;
-    },
-
-    // Utility actions
-    resetState() {
-      // Reset all state properties to their initial values
-      Object.assign(this.$state, {
-        operationplans: [],
-        selectedOperationplans: [],
-        preferences: {},
-        mode: 'table',
-        calendarmode: 'month',
-        grouping: null,
-        groupingdir: 'asc',
-        showTop: true,
-        showChildren: true,
-        page: 1,
-        rows: [],
-        frozen: 0,
-        currentFilter: '',
-        widgets: [],
-        sidx: 'batch',
-        sord: 'asc',
-        favorites: [],
-        segment: "",
-        columns: [],
-        loading: false,
-        error: { title: "", showError: false, message: "", details: "", type: "error" },
-        dataRowHeight: null,
-        width: 300,
-        detailwidth: 300,
-        height: 300,
-        horizonstart: new Date(),
-        horizonend: new Date(),
-        viewstart: new Date(),
-        viewend: new Date(),
-        currentdate: new Date(),
-        kanbanoperationplans: [],
-        kanbancolumns: [],
-        ganttoperationplans: [],
-        calendarevents: []
-      });
     },
 
     // Initialize store with preferences
@@ -295,29 +238,13 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     // Selection actions
     selectMultipleOperationplans(operationplans) {
-      this.selectedOperationplans = operationplans;
+      console.log(240, 'selectMultipleOperationplans: ', operationplans);
+      // this.selectedOperationplans = operationplans;
     },
 
     clearSelection() {
       this.selectedOperationplan = null;
       this.selectedOperationplans = [];
-    },
-
-    // Data loading actions
-    setOperationplans(operationplans) {
-      this.operationplans = operationplans;
-    },
-
-    setKanbanOperationplans(operationplans) {
-      this.kanbanoperationplans = operationplans;
-    },
-
-    setKanbanColumns(columns) {
-      this.kanbancolumns = columns;
-    },
-
-    setGanttOperationplans(operationplans) {
-      this.ganttoperationplans = operationplans;
     },
 
     setCalendarEvents(events) {
@@ -346,7 +273,7 @@ export const useOperationplansStore = defineStore('operationplans', {
 
         // Call your backend service here if needed
         // const result = await operationplanService.savePreferences(this.preferences);
-        const result = await operationplanService.savePreferences({ "freppledb.input.views.manufacturing.ManufacturingOrderList": this.preferences });
+        await operationplanService.savePreferences({ "freppledb.input.views.manufacturing.ManufacturingOrderList": this.preferences });
 
         console.log('Preferences saved:', this.preferences);
       } catch (error) {

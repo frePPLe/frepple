@@ -12,7 +12,7 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
-import OperationplanFormCard from '@/components/OperationplanFormCard.vue';
+// import OperationplanFormCard from '@/components/OperationplanFormCard.vue';
 import InventoryGraphCard from '@/components/InventoryGraphCard.vue';
 import InventoryDataCard from '@/components/InventoryDataCard.vue';
 import ProblemsCard from '@/components/ProblemsCard.vue';
@@ -20,17 +20,19 @@ import ResourcesCard from '@/components/ResourcesCard.vue';
 import BuffersCard from '@/components/BuffersCard.vue';
 import DemandPeggingCard from '@/components/DemandPeggingCard.vue';
 import NetworkStatusCard from '@/components/NetworkStatusCard.vue';
-import DownstreamCard from '@/components/DownstreamCard.vue';
-import UpstreamCard from '@/components/UpstreamCard.vue';
+// import DownstreamCard from '@/components/DownstreamCard.vue';
+// import UpstreamCard from '@/components/UpstreamCard.vue';
+import SupplyInformationCard from "@/components/SupplyInformationCard.vue";
 
 const { t: ttt } = useI18n({
   useScope: 'global',
   inheritLocale: true
 });
 
+const appElement = ref(null);
 const store = useOperationplansStore();
 
-const database = computed(() => window.database);
+// const database = computed(() => window.database);
 const preferences = computed(() => window.preferences || {});
 
 const databaseerrormodal = ref(false);
@@ -63,7 +65,7 @@ function undo() {
 
 function getWidgetComponent(widgetName) {
   const componentMap = {
-    'operationplan': OperationplanFormCard,
+    // 'operationplan': OperationplanFormCard,
     'inventorygraph': InventoryGraphCard,
     'inventorydata': InventoryDataCard,
     'operationproblems': ProblemsCard,
@@ -71,8 +73,9 @@ function getWidgetComponent(widgetName) {
     'operationflowplans': BuffersCard,
     'operationdemandpegging': DemandPeggingCard,
     'networkstatus': NetworkStatusCard,
-    'downstreamoperationplans': DownstreamCard,
-    'upstreamoperationplans': UpstreamCard,
+    // 'downstreamoperationplans': DownstreamCard,
+    // 'upstreamoperationplans': UpstreamCard,
+    'supplyinformation': SupplyInformationCard,
   };
   return componentMap[widgetName] || null;
 }
@@ -98,24 +101,131 @@ function shouldShowWidget(widgetName) {
 }
 
 onMounted(() => {
-  if (!store.operationplan) {
-    store.loadOperationplans(1391);
-  }
+  const getGridRowData = (id) => {
+    try {
+      return window.jQuery('#grid').getRowData(id);
+    } catch (err) {
+      console.log("Cannot get row data for id ", id, ": ", err);
+    }
+    return null;
+  };
+
+  const handleSingleSelectEvent = (e) => {
+    const detail = e?.detail || {};
+    console.log(115, detail);
+    if (detail.execute === 'displayInfo') {
+      const rowid = detail.name;
+      // const row = getGridRowData(rowid);
+      store.loadOperationplans(rowid);
+    }
+    else console.warn('[OperationplanDetails] singleSelect: row data not found for id', rowid);
+  };
+
+  const handleAllSelectEvent = (e) => {
+    const detail = e?.detail || {};
+    console.log(126, detail);
+    const ids = detail.name || [];
+    const selectiondata = [];
+    try {
+      for (const id of ids) {
+        const row = getGridRowData(id);
+        if (row) selectiondata.push(row);
+      }
+      const colModel = (window.jQuery && window.jQuery('#grid').jqGrid) ? window.jQuery('#grid').jqGrid('getGridParam', 'colModel') : undefined;
+      store.processAggregatedInfo(selectiondata, colModel);
+    } catch (err) {
+      console.error(141, err);
+    }
+  };
+
+  const handleProcessAggregatedInfo = (e) => {
+    const detail = e?.detail || {};
+    console.log(143, detail);
+    if (detail.selectiondata) {
+      store.processAggregatedInfo(detail.selectiondata, detail.colModel);
+    }
+  };
+
+  const handleDisplayOnPanel = (e) => {
+    // This event may carry either { rowid, cellname, value } or the row object directly (legacy calls)
+    const detail = e?.detail;
+    console.log('[OperationplanDetails] displayonpanel', detail);
+    if (!detail) return;
+
+    // If detail has rowid, fetch row data
+    if (detail.rowid) {
+      const row = getGridRowData(detail.rowid);
+      if (row) store.displayInfo(row);
+      return;
+    }
+
+    // If detail is already a row object (legacy code sometimes calls new CustomEvent with raw data), try to use it
+    if (typeof detail === 'object' && Object.keys(detail).length > 0) {
+      // Some legacy callers pass the row data directly as the event's 'detail' (or as second arg incorrectly). Use it if it looks like a row.
+      store.displayInfo(detail);
+    }
+  };
+
+  // Attach listeners on the app root element if present, otherwise on document
+  const rootEl = document.getElementById('app') || document;
+  rootEl.addEventListener('singleSelect', handleSingleSelectEvent);
+  rootEl.addEventListener('allSelect', handleAllSelectEvent);
+  rootEl.addEventListener('processAggregatedInfo', handleProcessAggregatedInfo);
+  rootEl.addEventListener('displayonpanel', handleDisplayOnPanel);
+
+  // Save references to handlers so they can be removed on unmount
+  appElement.value = {
+    rootEl,
+    handlers: {
+      single: handleSingleSelectEvent,
+      all: handleAllSelectEvent,
+      proc: handleProcessAggregatedInfo,
+      display: handleDisplayOnPanel,
+    }
+  };
 });
 
+// onMounted(() => {
+//   if (!store.operationplan) {
+//     store.loadOperationplans(1391);
+//   }
+// });
+
 onUnmounted(() => {
-  store.resetTemporaryState();
+  const info = appElement.value;
+  if (info && info.rootEl && info.handlers) {
+    try {
+      info.rootEl.removeEventListener('singleSelect', info.handlers.single);
+      info.rootEl.removeEventListener('allSelect', info.handlers.all);
+      info.rootEl.removeEventListener('processAggregatedInfo', info.handlers.proc);
+      info.rootEl.removeEventListener('displayonpanel', info.handlers.display);
+    } catch (err) {
+      console.log('Failed to remove event listeners from app root element:', err);
+    }
+  }
 });
 
 </script>
 
 <template>
   <div class="row">
+    <BuffersCard />
+    <DemandPeggingCard />
+<!--    <DownstreamCard />-->
+    <InventoryDataCard />
+    <InventoryGraphCard />
+    <NetworkStatusCard />
+<!--    <OperationplanFormCard />-->
+    <ProblemsCard />
+    <ResourcesCard />
+    <SupplyInformationCard />
+<!--    <UpstreamCard />-->
+
     <div
         v-for="col in preferences.widgets"
         :key="col.name"
         class="widget-list col-12"
-        :class="`col-lg-${store.numberOfCols}`"
+        :class="`col-lg-{{store.widgets.length}}`"
         :data-widget="col.name"
         :data-widget-width="col.cols?.[0]?.width"
     >

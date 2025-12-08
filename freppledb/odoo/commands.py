@@ -59,7 +59,7 @@ logger = logging.getLogger(__name__)
 
 def getOdooFolder(database):
     if "ODOO_FOLDER" in os.environ:
-        folder = os.environ["ODOO_FOLDER"]
+        folder = os.path.expanduser(os.environ["ODOO_FOLDER"])
     else:
         folder = os.path.join(settings.FREPPLE_LOGDIR, "data", database, "odoo")
     return folder
@@ -170,13 +170,13 @@ class OdooReadData(PlanTask):
         # to read that file rather than the data at url.
         odoo_folder = getOdooFolder(database)
         if os.access(os.path.join(odoo_folder, "odoodata.xml"), os.F_OK | os.R_OK):
-            # MODE 1: read XML data from a file
+            print(f"Loading data from {odoo_folder}/odoodata.xml")
             with open(os.path.join(odoo_folder, "odoodata.xml"), encoding="utf-8") as f:
                 frepple.readXMLdata(
                     f.read().translate({ord(i): None for i in "\f\v\b"}), False, False
                 )
         elif os.access(os.path.join(odoo_folder, "odoodata.xml.gz"), os.F_OK | os.R_OK):
-            # MODE 2: read XML data from a compressed file
+            print(f"Loading data from {odoo_folder}/odoodata.xml.gz")
             with gzip.open(
                 os.path.join(odoo_folder, "odoodata.xml.gz"),
                 mode="rt",
@@ -186,7 +186,7 @@ class OdooReadData(PlanTask):
                     f.read().translate({ord(i): None for i in "\f\v\b"}), False, False
                 )
         elif os.access(os.path.join(odoo_folder, "odoodata.json"), os.F_OK | os.R_OK):
-            # MODE 3: read JSON data from a file
+            print(f"Loading data from {odoo_folder}/odoodata.json")
             with open(
                 os.path.join(odoo_folder, "odoodata.json"), encoding="utf-8"
             ) as f:
@@ -196,7 +196,7 @@ class OdooReadData(PlanTask):
         elif os.access(
             os.path.join(odoo_folder, "odoodata.json.gz"), os.F_OK | os.R_OK
         ):
-            # MODE 4: read JSON data from a compressed file
+            print(f"Loading data from {odoo_folder}/odoodata.json.gz")
             with gzip.open(
                 os.path.join(odoo_folder, "odoodata.json.gz"),
                 mode="rt",

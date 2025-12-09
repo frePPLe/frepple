@@ -114,33 +114,38 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.preferences.calendarmode = newCalendarMode;
     },
 
-    // Data management actions
-    async loadOperationplans(reference) {
+    async loadOperationplans(reference = []) {
       if (!reference) return;
-      this.loading = true;
-      this.error.showError = false;
+      if (this.selectedOperationplans.includes(reference)) {
+        this.operationplan = {};
+        this.selectedOperationplans = this.selectedOperationplans.filter(item => item !== reference);
+      } else {
+        this.loading = true;
+        this.error.showError = false;
 
-      try { // reference value should be the selected table record reference
-        const response = await operationplanService.getOperationplanDetails({
-          reference: reference
-        });
+        try { // reference value should be the selected table record reference
+          const response = await operationplanService.getOperationplanDetails({
+            reference: reference
+          });
 
-        // Update the store with the fetched data
-        console.log( '128: ', toRaw( response.responseData.value));
-        const operationplan = toRaw( response.responseData.value);
-        const operationplanReference = operationplan.reference;
-        this.operationplan = toRaw( response.responseData.value)[0];
-        this.operationplans[operationplanReference] = operationplan;
-      } catch (error) {
-        this.error = {
-          title: 'Failed to load operation plans',
-          showError: true,
-          message: error.response?.data?.message || 'An error occurred while loading operation plans',
-          details: error.message,
-          type: 'error'
-        };
-      } finally {
-        this.loading = false;
+          // Update the store with the fetched data
+          const operationplan = toRaw(response.responseData.value)[0];
+          const operationplanReference = operationplan.reference;
+
+          this.operationplan = operationplan;
+          this.operationplans[operationplanReference] = operationplan;
+          this.selectedOperationplans.push(operationplanReference);
+        } catch (error) {
+          this.error = {
+            title: 'Failed to load operation plans',
+            showError: true,
+            message: error.response?.data?.message || 'An error occurred while loading operation plans',
+            details: error.message,
+            type: 'error'
+          };
+        } finally {
+          this.loading = false;
+        }
       }
     },
 

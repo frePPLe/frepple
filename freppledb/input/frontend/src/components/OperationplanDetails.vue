@@ -118,7 +118,7 @@ onMounted(() => {
       // const row = getGridRowData(rowid);
       store.loadOperationplans(rowid);
     }
-    else console.warn('[OperationplanDetails] singleSelect: row data not found for id', rowid);
+    else console.log('[OperationplanDetails] singleSelect: row data not found for', detail.name);
   };
 
   const handleAllSelectEvent = (e) => {
@@ -209,13 +209,13 @@ onUnmounted(() => {
 
 <template>
   <div class="row">
+    <!--    <OperationplanFormCard />-->
     <BuffersCard />
     <DemandPeggingCard />
     <DownstreamCard />
     <InventoryDataCard />
-    <InventoryGraphCard />
+    <InventoryGraphCard :key="store.operationplan?.reference || 'empty'"/>
     <NetworkStatusCard />
-<!--    <OperationplanFormCard />-->
     <ProblemsCard />
     <ResourcesCard />
     <SupplyInformationCard />

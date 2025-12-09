@@ -20,8 +20,8 @@ import ResourcesCard from '@/components/ResourcesCard.vue';
 import BuffersCard from '@/components/BuffersCard.vue';
 import DemandPeggingCard from '@/components/DemandPeggingCard.vue';
 import NetworkStatusCard from '@/components/NetworkStatusCard.vue';
-// import DownstreamCard from '@/components/DownstreamCard.vue';
-// import UpstreamCard from '@/components/UpstreamCard.vue';
+import DownstreamCard from '@/components/DownstreamCard.vue';
+import UpstreamCard from '@/components/UpstreamCard.vue';
 import SupplyInformationCard from "@/components/SupplyInformationCard.vue";
 
 const { t: ttt } = useI18n({
@@ -73,8 +73,8 @@ function getWidgetComponent(widgetName) {
     'operationflowplans': BuffersCard,
     'operationdemandpegging': DemandPeggingCard,
     'networkstatus': NetworkStatusCard,
-    // 'downstreamoperationplans': DownstreamCard,
-    // 'upstreamoperationplans': UpstreamCard,
+    'downstreamoperationplans': DownstreamCard,
+    'upstreamoperationplans': UpstreamCard,
     'supplyinformation': SupplyInformationCard,
   };
   return componentMap[widgetName] || null;
@@ -211,7 +211,7 @@ onUnmounted(() => {
   <div class="row">
     <BuffersCard />
     <DemandPeggingCard />
-<!--    <DownstreamCard />-->
+    <DownstreamCard />
     <InventoryDataCard />
     <InventoryGraphCard />
     <NetworkStatusCard />
@@ -219,7 +219,7 @@ onUnmounted(() => {
     <ProblemsCard />
     <ResourcesCard />
     <SupplyInformationCard />
-<!--    <UpstreamCard />-->
+    <UpstreamCard />
 
     <div
         v-for="col in preferences.widgets"

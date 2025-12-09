@@ -14,20 +14,19 @@ import {useOperationplansStore} from "@/stores/operationplansStore.js";
 import {dateTimeFormat} from "../../../../common/static/utils.js";
 import {computed} from "vue";
 
-const { t: ttt, locale, availableLocales } = useI18n({
+const { t: ttt } = useI18n({
   useScope: 'global',  // This is crucial for reactivity
   inheritLocale: true
 });
 
 const store = useOperationplansStore();
 
-const currentOperationplan = computed(store.operationplan);
-// const props = defineProps({
-//   panelid: {
-//     type: String,
-//     default: null
-//   }
-// });
+const currentOperationplan = store.operationplan;
+
+const filteredUpstream = computed(() => {
+  if (!store.operationplan.value.upstreamoperationplans) return [];
+  return store.operationplan.value.upstreamoperationplans.filter(peg => peg[11] != 2);
+});
 
 </script>
 
@@ -36,7 +35,8 @@ const currentOperationplan = computed(store.operationplan);
     <h5 class="card-title fs-5 me-auto text-capitalize">{{ ttt('upstream operations') }}</h5>
     <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
   </div>
-  <div id="widget_upstream" class="card-body collapse'" :class=" (!$parent.widget[1]['collapsed']) ? 'show' : ''">
+<!--  <div id="widget_upstream" class="card-body collapse'" :class=" (!$parent.widget[1]['collapsed']) ? 'show' : ''"> TODO-->
+  <div id="widget_upstream" class="card-body collapse'" >
     <table class="table table-sm table-hover table-borderless"><thead><tr>
       <td><b class="text-capitalize">{{ ttt('level') }}</b></td>
       <td><b class="text-capitalize">{{ ttt('reference') }}</b></td>
@@ -51,7 +51,7 @@ const currentOperationplan = computed(store.operationplan);
     </tr></thead>
       <tbody>
       <tr v-if="!currentOperationplan.upstreamoperationplans"><td colspan="8">{{ ttt('no upstream information') }}</td></tr>
-      <tr v-if="currentOperationplan.upstreamoperationplans && peg[11] != 2" v-for="peg in currentOperationplan.upstreamoperationplans" ref="currentOperationplan.id">
+      <tr v-else v-for="(peg, key) in filteredUpstream" :key="key">
         <td>
           <span v-if="peg[11] == 0" class="fa fa-fw fa-caret-right" @click='expandOrCollapse($index)'></span>
           <span v-if="peg[11] == 1" class="fa fa-fw fa-caret-down" @click='expandOrCollapse($index)'></span>

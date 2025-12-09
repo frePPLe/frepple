@@ -9,19 +9,9 @@
 */
 
 <script setup lang="js">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
-import OperationplanFormCard from '@/components/OperationplanFormCard.vue';
-import InventoryGraphCard from '@/components/InventoryGraphCard.vue';
-import InventoryDataCard from '@/components/InventoryDataCard.vue';
-import ProblemsCard from '@/components/ProblemsCard.vue';
-import ResourcesCard from '@/components/ResourcesCard.vue';
-import BuffersCard from '@/components/BuffersCard.vue';
-import DemandPeggingCard from '@/components/DemandPeggingCard.vue';
-import NetworkStatusCard from '@/components/NetworkStatusCard.vue';
-import DownstreamCard from '@/components/DownstreamCard.vue';
-import UpstreamCard from '@/components/UpstreamCard.vue';
 
 const { t: ttt } = useI18n({
   useScope: 'global',
@@ -30,58 +20,15 @@ const { t: ttt } = useI18n({
 
 const store = useOperationplansStore();
 
-const database = computed(() => window.database);
-const preferences = computed(() => window.preferences || {});
+const hasFlowplans = computed(() => {
+  const op = store.operationplan.value;
+  return op && op.flowplans && Array.isArray(op.flowplans) && op.flowplans.length > 0;
+});
 
-const databaseerrormodal = ref(false);
-const rowlimiterrormodal = ref(false);
-const modalcallback = ref({ resolve: () => {} });
+const flowplans = computed(() => {
+  return store.operationplan.value?.flowplans || [];
+});
 
-function save() {
-  if (store.hasChanges) store.saveOperationplanChanges();
-}
-
-function undo() {
-  if (store.hasChanges) {
-    store.undo();
-  }
-}
-
-function getWidgetComponent(widgetName) {
-  const componentMap = {
-    'operationplan': OperationplanFormCard,
-    'inventorygraph': InventoryGraphCard,
-    'inventorydata': InventoryDataCard,
-    'operationproblems': ProblemsCard,
-    'operationresources': ResourcesCard,
-    'operationflowplans': BuffersCard,
-    'operationdemandpegging': DemandPeggingCard,
-    'networkstatus': NetworkStatusCard,
-    'downstreamoperationplans': DownstreamCard,
-    'upstreamoperationplans': UpstreamCard,
-  };
-  return componentMap[widgetName] || null;
-}
-
-function shouldShowWidget(widgetName) {
-  console.log(store.operationplans);
-  if ( store.operationplans.length !== 1) return false;
-
-  const widgetConditions = {
-    'inventorygraph': () => store.operationplan.inventoryreport !== undefined,
-    'inventorydata': () => store.operationplan.inventoryreport !== undefined,
-    'operationproblems': () => store.operationplan.problems !== undefined || store.operationplan.info !== undefined,
-    'operationresources': () => store.operationplan.loadplans !== undefined,
-    'operationflowplans': () => store.operationplan.flowplans !== undefined,
-    'networkstatus': () => store.operationplan.network !== undefined,
-    'downstreamoperationplans': () => store.operationplan.downstreamoperationplans !== undefined,
-    'upstreamoperationplans': () => store.operationplan.upstreamoperationplans !== undefined,
-  };
-
-  return widgetName === 'operationplan' ||
-      widgetName === 'operationdemandpegging' ||
-      (widgetConditions[widgetName] && widgetConditions[widgetName]());
-}
 </script>
 
 <template>

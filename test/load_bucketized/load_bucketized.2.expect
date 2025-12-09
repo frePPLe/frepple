@@ -81,14 +81,14 @@ PROBLEM	overload	Resource '5. Resource' has capacity shortage of 2	2018-04-28T00
 PROBLEM	overload	Resource '5. Resource' has capacity shortage of 180	2018-09-29T00:00:00 / 2018-10-01T00:00:00
 PROBLEM	overload	Resource '6. Resource' has capacity shortage of 120	2017-12-18T00:00:00 / 2017-12-23T00:00:00
 PROBLEM	overload	Resource '6. Resource' has capacity shortage of 120	2018-09-17T00:00:00 / 2018-09-22T00:00:00
-DEMAND CONSTRAINT	1. order 2	Operation '1. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	
-DEMAND CONSTRAINT	1. order 2	Resource '1. Resource' has capacity shortage of 12	2018-01-16T00:00:00 / 2018-01-18T00:00:00	
-DEMAND CONSTRAINT	2. order 2	Operation '2. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	
-DEMAND CONSTRAINT	2. order 2	Resource '2. Resource' has capacity shortage of 120	2018-01-06T00:00:00 / 2018-01-17T00:00:00	
-DEMAND CONSTRAINT	3. order 2	Operation '3. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	
-DEMAND CONSTRAINT	3. order 2	Resource '3. Resource' has capacity shortage of 120	2018-01-06T00:00:00 / 2018-01-17T00:00:00	
-DEMAND CONSTRAINT	4. order 2	Operation '4. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	
-DEMAND CONSTRAINT	4. order 2	Resource '4. Resource' has capacity shortage of 60	2018-01-11T00:00:00 / 2018-01-17T00:00:00	
-DEMAND CONSTRAINT	5. order 2	Operation '5. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	
-DEMAND CONSTRAINT	6. order 2	Operation '6. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	
-DEMAND CONSTRAINT	6. order 2	Resource '6. Resource' has capacity shortage of 60	2018-01-11T00:00:00 / 2018-01-17T00:00:00	
+DEMAND CONSTRAINT	1. order 2	Manufacturing lead time on '1. make end item'	2017-12-15T00:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	1. order 2	Resource '1. Resource' has capacity shortage of 12	2018-01-16T00:00:00 / 2018-01-18T00:00:00
+DEMAND CONSTRAINT	2. order 2	Manufacturing lead time on '2. make end item'	2017-12-15T00:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	2. order 2	Resource '2. Resource' has capacity shortage of 120	2018-01-06T00:00:00 / 2018-01-17T00:00:00
+DEMAND CONSTRAINT	3. order 2	Manufacturing lead time on '3. make end item'	2017-12-15T00:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 2	Resource '3. Resource' has capacity shortage of 120	2018-01-06T00:00:00 / 2018-01-17T00:00:00
+DEMAND CONSTRAINT	4. order 2	Manufacturing lead time on '4. make end item'	2017-12-15T00:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	4. order 2	Resource '4. Resource' has capacity shortage of 60	2018-01-11T00:00:00 / 2018-01-17T00:00:00
+DEMAND CONSTRAINT	5. order 2	Manufacturing lead time on '5. make end item'	2017-12-15T00:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	6. order 2	Manufacturing lead time on '6. make end item'	2017-12-15T00:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	6. order 2	Resource '6. Resource' has capacity shortage of 60	2018-01-11T00:00:00 / 2018-01-17T00:00:00

@@ -88,6 +88,6 @@ OPERATION	supply 2	2024-10-25T00:00:00	2024-11-01T00:00:00	22
 PROBLEM	material shortage	Buffer 'item 1 @ factory' has material shortage of 8	2024-01-01T00:00:00 / 2024-01-08T00:00:00
 PROBLEM	material shortage	Buffer 'item 2 @ factory' has material shortage of 10	2024-01-01T00:00:00 / 2024-01-08T00:00:00
 PROBLEM	material shortage	Buffer 'item 3 @ factory' has material shortage of 10	2024-01-01T00:00:00 / 2024-01-08T00:00:00
-DEMAND CONSTRAINT	SO #1 for item 2	Operation 'supply 2' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00
-DEMAND CONSTRAINT	SO #1 for item 3	Operation 'Purchase item 3 @ factory from Supplier of item 3' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00
-DEMAND CONSTRAINT	SO #12 for item 3	Operation 'Purchase item 3 @ factory from Supplier of item 3' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00
+DEMAND CONSTRAINT	SO #1 for item 2	Manufacturing lead time on 'supply 2'	2023-12-25T00:00:00 / 2024-01-01T00:00:00
+DEMAND CONSTRAINT	SO #1 for item 3	Purchasing lead time on 'Purchase item 3 @ factory from Supplier of item 3'	2023-12-25T00:00:00 / 2024-01-01T00:00:00
+DEMAND CONSTRAINT	SO #12 for item 3	Purchasing lead time on 'Purchase item 3 @ factory from Supplier of item 3'	2023-12-25T00:00:00 / 2024-01-01T00:00:00

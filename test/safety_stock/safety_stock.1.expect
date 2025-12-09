@@ -38,5 +38,5 @@ OPERATION	make end item 2	2009-03-05T00:00:00	2009-03-05T00:00:00	10
 PROBLEM	material shortage	Buffer 'end item 3 A @ factory' has material shortage of 10	2009-01-01T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	material shortage	Buffer 'end item 3 B @ factory' has material shortage of 20	2009-01-01T00:00:00 / 2009-01-09T00:00:00
 PROBLEM	material shortage	Buffer 'end item 3 C @ factory' has material shortage of 20	2009-01-01T00:00:00 / 2009-01-05T00:00:00
-DEMAND CONSTRAINT	order 1 - item 1	Operation 'delivery end item 1' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	order 1 - item 2	Operation 'delivery end item 2' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 - item 1	Manufacturing lead time on 'delivery end item 1'	2008-12-30T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 - item 2	Manufacturing lead time on 'delivery end item 2'	2008-12-30T00:00:00 / 2009-01-01T00:00:00

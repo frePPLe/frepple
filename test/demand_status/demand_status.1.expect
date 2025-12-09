@@ -20,4 +20,4 @@ OPERATION	Purchase item 3 @ factory from Magic Supplier	2025-02-26T00:00:00	2025
 OPERATION	Purchase item 5A @ factory from Magic Supplier	2025-04-28T00:00:00	2025-05-05T00:00:00	1
 OPERATION	Purchase item 6A @ factory from Magic Supplier	2025-05-29T00:00:00	2025-06-05T00:00:00	1
 OPERATION	Purchase item 6B @ factory from Magic Supplier	2025-05-29T00:00:00	2025-06-05T00:00:00	1
-DEMAND CONSTRAINT	order 1 - open	Operation 'Purchase item 1 @ factory from Magic Supplier' planned in the past	2024-12-29T00:00:00 / 2025-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 - open	Purchasing lead time on 'Purchase item 1 @ factory from Magic Supplier'	2024-12-29T00:00:00 / 2025-01-01T00:00:00

@@ -122,22 +122,22 @@ OPERATION	Purchase 6. component @ factory from 6. Supplier	2026-02-22T00:00:00	2
 OPERATION	Purchase 6. component @ factory from 6. Supplier	2026-06-24T00:00:00	2026-07-01T00:00:00	30	approved
 OPERATION	Purchase 6. component @ factory from 6. Supplier	2026-07-10T00:00:00	2026-07-17T00:00:00	70
 PROBLEM	precedence	Operation '7. task X2 step 2' starts before preceding operation ends	2026-08-01T00:00:00 / 2026-08-01T00:00:00
-DEMAND CONSTRAINT	10. sales order	Operation 'Purchase 10. item @ factory from 10. Supplier' planned in the past	2025-12-25T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	2. sales order	Operation 'Purchase 2. item @ factory from 2. Supplier' planned in the past	2025-12-25T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	4. sales order	Operation '4. Make item' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	4. sales order	Operation '4. Make item subassembly' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
+DEMAND CONSTRAINT	10. sales order	Purchasing lead time on 'Purchase 10. item @ factory from 10. Supplier'	2025-12-25T00:00:00 / 2026-01-01T00:00:00
+DEMAND CONSTRAINT	2. sales order	Purchasing lead time on 'Purchase 2. item @ factory from 2. Supplier'	2025-12-25T00:00:00 / 2026-01-01T00:00:00
+DEMAND CONSTRAINT	4. sales order	Manufacturing lead time on '4. Make item'	2025-12-29T00:00:00 / 2026-01-01T00:00:00
+DEMAND CONSTRAINT	4. sales order	Manufacturing lead time on '4. Make item subassembly'	2025-12-29T00:00:00 / 2026-01-01T00:00:00
 DEMAND CONSTRAINT	4. sales order	Resource '4. Resource' has capacity shortage of 1	2026-01-01T00:00:00 / 2026-01-04T00:00:00
-DEMAND CONSTRAINT	5. sales order	Operation '5. Make item' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	5. sales order	Operation '5. Make item subassembly' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	5. sales order	Operation 'Purchase 5. component @ factory from 5. Supplier' planned in the past	2025-12-25T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	6. sales order	Operation '6. Make item' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	6. sales order	Operation '6. Make item subassembly' planned in the past	2025-12-29T00:00:00 / 2026-01-01T00:00:00
+DEMAND CONSTRAINT	5. sales order	Manufacturing lead time on '5. Make item'	2025-12-29T00:00:00 / 2026-01-01T00:00:00
+DEMAND CONSTRAINT	5. sales order	Manufacturing lead time on '5. Make item subassembly'	2025-12-29T00:00:00 / 2026-01-01T00:00:00
+DEMAND CONSTRAINT	5. sales order	Purchasing lead time on 'Purchase 5. component @ factory from 5. Supplier'	2025-12-25T00:00:00 / 2026-01-01T00:00:00
+DEMAND CONSTRAINT	6. sales order	Manufacturing lead time on '6. Make item'	2025-12-29T00:00:00 / 2026-01-01T00:00:00
+DEMAND CONSTRAINT	6. sales order	Manufacturing lead time on '6. Make item subassembly'	2025-12-29T00:00:00 / 2026-01-01T00:00:00
 DEMAND CONSTRAINT	6. sales order	Resource '6. Resource' has capacity shortage of 1	2026-01-01T00:00:00 / 2026-01-04T00:00:00
 DEMAND CONSTRAINT	7. project X	Operation  '7. task X1' awaits confirmed supply	2026-08-01T00:00:00 / 2026-08-11T00:00:00
 DEMAND CONSTRAINT	7. project X	Operation  '7. task X2 step 2' awaits confirmed supply	2026-08-01T00:00:00 / 2026-08-08T00:00:00
-DEMAND CONSTRAINT	8. project X	Operation '8. project X' planned in the past	2025-12-22T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	8. project X	Operation '8. task X1' planned in the past	2025-12-27T00:00:00 / 2026-01-01T00:00:00
-DEMAND CONSTRAINT	8. project X	Operation '8. task X2 step 3' planned in the past	2025-12-30T00:00:00 / 2026-01-01T00:00:00
+DEMAND CONSTRAINT	8. project X	Manufacturing lead time on '8. project X'	2025-12-22T00:00:00 / 2026-01-01T00:00:00
+DEMAND CONSTRAINT	8. project X	Manufacturing lead time on '8. task X1'	2025-12-27T00:00:00 / 2026-01-01T00:00:00
+DEMAND CONSTRAINT	8. project X	Manufacturing lead time on '8. task X2 step 3'	2025-12-30T00:00:00 / 2026-01-01T00:00:00
 DEMAND CONSTRAINT	8. project X	Operation  '8. task X2 step 2' awaits confirmed supply	2026-08-01T00:00:00 / 2026-08-08T00:00:00
-DEMAND CONSTRAINT	9. project X	Operation '9. project X' planned in the past	2025-12-22T00:00:00 / 2026-01-01T00:00:00
+DEMAND CONSTRAINT	9. project X	Manufacturing lead time on '9. project X'	2025-12-22T00:00:00 / 2026-01-01T00:00:00
 DEMAND CONSTRAINT	9. project X	Operation  '9. task X1' awaits confirmed supply	2026-09-01T00:00:00 / 2026-09-11T00:00:00

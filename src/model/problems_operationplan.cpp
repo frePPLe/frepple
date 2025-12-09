@@ -123,8 +123,7 @@ OperationPlan::ProblemIterator::ProblemIterator(const OperationPlan* o,
       ProblemIterator probs(m, false);
       while (auto p = probs.next()) {
         if (p->isFeasible() ||
-            !p->hasType<ProblemBeforeCurrent, ProblemBeforeFence,
-                        ProblemPrecedence>())
+            !p->hasType<ProblemBeforeCurrent, ProblemPrecedence>())
           continue;
         bool exists = false;
         for (auto& x : relatedproblems)

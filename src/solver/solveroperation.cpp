@@ -548,9 +548,7 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
 
   // Log the constraint
   if (data.logConstraints && data.constraints)
-    data.constraints->push((threshold == Plan::instance().getCurrent())
-                               ? ProblemBeforeCurrent::metadata
-                               : ProblemBeforeFence::metadata,
+    data.constraints->push(ProblemBeforeCurrent::metadata,
                            opplan->getOperation(), original.start,
                            opplan->getStart(), original.quantity);
 
@@ -1541,7 +1539,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
         data->state->a_date = (*altIter)->getEffectiveStart();
         if (data->logConstraints && data->constraints)
           data->constraints->push(
-              ProblemBeforeFence::metadata, (*altIter)->getOperation(),
+              ProblemBeforeCurrent::metadata, (*altIter)->getOperation(),
               origQDate, (*altIter)->getEffectiveStart(), data->state->q_qty);
       } else if (search == SearchMode::PRIORITY) {
         if (loglevel > 1)

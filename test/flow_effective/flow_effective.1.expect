@@ -42,6 +42,6 @@ OPERATION	3. make end item	2009-02-19T00:00:00	2009-02-20T00:00:00	125
 OPERATION	3. make end item	2009-03-19T00:00:00	2009-03-20T00:00:00	100
 PROBLEM	invalid data	No replenishment defined for '2. component A @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for '2. component B @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	2. order 1	Operation '2. make end item' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	2. order 1	Manufacturing lead time on '2. make end item'	2008-12-31T00:00:00 / 2009-01-01T00:00:00
 DEMAND CONSTRAINT	2. order 1	Buffer '2. component A @ factory' has material shortage of 20	2009-01-01T00:00:00 / 2030-12-31T00:00:00
 DEMAND CONSTRAINT	2. order 1	Buffer '2. component B @ factory' has material shortage of 10	2009-02-01T00:00:00 / 2030-12-31T00:00:00

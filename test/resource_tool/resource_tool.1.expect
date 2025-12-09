@@ -143,24 +143,24 @@ OPERATION	1.step 5	2023-01-23T00:00:00	2023-01-26T00:00:00	2
 OPERATION	1.step 5	2023-01-27T00:00:00	2023-02-01T00:00:00	4
 OPERATION	1.step 5	2023-02-11T00:00:00	2023-02-15T00:00:00	3
 OPERATION	1.step 5	2023-03-11T00:00:00	2023-03-17T00:00:00	5
-DEMAND CONSTRAINT	1.order 1	Operation '1.step 5' planned in the past	2022-12-30T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	1.order 1	Operation '1.step 4' planned in the past	2022-12-30T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	1.order 1	Operation '1.step 3' planned in the past	2022-12-30T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	1.order 1	Operation '1.step 2' planned in the past	2022-12-30T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	1.order 1	Operation '1.step 1' planned in the past	2022-12-30T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	1.order 2	Operation '1.step 5' planned in the past	2022-12-29T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	1.order 2	Operation '1.step 4' planned in the past	2022-12-29T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	1.order 2	Operation '1.step 3' planned in the past	2022-12-29T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	1.order 2	Operation '1.step 2' planned in the past	2022-12-29T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	1.order 2	Operation '1.step 1' planned in the past	2022-12-29T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 1	Manufacturing lead time on '1.step 5'	2022-12-30T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 1	Manufacturing lead time on '1.step 4'	2022-12-30T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 1	Manufacturing lead time on '1.step 3'	2022-12-30T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 1	Manufacturing lead time on '1.step 2'	2022-12-30T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 1	Manufacturing lead time on '1.step 1'	2022-12-30T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 2	Manufacturing lead time on '1.step 5'	2022-12-29T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 2	Manufacturing lead time on '1.step 4'	2022-12-29T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 2	Manufacturing lead time on '1.step 3'	2022-12-29T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 2	Manufacturing lead time on '1.step 2'	2022-12-29T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 2	Manufacturing lead time on '1.step 1'	2022-12-29T00:00:00 / 2023-01-01T00:00:00
 DEMAND CONSTRAINT	1.order 2	Resource '1.holder 3' has capacity shortage of 1	2023-01-10T00:00:00 / 2023-01-13T00:00:00
-DEMAND CONSTRAINT	1.order 3	Operation '1.step 4' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 3	Manufacturing lead time on '1.step 4'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
 DEMAND CONSTRAINT	1.order 3	Resource '1.holder 3' has capacity shortage of 1	2023-01-24T00:00:00 / 2023-01-28T00:00:00
-DEMAND CONSTRAINT	1.order 3	Operation '1.step 3' planned in the past	2022-12-29T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	1.order 3	Operation '1.step 2' planned in the past	2022-12-29T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	1.order 3	Operation '1.step 1' planned in the past	2022-12-29T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	1.order 5	Operation '1.step 4' planned in the past	2022-12-26T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	1.order 5	Operation '1.step 3' planned in the past	2022-12-26T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	1.order 5	Operation '1.step 2' planned in the past	2022-12-26T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 3	Manufacturing lead time on '1.step 3'	2022-12-29T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 3	Manufacturing lead time on '1.step 2'	2022-12-29T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 3	Manufacturing lead time on '1.step 1'	2022-12-29T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 5	Manufacturing lead time on '1.step 4'	2022-12-26T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 5	Manufacturing lead time on '1.step 3'	2022-12-26T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 5	Manufacturing lead time on '1.step 2'	2022-12-26T00:00:00 / 2023-01-01T00:00:00
 DEMAND CONSTRAINT	1.order 5	Resource '1.holder 3' has capacity shortage of 1	2023-02-09T00:00:00 / 2023-02-15T00:00:00
-DEMAND CONSTRAINT	1.order 5	Operation '1.step 1' planned in the past	2022-12-29T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	1.order 5	Manufacturing lead time on '1.step 1'	2022-12-29T00:00:00 / 2023-01-01T00:00:00

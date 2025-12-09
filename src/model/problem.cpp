@@ -33,9 +33,8 @@ bool Plannable::computationBusy = false;
 const MetaCategory* Problem::metadata;
 const MetaClass *ProblemMaterialShortage::metadata,
     *ProblemInvalidData::metadata, *ProblemPrecedence::metadata,
-    *ProblemBeforeFence::metadata, *ProblemBeforeCurrent::metadata,
-    *ProblemCapacityOverload::metadata, *ProblemAwaitSupply::metadata,
-    *ProblemSyncDemand::metadata;
+    *ProblemBeforeCurrent::metadata, *ProblemCapacityOverload::metadata,
+    *ProblemAwaitSupply::metadata, *ProblemSyncDemand::metadata;
 const MetaClass *ConstraintOverdueDemand::metadata,
     *ConstraintPurchasingLeadTime::metadata,
     *ConstraintDistributionLeadTime::metadata,
@@ -56,8 +55,6 @@ int Problem::initialize() {
       "problem", "invalid data", true);
   ProblemPrecedence::metadata = MetaClass::registerClass<ProblemPrecedence>(
       "problem", "precedence", true);
-  ProblemBeforeFence::metadata = MetaClass::registerClass<ProblemBeforeFence>(
-      "problem", "before fence", true);
   ProblemBeforeCurrent::metadata =
       MetaClass::registerClass<ProblemBeforeCurrent>("problem",
                                                      "before current", true);
@@ -550,7 +547,7 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
     return cur;
 
   // Create a new problem
-  Problem* p;
+  Problem* p = nullptr;
   if (m == ProblemCapacityOverload::metadata)
     p = new ProblemCapacityOverload(
         const_cast<Resource*>(dynamic_cast<const Resource*>(o)), st, nd, w,
@@ -559,11 +556,16 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
     p = new ProblemMaterialShortage(
         const_cast<Buffer*>(dynamic_cast<const Buffer*>(o)), st, nd, w, false);
   else if (m == ProblemBeforeCurrent::metadata) {
-    p = new ProblemBeforeCurrent(
-        const_cast<Operation*>(dynamic_cast<const Operation*>(o)), st, nd, w);
-  } else if (m == ProblemBeforeFence::metadata) {
-    p = new ProblemBeforeFence(
-        const_cast<Operation*>(dynamic_cast<const Operation*>(o)), st, nd, w);
+    auto oper = dynamic_cast<const Operation*>(o);
+    if (oper->hasType<OperationItemDistribution>())
+      p = new ConstraintDistributionLeadTime(const_cast<Operation*>(oper), st,
+                                             nd, w);
+    else if (oper->hasType<OperationItemSupplier>())
+      p = new ConstraintPurchasingLeadTime(const_cast<Operation*>(oper), st,
+                                           nd);
+    else if (!oper->hasType<OperationDelivery>())
+      p = new ConstraintManufacturingLeadTime(const_cast<Operation*>(oper), st,
+                                              nd);
   } else if (m == ProblemAwaitSupply::metadata) {
     auto owner = const_cast<Buffer*>(dynamic_cast<const Buffer*>(o));
     if (owner)
@@ -578,12 +580,14 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
   else
     throw LogicException("Problem factory can't create this type of problem");
 
-  // Link the problem in the list
-  if (cur)
-    cur->nextProblem = p;
-  else
-    first = p;
-  Py_INCREF(p);
+  if (p) {
+    // Link the problem in the list
+    if (cur)
+      cur->nextProblem = p;
+    else
+      first = p;
+    Py_INCREF(p);
+  }
   return p;
 }
 

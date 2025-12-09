@@ -9023,68 +9023,6 @@ class ProblemBeforeCurrent : public Problem {
   Date end;
 };
 
-/* A problem of this class is created when an operationplan is being
- * planned before its fence date, i.e. it starts 1) before the "current"
- * date of the plan plus the release fence of the operation and 2) after the
- * current date of the plan.
- */
-class ProblemBeforeFence : public Problem {
- public:
-  string getDescription() const {
-    ostringstream ch;
-    ch << "Operation '"
-       << (oper ? oper
-                : static_cast<OperationPlan*>(getOwner())->getOperation())
-       << "' planned before fence";
-    return ch.str();
-  }
-
-  bool isFeasible() const { return true; }
-
-  explicit ProblemBeforeFence(OperationPlan* o, bool add = true) : Problem(o) {
-    if (add) addProblem();
-  }
-
-  explicit ProblemBeforeFence(Operation* o, Date st, Date nd, double q)
-      : oper(o), start(st), end(nd) {}
-
-  ~ProblemBeforeFence() { removeProblem(); }
-
-  string getEntity() const { return "operation"; }
-
-  Object* getOwner() const {
-    return oper ? static_cast<Object*>(oper)
-                : static_cast<OperationPlan*>(owner);
-  }
-
-  const DateRange getDates() const {
-    if (oper) return DateRange(start, end);
-    OperationPlan* o = static_cast<OperationPlan*>(owner);
-    auto tmp = o->getOperation()->getFence(o);
-    if (o->getEnd() > tmp)
-      return DateRange(o->getStart(), tmp);
-    else
-      return o->getDates();
-  }
-
-  void update(Operation* o, Date st, Date nd, double q) {
-    oper = o;
-    start = st;
-    end = nd;
-  }
-
-  /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
-
-  /* Storing metadata on this class. */
-  static const MetaClass* metadata;
-
- private:
-  Operation* oper = nullptr;
-  Date start;
-  Date end;
-};
-
 /* An instance of this class is used to flag constraints where a
  * replenishment isn't created and we wait for later supply instead.
  */
@@ -9341,8 +9279,8 @@ class ConstraintPurchasingLeadTime : public Problem {
  public:
   string getDescription() const {
     ostringstream ch;
-    ch << "Operation '" << static_cast<Operation*>(getOwner())
-       << "' planned before fence";
+    ch << "Purchasing lead time on '" << static_cast<Operation*>(getOwner())
+       << "'";
     return ch.str();
   }
 
@@ -9380,45 +9318,26 @@ class ConstraintManufacturingLeadTime : public Problem {
  public:
   string getDescription() const {
     ostringstream ch;
-    ch << "Operation '"
-       << (oper ? oper
-                : static_cast<OperationPlan*>(getOwner())->getOperation())
-       << "' planned before fence";
+    ch << "Manufacturing lead time on '" << static_cast<Operation*>(getOwner())
+       << "'";
     return ch.str();
   }
 
   bool isFeasible() const { return true; }
 
-  explicit ConstraintManufacturingLeadTime(OperationPlan* o, bool add = true)
-      : Problem(o) {
-    if (add) addProblem();
-  }
-
-  explicit ConstraintManufacturingLeadTime(Operation* o, Date st, Date nd,
-                                           double q)
-      : oper(o), start(st), end(nd) {}
+  explicit ConstraintManufacturingLeadTime(Operation* o, Date st, Date nd)
+      : Problem(o), start(st), end(nd) {}
 
   ~ConstraintManufacturingLeadTime() { removeProblem(); }
 
   string getEntity() const { return "operation"; }
 
-  Object* getOwner() const {
-    return oper ? static_cast<Object*>(oper)
-                : static_cast<OperationPlan*>(owner);
-  }
+  Object* getOwner() const { return static_cast<Operation*>(owner); }
 
-  const DateRange getDates() const {
-    if (oper) return DateRange(start, end);
-    OperationPlan* o = static_cast<OperationPlan*>(owner);
-    auto tmp = o->getOperation()->getFence(o);
-    if (o->getEnd() > tmp)
-      return DateRange(o->getStart(), tmp);
-    else
-      return o->getDates();
-  }
+  const DateRange getDates() const { return DateRange(start, end); }
 
   void update(Operation* o, Date st, Date nd, double q) {
-    oper = o;
+    owner = o;
     start = st;
     end = nd;
   }
@@ -9430,7 +9349,6 @@ class ConstraintManufacturingLeadTime : public Problem {
   static const MetaClass* metadata;
 
  private:
-  Operation* oper = nullptr;
   Date start;
   Date end;
 };
@@ -9439,45 +9357,27 @@ class ConstraintDistributionLeadTime : public Problem {
  public:
   string getDescription() const {
     ostringstream ch;
-    ch << "Operation '"
-       << (oper ? oper
-                : static_cast<OperationPlan*>(getOwner())->getOperation())
-       << "' planned before fence";
+    ch << "Distribution lead time on '" << static_cast<Operation*>(getOwner())
+       << "'";
     return ch.str();
   }
 
   bool isFeasible() const { return true; }
 
-  explicit ConstraintDistributionLeadTime(OperationPlan* o, bool add = true)
-      : Problem(o) {
-    if (add) addProblem();
-  }
-
   explicit ConstraintDistributionLeadTime(Operation* o, Date st, Date nd,
                                           double q)
-      : oper(o), start(st), end(nd) {}
+      : Problem(o), start(st), end(nd) {}
 
   ~ConstraintDistributionLeadTime() { removeProblem(); }
 
   string getEntity() const { return "operation"; }
 
-  Object* getOwner() const {
-    return oper ? static_cast<Object*>(oper)
-                : static_cast<OperationPlan*>(owner);
-  }
+  Object* getOwner() const { return static_cast<Operation*>(owner); }
 
-  const DateRange getDates() const {
-    if (oper) return DateRange(start, end);
-    OperationPlan* o = static_cast<OperationPlan*>(owner);
-    auto tmp = o->getOperation()->getFence(o);
-    if (o->getEnd() > tmp)
-      return DateRange(o->getStart(), tmp);
-    else
-      return o->getDates();
-  }
+  const DateRange getDates() const { return DateRange(start, end); }
 
   void update(Operation* o, Date st, Date nd, double q) {
-    oper = o;
+    owner = o;
     start = st;
     end = nd;
   }
@@ -9489,7 +9389,6 @@ class ConstraintDistributionLeadTime : public Problem {
   static const MetaClass* metadata;
 
  private:
-  Operation* oper = nullptr;
   Date start;
   Date end;
 };

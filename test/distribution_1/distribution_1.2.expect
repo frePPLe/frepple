@@ -65,11 +65,11 @@ PROBLEM	invalid data	Distribution order '4' on unknown item distribution	1971-01
 PROBLEM	invalid data	Distribution order '2' on unknown item distribution	1971-01-01T00:00:00 / 2015-06-05T00:00:00
 PROBLEM	invalid data	Distribution order '3' on unknown item distribution	1971-01-01T00:00:00 / 2015-06-06T00:00:00
 PROBLEM	invalid data	Distribution order '1' on unknown item distribution	1971-01-01T00:00:00 / 2015-06-06T00:00:00
-DEMAND CONSTRAINT	order 1a for product A	Operation 'Ship product A from Regional DC 1 to Local DC 1a' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	order 1a for product A	Operation 'Ship product A from Central WH to Regional DC 1' planned in the past	2014-12-22T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	order 1a for product A	Operation 'Purchase product A @ Central WH from Supplier 1' planned in the past	2014-12-25T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	order 1b for product A	Operation 'Ship product A from Regional DC 1 to Local DC 1a' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	order 1b for product A	Operation 'Ship product A from Central WH to Regional DC 1' planned in the past	2014-12-22T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	order 1b for product A	Operation 'Purchase product A @ Central WH from Supplier 1' planned in the past	2014-12-25T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	order 3 for product A	Operation 'Ship product A from Regional DC 2 to Local DC 2a' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	order 3 for product A	Operation 'Ship product A from Central WH to Regional DC 2' planned in the past	2014-12-20T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 1a for product A	Distribution lead time on 'Ship product A from Regional DC 1 to Local DC 1a'	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 1a for product A	Distribution lead time on 'Ship product A from Central WH to Regional DC 1'	2014-12-22T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 1a for product A	Purchasing lead time on 'Purchase product A @ Central WH from Supplier 1'	2014-12-25T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 1b for product A	Distribution lead time on 'Ship product A from Regional DC 1 to Local DC 1a'	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 1b for product A	Distribution lead time on 'Ship product A from Central WH to Regional DC 1'	2014-12-22T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 1b for product A	Purchasing lead time on 'Purchase product A @ Central WH from Supplier 1'	2014-12-25T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 3 for product A	Distribution lead time on 'Ship product A from Regional DC 2 to Local DC 2a'	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 3 for product A	Distribution lead time on 'Ship product A from Central WH to Regional DC 2'	2014-12-20T00:00:00 / 2015-01-01T00:00:00

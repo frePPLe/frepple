@@ -152,13 +152,13 @@ OPERATION	4. make item 1	2021-02-01T00:00:00	2021-02-02T12:00:00	2	approved
 OPERATION	4. make item 1	2021-02-01T00:00:00	2021-02-04T00:00:00	2	approved
 PROBLEM	overload	Resource '4. machine' has capacity shortage of 2	2021-02-01T00:00:00 / 2021-02-02T12:00:00
 PROBLEM	overload	Resource '4. operator B' has capacity shortage of 1	2021-02-01T00:00:00 / 2021-02-02T04:48:00
-DEMAND CONSTRAINT	1. order 1	Operation '1. make item 1' planned in the past	2020-12-31T00:00:00 / 2021-01-01T00:00:00
-DEMAND CONSTRAINT	1. order 2	Operation '1. make item 2' planned in the past	2020-12-21T00:00:00 / 2021-01-01T00:00:00
-DEMAND CONSTRAINT	2. order 1	Operation '2. make item 1' planned in the past	2020-12-31T00:00:00 / 2021-01-01T00:00:00
-DEMAND CONSTRAINT	2. order 2	Operation '2. make item 2' planned in the past	2020-12-21T00:00:00 / 2021-01-01T00:00:00
+DEMAND CONSTRAINT	1. order 1	Manufacturing lead time on '1. make item 1'	2020-12-31T00:00:00 / 2021-01-01T00:00:00
+DEMAND CONSTRAINT	1. order 2	Manufacturing lead time on '1. make item 2'	2020-12-21T00:00:00 / 2021-01-01T00:00:00
+DEMAND CONSTRAINT	2. order 1	Manufacturing lead time on '2. make item 1'	2020-12-31T00:00:00 / 2021-01-01T00:00:00
+DEMAND CONSTRAINT	2. order 2	Manufacturing lead time on '2. make item 2'	2020-12-21T00:00:00 / 2021-01-01T00:00:00
 DEMAND CONSTRAINT	2. order 2	Resource '2. operator pool' has capacity shortage of 1	2021-01-01T00:00:00 / 2021-01-12T00:00:00
 DEMAND CONSTRAINT	2. order 5	Resource '2. operator pool' has capacity shortage of 1	2021-01-20T00:00:00 / 2021-01-31T00:00:00
-DEMAND CONSTRAINT	3. order 1	Operation '3. make item 1' planned in the past	2020-12-31T00:00:00 / 2021-01-01T00:00:00
-DEMAND CONSTRAINT	3. order 2	Operation '3. make item 2' planned in the past	2020-12-21T00:00:00 / 2021-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 1	Manufacturing lead time on '3. make item 1'	2020-12-31T00:00:00 / 2021-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 2	Manufacturing lead time on '3. make item 2'	2020-12-21T00:00:00 / 2021-01-01T00:00:00
 DEMAND CONSTRAINT	3. order 2	Resource '3. operator pool' has capacity shortage of 1	2021-01-01T00:00:00 / 2021-01-12T00:00:00
 DEMAND CONSTRAINT	3. order 3	Error: No subresource of '3. operator pool' has the skill '3. nobody can do this' required for operation '3. make item 3'	2021-02-01T00:00:00 / 2021-02-01T00:00:00

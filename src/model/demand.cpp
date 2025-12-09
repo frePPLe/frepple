@@ -307,12 +307,6 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args,
       cnstrnt = dmd->getConstraints().push(ProblemMaterialShortage::metadata,
                                            obj, cnstrnt_start, cnstrnt_end,
                                            cnstrnt_weight);
-    } else if (cnstrnt_type == ProblemBeforeFence::metadata->type) {
-      Operation* obj = Operation::findFromName(cnstrnt_owner);
-      if (!obj) throw DataException("Can't find constraint owner");
-      cnstrnt = dmd->getConstraints().push(ProblemBeforeFence::metadata, obj,
-                                           cnstrnt_start, cnstrnt_end,
-                                           cnstrnt_weight);
     } else if (cnstrnt_type == ProblemAwaitSupply::metadata->type) {
       Buffer* obj_buffer = Buffer::findFromName(cnstrnt_owner);
       if (obj_buffer)

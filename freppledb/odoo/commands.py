@@ -682,7 +682,7 @@ class OdooSendRecommendations(PlanTask):
                         description = "Stock replenishment"
                     yield {
                         "type": "purchase",
-                        "supplier_id": int(j.supplier.name.rsplit(" ", 1)[1]),
+                        "data": {"supplier_id": int(j.supplier.name.rsplit(" ", 1)[1])},
                         "product_id": int(j.item.subcategory.split(",")[1]),
                         "startdate": j.start.isoformat(),
                         "enddate": j.end.isoformat(),

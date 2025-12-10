@@ -131,7 +131,7 @@ DEMAND CONSTRAINT	11. constrained material and capacity	Manufacturing lead time 
 DEMAND CONSTRAINT	11. constrained material and capacity	Manufacturing lead time on '11. task 4b'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
 DEMAND CONSTRAINT	11. constrained material and capacity	Purchasing lead time on 'Purchase 11. material 3 @ factory from 11. supplier'	2022-12-02T00:00:00 / 2023-01-01T00:00:00
 DEMAND CONSTRAINT	11. constrained material and capacity	Purchasing lead time on 'Purchase 11. material 4 @ factory from 11. supplier'	2022-12-23T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	11. constrained material and capacity	Resource '11. Resource' has capacity shortage of 1	2023-02-11T00:00:00 / 2023-02-12T00:00:00
+DEMAND CONSTRAINT	11. constrained material and capacity	Resource '11. Resource' has capacity shortage	2023-02-11T00:00:00 / 2023-02-12T00:00:00
 DEMAND CONSTRAINT	2. project	Manufacturing lead time on '2. project X'	2022-12-22T00:00:00 / 2023-01-01T00:00:00
 DEMAND CONSTRAINT	2. project	Manufacturing lead time on '2. task X1'	2022-12-27T00:00:00 / 2023-01-01T00:00:00
 DEMAND CONSTRAINT	2. project	Manufacturing lead time on '2. task X2 step 3'	2022-12-30T00:00:00 / 2023-01-01T00:00:00

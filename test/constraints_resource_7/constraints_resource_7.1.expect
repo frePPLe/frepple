@@ -231,13 +231,13 @@ OPERATION	Purchase 5. end item @ 5. factory from 5. Supplier	2019-03-30T00:00:00
 PROBLEM	invalid data	No replenishment defined for '5. component @ 5. factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 DEMAND CONSTRAINT	1. order 2	Demand is overdue	2018-11-11T00:00:00 / 2019-01-01T00:00:00
 DEMAND CONSTRAINT	1. order 2	Manufacturing lead time on '1. make end item'	2018-11-02T00:00:00 / 2019-01-01T00:00:00
-DEMAND CONSTRAINT	1. order 2	Resource '1. Resource' has capacity shortage of 6	2019-01-01T00:00:00 / 2019-03-02T00:00:00
+DEMAND CONSTRAINT	1. order 2	Resource '1. Resource' has capacity shortage	2019-01-01T00:00:00 / 2019-03-02T00:00:00
 DEMAND CONSTRAINT	2. order 2	Demand is overdue	2018-11-11T00:00:00 / 2019-01-01T00:00:00
 DEMAND CONSTRAINT	2. order 2	Manufacturing lead time on '2. make end item'	2018-10-23T00:00:00 / 2019-01-01T00:00:00
-DEMAND CONSTRAINT	2. order 2	Resource '2. Resource' has capacity shortage of 6	2019-01-01T00:00:00 / 2019-03-08T00:00:00
+DEMAND CONSTRAINT	2. order 2	Resource '2. Resource' has capacity shortage	2019-01-01T00:00:00 / 2019-03-08T00:00:00
 DEMAND CONSTRAINT	3. order 3	Demand is overdue	2018-11-11T00:00:00 / 2019-01-01T00:00:00
 DEMAND CONSTRAINT	3. order 3	Manufacturing lead time on '3. make end item'	2018-12-05T00:00:00 / 2019-01-01T00:00:00
-DEMAND CONSTRAINT	3. order 3	Resource '3. Resource' has capacity shortage of 22	2019-01-01T00:00:00 / 2019-01-24T00:00:00
-DEMAND CONSTRAINT	4. order 1	Resource '4. Resource A' has capacity shortage of 58	2019-02-26T15:00:00 / 2019-03-01T00:00:00
-DEMAND CONSTRAINT	6. order 1	Resource '6. Resource C' has capacity shortage of 8	2019-02-15T00:00:00 / 2019-02-15T00:00:00
-DEMAND CONSTRAINT	6. order 1	Resource '6. Resource A' has capacity shortage of 80	2019-05-01T00:00:00 / 2019-05-01T00:00:00
+DEMAND CONSTRAINT	3. order 3	Resource '3. Resource' has capacity shortage	2019-01-01T00:00:00 / 2019-01-24T00:00:00
+DEMAND CONSTRAINT	4. order 1	Resource '4. Resource A' has capacity shortage	2019-02-26T15:00:00 / 2019-03-01T00:00:00
+DEMAND CONSTRAINT	6. order 1	Resource '6. Resource C' has capacity shortage	2019-02-15T00:00:00 / 2019-02-15T00:00:00
+DEMAND CONSTRAINT	6. order 1	Resource '6. Resource A' has capacity shortage	2019-05-01T00:00:00 / 2019-05-01T00:00:00

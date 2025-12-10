@@ -95,7 +95,7 @@ PROBLEM	invalid data	No replenishment defined for 'constraint buffer 1'	1971-01-
 PROBLEM	invalid data	No replenishment defined for 'constraint buffer 2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'constraint buffer 3'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'constraint buffer 4'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order for item 1	Buffer 'constraint buffer 1' has material shortage of 14	2009-01-09T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order for item 2	Buffer 'constraint buffer 2' has material shortage of 194	2009-01-09T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order for item 3	Buffer 'constraint buffer 3' has material shortage of 194	2009-01-09T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order for item 4	Buffer 'constraint buffer 4' has material shortage of 194	2009-01-09T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order for item 1	Buffer 'constraint buffer 1' has material shortage	2009-01-09T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order for item 2	Buffer 'constraint buffer 2' has material shortage	2009-01-09T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order for item 3	Buffer 'constraint buffer 3' has material shortage	2009-01-09T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order for item 4	Buffer 'constraint buffer 4' has material shortage	2009-01-09T00:00:00 / 2030-12-31T00:00:00

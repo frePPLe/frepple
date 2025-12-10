@@ -158,8 +158,8 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             // Create a problem
             if (j == Problem::end())
               new ProblemInvalidData(const_cast<Demand*>(l), problemtext,
-                                     "demand", l->getDue(), l->getDue(),
-                                     l->getQuantity());
+                                     "demand", l->getDue(), l->getDue()
+                                     );
             // Abort planning of this demand
             throw DataException("Demand '" + l->getName() +
                                 "' can't be planned");

@@ -171,8 +171,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
         if (j == data.constraints->end())
           data.constraints->push(new ProblemInvalidData(
               opplan->getOperation(), msg, "operation",
-              Plan::instance().getCurrent(), Date::infiniteFuture,
-              data.state->q_qty, false));
+              Plan::instance().getCurrent(), Date::infiniteFuture, false));
       }
       bool problem_already_exists = false;
       auto probiter = Problem::iterator(opplan->getOperation());
@@ -185,7 +184,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
       }
       if (!problem_already_exists)
         new ProblemInvalidData(opplan->getOperation(), msg, "operation",
-                               Date::infinitePast, Date::infiniteFuture, 1.0);
+                               Date::infinitePast, Date::infiniteFuture);
     }
     // Pick up the earliest date we can reply back
     data.state->a_date = opplan->getEnd();
@@ -550,7 +549,7 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
   if (data.logConstraints && data.constraints)
     data.constraints->push(ProblemBeforeCurrent::metadata,
                            opplan->getOperation(), original.start,
-                           opplan->getStart(), original.quantity);
+                           opplan->getStart());
 
   // Set the quantity to 0 to make sure the buffer doesn't see any supply
   opplan->setQuantity(0.0);
@@ -686,7 +685,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
         if (j == dmd->end()) {
           dmd->push(new ProblemInvalidData(data->state->curBuffer, problemtext,
                                            "material", Date::infinitePast,
-                                           Date::infiniteFuture, 1, false));
+                                           Date::infiniteFuture, false));
         }
       }
       if (getLogLevel() > 1) {
@@ -1033,7 +1032,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
         if (j == data->constraints->end())
           data->constraints->push(new ProblemInvalidData(
               const_cast<OperationRouting*>(oper), msg, "operation",
-              Plan::instance().getCurrent(), Date::infiniteFuture, 1.0, false));
+              Plan::instance().getCurrent(), Date::infiniteFuture, false));
       }
       bool problem_already_exists = false;
       auto probiter = Problem::iterator(oper);
@@ -1047,7 +1046,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
       if (!problem_already_exists)
         new ProblemInvalidData(const_cast<OperationRouting*>(oper), msg,
                                "operation", Date::infinitePast,
-                               Date::infiniteFuture, 1.0);
+                               Date::infiniteFuture);
     }
   } else
     // Using the routing as the delivery operation of a demand
@@ -1441,8 +1440,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
             if (j == data->constraints->end())
               data->constraints->push(new ProblemInvalidData(
                   const_cast<OperationAlternate*>(oper), msg, "operation",
-                  Plan::instance().getCurrent(), Date::infiniteFuture, 1.0,
-                  false));
+                  Plan::instance().getCurrent(), Date::infiniteFuture, false));
           }
           bool problem_already_exists = false;
           auto probiter = Problem::iterator(oper);
@@ -1456,7 +1454,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
           if (!problem_already_exists)
             new ProblemInvalidData(const_cast<OperationAlternate*>(oper), msg,
                                    "operation", Date::infinitePast,
-                                   Date::infiniteFuture, 1.0);
+                                   Date::infiniteFuture);
         }
       }
 
@@ -1538,9 +1536,9 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
         data->state->a_qty = 0.0;
         data->state->a_date = (*altIter)->getEffectiveStart();
         if (data->logConstraints && data->constraints)
-          data->constraints->push(
-              ProblemBeforeCurrent::metadata, (*altIter)->getOperation(),
-              origQDate, (*altIter)->getEffectiveStart(), data->state->q_qty);
+          data->constraints->push(ProblemBeforeCurrent::metadata,
+                                  (*altIter)->getOperation(), origQDate,
+                                  (*altIter)->getEffectiveStart());
       } else if (search == SearchMode::PRIORITY) {
         if (loglevel > 1)
           logger << indentlevel << "Alternate operation '" << oper
@@ -2006,8 +2004,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
           if (j == data->constraints->end())
             data->constraints->push(new ProblemInvalidData(
                 const_cast<OperationSplit*>(oper), msg, "operation",
-                Plan::instance().getCurrent(), Date::infiniteFuture, 1.0,
-                false));
+                Plan::instance().getCurrent(), Date::infiniteFuture, false));
         }
         bool problem_already_exists = false;
         auto probiter = Problem::iterator(oper);
@@ -2021,7 +2018,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
         if (!problem_already_exists)
           new ProblemInvalidData(const_cast<OperationSplit*>(oper), msg,
                                  "operation", Date::infinitePast,
-                                 Date::infiniteFuture, 1.0);
+                                 Date::infiniteFuture);
       }
 
       // Plan along this alternate
@@ -2391,7 +2388,7 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
           if (data.logConstraints && data.constraints)
             data.constraints->push(ProblemAwaitSupply::metadata,
                                    o->getOperation(), opplan->getStart(),
-                                   refuse, o->getQuantity());
+                                   refuse);
           data.state->a_date = refuse;
           matnext = DateRange(refuse, refuse);
           return;

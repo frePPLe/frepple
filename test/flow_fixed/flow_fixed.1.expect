@@ -196,5 +196,5 @@ OPERATION	6. make end item - alternate 1	2013-02-17T00:00:00	2013-02-19T00:00:00
 OPERATION	6. make end item - alternate 1	2013-02-17T00:00:00	2013-02-19T00:00:00	1
 OPERATION	6. make end item - alternate 1	2013-02-17T00:00:00	2013-02-19T00:00:00	1
 PROBLEM	invalid data	No replenishment defined for '1. fixed consumption item'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	1. order 3	Buffer '1. fixed consumption item' has material shortage of 2	2013-02-18T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	1. order 3	Buffer '1. fixed consumption item' has material shortage	2013-02-18T00:00:00 / 2030-12-31T00:00:00
 DEMAND CONSTRAINT	2. order 1	Manufacturing lead time on '2. deliver co-product'	2013-01-19T00:00:00 / 2013-01-26T00:00:00

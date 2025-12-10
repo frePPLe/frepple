@@ -499,7 +499,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       new ProblemInvalidData(opplan,
                              "Purchase order '" + opplan->getReference() +
                                  "' on unauthorized supplier ",
-                             "operationplan", start, end, quantity);
+                             "operationplan", start, end);
     } else
       // Create the operationplan
       opplan = static_cast<Operation*>(operval)->createOperationPlan(
@@ -648,7 +648,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
         new ProblemInvalidData(opplan,
                                "Distribution order '" + opplan->getReference() +
                                    "' on unknown item distribution",
-                               "operationplan", start, end, quantity);
+                               "operationplan", start, end);
     } else
       // Create operation plan
       opplan = static_cast<Operation*>(operval)->createOperationPlan(

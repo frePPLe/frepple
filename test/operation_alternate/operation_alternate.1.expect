@@ -126,8 +126,8 @@ OPERATION	delivery 1	2009-01-04T00:00:00	2009-01-05T00:00:00	10
 OPERATION	delivery 1	2009-01-10T00:00:00	2009-01-11T00:00:00	20
 PROBLEM	invalid data	No replenishment defined for '3. unavailable component @ warehouse'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'item 5 @ warehouse'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	3. SO1	Buffer '3. unavailable component @ warehouse' has material shortage of 10	2009-01-20T23:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	3. SO1	Buffer '3. unavailable component @ warehouse' has material shortage	2009-01-20T23:00:00 / 2030-12-31T00:00:00
 DEMAND CONSTRAINT	item 3 SO1	Purchasing lead time on 'Purchase item 3 @ warehouse from MySupplier'	2008-12-27T00:00:00 / 2009-01-01T00:00:00
 DEMAND CONSTRAINT	item 4 SO1	Purchasing lead time on 'Purchase item 4 @ warehouse from MySupplier valid from 2009-02-10T00:00:00'	2009-01-31T00:00:00 / 2009-02-10T00:00:00
-DEMAND CONSTRAINT	item 5 SO1	Buffer 'item 5 @ warehouse' has material shortage of 10	2009-01-31T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	item 5 SO1	Buffer 'item 5 @ warehouse' has material shortage	2009-01-31T00:00:00 / 2030-12-31T00:00:00
 DEMAND CONSTRAINT	order prio 2 for item 1	Manufacturing lead time on 'make item 1 with routing A step 2'	2008-12-17T00:00:00 / 2009-01-01T00:00:00

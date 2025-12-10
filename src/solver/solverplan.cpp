@@ -488,18 +488,17 @@ void SolverCreate::SolverData::commit() {
           } catch (const bad_exception&) {
             curdmd->getConstraints().push(new ProblemInvalidData(
                 curdmd, "Error: bad exception", "demand", curdmd->getDue(),
-                curdmd->getDue(), curdmd->getQuantity(), false));
+                curdmd->getDue(), false));
             logger << "  bad exception" << endl;
           } catch (const exception& e) {
             curdmd->getConstraints().push(new ProblemInvalidData(
                 curdmd, "Error: " + string(e.what()), "demand",
-                curdmd->getDue(), curdmd->getDue(), curdmd->getQuantity(),
-                false));
+                curdmd->getDue(), curdmd->getDue(), false));
             logger << "  " << e.what() << endl;
           } catch (...) {
             curdmd->getConstraints().push(new ProblemInvalidData(
                 curdmd, "Error: unknown type", "demand", curdmd->getDue(),
-                curdmd->getDue(), curdmd->getQuantity(), false));
+                curdmd->getDue(), false));
             logger << "  Unknown type" << endl;
           }
         }

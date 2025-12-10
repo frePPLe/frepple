@@ -773,7 +773,8 @@ class Problem::List {
   void clear(Problem* = nullptr);
 
   /* Add a problem to the list. */
-  Problem* push(const MetaClass*, const Object*, Date, Date, double);
+  Problem* push(const MetaClass*, const Object*, Date, Date, double = 0.0,
+                Operation* = nullptr);
 
   /* Add a problem to the list. */
   void push(Problem* p);
@@ -808,6 +809,9 @@ class Problem::List {
 
   /* Move the problems from this list to a new owner. */
   void transfer(HasProblems*);
+
+  /* Postprocessing of a constraint list to keep it user-friendly. */
+  void cleanConstraints(Demand*);
 
  private:
   /* Pointer to the head of the list. */
@@ -9040,11 +9044,11 @@ class ProblemAwaitSupply : public Problem {
 
   bool isFeasible() const { return true; }
 
-  explicit ProblemAwaitSupply(Buffer* b, Date st, Date nd, double q)
-      : Problem(b), dates(st, nd), qty(q), for_buffer(true) {}
+  explicit ProblemAwaitSupply(Buffer* b, Date st, Date nd)
+      : Problem(b), dates(st, nd), for_buffer(true) {}
 
-  explicit ProblemAwaitSupply(Operation* b, Date st, Date nd, double q)
-      : Problem(b), dates(st, nd), qty(q), for_buffer(false) {}
+  explicit ProblemAwaitSupply(Operation* b, Date st, Date nd)
+      : Problem(b), dates(st, nd), for_buffer(false) {}
 
   ~ProblemAwaitSupply() { removeProblem(); }
 
@@ -9067,7 +9071,6 @@ class ProblemAwaitSupply : public Problem {
 
  private:
   DateRange dates;
-  double qty = 0.0;
   bool for_buffer;
 };
 
@@ -9086,7 +9089,7 @@ class ProblemSyncDemand : public Problem {
 
   bool isFeasible() const { return true; }
 
-  explicit ProblemSyncDemand(Demand* b, Date st, Date nd, double q)
+  explicit ProblemSyncDemand(Demand* b, Date st, Date nd)
       : synced_with(b), dates(st, nd) {}
 
   explicit ProblemSyncDemand(Demand* b, Demand* s)
@@ -9161,8 +9164,8 @@ class ProblemInvalidData : public Problem {
   bool isFeasible() const { return false; }
 
   explicit ProblemInvalidData(HasProblems* o, const string& d, const string& e,
-                              Date st, Date nd, double q, bool add = true)
-      : Problem(o), description(d), entity(e), dates(st, nd), qty(q) {
+                              Date st, Date nd, bool add = true)
+      : Problem(o), description(d), entity(e), dates(st, nd) {
     if (add) addProblem();
   }
 
@@ -9194,7 +9197,6 @@ class ProblemInvalidData : public Problem {
   string description;
   string entity;
   DateRange dates;
-  double qty;
 };
 
 /* A problem of this class is created when a resource is being
@@ -9211,6 +9213,8 @@ class ProblemCapacityOverload : public Problem {
       : Problem(r), qty(q), dr(st, nd) {
     if (add) addProblem();
   }
+
+  void setOperation(Operation* o) { oper = o; }
 
   ~ProblemCapacityOverload() { removeProblem(); }
 
@@ -9230,10 +9234,12 @@ class ProblemCapacityOverload : public Problem {
 
  private:
   /* Overload quantity. */
-  double qty;
+  double qty = 0.0;
 
   /* The daterange of the problem. */
   DateRange dr;
+
+  Operation* oper = nullptr;
 };
 
 /* A problem of this class is created when a buffer is having a
@@ -9364,8 +9370,7 @@ class ConstraintDistributionLeadTime : public Problem {
 
   bool isFeasible() const { return true; }
 
-  explicit ConstraintDistributionLeadTime(Operation* o, Date st, Date nd,
-                                          double q)
+  explicit ConstraintDistributionLeadTime(Operation* o, Date st, Date nd)
       : Problem(o), start(st), end(nd) {}
 
   ~ConstraintDistributionLeadTime() { removeProblem(); }

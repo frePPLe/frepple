@@ -115,7 +115,8 @@ void ResourceBuckets::updateProblems() {
 
 string ProblemCapacityOverload::getDescription() const {
   ostringstream ch;
-  ch << "Resource '" << getResource() << "' has capacity shortage of " << qty;
+  ch << "Resource '" << getResource() << "' has capacity shortage";
+  if (qty) ch << " of " << qty;
   return ch.str();
 }
 

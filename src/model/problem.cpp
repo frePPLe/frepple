@@ -537,7 +537,7 @@ void Problem::List::erase(Object& p) {
 }
 
 Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
-                             Date nd, double w) {
+                             Date nd, double w, Operation* oper) {
   // Find the end of the list
   Problem* cur = first;
   while (cur && cur->nextProblem && cur->getOwner() != o)
@@ -548,18 +548,23 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
 
   // Create a new problem
   Problem* p = nullptr;
-  if (m == ProblemCapacityOverload::metadata)
+  if (m == ProblemCapacityOverload::metadata) {
     p = new ProblemCapacityOverload(
         const_cast<Resource*>(dynamic_cast<const Resource*>(o)), st, nd, w,
         false);
-  else if (m == ProblemMaterialShortage::metadata)
+    if (oper)
+      static_cast<ProblemCapacityOverload*>(p)->setOperation(oper);
+    else
+      throw LogicException(
+          "Logging a capacity constraint should always be on an operation");
+  } else if (m == ProblemMaterialShortage::metadata)
     p = new ProblemMaterialShortage(
         const_cast<Buffer*>(dynamic_cast<const Buffer*>(o)), st, nd, w, false);
   else if (m == ProblemBeforeCurrent::metadata) {
     auto oper = dynamic_cast<const Operation*>(o);
     if (oper->hasType<OperationItemDistribution>())
       p = new ConstraintDistributionLeadTime(const_cast<Operation*>(oper), st,
-                                             nd, w);
+                                             nd);
     else if (oper->hasType<OperationItemSupplier>())
       p = new ConstraintPurchasingLeadTime(const_cast<Operation*>(oper), st,
                                            nd);
@@ -569,14 +574,14 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
   } else if (m == ProblemAwaitSupply::metadata) {
     auto owner = const_cast<Buffer*>(dynamic_cast<const Buffer*>(o));
     if (owner)
-      p = new ProblemAwaitSupply(owner, st, nd, w);
+      p = new ProblemAwaitSupply(owner, st, nd);
     else {
       auto owner = const_cast<Operation*>(dynamic_cast<const Operation*>(o));
-      if (owner) p = new ProblemAwaitSupply(owner, st, nd, w);
+      if (owner) p = new ProblemAwaitSupply(owner, st, nd);
     }
   } else if (m == ProblemSyncDemand::metadata)
     p = new ProblemSyncDemand(
-        const_cast<Demand*>(dynamic_cast<const Demand*>(o)), st, nd, w);
+        const_cast<Demand*>(dynamic_cast<const Demand*>(o)), st, nd);
   else
     throw LogicException("Problem factory can't create this type of problem");
 
@@ -634,6 +639,11 @@ void Problem::List::push(Problem* p) {
     // Link at the end of the list
     cur->nextProblem = p;
   Py_INCREF(p);
+}
+
+void Problem::List::cleanConstraints(Demand* d) {
+  // Check all manufacturing lead time constraints, and keep only the
+  // critical path.
 }
 
 }  // namespace frepple

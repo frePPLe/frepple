@@ -950,9 +950,9 @@ OPERATION	Replenish item 6	2017-12-25T00:00:00	2018-01-01T00:00:00	5
 OPERATION	Replenish item 7	2015-12-25T00:00:00	2016-01-01T00:00:00	5
 DEMAND CONSTRAINT	2. order 1	Manufacturing lead time on '2. make end item in A'	2014-08-26T00:00:00 / 2015-01-01T00:00:00
 DEMAND CONSTRAINT	2. order 1	Manufacturing lead time on '2. make end item in B'	2014-11-24T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	2. order 1	Resource '2. capacity in B' has capacity shortage of 1	2015-01-01T00:00:00 / 2015-02-02T00:00:00
+DEMAND CONSTRAINT	2. order 1	Resource '2. capacity in B' has capacity shortage	2015-01-01T00:00:00 / 2015-02-02T00:00:00
 DEMAND CONSTRAINT	3. order 1	Manufacturing lead time on '3. make end item in B'	2014-09-25T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	3. order 1	Resource '3. capacity in B' has capacity shortage of 1	2015-01-05T00:00:00 / 2015-02-12T00:00:00
+DEMAND CONSTRAINT	3. order 1	Resource '3. capacity in B' has capacity shortage	2015-01-05T00:00:00 / 2015-02-12T00:00:00
 DEMAND CONSTRAINT	4. order 1	Manufacturing lead time on '4. make end item'	2014-12-25T00:00:00 / 2015-01-01T00:00:00
 DEMAND CONSTRAINT	4. order 2	Manufacturing lead time on '4. make end item'	2014-12-26T00:00:00 / 2015-01-01T00:00:00
 DEMAND CONSTRAINT	4. order 3	Manufacturing lead time on '4. make end item'	2014-12-27T00:00:00 / 2015-01-01T00:00:00

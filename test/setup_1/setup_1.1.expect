@@ -6,8 +6,7 @@ BUFFER	colorless product @ factory	2009-02-20T00:00:00	4	4
 BUFFER	colorless product @ factory	2009-02-20T00:00:00	-4	0
 BUFFER	green product @ factory	2009-02-10T00:00:00	3	3
 BUFFER	green product @ factory	2009-02-10T00:00:00	-3	0
-BUFFER	red product @ factory	2009-01-30T00:00:00	3	3
-BUFFER	red product @ factory	2009-01-30T00:00:00	3	6
+BUFFER	red product @ factory	2009-01-30T00:00:00	6	6
 BUFFER	red product @ factory	2009-01-30T00:00:00	-3	3
 BUFFER	red product @ factory	2009-01-30T00:00:00	-3	0
 BUFFER	white product @ factory	2009-02-01T00:00:00	3	3
@@ -23,10 +22,8 @@ RESOURCE	Painting line	2008-12-28T00:00:00	1	1
 RESOURCE	Painting line	2009-01-05T00:00:00	-1	0
 RESOURCE	Painting line	2009-01-09T00:00:00	1	1
 RESOURCE	Painting line	2009-01-12T00:00:00	-1	0
-RESOURCE	Painting line	2009-01-23T00:00:00	1	1
+RESOURCE	Painting line	2009-01-20T00:00:00	1	1
 RESOURCE	Painting line	2009-01-27T00:00:00	1	2
-RESOURCE	Painting line	2009-01-27T00:00:00	1	3
-RESOURCE	Painting line	2009-01-30T00:00:00	-1	2
 RESOURCE	Painting line	2009-01-30T00:00:00	-1	1
 RESOURCE	Painting line	2009-02-01T00:00:00	-1	0
 RESOURCE	Painting line	2009-02-04T00:00:00	1	1
@@ -37,7 +34,6 @@ OPERATION	make black product	2008-12-28T00:00:00	2009-01-05T00:00:00	7
 OPERATION	make colorless product	2009-01-09T00:00:00	2009-01-12T00:00:00	3
 OPERATION	make colorless product	2009-02-16T00:00:00	2009-02-20T00:00:00	4
 OPERATION	make green product	2009-02-04T00:00:00	2009-02-10T00:00:00	3
-OPERATION	make red product	2009-01-23T00:00:00	2009-01-30T00:00:00	3
-OPERATION	make red product	2009-01-27T00:00:00	2009-01-30T00:00:00	3
+OPERATION	make red product	2009-01-20T00:00:00	2009-01-30T00:00:00	6
 OPERATION	make white product	2009-01-27T00:00:00	2009-02-01T00:00:00	3
-PROBLEM	overload	Resource 'Painting line' has capacity shortage of 2	2009-01-27T00:00:00 / 2009-01-30T00:00:00
+PROBLEM	overload	Resource 'Painting line' has capacity shortage of 1	2009-01-27T00:00:00 / 2009-01-30T00:00:00

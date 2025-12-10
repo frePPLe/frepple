@@ -243,7 +243,6 @@ OPERATION	Purchase crude @ Site from FRN	2023-07-23T04:00:00	2023-07-24T04:00:00
 OPERATION	Purchase crude @ Site from FRN	2023-08-21T12:00:00	2023-08-22T12:00:00	48
 OPERATION	Purchase crude @ Site from FRN	2023-09-22T08:00:00	2023-09-23T08:00:00	20
 DEMAND CONSTRAINT	Sales PF4 3	Demand is overdue	2022-08-25T00:00:00 / 2023-06-01T00:00:00
-DEMAND CONSTRAINT	Sales PF4 3	Operation 'Ship PF4 @ Site' planned in the past	2022-08-25T00:00:00 / 2023-06-01T00:00:00
-DEMAND CONSTRAINT	Sales PF4 3	Operation 'Production' planned in the past	2023-05-30T08:00:00 / 2023-06-01T00:00:00
-DEMAND CONSTRAINT	Sales PF4 3	Operation 'Purchase crude @ Site from FRN' planned in the past	2023-05-31T00:00:00 / 2023-06-01T00:00:00
+DEMAND CONSTRAINT	Sales PF4 3	Manufacturing lead time on 'Production'	2023-05-30T08:00:00 / 2023-06-01T00:00:00
+DEMAND CONSTRAINT	Sales PF4 3	Purchasing lead time on 'Purchase crude @ Site from FRN'	2023-05-31T00:00:00 / 2023-06-01T00:00:00
 DEMAND CONSTRAINT	Sales PF4 3	Resource 'production line' has capacity shortage of 1	2023-06-02T00:00:00 / 2023-06-02T20:00:00

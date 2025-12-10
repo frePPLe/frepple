@@ -96,18 +96,17 @@ OPERATION	make item 4	2018-01-13T00:00:00	2018-01-25T00:00:00	5
 OPERATION	make item 4	2018-01-21T00:00:00	2018-02-01T00:00:00	10
 OPERATION	make item 4	2018-02-15T06:00:00	2018-03-01T00:00:00	10
 OPERATION	make item 4	2021-02-18T00:00:00	2021-03-01T00:00:00	10
-DEMAND CONSTRAINT	item 4 - order 1	Operation 'make item 4' planned in the past	2017-12-10T00:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	item 4 - order 1	Manufacturing lead time on 'make item 4'	2017-12-10T00:00:00 / 2018-01-01T00:00:00
 DEMAND CONSTRAINT	item 4 - order 1	Resource 'Resource 4' has capacity shortage of 1	2018-01-01T00:00:00 / 2018-01-23T00:00:00
 DEMAND CONSTRAINT	item 4 - order 5	Demand is overdue	2017-01-01T00:00:00 / 2018-01-01T00:00:00
-DEMAND CONSTRAINT	item 4 - order 5	Operation 'Ship item 4 @ factory' planned in the past	2017-01-01T00:00:00 / 2018-01-01T00:00:00
-DEMAND CONSTRAINT	item 4 - order 5	Operation 'make item 4' planned in the past	2017-12-10T00:00:00 / 2018-01-01T00:00:00
-DEMAND CONSTRAINT	order 1	Operation 'make item 1' planned in the past	2017-12-30T21:20:00 / 2018-01-01T00:00:00
-DEMAND CONSTRAINT	order 2	Operation 'make item 2' planned in the past	2017-12-22T20:00:00 / 2018-01-01T00:00:00
-DEMAND CONSTRAINT	order 3	Operation 'make item 3' planned in the past	2017-12-22T20:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	item 4 - order 5	Manufacturing lead time on 'make item 4'	2017-12-10T00:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	order 1	Manufacturing lead time on 'make item 1'	2017-12-30T21:20:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	order 2	Manufacturing lead time on 'make item 2'	2017-12-22T20:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	order 3	Manufacturing lead time on 'make item 3'	2017-12-22T20:00:00 / 2018-01-01T00:00:00
 DEMAND CONSTRAINT	order 3	Resource 'Resource 3' has capacity shortage of 1	2018-01-01T00:00:00 / 2018-01-06T00:00:00
-DEMAND CONSTRAINT	order 4	Operation 'make item 3' planned in the past	2017-12-22T20:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	order 4	Manufacturing lead time on 'make item 3'	2017-12-22T20:00:00 / 2018-01-01T00:00:00
 DEMAND CONSTRAINT	order 4	Resource 'Resource 3' has capacity shortage of 1	2018-01-04T00:00:00 / 2018-01-09T00:00:00
-DEMAND CONSTRAINT	order 5	Operation 'make item 3' planned in the past	2017-12-22T20:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	order 5	Manufacturing lead time on 'make item 3'	2017-12-22T20:00:00 / 2018-01-01T00:00:00
 DEMAND CONSTRAINT	order 5	Resource 'Resource 3' has capacity shortage of 1	2018-01-01T00:00:00 / 2018-01-10T04:00:00
-DEMAND CONSTRAINT	order 6	Operation 'make item 3' planned in the past	2017-12-22T20:00:00 / 2018-01-01T00:00:00
+DEMAND CONSTRAINT	order 6	Manufacturing lead time on 'make item 3'	2017-12-22T20:00:00 / 2018-01-01T00:00:00
 DEMAND CONSTRAINT	order 6	Resource 'Resource 3' has capacity shortage of 1	2018-01-01T00:00:00 / 2018-01-10T04:00:00

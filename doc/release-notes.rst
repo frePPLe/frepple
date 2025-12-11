@@ -34,8 +34,13 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
       - ...
 
 - | It's now possible to run the odoo import as part of the plan generation.
-  | In practice, you'll always run the plan righ after the import, isn't it?
+  | In practice, you'll always run the plan right after the import, isn't it?
     So, we made it now a checkbox in the plan generation options.
+
+- | When exporting Manufacturing Orders from frePPLe to Odoo, the connectors are
+    now sending the consumed and produced items. This can be useful in case alternate
+    materials exist.
+
 
 9.12.0 (2025-11-14)
 ===================

@@ -29,34 +29,14 @@
 // };
 
 const REQUIRED_PROPERTIES = {
-  Name: ""
+  id: -1
 };
 
-export class Item {
+export class Operationplan {
   constructor(data = {}) {
     Object.assign(this, REQUIRED_PROPERTIES);
 
     Object.assign(this, data);
-  }
-
-  // Get only the required properties
-  getRequiredProperties() {
-    const { name, description, category, subcategory } = this;
-    return { name, description, category, subcategory };
-  }
-
-  // Get all custom/optional properties (everything except the required ones)
-  getCustomProperties() {
-    const result = {};
-    const requiredKeys = Object.keys(REQUIRED_PROPERTIES);
-
-    for (const [key, value] of Object.entries(this)) {
-      if (!requiredKeys.includes(key)) {
-        result[key] = value;
-      }
-    }
-
-    return result;
   }
 
   // Convert to API format - includes all properties
@@ -67,12 +47,12 @@ export class Item {
 
   // Create an Item instance from API data
   static fromJSON(data) {
-    return new Item(data);
+    return new Operationplan(data);
   }
 
   // Clone the item with all its properties
   clone() {
-    return new Item({ ...this });
+    return new Operationplan({ ...this });
   }
 
   // Check if all required properties are present and valid

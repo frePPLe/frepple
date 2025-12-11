@@ -12,7 +12,7 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
-// import OperationplanFormCard from '@/components/OperationplanFormCard.vue';
+import OperationplanFormCard from '@/components/OperationplanFormCard.vue';
 import InventoryGraphCard from '@/components/InventoryGraphCard.vue';
 import InventoryDataCard from '@/components/InventoryDataCard.vue';
 import ProblemsCard from '@/components/ProblemsCard.vue';
@@ -65,7 +65,7 @@ function undo() {
 
 function getWidgetComponent(widgetName) {
   const componentMap = {
-    // 'operationplan': OperationplanFormCard,
+    'operationplan': OperationplanFormCard,
     'inventorygraph': InventoryGraphCard,
     'inventorydata': InventoryDataCard,
     'operationproblems': ProblemsCard,
@@ -84,14 +84,17 @@ function shouldShowWidget(widgetName) {
   if (!store.operationplan || store.operationplan.id === -1) return false;
 
   const widgetConditions = {
+    'operationplan': () => true,
     'inventorygraph': () => store.operationplan.inventoryreport !== undefined,
     'inventorydata': () => store.operationplan.inventoryreport !== undefined,
     'operationproblems': () => store.operationplan.problems !== undefined || store.operationplan.info !== undefined,
     'operationresources': () => store.operationplan.loadplans !== undefined,
     'operationflowplans': () => store.operationplan.flowplans !== undefined,
+    'operationdemandpegging': () => store.operationplan !== undefined,
     'networkstatus': () => store.operationplan.network !== undefined,
     'downstreamoperationplans': () => store.operationplan.downstreamoperationplans !== undefined,
     'upstreamoperationplans': () => store.operationplan.upstreamoperationplans !== undefined,
+    'supplyinformation': () => store.operationplan !== undefined,
   };
 
   // Special handling for certain widgets
@@ -209,7 +212,7 @@ onUnmounted(() => {
 
 <template>
   <div class="row">
-    <!--    <OperationplanFormCard />-->
+    <OperationplanFormCard />
     <BuffersCard />
     <DemandPeggingCard />
     <DownstreamCard />

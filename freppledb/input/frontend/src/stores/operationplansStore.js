@@ -39,11 +39,12 @@ import {operationplanService} from "@/services/operationplanService.js";7
  */
 
 import { defineStore } from 'pinia';
+import {Operationplan} from "@/models/operationplan.js";
 
 export const useOperationplansStore = defineStore('operationplans', {
   state: () => ({
     // Data
-    operationplan: {},
+    operationplan: new Operationplan(),
     operationplans: {},
     selectedOperationplans: [],
 
@@ -132,7 +133,7 @@ export const useOperationplansStore = defineStore('operationplans', {
           const operationplan = toRaw(response.responseData.value)[0];
           const operationplanReference = operationplan.reference;
 
-          this.operationplan = operationplan;
+          this.operationplan = new Operationplan(operationplan);
           this.operationplans[operationplanReference] = operationplan;
           this.selectedOperationplans.push(operationplanReference);
         } catch (error) {

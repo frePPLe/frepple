@@ -520,45 +520,42 @@ class OdooSendRecommendations(PlanTask):
                     os.path.join(odoo_folder, "metadata.json"), "r", encoding="utf-8"
                 ) as f:
                     metadata = json.load(f)
+                authentication = f"Bearer {metadata.pop("token")}"
             except Exception:
                 metadata = None
-
         if not metadata:
             # Mode 2: Build metadata from parameters
             metadata = {
-                "odoo_db": (
+                "database": (
                     getattr(settings, "ODOO_DB", {}).get(database, "")
                     or Parameter.getValue("odoo.db", database, "")
                 ).strip(),
-                "odoo_company": (
+                "company": (
                     getattr(settings, "ODOO_COMPANY", {}).get(database, "")
                     or Parameter.getValue("odoo.company", database, "")
-                ).strip(),
-                "odoo_user": (
-                    getattr(settings, "ODOO_USER", {}).get(database, "")
-                    or Parameter.getValue("odoo.user", database, "")
-                ).strip(),
-                "odoo_password": (
-                    getattr(settings, "ODOO_PASSWORDS", {}).get(database, "")
-                    or Parameter.getValue("odoo.password", database, "")
                 ).strip(),
                 "odoo_url": (
                     getattr(settings, "ODOO_URL", {}).get(database, "")
                     or Parameter.getValue("odoo.url", database, "")
                 ).strip(),
             }
-            metadata["token"] = jwt.encode(
-                {"exp": round(time.time()) + 600, "user": metadata["odoo_user"]},
-                get_databases()[database].get(
-                    "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
-                ),
-                algorithm="HS256",
-            )
+            odoo_user = (
+                getattr(settings, "ODOO_USER", {}).get(database, "")
+                or Parameter.getValue("odoo.user", database, "")
+            ).strip()
+            odoo_password = (
+                getattr(settings, "ODOO_PASSWORD", {}).get(database, "")
+                or Parameter.getValue("odoo.password", database, "")
+            ).strip()
+            encoded = base64.encodebytes(
+                ("%s:%s" % (odoo_user, odoo_password)).encode("utf-8")
+            )[:-1]
+            authentication = "Basic %s" % encoded.decode("ascii")
             if (
-                not metadata["odoo_db"]
-                or not metadata["odoo_company"]
-                or not metadata["odoo_user"]
-                or not metadata["odoo_password"]
+                not metadata["database"]
+                or not metadata["company"]
+                or not odoo_user
+                or not odoo_password
                 or not metadata["odoo_url"]
             ):
                 raise Exception("Invalid configuration parameters")
@@ -569,8 +566,11 @@ class OdooSendRecommendations(PlanTask):
         except Exception:
             loglevel = 0
         metadata["loglevel"] = loglevel
+        metadata["description"] = (
+            f"repple output v{frepple.version} at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}"
+        )
 
-        # Try to create the upload if doesn't exist yet
+        # Try to create the folder if doesn't exist yet
         if not os.path.isdir(odoo_folder):
             try:
                 os.makedirs(odoo_folder)
@@ -580,7 +580,7 @@ class OdooSendRecommendations(PlanTask):
         # Write recommendations to a flat file.
         recommendations = os.path.join(odoo_folder, "odoo_recommendations.json")
         with open(recommendations, "w", encoding="utf-8") as f:
-            o = f'"description": "frepple output v{frepple.version} at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}",'
+            o = json.dumps(metadata).rstrip("}\t\n")  # remove the closing backslash
             print("{", file=f)
             print(o, file=f)
             print('"recommendations": [', file=f)
@@ -609,7 +609,7 @@ class OdooSendRecommendations(PlanTask):
         with open(recommendations, "rb") as f:
             response = requests.post(
                 f"{metadata["odoo_url"]}frepple/recommendations/",
-                headers={"Authorization": f"Bearer {metadata['token']}"},
+                headers={"Authorization": authentication},
                 files={
                     "recommendations.json": (
                         "recommendations.json",
@@ -623,7 +623,7 @@ class OdooSendRecommendations(PlanTask):
             elif response.status_code == 404:
                 print(
                     "Your odoo instance can't receive recommendations.\n"
-                    "This is only possible with the connector odoo 19 onwards."
+                    "This is only possible from odoo 19 onwards (or you backported the required changes)."
                 )
             else:
                 print(f"Failure: {response.status_code} {response.text}")

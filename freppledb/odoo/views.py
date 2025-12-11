@@ -368,6 +368,22 @@ def Upload(request):
                                                 wores.quantity,
                                             )
                                         )
+                                for womat in wo.materials.using(request.database).all():
+                                    if (
+                                        womat.item.source
+                                        and womat.item.source.startswith("odoo")
+                                    ):
+                                        data_odoo.append(
+                                            '<item name=%s id=%s quantity="%s"/>'
+                                            % (
+                                                quoteattr(womat.item.name),
+                                                quoteattr(
+                                                    womat.item.subcategory.split(",")[1]
+                                                    or ""
+                                                ),
+                                                womat.quantity,
+                                            )
+                                        )
                                 data_odoo.append("</workorder>")
                         else:
                             for opplanres in op.resources.using(request.database).all():
@@ -382,6 +398,22 @@ def Upload(request):
                                             quoteattr(
                                                 opplanres.resource.category or ""
                                             ),
+                                        )
+                                    )
+                            for opplanmat in op.materials.using(request.database).all():
+                                if (
+                                    opplanmat.item.source
+                                    and opplanmat.item.source.startswith("odoo")
+                                ):
+                                    data_odoo.append(
+                                        '<item name=%s id=%s quantity="%s"/>'
+                                        % (
+                                            quoteattr(opplanmat.item.name),
+                                            quoteattr(
+                                                womat.item.subcategory.split(",")[1]
+                                                or ""
+                                            ),
+                                            opplanmat.quantity,
                                         )
                                     )
                         data_odoo.append("</operationplan>")

@@ -41,6 +41,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     now sending the consumed and produced items. This can be useful in case alternate
     materials exist.
 
+- | User accessing frepple from the odoo user interface could end up in
+    scenarios to which they don't have access. We now redirect them automatically to
+    a scenario to which they have access.
+
 
 9.12.0 (2025-11-14)
 ===================

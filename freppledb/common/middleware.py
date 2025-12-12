@@ -175,6 +175,7 @@ class MultiDBMiddleware:
         setattr(_thread_locals, "request", request)
 
         # Select scenario database
+        allow_scenario_switch = False
         request.prefix = ""
         db = DEFAULT_DB_ALIAS
         for i in get_databases():
@@ -253,6 +254,7 @@ class MultiDBMiddleware:
                                 return HttpResponseForbidden(
                                     "No user or email in webtoken"
                                 )
+                            allow_scenario_switch = True
                         except User.DoesNotExist:
                             if getattr(settings, "SOCIALACCOUNT_AUTO_SIGNUP", True):
                                 # Autocreate new user
@@ -372,7 +374,23 @@ class MultiDBMiddleware:
                     )
                 )
             ):
-                return HttpResponseNotFound("Scenario not in use, or access is denied")
+                if allow_scenario_switch:
+                    sc = getattr(request.user, "default_scenario", None)
+                    if sc not in get_databases() or (
+                        request.user.databases and sc not in request.user.databases
+                    ):
+                        sc = None
+                    if not sc and request.user.databases:
+                        sc = sorted(request.user.databases)[0]
+                    if sc:
+                        # Automatically switch to a non-default scenario
+                        return HttpResponseRedirect(
+                            f"/{sc}/" if sc != DEFAULT_DB_ALIAS else "/"
+                        )
+                else:
+                    return HttpResponseNotFound(
+                        "Scenario not in use, or access is denied"
+                    )
 
             # Update user
             request.user.switchDatabase(request.database)

@@ -46,7 +46,7 @@ PROBLEM	invalid data	No replenishment defined for 'item 1 @ factory'	1971-01-01T
 PROBLEM	invalid data	No replenishment defined for 'item 2 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'item 3 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'item 4 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 3 for item 1	Buffer 'item 1 @ factory' has material shortage of 5	2009-01-12T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 3 for item 2	Buffer 'item 2 @ factory' has material shortage of 5	2009-01-05T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 3 for item 3	Buffer 'item 3 @ factory' has material shortage of 5	2009-01-05T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 3 for item 4	Buffer 'item 4 @ factory' has material shortage of 8	2009-01-05T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 3 for item 1	Buffer 'item 1 @ factory' has material shortage	2009-01-12T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 3 for item 2	Buffer 'item 2 @ factory' has material shortage	2009-01-05T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 3 for item 3	Buffer 'item 3 @ factory' has material shortage	2009-01-05T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 3 for item 4	Buffer 'item 4 @ factory' has material shortage	2009-01-05T00:00:00 / 2030-12-31T00:00:00

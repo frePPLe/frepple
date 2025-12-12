@@ -14,4 +14,4 @@ OPERATION	Purchase component A1 @ factory from Component supplier	2020-01-01T00:
 OPERATION	Purchase component A2 @ factory from Component supplier	2020-01-27T00:00:00	2020-02-01T00:00:00	500	confirmed
 OPERATION	Purchase component B1 @ factory from Component supplier	2020-01-01T00:00:00	2020-01-08T00:00:00	95
 OPERATION	assembly	2020-01-08T00:00:00	2020-01-15T00:00:00	100
-DEMAND CONSTRAINT	order 1	Operation 'Purchase component A1 @ factory from Component supplier' planned in the past	2019-12-28T00:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	order 1	Purchasing lead time on 'Purchase component A1 @ factory from Component supplier'	2019-12-28T00:00:00 / 2020-01-01T00:00:00

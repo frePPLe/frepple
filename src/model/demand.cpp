@@ -271,12 +271,10 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args,
     char* pyowner = nullptr;
     PyObject* pystart = nullptr;
     PyObject* pyend = nullptr;
-    double cnstrnt_weight = 0;
-    static const char* kwlist[] = {"type", "owner",  "start",
-                                   "end",  "weight", nullptr};
-    if (!PyArg_ParseTupleAndKeywords(
-            args, kwds, "ss|OOd:addConstraint", const_cast<char**>(kwlist),
-            &pytype, &pyowner, &pystart, &pyend, &cnstrnt_weight))
+    static const char* kwlist[] = {"type", "owner", "start", "end", nullptr};
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "ss|OO:addConstraint",
+                                     const_cast<char**>(kwlist), &pytype,
+                                     &pyowner, &pystart, &pyend))
       return nullptr;
     string cnstrnt_type;
     if (pytype) cnstrnt_type = pytype;
@@ -293,38 +291,29 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args,
       Operation* obj = Operation::findFromName(cnstrnt_owner);
       if (!obj) throw DataException("Can't find constraint owner");
       cnstrnt = dmd->getConstraints().push(ProblemBeforeCurrent::metadata, obj,
-                                           cnstrnt_start, cnstrnt_end,
-                                           cnstrnt_weight);
+                                           cnstrnt_start, cnstrnt_end);
     } else if (cnstrnt_type == ProblemCapacityOverload::metadata->type) {
       Resource* obj = Resource::find(cnstrnt_owner);
       if (!obj) throw DataException("Can't find constraint owner");
       cnstrnt = dmd->getConstraints().push(ProblemCapacityOverload::metadata,
-                                           obj, cnstrnt_start, cnstrnt_end,
-                                           cnstrnt_weight);
+                                           obj, cnstrnt_start, cnstrnt_end);
     } else if (cnstrnt_type == ProblemMaterialShortage::metadata->type) {
       Buffer* obj = Buffer::findFromName(cnstrnt_owner);
       if (!obj) throw DataException("Can't find constraint owner");
       cnstrnt = dmd->getConstraints().push(ProblemMaterialShortage::metadata,
-                                           obj, cnstrnt_start, cnstrnt_end,
-                                           cnstrnt_weight);
-    } else if (cnstrnt_type == ProblemBeforeFence::metadata->type) {
-      Operation* obj = Operation::findFromName(cnstrnt_owner);
-      if (!obj) throw DataException("Can't find constraint owner");
-      cnstrnt = dmd->getConstraints().push(ProblemBeforeFence::metadata, obj,
-                                           cnstrnt_start, cnstrnt_end,
-                                           cnstrnt_weight);
+                                           obj, cnstrnt_start, cnstrnt_end);
     } else if (cnstrnt_type == ProblemAwaitSupply::metadata->type) {
       Buffer* obj_buffer = Buffer::findFromName(cnstrnt_owner);
       if (obj_buffer)
-        cnstrnt = dmd->getConstraints().push(ProblemAwaitSupply::metadata,
-                                             obj_buffer, cnstrnt_start,
-                                             cnstrnt_end, cnstrnt_weight);
+        cnstrnt =
+            dmd->getConstraints().push(ProblemAwaitSupply::metadata, obj_buffer,
+                                       cnstrnt_start, cnstrnt_end);
       else {
         Operation* obj_operation = Operation::findFromName(cnstrnt_owner);
         if (obj_operation)
           cnstrnt = dmd->getConstraints().push(ProblemAwaitSupply::metadata,
                                                obj_operation, cnstrnt_start,
-                                               cnstrnt_end, cnstrnt_weight);
+                                               cnstrnt_end);
         else
           throw DataException("Can't find constraint owner");
       }
@@ -332,8 +321,7 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args,
       Demand* obj = Demand::find(cnstrnt_owner);
       if (!obj) throw DataException("Can't find constraint owner");
       cnstrnt = dmd->getConstraints().push(ProblemSyncDemand::metadata, obj,
-                                           cnstrnt_start, cnstrnt_end,
-                                           cnstrnt_weight);
+                                           cnstrnt_start, cnstrnt_end);
     } else
       throw DataException("Invalid constraint type");
     Py_IncRef(cnstrnt);

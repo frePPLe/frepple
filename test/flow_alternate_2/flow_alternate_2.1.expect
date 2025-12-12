@@ -12,4 +12,4 @@ BUFFER	product @ factory	2009-01-04T00:00:00	-5	0
 DEMAND	order 1	2009-01-04T00:00:00	5
 DEMAND	order 1	planned 5 units short
 OPERATION	assembly	2009-01-03T00:00:00	2009-01-04T00:00:00	5
-DEMAND CONSTRAINT	order 1	Operation 'Purchase B3 @ factory from Component supplier' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order 1	Purchasing lead time on 'Purchase B3 @ factory from Component supplier'	2008-12-27T00:00:00 / 2009-01-01T00:00:00

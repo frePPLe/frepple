@@ -83,13 +83,13 @@ OPERATION	4. make item level 3	2009-01-18T00:00:00	2009-01-25T00:00:00	6
 OPERATION	4. make item level 4	2009-01-01T00:00:00	2009-01-08T00:00:00	24
 OPERATION	4. make item level 4	2009-01-04T00:00:00	2009-01-11T00:00:00	6
 PROBLEM	invalid data	No replenishment defined for '3. raw material @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	1. order 1	Operation '1. make item' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	2. order 1	Operation '2. make item' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	3. order 1	Operation '3. make item' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	3. order 2	Operation '3. make item' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	3. order 2	Buffer '3. raw material @ factory' has material shortage of 2	2009-01-01T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	3. order 3	Buffer '3. raw material @ factory' has material shortage of 3	2009-01-17T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	4. order 1	Operation '4. make item level 1' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	4. order 1	Operation '4. make item level 2' planned in the past	2008-12-18T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	4. order 1	Operation '4. make item level 3' planned in the past	2008-12-18T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	4. order 1	Operation '4. make item level 4' planned in the past	2008-12-18T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	1. order 1	Manufacturing lead time on '1. make item'	2008-12-22T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	2. order 1	Manufacturing lead time on '2. make item'	2008-12-22T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 1	Manufacturing lead time on '3. make item'	2008-12-22T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 2	Manufacturing lead time on '3. make item'	2008-12-27T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 2	Buffer '3. raw material @ factory' has material shortage	2009-01-01T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	3. order 3	Buffer '3. raw material @ factory' has material shortage	2009-01-17T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	4. order 1	Manufacturing lead time on '4. make item level 1'	2008-12-22T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	4. order 1	Manufacturing lead time on '4. make item level 2'	2008-12-18T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	4. order 1	Manufacturing lead time on '4. make item level 3'	2008-12-18T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	4. order 1	Manufacturing lead time on '4. make item level 4'	2008-12-18T00:00:00 / 2009-01-01T00:00:00

@@ -7,6 +7,6 @@ RESOURCE	Resource C	2009-01-10T00:00:00	1	1
 RESOURCE	Resource C	2009-01-12T00:00:00	-1	0
 OPERATION	deliver end item	2009-01-12T00:00:00	2009-01-13T00:00:00	1
 OPERATION	make end item	2009-01-10T00:00:00	2009-01-12T00:00:00	1
-DEMAND CONSTRAINT	order 1	Operation 'deliver end item' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	order 1	Operation 'make end item' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	order 1	Resource 'Resource A' has capacity shortage of 1.5	2009-01-01T00:00:00 / 2009-01-03T00:00:00
+DEMAND CONSTRAINT	order 1	Manufacturing lead time on 'deliver end item'	2008-12-31T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order 1	Manufacturing lead time on 'make end item'	2008-12-30T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order 1	Resource 'Resource A' has capacity shortage	2009-01-01T00:00:00 / 2009-01-03T00:00:00

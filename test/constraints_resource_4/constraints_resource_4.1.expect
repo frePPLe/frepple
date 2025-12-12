@@ -61,5 +61,5 @@ OPERATION	make end item	2009-01-14T00:00:00	2009-01-16T00:00:00	2
 OPERATION	make end item	2009-01-16T00:00:00	2009-01-18T00:00:00	2
 OPERATION	make end item	2009-01-17T00:00:00	2009-01-18T00:00:00	1
 OPERATION	make end item	2009-01-18T00:00:00	2009-01-19T00:00:00	1
-DEMAND CONSTRAINT	order 4	Operation 'buy component' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	order 4	Resource 'Resource' has capacity shortage of 1	2009-01-11T00:00:00 / 2009-01-19T00:00:00
+DEMAND CONSTRAINT	order 4	Manufacturing lead time on 'buy component'	2008-12-31T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order 4	Resource 'Resource' has capacity shortage	2009-01-11T00:00:00 / 2009-01-19T00:00:00

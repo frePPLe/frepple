@@ -56,9 +56,12 @@ import os.path
 import getopt
 import sys
 import glob
+import shutil
 from subprocess import Popen, STDOUT, PIPE
 
+
 debug = False
+fix = False
 
 
 # Directory names for tests and frepple_home
@@ -81,12 +84,15 @@ def usage():
           -e  --exclude:'
              Skip a specific test from the suite.
              This option can be specified multiple times.
+          -f  --fix:'
+             Copy output back to the expect files.
+             Handy for a bulk acceptance of massive test result changes.
         """
     )
 
 
 def runTestSuite():
-    global debug, testdir
+    global debug, testdir, fix
 
     # Frepple uses the time functions from the C-library, which is senstive to
     # timezone settings. In particular the daylight saving time of different
@@ -103,7 +109,7 @@ def runTestSuite():
 
     try:
         opts, args = getopt.getopt(
-            sys.argv[1:], "dvhre:", ["debug", "help", "exclude="]
+            sys.argv[1:], "fdvhre:", ["fix", "debug", "help", "exclude="]
         )
     except getopt.GetoptError:
         usage()
@@ -117,6 +123,8 @@ def runTestSuite():
             # Print help information and exit
             usage()
             sys.exit(1)
+        elif o in ("-f", "--fix"):
+            fix = True
     for i in args:
         tests.extend(glob.glob(i))
 
@@ -257,14 +265,15 @@ class freppleTest(unittest.TestCase):
 
             # Now check the output file, if there is an expected output given
             nr = 1
-            while os.path.isfile(self.subdirectory + "." + str(nr) + ".expect"):
-                if os.path.isfile("output." + str(nr) + ".xml"):
+            while os.path.isfile(f"{self.subdirectory}.{nr}.expect"):
+                expect = f"{self.subdirectory}.{nr}.expect"
+                output = f"output.{nr}.xml"
+                if os.path.isfile(output):
+                    if fix:
+                        shutil.copy(output, expect)
                     if debug:
                         print("Comparing expected and actual output", nr)
-                    if diff(
-                        self.subdirectory + "." + str(nr) + ".expect",
-                        "output." + str(nr) + ".xml",
-                    ):
+                    if diff(expect, output):
                         self.assertFalse(
                             "Difference in output " + str(nr),
                             "Difference in output " + str(nr),

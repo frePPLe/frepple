@@ -142,13 +142,18 @@ class Command(BaseCommand):
             default=False,
             help="Run the planning engine as a daemon process for which we don't need to wait (default = False)",
         )
+        if "freppledb.odoo" in settings.INSTALLED_APPS:
+            parser.add_argument(
+                "--odoo_folder",
+                dest="odoo_folder",
+                default=None,
+                help="A folder where to keep odoo data files",
+            )
 
     def handle(self, **options):
         # Set the server timezone to the TIME_ZONE parameter of djangosettings
-        # unsupported by windows
-        if not os.name == "nt":
-            os.environ["TZ"] = settings.TIME_ZONE
-            time.tzset()
+        os.environ["TZ"] = settings.TIME_ZONE
+        time.tzset()
 
         # Pick up the options
         now = datetime.now()
@@ -241,6 +246,8 @@ class Command(BaseCommand):
                     os.environ[label[0]] = "1"
             if "loadplan" in os.environ:
                 del os.environ["loadplan"]
+            if "odoo_folder" in os.environ:
+                del os.environ["odoo_folder"]
             for i in range(5):
                 v = f"odoo_read_{i}"
                 if v in os.environ:
@@ -271,6 +278,11 @@ class Command(BaseCommand):
                 task.arguments += " --daemon"
             if "cluster" in options:
                 task.arguments += " --cluster=%s" % options["cluster"]
+            if (
+                options.get("odoo_folder", None)
+                and "freppledb.odoo" in settings.INSTALLED_APPS
+            ):
+                task.arguments += f" --odoo_folder={options["odoo_folder"]}"
 
             # Log task
             # Different from the other tasks the frepple engine will write the processid
@@ -318,6 +330,11 @@ class Command(BaseCommand):
                 + os.pathsep
                 + settings.FREPPLE_APP
             )
+            if (
+                options.get("odoo_folder", None)
+                and "freppledb.odoo" in settings.INSTALLED_APPS
+            ):
+                os.environ["ODOO_FOLDER"] = options["odoo_folder"]
             if os.path.isfile(os.path.join(settings.FREPPLE_HOME, "libfrepple.so")):
                 os.environ["LD_LIBRARY_PATH"] = settings.FREPPLE_HOME
             if "DJANGO_SETTINGS_MODULE" not in os.environ:
@@ -325,27 +342,9 @@ class Command(BaseCommand):
             os.environ["PYTHONPATH"] = os.path.normpath(settings.FREPPLE_APP)
 
             if options["background"] or options["daemon"]:
-                # Execute as background process on Windows
-                if os.name == "nt":
-                    startupinfo = subprocess.STARTUPINFO()
-                    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-                    subprocess.Popen(
-                        ["frepple", cmd],
-                        creationflags=0x08000000,
-                        startupinfo=startupinfo,
-                    )
-                else:
-                    # Execute as background process on Linux
-                    subprocess.Popen(["frepple", cmd], preexec_fn=setlimits)
+                subprocess.Popen(["frepple", cmd], preexec_fn=setlimits)
             else:
-                if os.name == "nt":
-                    # Execute in foreground on Windows
-                    startupinfo = subprocess.STARTUPINFO()
-                    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-                    ret = subprocess.call(["frepple", cmd], startupinfo=startupinfo)
-                else:
-                    # Execute in foreground on Linux
-                    ret = subprocess.call(["frepple", cmd], preexec_fn=setlimits)
+                ret = subprocess.call(["frepple", cmd], preexec_fn=setlimits)
                 if ret != 0 and ret != 2:
                     # Return code 0 is a successful run
                     # Return code is 2 is a run cancelled by a user. That's shown in the status field.

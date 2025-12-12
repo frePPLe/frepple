@@ -271,9 +271,9 @@ OPERATION	Ship 4. item from warehouse to factory	2021-02-16T00:00:00	2021-02-19T
 OPERATION	Ship 4. item from warehouse to factory	2021-02-23T00:00:00	2021-02-26T00:00:00	18
 OPERATION	Ship 4. item from warehouse to factory	2021-03-16T00:00:00	2021-03-19T00:00:00	12
 OPERATION	Ship 4. item from warehouse to factory	2021-04-04T00:00:00	2021-04-07T00:00:00	6
-DEMAND CONSTRAINT	0. order 1	Operation 'Purchase 0. item @ factory from 0. supplier' planned in the past	2020-12-25T00:00:00 / 2021-01-01T00:00:00
-DEMAND CONSTRAINT	1. order 1	Operation 'Purchase 1. item @ factory from 1. supplier' planned in the past	2020-12-25T00:00:00 / 2021-01-01T00:00:00
-DEMAND CONSTRAINT	2. order 1	Operation 'Purchase 2. item @ factory from 2. supplier' planned in the past	2020-12-25T00:00:00 / 2021-01-01T00:00:00
-DEMAND CONSTRAINT	3. order 1	Operation 'Purchase 3. item @ factory from 3. supplier' planned in the past	2020-12-25T00:00:00 / 2021-01-01T00:00:00
-DEMAND CONSTRAINT	4. order 1	Operation 'Ship 4. item from warehouse to factory' planned in the past	2020-12-29T00:00:00 / 2021-01-01T00:00:00
-DEMAND CONSTRAINT	5. order 1	Operation 'Purchase 5. item @ factory from 5. supplier' planned in the past	2020-12-25T00:00:00 / 2021-01-01T00:00:00
+DEMAND CONSTRAINT	0. order 1	Purchasing lead time on 'Purchase 0. item @ factory from 0. supplier'	2020-12-25T00:00:00 / 2021-01-01T00:00:00
+DEMAND CONSTRAINT	1. order 1	Purchasing lead time on 'Purchase 1. item @ factory from 1. supplier'	2020-12-25T00:00:00 / 2021-01-01T00:00:00
+DEMAND CONSTRAINT	2. order 1	Purchasing lead time on 'Purchase 2. item @ factory from 2. supplier'	2020-12-25T00:00:00 / 2021-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 1	Purchasing lead time on 'Purchase 3. item @ factory from 3. supplier'	2020-12-25T00:00:00 / 2021-01-01T00:00:00
+DEMAND CONSTRAINT	4. order 1	Distribution lead time on 'Ship 4. item from warehouse to factory'	2020-12-29T00:00:00 / 2021-01-01T00:00:00
+DEMAND CONSTRAINT	5. order 1	Purchasing lead time on 'Purchase 5. item @ factory from 5. supplier'	2020-12-25T00:00:00 / 2021-01-01T00:00:00

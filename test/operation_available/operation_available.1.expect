@@ -163,11 +163,11 @@ OPERATION	6. Make item	2017-01-10T10:00:00	2017-01-23T11:00:00	1
 OPERATION	6. Make item	2017-01-16T10:00:00	2017-01-24T11:00:00	1
 OPERATION	6. Make item	2017-01-16T10:00:00	2017-01-24T11:00:00	1
 PROBLEM	invalid data	No available time found on operation '2. Deliver item 10 days'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	1. order 8	Operation '1. Deliver item 20 days' planned in the past	2008-12-23T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	5. order 5	Resource '5. resource' has capacity shortage of 1	2009-01-05T00:00:00 / 2009-01-07T00:00:00
-DEMAND CONSTRAINT	5. order 6	Operation '5. Make item' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	5. order 6	Resource '5. resource' has capacity shortage of 1	2009-01-01T00:00:00 / 2009-01-14T00:00:00
-DEMAND CONSTRAINT	5. order 7	Operation '5. Make item' planned in the past	2008-12-20T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	5. order 7	Resource '5. resource' has capacity shortage of 1	2009-01-02T00:00:00 / 2009-01-27T00:00:00
-DEMAND CONSTRAINT	5. order 8	Operation '5. Make item' planned in the past	2008-12-21T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	5. order 8	Resource '5. resource' has capacity shortage of 1	2009-01-01T00:00:00 / 2009-01-26T00:00:00
+DEMAND CONSTRAINT	1. order 8	Manufacturing lead time on '1. Deliver item 20 days'	2008-12-23T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	5. order 5	Resource '5. resource' has capacity shortage	2009-01-05T00:00:00 / 2009-01-07T00:00:00
+DEMAND CONSTRAINT	5. order 6	Manufacturing lead time on '5. Make item'	2008-12-31T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	5. order 6	Resource '5. resource' has capacity shortage	2009-01-01T00:00:00 / 2009-01-14T00:00:00
+DEMAND CONSTRAINT	5. order 7	Manufacturing lead time on '5. Make item'	2008-12-20T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	5. order 7	Resource '5. resource' has capacity shortage	2009-01-02T00:00:00 / 2009-01-27T00:00:00
+DEMAND CONSTRAINT	5. order 8	Manufacturing lead time on '5. Make item'	2008-12-21T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	5. order 8	Resource '5. resource' has capacity shortage	2009-01-01T00:00:00 / 2009-01-26T00:00:00

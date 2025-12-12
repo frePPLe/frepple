@@ -118,48 +118,48 @@ OPERATION	Purchase 11. material 3 @ factory from 11. supplier	2023-01-19T00:00:0
 OPERATION	Purchase 11. material 4 @ factory from 11. supplier	2023-01-10T00:00:00	2023-02-19T00:00:00	2
 OPERATION	Purchase 11. material 5 @ X from 10. supplier	2023-01-01T00:00:00	2023-02-20T00:00:00	2
 PROBLEM	precedence	Operation '2. task X2 step 3' starts before preceding operation ends	2023-01-20T00:00:00 / 2023-01-20T00:00:00
-DEMAND CONSTRAINT	10. constrained material and capacity	Operation '10. constrained material and capacity' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	10. constrained material and capacity	Operation '10. task 1' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	10. constrained material and capacity	Operation '10. task 2' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	10. constrained material and capacity	Operation '10. task 4c' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	10. constrained material and capacity	Operation '10. task 4b' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	10. constrained material and capacity	Operation 'Purchase 10. material 3 @ factory from 10. supplier' planned in the past	2022-12-02T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	10. constrained material and capacity	Operation 'Purchase 10. material 4 @ factory from 10. supplier' planned in the past	2022-12-23T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	11. constrained material and capacity	Operation '11. constrained material and capacity' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	11. constrained material and capacity	Operation '11. task 1' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	11. constrained material and capacity	Operation '11. task 2' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	11. constrained material and capacity	Operation '11. task 4c' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	11. constrained material and capacity	Operation '11. task 4b' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	11. constrained material and capacity	Operation 'Purchase 11. material 3 @ factory from 11. supplier' planned in the past	2022-12-02T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	11. constrained material and capacity	Operation 'Purchase 11. material 4 @ factory from 11. supplier' planned in the past	2022-12-23T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	11. constrained material and capacity	Resource '11. Resource' has capacity shortage of 1	2023-02-11T00:00:00 / 2023-02-12T00:00:00
-DEMAND CONSTRAINT	2. project	Operation '2. project X' planned in the past	2022-12-22T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	2. project	Operation '2. task X1' planned in the past	2022-12-27T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	2. project	Operation '2. task X2 step 3' planned in the past	2022-12-30T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	2. project	Operation '2. task X2 step 2' planned in the past	2022-12-25T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	2. project	Operation '2. task X2 step 1' planned in the past	2022-12-27T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	3. constrained project	Operation '3. project X' planned in the past	2022-12-22T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	3. constrained project	Operation '3. task X1' planned in the past	2022-12-17T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	3. constrained project	Operation '3. task X2 step 2' planned in the past	2022-12-18T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	3. constrained project	Operation '3. task X2 step 1' planned in the past	2022-12-17T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	4. converging	Operation '4. project X' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	4. converging	Operation '4. task X1' planned in the past	2022-12-17T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	4. converging	Operation '4. task X3' planned in the past	2022-12-27T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	5. converging	Operation '5. project X' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	5. converging	Operation '5. task X1' planned in the past	2022-12-25T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	5. converging	Operation '5. task X2' planned in the past	2022-12-24T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	5. converging	Operation '5. task X3' planned in the past	2022-12-27T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	7. routing	Operation '7. task 1' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	7. routing	Operation '7. task 2' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	7. routing	Operation '7. task 4c' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	7. routing	Operation '7. task 4b' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	7. routing	Operation '7. task 5' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	8. with wip	Operation '8. project X' planned in the past	2022-12-22T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	8. with wip	Operation '8. task X1' planned in the past	2022-12-27T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	8. with wip	Operation '8. task X2 step 3' planned in the past	2022-12-30T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	8. with wip	Operation '8. task X2 step 2' planned in the past	2022-12-25T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	10. constrained material and capacity	Manufacturing lead time on '10. constrained material and capacity'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	10. constrained material and capacity	Manufacturing lead time on '10. task 1'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	10. constrained material and capacity	Manufacturing lead time on '10. task 2'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	10. constrained material and capacity	Manufacturing lead time on '10. task 4c'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	10. constrained material and capacity	Manufacturing lead time on '10. task 4b'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	10. constrained material and capacity	Purchasing lead time on 'Purchase 10. material 3 @ factory from 10. supplier'	2022-12-02T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	10. constrained material and capacity	Purchasing lead time on 'Purchase 10. material 4 @ factory from 10. supplier'	2022-12-23T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	11. constrained material and capacity	Manufacturing lead time on '11. constrained material and capacity'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	11. constrained material and capacity	Manufacturing lead time on '11. task 1'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	11. constrained material and capacity	Manufacturing lead time on '11. task 2'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	11. constrained material and capacity	Manufacturing lead time on '11. task 4c'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	11. constrained material and capacity	Manufacturing lead time on '11. task 4b'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	11. constrained material and capacity	Purchasing lead time on 'Purchase 11. material 3 @ factory from 11. supplier'	2022-12-02T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	11. constrained material and capacity	Purchasing lead time on 'Purchase 11. material 4 @ factory from 11. supplier'	2022-12-23T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	11. constrained material and capacity	Resource '11. Resource' has capacity shortage	2023-02-11T00:00:00 / 2023-02-12T00:00:00
+DEMAND CONSTRAINT	2. project	Manufacturing lead time on '2. project X'	2022-12-22T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	2. project	Manufacturing lead time on '2. task X1'	2022-12-27T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	2. project	Manufacturing lead time on '2. task X2 step 3'	2022-12-30T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	2. project	Manufacturing lead time on '2. task X2 step 2'	2022-12-25T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	2. project	Manufacturing lead time on '2. task X2 step 1'	2022-12-27T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	3. constrained project	Manufacturing lead time on '3. project X'	2022-12-22T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	3. constrained project	Manufacturing lead time on '3. task X1'	2022-12-17T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	3. constrained project	Manufacturing lead time on '3. task X2 step 2'	2022-12-18T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	3. constrained project	Manufacturing lead time on '3. task X2 step 1'	2022-12-17T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	4. converging	Manufacturing lead time on '4. project X'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	4. converging	Manufacturing lead time on '4. task X1'	2022-12-17T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	4. converging	Manufacturing lead time on '4. task X3'	2022-12-27T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	5. converging	Manufacturing lead time on '5. project X'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	5. converging	Manufacturing lead time on '5. task X1'	2022-12-25T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	5. converging	Manufacturing lead time on '5. task X2'	2022-12-24T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	5. converging	Manufacturing lead time on '5. task X3'	2022-12-27T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	7. routing	Manufacturing lead time on '7. task 1'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	7. routing	Manufacturing lead time on '7. task 2'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	7. routing	Manufacturing lead time on '7. task 4c'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	7. routing	Manufacturing lead time on '7. task 4b'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	7. routing	Manufacturing lead time on '7. task 5'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	8. with wip	Manufacturing lead time on '8. project X'	2022-12-22T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	8. with wip	Manufacturing lead time on '8. task X1'	2022-12-27T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	8. with wip	Manufacturing lead time on '8. task X2 step 3'	2022-12-30T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	8. with wip	Manufacturing lead time on '8. task X2 step 2'	2022-12-25T00:00:00 / 2023-01-01T00:00:00
 DEMAND CONSTRAINT	8. with wip	Operation  '8. task X2 step 1' awaits confirmed supply	2023-03-05T00:00:00 / 2023-03-14T00:00:00
-DEMAND CONSTRAINT	9. with quantity-per and wip	Operation '9. project X' planned in the past	2022-12-30T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	9. with quantity-per and wip	Operation '9. task X1' planned in the past	2022-12-30T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	9. with quantity-per and wip	Operation '9. task X2 step 2' planned in the past	2022-12-29T00:00:00 / 2023-01-01T00:00:00
-DEMAND CONSTRAINT	9. with quantity-per and wip	Operation '9. task X2 step 1' planned in the past	2022-12-29T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	9. with quantity-per and wip	Manufacturing lead time on '9. project X'	2022-12-30T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	9. with quantity-per and wip	Manufacturing lead time on '9. task X1'	2022-12-30T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	9. with quantity-per and wip	Manufacturing lead time on '9. task X2 step 2'	2022-12-29T00:00:00 / 2023-01-01T00:00:00
+DEMAND CONSTRAINT	9. with quantity-per and wip	Manufacturing lead time on '9. task X2 step 1'	2022-12-29T00:00:00 / 2023-01-01T00:00:00

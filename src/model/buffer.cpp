@@ -907,7 +907,7 @@ void Buffer::buildProducingOperation() {
                 this,
                 string("Excessive replenishments defined for '") + getName() +
                     "'",
-                "material", Date::infinitePast, Date::infiniteFuture, 1);
+                "material", Date::infinitePast, Date::infiniteFuture);
             return;
           } else {
             subop->setOwner(producing_operation);
@@ -1026,7 +1026,7 @@ void Buffer::buildProducingOperation() {
                 this,
                 string("Excessive replenishments defined for '") + getName() +
                     "'",
-                "material", Date::infinitePast, Date::infiniteFuture, 1);
+                "material", Date::infinitePast, Date::infiniteFuture);
             return;
           } else {
             subop->setOwner(producing_operation);
@@ -1135,7 +1135,7 @@ void Buffer::buildProducingOperation() {
                 this,
                 string("Excessive replenishments defined for '") + getName() +
                     "'",
-                "material", Date::infinitePast, Date::infiniteFuture, 1);
+                "material", Date::infinitePast, Date::infiniteFuture);
             return;
           } else {
             subop->setOwner(producing_operation);
@@ -1197,7 +1197,7 @@ void Buffer::buildProducingOperation() {
     // No producer could be generated. No replenishment will be possible.
     new ProblemInvalidData(
         this, string("No replenishment defined for '") + getName() + "'",
-        "material", Date::infinitePast, Date::infiniteFuture, 1);
+        "material", Date::infinitePast, Date::infiniteFuture);
     producing_operation = nullptr;
   } else {
     // Remove eventual existing problem on the buffer

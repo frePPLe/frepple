@@ -130,9 +130,9 @@ OPERATION	Purchase ink @ factory 1	2009-01-01T00:00:00	2009-01-10T00:00:00	50
 OPERATION	Purchase ink @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	100	confirmed
 OPERATION	Purchase ink @ factory 1	2009-01-02T10:00:00	2009-01-13T10:00:00	50
 OPERATION	Purchase thread @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	500	confirmed
-DEMAND CONSTRAINT	Demand 1	Operation 'Deliver product from factory 1 - 1 day' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	Demand 1	Operation 'Pack product @ factory 1' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	Demand 1	Operation 'Make fabric @ factory 1' planned in the past	2008-12-27T20:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	Demand 1	Resource 'pack in factory 1' has capacity shortage of 1	2009-01-02T01:00:00 / 2009-01-05T01:00:00
-DEMAND CONSTRAINT	Demand 1	Resource 'weave in factory 1' has capacity shortage of 1	2009-01-02T22:00:00 / 2009-01-07T01:00:00
-DEMAND CONSTRAINT	Demand 1	Operation 'Purchase ink @ factory 1' planned in the past	2008-12-29T01:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	Demand 1	Manufacturing lead time on 'Deliver product from factory 1 - 1 day'	2008-12-31T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	Demand 1	Manufacturing lead time on 'Pack product @ factory 1'	2008-12-31T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	Demand 1	Manufacturing lead time on 'Make fabric @ factory 1'	2008-12-27T20:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	Demand 1	Resource 'pack in factory 1' has capacity shortage	2009-01-02T01:00:00 / 2009-01-05T01:00:00
+DEMAND CONSTRAINT	Demand 1	Resource 'weave in factory 1' has capacity shortage	2009-01-02T22:00:00 / 2009-01-07T01:00:00
+DEMAND CONSTRAINT	Demand 1	Manufacturing lead time on 'Purchase ink @ factory 1'	2008-12-29T01:00:00 / 2009-01-01T00:00:00

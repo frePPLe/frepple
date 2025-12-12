@@ -89,7 +89,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
       if (!already_logged)
         data->constraints->push(new ProblemInvalidData(
             const_cast<Buffer*>(b), o.str(), "material", Date::infinitePast,
-            Date::infiniteFuture, data->state->q_qty, false));
+            Date::infiniteFuture, false));
     }
     if (getLogLevel() > 1) {
       logger << indentlevel << "Warning: " << o.str() << endl;
@@ -284,8 +284,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 // Existing supply covers the complete requirement
                 if (data->logConstraints && data->constraints)
                   data->constraints->push(ProblemAwaitSupply::metadata, b,
-                                          theDate, scanner->getDate(),
-                                          theDelta);
+                                          theDate, scanner->getDate());
                 if (getLogLevel() > 1 && firstmsg1) {
                   logger
                       << indentlevel
@@ -423,8 +422,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                   !tmp->getOperation()->getName().starts_with("Correction")) {
                 if (firstmsg3 && data->logConstraints && data->constraints)
                   data->constraints->push(ProblemAwaitSupply::metadata, b,
-                                          theDate, scanner->getDate(),
-                                          theDelta);
+                                          theDate, scanner->getDate());
                 if (getLogLevel() > 1 && firstmsg3) {
                   logger << indentlevel
                          << "Refuse to create extra supply because confirmed "
@@ -712,7 +710,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
     if (!b->getProducingOperation() && data->logConstraints &&
         shortage > ROUNDING_ERROR && data->constraints)
       data->constraints->push(ProblemMaterialShortage::metadata, b,
-                              requested_date, Date::infiniteFuture, shortage);
+                              requested_date, Date::infiniteFuture);
   } else {
     // Enough inventory or supply available, or not material constrained.
     // In case of a plan that is not material constrained, the buffer tries to

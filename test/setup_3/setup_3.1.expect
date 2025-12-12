@@ -1,4 +1,5 @@
-BUFFER	black product @ factory	2009-01-05T00:00:00	-7	-7
+BUFFER	black product @ factory	2009-01-05T00:00:00	7	7
+BUFFER	black product @ factory	2009-01-05T00:00:00	-7	0
 BUFFER	colorless product @ factory	2009-01-05T00:00:00	3	3
 BUFFER	colorless product @ factory	2009-01-05T00:00:00	-3	0
 BUFFER	green product @ factory	2009-02-10T00:00:00	3	3
@@ -16,12 +17,14 @@ RESOURCE	Painting line A	2009-02-07T00:00:00	1	1
 RESOURCE	Painting line A	2009-02-10T00:00:00	-1	0
 RESOURCE	Painting line A	2009-02-24T00:00:00	1	1
 RESOURCE	Painting line A	2009-02-28T00:00:00	-1	0
+RESOURCE	Painting line B	2009-01-02T00:00:00	1	1
+RESOURCE	Painting line B	2009-01-05T00:00:00	-1	0
 RESOURCE	Painting line B	2009-01-29T00:00:00	1	1
 RESOURCE	Painting line B	2009-02-01T00:00:00	-1	0
-RESOURCE	Painting line C	2009-01-02T00:00:00	1	1
+RESOURCE	Painting line C	2008-12-29T00:00:00	1	1
 RESOURCE	Painting line C	2009-01-05T00:00:00	-1	0
+OPERATION	make black product	2008-12-29T00:00:00	2009-01-05T00:00:00	7
 OPERATION	make colorless product	2009-01-02T00:00:00	2009-01-05T00:00:00	3
 OPERATION	make green product	2009-02-07T00:00:00	2009-02-10T00:00:00	3
 OPERATION	make red product	2009-02-24T00:00:00	2009-02-28T00:00:00	3
 OPERATION	make yellow product	2009-01-29T00:00:00	2009-02-01T00:00:00	3
-PROBLEM	WRONG RESULT!!!! material shortage	Buffer 'black product @ factory' has material shortage of 7	2009-01-05T00:00:00 / 2030-12-31T00:00:00

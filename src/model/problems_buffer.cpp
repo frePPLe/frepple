@@ -50,7 +50,7 @@ void Buffer::updateProblems() {
     //   curMax = iter->getMax();
 
     // Only consider the last flowplan for a certain date
-    const TimeLine<FlowPlan>::Event *f = &*(iter++);
+    const TimeLine<FlowPlan>::Event* f = &*(iter++);
     if (iter != flowplans.end() && iter->getDate() == f->getDate()) continue;
 
     // Check against minimum target
@@ -84,7 +84,8 @@ void Buffer::updateProblems() {
 
 string ProblemMaterialShortage::getDescription() const {
   ostringstream ch;
-  ch << "Buffer '" << getBuffer() << "' has material shortage of " << qty;
+  ch << "Buffer '" << getBuffer() << "' has material shortage";
+  if (qty) ch << " of " << qty;
   return ch.str();
 }
 

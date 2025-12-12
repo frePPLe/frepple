@@ -80,19 +80,19 @@ PROBLEM	invalid data	No replenishment defined for 'buffer D @ factory'	1971-01-0
 PROBLEM	invalid data	No replenishment defined for 'buffer E @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'buffer F @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'buffer G @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order A	Buffer 'buffer A @ factory' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order B	Buffer 'buffer B @ factory' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order C	Buffer 'buffer C @ factory' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order D	Buffer 'buffer D @ factory' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order E	Buffer 'buffer E @ factory' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order F	Buffer 'buffer F @ factory' has material shortage of 5	2009-01-05T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order G	Buffer 'buffer G @ factory' has material shortage of 15	2009-01-05T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order H1	Operation 'Purchase item H1 @ factory from Supplier for H' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	order H2	Operation 'Purchase item H2 @ factory from Supplier for H' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	order H3	Operation 'Purchase item H3 @ factory from Supplier for H' planned in the past	2008-12-06T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order A	Buffer 'buffer A @ factory' has material shortage	2009-01-05T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order B	Buffer 'buffer B @ factory' has material shortage	2009-01-05T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order C	Buffer 'buffer C @ factory' has material shortage	2009-01-05T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order D	Buffer 'buffer D @ factory' has material shortage	2009-01-05T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order E	Buffer 'buffer E @ factory' has material shortage	2009-01-05T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order F	Buffer 'buffer F @ factory' has material shortage	2009-01-05T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order G	Buffer 'buffer G @ factory' has material shortage	2009-01-05T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order H1	Purchasing lead time on 'Purchase item H1 @ factory from Supplier for H'	2008-12-22T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order H2	Purchasing lead time on 'Purchase item H2 @ factory from Supplier for H'	2008-12-31T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order H3	Purchasing lead time on 'Purchase item H3 @ factory from Supplier for H'	2008-12-06T00:00:00 / 2009-01-01T00:00:00
 DEMAND CONSTRAINT	order I1	Demand 'order I1' is synchronized with order I3	2009-01-05T00:00:00 / 2009-01-31T00:00:00
 DEMAND CONSTRAINT	order I2	Demand 'order I2' is synchronized with order I3	2009-01-06T00:00:00 / 2009-01-31T00:00:00
-DEMAND CONSTRAINT	order I3	Operation 'Purchase item I3 @ factory from Supplier for I' planned in the past	2008-12-16T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	order J1	Operation 'Purchase item J1 @ factory from Supplier for J' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	order J2	Operation 'Purchase item J2 @ factory from Supplier for J' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	order J3	Operation 'Purchase item J3 @ factory from Supplier for J' planned in the past	2008-12-06T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order I3	Purchasing lead time on 'Purchase item I3 @ factory from Supplier for I'	2008-12-16T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order J1	Purchasing lead time on 'Purchase item J1 @ factory from Supplier for J'	2008-12-22T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order J2	Purchasing lead time on 'Purchase item J2 @ factory from Supplier for J'	2008-12-30T00:00:00 / 2009-01-01T00:00:00
+DEMAND CONSTRAINT	order J3	Purchasing lead time on 'Purchase item J3 @ factory from Supplier for J'	2008-12-06T00:00:00 / 2009-01-01T00:00:00

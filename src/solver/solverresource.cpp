@@ -336,7 +336,8 @@ void SolverCreate::solve(const Resource* res, void* v) {
   // Maintain the constraint list
   if (data->state->a_qty == 0.0 && data->logConstraints && data->constraints)
     data->constraints->push(ProblemCapacityOverload::metadata, res,
-                            currentOpplan.start, currentOpplan.end, orig_q_qty);
+                            currentOpplan.start, currentOpplan.end, 0.0,
+                            data->state->q_operationplan->getOperation());
 
   // Message
   if (getLogLevel() > 1) {
@@ -911,8 +912,8 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
   // Maintain the constraint list
   if (data->state->a_qty == 0.0 && data->logConstraints && data->constraints)
     data->constraints->push(ProblemCapacityOverload::metadata, res,
-                            originalOpplan.start, originalOpplan.end,
-                            orig_q_qty);
+                            originalOpplan.start, originalOpplan.end, 0.0,
+                            opplan->getOperation());
 
   if (data->state->a_qty < orig_q_qty - ROUNDING_ERROR)
     data->accept_partial_reply = true;

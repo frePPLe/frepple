@@ -62,13 +62,13 @@ OPERATION	Purchase Component E @ warehouse from Supplier of component E	2015-01-
 OPERATION	Purchase Component E @ warehouse from Supplier of component E	2015-01-16T00:00:00	2015-02-06T00:00:00	100
 PROBLEM	invalid data	No replenishment defined for 'Component D @ warehouse'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	Purchase order 'PO #1' on unauthorized supplier 	1971-01-01T00:00:00 / 2015-06-06T00:00:00
-DEMAND CONSTRAINT	order 1 for item A	Operation 'Purchase Component A @ warehouse from Supplier of components A and B' planned in the past	2014-12-18T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	order 1 for item B	Operation 'Purchase Component B @ warehouse from Supplier of component B' planned in the past	2014-12-18T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	order 1 for item C	Operation 'Purchase Component C @ warehouse from Supplier of component C' planned in the past	2014-12-11T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	order 1 for item D	Buffer 'Component D @ warehouse' has material shortage of 90	2015-01-01T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order 1 for item E	Operation 'Purchase Component E @ warehouse from Supplier of component E' planned in the past	2014-12-06T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	order 2 for item D	Buffer 'Component D @ warehouse' has material shortage of 100	2015-02-01T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order 2 for item E	Operation 'Purchase Component E @ warehouse from Supplier of component E' planned in the past	2014-12-10T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	order 3 for item E	Operation 'Purchase Component E @ warehouse from Supplier of component E' planned in the past	2014-12-14T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	order 4 for item E	Operation 'Purchase Component E @ warehouse from Supplier of component E' planned in the past	2014-12-18T00:00:00 / 2015-01-01T00:00:00
-DEMAND CONSTRAINT	order 8 for item E	Operation 'Purchase Component E @ warehouse from Supplier of component E' planned in the past	2014-12-22T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 for item A	Purchasing lead time on 'Purchase Component A @ warehouse from Supplier of components A and B'	2014-12-18T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 for item B	Purchasing lead time on 'Purchase Component B @ warehouse from Supplier of component B'	2014-12-18T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 for item C	Purchasing lead time on 'Purchase Component C @ warehouse from Supplier of component C'	2014-12-11T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 1 for item D	Buffer 'Component D @ warehouse' has material shortage	2015-01-01T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order 1 for item E	Purchasing lead time on 'Purchase Component E @ warehouse from Supplier of component E'	2014-12-06T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 2 for item D	Buffer 'Component D @ warehouse' has material shortage	2015-02-01T00:00:00 / 2030-12-31T00:00:00
+DEMAND CONSTRAINT	order 2 for item E	Purchasing lead time on 'Purchase Component E @ warehouse from Supplier of component E'	2014-12-10T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 3 for item E	Purchasing lead time on 'Purchase Component E @ warehouse from Supplier of component E'	2014-12-14T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 4 for item E	Purchasing lead time on 'Purchase Component E @ warehouse from Supplier of component E'	2014-12-18T00:00:00 / 2015-01-01T00:00:00
+DEMAND CONSTRAINT	order 8 for item E	Purchasing lead time on 'Purchase Component E @ warehouse from Supplier of component E'	2014-12-22T00:00:00 / 2015-01-01T00:00:00

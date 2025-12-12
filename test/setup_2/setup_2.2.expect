@@ -1,5 +1,5 @@
-BUFFER	black product @ factory	2009-01-08T00:00:00	7	7
-BUFFER	black product @ factory	2009-01-08T00:00:00	-7	0
+BUFFER	black product @ factory	2009-01-09T00:00:00	7	7
+BUFFER	black product @ factory	2009-01-09T00:00:00	-7	0
 BUFFER	colorless product @ factory	2009-01-05T00:00:00	3	3
 BUFFER	colorless product @ factory	2009-01-05T00:00:00	-3	0
 BUFFER	green product @ factory	2009-02-10T00:00:00	3	3
@@ -8,25 +8,24 @@ BUFFER	red product @ factory	2009-02-28T00:00:00	3	3
 BUFFER	red product @ factory	2009-02-28T00:00:00	-3	0
 BUFFER	yellow product @ factory	2009-02-01T00:00:00	3	3
 BUFFER	yellow product @ factory	2009-02-01T00:00:00	-3	0
-DEMAND	order 1 black	2009-01-08T00:00:00	7
+DEMAND	order 1 black	2009-01-09T00:00:00	7	later than 2009-01-05T00:00:00
 DEMAND	order 1 colorless	2009-01-05T00:00:00	3
 DEMAND	order 1 red	2009-02-28T00:00:00	3
 DEMAND	order 1 yellow	2009-02-01T00:00:00	3
 DEMAND	order 2 green	2009-02-10T00:00:00	3
-RESOURCE	Painting line A	2009-02-07T00:00:00	1	1
-RESOURCE	Painting line A	2009-02-10T00:00:00	-1	0
-RESOURCE	Painting line A	2009-02-24T00:00:00	1	1
-RESOURCE	Painting line A	2009-02-28T00:00:00	-1	0
-RESOURCE	Painting line B	2009-01-02T00:00:00	1	1
-RESOURCE	Painting line B	2009-01-05T00:00:00	-1	0
-RESOURCE	Painting line B	2009-01-29T00:00:00	1	1
-RESOURCE	Painting line B	2009-02-01T00:00:00	-1	0
-RESOURCE	Painting line C	2009-01-01T00:00:00	1	1
-RESOURCE	Painting line C	2009-01-08T00:00:00	-1	0
-OPERATION	make black product	2009-01-01T00:00:00	2009-01-08T00:00:00	7
+RESOURCE	Painting line A	2009-01-02T00:00:00	1	1
+RESOURCE	Painting line A	2009-01-05T00:00:00	-1	0
+RESOURCE	Painting line A	2009-01-28T00:00:00	1	1
+RESOURCE	Painting line A	2009-02-01T00:00:00	-1	0
+RESOURCE	Painting line B	2009-02-05T00:00:00	1	1
+RESOURCE	Painting line B	2009-02-10T00:00:00	-1	0
+RESOURCE	Painting line B	2009-02-24T00:00:00	1	1
+RESOURCE	Painting line B	2009-02-28T00:00:00	-1	0
+RESOURCE	Painting line C	2009-01-02T00:00:00	1	1
+RESOURCE	Painting line C	2009-01-09T00:00:00	-1	0
+OPERATION	make black product	2009-01-02T00:00:00	2009-01-09T00:00:00	7
 OPERATION	make colorless product	2009-01-02T00:00:00	2009-01-05T00:00:00	3
-OPERATION	make green product	2009-02-07T00:00:00	2009-02-10T00:00:00	3
+OPERATION	make green product	2009-02-05T00:00:00	2009-02-10T00:00:00	3
 OPERATION	make red product	2009-02-24T00:00:00	2009-02-28T00:00:00	3
-OPERATION	make yellow product	2009-01-29T00:00:00	2009-02-01T00:00:00	3
-PROBLEM	late	7 units of demand 'order 1 black' planned up to 3.0 days after its due date	2009-01-05T00:00:00 / 2009-01-08T00:00:00
-DEMAND CONSTRAINT	order 1 black	Operation 'make black product' planned in the past	2008-12-29T00:00:00 / 2009-01-05T00:00:00	
+OPERATION	make yellow product	2009-01-28T00:00:00	2009-02-01T00:00:00	3
+DEMAND CONSTRAINT	order 1 black	Manufacturing lead time on 'make black product'	2008-12-28T00:00:00 / 2009-01-01T00:00:00

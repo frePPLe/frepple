@@ -33,6 +33,4 @@ PROBLEM	material shortage	Buffer 'item B @ WH3' has material shortage of 10	2016
 PROBLEM	material shortage	Buffer 'item B @ WH4' has material shortage of 10	2016-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'item B @ WH6' has material shortage of 10	2016-01-01T00:00:00 / 2030-12-31T00:00:00
 DEMAND CONSTRAINT	order B1	Demand is overdue	2015-12-01T00:00:00 / 2016-01-01T00:00:00
-DEMAND CONSTRAINT	order B1	Operation 'Ship item B @ WH4' planned in the past	2015-12-01T00:00:00 / 2016-01-01T00:00:00
-DEMAND CONSTRAINT	order B1	Operation 'Ship item B from DC2 to WH4' planned in the past	2015-12-22T00:00:00 / 2016-01-01T00:00:00
-DEMAND CONSTRAINT	order B1	Operation 'Ship item B @ WH2' planned in the past	2015-12-01T00:00:00 / 2016-01-01T00:00:00
+DEMAND CONSTRAINT	order B1	Distribution lead time on 'Ship item B from DC2 to WH4'	2015-12-22T00:00:00 / 2016-01-01T00:00:00

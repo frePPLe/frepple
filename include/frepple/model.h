@@ -773,7 +773,8 @@ class Problem::List {
   void clear(Problem* = nullptr);
 
   /* Add a problem to the list. */
-  Problem* push(const MetaClass*, const Object*, Date, Date, double);
+  Problem* push(const MetaClass*, const Object*, Date, Date, double = 0.0,
+                Operation* = nullptr);
 
   /* Add a problem to the list. */
   void push(Problem* p);
@@ -808,6 +809,9 @@ class Problem::List {
 
   /* Move the problems from this list to a new owner. */
   void transfer(HasProblems*);
+
+  /* Postprocessing of a constraint list to keep it user-friendly. */
+  void cleanConstraints(Demand*);
 
  private:
   /* Pointer to the head of the list. */
@@ -9023,68 +9027,6 @@ class ProblemBeforeCurrent : public Problem {
   Date end;
 };
 
-/* A problem of this class is created when an operationplan is being
- * planned before its fence date, i.e. it starts 1) before the "current"
- * date of the plan plus the release fence of the operation and 2) after the
- * current date of the plan.
- */
-class ProblemBeforeFence : public Problem {
- public:
-  string getDescription() const {
-    ostringstream ch;
-    ch << "Operation '"
-       << (oper ? oper
-                : static_cast<OperationPlan*>(getOwner())->getOperation())
-       << "' planned before fence";
-    return ch.str();
-  }
-
-  bool isFeasible() const { return true; }
-
-  explicit ProblemBeforeFence(OperationPlan* o, bool add = true) : Problem(o) {
-    if (add) addProblem();
-  }
-
-  explicit ProblemBeforeFence(Operation* o, Date st, Date nd, double q)
-      : oper(o), start(st), end(nd) {}
-
-  ~ProblemBeforeFence() { removeProblem(); }
-
-  string getEntity() const { return "operation"; }
-
-  Object* getOwner() const {
-    return oper ? static_cast<Object*>(oper)
-                : static_cast<OperationPlan*>(owner);
-  }
-
-  const DateRange getDates() const {
-    if (oper) return DateRange(start, end);
-    OperationPlan* o = static_cast<OperationPlan*>(owner);
-    auto tmp = o->getOperation()->getFence(o);
-    if (o->getEnd() > tmp)
-      return DateRange(o->getStart(), tmp);
-    else
-      return o->getDates();
-  }
-
-  void update(Operation* o, Date st, Date nd, double q) {
-    oper = o;
-    start = st;
-    end = nd;
-  }
-
-  /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
-
-  /* Storing metadata on this class. */
-  static const MetaClass* metadata;
-
- private:
-  Operation* oper = nullptr;
-  Date start;
-  Date end;
-};
-
 /* An instance of this class is used to flag constraints where a
  * replenishment isn't created and we wait for later supply instead.
  */
@@ -9102,11 +9044,11 @@ class ProblemAwaitSupply : public Problem {
 
   bool isFeasible() const { return true; }
 
-  explicit ProblemAwaitSupply(Buffer* b, Date st, Date nd, double q)
-      : Problem(b), dates(st, nd), qty(q), for_buffer(true) {}
+  explicit ProblemAwaitSupply(Buffer* b, Date st, Date nd)
+      : Problem(b), dates(st, nd), for_buffer(true) {}
 
-  explicit ProblemAwaitSupply(Operation* b, Date st, Date nd, double q)
-      : Problem(b), dates(st, nd), qty(q), for_buffer(false) {}
+  explicit ProblemAwaitSupply(Operation* b, Date st, Date nd)
+      : Problem(b), dates(st, nd), for_buffer(false) {}
 
   ~ProblemAwaitSupply() { removeProblem(); }
 
@@ -9129,7 +9071,6 @@ class ProblemAwaitSupply : public Problem {
 
  private:
   DateRange dates;
-  double qty = 0.0;
   bool for_buffer;
 };
 
@@ -9148,7 +9089,7 @@ class ProblemSyncDemand : public Problem {
 
   bool isFeasible() const { return true; }
 
-  explicit ProblemSyncDemand(Demand* b, Date st, Date nd, double q)
+  explicit ProblemSyncDemand(Demand* b, Date st, Date nd)
       : synced_with(b), dates(st, nd) {}
 
   explicit ProblemSyncDemand(Demand* b, Demand* s)
@@ -9223,8 +9164,8 @@ class ProblemInvalidData : public Problem {
   bool isFeasible() const { return false; }
 
   explicit ProblemInvalidData(HasProblems* o, const string& d, const string& e,
-                              Date st, Date nd, double q, bool add = true)
-      : Problem(o), description(d), entity(e), dates(st, nd), qty(q) {
+                              Date st, Date nd, bool add = true)
+      : Problem(o), description(d), entity(e), dates(st, nd) {
     if (add) addProblem();
   }
 
@@ -9256,7 +9197,6 @@ class ProblemInvalidData : public Problem {
   string description;
   string entity;
   DateRange dates;
-  double qty;
 };
 
 /* A problem of this class is created when a resource is being
@@ -9273,6 +9213,8 @@ class ProblemCapacityOverload : public Problem {
       : Problem(r), qty(q), dr(st, nd) {
     if (add) addProblem();
   }
+
+  void setOperation(Operation* o) { oper = o; }
 
   ~ProblemCapacityOverload() { removeProblem(); }
 
@@ -9292,10 +9234,12 @@ class ProblemCapacityOverload : public Problem {
 
  private:
   /* Overload quantity. */
-  double qty;
+  double qty = 0.0;
 
   /* The daterange of the problem. */
   DateRange dr;
+
+  Operation* oper = nullptr;
 };
 
 /* A problem of this class is created when a buffer is having a
@@ -9341,8 +9285,8 @@ class ConstraintPurchasingLeadTime : public Problem {
  public:
   string getDescription() const {
     ostringstream ch;
-    ch << "Operation '" << static_cast<Operation*>(getOwner())
-       << "' planned before fence";
+    ch << "Purchasing lead time on '" << static_cast<Operation*>(getOwner())
+       << "'";
     return ch.str();
   }
 
@@ -9380,45 +9324,26 @@ class ConstraintManufacturingLeadTime : public Problem {
  public:
   string getDescription() const {
     ostringstream ch;
-    ch << "Operation '"
-       << (oper ? oper
-                : static_cast<OperationPlan*>(getOwner())->getOperation())
-       << "' planned before fence";
+    ch << "Manufacturing lead time on '" << static_cast<Operation*>(getOwner())
+       << "'";
     return ch.str();
   }
 
   bool isFeasible() const { return true; }
 
-  explicit ConstraintManufacturingLeadTime(OperationPlan* o, bool add = true)
-      : Problem(o) {
-    if (add) addProblem();
-  }
-
-  explicit ConstraintManufacturingLeadTime(Operation* o, Date st, Date nd,
-                                           double q)
-      : oper(o), start(st), end(nd) {}
+  explicit ConstraintManufacturingLeadTime(Operation* o, Date st, Date nd)
+      : Problem(o), start(st), end(nd) {}
 
   ~ConstraintManufacturingLeadTime() { removeProblem(); }
 
   string getEntity() const { return "operation"; }
 
-  Object* getOwner() const {
-    return oper ? static_cast<Object*>(oper)
-                : static_cast<OperationPlan*>(owner);
-  }
+  Object* getOwner() const { return static_cast<Operation*>(owner); }
 
-  const DateRange getDates() const {
-    if (oper) return DateRange(start, end);
-    OperationPlan* o = static_cast<OperationPlan*>(owner);
-    auto tmp = o->getOperation()->getFence(o);
-    if (o->getEnd() > tmp)
-      return DateRange(o->getStart(), tmp);
-    else
-      return o->getDates();
-  }
+  const DateRange getDates() const { return DateRange(start, end); }
 
   void update(Operation* o, Date st, Date nd, double q) {
-    oper = o;
+    owner = o;
     start = st;
     end = nd;
   }
@@ -9430,7 +9355,6 @@ class ConstraintManufacturingLeadTime : public Problem {
   static const MetaClass* metadata;
 
  private:
-  Operation* oper = nullptr;
   Date start;
   Date end;
 };
@@ -9439,45 +9363,26 @@ class ConstraintDistributionLeadTime : public Problem {
  public:
   string getDescription() const {
     ostringstream ch;
-    ch << "Operation '"
-       << (oper ? oper
-                : static_cast<OperationPlan*>(getOwner())->getOperation())
-       << "' planned before fence";
+    ch << "Distribution lead time on '" << static_cast<Operation*>(getOwner())
+       << "'";
     return ch.str();
   }
 
   bool isFeasible() const { return true; }
 
-  explicit ConstraintDistributionLeadTime(OperationPlan* o, bool add = true)
-      : Problem(o) {
-    if (add) addProblem();
-  }
-
-  explicit ConstraintDistributionLeadTime(Operation* o, Date st, Date nd,
-                                          double q)
-      : oper(o), start(st), end(nd) {}
+  explicit ConstraintDistributionLeadTime(Operation* o, Date st, Date nd)
+      : Problem(o), start(st), end(nd) {}
 
   ~ConstraintDistributionLeadTime() { removeProblem(); }
 
   string getEntity() const { return "operation"; }
 
-  Object* getOwner() const {
-    return oper ? static_cast<Object*>(oper)
-                : static_cast<OperationPlan*>(owner);
-  }
+  Object* getOwner() const { return static_cast<Operation*>(owner); }
 
-  const DateRange getDates() const {
-    if (oper) return DateRange(start, end);
-    OperationPlan* o = static_cast<OperationPlan*>(owner);
-    auto tmp = o->getOperation()->getFence(o);
-    if (o->getEnd() > tmp)
-      return DateRange(o->getStart(), tmp);
-    else
-      return o->getDates();
-  }
+  const DateRange getDates() const { return DateRange(start, end); }
 
   void update(Operation* o, Date st, Date nd, double q) {
-    oper = o;
+    owner = o;
     start = st;
     end = nd;
   }
@@ -9489,7 +9394,6 @@ class ConstraintDistributionLeadTime : public Problem {
   static const MetaClass* metadata;
 
  private:
-  Operation* oper = nullptr;
   Date start;
   Date end;
 };

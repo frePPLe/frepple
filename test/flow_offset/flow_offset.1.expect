@@ -119,22 +119,22 @@ OPERATION	Purchase 7. raw material @ 7. factory from 7. supplier	2019-11-24T00:0
 OPERATION	Purchase 8. raw material @ 8. factory from 8. supplier	2020-01-01T00:00:00	2020-01-08T00:00:00	24
 OPERATION	Purchase 9. component 1 @ 9. factory from 9. supplier	2020-01-09T00:00:00	2020-01-09T00:00:00	2
 OPERATION	Purchase 9. component 2 @ 9. factory from 9. supplier	2020-01-01T00:00:00	2020-01-11T00:00:00	2
-DEMAND CONSTRAINT	1. order 1	Operation '1. produce end item' planned in the past	2019-12-22T09:00:00 / 2020-01-01T09:00:00
-DEMAND CONSTRAINT	1. order 1	Operation '1. produce intermediate item' planned in the past	2019-12-28T09:00:00 / 2020-01-01T00:00:00
-DEMAND CONSTRAINT	1. order 1	Operation 'Purchase 1. raw material @ 1. factory from 1. supplier' planned in the past	2019-12-25T09:00:00 / 2020-01-01T00:00:00
-DEMAND CONSTRAINT	2. order 1	Operation '2. produce end item' planned in the past	2019-12-18T09:00:00 / 2020-01-01T09:00:00
-DEMAND CONSTRAINT	2. order 1	Operation '2. produce intermediate item' planned in the past	2019-12-26T09:00:00 / 2020-01-01T00:00:00
-DEMAND CONSTRAINT	2. order 1	Operation 'Purchase 2. raw material @ 2. factory from 2. supplier' planned in the past	2019-12-25T09:00:00 / 2020-01-01T00:00:00
-DEMAND CONSTRAINT	3. order 1	Operation '3. produce end item' planned in the past	2019-12-22T09:00:00 / 2020-01-01T09:00:00
-DEMAND CONSTRAINT	3. order 1	Operation '3. produce intermediate item' planned in the past	2019-12-28T09:00:00 / 2020-01-01T00:00:00
-DEMAND CONSTRAINT	3. order 1	Operation 'Purchase 3. raw material @ 3. factory from 3. supplier' planned in the past	2019-12-24T09:00:00 / 2020-01-01T00:00:00
-DEMAND CONSTRAINT	4. order 1	Operation '4. produce end item' planned in the past	2019-12-18T09:00:00 / 2020-01-01T09:00:00
-DEMAND CONSTRAINT	4. order 1	Operation '4. produce intermediate item' planned in the past	2019-12-26T09:00:00 / 2020-01-01T00:00:00
-DEMAND CONSTRAINT	4. order 1	Operation 'Purchase 4. raw material @ 4. factory from 4. supplier' planned in the past	2019-12-24T09:00:00 / 2020-01-01T00:00:00
-DEMAND CONSTRAINT	5. order 1	Operation '5. produce end item' planned in the past	2019-12-28T09:00:00 / 2020-01-01T09:00:00
-DEMAND CONSTRAINT	5. order 1	Operation 'Purchase 5. raw material @ 5. factory from 5. supplier' planned in the past	2019-12-25T09:00:00 / 2020-01-01T00:00:00
-DEMAND CONSTRAINT	6. order 1	Operation '6. produce end item' planned in the past	2019-12-28T09:00:00 / 2020-01-01T09:00:00
-DEMAND CONSTRAINT	6. order 1	Operation 'Purchase 6. raw material @ 6. factory from 6. supplier' planned in the past	2019-12-26T09:00:00 / 2020-01-01T00:00:00
-DEMAND CONSTRAINT	8. order 1	Operation '8. produce end item - alt 1' planned in the past	2019-11-28T00:00:00 / 2020-01-01T00:00:00
-DEMAND CONSTRAINT	9. order 1	Operation '9. produce end item' planned in the past	2019-12-26T00:00:00 / 2020-01-01T00:00:00
-DEMAND CONSTRAINT	9. order 1	Operation 'Purchase 9. component 2 @ 9. factory from 9. supplier' planned in the past	2019-12-24T00:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	1. order 1	Manufacturing lead time on '1. produce end item'	2019-12-22T09:00:00 / 2020-01-01T09:00:00
+DEMAND CONSTRAINT	1. order 1	Manufacturing lead time on '1. produce intermediate item'	2019-12-28T09:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	1. order 1	Purchasing lead time on 'Purchase 1. raw material @ 1. factory from 1. supplier'	2019-12-25T09:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	2. order 1	Manufacturing lead time on '2. produce end item'	2019-12-18T09:00:00 / 2020-01-01T09:00:00
+DEMAND CONSTRAINT	2. order 1	Manufacturing lead time on '2. produce intermediate item'	2019-12-26T09:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	2. order 1	Purchasing lead time on 'Purchase 2. raw material @ 2. factory from 2. supplier'	2019-12-25T09:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 1	Manufacturing lead time on '3. produce end item'	2019-12-22T09:00:00 / 2020-01-01T09:00:00
+DEMAND CONSTRAINT	3. order 1	Manufacturing lead time on '3. produce intermediate item'	2019-12-28T09:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	3. order 1	Purchasing lead time on 'Purchase 3. raw material @ 3. factory from 3. supplier'	2019-12-24T09:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	4. order 1	Manufacturing lead time on '4. produce end item'	2019-12-18T09:00:00 / 2020-01-01T09:00:00
+DEMAND CONSTRAINT	4. order 1	Manufacturing lead time on '4. produce intermediate item'	2019-12-26T09:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	4. order 1	Purchasing lead time on 'Purchase 4. raw material @ 4. factory from 4. supplier'	2019-12-24T09:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	5. order 1	Manufacturing lead time on '5. produce end item'	2019-12-28T09:00:00 / 2020-01-01T09:00:00
+DEMAND CONSTRAINT	5. order 1	Purchasing lead time on 'Purchase 5. raw material @ 5. factory from 5. supplier'	2019-12-25T09:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	6. order 1	Manufacturing lead time on '6. produce end item'	2019-12-28T09:00:00 / 2020-01-01T09:00:00
+DEMAND CONSTRAINT	6. order 1	Purchasing lead time on 'Purchase 6. raw material @ 6. factory from 6. supplier'	2019-12-26T09:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	8. order 1	Manufacturing lead time on '8. produce end item - alt 1'	2019-11-28T00:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	9. order 1	Manufacturing lead time on '9. produce end item'	2019-12-26T00:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	9. order 1	Purchasing lead time on 'Purchase 9. component 2 @ 9. factory from 9. supplier'	2019-12-24T00:00:00 / 2020-01-01T00:00:00

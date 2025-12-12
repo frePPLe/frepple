@@ -266,7 +266,7 @@ void SetupMatrixRule::updateExpression() {
       }
     if (rsrc)
       new ProblemInvalidData(rsrc, msg, "capacity", Date::infinitePast,
-                             Date::infiniteFuture, 1);
+                             Date::infiniteFuture);
     throw DataException(msg);
   }
 }
@@ -298,7 +298,7 @@ SetupMatrixRule* SetupMatrix::calculateSetup(const PooledString& oldsetup,
     o << "No conversion from '" << oldsetup << "' to '" << newsetup
       << "' defined in setup matrix '" << getName() << "'";
     new ProblemInvalidData(res, o.str(), "resource", Date::infinitePast,
-                           Date::infiniteFuture, 1, true);
+                           Date::infiniteFuture, true);
   }
   auto norule = const_cast<SetupMatrixRuleDefault*>(&ChangeOverNotAllowed);
   const_cast<cachedrules&>(cachedChangeovers)[key] = norule;

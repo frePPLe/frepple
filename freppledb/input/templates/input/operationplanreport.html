@@ -368,17 +368,20 @@ onSelectRow: function(rowid, status) {
   const event = new CustomEvent('singleSelect', {
     detail: {
       execute: 'displayInfo',
-      name: rowid
+      reference: rowid,
+      status: status,
+      selectedRows: $(this).jqGrid('getGridParam', 'selarrrow')
     }
   });
   document.getElementById('app').dispatchEvent(event);
-  console.log('singleSelect ', rowid, status);
+  console.log('operationReport.html singleSelect ', rowid, status, $(this).jqGrid('getGridParam', 'selarrrow'));
 },
 onSelectAll: function(aRowids, status){
   const event = new CustomEvent('allSelect', {
     detail: {
       execute: 'displayInfo',
-      name: aRowids
+      selected: status,
+      selectedRows: aRowids,
     }
   });
   document.getElementById('app').dispatchEvent(event);

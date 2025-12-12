@@ -96,7 +96,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     isGanttMode: () => this.mode === 'gantt',
     isCalendarMode: () => this.mode.startsWith('calendar'),
 
-    hasSelected: () => !!this.selectedOperationplans || Object.keys(this.operationplans).length > 0,
+    hasSelected: () => this.selectedOperationplans.length > 0,
 
     getPreferences(state) {
       state.preferences = window.preferences;
@@ -114,28 +114,43 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.calendarmode = newCalendarMode;
       this.preferences.calendarmode = newCalendarMode;
     },
-
-    async loadOperationplans(reference = []) {
-      if (!reference) return;
-      if (this.selectedOperationplans.includes(reference)) {
-        this.operationplan = {};
-        this.selectedOperationplans = this.selectedOperationplans.filter(item => item !== reference);
+// -----------------------------------------------------------
+    async loadOperationplans(references = [], selectedFlag, selectedRows) {
+      if (references.length === 0) return;
+      console.log(120, toRaw(references), selectedFlag, toRaw(selectedRows));
+      this.selectedOperationplans.length = 0
+      this.selectedOperationplans.push(...selectedRows);
+      if (selectedFlag === false) {
+        if (this.selectedOperationplans.length === 1) {
+          console.log(126, this.selectedOperationplans[0]);
+          await this.loadOperationplans(selectedRows, true, selectedRows);
+          this.operationplan.update([{id: 100}]);
+        } else { // calculate aggregated info
+          console.log("129 aggregated info: ");
+          this.operationplan = new Operationplan();
+        }
       } else {
+        console.log(134, 'loadOperationplans: ', references, toRaw(this.selectedOperationplans));
+        this.operationplan = new Operationplan();
         this.loading = true;
         this.error.showError = false;
+        const operationplanReference = references[0];
 
-        try { // reference value should be the selected table record reference
+        try {
           const response = await operationplanService.getOperationplanDetails({
-            reference: reference
+            reference: operationplanReference
           });
 
           // Update the store with the fetched data
           const operationplan = toRaw(response.responseData.value)[0];
-          const operationplanReference = operationplan.reference;
-
-          this.operationplan = new Operationplan(operationplan);
-          this.operationplans[operationplanReference] = operationplan;
-          this.selectedOperationplans.push(operationplanReference);
+          if (this.selectedOperationplans.length === 1) {
+            console.log(135, operationplan, parseInt(operationplanReference));
+            this.operationplan = new Operationplan(operationplan);
+            // this.operationplan.id = parseInt(operationplanReference);
+          } else {
+            console.log("152 aggregated info: ");
+          this.operationplan = new Operationplan();
+          }
         } catch (error) {
           this.error = {
             title: 'Failed to load operation plans',
@@ -146,7 +161,11 @@ export const useOperationplansStore = defineStore('operationplans', {
           };
         } finally {
           this.loading = false;
+          // this.operationplan.id = parseInt(this.operationplan.reference);
         }
+        // } else { //  calculate aggregated info
+        //   this.operationplan = new Operationplan();
+        // }
       }
     },
 
@@ -323,6 +342,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     // Process aggregated info for multiple selections
     processAggregatedInfo(operationplans, colModel) {
       this.selectedOperationplans = operationplans;
+      console.log(260, 'processAggregatedInfo: ', operationplans, colModel);
     },
   }
 })

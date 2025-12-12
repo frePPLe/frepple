@@ -191,11 +191,11 @@ function changeEdit() {
                 </b>
               </td>
             </tr>
-            <tr v-if="store.operationplan.id !== -1&& store.operationplan.type !== 'STCK'">
+            <tr v-if="store.operationplan.id !== -1 && store.operationplan.type !== 'STCK'">
               <td><b class="text-capitalize">{{ ttt('reference' )}}</b></td>
               <td id="referencerow">{{store.operationplan.reference}}</td>
             </tr>
-            <tr v-if="store.operationplan.type == 'MO'&& store.operationplan.owner">
+            <tr v-if="store.operationplan.type == 'MO' && store.operationplan.owner">
               <td><b class="text-capitalize">{{ttt('owner')}}</b></td>
               <td id="ownerrow">{{store.operationplan.owner}}
                 <a href="/detail/input/manufacturingorder/key/" role="input/manufacturingorder" onclick="opendetail(event)">
@@ -280,15 +280,15 @@ function changeEdit() {
                 <small v-if="store.operationplan.colmodel?.operationplan__startdate">({{ ttt(store.operationplan.colmodel?.operationplan__startdate.type) }})</small>
               </td>
               <td>
-                <input v-if='store.operationplan.id === -1&& store.operationplan.start' class="form-control border-0 bg-white" type="datetime-local" v-model="store.operationplan.start" readonly>
-                <input v-if='store.operationplan.id !== -1 && !operationplan.hasOwnProperty("store.operationplan__startdate")' class="form-control" type="datetime-local" v-model="store.operationplan.start"
+                <input v-if='store.operationplan.id === -1 && store.operationplan.start' class="form-control border-0 bg-white" type="datetime-local" v-model="store.operationplan.start" readonly>
+                <input v-if='store.operationplan.id !== -1 && !store.operationplan.hasOwnProperty("store.operationplan__startdate")' class="form-control" type="datetime-local" v-model="store.operationplan.start"
                        @input="setEditValue('setTo', $event.target.value)" :readonly="!editable">
-                <input v-if='store.operationplan.id !== -1&& store.operationplan.hasOwnProperty("store.operationplan__startdate")' class="form-control" type="datetime-local" v-model="store.operationplan.operationplan__startdate" @input="setEditValue('setTo', $event.target.value)"" :readonly="!editable">
+                <input v-if='store.operationplan.id !== -1 && store.operationplan.hasOwnProperty("store.operationplan__startdate")' class="form-control" type="datetime-local" v-model="store.operationplan.operationplan__startdate" @input="setEditValue('setTo', $event.target.value)"" :readonly="!editable">
               </td>
             </tr>
             <tr v-if="store.operationplan.setupend">
               <td><b class="text-capitalize">{{ttt('setup end date')}}</b></td>
-              <td>{{(store.operationplan.setupend|| store.operationplan.operationplan__setupend)|formatdatetime}}</td>
+              <td>{{formatdatetime(store.operationplan.setupend|| store.operationplan.operationplan__setupend)}}</td>
             </tr>
             <tr v-if="store.operationplan.type !== 'STCK'">
               <td>
@@ -342,11 +342,11 @@ function changeEdit() {
               <td><b class="text-capitalize">{{ttt('status')}}</b></td>
               <td>
                 <div class="btn-group" role="group">
-                  <button id="proposedBtn" v-if="(!editable && store.operationplan.status === ttt('proposed')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status == 'proposed'}]" @click="store.operationplan.status = 'proposed'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" title="{{'proposed')}}"> <i class="fa fa-unlock"></i></button>
-                  <button id="approvedBtn" v-if="(!editable && store.operationplan.status === ttt('approved')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status == 'approved'}]" @click="store.operationplan.status = 'approved'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" title="{{'approved')}}"><i class="fa fa-unlock-alt"></i></button>
-                  <button id="confirmedBtn" v-if="(!editable && store.operationplan.status === ttt('confirmed')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status == 'confirmed'}]" @click="store.operationplan.status = 'confirmed'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" title="{{'confirmed')}}"><i class="fa fa-lock"></i></button>
-                  <button id="completedBtn" v-if="(!editable && store.operationplan.status === ttt('completed')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status == 'completed'}]" @click="store.operationplan.status = 'completed'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" title="{{'completed')}}"><i class="fa fa-check"></i></button>
-                  <button id="closedBtn" v-if="(!editable && store.operationplan.status === ttt('closed')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status === 'closed'}]" @click="store.operationplan.status = 'closed'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" title="{{'closed')}}"><i class="fa fa-times"></i></button>
+                  <button id="proposedBtn" v-if="(!editable && store.operationplan.status === ttt('proposed')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status == 'proposed'}]" @click="store.operationplan.status = 'proposed'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('proposed')"> <i class="fa fa-unlock"></i></button>
+                  <button id="approvedBtn" v-if="(!editable && store.operationplan.status === ttt('approved')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status == 'approved'}]" @click="store.operationplan.status = 'approved'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('approved')"><i class="fa fa-unlock-alt"></i></button>
+                  <button id="confirmedBtn" v-if="(!editable && store.operationplan.status === ttt('confirmed')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status == 'confirmed'}]" @click="store.operationplan.status = 'confirmed'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('confirmed')"><i class="fa fa-lock"></i></button>
+                  <button id="completedBtn" v-if="(!editable && store.operationplan.status === ttt('completed')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status == 'completed'}]" @click="store.operationplan.status = 'completed'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('completed')"><i class="fa fa-check"></i></button>
+                  <button id="closedBtn" v-if="(!editable && store.operationplan.status === ttt('closed')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status === 'closed'}]" @click="store.operationplan.status = 'closed'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('closed')"><i class="fa fa-times"></i></button>
                   <button id="erp_incr_exportBtn" v-if="editable && actions.hasOwnProperty('erp_incr_export')&& store.operationplan.status === 'proposed'" type="button" class="btn btn-primary text-capitalize" @click="actions['erp_incr_export']()">{{ttt('export')}}</button>
                 </div>
               </td>

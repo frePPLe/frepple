@@ -117,9 +117,7 @@ onMounted(() => {
     const detail = e?.detail || {};
     console.log(115, detail);
     if (detail.execute === 'displayInfo') {
-      const rowid = detail.name;
-      // const row = getGridRowData(rowid);
-      store.loadOperationplans(rowid);
+      store.loadOperationplans([detail.reference], detail.status, detail.selectedRows);
     }
     else console.log('[OperationplanDetails] singleSelect: row data not found for', detail.name);
   };
@@ -127,7 +125,7 @@ onMounted(() => {
   const handleAllSelectEvent = (e) => {
     const detail = e?.detail || {};
     console.log(126, detail);
-    const ids = detail.name || [];
+    const ids = detail.selectedRows || [];
     const selectiondata = [];
     try {
       for (const id of ids) {

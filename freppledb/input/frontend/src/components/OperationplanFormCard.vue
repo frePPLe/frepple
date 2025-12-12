@@ -60,6 +60,14 @@ const formatNumber = window.grid.formatNumber;
 // eslint-disable-next-line no-undef
 const actions = window.actions;
 
+const opptype = {
+  'MO': ttt('manufacturing order'),
+  'PO': ttt('purchase order'),
+  'DO': ttt('distribution order'),
+  'STCK': ttt('stock'),
+  'DLVR': ttt('delivery'),
+}
+
 // const sortedEditableMeasureList = computed(() => {
 //   return Object.values(store.measures).filter(x => x.editable).sort((a, b) => {
 //     return a.label.localeCompare(b.label);
@@ -158,9 +166,9 @@ function changeEdit() {
   <div class="card">
     <div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_operationplanpanel" aria-expanded="false" aria-controls="widget_operationplanpanel">
       <h5 class="card-title text-capitalize me-auto">
-        <span v-if="store.operationplan.type"  class="">{{ttt("manufacturing order")}}</span>
-        <span v-if="!store.operationplan.id && !store.operationplan.reference && !store.operationplan.operationplan__reference"  class="">{{ttt("!!!manufacturing order")}}</span>
-        <span v-if="store.operationplan.id == -1"  class="">{{ttt("???manufacturing order")}}</span>
+        <span v-if="!store.operationplan.id && !store.operationplan.reference && !store.operationplan.operationplan__reference"  class="">{{ ttt('no selection') }}</span>
+        <span v-if="store.operationplan.id === -1"  class="">{{ ttt('selected') }}&nbsp;{{ store.operationplan.count || 0 }}</span>
+        <span v-if="store.operationplan.type"  class="">{{ opptype[store.operationplan.type] }}</span>
       </h5>
       <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
     </div>

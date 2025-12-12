@@ -567,7 +567,7 @@ class OdooSendRecommendations(PlanTask):
             loglevel = 0
         metadata["loglevel"] = loglevel
         metadata["description"] = (
-            f"repple output v{frepple.version} at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}"
+            f"frepple output v{frepple.version} at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}"
         )
 
         # Try to create the folder if doesn't exist yet
@@ -581,13 +581,11 @@ class OdooSendRecommendations(PlanTask):
         recommendations = os.path.join(odoo_folder, "odoo_recommendations.json")
         with open(recommendations, "w", encoding="utf-8") as f:
             o = json.dumps(metadata).rstrip("}\t\n")  # remove the closing backslash
-            print("{", file=f)
             print(o, file=f)
-            print('"recommendations": [', file=f)
+            print(',"recommendations": [', file=f)
             if loglevel:
-                print("{")
                 print(o)
-                print('"recommendations": [')
+                print(',"recommendations": [')
             first = True
             for rec in cls.OdooRecommendations(**metadata):
                 o = json.dumps(rec)
@@ -626,7 +624,9 @@ class OdooSendRecommendations(PlanTask):
                     "This is only possible from odoo 19 onwards (or you backported the required changes)."
                 )
             else:
-                print(f"Failure: {response.status_code} {response.text}")
+                print(
+                    f"Odoo replies a failure with code {response.status_code}:\n{response.text}"
+                )
                 raise Exception("Error sending recommendations to odoo")
 
     class OdooRecommendations:
@@ -646,7 +646,11 @@ class OdooSendRecommendations(PlanTask):
 
             po_count = 0
             for i in frepple.operations():
-                if not isinstance(i, frepple.operation_itemsupplier):
+                if (
+                    not isinstance(i, frepple.operation_itemsupplier)
+                    or "odoo" not in i.itemsupplier.item.source
+                    or "odoo" not in i.itemsupplier.supplier.source
+                ):
                     continue
                 for j in i.operationplans:
                     # We are sending the proposed POs within the lead time of the item
@@ -693,29 +697,53 @@ class OdooSendRecommendations(PlanTask):
                 print(f"Generated {po_count} purchase recommendations")
 
         def generateManufacturingRecommendations(self):
-            yield {
-                "type": "manufacturing",
-                "owner": "owner1",
-                "description": "MO recommendation1",
-            }
-            yield {
-                "type": "manufacturing",
-                "owner": "owner2",
-                "description": "MO recommendation2",
-            }
             if not self.loglevel:
                 print("Generated 2 MO recommendations")
+            if False:
+                yield None  # Dummy
 
         def generateSalesOrderRecommendations(self):
-            yield {
-                "type": "sales",
-                "owner": "owner1",
-                "description": "SO recommendation1",
-            }
-            yield {
-                "type": "sales",
-                "owner": "owner2",
-                "description": "SO recommendation2",
-            }
+            import frepple
+
+            so_count = 0
+            for i in frepple.demands():
+                if (
+                    isinstance(
+                        i,
+                        (
+                            frepple.demand_forecast,
+                            frepple.demand_forecastbucket,
+                            frepple.demand_group,
+                        ),
+                    )
+                    or i.status != "open"
+                    or "odoo" not in i.source
+                    or "odoo" not in i.item.source
+                ):
+                    continue
+                late_quantity = 0
+                late_date = None
+                so = i.name.split(" ", 1)
+                for j in i.operationplans:
+                    if j.end > i.due:
+                        late_quantity += j.quantity
+                        if not late_date or j.end > late_date:
+                            late_date = j.end
+                if not late_date:
+                    continue
+                description = f"{so[0]} will be shipped {(late_date - i.due).days} days late on {late_date.strftime("%Y-%m-%d")}"
+                so_count += 1
+                yield {
+                    "type": "sale",
+                    "data": {
+                        "constraints": [c.description for c in i.constraints],
+                        "so_line_id": so[1],
+                    },
+                    "product_id": int(i.item.subcategory.split(",")[1]),
+                    "startdate": i.due.isoformat(),
+                    "enddate": late_date.isoformat() if late_date else None,
+                    "quantity": late_quantity,
+                    "description": description,
+                }
             if not self.loglevel:
-                print("Generated 2 SO recommendations")
+                print(f"Generated {so_count} sales order recommendations")

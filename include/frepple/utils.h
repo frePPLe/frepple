@@ -1947,6 +1947,10 @@ class MetaCategory : public MetaClass {
    * located the return value is nullptr. */
   static const MetaCategory* findCategoryByGroupTag(const size_t);
 
+  void setDefaultClass(const MetaClass* i) {
+    classes[Keyword::hash("default")] = i;
+  }
+
   /* Find a class in this category with a specified name.
    * If the catrgory can't be found the return value is nullptr.
    */

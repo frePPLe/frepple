@@ -30,6 +30,12 @@
 	</suppliers>
 	<calendars>
 		<calendar>
+			<name>cal #1</name>
+		</calendar>
+		<calendar>
+			<name>cal #2</name>
+		</calendar>
+		<calendar>
 			<name>weeks</name>
 			<buckets>
 				<bucket>

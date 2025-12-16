@@ -51,6 +51,7 @@ class Tags {
   static const Keyword buffers;
   static const Keyword calendar;
   static const Keyword calendars;
+  static const Keyword calendars_reorderpoints;
   static const Keyword category;
   static const Keyword closed;
   static const Keyword cluster;

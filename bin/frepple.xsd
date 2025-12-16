@@ -1277,6 +1277,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         <xsd:element name="customers" type="customerlist" />
         <xsd:element name="suppliers" type="supplierlist" />
         <xsd:element name="calendars" type="calendarlist" />
+        <xsd:element name="calendars_reorderpoints" type="calendarlist" />
         <xsd:element name="operations" type="operationlist" />
         <xsd:element name="items" type="itemlist" />
         <xsd:element name="buffers" type="bufferlist" />

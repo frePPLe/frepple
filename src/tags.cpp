@@ -50,6 +50,7 @@ const Keyword Tags::buffer("buffer");
 const Keyword Tags::buffers("buffers");
 const Keyword Tags::calendar("calendar");
 const Keyword Tags::calendars("calendars");
+const Keyword Tags::calendars_reorderpoints("calendars_reorderpoints");
 const Keyword Tags::category("category");
 const Keyword Tags::closed("closed");
 const Keyword Tags::cluster("cluster");

@@ -283,7 +283,7 @@ class OdooReadData(PlanTask):
 
                     if response.info().get("Content-Type") == "application/json":
                         frepple.readJSONdata(
-                            f.read().translate({ord(i): None for i in "\f\v\b"})
+                            data.translate({ord(i): None for i in "\f\v\b"})
                         )
                     else:
                         frepple.readXMLdata(

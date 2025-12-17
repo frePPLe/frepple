@@ -14,9 +14,7 @@
 #cmakedefine HAVE_UNISTD_H 1
 #cmakedefine HAVE_CRYPT_H 1
 
-#ifndef _MSC_VER
 // Only for unix-style directory layouts
 #define DATADIRECTORY "@CMAKE_INSTALL_FULL_DATADIR@"
 #define LIBDIRECTORY "@CMAKE_INSTALL_FULL_LIBDIR@"
 #define SYSCONFDIRECTORY "@CMAKE_INSTALL_FULL_SYSCONFDIR@/frepple"
-#endif

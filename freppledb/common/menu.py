@@ -181,5 +181,15 @@ menu.addItem(
     index=500,
 )
 menu.addItem(
+    "help",
+    "release notes",
+    url="https://frepple.com/docs/current/release-notes.html",
+    window=True,
+    label=_("Release notes"),
+    prefix=False,
+    index=501,
+)
+
+menu.addItem(
     "help", "about", javascript="about_show()", label=_("About frePPLe"), index=600
 )

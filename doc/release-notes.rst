@@ -37,14 +37,19 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | In practice, you'll always run the plan right after the import, isn't it?
     So, we made it now a checkbox in the plan generation options.
 
-- | When exporting Manufacturing Orders from frePPLe to Odoo, the connectors are
-    now sending the consumed and produced items. This can be useful in case alternate
-    materials exist.
+- | When exporting manufacturing orders from frePPLe to Odoo, the connectors are
+    now sending the consumed and produced items. This can be useful in situations
+    where alternate materials exist.
 
 - | User accessing frepple from the odoo user interface could end up in
     scenarios to which they don't have access. We now redirect them automatically to
     a scenario to which they have access.
 
+.. rubric:: User interface
+
+- | We've removed the "performance indicator report".
+  | You never heard about it? No worries, nobody actually used it because the low
+    level metrics of the plan are not practical, user-friendly or actionable.
 
 9.12.0 (2025-11-14)
 ===================

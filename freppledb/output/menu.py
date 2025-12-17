@@ -39,7 +39,6 @@ import freppledb.output.views.problem
 import freppledb.output.views.constraint
 import freppledb.output.views.resource
 import freppledb.output.views.operation
-import freppledb.output.views.kpi
 
 
 # Adding reports. We use an index value to keep the same order of the entries in all languages.
@@ -66,13 +65,6 @@ menu.addItem(
     report=freppledb.output.views.constraint.BaseReport,
     index=500,
     dependencies=[Item, Location, Customer, OperationPlan],
-)
-menu.addItem(
-    "admin",
-    "kpi report",
-    url="/kpi/",
-    report=freppledb.output.views.kpi.Report,
-    index=200,
 )
 menu.addItem(
     "inventory",

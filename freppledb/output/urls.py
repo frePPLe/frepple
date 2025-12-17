@@ -36,7 +36,6 @@ if mode == "WSGI":
     import freppledb.output.views.resource
     import freppledb.output.views.operation
     import freppledb.output.views.pegging
-    import freppledb.output.views.kpi
 
     urlpatterns = [
         re_path(
@@ -128,8 +127,5 @@ if mode == "WSGI":
             r"^constraintresource/(.+)/$",
             freppledb.output.views.constraint.ReportByResource.as_view(),
             name="output_constraint_resource",
-        ),
-        re_path(
-            r"^kpi/$", freppledb.output.views.kpi.Report.as_view(), name="output_kpi"
         ),
     ]

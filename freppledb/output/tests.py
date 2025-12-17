@@ -192,20 +192,3 @@ class OutputTest(TestCase):
             )
         )
 
-    # KPI
-    def test_output_kpi(self):
-        response = self.client.get("/kpi/")
-        self.assertContains(response, "Performance Indicators")
-        self.assertEqual(response.status_code, 200)
-        response = self.client.get("/kpi/?format=csvlist")
-        checkResponse(self, response)
-        self.assertTrue(
-            response.__getitem__("Content-Type").startswith("text/csv; charset=")
-        )
-        response = self.client.get("/kpi/?format=spreadsheetlist")
-        checkResponse(self, response)
-        self.assertTrue(
-            response.__getitem__("Content-Type").startswith(
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-        )

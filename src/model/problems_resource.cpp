@@ -39,17 +39,12 @@ void Resource::updateProblems() {
   Date excessProblemStart;
   Date shortageProblemStart;
   bool excessProblem = false;
-  bool shortageProblem = false;
   double curMax(0.0);
-  double shortageQty(0.0);
-  double curMin(0.0);
   double excessQty(0.0);
   for (auto iter = loadplans.begin(); iter != loadplans.end();) {
     // Process changes in the maximum or minimum targets
     if (iter->getEventType() == 4)
       curMax = iter->getMax();
-    else if (iter->getEventType() == 3)
-      curMin = iter->getMin();
 
     // Only consider the last loadplan for a certain date
     const TimeLine<LoadPlan>::Event* f = &*(iter++);

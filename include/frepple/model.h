@@ -812,7 +812,7 @@ class Problem::List {
   void transfer(HasProblems*);
 
   /* Postprocessing of a constraint list to keep it user-friendly. */
-  void cleanConstraints(Demand*);
+  void clean(const Demand*) const;
 
  private:
   /* Pointer to the head of the list. */

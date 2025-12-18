@@ -164,6 +164,11 @@ FreppleReadXMLFile(const char* filename, bool validate, bool validateonly) {
     XMLInputFile(filename).parse(&Plan::instance(), validate);
 }
 
+DECLARE_EXPORT(void)
+FreppleReadJSONFile(const char* filename) {
+  JSONInputFile(filename).parse(&Plan::instance());
+}
+
 DECLARE_EXPORT(void) FreppleReadPythonFile(const char* filename) {
   if (!filename) throw DataException("No Python file passed to execute");
   PythonInterpreter::executeFile(filename);

@@ -27,6 +27,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <iostream>
 #include <sstream>
 
@@ -215,12 +216,12 @@ int main(int argc, char* argv[]) {
           FreppleInitialize();
           input = true;
         }
-        if (strlen(argv[i]) >= 3 &&
-            !strcmp(argv[i] + strlen(argv[i]) - 3, ".py"))
-          // Execute as Python file
+        filesystem::path p(argv[i]);
+        if (p.extension() == ".py")
           FreppleReadPythonFile(argv[i]);
+        else if (p.extension() == ".json")
+          FreppleReadJSONFile(argv[i]);
         else
-          // Execute as XML file
           FreppleReadXMLFile(argv[i], validate, validate_only);
       }
     }

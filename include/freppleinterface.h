@@ -95,6 +95,8 @@ DECLARE_EXPORT(void) FreppleReadXMLData(const char*, bool, bool);
  */
 DECLARE_EXPORT(void) FreppleReadXMLFile(const char*, bool, bool);
 
+DECLARE_EXPORT(void) FreppleReadJSONFile(const char*);
+
 /* Execute the Python code in a file.
  *
  * This method is synchroneous, i.e. it returns only when the complete

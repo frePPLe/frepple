@@ -217,6 +217,12 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
         // Main planning loop for a sales order line
         ++indentlevel;
         bool hasOverdueConstraint = false;
+        Problem::iterator i = l->getConstraints().begin();
+        while (Problem* prob = i.next())
+          if (prob->hasType<ConstraintOverdueDemand>()) {
+            hasOverdueConstraint = true;
+            break;
+          }
         do {    // Loop over global-purchasing locations
           do {  // Multiple plan iterations
             // Message

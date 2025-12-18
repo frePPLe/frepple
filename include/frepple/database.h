@@ -32,7 +32,6 @@
 #include <libpq-fe.h>
 #endif
 
-#define FREPPLE_CORE
 #include "frepple.h"
 
 using namespace frepple;

@@ -23,8 +23,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE
-
 #include <clocale>
 #include <ctime>
 
@@ -50,7 +48,7 @@ const Date Date::infiniteFuture("2030-12-31T00:00:00", true);
 const Duration Duration::MAX(Date::infiniteFuture - Date::infinitePast);
 const Duration Duration::MIN(Date::infinitePast - Date::infiniteFuture);
 
-void Duration::toCharBuffer(char *t) const {
+void Duration::toCharBuffer(char* t) const {
   if (!lval) {
     sprintf(t, "P0D");
     return;
@@ -84,7 +82,7 @@ void Duration::toCharBuffer(char *t) const {
   }
 }
 
-void Duration::double2CharBuffer(double val, char *t) {
+void Duration::double2CharBuffer(double val, char* t) {
   if (!val) {
     sprintf(t, "P0D");
     return;
@@ -129,7 +127,7 @@ void Duration::double2CharBuffer(double val, char *t) {
 DateRange::operator string() const {
   // Start date
   char r[65];
-  char *pos = r + start.toCharBuffer(r);
+  char* pos = r + start.toCharBuffer(r);
 
   // Append the separator
   strcat(pos, separator.c_str());
@@ -140,11 +138,11 @@ DateRange::operator string() const {
   return r;
 }
 
-void Duration::parse(const char *s) {
+void Duration::parse(const char* s) {
   long totalvalue = 0;
   long value = 0;
   bool negative = false;
-  const char *c = s;
+  const char* c = s;
 
   // Optional minus sign
   if (*c == '-') {
@@ -234,13 +232,13 @@ void Duration::parse(const char *s) {
   lval = negative ? -totalvalue : totalvalue;
 }
 
-double Duration::parse2double(const char *s) {
+double Duration::parse2double(const char* s) {
   double totalvalue = 0.0;
   long value = 0;
   double milliseconds = 0.0;
   bool negative = false;
   bool subseconds = false;
-  const char *c = s;
+  const char* c = s;
 
   // Optional minus sign
   if (*c == '-') {
@@ -251,7 +249,7 @@ double Duration::parse2double(const char *s) {
   // Compulsary 'P' if the string is formatted as an XML duration, but
   // the string can also be formatted as a numeric value
   if (*c != 'P') {
-    char *endptr;
+    char* endptr;
     double value = strtod(s, &endptr);
     if (*endptr) throw DataException("Invalid time string '" + string(s) + "'");
     return value;
@@ -348,7 +346,7 @@ double Duration::parse2double(const char *s) {
   return negative ? -totalvalue : totalvalue;
 }
 
-void Date::parse(const char *s, const char *fmt) {
+void Date::parse(const char* s, const char* fmt) {
   if (!s) {
     // Null string passed - default value is infinite past
     lval = infinitePast.lval;
@@ -367,24 +365,24 @@ void Date::parse(const char *s, const char *fmt) {
 // isn't available in your standard library.
 #ifndef HAVE_STRPTIME
 
-char *Date::strptime(const char *buf, const char *fmt, struct tm *tm) {
+char* Date::strptime(const char* buf, const char* fmt, struct tm* tm) {
   struct dtconv {
-    const char *abbrev_month_names[12];
+    const char* abbrev_month_names[12];
     size_t len_abbrev_month_names[12];
-    const char *month_names[12];
+    const char* month_names[12];
     size_t len_month_names[12];
-    const char *abbrev_weekday_names[7];
+    const char* abbrev_weekday_names[7];
     size_t len_abbrev_weekday_names[7];
-    const char *weekday_names[7];
+    const char* weekday_names[7];
     size_t len_weekday_names[7];
-    const char *time_format;
-    const char *sDate_format;
-    const char *dtime_format;
-    const char *am_string;
+    const char* time_format;
+    const char* sDate_format;
+    const char* dtime_format;
+    const char* am_string;
     size_t len_am_string;
-    const char *pm_string;
+    const char* pm_string;
     size_t len_pm_string;
-    const char *lDate_format;
+    const char* lDate_format;
     unsigned short numWeekdays;
     unsigned short numMonths;
   };
@@ -419,7 +417,7 @@ char *Date::strptime(const char *buf, const char *fmt, struct tm *tm) {
   // No clue whether daylight saving time is in effect...
   tm->tm_isdst = -1;
 
-  ptr = (char *)fmt;
+  ptr = (char*)fmt;
   while (*ptr != 0) {
     if (*buf == 0) break;
     c = *ptr++;
@@ -611,7 +609,7 @@ char *Date::strptime(const char *buf, const char *fmt, struct tm *tm) {
     }
   }
 
-  return const_cast<char *>(buf);
+  return const_cast<char*>(buf);
 }
 
 #endif

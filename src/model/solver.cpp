@@ -23,23 +23,22 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple {
 
 template <class Solver>
 Tree utils::HasName<Solver>::st;
-const MetaCategory *Solver::metadata;
+const MetaCategory* Solver::metadata;
 
 int Solver::initialize() {
   // Initialize the metadata
   metadata = MetaCategory::registerCategory<Solver>(
       "solver", "solvers", MetaCategory::ControllerDefault);
-  registerFields<Solver>(const_cast<MetaCategory *>(metadata));
+  registerFields<Solver>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
-  auto &x = FreppleCategory<Solver>::getPythonType();
+  auto& x = FreppleCategory<Solver>::getPythonType();
   x.setName("solver");
   x.setDoc("frePPLe solver");
   x.supportgetattro();
@@ -49,10 +48,10 @@ int Solver::initialize() {
   return x.typeReady();
 }
 
-PyObject *Solver::solve(PyObject *self, PyObject *args) {
+PyObject* Solver::solve(PyObject* self, PyObject* args) {
   Py_BEGIN_ALLOW_THREADS;
   try {
-    static_cast<Solver *>(self)->solve();
+    static_cast<Solver*>(self)->solve();
   } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();

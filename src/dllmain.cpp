@@ -23,16 +23,15 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE
 #include "forecast/forecast.h"
 #include "frepple.h"
 #include "frepple/database.h"
 #include "freppleinterface.h"
 using namespace frepple;
 
-DECLARE_EXPORT(const char*) FreppleVersion() { return PACKAGE_VERSION; }
+const char* FreppleVersion() { return PACKAGE_VERSION; }
 
-DECLARE_EXPORT(void) FreppleInitialize(bool procesInitializationFiles) {
+void FreppleInitialize(bool procesInitializationFiles) {
   // Initialize only once
   static bool initialized = false;
   if (initialized) return;
@@ -137,8 +136,7 @@ DECLARE_EXPORT(void) FreppleInitialize(bool procesInitializationFiles) {
   }
 }
 
-DECLARE_EXPORT(void)
-FreppleReadXMLData(const char* x, bool validate, bool validateonly) {
+void FreppleReadXMLData(const char* x, bool validate, bool validateonly) {
   if (!x) return;
   if (validateonly)
     XMLInputString(x).parse(nullptr, true);
@@ -146,8 +144,8 @@ FreppleReadXMLData(const char* x, bool validate, bool validateonly) {
     XMLInputString(x).parse(&Plan::instance(), validate);
 }
 
-DECLARE_EXPORT(void)
-FreppleReadXMLFile(const char* filename, bool validate, bool validateonly) {
+void FreppleReadXMLFile(const char* filename, bool validate,
+                        bool validateonly) {
   if (!filename) {
     // Read from standard input
     xercesc::StdInInputSource in;
@@ -164,17 +162,16 @@ FreppleReadXMLFile(const char* filename, bool validate, bool validateonly) {
     XMLInputFile(filename).parse(&Plan::instance(), validate);
 }
 
-DECLARE_EXPORT(void)
-FreppleReadJSONFile(const char* filename) {
+void FreppleReadJSONFile(const char* filename) {
   JSONInputFile(filename).parse(&Plan::instance());
 }
 
-DECLARE_EXPORT(void) FreppleReadPythonFile(const char* filename) {
+void FreppleReadPythonFile(const char* filename) {
   if (!filename) throw DataException("No Python file passed to execute");
   PythonInterpreter::executeFile(filename);
 }
 
-DECLARE_EXPORT(void) FreppleSaveFile(const char* x) {
+void FreppleSaveFile(const char* x) {
   XMLSerializerFile o(x);
   o.writeElementWithHeader(Tags::plan, &Plan::instance());
 }
@@ -184,18 +181,16 @@ DECLARE_EXPORT(void) FreppleSaveFile(const char* x) {
  * reasons it is easier to "leak" the memory. The memory is freed when
  * the process exits.
  */
-DECLARE_EXPORT(void) FreppleExit() {
+void FreppleExit() {
   // Close the log file
   Environment::setLogFile("");
 }
 
-DECLARE_EXPORT(void) FreppleLog(const string& msg) { logger << msg << endl; }
+void FreppleLog(const string& msg) { logger << msg << endl; }
 
-extern "C" DECLARE_EXPORT(void) FreppleLog(const char* msg) {
-  logger << msg << endl;
-}
+extern "C" void FreppleLog(const char* msg) { logger << msg << endl; }
 
-extern "C" DECLARE_EXPORT(int) FreppleWrapperInitialize() {
+extern "C" int FreppleWrapperInitialize() {
   try {
     FreppleInitialize();
   } catch (...) {
@@ -204,8 +199,7 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperInitialize() {
   return EXIT_SUCCESS;
 }
 
-extern "C" DECLARE_EXPORT(int)
-    FreppleWrapperReadXMLData(char* d, bool v, bool c) {
+extern "C" int FreppleWrapperReadXMLData(char* d, bool v, bool c) {
   try {
     FreppleReadXMLData(d, v, c);
   } catch (...) {
@@ -214,8 +208,7 @@ extern "C" DECLARE_EXPORT(int)
   return EXIT_SUCCESS;
 }
 
-extern "C" DECLARE_EXPORT(int)
-    FreppleWrapperReadXMLFile(const char* f, bool v, bool c) {
+extern "C" int FreppleWrapperReadXMLFile(const char* f, bool v, bool c) {
   try {
     FreppleReadXMLFile(f, v, c);
   } catch (...) {
@@ -224,7 +217,7 @@ extern "C" DECLARE_EXPORT(int)
   return EXIT_SUCCESS;
 }
 
-extern "C" DECLARE_EXPORT(int) FreppleWrapperReadPythonFile(const char* f) {
+extern "C" int FreppleWrapperReadPythonFile(const char* f) {
   try {
     FreppleReadPythonFile(f);
   } catch (...) {
@@ -233,7 +226,7 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperReadPythonFile(const char* f) {
   return EXIT_SUCCESS;
 }
 
-extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveFile(char* f) {
+extern "C" int FreppleWrapperSaveFile(char* f) {
   try {
     FreppleSaveFile(f);
   } catch (...) {
@@ -242,7 +235,7 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveFile(char* f) {
   return EXIT_SUCCESS;
 }
 
-extern "C" DECLARE_EXPORT(int) FreppleWrapperExit() {
+extern "C" int FreppleWrapperExit() {
   try {
     FreppleExit();
   } catch (...) {

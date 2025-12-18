@@ -71,7 +71,7 @@ class OdooReadData(PlanTask):
     This function connects to a URL, authenticates itself using HTTP basic
     authentication, and then reads data from the URL.
     The data from the source must adhere to frePPLe's official XML schema,
-    as defined in the schema files bin/frepple.xsd and bin/frepple_core.xsd.
+    as defined in the schema files bin/frepple.xsd.
 
     The mode is pass as an argument:
     - Mode 1:

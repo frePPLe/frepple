@@ -27,40 +27,9 @@
 #ifndef FREPPLE_UTILS_H
 #define FREPPLE_UTILS_H
 
-/* Python.h has to be included first.
-   For a debugging build on windows we avoid using the debug version of Python
-   since that also requires Python and all its modules to be compiled in debug
-   mode.
-   Visual Studio will complain if system headers are #included both with
-   and without _DEBUG defined, so we have to #include all the system headers
-   used by pyconfig.h right here.
-*/
+/* Python.h has to be included first. */
 #define PY_SSIZE_T_CLEAN
-#ifdef _MSC_VER
-#define HAVE_SNPRINTF
-#endif
-#if defined(_DEBUG) && defined(_MSC_VER)
-#include <assert.h>
-#include <basetsd.h>
-#include <ctype.h>
-#include <errno.h>
-#include <float.h>
-#include <io.h>
-#include <limits.h>
-#include <math.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <wchar.h>
-#undef _DEBUG
 #include "Python.h"
-#define _DEBUG
-#else
-#include "Python.h"
-#endif
 #include "datetime.h"
 
 // A dummy function to suppress warnings about the unused variable
@@ -93,51 +62,7 @@ using namespace std;
 
 #include <config.h>
 
-// For the disabled and ansi-challenged people...
-#ifndef HAVE_STRNCASECMP
-#ifdef _MSC_VER
-#define strncasecmp _strnicmp
-#else
-#ifdef HAVE_STRNICMP
-#define strncasecmp(s1, s2, n) strnicmp(s1, s2, n)
-#else
-// Last resort. Force it through...
-#define strncasecmp(s1, s2, n) strnuppercmp(s1, s2, n)
-#endif
-#endif
-#endif
-
 constexpr double ROUNDING_ERROR = 0.000001;
-
-/* - DECLARE_EXPORT
- *   Used to define which symbols to export from a Windows DLL.
- * - MODULE_EXPORT
- *   Signature used for a module initialization routine. It assures the
- *   function is exported appropriately when running on Windows.
- *   A module will need to define a function with the following prototype:
- *       MODULE_EXPORT string initialize();
- */
-#undef DECLARE_EXPORT
-#undef MODULE_EXPORT
-#if defined(WIN32)
-#if defined(FREPPLE_CORE)
-#define DECLARE_EXPORT __declspec(dllexport)
-#elif defined(FREPPLE_STATIC)
-#define DECLARE_EXPORT
-#else
-#define DECLARE_EXPORT __declspec(dllimport)
-#endif
-#define MODULE_EXPORT extern "C" __declspec(dllexport)
-#ifndef MODULE_IMPORT
-#define MODULE_FUNCTION __declspec(dllexport)
-#else
-#define MODULE_FUNCTION __declspec(dllimport)
-#endif
-#else
-#define DECLARE_EXPORT
-#define MODULE_FUNCTION
-#define MODULE_EXPORT extern "C"
-#endif
 
 namespace frepple {
 
@@ -462,7 +387,7 @@ class PythonInterpreter {
   static void registerGlobalObject(const char*, PyObject*, bool = true);
 
   /* Return a pointer to the main extension module. */
-  static DECLARE_EXPORT PyObject* getModule() { return module; }
+  static PyObject* getModule() { return module; }
 
  private:
   /* Callback function to create the extension module. */

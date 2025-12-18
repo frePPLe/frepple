@@ -25,18 +25,12 @@
 
 #include "frepple/json.h"
 
+#include <filesystem>
 #include <iomanip>
 
 /* Uncomment the next line to create a lot of debugging messages during
  * the parsing of the data. */
-// #define PARSE_DEBUG
-
-#if HAVE_DIRENT_H
-#include <dirent.h>
-#define NAMLEN(dirent) strlen((dirent)->d_name)
-#else
-#error "This compiler isn't supported"
-#endif
+#define PARSE_DEBUG
 
 namespace frepple {
 namespace utils {
@@ -135,39 +129,18 @@ void JSONInputFile::parse(Object* pRoot) {
   if (filename.empty()) throw DataException("Missing input file or directory");
 
   // Check if the parameter is the name of a directory
-  struct stat stat_p;
-  if (stat(filename.c_str(), &stat_p))
+  filesystem::path p(filename);
+  if (!filesystem::exists(p))
     // Can't verify the status
     throw RuntimeException("Couldn't open input file '" + filename + "'");
-  else if (stat_p.st_mode & S_IFDIR) {
+  else if (filesystem::is_directory(p)) {
     // Data is a directory: loop through all *.json files now. No recursion in
     // subdirectories is done.
     // The code is unfortunately different for Windows & Linux. Sigh...
-#ifdef _MSC_VER
-    string f = filename + "\\*.json";
-    WIN32_FIND_DATA dir_entry_p;
-    HANDLE h = FindFirstFile(f.c_str(), &dir_entry_p);
-    if (h == INVALID_HANDLE_VALUE)
-      throw RuntimeException("Couldn't open input file '" + f + "'");
-    do {
-      f = filename + '/' + dir_entry_p.cFileName;
-      JSONInputFile(f.c_str()).parse(pRoot);
-    } while (FindNextFile(h, &dir_entry_p));
-    FindClose(h);
-#elif HAVE_DIRENT_H
-    struct dirent* dir_entry_p;
-    DIR* dir_p = opendir(filename.c_str());
-    while (nullptr != (dir_entry_p = readdir(dir_p))) {
-      int n = NAMLEN(dir_entry_p);
-      if (n > 4 && !strcmp(".json", dir_entry_p->d_name + n - 4)) {
-        string f = filename + '/' + dir_entry_p->d_name;
-        JSONInputFile(f.c_str()).parse(pRoot);
-      }
+    for (const auto& entry : filesystem::directory_iterator(p)) {
+      if (entry.is_regular_file() && entry.path().extension() == ".json")
+        JSONInputFile(entry.path().string().c_str()).parse(pRoot);
     }
-    closedir(dir_p);
-#else
-    throw RuntimeException("Can't process a directory on your platform");
-#endif
   } else {
     // Normal file
     // Read the complete file in a memory buffer
@@ -175,9 +148,9 @@ void JSONInputFile::parse(Object* pRoot) {
     t.open(filename.c_str());
     t.seekg(0, ios::end);
     ifstream::pos_type length = t.tellg();
-    if (length > 100000000) {
+    if (length > 300000000) {
       t.close();
-      throw DataException("Maximum JSON file size is 100MB");
+      throw DataException("Maximum JSON file size is 300MB");
     }
     t.seekg(0, std::ios::beg);
     char* buffer = new char[length];

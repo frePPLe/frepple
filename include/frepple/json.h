@@ -27,7 +27,6 @@
 #ifndef FREPPLE_JSON_H
 #define FREPPLE_JSON_H
 
-#define FREPPLE_CORE
 #include "frepple.h"
 using namespace frepple;
 

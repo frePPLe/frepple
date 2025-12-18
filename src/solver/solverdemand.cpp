@@ -23,7 +23,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE
 #include "frepple/solver.h"
 
 namespace frepple {
@@ -158,8 +157,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             // Create a problem
             if (j == Problem::end())
               new ProblemInvalidData(const_cast<Demand*>(l), problemtext,
-                                     "demand", l->getDue(), l->getDue()
-                                     );
+                                     "demand", l->getDue(), l->getDue());
             // Abort planning of this demand
             throw DataException("Demand '" + l->getName() +
                                 "' can't be planned");

@@ -27,8 +27,6 @@
 #ifndef FORECAST_H
 #define FORECAST_H
 
-#define FREPPLE_CORE
-
 // Configure the expression parser
 #define exprtk_disable_comments
 #define exprtk_disable_break_continue

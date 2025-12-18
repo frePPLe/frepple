@@ -23,18 +23,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE
-
 #include "frepple/xml.h"
 
 #include <sys/stat.h>
 
-#if HAVE_DIRENT_H
-#include <dirent.h>
-#define NAMLEN(dirent) strlen((dirent)->d_name)
-#else
-#error "This compiler isn't supported"
-#endif
+#include <filesystem>
 
 namespace frepple {
 namespace utils {
@@ -933,39 +926,17 @@ void XMLInputFile::parse(Object* pRoot, bool validate) {
   if (filename.empty()) throw DataException("Missing input file or directory");
 
   // Check if the parameter is the name of a directory
-  struct stat stat_p;
-  if (stat(filename.c_str(), &stat_p))
+  filesystem::path p(filename);
+  if (!filesystem::exists(p))
     // Can't verify the status
     throw RuntimeException("Couldn't open input file '" + filename + "'");
-  else if (stat_p.st_mode & S_IFDIR) {
+  else if (filesystem::is_directory(p)) {
     // Data is a directory: loop through all *.xml files now. No recursion in
     // subdirectories is done.
-    // The code is unfortunately different for Windows & Linux. Sigh...
-#ifdef _MSC_VER
-    string f = filename + "\\*.xml";
-    WIN32_FIND_DATA dir_entry_p;
-    HANDLE h = FindFirstFile(f.c_str(), &dir_entry_p);
-    if (h == INVALID_HANDLE_VALUE)
-      throw RuntimeException("Couldn't open input file '" + f + "'");
-    do {
-      f = filename + '/' + dir_entry_p.cFileName;
-      XMLInputFile(f.c_str()).parse(pRoot);
-    } while (FindNextFile(h, &dir_entry_p));
-    FindClose(h);
-#elif HAVE_DIRENT_H
-    struct dirent* dir_entry_p;
-    DIR* dir_p = opendir(filename.c_str());
-    while (nullptr != (dir_entry_p = readdir(dir_p))) {
-      int n = NAMLEN(dir_entry_p);
-      if (n > 4 && !strcmp(".xml", dir_entry_p->d_name + n - 4)) {
-        string f = filename + '/' + dir_entry_p->d_name;
-        XMLInputFile(f.c_str()).parse(pRoot, validate);
-      }
+    for (const auto& entry : filesystem::directory_iterator(p)) {
+      if (entry.is_regular_file() && entry.path().extension() == ".xml")
+        XMLInputFile(entry.path().string().c_str()).parse(pRoot, validate);
     }
-    closedir(dir_p);
-#else
-    throw RuntimeException("Can't process a directory on your platform");
-#endif
   } else {
     // Normal file
     // Parse the file

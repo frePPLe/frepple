@@ -31,7 +31,7 @@
 #include <cmath>
 #endif
 
-DECLARE_EXPORT extern PythonType* EventPythonType;
+extern PythonType* EventPythonType;
 
 /* This class implements a "sorted list" data structure, sorting
  * "events" based on a date.

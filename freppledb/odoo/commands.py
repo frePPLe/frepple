@@ -691,7 +691,7 @@ class OdooSendRecommendations(PlanTask):
                         "startdate": j.start.isoformat(),
                         "enddate": j.end.isoformat(),
                         "quantity": j.quantity,
-                        "description": description,
+                        "description": f"We recommend to purchase material {j.item.name}\n{description}",
                     }
             if not self.loglevel:
                 print(f"Generated {po_count} purchase recommendations")

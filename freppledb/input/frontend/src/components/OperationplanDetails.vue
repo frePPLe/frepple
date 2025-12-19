@@ -125,7 +125,10 @@ onMounted(() => {
         store.loadOperationplans([detail.reference], detail.status, detail.selectedRows);
       }
     }
-    else console.log('[OperationplanDetails] singleSelect: row data not found for', detail.name);
+    else {
+      console.log('[OperationplanDetails] singleSelect: row data not found for', detail.name);
+      store.undo();
+    }
   };
 
   const handleAllSelectEvent = (e) => {
@@ -173,6 +176,14 @@ onMounted(() => {
     }
   };
 
+  const handleUndoEvent = (e) => {
+    const detail = e?.detail || {};
+    console.log(178, "undo",detail);
+    if (detail.execute === 'undo') {
+      store.undo();
+    }
+  };
+
   // Attach listeners on the app root element if present, otherwise on document
   const rootEl = document.getElementById('app') || document;
   rootEl.addEventListener('singleSelect', handleSingleSelectEvent);
@@ -188,6 +199,7 @@ onMounted(() => {
       all: handleAllSelectEvent,
       proc: handleProcessAggregatedInfo,
       display: handleDisplayOnPanel,
+      undo: handleUndoEvent
     }
   };
 });
@@ -206,6 +218,7 @@ onUnmounted(() => {
       info.rootEl.removeEventListener('allSelect', info.handlers.all);
       info.rootEl.removeEventListener('processAggregatedInfo', info.handlers.proc);
       info.rootEl.removeEventListener('displayonpanel', info.handlers.display);
+      info.rootEl.removeEventListener('undo', info.handlers.display);
     } catch (err) {
       console.log('Failed to remove event listeners from app root element:', err);
     }

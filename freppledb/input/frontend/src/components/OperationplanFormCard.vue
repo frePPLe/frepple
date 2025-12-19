@@ -69,20 +69,6 @@ const opptype = {
 
 const isMultipleOrNone = computed(() => store.selectedOperationplans.length !== 1);
 
-// const sortedEditableMeasureList = computed(() => {
-//   return Object.values(store.measures).filter(x => x.editable).sort((a, b) => {
-//     return a.label.localeCompare(b.label);
-//   });
-// });
-
-// Initialize selectedMeasure when component mounts
-// onMounted(() => {
-//   if (sortedEditableMeasureList.value.length > 0 && !store.editForm.selectedMeasure?.label) {
-//     store.editForm.selectedMeasure = sortedEditableMeasureList.value[0];
-//   }
-//   store.editForm.mode = "set";
-// });
-
 function validateNumericField(field, value) {
   if (!isNumeric(value)) {
     validationErrors.value[field] = 'Please enter a valid number';
@@ -132,6 +118,7 @@ function changeEdit() {
     activateApply.value = false;
     return;
   }
+  result = isNumeric(store.editForm.setTo) && parseFloat(store.editForm.setTo) >= 0;
 
   let result = false;
 
@@ -281,11 +268,11 @@ function changeEdit() {
             <input
                 v-if="!isMultipleOrNone && !store.operationplan.hasOwnProperty('operationplan__startdate')"
                 class="form-control" type="datetime-local" v-model="store.operationplan.start"
-                @input="setEditValue('setTo', $event.target.value)" :readonly="!editable">
+                @input="setEditValue('startdate', $event.target.value)" :readonly="!editable">
             <input
                 v-if="!isMultipleOrNone && store.operationplan.hasOwnProperty('operationplan__startdate')"
                 class="form-control" type="datetime-local" v-model="store.operationplan.operationplan__startdate"
-                @input="setEditValue('setTo', $event.target.value)" :readonly="!editable">
+                @input="setEditValue('enddate', $event.target.value)" :readonly="!editable">
           </td>
         </tr>
         <tr v-if="store.operationplan.setupend">
@@ -308,10 +295,10 @@ function changeEdit() {
                    type="datetime-local" v-model="store.operationplan.enddate" readonly>
             <input v-if="!isMultipleOrNone && !store.operationplan.hasOwnProperty('store.operationplan__enddate')"
                    class="form-control" type="datetime-local" v-model="store.operationplan.end"
-                   @input="setEditValue('setTo', $event.target.value)" :readonly="!editable">
+                   @input="setEditValue('enddate', $event.target.value)" :readonly="!editable">
             <input v-if="!isMultipleOrNone && store.operationplan.hasOwnProperty('store.operationplan__enddate')"
                    class="form-control" type="datetime-local" v-model="store.operationplan.operationplan__enddate"
-                   @input="setEditValue('setTo', $event.target.value)" :readonly="!editable">
+                   @input="setEditValue('enddate', $event.target.value)" :readonly="!editable">
           </td>
         </tr>
         <tr>
@@ -321,8 +308,8 @@ function changeEdit() {
           </td>
           <td>
             <span v-if="isMultipleOrNone">{{ formatNumber(store.operationplan.operationplan__quantity || store.operationplan.quantity || 0) }}</span>
-            <input v-if="!isMultipleOrNone && !store.operationplan.hasOwnProperty('store.operationplan__quantity')" class="form-control" type="number" v-model="store.operationplan.quantity" @input="setEditValue('setTo', $event.target.value)" :readonly="!editable">
-            <input v-if="!isMultipleOrNone && store.operationplan.hasOwnProperty('store.operationplan__quantity')" class="form-control" type="number" v-model="store.operationplan.operationplan__quantity" @input="setEditValue('setTo', $event.target.value)" :readonly="!editable">
+            <input v-if="!isMultipleOrNone && !store.operationplan.hasOwnProperty('store.operationplan__quantity')" class="form-control" type="number" v-model="store.operationplan.quantity" @input="setEditValue('quantity', $event.target.value)" :readonly="!editable">
+            <input v-if="!isMultipleOrNone && store.operationplan.hasOwnProperty('store.operationplan__quantity')" class="form-control" type="number" v-model="store.operationplan.operationplan__quantity" @input="setEditValue('quantity', $event.target.value)" :readonly="!editable">
           </td>
         </tr>
         <!--
@@ -361,7 +348,7 @@ function changeEdit() {
         </tr>
         <tr v-if="store.operationplan.hasOwnProperty('remark')&& store.operationplan.type !== 'STCK'">
           <td><b class="text-capitalize">{{ttt('remark')}}</b></td>
-          <td><input class="form-control" v-model="store.operationplan.remark"></td>
+          <td><input class="form-control" v-model="store.operationplan.remark" @input="setEditValue('remark', $event.target.value)"></td>
         </tr>
         </tbody>
 

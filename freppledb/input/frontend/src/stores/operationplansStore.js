@@ -51,8 +51,8 @@ export const useOperationplansStore = defineStore('operationplans', {
     operationplans: {},
     selectedOperationplans: [],
 
-    // Preferences
     preferences: {},
+    editForm: {quantity: null, startdate: "", enddate: "", remark: ""},
 
     mode: 'table',
     calendarmode: 'month',
@@ -264,12 +264,6 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.viewend = new Date(endDate);
     },
 
-    // Selection actions
-    selectMultipleOperationplans(operationplans) {
-      console.log(240, 'selectMultipleOperationplans: ', operationplans);
-      // this.selectedOperationplans = operationplans;
-    },
-
     clearSelection() {
       this.selectedOperationplan = null;
       this.selectedOperationplans = [];
@@ -314,6 +308,17 @@ export const useOperationplansStore = defineStore('operationplans', {
       } finally {
         this.loading = false;
       }
+    },
+
+    async save(data) {
+      console.log(314, 'save: ', data);
+    },
+
+    undo() {
+      console.log(318, 'undo: ');
+      this.operationplan = new Operationplan();
+      this.editForm = {setQuantity: null, setStart: "", setEnd: "", setRemark: ""};
+      this.selectedOperationplans = [];
     },
 
     // Error handling
@@ -463,11 +468,13 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     setEditFormValues(field, value) {
-      console.log(491, 'setEditFormValues: ', field, value);
+      console.log(466, 'setEditFormValues: ', field, value);
+      window.displayongrid(this.operationplan.reference, field, value);
+      this.editForm[field] = value;
     },
 
     applyOperationplanChanges() {
-      console.log(465, 'applyOperationplanChanges');
+      console.log(470, 'applyOperationplanChanges');
     }
   }
 })

@@ -226,7 +226,8 @@ void JSONInput::parse(Object* pRoot, char* buffer) {
   rapidjson::Reader reader;
   rapidjson::ParseResult ok =
       reader.Parse<rapidjson::kParseCommentsFlag |
-                   rapidjson::kParseTrailingCommasFlag>(buf, *this);
+                   rapidjson::kParseTrailingCommasFlag |
+                   rapidjson::kParseStopWhenDoneFlag>(buf, *this);
   if (!ok) {
     ostringstream o;
     o << "Error position " << ok.Offset()
@@ -523,7 +524,7 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
                 switch (data[idx].value.getDataType()) {
                   case JSONData::JSON_BOOL:
                     // Property stored as a boolean
-                    objects[objectindex].object->setProperty(
+                    objects[objectindex - 1].object->setProperty(
                         data[idx].name, data[idx].value, 1,
                         getCommandManager());
                     break;
@@ -532,13 +533,13 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
                   case JSONData::JSON_UNSIGNEDLONG:
                   case JSONData::JSON_DOUBLE:
                     // Property stored as a double value
-                    objects[objectindex].object->setProperty(
+                    objects[objectindex - 1].object->setProperty(
                         data[idx].name, data[idx].value, 3,
                         getCommandManager());
                     break;
                   default:
                     // Property stored as a string
-                    objects[objectindex].object->setProperty(
+                    objects[objectindex - 1].object->setProperty(
                         data[idx].name, data[idx].value, 4,
                         getCommandManager());
                 }

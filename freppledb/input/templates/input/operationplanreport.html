@@ -182,7 +182,16 @@ rect.opplan {
       });
     $("#undo").on('click', function() {
       $(window).off('beforeunload', upload.warnUnsavedChanges);
+      const event = new CustomEvent('singleSelect', {
+      detail: {
+          execute: 'undo',
+          reference: null,
+          status: null,
+          selectedRows: null
+        }
       });
+      document.getElementById('app').dispatchEvent(event);
+    });
   //   $("#actionsul li, button#actions1").on('click', function() {
   //     angular.element('#controller').scope().refreshstatus($("#actions").val());
   //   });
@@ -231,22 +240,25 @@ rect.opplan {
   // }
   //
   // // Controller will call this function to pass values to the grid
-  // function displayongrid(id, columnid, value) {
-  //   angular.element(document).find(document.getElementById(id)).removeClass("edited").addClass("edited");
-  //   if (
-  //     columnid === "startdate" ||
-  //     columnid === "enddate" ||
-  //     columnid === "quantity" ||
-  //     columnid === "quantity_completed" ||
-  //     columnid === "remark" ||
-  //     (columnid === "status" && ['proposed', 'approved', 'confirmed', 'completed', 'closed'].indexOf(value) > -1)
-  //   ) {
-  //     angular.element(document).find("#grid").jqGrid("setCell", id, columnid, value, "dirty-cell");
-  //     $("#save, #undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-  //     $(window).off('beforeunload', upload.warnUnsavedChanges);
-  //     $(window).on('beforeunload', upload.warnUnsavedChanges);
-  //   }
-  // }
+  function displayongrid(id, columnid, value) {
+    console.log( "displayongrid called with id: " + id + ", columnid: " + columnid + ", value: " + value);
+    $("#"+id).removeClass("edited").addClass("edited");
+    if (
+      columnid === "startdate" ||
+      columnid === "enddate" ||
+      columnid === "quantity" ||
+      columnid === "quantity_completed" ||
+      columnid === "remark" ||
+      (columnid === "status" && ['proposed', 'approved', 'confirmed', 'completed', 'closed'].indexOf(value) > -1)
+    ) {
+      $("#grid").jqGrid("setCell", id, columnid, value, "dirty-cell");
+      $("#save, #undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+      $(window).off('beforeunload', upload.warnUnsavedChanges);
+      $(window).on('beforeunload', upload.warnUnsavedChanges);
+    }
+  }
+
+  window.displayongrid = displayongrid;
 
   jQuery("#workarea").css('overflow-x', 'visible');
   jQuery("#resize-handle").css({ 'display': 'inline-block' });

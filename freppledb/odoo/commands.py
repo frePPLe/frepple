@@ -648,8 +648,8 @@ class OdooSendRecommendations(PlanTask):
             for i in frepple.operations():
                 if (
                     not isinstance(i, frepple.operation_itemsupplier)
-                    #or "odoo" not in i.itemsupplier.item.source
-                    #or "odoo" not in i.itemsupplier.supplier.source
+                    or "odoo" not in i.itemsupplier.item.source
+                    or "odoo" not in i.itemsupplier.supplier.source
                 ):
                     continue
                 for j in i.operationplans:
@@ -657,7 +657,7 @@ class OdooSendRecommendations(PlanTask):
                     if (
                         not j.status == "proposed"
                         or not j.item.source == "odoo_1"
-                        #or not j.supplier.source == "odoo_1"
+                        or not j.supplier.source == "odoo_1"
                         or j.start
                         > frepple.settings.current + timedelta(seconds=i.duration)
                     ):
@@ -686,7 +686,7 @@ class OdooSendRecommendations(PlanTask):
                         description = "Stock replenishment"
                     yield {
                         "type": "purchase",
-                        "data": {"partner_id":14},
+                        "data": {"partner_id": int(j.supplier.name.rsplit(" ", 1)[1])},
                         "product_id": int(j.item.subcategory.split(",")[1]),
                         "startdate": j.start.isoformat(),
                         "enddate": j.end.isoformat(),

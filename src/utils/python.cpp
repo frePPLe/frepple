@@ -29,7 +29,6 @@
  * More information can be found on http://cxx.sourceforge.net
  */
 
-#define FREPPLE_CORE
 #include "frepple/json.h"
 #include "frepple/utils.h"
 #include "frepple/xml.h"

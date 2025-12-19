@@ -23,9 +23,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE
-#include <math.h>
-
 #include "frepple/model.h"
 
 namespace frepple {
@@ -665,7 +662,8 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
     if ((f->getQuantity() <= 0 &&
          f->getCumulativeConsumed() + f->getQuantity() < endQty) ||
         (f->getQuantity() > 0 && f->getCumulativeConsumed() < endQty &&
-         !(f->getCumulativeConsumed() > f->getCumulativeProduced() - f->getQuantity()))) {
+         !(f->getCumulativeConsumed() >
+           f->getCumulativeProduced() - f->getQuantity()))) {
       // CASE 2A: Not consumed enough yet: move forward
       while (f != getFlowPlans().end() &&
              f->getCumulativeConsumed() <= startQty)
@@ -716,7 +714,8 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
              ((f->getQuantity() <= 0 &&
                f->getCumulativeConsumed() + f->getQuantity() < endQty) ||
               (f->getQuantity() > 0 && f->getCumulativeConsumed() < endQty &&
-              !(f->getCumulativeConsumed() > f->getCumulativeProduced() - f->getQuantity()))))
+               !(f->getCumulativeConsumed() >
+                 f->getCumulativeProduced() - f->getQuantity()))))
         --f;
       while (f != getFlowPlans().end() &&
              f->getCumulativeConsumed() > startQty) {

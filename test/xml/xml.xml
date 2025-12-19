@@ -4,7 +4,7 @@
   <description>XML structure test model</description>
   <current>2009-01-01T00:00:00</current>
   <customers>
-  <customer name="customer level 1">  
+  <customer name="customer level 1">
     <stringproperty name="test" value="customer level 1"/>
     <members>
     <customer name="customer level 2">
@@ -83,6 +83,12 @@
       </operation>
     </demand>
   </demands>
+  <calendars>
+     <calendar name="cal #1"/>
+  </calendars>
+  <calendars_reorderpoints>
+     <calendar name="cal #2"/>
+  </calendars_reorderpoints>
   <problems>
     <!-- Input being ignored. It is still being validated. -->
   </problems>

@@ -23,7 +23,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE
 #include "frepple/cache.h"
 #include "frepple/model.h"
 

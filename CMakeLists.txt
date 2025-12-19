@@ -255,12 +255,6 @@ add_subdirectory(doc)
 add_subdirectory(contrib/docker)
 add_subdirectory(contrib/linux)
 
-# Test suite
-enable_testing()
-add_test(NAME engine
-  COMMAND ${Python3_VENV} ${CMAKE_CURRENT_SOURCE_DIR}/test/runtest.py ${TESTARGS}
-)
-
 # Debugging targets
 find_program(valgrind NAMES valgrind)
 

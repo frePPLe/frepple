@@ -23,7 +23,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple {
@@ -31,6 +30,7 @@ namespace frepple {
 template <class Calendar>
 Tree utils::HasName<Calendar>::st;
 const MetaCategory* Calendar::metadata;
+const MetaCategory* Calendar::metadata_alias;
 const MetaClass* CalendarDefault::metadata;
 const MetaCategory* CalendarBucket::metacategory;
 const MetaClass* CalendarBucket::metadata;
@@ -41,6 +41,11 @@ int Calendar::initialize() {
   metadata = MetaCategory::registerCategory<Calendar>("calendar", "calendars",
                                                       reader, finder);
   registerFields<Calendar>(const_cast<MetaCategory*>(metadata));
+
+  // An alias for the calendar
+  metadata_alias = MetaCategory::registerCategory<Calendar>(
+      "calendar_reorderpoints", "calendars_reorderpoints", reader, finder);
+  registerFields<Calendar>(const_cast<MetaCategory*>(metadata_alias));
 
   // Initialize the Python class
   auto& x = FreppleCategory<Calendar>::getPythonType();
@@ -78,6 +83,9 @@ int CalendarDefault::initialize() {
   // Initialize the metadata
   metadata = MetaClass::registerClass<CalendarDefault>(
       "calendar", "calendar_default", Object::create<CalendarDefault>, true);
+
+  const_cast<MetaCategory*>(Calendar::metadata_alias)
+      ->setDefaultClass(CalendarDefault::metadata);
 
   // Initialize the Python class
   return FreppleClass<CalendarDefault, Calendar>::initialize();

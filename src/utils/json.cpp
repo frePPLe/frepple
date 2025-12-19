@@ -25,35 +25,12 @@
 
 #include "frepple/json.h"
 
+#include <filesystem>
 #include <iomanip>
 
 /* Uncomment the next line to create a lot of debugging messages during
  * the parsing of the data. */
 // #define PARSE_DEBUG
-
-// With VC++ we use the Win32 functions to browse a directory
-#ifdef _MSC_VER
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#else
-// With Unix-like systems we use a check suggested by the autoconf tools
-#if HAVE_DIRENT_H
-#include <dirent.h>
-#define NAMLEN(dirent) strlen((dirent)->d_name)
-#else
-#define dirent direct
-#define NAMLEN(dirent) (dirent)->d_namlen
-#if HAVE_SYS_NDIR_H
-#include <sys/ndir.h>
-#endif
-#if HAVE_SYS_DIR_H
-#include <sys/dir.h>
-#endif
-#if HAVE_NDIR_H
-#include <ndir.h>
-#endif
-#endif
-#endif
 
 namespace frepple {
 namespace utils {
@@ -152,39 +129,18 @@ void JSONInputFile::parse(Object* pRoot) {
   if (filename.empty()) throw DataException("Missing input file or directory");
 
   // Check if the parameter is the name of a directory
-  struct stat stat_p;
-  if (stat(filename.c_str(), &stat_p))
+  filesystem::path p(filename);
+  if (!filesystem::exists(p))
     // Can't verify the status
     throw RuntimeException("Couldn't open input file '" + filename + "'");
-  else if (stat_p.st_mode & S_IFDIR) {
+  else if (filesystem::is_directory(p)) {
     // Data is a directory: loop through all *.json files now. No recursion in
     // subdirectories is done.
     // The code is unfortunately different for Windows & Linux. Sigh...
-#ifdef _MSC_VER
-    string f = filename + "\\*.json";
-    WIN32_FIND_DATA dir_entry_p;
-    HANDLE h = FindFirstFile(f.c_str(), &dir_entry_p);
-    if (h == INVALID_HANDLE_VALUE)
-      throw RuntimeException("Couldn't open input file '" + f + "'");
-    do {
-      f = filename + '/' + dir_entry_p.cFileName;
-      JSONInputFile(f.c_str()).parse(pRoot);
-    } while (FindNextFile(h, &dir_entry_p));
-    FindClose(h);
-#elif HAVE_DIRENT_H
-    struct dirent* dir_entry_p;
-    DIR* dir_p = opendir(filename.c_str());
-    while (nullptr != (dir_entry_p = readdir(dir_p))) {
-      int n = NAMLEN(dir_entry_p);
-      if (n > 4 && !strcmp(".json", dir_entry_p->d_name + n - 4)) {
-        string f = filename + '/' + dir_entry_p->d_name;
-        JSONInputFile(f.c_str()).parse(pRoot);
-      }
+    for (const auto& entry : filesystem::directory_iterator(p)) {
+      if (entry.is_regular_file() && entry.path().extension() == ".json")
+        JSONInputFile(entry.path().string().c_str()).parse(pRoot);
     }
-    closedir(dir_p);
-#else
-    throw RuntimeException("Can't process a directory on your platform");
-#endif
   } else {
     // Normal file
     // Read the complete file in a memory buffer
@@ -192,9 +148,9 @@ void JSONInputFile::parse(Object* pRoot) {
     t.open(filename.c_str());
     t.seekg(0, ios::end);
     ifstream::pos_type length = t.tellg();
-    if (length > 100000000) {
+    if (length > 300000000) {
       t.close();
-      throw DataException("Maximum JSON file size is 100MB");
+      throw DataException("Maximum JSON file size is 300MB");
     }
     t.seekg(0, std::ios::beg);
     char* buffer = new char[length];
@@ -268,12 +224,20 @@ void JSONInput::parse(Object* pRoot, char* buffer) {
   // The parser will modify the string buffer during the parsing!
   rapidjson::InsituStringStream buf(buffer);
   rapidjson::Reader reader;
-  rapidjson::ParseResult ok = reader.Parse(buf, *this);
-  if (!ok) {
-    ostringstream o;
-    o << "Error position " << ok.Offset()
-      << " during JSON parsing: " << rapidjson::GetParseError_En(ok.Code());
-    throw DataException(o.str());
+  try {
+    rapidjson::ParseResult ok =
+        reader.Parse<rapidjson::kParseCommentsFlag |
+                     rapidjson::kParseTrailingCommasFlag |
+                     rapidjson::kParseStopWhenDoneFlag>(buf, *this);
+    if (!ok) {
+      ostringstream o;
+      o << "Error position " << ok.Offset()
+        << " during JSON parsing: " << rapidjson::GetParseError_En(ok.Code());
+      throw DataException(o.str());
+    }
+  } catch (const exception& e) {
+    logger << "Parsing error near position " << buf.Tell() << endl;
+    throw;
   }
 }
 
@@ -439,7 +403,10 @@ bool JSONInput::String(const char* str, rapidjson::SizeType length, bool copy) {
   } else if (objectindex == 0 && objects[objectindex].object &&
              data[dataindex].field && !data[dataindex].field->isGroup()) {
     // Immediately process updates to the root object
-    if (data[dataindex].field == &useProperty)
+    if (data[dataindex].name == "source")
+      // Special case: Source specified as attribute of the root element
+      setSource(data[dataindex].value.getString());
+    else if (data[dataindex].field == &useProperty)
       // Property stored as a string
       objects[objectindex].object->setProperty(
           data[dataindex].name, data[dataindex].value, 4, getCommandManager());
@@ -511,6 +478,25 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
   // Build a dictionary with all fields of this model
   JSONDataValueDict dict(data, objects[objectindex].start, dataindex);
 
+  // Push also the source field in the attributes.
+  // This is only required if 1) it's not in the dict yet, and 2) there
+  // is a value set at the interface level, 3) the class has a source field.
+  if (!getSource().empty()) {
+    auto s = dict.get(Tags::source);
+    if (!s) {
+      const MetaFieldBase* f =
+          objects[objectindex].cls->findField(Tags::source);
+      if (!f && objects[objectindex].cls->category)
+        f = objects[objectindex].cls->category->findField(Tags::source);
+      if (f) {
+        data[++dataindex].field = f;
+        data[dataindex].hash = Tags::source.getHash();
+        data[dataindex].value.setString(getSource());
+        dict.enlarge();
+      }
+    }
+  }
+
   // Check if we need to add a parent object to the dict
   bool found_parent = false;
   if (objectindex > 0 && objects[objectindex].cls &&
@@ -554,10 +540,10 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
                   data[idx].hash == Tags::action.getHash())
                 continue;
               if (data[idx].field == &useProperty &&
-                  objects[objectindex].object) {
+                  objects[objectindex - 1].object) {
                 // Check again. If a field is defined on a subclass it is
                 // possible that we didn't see it before the object got created.
-                auto tmp = objects[objectindex].object->getType().findField(
+                auto tmp = objects[objectindex - 1].object->getType().findField(
                     data[idx].hash);
                 if (tmp) data[idx].field = tmp;
               }
@@ -565,7 +551,7 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
                 switch (data[idx].value.getDataType()) {
                   case JSONData::JSON_BOOL:
                     // Property stored as a boolean
-                    objects[objectindex].object->setProperty(
+                    objects[objectindex - 1].object->setProperty(
                         data[idx].name, data[idx].value, 1,
                         getCommandManager());
                     break;
@@ -574,13 +560,13 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
                   case JSONData::JSON_UNSIGNEDLONG:
                   case JSONData::JSON_DOUBLE:
                     // Property stored as a double value
-                    objects[objectindex].object->setProperty(
+                    objects[objectindex - 1].object->setProperty(
                         data[idx].name, data[idx].value, 3,
                         getCommandManager());
                     break;
                   default:
                     // Property stored as a string
-                    objects[objectindex].object->setProperty(
+                    objects[objectindex - 1].object->setProperty(
                         data[idx].name, data[idx].value, 4,
                         getCommandManager());
                 }
@@ -646,10 +632,10 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
                   data[idx].hash == Tags::action.getHash())
                 continue;
               if (data[idx].field == &useProperty &&
-                  objects[objectindex].object) {
+                  objects[objectindex - 1].object) {
                 // Check again. If a field is defined on a subclass it is
                 // possible that we didn't see it before the object got created.
-                auto tmp = objects[objectindex].object->getType().findField(
+                auto tmp = objects[objectindex - 1].object->getType().findField(
                     data[idx].hash);
                 if (tmp) data[idx].field = tmp;
               }
@@ -657,7 +643,7 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
                 switch (data[idx].value.getDataType()) {
                   case JSONData::JSON_BOOL:
                     // Property stored as a boolean
-                    objects[objectindex].object->setProperty(
+                    objects[objectindex - 1].object->setProperty(
                         data[idx].name, data[idx].value, 1,
                         getCommandManager());
                     break;
@@ -666,13 +652,13 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
                   case JSONData::JSON_UNSIGNEDLONG:
                   case JSONData::JSON_DOUBLE:
                     // Property stored as a double value
-                    objects[objectindex].object->setProperty(
+                    objects[objectindex - 1].object->setProperty(
                         data[idx].name, data[idx].value, 3,
                         getCommandManager());
                     break;
                   default:
                     // Property stored as a string
-                    objects[objectindex].object->setProperty(
+                    objects[objectindex - 1].object->setProperty(
                         data[idx].name, data[idx].value, 4,
                         getCommandManager());
                 }

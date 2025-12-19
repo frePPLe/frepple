@@ -23,7 +23,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE
 #include "frepple/solver.h"
 
 namespace frepple {
@@ -158,8 +157,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             // Create a problem
             if (j == Problem::end())
               new ProblemInvalidData(const_cast<Demand*>(l), problemtext,
-                                     "demand", l->getDue(), l->getDue()
-                                     );
+                                     "demand", l->getDue(), l->getDue());
             // Abort planning of this demand
             throw DataException("Demand '" + l->getName() +
                                 "' can't be planned");
@@ -217,6 +215,12 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
         // Main planning loop for a sales order line
         ++indentlevel;
         bool hasOverdueConstraint = false;
+        Problem::iterator i = l->getConstraints().begin();
+        while (Problem* prob = i.next())
+          if (prob->hasType<ConstraintOverdueDemand>()) {
+            hasOverdueConstraint = true;
+            break;
+          }
         do {    // Loop over global-purchasing locations
           do {  // Multiple plan iterations
             // Message
@@ -644,6 +648,8 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
         break;  // TODO
       } else if (policy != Demand::POLICY_INDEPENDENT)
         throw LogicException("Unknown demand policy!");
+
+      salesorder->getConstraints().clean(salesorder);
     } while (isGroup);
   } catch (...) {
     // Clean up if any exception happened during the planning of the demand

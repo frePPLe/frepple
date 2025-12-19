@@ -23,7 +23,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple {
@@ -641,7 +640,7 @@ void Problem::List::push(Problem* p) {
   Py_INCREF(p);
 }
 
-void Problem::List::cleanConstraints(Demand* d) {
+void Problem::List::clean(const Demand* d) const {
   // Check all manufacturing lead time constraints, and keep only the
   // critical path.
 }

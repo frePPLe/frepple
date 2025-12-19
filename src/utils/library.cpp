@@ -23,8 +23,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE
-
 // These headers are required for the loading of dynamic libraries and the
 // detection of the number of cores.
 #ifdef WIN32

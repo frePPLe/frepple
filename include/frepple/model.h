@@ -471,6 +471,7 @@ class Calendar : public HasName<Calendar>, public HasSource {
 
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaCategory* metadata;
+  static const MetaCategory* metadata_alias;
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
@@ -811,7 +812,7 @@ class Problem::List {
   void transfer(HasProblems*);
 
   /* Postprocessing of a constraint list to keep it user-friendly. */
-  void cleanConstraints(Demand*);
+  void clean(const Demand*) const;
 
  private:
   /* Pointer to the head of the list. */
@@ -8921,6 +8922,8 @@ class Plan : public Plannable, public Object {
     m->addIteratorField<Plan, Calendar::iterator, Calendar>(
         Tags::calendars, Tags::calendar, &Plan::getCalendars,
         BASE + WRITE_OBJECT);
+    m->addIteratorField<Plan, Calendar::iterator, Calendar>(
+        Tags::calendars_reorderpoints, Tags::calendar, nullptr, DONT_SERIALIZE);
     m->addIteratorField<Plan, Resource::iterator, Resource>(
         Tags::resources, Tags::resource, &Plan::getResources,
         BASE + WRITE_OBJECT);

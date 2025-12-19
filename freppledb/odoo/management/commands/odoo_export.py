@@ -501,6 +501,20 @@ class Command(BaseCommand):
                                         quoteattr(wores.resource.category or ""),
                                     )
                                 )
+                        for womat in wo.materials.using(self.database).all():
+                            if womat.item.source and womat.item.source.startswith(
+                                "odoo"
+                            ):
+                                rec.append(
+                                    '<item name=%s id=%s quantity="%s"/>'
+                                    % (
+                                        quoteattr(womat.item.name),
+                                        quoteattr(
+                                            womat.item.subcategory.split(",")[1] or ""
+                                        ),
+                                        womat.quantity,
+                                    )
+                                )
                         rec.append("</workorder>")
                 else:
                     for opplanres in i.resources.using(self.database).all():
@@ -513,6 +527,20 @@ class Command(BaseCommand):
                                 % (
                                     quoteattr(opplanres.resource.name),
                                     quoteattr(opplanres.resource.category or ""),
+                                )
+                            )
+                    for opplanmat in i.materials.using(self.database).all():
+                        if opplanmat.item.source and opplanmat.item.source.startswith(
+                            "odoo"
+                        ):
+                            rec.append(
+                                '<item name=%s id=%s quantity="%s"/>'
+                                % (
+                                    quoteattr(opplanmat.item.name),
+                                    quoteattr(
+                                        opplanmat.item.subcategory.split(",")[1] or ""
+                                    ),
+                                    opplanmat.quantity,
                                 )
                             )
                 rec.append("</operationplan>")
@@ -565,6 +593,16 @@ class Command(BaseCommand):
                         % (
                             quoteattr(wores.resource.name),
                             quoteattr(wores.resource.category or ""),
+                        )
+                    )
+            for womat in i.materials.using(self.database).all():
+                if womat.item.source and womat.item.source.startswith("odoo"):
+                    rec.append(
+                        '<item name=%s id=%s quantity="%s"/>'
+                        % (
+                            quoteattr(womat.item.name),
+                            quoteattr(womat.item.subcategory.split(",")[1] or ""),
+                            womat.quantity,
                         )
                     )
             rec.append("</operationplan>")

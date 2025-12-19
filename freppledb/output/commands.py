@@ -26,6 +26,7 @@ import json
 import logging
 import os
 from psycopg2.extras import execute_batch
+from time import time
 
 from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
@@ -40,6 +41,64 @@ from freppledb.input.models import OperationPlan
 from freppledb.boot import getAttributes
 
 logger = logging.getLogger(__name__)
+
+
+@PlanTaskRegistry.register
+class loadConstraints(PlanTask):
+    description = "Loading constraints"
+    sequence = 112
+
+    @staticmethod
+    def getWeight(database=DEFAULT_DB_ALIAS, **kwargs):
+        if "supply" in os.environ:
+            # Constraints will be recomputed shortly from scratch
+            return -1
+        for i in range(5):
+            if ("odoo_read_%s" % i) in os.environ:
+                # Skip constraint loading durin odoo import
+                return -1
+        return 1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                if "freppledb.forecast" in settings.INSTALLED_APPS:
+                    cursor.execute(
+                        """
+                        SELECT
+                        coalesce(demand, forecast), name, owner, startdate, enddate
+                        FROM out_constraint
+                        order by 1
+                        """
+                    )
+                else:
+                    cursor.execute(
+                        """
+                        SELECT
+                        demand, name, owner, startdate, enddate
+                        FROM out_constraint
+                        order by 1
+                        """
+                    )
+                prevdmd = None
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        if i[0] != prevdmd:
+                            dmd = frepple.demand(name=i[0], action="C")
+                            prevdmd = i[0]
+                        if dmd:
+                            dmd.addConstraint(i[1], i[2], i[3], i[4])
+                    except Exception as e:
+                        logger.error("Error: %s" % e)
+                logger.info(
+                    "Loaded %d constraints in %.2f seconds" % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -210,6 +269,14 @@ class TruncatePlan(PlanTask):
 
             cursor.execute(
                 """
+                delete from operationplanmaterial where item_id in (
+                    select name from cluster_keys
+                )
+                """
+            )
+
+            cursor.execute(
+                """
                 with opplans as (
                     select oplan_parent.reference
                     from operationplan as oplan_parent
@@ -221,11 +288,6 @@ class TruncatePlan(PlanTask):
                     from operationplan as oplan
                     inner join cluster_keys on oplan.item_id = cluster_keys.name
                     where oplan.status='proposed' or oplan.status is null or oplan.type='STCK'
-                ),
-                opplanmat as (
-                delete from operationplanmaterial
-                using opplans
-                where opplans.reference = operationplan_id
                 ),
                 opplanres as (
                 delete from operationplanresource

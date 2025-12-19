@@ -28,5 +28,4 @@ help link on each screen to land on the appropriate page in this section.
    demand-report
    demand-gantt-report
    forecast-report
-   performance-indicator-report
    quoting-screen

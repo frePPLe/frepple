@@ -27,15 +27,13 @@
 #ifndef FREPPLE_JSON_H
 #define FREPPLE_JSON_H
 
-#define FREPPLE_CORE
 #include "frepple.h"
 using namespace frepple;
 
 #if defined(HAVE_STDINT_H)
 #include <stdint.h>
 #else
-typedef unsigned __int64 uint64_t;
-typedef __int64 int64_t;
+#error "This compiler isn't supported"
 #endif
 
 // Parser flag to stop parsing at the end of root document

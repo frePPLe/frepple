@@ -23,7 +23,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE
 #include "frepple/model.h"
 namespace frepple {
 

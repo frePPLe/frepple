@@ -2,7 +2,7 @@
 Where can I check the forecast accuracy?
 ========================================
 
-Forecast accuracy is an import KPI for any demand planner. FrePPLe
+Forecast accuracy is an important KPI for any demand planner. FrePPLe
 implements the SMAPE accuracy metric.
 
 1) Navigate to Forecast Editor and scroll down to the bottom of the page.

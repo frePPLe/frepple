@@ -23,7 +23,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE
 #include <sys/stat.h>
 
 #include "frepple/model.h"

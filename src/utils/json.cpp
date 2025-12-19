@@ -403,7 +403,10 @@ bool JSONInput::String(const char* str, rapidjson::SizeType length, bool copy) {
   } else if (objectindex == 0 && objects[objectindex].object &&
              data[dataindex].field && !data[dataindex].field->isGroup()) {
     // Immediately process updates to the root object
-    if (data[dataindex].field == &useProperty)
+    if (data[dataindex].name == "source")
+      // Special case: Source specified as attribute of the root element
+      setSource(data[dataindex].value.getString());
+    else if (data[dataindex].field == &useProperty)
       // Property stored as a string
       objects[objectindex].object->setProperty(
           data[dataindex].name, data[dataindex].value, 4, getCommandManager());
@@ -474,6 +477,24 @@ bool JSONInput::Key(const char* str, rapidjson::SizeType length, bool copy) {
 bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
   // Build a dictionary with all fields of this model
   JSONDataValueDict dict(data, objects[objectindex].start, dataindex);
+
+  // Push also the source field in the attributes.
+  // This is only required if 1) it's not in the dict yet, and 2) there
+  // is a value set at the interface level, 3) the class has a source field.
+  if (!getSource().empty()) {
+    auto s = dict.get(Tags::source);
+    if (!s) {
+      const MetaFieldBase* f =
+          objects[objectindex].cls->findField(Tags::source);
+      if (!f && objects[objectindex].cls->category)
+        f = objects[objectindex].cls->category->findField(Tags::source);
+      if (f) {
+        data[++dataindex].field = f;
+        data[dataindex].hash = Tags::source.getHash();
+        data[dataindex].value.setString(getSource());
+      }
+    }
+  }
 
   // Check if we need to add a parent object to the dict
   bool found_parent = false;

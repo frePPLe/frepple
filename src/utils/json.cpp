@@ -30,7 +30,7 @@
 
 /* Uncomment the next line to create a lot of debugging messages during
  * the parsing of the data. */
-#define PARSE_DEBUG
+// #define PARSE_DEBUG
 
 namespace frepple {
 namespace utils {

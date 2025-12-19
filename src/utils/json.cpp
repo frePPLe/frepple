@@ -224,15 +224,20 @@ void JSONInput::parse(Object* pRoot, char* buffer) {
   // The parser will modify the string buffer during the parsing!
   rapidjson::InsituStringStream buf(buffer);
   rapidjson::Reader reader;
-  rapidjson::ParseResult ok =
-      reader.Parse<rapidjson::kParseCommentsFlag |
-                   rapidjson::kParseTrailingCommasFlag |
-                   rapidjson::kParseStopWhenDoneFlag>(buf, *this);
-  if (!ok) {
-    ostringstream o;
-    o << "Error position " << ok.Offset()
-      << " during JSON parsing: " << rapidjson::GetParseError_En(ok.Code());
-    throw DataException(o.str());
+  try {
+    rapidjson::ParseResult ok =
+        reader.Parse<rapidjson::kParseCommentsFlag |
+                     rapidjson::kParseTrailingCommasFlag |
+                     rapidjson::kParseStopWhenDoneFlag>(buf, *this);
+    if (!ok) {
+      ostringstream o;
+      o << "Error position " << ok.Offset()
+        << " during JSON parsing: " << rapidjson::GetParseError_En(ok.Code());
+      throw DataException(o.str());
+    }
+  } catch (const exception& e) {
+    logger << "Parsing error near position " << buf.Tell() << endl;
+    throw;
   }
 }
 
@@ -513,10 +518,10 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
                   data[idx].hash == Tags::action.getHash())
                 continue;
               if (data[idx].field == &useProperty &&
-                  objects[objectindex].object) {
+                  objects[objectindex - 1].object) {
                 // Check again. If a field is defined on a subclass it is
                 // possible that we didn't see it before the object got created.
-                auto tmp = objects[objectindex].object->getType().findField(
+                auto tmp = objects[objectindex - 1].object->getType().findField(
                     data[idx].hash);
                 if (tmp) data[idx].field = tmp;
               }
@@ -605,10 +610,10 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
                   data[idx].hash == Tags::action.getHash())
                 continue;
               if (data[idx].field == &useProperty &&
-                  objects[objectindex].object) {
+                  objects[objectindex - 1].object) {
                 // Check again. If a field is defined on a subclass it is
                 // possible that we didn't see it before the object got created.
-                auto tmp = objects[objectindex].object->getType().findField(
+                auto tmp = objects[objectindex - 1].object->getType().findField(
                     data[idx].hash);
                 if (tmp) data[idx].field = tmp;
               }
@@ -616,7 +621,7 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
                 switch (data[idx].value.getDataType()) {
                   case JSONData::JSON_BOOL:
                     // Property stored as a boolean
-                    objects[objectindex].object->setProperty(
+                    objects[objectindex - 1].object->setProperty(
                         data[idx].name, data[idx].value, 1,
                         getCommandManager());
                     break;
@@ -625,13 +630,13 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
                   case JSONData::JSON_UNSIGNEDLONG:
                   case JSONData::JSON_DOUBLE:
                     // Property stored as a double value
-                    objects[objectindex].object->setProperty(
+                    objects[objectindex - 1].object->setProperty(
                         data[idx].name, data[idx].value, 3,
                         getCommandManager());
                     break;
                   default:
                     // Property stored as a string
-                    objects[objectindex].object->setProperty(
+                    objects[objectindex - 1].object->setProperty(
                         data[idx].name, data[idx].value, 4,
                         getCommandManager());
                 }

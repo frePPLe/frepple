@@ -387,6 +387,8 @@ class MultiDBMiddleware:
                         return HttpResponseRedirect(
                             f"/{sc}/" if sc != DEFAULT_DB_ALIAS else "/"
                         )
+                    else:
+                        return HttpResponseNotFound("No accesible scenario")
                 else:
                     return HttpResponseNotFound(
                         "Scenario not in use, or access is denied"

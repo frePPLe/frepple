@@ -492,6 +492,7 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
         data[++dataindex].field = f;
         data[dataindex].hash = Tags::source.getHash();
         data[dataindex].value.setString(getSource());
+        dict.enlarge();
       }
     }
   }

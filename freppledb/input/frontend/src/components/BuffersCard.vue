@@ -132,7 +132,8 @@ const flowplans = computed(() => {
           <td>{{ formatNumber(flowplan.onhand) }}</td>
 
           <!-- Date column -->
-          <td style="white-space: nowrap">{{ formatDatetime(flowplan.date) }}</td>
+<!--          <td style="white-space: nowrap">{{ formatDatetime(flowplan.date) }}</td>-->
+          <td style="white-space: nowrap">{{ flowplan.date }}</td>
         </tr>
         </tbody>
       </table>

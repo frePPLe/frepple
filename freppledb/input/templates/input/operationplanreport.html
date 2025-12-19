@@ -380,7 +380,7 @@ onSelectAll: function(aRowids, status){
   const event = new CustomEvent('allSelect', {
     detail: {
       execute: 'displayInfo',
-      selected: status,
+      status: status,
       selectedRows: aRowids,
     }
   });

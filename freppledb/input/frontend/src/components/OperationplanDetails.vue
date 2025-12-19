@@ -39,6 +39,8 @@ const databaseerrormodal = ref(false);
 const rowlimiterrormodal = ref(false);
 const modalcallback = ref({ resolve: () => {} });
 
+const isMultipleOrNone = computed(() => store.selectedOperationplans.length !== 1);
+
 function save() {
   if (store.hasChanges) {
     store.saveOperationplanChanges()
@@ -81,7 +83,7 @@ function getWidgetComponent(widgetName) {
 }
 
 function shouldShowWidget(widgetName) {
-  if (!store.operationplan || store.operationplan.id === -1) return false;
+  if (!store.operationplan || store.operationplan.id === "-1" ) return false;
 
   const widgetConditions = {
     'operationplan': () => true,
@@ -117,7 +119,11 @@ onMounted(() => {
     const detail = e?.detail || {};
     console.log(115, detail);
     if (detail.execute === 'displayInfo') {
-      store.loadOperationplans([detail.reference], detail.status, detail.selectedRows);
+      if (detail.selectedRows.length > 1) {
+        handleAllSelectEvent(e);
+      } else if (detail.selectedRows.length === 1){
+        store.loadOperationplans([detail.reference], detail.status, detail.selectedRows);
+      }
     }
     else console.log('[OperationplanDetails] singleSelect: row data not found for', detail.name);
   };
@@ -132,7 +138,7 @@ onMounted(() => {
         const row = getGridRowData(id);
         if (row) selectiondata.push(row);
       }
-      const colModel = (window.jQuery && window.jQuery('#grid').jqGrid) ? window.jQuery('#grid').jqGrid('getGridParam', 'colModel') : undefined;
+      const colModel = window.jQuery('#grid').jqGrid ? window.jQuery('#grid').jqGrid('getGridParam', 'colModel') : undefined;
       store.processAggregatedInfo(selectiondata, colModel);
     } catch (err) {
       console.error(141, err);
@@ -222,29 +228,29 @@ onUnmounted(() => {
     <SupplyInformationCard />
     <UpstreamCard />
 
-    <div
-        v-for="col in preferences.widgets"
-        :key="col.name"
-        class="widget-list col-12"
-        :class="`col-lg-{{store.widgets.length}}`"
-        :data-widget="col.name"
-        :data-widget-width="col.cols?.[0]?.width"
-    >
-      <div v-for="(widget, index) in col.cols?.[0]?.widgets || []" :key="index">
-        <div
-            v-if="shouldShowWidget(widget[0])"
-            class="card widget mb-3"
-            :data-widget="widget[0]"
-        >
-          <component
-              :is="getWidgetComponent(widget[0])"
-              :operationplan="store.operationplan"
-              :is-loading="store.loading"
-              :error="store.error"
-          />
-        </div>
-      </div>
-    </div>
+<!--    <div-->
+<!--        v-for="col in preferences.widgets"-->
+<!--        :key="col.name"-->
+<!--        class="widget-list col-12"-->
+<!--        :class="`col-lg-{{store.widgets.length}}`"-->
+<!--        :data-widget="col.name"-->
+<!--        :data-widget-width="col.cols?.[0]?.width"-->
+<!--    >-->
+<!--      <div v-for="(widget, index) in col.cols?.[0]?.widgets || []" :key="index">-->
+<!--        <div-->
+<!--            v-if="shouldShowWidget(widget[0])"-->
+<!--            class="card widget mb-3"-->
+<!--            :data-widget="widget[0]"-->
+<!--        >-->
+<!--          <component-->
+<!--              :is="getWidgetComponent(widget[0])"-->
+<!--              :operationplan="store.operationplan"-->
+<!--              :is-loading="store.loading"-->
+<!--              :error="store.error"-->
+<!--          />-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
   </div>
 
   <!-- Modal -->

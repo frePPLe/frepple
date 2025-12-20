@@ -667,7 +667,7 @@ class MeasurePagePool {
   static MeasurePagePool measurepages_default;
   static MeasurePagePool measurepages_temp;
 
-  MeasurePagePool(string n) : name(n) {}
+  MeasurePagePool(string n) : name(std::move(n)) {}
 
   void releaseEmptyPages();
   static pair<double, double> check(const string& = "");

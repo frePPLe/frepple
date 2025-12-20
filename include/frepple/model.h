@@ -1427,7 +1427,7 @@ class SubOperation : public Object, public HasSource {
 
   void setEffectiveEnd(Date d) { effective.setEnd(d); }
 
-  void setEffective(DateRange d) { effective = d; }
+  void setEffective(const DateRange& d) { effective = d; }
 
   const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metacategory;
@@ -3134,7 +3134,7 @@ class Operation : public HasName<Operation>,
   void setEffectiveEnd(Date d) { effectivity.setEnd(d); }
 
   /* Update the effectivity range. */
-  void setEffective(DateRange dr) { effectivity = dr; }
+  void setEffective(const DateRange& dr) { effectivity = dr; }
 
   /* Returns the availability calendar of the operation. */
   Calendar* getAvailable() const { return available; }
@@ -3374,7 +3374,7 @@ class Operation : public HasName<Operation>,
 
   void updateMTO();
 
-  static Operation* findFromName(string);
+  static Operation* findFromName(const string&);
 
   static const MetaCategory* metadata;
 
@@ -4693,7 +4693,7 @@ class ItemSupplier : public Object,
   explicit ItemSupplier(Supplier*, Item*, int);
 
   /* Constructor. */
-  explicit ItemSupplier(Supplier*, Item*, int, DateRange);
+  explicit ItemSupplier(Supplier*, Item*, int, const DateRange&);
 
   /* Destructor. */
   ~ItemSupplier() override;
@@ -5064,7 +5064,7 @@ class Buffer : public HasHierarchy<Buffer>,
 
   static Buffer* findOrCreate(Item*, Location*, const PooledString&);
 
-  static Buffer* findFromName(string nm);
+  static Buffer* findFromName(const string& nm);
 
   /* Builds a producing operation for a buffer.
    * The logic used is based on the following:
@@ -5590,7 +5590,7 @@ class Flow : public Object,
   }
 
   /* Constructor. */
-  explicit Flow(Operation* o, Buffer* b, double q, DateRange e) : quantity(q) {
+  explicit Flow(Operation* o, Buffer* b, double q, const DateRange& e) : quantity(q) {
     setBuffer(b);
     setOperation(o);
     setEffective(e);
@@ -7003,7 +7003,7 @@ class ResourceSkill : public Object,
   explicit ResourceSkill(Skill*, Resource*, int);
 
   /* Constructor. */
-  explicit ResourceSkill(Skill*, Resource*, int, DateRange);
+  explicit ResourceSkill(Skill*, Resource*, int, const DateRange&);
 
   /* Destructor. */
   ~ResourceSkill() override;
@@ -7082,7 +7082,7 @@ class Load : public Object,
   }
 
   /* Constructor. */
-  explicit Load(Operation* o, Resource* r, double u, DateRange e) {
+  explicit Load(Operation* o, Resource* r, double u, const DateRange& e) {
     setOperation(o);
     Load::setResource(r);
     setQuantity(u);
@@ -7276,7 +7276,7 @@ class LoadDefault : public Load {
   explicit LoadDefault(Operation* o, Resource* r, double q) : Load(o, r, q) {}
 
   /* Constructor. */
-  explicit LoadDefault(Operation* o, Resource* r, double q, DateRange e)
+  explicit LoadDefault(Operation* o, Resource* r, double q, const DateRange& e)
       : Load(o, r, q, e) {}
 
   /* This constructor is called from the plan begin_element function. */
@@ -7305,7 +7305,7 @@ class LoadBucketizedPercentage : public Load {
 
   /* Constructor. */
   explicit LoadBucketizedPercentage(Operation* o, Resource* r, double q,
-                                    DateRange e) {
+                                    const DateRange& e) {
     setOperation(o);
     setResource(r);
     setQuantity(q);
@@ -7372,7 +7372,7 @@ class LoadBucketizedFromStart : public Load {
 
   /* Constructor. */
   explicit LoadBucketizedFromStart(Operation* o, Resource* r, double q,
-                                   DateRange e) {
+                                   const DateRange& e) {
     setOperation(o);
     setResource(r);
     setQuantity(q);
@@ -7439,7 +7439,7 @@ class LoadBucketizedFromEnd : public Load {
 
   /* Constructor. */
   explicit LoadBucketizedFromEnd(Operation* o, Resource* r, double q,
-                                 DateRange e) {
+                                 const DateRange& e) {
     setOperation(o);
     setResource(r);
     setQuantity(q);

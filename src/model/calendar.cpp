@@ -734,7 +734,7 @@ string CalendarBucket::getName() const {
   // We don't store the name field on the calendar bucket.
   // We just do an inefficient linear loop here (since you won't call this
   // method too often anyway).
-  for (auto f : names)
+  for (const auto& f : names)
     if (f.second == this) return f.first;
   return "";
 }

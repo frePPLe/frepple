@@ -2545,7 +2545,7 @@ PyObject* Operation::getDecoupledLeadTimePython(PyObject* self,
   }
 }
 
-Operation* Operation::findFromName(string nm) {
+Operation* Operation::findFromName(const string& nm) {
   Operation* oper = Operation::find(nm);
   if (oper)
     // The operation already exists

@@ -181,7 +181,7 @@ void ForecastMeasureComputed::compileMeasures() {
       deque<exprtk::parser<double>::dependent_entity_collector::symbol_t>
           symbol_list;
       parser.dec().symbols(symbol_list);
-      for (auto i : symbol_list) {
+      for (const auto& i : symbol_list) {
         if (i.second == exprtk::parser<double>::e_st_variable) {
           auto m = const_cast<ForecastMeasure*>(find(i.first));
           if (m) m->dependents.push_back(c);
@@ -201,7 +201,7 @@ void ForecastMeasureComputed::compileMeasures() {
         deque<exprtk::parser<double>::dependent_entity_collector::symbol_t>
             symbol_list;
         parser.dec().assignment_symbols(symbol_list);
-        for (auto i : symbol_list) {
+        for (const auto& i : symbol_list) {
           if (i.second == exprtk::parser<double>::e_st_variable) {
             auto m = const_cast<ForecastMeasure*>(find(i.first));
             if (m) c->assignments.push_back(m);

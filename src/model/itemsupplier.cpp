@@ -81,7 +81,7 @@ ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u) {
   HasLevel::triggerLazyRecomputation();
 }
 
-ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange e) {
+ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, const DateRange& e) {
   setSupplier(s);
   setItem(r);
   setPriority(u);

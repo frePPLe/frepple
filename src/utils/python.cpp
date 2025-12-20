@@ -674,7 +674,7 @@ void Object::setDoubleProperty(const string& name, double value) {
   PyGILState_Release(pythonstate);
 }
 
-void Object::setStringProperty(const string& name, string value) {
+void Object::setStringProperty(const string& name, const string& value) {
   // Adding the new key-value pair to the dictionary.
   auto pythonstate = PyGILState_Ensure();
   if (!dict) {

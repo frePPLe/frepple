@@ -263,7 +263,7 @@ inline ostream& operator<<(ostream& os, const indent& i) {
 class DataException : public logic_error {
  public:
   DataException(const char* c) : logic_error(c) {}
-  DataException(const string s) : logic_error(s) {}
+  DataException(const string& s) : logic_error(s) {}
 };
 
 /* An exception of this type is thrown when the library gets in an
@@ -275,7 +275,7 @@ class DataException : public logic_error {
 class LogicException : public logic_error {
  public:
   LogicException(const char* c) : logic_error(c) {}
-  LogicException(const string s) : logic_error(s) {}
+  LogicException(const string& s) : logic_error(s) {}
 };
 
 /* An exception of this type is thrown when the library runs into
@@ -291,7 +291,7 @@ class LogicException : public logic_error {
 class RuntimeException : public runtime_error {
  public:
   RuntimeException(const char* c) : runtime_error(c) {}
-  RuntimeException(const string s) : runtime_error(s) {}
+  RuntimeException(const string& s) : runtime_error(s) {}
 };
 
 /* Python exception class matching with frepple::LogicException. */
@@ -2319,7 +2319,7 @@ class DataKeyword {
   bool operator<(const DataKeyword& o) const { return hash < o.hash; }
 
   /* String comparison. */
-  bool operator==(const string o) const { return o == ch; }
+  bool operator==(const string& o) const { return o == ch; }
 };
 
 /* This abstract class represents a variant data type.
@@ -2576,7 +2576,7 @@ class Environment {
    *   - The library directory as configured during the compilation.
    *     This applies only to linux / unix.
    */
-  static string searchFile(const string);
+  static string searchFile(const string&);
 
   /* Returns the number of processor cores on your machine. */
   static int getProcessorCores();
@@ -3072,7 +3072,7 @@ class Object : public PyObject {
   void setDoubleProperty(const string&, double);
 
   /* Update a string property. */
-  void setStringProperty(const string&, string);
+  void setStringProperty(const string&, const string&);
 
   /* Check whether a property with a certain name is set. */
   bool hasProperty(const string&) const;
@@ -3386,7 +3386,7 @@ class PythonIterator : public Object {
     return x.typeReady();
   }
 
-  static int initialize(string nm) {
+  static int initialize(const string& nm) {
     auto& x = getPythonType();
     x.setName(nm);
     x.supportiter();
@@ -3455,7 +3455,7 @@ class PythonIteratorClass : public Object {
     return x.typeReady();
   }
 
-  static int initialize(string nm, string doc) {
+  static int initialize(const string& nm, const string& doc) {
     // Initialize the type
     auto& x = getPythonType();
     x.setName(nm);
@@ -5862,7 +5862,7 @@ class Association {
     void setEffectiveEnd(Date d) { effectivity.setEnd(d); }
 
     /* Update the effectivity range. */
-    void setEffective(DateRange dr) { effectivity = dr; }
+    void setEffective(const DateRange& dr) { effectivity = dr; }
 
     /* Get the start date of the effectivity range. */
     Date getEffectiveStart() const { return effectivity.getStart(); }
@@ -6054,7 +6054,7 @@ class MetaFieldString : public MetaFieldBase {
   MetaFieldString(const Keyword& n, getFunction getfunc,
                   setFunction setfunc = nullptr, string dflt = "",
                   unsigned int c = BASE)
-      : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(dflt) {
+      : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(std::move(dflt)) {
     if (getfunc == nullptr)
       throw DataException("Getter function can't be nullptr");
   };
@@ -6110,7 +6110,7 @@ class MetaFieldStringRef : public MetaFieldBase {
   MetaFieldStringRef(const Keyword& n, getFunction getfunc,
                      setFunction setfunc = nullptr, string dflt = "",
                      unsigned int c = BASE)
-      : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(dflt) {
+      : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(std::move(dflt)) {
     if (getfunc == nullptr)
       throw DataException("Getter function can't be nullptr");
   };

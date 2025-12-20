@@ -1088,7 +1088,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
       if (buckets.empty()) {
         short cnt = 0;
         buckets.reserve(dates.size());
-        for (auto b : dates)
+        for (const auto& b : dates)
           buckets.emplace_back(f, b.getStart(), b.getEnd(), cnt++, mode == 2);
       }
 

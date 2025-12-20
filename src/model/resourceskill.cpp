@@ -60,7 +60,7 @@ ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u) {
   initType(metadata);
 }
 
-ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u, DateRange e) {
+ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u, const DateRange& e) {
   setSkill(s);
   setResource(r);
   setPriority(u);

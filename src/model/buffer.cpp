@@ -1335,7 +1335,7 @@ PyObject* Buffer::availableOnhandPython(PyObject* self, PyObject* args) {
   }
 }
 
-Buffer* Buffer::findFromName(string nm) {
+Buffer* Buffer::findFromName(const string& nm) {
   // Check if it exists
   Buffer* buf = Buffer::find(nm);
   if (buf) return buf;

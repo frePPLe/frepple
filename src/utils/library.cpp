@@ -97,7 +97,7 @@ void LibraryUtils::initialize() {
     throw RuntimeException("Error registering command manager");
 }
 
-string Environment::searchFile(const string filename) {
+string Environment::searchFile(const string& filename) {
 #ifdef _MSC_VER
   static char pathseperator = '\\';
 #else

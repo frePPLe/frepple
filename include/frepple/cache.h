@@ -24,8 +24,6 @@
  ***************************************************************************/
 
 #pragma once
-#ifndef FREPPLE_CACHE_H
-#define FREPPLE_CACHE_H
 
 #include <atomic>
 
@@ -307,5 +305,3 @@ shared_ptr<T> CacheEntry<T, U>::getValue(const U* key) const {
 
 }  // namespace utils
 }  // namespace frepple
-
-#endif  // End of FREPPLE_CACHE_H

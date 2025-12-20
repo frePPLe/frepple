@@ -24,12 +24,8 @@
  ***************************************************************************/
 
 #pragma once
-#ifndef TIMELINE
-#define TIMELINE
 
-#ifndef DOXYGEN
 #include <cmath>
-#endif
 
 extern PythonType* EventPythonType;
 
@@ -953,5 +949,3 @@ bool TimeLine<type>::check() const {
   }
   return true;
 }
-
-#endif

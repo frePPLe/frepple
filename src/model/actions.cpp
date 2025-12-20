@@ -32,7 +32,7 @@ namespace frepple {
 // READ XML INPUT FILE
 //
 
-PyObject* readXMLfile(PyObject* self, PyObject* args) {
+PyObject* readXMLfile(PyObject*, PyObject* args) {
   // Pick up arguments
   char* filename = nullptr;
   int validate(1), validate_only(0);
@@ -81,7 +81,7 @@ PyObject* readXMLfile(PyObject* self, PyObject* args) {
 // READ XML INPUT STRING
 //
 
-PyObject* readXMLdata(PyObject* self, PyObject* args) {
+PyObject* readXMLdata(PyObject*, PyObject* args) {
   // Pick up arguments
   char* data;
   int validate(1), validate_only(0), loglevel(0);
@@ -119,7 +119,7 @@ PyObject* readXMLdata(PyObject* self, PyObject* args) {
 // SAVE MODEL TO XML
 //
 
-PyObject* saveXMLfile(PyObject* self, PyObject* args) {
+PyObject* saveXMLfile(PyObject*, PyObject* args) {
   // Pick up arguments
   char* filename;
   char* content = nullptr;
@@ -158,7 +158,7 @@ PyObject* saveXMLfile(PyObject* self, PyObject* args) {
 // SAVE PLAN SUMMARY TO TEXT FILE
 //
 
-PyObject* savePlan(PyObject* self, PyObject* args) {
+PyObject* savePlan(PyObject*, PyObject* args) {
   // Pick up arguments
   const char* filename = "plan.out";
   if (!PyArg_ParseTuple(args, "s:saveplan", &filename)) return nullptr;
@@ -364,7 +364,7 @@ CommandDeleteOperationPlan::CommandDeleteOperationPlan(OperationPlan* o)
 // DELETE MODEL
 //
 
-PyObject* eraseModel(PyObject* self, PyObject* args) {
+PyObject* eraseModel(PyObject*, PyObject* args) {
   // Pick up arguments
   PyObject* obj = nullptr;
   if (!PyArg_ParseTuple(args, "|O:erase", &obj)) return nullptr;
@@ -414,7 +414,7 @@ PyObject* eraseModel(PyObject* self, PyObject* args) {
 // PRINT MODEL SIZE
 //
 
-PyObject* printModelSize(PyObject* self, PyObject* args) {
+PyObject* printModelSize(PyObject*, PyObject*) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
 

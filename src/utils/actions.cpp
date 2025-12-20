@@ -189,7 +189,7 @@ bool CommandManager::empty() const {
 //
 
 CommandSetProperty::CommandSetProperty(Object* o, const string& nm,
-                                       const DataValue& value, short tp)
+                                       const DataValue& , short tp)
     : obj(o), name(nm), type(tp) {
   if (!o || nm.empty()) return;
 

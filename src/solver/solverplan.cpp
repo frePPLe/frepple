@@ -82,8 +82,7 @@ int SolverCreate::initialize() {
   return x.typeReady();
 }
 
-PyObject* SolverCreate::create(PyTypeObject* pytype, PyObject* args,
-                               PyObject* kwds) {
+PyObject* SolverCreate::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Create the solver
     SolverCreate* s = new SolverCreate();
@@ -307,7 +306,7 @@ void SolverCreate::SolverData::commit() {
               deliveryoper->solve(*solver, this);
               getCommandManager()->commit();
               plan_qty -= state->a_qty;
-              if (!state->a_qty)
+              if (!state->a_qty) {
                 if (state->a_date == Date::infiniteFuture ||
                     state->a_date <= due)
                   break;
@@ -316,6 +315,7 @@ void SolverCreate::SolverData::commit() {
                   // Can be caused with complete lack of any availability
                   // before the requirement date.
                   due = state->a_date;
+              }
             } catch (const exception& e) {
               logger << "Error creating delivery for '" << *i
                      << "': " << e.what() << endl;
@@ -759,7 +759,7 @@ void SolverCreate::update_user_exits() {
   setUserExitResource(getPyObjectProperty(Tags::userexit_resource.getName()));
 }
 
-void SolverCreate::solve(void* v) {
+void SolverCreate::solve(void*) {
   // Configure user exits
   update_user_exits();
 
@@ -915,7 +915,7 @@ PyObject* SolverCreate::solve(PyObject* self, PyObject* args,
   return Py_BuildValue("");
 }
 
-PyObject* SolverCreate::commit(PyObject* self, PyObject* args) {
+PyObject* SolverCreate::commit(PyObject* self, PyObject*) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {
@@ -933,7 +933,7 @@ PyObject* SolverCreate::commit(PyObject* self, PyObject* args) {
   return Py_BuildValue("");
 }
 
-PyObject* SolverCreate::rollback(PyObject* self, PyObject* args) {
+PyObject* SolverCreate::rollback(PyObject* self, PyObject*) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {
@@ -950,7 +950,7 @@ PyObject* SolverCreate::rollback(PyObject* self, PyObject* args) {
   return Py_BuildValue("");
 }
 
-PyObject* SolverCreate::markAutofence(PyObject* self, PyObject* args) {
+PyObject* SolverCreate::markAutofence(PyObject* self, PyObject*) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {
@@ -999,7 +999,7 @@ int SolverPropagateStatus::initialize() {
   return x.typeReady();
 }
 
-PyObject* SolverPropagateStatus::create(PyTypeObject* pytype, PyObject* args,
+PyObject* SolverPropagateStatus::create(PyTypeObject*, PyObject*,
                                         PyObject* kwds) {
   try {
     // Create the solver
@@ -1036,7 +1036,7 @@ PyObject* SolverPropagateStatus::create(PyTypeObject* pytype, PyObject* args,
   }
 }
 
-PyObject* SolverPropagateStatus::solve(PyObject* self, PyObject* args) {
+PyObject* SolverPropagateStatus::solve(PyObject* self, PyObject*) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {
@@ -1051,7 +1051,7 @@ PyObject* SolverPropagateStatus::solve(PyObject* self, PyObject* args) {
   return Py_BuildValue("");
 }
 
-void SolverPropagateStatus::solve(void* v) {
+void SolverPropagateStatus::solve(void*) {
   bool log = getLogLevel() > 0;
   for (short lvl = 0; lvl <= HasLevel::getNumberOfLevels(); ++lvl) {
     for (auto& oper : Operation::all()) {

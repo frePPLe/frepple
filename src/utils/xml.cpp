@@ -85,8 +85,8 @@ void XMLInput::processingInstruction(const XMLCh* const target,
   }
 }
 
-void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const ename,
-                            const XMLCh* const qname,
+void XMLInput::startElement(const XMLCh* const, const XMLCh* const ename,
+                            const XMLCh* const,
                             const xercesc::Attributes& atts) {
   string ename_utf8 = transcodeUTF8(ename);
 
@@ -319,8 +319,8 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const ename,
     reading = false;
 }
 
-void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
-                          const XMLCh* const qname) {
+void XMLInput::endElement(const XMLCh* const, const XMLCh* const,
+                          const XMLCh* const ename) {
   string ename_utf8 = transcodeUTF8(ename);
 
   // Currently ignoring all input?
@@ -606,7 +606,7 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
   dataindex = objects[objectindex--].start - 1;
 }
 
-void XMLInput::characters(const XMLCh* const c, const XMLSize_t n) {
+void XMLInput::characters(const XMLCh* const c, const XMLSize_t) {
   if (reading && dataindex >= 0)
     data[dataindex].value.appendString(transcodeUTF8(c));
 }

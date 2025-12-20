@@ -342,7 +342,7 @@ void PythonInterpreter::registerGlobalObject(const char* name, PyObject* obj,
   if (lock) PyGILState_Release(pythonstate);
 }
 
-PyObject* PythonInterpreter::python_log(PyObject* self, PyObject* args) {
+PyObject* PythonInterpreter::python_log(PyObject* , PyObject* args) {
   // Pick up arguments
   char* data;
   if (!PyArg_ParseTuple(args, "s:log", &data)) return nullptr;

@@ -119,7 +119,7 @@ bool ForecastMeasureComputedPlanned::isLeaf(const ForecastBase* f) const {
   return f->getPlanned();
 }
 
-bool ForecastMeasureLocal::isLeaf(const ForecastBase* f) const {
+bool ForecastMeasureLocal::isLeaf(const ForecastBase*) const {
   // Local measures consider all nodes as leafs
   return true;
 }
@@ -272,8 +272,7 @@ void ForecastMeasure::computeMeasures(const vector<ForecastMeasure*>& msrs) {
   Cache::instance->setWriteImmediately(prev);
 }
 
-PyObject* ForecastMeasure::updatePlannedForecastPython(PyObject* self,
-                                                       PyObject* args) {
+PyObject* ForecastMeasure::updatePlannedForecastPython(PyObject*, PyObject*) {
   // Switch on lazy writes
   auto prev = Cache::instance->setWriteImmediately(false);
 
@@ -455,8 +454,7 @@ void ForecastBucketData::removeValue(bool propagate, CommandManager* mgr,
   if (!key->isTemporary()) markDirty();
 }
 
-PyObject* ForecastMeasure::aggregateMeasuresPython(PyObject* self,
-                                                   PyObject* args,
+PyObject* ForecastMeasure::aggregateMeasuresPython(PyObject*, PyObject* args,
                                                    PyObject* kwargs) {
   static const char* kwlist[] = {"includeplanned", "measures", nullptr};
   int include_planned = 0;
@@ -498,7 +496,7 @@ PyObject* ForecastMeasure::aggregateMeasuresPython(PyObject* self,
   return Py_BuildValue("");
 }
 
-PyObject* ForecastMeasure::computeMeasuresPython(PyObject* self, PyObject* args,
+PyObject* ForecastMeasure::computeMeasuresPython(PyObject*, PyObject* args,
                                                  PyObject* kwargs) {
   static const char* kwlist[] = {"measures", nullptr};
   PyObject* py_msrs = nullptr;
@@ -538,7 +536,7 @@ PyObject* ForecastMeasure::computeMeasuresPython(PyObject* self, PyObject* args,
   return Py_BuildValue("");
 }
 
-PyObject* ForecastMeasure::resetMeasuresPython(PyObject* self, PyObject* args) {
+PyObject* ForecastMeasure::resetMeasuresPython(PyObject*, PyObject* args) {
   const char* pymeasure1 = nullptr;
   const char* pymeasure2 = nullptr;
   const char* pymeasure3 = nullptr;
@@ -705,7 +703,7 @@ double ForecastMeasureAggregated::disaggregate(ForecastBase* fcst,
 }
 
 double ForecastMeasureAggregated::disaggregateOverride(
-    ForecastBucketData& bckt, double val, bool multiply, double remainder,
+    ForecastBucketData& bckt, double val, bool, double remainder,
     CommandManager* mgr) const {
   // Get the current value of this node
   auto fcst = bckt.getForecast();
@@ -818,7 +816,7 @@ double ForecastMeasureAggregated::disaggregateOverride(
 }
 
 double ForecastMeasureAggregated::disaggregateOverride(
-    ForecastBase* fcst, Date startdate, Date enddate, double val, bool multiply,
+    ForecastBase* fcst, Date startdate, Date enddate, double val, bool,
     double remainder, CommandManager* mgr) const {
   // Get the current status
   double current_base = 0.0;

@@ -219,7 +219,7 @@ int ForecastBucket::initialize() {
   return x.typeReady();
 }
 
-Object* ForecastBucket::reader(const MetaClass* cat, const DataValueDict& in,
+Object* ForecastBucket::reader(const MetaClass*, const DataValueDict& in,
                                CommandManager* mgr) {
   // Pick up the forecast attribute. An error is reported if it's missing.
   const DataValue* fcstElement = in.get(ForecastBucket::tag_forecast);
@@ -265,8 +265,7 @@ Object* ForecastBucket::reader(const MetaClass* cat, const DataValueDict& in,
   return nullptr;
 }
 
-PyObject* ForecastBucket::create(PyTypeObject* pytype, PyObject* args,
-                                 PyObject* kwds) {
+PyObject* ForecastBucket::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Pick up the forecast. An error is reported if it's missing or has a
     // wrong data type.
@@ -479,7 +478,7 @@ void ForecastBucket::setOrdersAdjustment(double v) {
   Measures::ordersadjustment->disaggregate(data->getBuckets()[bucketindex], v);
 }
 
-bool Forecast::callback(Calendar* l, const Signal a) {
+bool Forecast::callback(Calendar* l, const Signal) {
   // This function is called when a calendar is about to be deleted.
   // If that calendar happens to be the one defining calendar buckets, we
   // reset the calendar pointer to null.
@@ -1423,13 +1422,12 @@ string ForecastData::toString() const {
 }
 
 CommandSetForecastData::CommandSetForecastData(ForecastBucketData* b,
-                                               const ForecastMeasure* k,
-                                               double newvalue)
+                                               const ForecastMeasure* k, double)
     : owner(b->getForecast()->getData()), fcstbucket(b), key(k) {
   oldvalue = key->getValue(*b);
 }
 
-void Forecast::parse(Object* o, const DataValueDict& in, CommandManager* mgr) {
+void Forecast::parse(Object*, const DataValueDict& in, CommandManager* mgr) {
   // TODO currently only the JSON parser calls this function
 
   // Validate the forecast field
@@ -1557,8 +1555,7 @@ PyObject* Forecast::setValuePython(PyObject* self, PyObject* args,
   return Py_BuildValue("");
 }
 
-PyObject* Forecast::setValuePython2(PyObject* self, PyObject* args,
-                                    PyObject* kwargs) {
+PyObject* Forecast::setValuePython2(PyObject*, PyObject*, PyObject* kwargs) {
   // Keyword arguments are:
   //  bucket, startdate, enddate, item, location, customer, plus measure
   //  names
@@ -1633,8 +1630,7 @@ PyObject* Forecast::setValuePython2(PyObject* self, PyObject* args,
   return Py_BuildValue("");
 }
 
-PyObject* Forecast::getValuePython(PyObject* self, PyObject* args,
-                                   PyObject* kwdict) {
+PyObject* Forecast::getValuePython(PyObject* self, PyObject* args, PyObject*) {
   try {
     // Parse the arguments
     PyObject* pydate;
@@ -1688,7 +1684,7 @@ PyObject* Forecast::inspectPython(PyObject* self, PyObject* args) {
   }
 }
 
-PyObject* Forecast::saveForecast(PyObject* self, PyObject* args) {
+PyObject* Forecast::saveForecast(PyObject*, PyObject* args) {
   // Pick up arguments
   const char* filename = "plan.out";
   if (!PyArg_ParseTuple(args, "s:saveforecast", &filename)) return nullptr;
@@ -1766,7 +1762,7 @@ PyObject* Forecast::saveForecast(PyObject* self, PyObject* args) {
 }
 
 PyObject* ForecastBucket::getMeasurePython(PyObject* self, PyObject* args,
-                                           PyObject* kwdict) {
+                                           PyObject*) {
   try {
     // Parse the arguments
     char* pymeasure = nullptr;
@@ -1786,7 +1782,7 @@ PyObject* ForecastBucket::getMeasurePython(PyObject* self, PyObject* args,
   return Py_BuildValue("");
 }
 
-PyObject* ForecastBucket::setMeasurePython(PyObject* self, PyObject* args,
+PyObject* ForecastBucket::setMeasurePython(PyObject* self, PyObject*,
                                            PyObject* kwdict) {
   try {
     // Update the forecastbucket with each keyword argument

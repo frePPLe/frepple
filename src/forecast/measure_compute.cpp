@@ -133,8 +133,7 @@ void ForecastMeasureComputed::appendDependents(
     if (i != this) i->appendDependents(l);
 }
 
-PyObject* ForecastMeasureComputed::compileMeasuresPython(PyObject* self,
-                                                         PyObject* args) {
+PyObject* ForecastMeasureComputed::compileMeasuresPython(PyObject*, PyObject*) {
   try {
     compileMeasures();
   } catch (...) {

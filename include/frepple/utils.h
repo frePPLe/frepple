@@ -24,8 +24,6 @@
  ***************************************************************************/
 
 #pragma once
-#ifndef FREPPLE_UTILS_H
-#define FREPPLE_UTILS_H
 
 /* Python.h has to be included first. */
 #define PY_SSIZE_T_CLEAN
@@ -580,7 +578,7 @@ class Date {
 
   /* A private constructor used to create the infinitePast and
    * infiniteFuture constants. */
-  Date(const char* s, bool dummy) { parse(s); }
+  Date(const char* s, bool) { parse(s); }
 
  public:
   /* A utility function that uses the C function localtime to compute the
@@ -1404,7 +1402,7 @@ class MetaFieldBase {
    * Only the size that is additional to the class instance size needs
    * to be reported here.
    */
-  virtual size_t getSize(const Object* o) const { return 0; }
+  virtual size_t getSize(const Object*) const { return 0; }
 
   bool getFlag(unsigned int i) const { return (flags & i) != 0; }
 
@@ -1699,10 +1697,9 @@ class MetaClass : public NonCopyable {
 
   template <class Cls, class Iter, class Ptr>
   inline void addIteratorField(const Keyword& k1, const Keyword& k2, string nm,
-                               string doc,
                                Iter (Cls::*getfunc)(void) const = nullptr,
                                unsigned int c = BASE) {
-    PythonIterator<Iter, Ptr>::initialize(nm, doc);
+    PythonIterator<Iter, Ptr>::initialize(nm);
     fields.push_back(
         new MetaFieldIterator<Cls, Iter, PythonIterator<Iter, Ptr>, Ptr>(
             k1, k2, getfunc, c));
@@ -3048,7 +3045,7 @@ class Object : public PyObject {
 
   /* Mark the object as hidden or not. Hidden objects are not exported
    * and are used only as dummy constructs. */
-  virtual void setHidden(bool b) {}
+  virtual void setHidden(bool) {}
 
   /* Method to set a custom property.
    * Avaialable types:
@@ -3167,8 +3164,7 @@ class Object : public PyObject {
   /* Template function that generates a factory method callable
    * from Python. */
   template <class T>
-  static PyObject* create(PyTypeObject* pytype, PyObject* args,
-                          PyObject* kwds) {
+  static PyObject* create(PyTypeObject*, PyObject*, PyObject* kwds) {
     try {
       // Find or create the C++ object
       PythonDataValueDict atts(kwds);
@@ -3247,7 +3243,7 @@ class Object : public PyObject {
    * Subclasses are expected to implement an override if the type supports
    * gettattro.
    */
-  virtual PyObject* getattro(const DataKeyword& attr) {
+  virtual PyObject* getattro(const DataKeyword&) {
     PyErr_SetString(PythonLogicException, "Missing method 'getattro'");
     return nullptr;
   }
@@ -3256,7 +3252,7 @@ class Object : public PyObject {
    * Subclasses are expected to implement an override if the type supports
    * compare.
    */
-  virtual int compare(const PyObject* other) const {
+  virtual int compare(const PyObject*) const {
     throw LogicException("Missing method 'compare'");
   }
 
@@ -3273,7 +3269,7 @@ class Object : public PyObject {
    * Subclasses are expected to implement an override if the type supports
    * calls.
    */
-  virtual PyObject* call(const PythonData& args, const PythonData& kwds) {
+  virtual PyObject* call(const PythonData&, const PythonData&) {
     PyErr_SetString(PythonLogicException, "Missing method 'call'");
     return nullptr;
   }
@@ -3379,22 +3375,18 @@ class PythonIterator : public Object {
   }
 
   static int initialize() {
-    // Initialize the type
     auto& x = getPythonType();
     if (!DATACLASS::metadata)
       throw LogicException("Iterator for " + string(typeid(DATACLASS).name()) +
                            " initialized before its data class");
     x.setName(DATACLASS::metadata->type + "Iterator");
-    x.setDoc("frePPLe iterator for " + DATACLASS::metadata->type);
     x.supportiter();
     return x.typeReady();
   }
 
-  static int initialize(string nm, string doc) {
-    // Initialize the type
+  static int initialize(string nm) {
     auto& x = getPythonType();
     x.setName(nm);
-    x.setDoc(nm);
     x.supportiter();
     return x.typeReady();
   }
@@ -3420,9 +3412,7 @@ class PythonIterator : public Object {
     this->initType(getPythonType().type_object());
   }
 
-  static PyObject* create(PyObject* self, PyObject* args) {
-    return new MYCLASS();
-  }
+  static PyObject* create(PyObject*, PyObject*) { return new MYCLASS(); }
 
  private:
   ITERCLASS iter;
@@ -4258,7 +4248,7 @@ class CommandSetField : public Command {
 
  public:
   /* Constructor. */
-  CommandSetField(Object* o, const MetaFieldBase* f, const DataValue& d)
+  CommandSetField(Object* o, const MetaFieldBase* f, const DataValue&)
       : obj(o), fld(f) {
     if (!obj || !fld) return;
     fld->getField(obj, olddata);
@@ -4838,7 +4828,7 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
   /* Returns a STL-like iterator to the start of the entity list. */
   static iterator begin() { return st.begin(); }
 
-  static PyObject* createIterator(PyObject* self, PyObject* args) {
+  static PyObject* createIterator(PyObject*, PyObject*) {
     return new PythonIterator<iterator, T>(st.begin());
   }
 
@@ -6176,13 +6166,13 @@ class MetaFieldCommand : public MetaFieldBase {
   };
 
   virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {
+                        CommandManager*) const {
     (static_cast<Cls*>(me)->*cmdf)(el.getString());
   }
 
-  virtual void getField(Object* me, DataValue& el) const {}
+  virtual void getField(Object*, DataValue&) const {}
 
-  virtual void writeField(Serializer& output) const {}
+  virtual void writeField(Serializer&) const {}
 
  protected:
   cmdFunction cmdf;
@@ -6789,14 +6779,13 @@ class MetaFieldFunction : public MetaFieldBase {
                     unsigned int c = DONT_SERIALIZE)
       : MetaFieldBase(n, c), thefunction(f) {};
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {}
+  virtual void setField(Object*, const DataValue&, CommandManager*) const {}
 
   virtual HandlerFunction getFunction() const { return thefunction; }
 
-  virtual void getField(Object* me, DataValue& el) const {}
+  virtual void getField(Object*, DataValue&) const {}
 
-  virtual void writeField(Serializer& output) const {}
+  virtual void writeField(Serializer&) const {}
 
  protected:
   HandlerFunction thefunction;
@@ -6811,8 +6800,7 @@ class MetaFieldIterator : public MetaFieldBase {
                     getFunction getfunc = nullptr, unsigned int c = BASE)
       : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n) {};
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {}
+  virtual void setField(Object*, const DataValue&, CommandManager*) const {}
 
   virtual void getField(Object* me, DataValue& el) const {
     // This code is Python-specific. Only from Python can we call
@@ -6916,8 +6904,7 @@ class MetaFieldIteratorClass : public MetaFieldBase {
                          getFunction getfunc = nullptr, unsigned int c = BASE)
       : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n) {};
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {}
+  virtual void setField(Object*, const DataValue&, CommandManager*) const {}
 
   virtual void getField(Object* me, DataValue& el) const {
     // This code is Python-specific. Only from Python can we call
@@ -7287,40 +7274,6 @@ class MemoryPool {
       append(n);
     }
 
-    // void erase(T&) {
-    // for (auto p = first; p; p = p->next)
-    //   if (p->msr == k) {
-    //     // Unlink from the list
-    //     if (p->prev)
-    //       p->prev->next = p->next;
-    //     else
-    //       first = p->next;
-    //     if (p->next)
-    //       p->next->prev = p->prev;
-    //     else
-    //       last = p->prev;
-
-    //     // Add to free list
-    //     p->addToFree();
-    //     return;
-    //   }
-    //}
-
-    // void MeasureList::erase(MeasureValue* p) {
-    //   // Unlink from the list
-    //   if (p->prev)
-    //     p->prev->next = p->next;
-    //   else
-    //     first = p->next;
-    //   if (p->next)
-    //     p->next->prev = p->prev;
-    //   else
-    //     last = p->prev;
-
-    //   // Add to free list
-    //   p->addToFree();
-    // }
-
     class iterator {
      private:
       MemoryObject* ptr = nullptr;
@@ -7417,5 +7370,3 @@ class MemoryPool {
 
 }  // namespace utils
 }  // namespace frepple
-
-#endif  // End of FREPPLE_UTILS_H

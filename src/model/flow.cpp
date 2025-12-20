@@ -96,7 +96,7 @@ Flow::~Flow() {
   if (getBuffer()) getBuffer()->flows.erase(this);
 }
 
-PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds) {
+PyObject* Flow::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Pick up the operation
     PyObject* oper = PyDict_GetItemString(kwds, "operation");
@@ -465,12 +465,12 @@ Date FlowStart::computeOperationToFlowDate(const OperationPlan* opplan,
   return getOffset() > 0L ? dr.getEnd() : dr.getStart();
 }
 
-Date FlowTransferBatch::computeFlowToOperationDate(const OperationPlan* o,
+Date FlowTransferBatch::computeFlowToOperationDate(const OperationPlan*,
                                                    Date d) {
   return d;
 }
 
-Date FlowTransferBatch::computeOperationToFlowDate(const OperationPlan* o,
+Date FlowTransferBatch::computeOperationToFlowDate(const OperationPlan*,
                                                    Date d) {
   return d;
 }

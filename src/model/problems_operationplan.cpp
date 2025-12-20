@@ -263,7 +263,7 @@ bool OperationPlan::updateFeasible() {
   return true;
 }
 
-PyObject* OperationPlan::updateFeasiblePython(PyObject* self, PyObject* args) {
+PyObject* OperationPlan::updateFeasiblePython(PyObject* self, PyObject*) {
   return PythonData(static_cast<OperationPlan*>(self)->updateFeasible());
 }
 

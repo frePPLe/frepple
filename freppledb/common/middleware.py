@@ -388,7 +388,9 @@ class MultiDBMiddleware:
                             f"/{sc}/" if sc != DEFAULT_DB_ALIAS else "/"
                         )
                     else:
-                        return HttpResponseNotFound("No accesible scenario")
+                        return HttpResponseNotFound(
+                            "Sorry, no scenario is accesible to you.\n"
+                            "Ask your administrator to grant you access.")
                 else:
                     return HttpResponseNotFound(
                         "Scenario not in use, or access is denied"

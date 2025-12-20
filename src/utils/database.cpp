@@ -86,7 +86,7 @@ DatabaseResult::DatabaseResult(DatabaseReader& db, DatabaseStatement& stmt) {
   }
 }
 
-PyObject* runDatabaseThread(PyObject* self, PyObject* args, PyObject* kwds) {
+PyObject* runDatabaseThread(PyObject* , PyObject* args, PyObject* ) {
   // Pick up arguments
   const char* con = "";
   if (!PyArg_ParseTuple(args, "|s:runDatabaseThread", &con)) return nullptr;

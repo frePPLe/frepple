@@ -206,8 +206,6 @@ class XMLInput : public DataInput,
 
   void setLogLevel(short v) { loglevel = v; }
 
-  short getLogLevel(short v) { return loglevel; }
-
   /* Transcode the Xerces XML characters to our UTF8 encoded buffer. */
   char* transcodeUTF8(const XMLCh*);
 
@@ -222,7 +220,7 @@ class XMLInput : public DataInput,
    * DataException is thrown when the data can't be processed
    * normally by the objects being created or updated.
    */
-  virtual void parse(Object* s, bool b = false) {
+  virtual void parse(Object*, bool = false) {
     throw LogicException("Unreachable code reached");
   }
 };

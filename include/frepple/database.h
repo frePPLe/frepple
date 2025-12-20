@@ -23,8 +23,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef DATABASE_H
-#define DATABASE_H
+#pragma once
 
 #ifdef POSTGRESQL_LIBPQ_FE_H
 #include <postgresql/libpq-fe.h>
@@ -670,4 +669,3 @@ class DatabaseWriter : public NonCopyable {
 }  // namespace utils
 }  // namespace frepple
 
-#endif

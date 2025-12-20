@@ -264,7 +264,7 @@ void Environment::setProcessName() {
 #endif
 }
 
-void MetaClass::addClass(const string& a, const string& b, bool def,
+void MetaClass::addClass(const string& a, const string& b, bool ,
                          creatorDefault f) {
   // Find or create the category
   MetaCategory* cat =

@@ -68,7 +68,7 @@ int Cache::initialize() {
   return tmp;
 }
 
-PyObject* Cache::pythonFlush(PyObject* self, PyObject* args) {
+PyObject* Cache::pythonFlush(PyObject* self, PyObject* ) {
   auto c = static_cast<Cache*>(self);
   Py_BEGIN_ALLOW_THREADS;
   try {
@@ -97,7 +97,7 @@ void Cache::flush() {
 #endif
 }
 
-PyObject* Cache::pythonClear(PyObject* self, PyObject* args) {
+PyObject* Cache::pythonClear(PyObject* self, PyObject* ) {
   auto c = static_cast<Cache*>(self);
   Py_BEGIN_ALLOW_THREADS;
   try {
@@ -257,7 +257,7 @@ void AbstractCacheEntry::removeFromCache() const {
   }
 }
 
-PyObject* Cache::pythonPrintStatus(PyObject* self, PyObject* args) {
+PyObject* Cache::pythonPrintStatus(PyObject* self, PyObject* ) {
   auto c = static_cast<Cache*>(self);
   Py_BEGIN_ALLOW_THREADS;
   try {

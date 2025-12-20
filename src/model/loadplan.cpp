@@ -403,7 +403,7 @@ bool LoadPlan::getFeasible() const {
   return true;
 }
 
-Object* LoadPlan::reader(const MetaClass* cat, const DataValueDict& in,
+Object* LoadPlan::reader(const MetaClass*, const DataValueDict& in,
                          CommandManager* mgr) {
   // Pick up the operationplan attribute. An error is reported if it's missing.
   const DataValue* opplanElement = in.get(Tags::operationplan);
@@ -490,8 +490,7 @@ Object* LoadPlan::reader(const MetaClass* cat, const DataValueDict& in,
   throw LogicException("Unreachable code reached");
 }
 
-PyObject* LoadPlan::create(PyTypeObject* pytype, PyObject* args,
-                           PyObject* kwds) {
+PyObject* LoadPlan::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Find or create the C++ object
     PythonDataValueDict atts(kwds);

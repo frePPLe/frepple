@@ -24,8 +24,6 @@
  ***************************************************************************/
 
 #pragma once
-#ifndef FREPPLE_JSON_H
-#define FREPPLE_JSON_H
 
 #include "frepple.h"
 using namespace frepple;
@@ -110,7 +108,7 @@ class JSONSerializer : public Serializer {
   /* Start writing a new object. This method will open a new tag.
    * Output: "TAG" : {
    */
-  void BeginObject(const Keyword& t, const string& atts) {
+  void BeginObject(const Keyword& t, const string&) {
     if (formatted) {
       incIndent();
       if (first)
@@ -254,7 +252,7 @@ class JSONSerializer : public Serializer {
   /* Write the closing tag of this object
    * Output: }
    */
-  void EndObject(const Keyword& t) {
+  void EndObject(const Keyword&) {
     if (formatted) {
       decIndent();
       *m_fp << "\n" << indentstring << "}";
@@ -267,7 +265,7 @@ class JSONSerializer : public Serializer {
   /* Write the closing tag of this object
    * Output: ]
    */
-  void EndList(const Keyword& t) {
+  void EndList(const Keyword&) {
     if (formatted) decIndent();
     *m_fp << "]";
     first = false;
@@ -851,7 +849,7 @@ class JSONInput : public NonCopyable, public DataInput {
   bool EndObject(rapidjson::SizeType memberCount);
   bool StartArray();
   bool EndArray(rapidjson::SizeType elementCount);
-  bool RawNumber(const char* str, rapidjson::SizeType length, bool copy) {
+  bool RawNumber(const char*, rapidjson::SizeType, bool) {
     throw LogicException("Shouldn't be called");
   }
 
@@ -963,5 +961,3 @@ PyObject* readJSONfile(PyObject*, PyObject*);
 
 }  // namespace utils
 }  // namespace frepple
-
-#endif

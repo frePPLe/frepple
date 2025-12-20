@@ -268,7 +268,7 @@ PyObject* Operation::setFencePython(PyObject* self, PyObject* args) {
   }
 }
 
-PyObject* Operation::getFencePython(PyObject* self, PyObject* args) {
+PyObject* Operation::getFencePython(PyObject* self, PyObject*) {
   try {
     auto oper = static_cast<Operation*>(self);
     auto result = oper->getFence()
@@ -1141,9 +1141,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
   return OperationPlanState(opplan);
 }
 
-bool OperationFixedTime::extraInstantiate(OperationPlan* o,
-                                          bool createsubopplans,
-                                          bool use_start) {
+bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool, bool) {
   // See if we can consolidate this operationplan with an existing one.
   // Merging is possible only when all the following conditions are met:
   //   - id of the new opplan is not set
@@ -1822,7 +1820,7 @@ OperationPlanState OperationAlternate::setOperationPlanParameters(
 
 bool OperationAlternate::extraInstantiate(OperationPlan* o,
                                           bool createsubopplans,
-                                          bool use_start) {
+                                          bool ) {
   // Create a suboperationplan if one doesn't exist yet.
   // We use the first effective alternate by default.
   if (createsubopplans && !o->lastsubopplan) {
@@ -1844,8 +1842,8 @@ bool OperationAlternate::extraInstantiate(OperationPlan* o,
 }
 
 OperationPlanState OperationSplit::setOperationPlanParameters(
-    OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
-    bool execute, bool roundDown, bool later) const {
+    OperationPlan* opplan, double q, Date s, Date e, bool ,
+    bool execute, bool roundDown, bool ) const {
   // Invalid calls to this function
   if (!opplan || q < 0)
     throw LogicException("Incorrect parameters for split operationplan");
@@ -1865,7 +1863,7 @@ OperationPlanState OperationSplit::setOperationPlanParameters(
 }
 
 bool OperationSplit::extraInstantiate(OperationPlan* o, bool createsubopplans,
-                                      bool use_start) {
+                                      bool ) {
   if (!createsubopplans || o->lastsubopplan)
     // Suboperationplans already exist. Nothing to do here.
     return true;
@@ -1911,7 +1909,7 @@ bool OperationSplit::extraInstantiate(OperationPlan* o, bool createsubopplans,
 }
 
 void Operation::addSubOperationPlan(OperationPlan* parent, OperationPlan* child,
-                                    bool fast) {
+                                    bool ) {
   // Check
   if (!parent) throw LogicException("Invalid parent for suboperationplan");
   if (!child) throw LogicException("Adding null suboperationplan");

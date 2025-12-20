@@ -167,7 +167,7 @@ void OperationPlan::restore(const OperationPlanState& x) {
   if (!SetupMatrix::empty()) scanSetupTimes();
 }
 
-Object* OperationPlan::createOperationPlan(const MetaClass* cat,
+Object* OperationPlan::createOperationPlan(const MetaClass*,
                                            const DataValueDict& in,
                                            CommandManager* mgr) {
   // Pick up the action attribute
@@ -1482,7 +1482,7 @@ void OperationPlan::scanSetupTimes() {
   */
 }
 
-bool OperationPlan::updateSetupTime(bool report) {
+bool OperationPlan::updateSetupTime() {
   // TODO The setOperationplanParameter methods are a better/more generic/more
   // robust place to put this logic
   Date end_of_setup = getSetupEnd();

@@ -23,8 +23,6 @@
  ***************************************************************************/
 
 #pragma once
-#ifndef MODEL_H
-#define MODEL_H
 
 #include <regex>
 
@@ -905,7 +903,7 @@ class Solver : public Object {
     solve(reinterpret_cast<const Buffer*>(b), v);
   }
 
-  virtual void solve(const Load* b, void* v = nullptr) {
+  virtual void solve(const Load*, void* = nullptr) {
     throw LogicException("Called undefined solve(Load*) method");
   }
 
@@ -925,7 +923,7 @@ class Solver : public Object {
     solve(reinterpret_cast<const Load*>(b), v);
   }
 
-  virtual void solve(const Flow* b, void* v = nullptr) {
+  virtual void solve(const Flow*, void* = nullptr) {
     throw LogicException("Called undefined solve(Flow*) method");
   }
 
@@ -2525,7 +2523,7 @@ class OperationPlan : public Object,
   /* Update the setup time in situations where it could have changed.
    * The return value is true when the time has changed.
    */
-  bool updateSetupTime(bool report = false);
+  bool updateSetupTime();
 
   /* Delete all existing loadplans. */
   void setResetResources(bool);
@@ -2633,8 +2631,7 @@ class OperationPlan : public Object,
         DONT_SERIALIZE);
     m->addIteratorField<Cls, OperationPlan::AlternateIterator, Operation>(
         Tags::alternates, Tags::alternate, "AlternateOperationIterator",
-        "Iterator over operation alternates", &Cls::getAlternates,
-        PLAN + FORCE_BASE);
+        &Cls::getAlternates, PLAN + FORCE_BASE);
     m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, nullptr, 0,
                         DONT_SERIALIZE);
     m->addStringField<Cls>(Tags::ordertype, &Cls::getOrderType,
@@ -2960,8 +2957,7 @@ class Operation : public HasName<Operation>,
    * When the function returns false the creation of the operationplan
    * is denied and it is deleted.
    */
-  virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
-                                bool use_start = false) {
+  virtual bool extraInstantiate(OperationPlan*, bool = true, bool = false) {
     return true;
   }
 
@@ -8297,8 +8293,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
   static inline void registerFields(MetaClass* m) {
     m->addIteratorField<Cls, AlternateIterator, Resource>(
         Tags::alternates, Tags::alternate, "AlternateResourceIterator",
-        "Iterator over loadplan alternates", &Cls::getAlternates,
-        PLAN + FORCE_BASE);
+        &Cls::getAlternates, PLAN + FORCE_BASE);
     m->addDateField<Cls>(Tags::date, &Cls::getDate);
     m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity,
                            &Cls::setQuantity);
@@ -8987,7 +8982,7 @@ class ProblemBeforeCurrent : public Problem {
     if (add) addProblem();
   }
 
-  explicit ProblemBeforeCurrent(Operation* o, Date st, Date nd, double q)
+  explicit ProblemBeforeCurrent(Operation* o, Date st, Date nd)
       : oper(o), start(st), end(nd) {}
 
   ~ProblemBeforeCurrent() { removeProblem(); }
@@ -9012,7 +9007,7 @@ class ProblemBeforeCurrent : public Problem {
     }
   }
 
-  void update(Operation* o, Date st, Date nd, double q) {
+  void update(Operation* o, Date st, Date nd) {
     oper = o;
     start = st;
     end = nd;
@@ -9306,7 +9301,7 @@ class ConstraintPurchasingLeadTime : public Problem {
 
   const DateRange getDates() const { return DateRange(start, end); }
 
-  void update(Operation* o, Date st, Date nd, double q) {
+  void update(Operation* o, Date st, Date nd) {
     owner = o;
     start = st;
     end = nd;
@@ -9345,7 +9340,7 @@ class ConstraintManufacturingLeadTime : public Problem {
 
   const DateRange getDates() const { return DateRange(start, end); }
 
-  void update(Operation* o, Date st, Date nd, double q) {
+  void update(Operation* o, Date st, Date nd) {
     owner = o;
     start = st;
     end = nd;
@@ -9384,7 +9379,7 @@ class ConstraintDistributionLeadTime : public Problem {
 
   const DateRange getDates() const { return DateRange(start, end); }
 
-  void update(Operation* o, Date st, Date nd, double q) {
+  void update(Operation* o, Date st, Date nd) {
     owner = o;
     start = st;
     end = nd;
@@ -9422,7 +9417,7 @@ class ConstraintOverdueDemand : public Problem {
                      Plan::instance().getCurrent());
   }
 
-  void update(Demand* d, Date st, Date nd, double q) {
+  void update(Demand* d, Date st, Date nd) {
     owner = d;
     start = st;
     end = nd;
@@ -10189,5 +10184,3 @@ PyObject* saveXMLfile(PyObject*, PyObject*);
 PyObject* eraseModel(PyObject* self, PyObject* args);
 
 }  // namespace frepple
-
-#endif

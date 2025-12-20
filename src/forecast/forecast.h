@@ -24,8 +24,6 @@
  ***************************************************************************/
 
 #pragma once
-#ifndef FORECAST_H
-#define FORECAST_H
 
 // Configure the expression parser
 #define exprtk_disable_comments
@@ -484,8 +482,7 @@ class ForecastMeasureTemp : public ForecastMeasure {
   }
 
   virtual double disaggregate(ForecastBase*, Date, Date, double, bool = false,
-                              double = 0.0,
-                              CommandManager* mgr = nullptr) const {
+                              double = 0.0, CommandManager* = nullptr) const {
     return 0.0;
   }
 
@@ -675,7 +672,7 @@ class MeasurePagePool {
   void releaseEmptyPages();
   static pair<double, double> check(const string& = "");
 
-  static PyObject* releaseEmptyPagesPython(PyObject* self, PyObject* args) {
+  static PyObject* releaseEmptyPagesPython(PyObject*, PyObject*) {
     measurepages_default.releaseEmptyPages();
     measurepages_temp.releaseEmptyPages();
     auto stats = check();
@@ -695,8 +692,8 @@ class ForecastBucketData {
   ForecastBucketData(ForecastBucketData&& other)
       : fcstbkt(other.fcstbkt),
         fcst(other.fcst),
-        index(other.index),
         dates(other.dates),
+        index(other.index),
         measures(move(other.measures)) {}
 
   ForecastBucketData(const ForecastBucketData&) = delete;
@@ -1164,7 +1161,7 @@ class ForecastBucket : public Demand {
   /* This method doesn't do anything.
    * It is used as a dummy handler when some read-only fields are updated.
    */
-  void dummySink(double d) {}
+  void dummySink(double) {}
 };
 
 class ForecastBase {
@@ -1456,7 +1453,7 @@ class Forecast : public Demand, public ForecastBase {
   ~Forecast();
 
   /* Updates the quantity of the forecast. This method is empty. */
-  virtual void setQuantity(double f) {
+  virtual void setQuantity(double) {
     throw DataException("Can't set quantity of a forecast");
   }
 
@@ -1646,7 +1643,7 @@ class Forecast : public Demand, public ForecastBase {
   virtual void setPriority(int);
 
   /* Updates the due date of the demand. */
-  virtual void setDue(const Date& d) {
+  virtual void setDue(const Date&) {
     throw DataException("Can't set due date of a forecast");
   }
 
@@ -2555,7 +2552,7 @@ class ForecastSolver : public Solver {
   void solve(const Demand*, void* = nullptr);
 
   /* This is the main solver method. */
-  void solve(void* v = nullptr) { solve(true, true, -1); }
+  void solve(void* = nullptr) { solve(true, true, -1); }
   void solve(bool run_fcst = true, bool run_netting = true, int cluster = -1);
 
   /* Python interface for the solve method. */
@@ -2647,14 +2644,7 @@ class ForecastSolver : public Solver {
   unsigned long getForecastIterations() const { return Forecast_Iterations; }
 
   /* Updates the value of the Forecast_Skip module parameter. */
-  void setForecastSkip(unsigned long t) {
-    if (t < 0)
-      logger << "Warning: Parameter Forecast.Skip must be bigger than or equal "
-                "to 0"
-             << endl;
-    else
-      Forecast_Skip = t;
-  }
+  void setForecastSkip(unsigned long t) { Forecast_Skip = t; }
 
   /* Return the number of timeseries values used to initialize the
    * algorithm. The forecast error is not counted for these buckets.
@@ -3236,4 +3226,3 @@ void ForecastMeasure::resetMeasure(short mode, Measures*... measures) {
 }
 
 }  // namespace frepple
-#endif

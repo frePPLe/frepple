@@ -118,8 +118,7 @@ int ForecastSolver::initialize() {
   return x.typeReady();
 }
 
-PyObject* ForecastSolver::create(PyTypeObject* pytype, PyObject* args,
-                                 PyObject* kwds) {
+PyObject* ForecastSolver::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Create the solver
     ForecastSolver* s = new ForecastSolver();
@@ -152,7 +151,7 @@ PyObject* ForecastSolver::create(PyTypeObject* pytype, PyObject* args,
   }
 }
 
-void ForecastSolver::solve(const Demand* l, void* v) {
+void ForecastSolver::solve(const Demand* l, void*) {
   if (l->hasType<Forecast>())
     // Compute the baseline forecast
     computeBaselineForecast(static_cast<const Forecast*>(l));
@@ -559,7 +558,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
     logger << "    Remains " << remaining << " that can't be netted" << endl;
 }
 
-PyObject* ForecastSolver::commit(PyObject* self, PyObject* args) {
+PyObject* ForecastSolver::commit(PyObject* self, PyObject*) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {
@@ -574,7 +573,7 @@ PyObject* ForecastSolver::commit(PyObject* self, PyObject* args) {
   return Py_BuildValue("");
 }
 
-PyObject* ForecastSolver::rollback(PyObject* self, PyObject* args) {
+PyObject* ForecastSolver::rollback(PyObject* self, PyObject*) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {

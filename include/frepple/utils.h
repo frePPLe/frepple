@@ -3520,7 +3520,7 @@ class ThreadGroup : public NonCopyable {
 
   /* Add a new function to be called and its argument. */
   void add(callable func, void* arg1, int arg2 = 0, void* arg3 = nullptr) {
-    callables.push(make_tuple(func, arg1, arg2, arg3));
+    callables.emplace(func, arg1, arg2, arg3);
   }
 
   /* Execute all functions and wait for them to finish. */

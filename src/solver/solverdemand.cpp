@@ -205,8 +205,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                     buffer->getOnHand(l->getDue()) - calendarBucket->getValue();
             } else
               excess = buffer->getOnHand(l->getDue()) - buffer->getMinimum();
-            sortedLocation.push_front(
-                pair<Location*, double>(buffer->getLocation(), excess));
+            sortedLocation.emplace_front(buffer->getLocation(), excess);
           }
           // Let's now order the list of location
           sortedLocation.sort(compare_location);

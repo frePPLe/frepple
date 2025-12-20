@@ -1080,7 +1080,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
              prevDate <= hrzn_end; prevDate = i.getDate(), ++i) {
           if (prevDate && i.getDate() > hrzn_start &&
               i.getDate() != Date::infiniteFuture)
-            dates.push_back(DateRange(prevDate, i.getDate()));
+            dates.emplace_back(prevDate, i.getDate());
         }
       }
 
@@ -1387,7 +1387,7 @@ string ForecastBucketData::toString(bool add_dates, bool sorted) const {
   o << "{";
   bool first = true;
   if (add_dates) {
-    o << "\"startdate\":\"" << getStart() << "\",\"enddate\":\"" << getEnd()
+    o << R"("startdate":")" << getStart() << R"(","enddate":")" << getEnd()
       << "\"";
     first = false;
   }

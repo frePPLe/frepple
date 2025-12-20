@@ -280,8 +280,7 @@ void Cache::setThreads(int i) {
     auto extra = i - threads;
     threads = i;
     while (extra > 0) {
-      workers.push(
-          thread(workerthread, this, static_cast<int>(workers.size())));
+      workers.emplace(workerthread, this, static_cast<int>(workers.size()));
       --extra;
     }
   } else if (i < threads) {

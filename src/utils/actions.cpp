@@ -287,7 +287,7 @@ void ThreadGroup::execute() {
 
     // Launch all threads
     while (numthreads > 0) {
-      threads.push(thread(wrapper, this));
+      threads.emplace(wrapper, this);
       --numthreads;
     }
 

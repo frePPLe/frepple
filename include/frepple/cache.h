@@ -131,8 +131,7 @@ class Cache : public Object {
   Cache() {
     initType(metadata);
     for (auto c = threads; c > 0; --c)
-      workers.push(
-          thread(workerthread, this, static_cast<int>(workers.size())));
+      workers.emplace(workerthread, this, static_cast<int>(workers.size()));
   };
 
   // Destructor

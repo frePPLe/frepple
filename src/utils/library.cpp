@@ -82,7 +82,7 @@ void LibraryUtils::initialize() {
   static bool init = false;
   if (init) {
     logger << "Warning: Calling frepple::LibraryUtils::initialize() more "
-           << "than once." << endl;
+           << "than once.\n";
     return;
   }
   init = true;
@@ -181,7 +181,7 @@ int StreambufWrapper::sync() {
     cur_size = 0;
     auto r = filebuf::sync();
     Environment::truncateLogFile(start_size);
-    logger << "\nTruncated some output here...\n" << endl;
+    logger << "\nTruncated some output here...\n\n";
     return r;
   } else
     return filebuf::sync();
@@ -189,7 +189,7 @@ int StreambufWrapper::sync() {
 
 void Environment::setLogFile(const string& x) {
   // Bye bye message
-  if (!logfilename.empty()) logger << "Stop logging at " << Date::now() << endl;
+  if (!logfilename.empty()) logger << "Stop logging at " << Date::now() << '\n';
 
   // Close an eventual existing log file.
   if (logfile.is_open()) logfile.close();
@@ -225,7 +225,7 @@ void Environment::setLogFile(const string& x) {
 
   // Print a nice header
   logger << "Start logging frePPLe " << PACKAGE_VERSION << " (" << __DATE__
-         << ") at " << Date::now() << endl;
+         << ") at " << Date::now() << '\n';
 }
 
 void Environment::truncateLogFile(unsigned long long sz) {
@@ -237,7 +237,7 @@ void Environment::truncateLogFile(unsigned long long sz) {
 #ifdef HAVE_TRUNCATE
   // Resize the file
   if (truncate(logfilename.c_str(), sz))
-    logger << "Error: Failed to truncate log file" << endl;
+    logger << "Error: Failed to truncate log file\n";
 #else
 #error "This platform doesn't have a file resizing api."
 #endif
@@ -264,7 +264,7 @@ void Environment::setProcessName() {
 #endif
 }
 
-void MetaClass::addClass(const string& a, const string& b, bool ,
+void MetaClass::addClass(const string& a, const string& b, bool,
                          creatorDefault f) {
   // Find or create the category
   auto* cat =
@@ -368,18 +368,17 @@ const MetaClass* MetaClass::findClass(PyObject* pytype) {
 }
 
 void MetaClass::printClasses() {
-  logger << "Registered classes:" << endl;
+  logger << "Registered classes:\n";
   // Loop through all categories
-  for (auto & i : MetaCategory::categoriesByTag) {
-    logger << "  " << i.second->type << endl;
+  for (auto& i : MetaCategory::categoriesByTag) {
+    logger << "  " << i.second->type << '\n';
     // Loop through the classes for the category
-    for (auto j = i.second->classes.begin(); j != i.second->classes.end();
-         ++j)
+    for (auto j = i.second->classes.begin(); j != i.second->classes.end(); ++j)
       if (j->first == Keyword::hash("default"))
         logger << "    default ( = " << j->second->type << " )" << j->second
-               << endl;
+               << '\n';
       else
-        logger << "    " << j->second->type << j->second << endl;
+        logger << "    " << j->second->type << j->second << '\n';
   }
 }
 

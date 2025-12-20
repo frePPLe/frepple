@@ -138,7 +138,7 @@ void SolverCreate::chooseResource(
                       if (c5->isGroup())
                         logger << "Warning: Resource "
                                   "hierarchies can only have up to 5 levels"
-                               << endl;
+                               << '\n';
                       else
                         res_stack.push_back(&*c5);
                     }
@@ -250,7 +250,7 @@ void SolverCreate::chooseResource(
       if (loglevel > 1)
         logger << indentlevel << "  Operation '" << l->getOperation()
                << "' evaluates alternate '" << res << "': cost " << deltaCost
-               << ", penalty " << deltaPenalty << endl;
+               << ", penalty " << deltaPenalty << '\n';
       data->state->a_cost = beforeCost;
       data->state->a_penalty = beforePenalty;
       double val = 0.0;
@@ -283,7 +283,7 @@ void SolverCreate::chooseResource(
     } else if (loglevel > 1)
       logger << indentlevel << "  Operation '" << l->getOperation()
              << "' evaluates alternate '" << lplan->getResource()
-             << "': not available before " << data->state->a_date << endl;
+             << "': not available before " << data->state->a_date << '\n';
 
     // Keep track of best next date
     if (data->state->a_date < min_next_date)
@@ -306,7 +306,7 @@ void SolverCreate::chooseResource(
     if (loglevel > 1)
       logger << indentlevel << "  Operation '" << l->getOperation()
              << "' chooses alternate '" << bestAlternateSelection << "' "
-             << l->getSearch() << endl;
+             << l->getSearch() << '\n';
 
     // Switch back
     data->state->q_loadplan = lplan;  // because q_loadplan can change!
@@ -349,7 +349,7 @@ void SolverCreate::chooseResource(
 
     if (loglevel > 1)
       logger << indentlevel << "Alternate load overloads alternate "
-             << firstAlternate << endl;
+             << firstAlternate << '\n';
   } else {
     // No alternate gave a good result in a constrained plan
     data->state->a_date = max(min_next_date, original_q_date);
@@ -368,7 +368,7 @@ void SolverCreate::chooseResource(
     if (loglevel > 1)
       logger << indentlevel
              << "  Alternate load doesn't find supply on any alternate: "
-             << "not available before " << data->state->a_date << endl;
+             << "not available before " << data->state->a_date << '\n';
   }
 }
 
@@ -394,7 +394,7 @@ void SolverCreate::solve(const Load* l, void* v) {
   list<const Load*> thealternates;
   const Load* x = l->hasAlternates() ? l : l->getAlternate();
   SearchMode search = l->getSearch();
-  for (const auto & i : l->getOperation()->getLoads())
+  for (const auto& i : l->getOperation()->getLoads())
     if ((i.getAlternate() == x || &i == x) && i.getPriority() &&
         i.getEffective().within(data->state->q_loadplan->getDate()))
       thealternates.push_back(&i);
@@ -474,14 +474,14 @@ void SolverCreate::solve(const Load* l, void* v) {
           logger << indentlevel << "Operation '" << l->getOperation()
                  << "' evaluates alternate '" << curload->getResource()
                  << "': cost " << deltaCost << ", penalty " << deltaPenalty
-                 << endl;
+                 << '\n';
         if (deltaCost < ROUNDING_ERROR && deltaPenalty < ROUNDING_ERROR) {
           // Zero cost and zero penalty on this alternate. It won't get any
           // better than this, so we accept this alternate.
           if (loglevel > 1)
             logger << indentlevel << "Operation '" << l->getOperation()
                    << "' chooses alternate '" << curload->getResource() << "' "
-                   << search << endl;
+                   << search << '\n';
           // Restore the planning mode
           data->constrainedPlanning = originalPlanningMode;
           data->logConstraints = originalLogConstraints;
@@ -517,7 +517,7 @@ void SolverCreate::solve(const Load* l, void* v) {
     } else if (loglevel > 1 && search != SearchMode::PRIORITY)
       logger << indentlevel << "Operation '" << l->getOperation()
              << "' evaluates alternate '" << curload->getResource()
-             << "': not available before " << data->state->a_date << endl;
+             << "': not available before " << data->state->a_date << '\n';
 
     // 4d) Undo the plan on the alternate
     data->getCommandManager()->rollback(topcommand);
@@ -529,7 +529,7 @@ void SolverCreate::solve(const Load* l, void* v) {
         search == SearchMode::PRIORITY)
       logger << indentlevel << "  Alternate load switches from '"
              << curload->getResource() << "' to '" << (*i)->getResource() << "'"
-             << endl;
+             << '\n';
   }
 
   // 5) Unconstrained plan: plan on the first alternate
@@ -547,7 +547,7 @@ void SolverCreate::solve(const Load* l, void* v) {
     if (loglevel > 1)
       logger << indentlevel << "  Operation '" << l->getOperation()
              << "' chooses alternate '" << bestAlternateSelection->getResource()
-             << "' " << search << endl;
+             << "' " << search << '\n';
 
     // Switch back
     data->state->q_loadplan = lplan;  // because q_loadplan can change!
@@ -586,7 +586,7 @@ void SolverCreate::solve(const Load* l, void* v) {
   if (loglevel > 1)
     logger << indentlevel
            << "  Alternate load doesn't find supply on any alternate: "
-           << "not available before " << data->state->a_date << endl;
+           << "not available before " << data->state->a_date << '\n';
 }
 
 }  // namespace frepple

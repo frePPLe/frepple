@@ -482,12 +482,12 @@ class ForecastMeasureTemp : public ForecastMeasure {
   }
 
   double disaggregate(ForecastBase*, Date, Date, double, bool = false,
-                              double = 0.0, CommandManager* = nullptr) const override {
+                      double = 0.0, CommandManager* = nullptr) const override {
     return 0.0;
   }
 
-  double disaggregate(ForecastBucketData&, double, bool = false,
-                              double = 0.0, CommandManager* = nullptr) const override {
+  double disaggregate(ForecastBucketData&, double, bool = false, double = 0.0,
+                      CommandManager* = nullptr) const override {
     return 0.0;
   };
 };
@@ -1011,7 +1011,7 @@ class ForecastBucket : public Demand {
     else if (v == DUEATEND)
       DueWithinBucket = 2;
     else
-      logger << "Warning: Invalid value for DueWithinBucket" << endl;
+      logger << "Warning: Invalid value for DueWithinBucket\n";
   }
 
   static const string& getDueWithinBucket() {
@@ -1561,7 +1561,7 @@ class Forecast : public Demand, public ForecastBase {
     else if (method == 0)
       return none;
     else {
-      logger << "method" << method << endl;
+      logger << "method" << method << '\n';
       throw LogicException("Unknown forecast method");
     }
   }
@@ -1615,7 +1615,7 @@ class Forecast : public Demand, public ForecastBase {
   static void setCalendar_static(Calendar* c) {
     if (calptr && c != calptr)
       logger << "Warning: Forecasting buckets can't be changed once specified"
-             << endl;
+             << '\n';
     else
       calptr = c;
   }
@@ -1623,7 +1623,7 @@ class Forecast : public Demand, public ForecastBase {
   void setCalendar(Calendar* c) {
     if (calptr && c != calptr)
       logger << "Warning: Forecasting buckets can't be changed once specified"
-             << endl;
+             << '\n';
     else
       calptr = c;
   }
@@ -1860,7 +1860,7 @@ class ForecastSolver : public Solver {
       if (i < 1) {
         logger
             << "Warning: Moving average needs to smooth over at least 1 bucket"
-            << endl;
+            << '\n';
         i = 1;
       }
     }
@@ -1879,7 +1879,7 @@ class ForecastSolver : public Solver {
       if (x < 1)
         logger
             << "Warning: Parameter MovingAverage.order needs to be at least 1"
-            << endl;
+            << '\n';
       else
         defaultorder = x;
     }
@@ -1937,8 +1937,7 @@ class ForecastSolver : public Solver {
     static void setInitialAlfa(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter SingleExponential.initialAlfa must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         initial_alfa = x;
     }
@@ -1949,8 +1948,7 @@ class ForecastSolver : public Solver {
     static void setMinAlfa(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter SingleExponential.minAlfa must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         min_alfa = x;
     }
@@ -1961,8 +1959,7 @@ class ForecastSolver : public Solver {
     static void setMaxAlfa(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter SingleExponential.maxAlfa must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         max_alfa = x;
     }
@@ -2048,8 +2045,7 @@ class ForecastSolver : public Solver {
     static void setInitialAlfa(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter DoubleExponential.initialAlfa must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         initial_alfa = x;
     }
@@ -2060,8 +2056,7 @@ class ForecastSolver : public Solver {
     static void setMinAlfa(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter DoubleExponential.minAlfa must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         min_alfa = x;
     }
@@ -2072,8 +2067,7 @@ class ForecastSolver : public Solver {
     static void setMaxAlfa(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter DoubleExponential.maxAlfa must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         max_alfa = x;
     }
@@ -2090,8 +2084,7 @@ class ForecastSolver : public Solver {
     static void setInitialGamma(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter DoubleExponential.initialGamma must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         initial_gamma = x;
     }
@@ -2102,8 +2095,7 @@ class ForecastSolver : public Solver {
     static void setMinGamma(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter DoubleExponential.minGamma must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         min_gamma = x;
     }
@@ -2114,8 +2106,7 @@ class ForecastSolver : public Solver {
     static void setMaxGamma(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter DoubleExponential.maxGamma must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         max_gamma = x;
     }
@@ -2126,8 +2117,7 @@ class ForecastSolver : public Solver {
     static void setDampenTrend(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter DoubleExponential.dampenTrend must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         dampenTrend = x;
     }
@@ -2258,8 +2248,8 @@ class ForecastSolver : public Solver {
     /* Update the minimum period that can be detected. */
     static void setMinPeriod(int x) {
       if (x <= 1)
-        logger << "Warning: Parameter Seasonal.minPeriod must be greater than 1"
-               << endl;
+        logger
+            << "Warning: Parameter Seasonal.minPeriod must be greater than 1\n";
       else
         min_period = x;
     }
@@ -2271,7 +2261,7 @@ class ForecastSolver : public Solver {
       if (x <= 1 || x > 80)
         logger
             << "Warning: Parameter Seasonal.maxPeriod must be between 1 and 80"
-            << endl;
+            << '\n';
       else
         max_period = x;
     }
@@ -2284,8 +2274,7 @@ class ForecastSolver : public Solver {
     static void setMinAutocorrelation(double d) {
       if (d <= 0.0 || d > 1.0)
         logger << "Warning: Parameter Seasonal.minAutocorrelation must be "
-                  "between 0.0 and 1.0"
-               << endl;
+                  "between 0.0 and 1.0\n";
       else
         min_autocorrelation = d;
     }
@@ -2300,8 +2289,7 @@ class ForecastSolver : public Solver {
     static void setMaxAutocorrelation(double d) {
       if (d <= 0.0 || d > 1.0)
         logger << "Warning: Parameter Seasonal.maxAutocorrelation must be "
-                  "between 0.0 and 1.0"
-               << endl;
+                  "between 0.0 and 1.0\n";
       else
         max_autocorrelation = d;
     }
@@ -2313,7 +2301,7 @@ class ForecastSolver : public Solver {
       if (x < 0 || x > 1.0)
         logger
             << "Warning: Parameter Seasonal.initialAlfa must be between 0 and 1"
-            << endl;
+            << '\n';
       else
         initial_alfa = x;
     }
@@ -2323,8 +2311,8 @@ class ForecastSolver : public Solver {
     /* Update the minimum value for the alfa parameter. */
     static void setMinAlfa(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Seasonal.minAlfa must be between 0 and 1"
-               << endl;
+        logger
+            << "Warning: Parameter Seasonal.minAlfa must be between 0 and 1\n";
       else
         min_alfa = x;
     }
@@ -2334,8 +2322,8 @@ class ForecastSolver : public Solver {
     /* Update the maximum value for the alfa parameter. */
     static void setMaxAlfa(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Seasonal.maxAlfa must be between 0 and 1"
-               << endl;
+        logger
+            << "Warning: Parameter Seasonal.maxAlfa must be between 0 and 1\n";
       else
         max_alfa = x;
     }
@@ -2347,7 +2335,7 @@ class ForecastSolver : public Solver {
       if (x < 0 || x > 1.0)
         logger
             << "Warning: Parameter Seasonal.initialBeta must be between 0 and 1"
-            << endl;
+            << '\n';
       else
         initial_beta = x;
     }
@@ -2357,8 +2345,8 @@ class ForecastSolver : public Solver {
     /* Update the minimum value for the beta parameter. */
     static void setMinBeta(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Seasonal.minBeta must be between 0 and 1"
-               << endl;
+        logger
+            << "Warning: Parameter Seasonal.minBeta must be between 0 and 1\n";
       else
         min_beta = x;
     }
@@ -2368,8 +2356,8 @@ class ForecastSolver : public Solver {
     /* Update the maximum value for the beta parameter. */
     static void setMaxBeta(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Seasonal.maxBeta must be between 0 and 1"
-               << endl;
+        logger
+            << "Warning: Parameter Seasonal.maxBeta must be between 0 and 1\n";
       else
         max_beta = x;
     }
@@ -2381,8 +2369,7 @@ class ForecastSolver : public Solver {
      */
     static void setGamma(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Seasonal.gamma must be between 0 and 1"
-               << endl;
+        logger << "Warning: Parameter Seasonal.gamma must be between 0 and 1\n";
       else
         gamma = x;
     }
@@ -2458,7 +2445,7 @@ class ForecastSolver : public Solver {
       if (x < 0 || x > 1.0)
         logger
             << "Warning: Parameter Croston.initialAlfa must be between 0 and 1"
-            << endl;
+            << '\n';
       else
         initial_alfa = x;
     }
@@ -2468,8 +2455,8 @@ class ForecastSolver : public Solver {
     /* Update the minimum value for the alfa parameter. */
     static void setMinAlfa(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Croston.minAlfa must be between 0 and 1"
-               << endl;
+        logger
+            << "Warning: Parameter Croston.minAlfa must be between 0 and 1\n";
       else
         min_alfa = x;
     }
@@ -2479,8 +2466,8 @@ class ForecastSolver : public Solver {
     /* Decay rate for dying items. */
     static void setDecayRate(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Croston.decayRate must be between 0 and 1"
-               << endl;
+        logger
+            << "Warning: Parameter Croston.decayRate must be between 0 and 1\n";
       else
         decay_rate = x;
     }
@@ -2490,8 +2477,8 @@ class ForecastSolver : public Solver {
     /* Update the maximum value for the alfa parameter. */
     static void setMaxAlfa(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Croston.maxAlfa must be between 0 and 1"
-               << endl;
+        logger
+            << "Warning: Parameter Croston.maxAlfa must be between 0 and 1\n";
       else
         max_alfa = x;
     }
@@ -2502,8 +2489,7 @@ class ForecastSolver : public Solver {
     static void setMinIntermittence(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter Croston.minIntermittence must be between "
-                  "0 and 1"
-               << endl;
+                  "0 and 1\n";
       else
         min_intermittence = x;
     }
@@ -2617,7 +2603,7 @@ class ForecastSolver : public Solver {
     if (t <= 0.5 || t > 1.0) {
       logger
           << "Warning: Parameter Forecast.smapeAlfa must be between 0.5 and 1.0"
-          << endl;
+          << '\n';
       return;
     }
     Forecast_SmapeAlfa = t;
@@ -2635,7 +2621,7 @@ class ForecastSolver : public Solver {
   void setForecastIterations(unsigned long t) {
     if (t <= 0)
       logger << "Warning: Parameter Forecast.Iterations must be bigger than 0"
-             << endl;
+             << '\n';
     else
       Forecast_Iterations = t;
   }
@@ -2657,7 +2643,7 @@ class ForecastSolver : public Solver {
   void setForecastMaxDeviation(double d) {
     if (d <= 0)
       logger << "Warning: Parameter Forecast.maxDeviation must be bigger than 0"
-             << endl;
+             << '\n';
     else
       Forecast_maxDeviation = d;
   }
@@ -2671,7 +2657,7 @@ class ForecastSolver : public Solver {
     if (d <= 0)
       logger
           << "Warning: Parameter Forecast.deadAfterInactivity must be positive"
-          << endl;
+          << '\n';
     else
       Forecast_DeadAfterInactivity = d;
   }
@@ -3185,7 +3171,9 @@ class ProblemOutlier : public Problem {
                      getForecastBucket()->getEndDate());
   }
 
-  Object* getOwner() const override { return static_cast<ForecastBucket*>(owner); }
+  Object* getOwner() const override {
+    return static_cast<ForecastBucket*>(owner);
+  }
 
   ForecastBucket* getForecastBucket() const {
     return static_cast<ForecastBucket*>(owner);

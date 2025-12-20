@@ -49,7 +49,7 @@ void SolverCreate::solve(const Flow* fl,
     // 1) collect a list of alternates
     list<const Flow*> thealternates;
     const Flow* x = fl->hasAlternates() ? fl : fl->getAlternate();
-    for (const auto & i : fl->getOperation()->getFlows())
+    for (const auto& i : fl->getOperation()->getFlows())
       if ((i.getAlternate() == x || &i == x) &&
           i.getEffective().within(data->state->q_flowplan->getDate()))
         thealternates.push_front(&i);
@@ -86,12 +86,12 @@ void SolverCreate::solve(const Flow* fl,
           // Return value is false, alternate rejected
           if (getLogLevel() > 1)
             logger << indentlevel << "User exit disallows consumption from '"
-                   << (*i)->getBuffer() << "'" << endl;
+                   << (*i)->getBuffer() << "'\n";
           // Move to the next alternate
           if (++i != thealternates.end() && getLogLevel() > 1)
             logger << indentlevel << "Operation switches from '"
                    << curflow->getBuffer() << "' to alternate material '"
-                   << (*i)->getBuffer() << "'" << endl;
+                   << (*i)->getBuffer() << "'\n";
           continue;
         }
       }
@@ -154,7 +154,7 @@ void SolverCreate::solve(const Flow* fl,
       if (++i != thealternates.end() && getLogLevel() > 1)
         logger << indentlevel << "Operation switches from '"
                << curflow->getBuffer() << "' to alternate material '"
-               << (*i)->getBuffer() << "'" << endl;
+               << (*i)->getBuffer() << "'\n";
     }
 
     // 5) No reply found, all alternates are infeasible
@@ -167,7 +167,7 @@ void SolverCreate::solve(const Flow* fl,
       if (getLogLevel() > 1)
         logger << indentlevel
                << "Alternate flow plans unconstrained on alternate '"
-               << firstAlternate->getBuffer() << "'" << endl;
+               << firstAlternate->getBuffer() << "'\n";
       // Plan unconstrained
       data->constrainedPlanning = false;
       data->state->q_flowplan = flplan;  // because q_flowplan can change
@@ -185,7 +185,7 @@ void SolverCreate::solve(const Flow* fl,
       if (getLogLevel() > 1)
         logger << indentlevel
                << "Alternate flow doesn't find supply on any alternate : "
-               << data->state->a_qty << "  " << data->state->a_date << endl;
+               << data->state->a_qty << "  " << data->state->a_date << '\n';
     }
 
     // Optimization for detection of broken supply paths is disabled when we
@@ -225,7 +225,7 @@ void SolverCreate::solve(const Flow* fl,
                        << data->state->q_flowplan->getBuffer()
                        << "' answers from generic MTO buffer '"
                        << fl->getBuffer() << "' : " << data->state->q_qty
-                       << endl;
+                       << '\n';
               data->state->q_flowplan->setBuffer(fl->getBuffer());
               data->state->a_date = data->state->q_date;
               data->state->a_qty = data->state->q_qty;
@@ -237,7 +237,7 @@ void SolverCreate::solve(const Flow* fl,
                 logger << indentlevel << "  Buffer '"
                        << data->state->q_flowplan->getBuffer()
                        << "' answers from generic MTO buffer '"
-                       << fl->getBuffer() << "' : " << free_generic << endl;
+                       << fl->getBuffer() << "' : " << free_generic << '\n';
               auto extraflpln = new FlowPlan(
                   data->state->q_flowplan->getOperationPlan(), fl,
                   data->state->q_flowplan->getDate(), -free_generic);
@@ -280,7 +280,7 @@ void SolverCreate::solve(const Flow* fl,
               logger << indentlevel << "  Buffer '"
                      << data->state->q_flowplan->getBuffer()
                      << "' answers from generic MTO buffer '" << fl->getBuffer()
-                     << "' : 0 " << await_extra << endl;
+                     << "' : 0 " << await_extra << '\n';
           }
         }
       }
@@ -293,7 +293,7 @@ void SolverCreate::solve(const Flow* fl,
           logger << indentlevel << "Buffer '" << thebuf
                  << "' answer date is adjusted to "
                  << fl->getEffective().getEnd()
-                 << " because of a date effective flow" << endl;
+                 << " because of a date effective flow\n";
         data->state->a_date = fl->getEffective().getEnd();
       }
     } else {

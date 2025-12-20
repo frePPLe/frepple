@@ -262,7 +262,7 @@ OperationItemDistribution::~OperationItemDistribution() {
       OperationItemDistribution* i = itemdist->firstOperation;
       while (i->nextOperation != this && i->nextOperation) i = i->nextOperation;
       if (!i)
-        logger << "Error: ItemDistribution operation list corrupted" << endl;
+        logger << "Error: ItemDistribution operation list corrupted\n";
       else
         i->nextOperation = nextOperation;
     }
@@ -270,13 +270,13 @@ OperationItemDistribution::~OperationItemDistribution() {
 }
 
 Buffer* OperationItemDistribution::getOrigin() const {
-  for (const auto & i : getFlows())
+  for (const auto& i : getFlows())
     if (i.getQuantity() < 0.0) return i.getBuffer();
   return nullptr;
 }
 
 Buffer* OperationItemDistribution::getDestination() const {
-  for (const auto & i : getFlows())
+  for (const auto& i : getFlows())
     if (i.getQuantity() > 0.0) return i.getBuffer();
   return nullptr;
 }

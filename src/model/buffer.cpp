@@ -148,11 +148,11 @@ void Buffer::inspect(const string& msg, const short i) const {
   indent indentstring(i);
   logger << indentstring << "  Inspecting buffer " << getName() << ": ";
   if (!msg.empty()) logger << msg;
-  logger << endl;
+  logger << '\n';
 
   double curmin = 0.0;
   double curmax = 0.0;
-  for (const auto & oo : getFlowPlans()) {
+  for (const auto& oo : getFlowPlans()) {
     if (oo.getEventType() == 3)
       curmin = oo.getMin();
     else if (oo.getEventType() == 4)
@@ -163,16 +163,16 @@ void Buffer::inspect(const string& msg, const short i) const {
     if (curmax) logger << ", max:" << curmax;
     switch (oo.getEventType()) {
       case 1:
-        logger << ", " << oo.getOperationPlan() << endl;
+        logger << ", " << oo.getOperationPlan() << '\n';
         break;
       case 2:
-        logger << ", set onhand to " << oo.getOnhand() << endl;
+        logger << ", set onhand to " << oo.getOnhand() << '\n';
         break;
       case 3:
-        logger << ", update minimum to " << oo.getMin() << endl;
+        logger << ", update minimum to " << oo.getMin() << '\n';
         break;
       case 4:
-        logger << ", update maximum to " << oo.getMax() << endl;
+        logger << ", update maximum to " << oo.getMax() << '\n';
     }
   }
 }
@@ -284,7 +284,7 @@ Buffer* OperationInventory::getBuffer() const {
 
 double Buffer::getOnHand() const {
   string invop = "Inventory " + string(getName());
-  for (const auto & flowplan : flowplans) {
+  for (const auto& flowplan : flowplans) {
     if (flowplan.getDate())
       return 0.0;  // Inventory event is always at start of horizon
     if (flowplan.getEventType() != 1) continue;
@@ -302,8 +302,9 @@ double Buffer::getOnHand(Date d, bool after) const {
     return tmp == flowplans.end() ? 0.0 : tmp->getOnhand();
   }
   double tmp(0.0);
-  for (const auto & flowplan : flowplans) {
-    if ((after && flowplan.getDate() > d) || (!after && flowplan.getDate() >= d))
+  for (const auto& flowplan : flowplans) {
+    if ((after && flowplan.getDate() > d) ||
+        (!after && flowplan.getDate() >= d))
       // Found a flowplan with a later date.
       // Return the onhand after the previous flowplan.
       return tmp;
@@ -376,7 +377,7 @@ void Buffer::setMinimum(double m) {
   min_val = m;
 
   // Create or update a single timeline min event
-  for (auto & flowplan : flowplans)
+  for (auto& flowplan : flowplans)
     if (flowplan.getEventType() == 3) {
       // Update existing event
       static_cast<flowplanlist::EventMinQuantity*>(&flowplan)->setMin(min_val);
@@ -501,7 +502,7 @@ void Buffer::setMaximumCalendar(Calendar* cal) {
 
 void Buffer::deleteOperationPlans(bool deleteLocked) {
   // Delete the operationplans
-  for (auto & flow : flows)
+  for (auto& flow : flows)
     OperationPlan::deleteOperationPlans(flow.getOperation(), deleteLocked);
 
   // Mark to recompute the problems
@@ -526,7 +527,7 @@ Buffer::~Buffer() {
       Buffer* buf = it->firstItemBuffer;
       while (buf && buf->nextItemBuffer != this) buf = buf->nextItemBuffer;
       if (!buf)
-        logger << "Error: Corrupted buffer list for an item" << endl;
+        logger << "Error: Corrupted buffer list for an item\n";
       else
         buf->nextItemBuffer = nextItemBuffer;
     }
@@ -813,7 +814,7 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc,
 }
 
 bool Buffer::hasConsumingFlows() const {
-  for (const auto & fl : getFlows())
+  for (const auto& fl : getFlows())
     if (fl.isConsumer()) return true;
   return false;
 }
@@ -848,8 +849,7 @@ void Buffer::buildProducingOperation() {
       if (producing_operation &&
           producing_operation != uninitializedProducing) {
         if (producing_operation->hasType<OperationItemSupplier>()) {
-          auto* o =
-              static_cast<OperationItemSupplier*>(producing_operation);
+          auto* o = static_cast<OperationItemSupplier*>(producing_operation);
           if (o->getItemSupplier() == supitem)
             // Already exists
             continue;
@@ -859,8 +859,7 @@ void Buffer::buildProducingOperation() {
               producing_operation->getSubOperations());
           while (SubOperation* o = subiter.next())
             if (o->getOperation()->hasType<OperationItemSupplier>()) {
-              auto* s =
-                  static_cast<OperationItemSupplier*>(o->getOperation());
+              auto* s = static_cast<OperationItemSupplier*>(o->getOperation());
               if (s->getItemSupplier() == supitem) {
                 // Already exists
                 exists = true;
@@ -1176,7 +1175,7 @@ void Buffer::buildProducingOperation() {
   // or operations with 0 priority are skipped.
   if (producing_operation == uninitializedProducing) {
     const Flow* found = nullptr;
-    for (const auto & tmp : getFlows()) {
+    for (const auto& tmp : getFlows()) {
       if (tmp.getQuantity() > 0 &&
           !tmp.getOperation()->hasType<OperationInventory>() &&
           tmp.getOperation()->getPriority()) {

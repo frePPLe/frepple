@@ -35,8 +35,8 @@
 
 using namespace frepple;
 
-namespace frepple {
-namespace utils {
+
+namespace frepple::utils {
 
 class DatabaseReader;
 
@@ -499,8 +499,8 @@ class DatabaseResult : public NonCopyable {
     if (PQresultStatus(res) != PGRES_TUPLES_OK &&
         PQresultStatus(res) != PGRES_COMMAND_OK) {
       stringstream o;
-      o << "Database error: " << db.getError() << endl
-        << "   statement: " << stmt << endl;
+      o << "Database error: " << db.getError() << '\n'
+        << "   statement: " << stmt << '\n';
       PQclear(res);
       throw RuntimeException(o.str());
     }
@@ -666,6 +666,6 @@ class DatabaseWriter : public NonCopyable {
   thread worker;
 };
 
-}  // namespace utils
-}  // namespace frepple
+} // namespace frepple::utils
+
 

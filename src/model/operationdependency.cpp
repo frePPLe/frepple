@@ -239,12 +239,12 @@ bool OperationDependency::checkLoops(const Operation* o,
   auto found = find(path.begin(), path.end(), o);
   if (found != path.end()) {
     logger << "Data error: Ignoring looping blocked-by dependencies among:"
-           << endl;
+           << '\n';
     while (found != path.end()) {
-      logger << "    " << *found << endl;
+      logger << "    " << *found << '\n';
       ++found;
     }
-    logger << "    " << o << endl;
+    logger << "    " << o << '\n';
     return false;
   }
   path.push_back(o);
@@ -265,7 +265,7 @@ void OperationPlan::matchDependencies(bool log) {
   if (!getOperation() || getOperation()->getDependencies().empty() ||
       getCompleted() || getClosed())
     return;
-  if (log) logger << "Scanning dependencies of " << this << endl;
+  if (log) logger << "Scanning dependencies of " << this << '\n';
   for (auto dpd : getOperation()->getDependencies()) {
     if (dpd->getBlockedBy() == getOperation()) continue;
     auto needed = getQuantity() * dpd->getQuantity();
@@ -290,7 +290,7 @@ void OperationPlan::matchDependencies(bool log) {
       }
       if (unpegged > ROUNDING_ERROR) {
         new OperationPlanDependency(&*o, this, dpd);
-        if (log) logger << "  Matching " << &*o << endl;
+        if (log) logger << "  Matching " << &*o << '\n';
         needed -= unpegged;
         if (needed < ROUNDING_ERROR) break;
       }
@@ -298,7 +298,7 @@ void OperationPlan::matchDependencies(bool log) {
     }
     if (log && needed > ROUNDING_ERROR)
       logger << "  Unmatched " << needed << " on operation '"
-             << dpd->getBlockedBy() << "'" << endl;
+             << dpd->getBlockedBy() << "'\n";
   }
 }
 

@@ -65,7 +65,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
       }
       if (!data->constrainedPlanning || !isConstrained())
         logger << " in unconstrained mode";
-      logger << endl;
+      logger << '\n';
     }
 
     // Collect sales order lines in the group
@@ -86,7 +86,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                salesorder->getStatus() != Demand::STATUS_INQUIRY)
       salesorderlines.push_back(const_cast<Demand*>(salesorder));
     if (salesorderlines.empty()) {
-      if (loglevel > 0) logger << "  Nothing to be planned." << endl;
+      if (loglevel > 0) logger << "  Nothing to be planned.\n";
       return;
     }
 
@@ -123,7 +123,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                  << l->getQuantity();
           if (!data->constrainedPlanning || !isConstrained())
             logger << " in unconstrained mode";
-          logger << endl;
+          logger << '\n';
         }
 
         // Track constraints or not
@@ -226,7 +226,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             // Message
             if (loglevel > 0)
               logger << indentlevel << "Demand '" << l << "' asks: " << plan_qty
-                     << "  " << plan_date << endl;
+                     << "  " << plan_date << '\n';
 
             // Store the last command in the list, in order to undo the
             // following commands if required.
@@ -273,7 +273,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                 if (loglevel > 1)
                   logger << indentlevel << "Demand '" << l
                          << "' tries planning minimum quantity " << minshipment
-                         << endl;
+                         << '\n';
                 data->getCommandManager()->rollback(loopcommand);
                 data->state->curBuffer = nullptr;
                 data->state->q_qty = minshipment;
@@ -307,7 +307,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                     if (loglevel > 0)
                       logger << indentlevel << "Demand '" << l
                              << "' tries planning a different quantity "
-                             << new_qty << endl;
+                             << new_qty << '\n';
                     data->getCommandManager()->rollback(loopcommand);
                     data->state->curBuffer = nullptr;
                     data->state->q_qty = new_qty;
@@ -335,7 +335,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                     if (loglevel > 0)
                       logger << indentlevel << "Demand '" << l
                              << "' restores plan for quantity " << min_qty
-                             << endl;
+                             << '\n';
                     // Restore the last feasible plan
                     data->getCommandManager()->rollback(loopcommand);
                     data->state->curBuffer = nullptr;
@@ -363,7 +363,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                      << "' gets answer: " << data->state->a_qty;
               if (!data->state->a_qty) logger << "  " << next_date;
               logger << "  " << data->state->a_cost << "  "
-                     << data->state->a_penalty << endl;
+                     << data->state->a_penalty << '\n';
             }
 
             // Update the date to plan in the next loop
@@ -410,7 +410,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                   if (loglevel > 1)
                     logger << indentlevel << "Demand '" << l
                            << "': Easy retry on " << plan_date
-                           << " rather than " << next_date << endl;
+                           << " rather than " << next_date << '\n';
                 } else
                   // We can trust the next date returned by the search if the
                   // shipment quantity was purely based on some onhand.
@@ -425,7 +425,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                 if (loglevel > 1)
                   logger << indentlevel << "Demand '" << l
                          << "': Easy retry on " << plan_date << " rather than "
-                         << next_date << endl;
+                         << next_date << '\n';
               } else if (getMinimumDelay()) {
                 Date tmp = copy_plan_date + getMinimumDelay();
                 if (tmp > next_date) {
@@ -434,7 +434,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                   if (loglevel > 0)
                     logger << indentlevel << "Demand '" << l
                            << "': Minimum retry on " << tmp << " rather than "
-                           << next_date << endl;
+                           << next_date << '\n';
                   plan_date = tmp;
                 } else
                   // Use the next-date answer from the solver
@@ -464,7 +464,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                 // Create the correct operationplans
                 if (loglevel >= 2)
                   logger << indentlevel << "Demand '" << l
-                         << "' plans coordination." << endl;
+                         << "' plans coordination.\n";
                 setLogLevel(0);
                 double tmpresult = 0;
                 short tries = 7;
@@ -497,7 +497,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                         coordination_date -= Duration(24L * 3600L);
                       } else {
                         logger << indentlevel << "Warning: Demand '" << l
-                               << "': Failing coordination" << endl;
+                               << "': Failing coordination\n";
                         break;
                       }
                     } else {
@@ -550,7 +550,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             if (getLogLevel() > 1)
               logger << indentlevel << "Changing demand location for " << l
                      << " from " << l->getLocation() << " to "
-                     << sortedLocation.front().first << endl;
+                     << sortedLocation.front().first << '\n';
 
             // Prepare for planning on the next location
             const_cast<Demand*>(l)->setLocationNoRecalc(
@@ -576,7 +576,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             policy != Demand::POLICY_ALLTOGETHER) {
           if (loglevel >= 2)
             logger << indentlevel << "Demand '" << l
-                   << "' accepts a best answer." << endl;
+                   << "' accepts a best answer.\n";
           setLogLevel(0);
           try {
             for (double remainder = best_q_qty;
@@ -596,7 +596,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
               deliveryoper->solve(*this, v);
               if (data->state->a_qty < ROUNDING_ERROR) {
                 logger << indentlevel << "Warning: Demand '" << l
-                       << "': Failing accepting best answer" << endl;
+                       << "': Failing accepting best answer\n";
                 break;
               }
             }
@@ -637,7 +637,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
           // Give it up
           if (loglevel > 1)
             logger << indentlevel << "Warning: Demand group '" << salesorder
-                   << "' can't be planned." << endl;
+                   << "' can't be planned.\n";
           break;
         } else {
           // Repeat at a new date
@@ -660,13 +660,13 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
 }
 
 void SolverCreate::scanExcess(CommandManager* mgr) {
-  for (auto & i : *mgr)
+  for (auto& i : *mgr)
     if (i.isActive()) scanExcess(&i);
 }
 
 void SolverCreate::scanExcess(CommandList* l) {
   // Loop over all newly created operationplans found in the command stack
-  for (auto & cmd : *l) {
+  for (auto& cmd : *l) {
     switch (cmd.getType()) {
       case 1:
         // Recurse deeper into command lists
@@ -683,7 +683,7 @@ void SolverCreate::scanExcess(CommandList* l) {
               logger << "Denying creation of redundant operationplan "
                      << createcmd->getOperationPlan()->getOperation() << "  "
                      << createcmd->getOperationPlan()->getDates() << "  "
-                     << createcmd->getOperationPlan()->getQuantity() << endl;
+                     << createcmd->getOperationPlan()->getQuantity() << '\n';
             createcmd->rollback();
           } else if (!createcmd->getOperationPlan()
                           ->getOperation()
@@ -701,7 +701,7 @@ void SolverCreate::scanExcess(CommandList* l) {
                 if (getLogLevel() > 1)
                   logger << "Removing previously created redundant "
                             "operationplan "
-                         << tmp << endl;
+                         << tmp << '\n';
                 delete tmp;
               } else
                 ++o;
@@ -714,7 +714,7 @@ void SolverCreate::scanExcess(CommandList* l) {
 }
 
 bool SolverCreate::hasOperationPlans(CommandManager* mgr) {
-  for (auto & i : *mgr) {
+  for (auto& i : *mgr) {
     if (i.isActive()) {
       if (hasOperationPlans(&i)) return true;
     }
@@ -724,7 +724,7 @@ bool SolverCreate::hasOperationPlans(CommandManager* mgr) {
 
 bool SolverCreate::hasOperationPlans(CommandList* l) {
   // Loop over all newly created operationplans found in the command stack
-  for (auto & cmd : *l) {
+  for (auto& cmd : *l) {
     switch (cmd.getType()) {
       case 1:
         // Recurse deeper into command lists

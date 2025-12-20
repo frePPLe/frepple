@@ -236,7 +236,7 @@ void JSONInput::parse(Object* pRoot, char* buffer) {
       throw DataException(o.str());
     }
   } catch (const exception& e) {
-    logger << "Parsing error near position " << buf.Tell() << endl;
+    logger << "Parsing error near position " << buf.Tell() << '\n';
     throw;
   }
 }
@@ -436,7 +436,7 @@ bool JSONInput::StartObject() {
   logger << "Starting object #" << objectindex << " (type "
          << (objects[objectindex].cls ? objects[objectindex].cls->type
                                       : "nullptr")
-         << ")" << endl;
+         << ")\n";
 #endif
   return true;
 }
@@ -468,7 +468,7 @@ bool JSONInput::Key(const char* str, rapidjson::SizeType, bool) {
          << ((objectindex >= 0 && objects[objectindex].cls)
                  ? objects[objectindex].cls->type
                  : "none")
-         << ")" << endl;
+         << ")\n";
 #endif
 
   return true;
@@ -688,7 +688,7 @@ bool JSONInput::EndObject(rapidjson::SizeType) {
          << ((objectindex >= 0 && objects[objectindex].cls)
                  ? objects[objectindex].cls->type
                  : "none")
-         << "):" << endl;
+         << "):\n";
   dict.print();
 #endif
 
@@ -777,14 +777,14 @@ bool JSONInput::EndObject(rapidjson::SizeType) {
 
 bool JSONInput::StartArray() {
 #ifdef PARSE_DEBUG
-  logger << "Starting array" << endl;
+  logger << "Starting array\n";
 #endif
   return true;
 }
 
 bool JSONInput::EndArray(rapidjson::SizeType) {
 #ifdef PARSE_DEBUG
-  logger << "Ending array" << endl;
+  logger << "Ending array\n";
 #endif
   return true;
 }
@@ -1025,9 +1025,9 @@ void JSONDataValueDict::print() {
       logger << "  " << i << "   null: ";
     auto* obj = static_cast<Object*>(fields[i].value.getObject());
     if (obj)
-      logger << "pointer to " << obj->getType().type << endl;
+      logger << "pointer to " << obj->getType().type << '\n';
     else
-      logger << fields[i].value.getString() << endl;
+      logger << fields[i].value.getString() << '\n';
   }
 }
 

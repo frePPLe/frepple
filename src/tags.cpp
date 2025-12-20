@@ -26,8 +26,8 @@
 #include "frepple/utils.h"
 using namespace frepple;
 
-namespace frepple {
-namespace utils {
+
+namespace frepple::utils {
 
 const Keyword Tags::action("action");
 const Keyword Tags::allmembers("allmembers");
@@ -262,5 +262,5 @@ const Keyword Tags::volume("volume");
 const Keyword Tags::weight("weight");
 const Keyword Tags::wip_produce_full_quantity("wip_produce_full_quantity");
 
-}  // namespace utils
-}  // namespace frepple
+} // namespace frepple::utils
+

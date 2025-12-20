@@ -47,11 +47,11 @@ void SolverCreate::solve(const Resource* res, void* v) {
     if (!data->constrainedPlanning || !isConstrained())
       logger << ++indentlevel << "Resource '" << res
              << "' is asked in unconstrained mode: " << (-data->state->q_qty)
-             << "  " << data->state->q_operationplan->getDates() << endl;
+             << "  " << data->state->q_operationplan->getDates() << '\n';
     else
       logger << ++indentlevel << "Resource '" << res
              << "' is asked: " << (-data->state->q_qty) << "  "
-             << data->state->q_operationplan->getDates() << endl;
+             << data->state->q_operationplan->getDates() << '\n';
   }
 
   // Initialize some variables
@@ -284,7 +284,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
     if (iterations >= getResourceIterationMax())
       logger << indentlevel << "Warning: no free capacity slot found on " << res
              << " after " << getResourceIterationMax()
-             << " iterations. Last date: " << newDate << endl;
+             << " iterations. Last date: " << newDate << '\n';
     data->state->q_loadplan = old_q_loadplan;
 
     // Set the date where a next trial date can happen
@@ -319,7 +319,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
       data->state->a_cost += tmp;
       if (data->logcosts && data->incostevaluation)
         logger << indentlevel << "     + cost on resource '" << res
-               << "': " << tmp << endl;
+               << "': " << tmp << '\n';
     }
 
     // Setup cost
@@ -350,7 +350,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
         data->state->q_operationplan->getQuantity() < currentOpplan.quantity)
       logger << " with reduced quantity "
              << data->state->q_operationplan->getQuantity();
-    logger << endl;
+    logger << '\n';
   }
 }
 
@@ -365,7 +365,7 @@ void SolverCreate::solveUnconstrained(const Resource* res, void* v) {
   if (getLogLevel() > 1 && data->state->q_qty < 0)
     logger << ++indentlevel << "Unconstrained resource '" << res
            << "' is asked: " << (-data->state->q_qty) << "  "
-           << data->state->q_operationplan->getDates() << endl;
+           << data->state->q_operationplan->getDates() << '\n';
 
   // @todo Need to make the setups feasible - move to earlier dates till
   // max_early fence is reached
@@ -381,13 +381,13 @@ void SolverCreate::solveUnconstrained(const Resource* res, void* v) {
     data->state->a_cost += tmp;
     if (data->logcosts && data->incostevaluation)
       logger << indentlevel << "     + cost on resource '" << res
-             << "': " << tmp << endl;
+             << "': " << tmp << '\n';
   }
 
   // Message
   if (getLogLevel() > 1 && data->state->q_qty < 0)
     logger << indentlevel-- << "Unconstrained resource '" << res
-           << "' answers: " << data->state->a_qty << endl;
+           << "' answers: " << data->state->a_qty << '\n';
 }
 
 void SolverCreate::solve(const ResourceBuckets* res, void* v) {
@@ -406,7 +406,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
   if (getLogLevel() > 1 && data->state->q_qty < 0)
     logger << ++indentlevel << "Bucketized resource '" << res
            << "' is asked: " << (-data->state->q_qty) << "  "
-           << opplan->getDates() << endl;
+           << opplan->getDates() << '\n';
 
   // Set a flag for the checkOperation method to mark that bucketized resources
   // are involved
@@ -898,7 +898,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
     data->state->a_cost += tmp;
     if (data->logcosts && data->incostevaluation)
       logger << indentlevel << "     + cost on resource '" << res
-             << "': " << tmp << endl;
+             << "': " << tmp << '\n';
 
     // Build-ahead penalty: 5% of the cost   @todo buildahead penalty is
     // hardcoded
@@ -926,7 +926,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
     else if (originalOpplan.start > data->state->q_operationplan->getStart())
       logger << " using earlier capacity "
              << data->state->q_operationplan->getStart();
-    logger << endl;
+    logger << '\n';
   }
 }
 

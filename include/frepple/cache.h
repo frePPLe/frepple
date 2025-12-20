@@ -31,9 +31,7 @@
 
 using namespace std;
 
-namespace frepple {
-
-namespace utils {
+namespace frepple::utils {
 
 class AbstractCacheEntry {
   friend class Cache;
@@ -149,7 +147,7 @@ class Cache : public Object {
 
   void setMaximum(unsigned long s) {
     if (s <= 0) {
-      logger << "Warning: Cache object limit must be bigger than 0" << endl;
+      logger << "Warning: Cache object limit must be bigger than 0\n";
       return;
     }
     max_objects = s;
@@ -303,5 +301,4 @@ shared_ptr<T> CacheEntry<T, U>::getValue(const U* key) const {
   }
 }
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

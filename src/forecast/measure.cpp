@@ -156,7 +156,7 @@ void ForecastMeasure::aggregateMeasures(const vector<ForecastMeasure*>& msrs) {
           planned = false;
           logger << static_cast<Forecast*>(fcst)
                  << " can't be planned because its parent is already planned"
-                 << endl;
+                 << '\n';
         }
       }
     }
@@ -211,7 +211,7 @@ void ForecastMeasure::aggregateMeasures(const vector<ForecastMeasure*>& msrs) {
             if (!bckt.isDirty()) ++updated;
             if (Cache::instance->getLogLevel() > 2)
               logger << "Correcting " << msr.first << ": found " << cur
-                     << " but expected " << val.first << " on " << bckt << endl;
+                     << " but expected " << val.first << " on " << bckt << '\n';
             bckt.setValue(false, nullptr, msr.first, val.first);
           }
           bckt.removeValue(false, nullptr, msr.second);
@@ -223,7 +223,7 @@ void ForecastMeasure::aggregateMeasures(const vector<ForecastMeasure*>& msrs) {
   // Delete temp measures
   for (auto& msr : msrlist) delete msr.second;
 
-  logger << "Corrected " << updated << " parent forecast buckets" << endl;
+  logger << "Corrected " << updated << " parent forecast buckets\n";
   Cache::instance->setWriteImmediately(prev);
 }
 
@@ -604,7 +604,7 @@ double ForecastMeasureAggregated::disaggregate(ForecastBucketData& bckt,
         logger << " no child forecast found to update for "
                << fcst->getForecastItem() << " / "
                << fcst->getForecastLocation() << " / "
-               << fcst->getForecastCustomer() << endl;
+               << fcst->getForecastCustomer() << '\n';
       else {
         auto delta = val / cnt;
         for (auto p = fcst->getLeaves(false, this); p; ++p)
@@ -657,12 +657,12 @@ double ForecastMeasureAggregated::disaggregate(ForecastBase* fcst,
       }
     } else {
       // Equally distribute over all buckets
-      if (multiply) logger << "ignoring multiply flag" << endl;
+      if (multiply) logger << "ignoring multiply flag\n";
       if (!cnt)
         logger << " no child forecast found to update for "
                << fcst->getForecastItem() << " / "
                << fcst->getForecastLocation() << " / "
-               << fcst->getForecastCustomer() << endl;
+               << fcst->getForecastCustomer() << '\n';
       else {
         auto newval = val / cnt;
         for (auto& bckt : fcstdata->getBuckets()) {
@@ -690,7 +690,7 @@ double ForecastMeasureAggregated::disaggregate(ForecastBase* fcst,
         logger << " no child forecast found to update for "
                << fcst->getForecastItem() << " / "
                << fcst->getForecastLocation() << " / "
-               << fcst->getForecastCustomer() << endl;
+               << fcst->getForecastCustomer() << '\n';
       else {
         auto delta = val / cnt;
         for (auto p = fcst->getLeaves(false, this); p; ++p)
@@ -767,7 +767,7 @@ double ForecastMeasureAggregated::disaggregateOverride(
     mode = 4;
     arg = val / count_no_override;
   } else {
-    logger << "no children found!!!!" << endl;
+    logger << "no children found!!!!\n";
     return remainder;
   }
   for (auto ch = fcst->getLeaves(true, this); ch; ++ch) {
@@ -1195,7 +1195,7 @@ void MeasurePagePool::releaseEmptyPages() {
     } else
       p = p->next;
   }
-  logger << "Released " << count << " " << name << " memory pages" << endl;
+  logger << "Released " << count << " " << name << " memory pages\n";
 }
 
 void MeasureList::insert(const PooledString& k, double v, bool c) {
@@ -1298,10 +1298,10 @@ void MeasureList::check() {
   }
   if (count_fwd != count_bck)
     logger << "Error: Mismatch forward and backward size: " << count_fwd
-           << " vs " << count_bck << endl;
+           << " vs " << count_bck << '\n';
   if (count_wrong_links)
     logger << "Error: " << count_wrong_links << "incorrect links in list"
-           << endl;
+           << '\n';
   if (count_fwd != count_bck || count_wrong_links)
     throw DataException("Corrupted list");
 }
@@ -1358,7 +1358,7 @@ pair<double, double> MeasurePagePool::check(const string& msg) {
     ++count_freelist_bck;
   if (count_freelist_fwd != count_free || count_freelist_bck != count_free) {
     logger << "Error: mismatched free count " << count_freelist_fwd << " vs "
-           << count_freelist_bck << " vs " << count_free << endl;
+           << count_freelist_bck << " vs " << count_free << '\n';
   }
 
   // Temp free list
@@ -1372,25 +1372,25 @@ pair<double, double> MeasurePagePool::check(const string& msg) {
       count_freelist_temp_bck != count_temp_free) {
     logger << "Error: mismatched temp free count " << count_freelist_temp_fwd
            << " vs " << count_freelist_temp_bck << " vs " << count_temp_free
-           << endl;
+           << '\n';
   }
 
   // Print stats
   if (count_wrong_links) {
     logger << "Error: " << count_wrong_links << "incorrect links in list"
-           << endl;
+           << '\n';
   }
-  logger << "Measure memory page stats: " << msg << endl;
+  logger << "Measure memory page stats: " << msg << '\n';
   logger << "   " << count_pages << " pages with " << count_used
-         << " pairs in use and " << count_free << " free pairs." << endl;
+         << " pairs in use and " << count_free << " free pairs.\n";
   logger << "   " << count_pages_temp << " temporary pages with "
          << count_temp_used << " pairs in use and " << count_temp_free
-         << " free pairs." << endl;
+         << " free pairs.\n";
   double util = count_free + count_used + count_temp_free + count_temp_used;
   util = util ? round(100.0 * (count_used + count_temp_used) / util) : 0.0;
-  logger << "   " << util << "% average utilization" << endl;
+  logger << "   " << util << "% average utilization\n";
   logger << "   " << count_pages_free << " empty pages, "
-         << count_pages_temp_free << " free temporary pages." << endl;
+         << count_pages_temp_free << " free temporary pages.\n";
   return make_pair(util, static_cast<double>(count_pages + count_pages_temp));
 }
 

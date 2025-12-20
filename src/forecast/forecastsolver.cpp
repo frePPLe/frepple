@@ -161,18 +161,17 @@ void ForecastSolver::solve(const Demand* l, void*) {
       logger << "  Netting of demand '" << l << "'  ('" << l->getCustomer()
              << "', '" << l->getItem() << "', '" << l->getLocation() << "', '"
              << l->getDeliveryOperation() << "'): " << l->getDue() << ", "
-             << l->getQuantity() << endl;
+             << l->getQuantity() << '\n';
 
     // Find a matching forecast
     Forecast* fcst = matchDemandToForecast(l);
 
     if (!fcst) {
       // Message
-      if (getLogLevel() > 0)
-        logger << "    No matching forecast available" << endl;
+      if (getLogLevel() > 0) logger << "    No matching forecast available\n";
       return;
     } else if (getLogLevel() > 0)
-      logger << "    Matching forecast: " << fcst << endl;
+      logger << "    Matching forecast: " << fcst << '\n';
 
     // Netting the order from the forecast
     netDemandFromForecast(l, fcst);
@@ -269,8 +268,7 @@ void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
   if (run_fcst) {
     // Time series forecasting for all leaf forecasts
     // TODO Assumes that the lowest forecasting level is a leaf forecast.
-    if (getLogLevel() > 5)
-      logger << "Start forecasting for leaf forecasts" << endl;
+    if (getLogLevel() > 5) logger << "Start forecasting for leaf forecasts\n";
     for (auto& x : Forecast::getForecasts()) {
       try {
         if (x->getMethods() && x->isLeaf() &&
@@ -279,24 +277,22 @@ void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
           solve(static_cast<Forecast*>(&*x), nullptr);
       } catch (...) {
         logger << "Error: Caught an exception while forecasting '"
-               << static_cast<Forecast*>(&*x) << "':" << endl;
+               << static_cast<Forecast*>(&*x) << "':\n";
         try {
           throw;
         } catch (const bad_exception&) {
-          logger << "  bad exception" << endl;
+          logger << "  bad exception\n";
         } catch (const exception& e) {
-          logger << "  " << e.what() << endl;
+          logger << "  " << e.what() << '\n';
         } catch (...) {
-          logger << "  Unknown type" << endl;
+          logger << "  Unknown type\n";
         }
       }
     }
-    if (getLogLevel() > 5)
-      logger << "End forecasting for leaf forecasts" << endl;
+    if (getLogLevel() > 5) logger << "End forecasting for leaf forecasts\n";
 
     // Time series forecasting for all middle-out parent forecasts
-    if (getLogLevel() > 5)
-      logger << "Start forecasting for parent forecasts" << endl;
+    if (getLogLevel() > 5) logger << "Start forecasting for parent forecasts\n";
     for (auto& x : Forecast::getForecasts()) {
       try {
         if (x->getMethods() && !x->isLeaf() &&
@@ -305,20 +301,19 @@ void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
           solve(static_cast<Forecast*>(&*x), nullptr);
       } catch (...) {
         logger << "Error: Caught an exception while forecasting '"
-               << static_cast<Forecast*>(&*x)->getName() << "':" << endl;
+               << static_cast<Forecast*>(&*x)->getName() << "':\n";
         try {
           throw;
         } catch (const bad_exception&) {
-          logger << "  bad exception" << endl;
+          logger << "  bad exception\n";
         } catch (const exception& e) {
-          logger << "  " << e.what() << endl;
+          logger << "  " << e.what() << '\n';
         } catch (...) {
-          logger << "  Unknown type" << endl;
+          logger << "  Unknown type\n";
         }
       }
     }
-    if (getLogLevel() > 5)
-      logger << "End forecasting for parent forecasts" << endl;
+    if (getLogLevel() > 5) logger << "End forecasting for parent forecasts\n";
   }
 
   if (run_netting) {
@@ -339,15 +334,15 @@ void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
         solve(i, nullptr);
       } catch (...) {
         logger << "Error: Caught an exception while netting demand '"
-               << i->getName() << "':" << endl;
+               << i->getName() << "':\n";
         try {
           throw;
         } catch (const bad_exception&) {
-          logger << "  bad exception" << endl;
+          logger << "  bad exception\n";
         } catch (const exception& e) {
-          logger << "  " << e.what() << endl;
+          logger << "  " << e.what() << '\n';
         } catch (...) {
-          logger << "  Unknown type" << endl;
+          logger << "  Unknown type\n";
         }
       }
     }
@@ -450,9 +445,9 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
 
   // Empty forecast model
   if (!fcst->isGroup()) {
-    if (getLogLevel() > 1) logger << "    Empty forecast model" << endl;
+    if (getLogLevel() > 1) logger << "    Empty forecast model\n";
     if (getLogLevel() > 0 && remaining)
-      logger << "    Remains " << remaining << " that can't be netted" << endl;
+      logger << "    Remains " << remaining << " that can't be netted\n";
     return;
   }
 
@@ -481,7 +476,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
     // Such orders shouldn't be considered for netting, as we can assume
     // they consumed from past buckets we're not concerned with any longer.
     if (getLogLevel() > 1)
-      logger << "    Overdue order doesn't require netting" << endl;
+      logger << "    Overdue order doesn't require netting\n";
     return;
   }
 
@@ -504,7 +499,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
         if (getLogLevel() > 1)
           logger << "    Consuming " << remaining << " from bucket "
                  << curbucket->getDates() << " (" << available << " available)"
-                 << endl;
+                 << '\n';
         Measures::forecastconsumed->disaggregate(
             *curbucket,
             remaining + Measures::forecastconsumed->getValue(*curbucket), false,
@@ -518,7 +513,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
         if (getLogLevel() > 1)
           logger << "    Consuming " << available << " from bucket "
                  << curbucket->getDates() << " (" << available << " available)"
-                 << endl;
+                 << '\n';
         remaining -= available;
         Measures::forecastconsumed->disaggregate(
             *curbucket,
@@ -529,7 +524,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
       }
     } else if (getLogLevel() > 1)
       logger << "    Nothing available in bucket " << curbucket->getDates()
-             << endl;
+             << '\n';
 
     // Find the next forecast bucket
     if (backward) {
@@ -555,7 +550,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
 
   // Quantity for which no bucket is found
   if (remaining > 0 && getLogLevel() > 0)
-    logger << "    Remains " << remaining << " that can't be netted" << endl;
+    logger << "    Remains " << remaining << " that can't be netted\n";
 }
 
 PyObject* ForecastSolver::commit(PyObject* self, PyObject*) {

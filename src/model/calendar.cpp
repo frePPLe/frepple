@@ -189,16 +189,14 @@ CalendarBucket::~CalendarBucket() {
 
 void CalendarBucket::setEnd(const Date d) {
   if (d < startdate)
-    logger << "Warning: Calendar bucket end must be later than its start"
-           << endl;
+    logger << "Warning: Calendar bucket end must be later than its start\n";
   else
     enddate = d;
 }
 
 void CalendarBucket::setStart(const Date d) {
   if (d > enddate)
-    logger << "Warning: Calendar bucket start must be earlier than its end"
-           << endl;
+    logger << "Warning: Calendar bucket start must be earlier than its end\n";
   else {
     startdate = d;
     updateSort();

@@ -25,8 +25,7 @@
 
 #include "frepple/utils.h"
 
-namespace frepple {
-namespace utils {
+namespace frepple::utils {
 
 const MetaCategory* CommandManager::metacategory;
 const MetaClass* CommandManager::metadata;
@@ -88,7 +87,7 @@ void CommandList::commit() {
 CommandList::~CommandList() {
   if (firstCommand) {
     logger << "Warning: Deleting a command list with commands that have"
-           << " not been committed or rolled back" << endl;
+           << " not been committed or rolled back\n";
     rollback();
   }
 }
@@ -189,7 +188,7 @@ bool CommandManager::empty() const {
 //
 
 CommandSetProperty::CommandSetProperty(Object* o, const string& nm,
-                                       const DataValue& , short tp)
+                                       const DataValue&, short tp)
     : obj(o), name(nm), type(tp) {
   if (!o || nm.empty()) return;
 
@@ -320,17 +319,16 @@ void ThreadGroup::wrapper(ThreadGroup* grp) {
       get<0>(job)(get<1>(job), get<2>(job), get<3>(job));
     } catch (...) {
       // Error message
-      logger << "Error: Caught an exception while executing command:" << endl;
+      logger << "Error: Caught an exception while executing command:\n";
       try {
         throw;
       } catch (const exception& e) {
-        logger << "  " << e.what() << endl;
+        logger << "  " << e.what() << '\n';
       } catch (...) {
-        logger << "  Unknown type" << endl;
+        logger << "  Unknown type\n";
       }
     }
   };
 }
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

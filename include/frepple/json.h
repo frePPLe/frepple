@@ -39,8 +39,7 @@ using namespace frepple;
 #include "rapidjson/error/en.h"
 #include "rapidjson/reader.h"
 
-namespace frepple {
-namespace utils {
+namespace frepple::utils {
 
 /* Base class for writing JSON formatted data to an output stream.
  *
@@ -120,7 +119,7 @@ class JSONSerializer : public Serializer {
     *m_fp << "\"" << t << "\":{";
     first = true;
     mode.push(false);
-    logger << "IMPLEMENTATION INCOMPLETE" << endl;  // TODO not using atts
+    logger << "IMPLEMENTATION INCOMPLETE\n";  // TODO not using atts
   }
 
   /* Start writing a new object. This method will open a new tag.
@@ -959,5 +958,4 @@ PyObject* readJSONdata(PyObject*, PyObject*);
 /* Method exposed in Python to process JSON data from a file. */
 PyObject* readJSONfile(PyObject*, PyObject*);
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

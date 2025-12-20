@@ -106,11 +106,11 @@ void Load::setOperation(Operation* o) {
   if (!setup.empty() && o) {
     // Guarantuee that only a single load has a setup.
     // Alternates of that load can have a setup as well.
-    for (auto & i : o->loaddata)
+    for (auto& i : o->loaddata)
       if (&i != this && !i.setup.empty() && i.getName() != getName()) {
         logger
             << "Warning: Only a single load of an operation can specify a setup"
-            << endl;
+            << '\n';
         return;
       }
   }
@@ -124,11 +124,11 @@ void Load::setSetupString(const string& n) {
   if (!n.empty() && getOperation()) {
     // Guarantuee that only a single load has a setup.
     // Alternates of that load can have a setup as well.
-    for (auto & i : getOperation()->loaddata)
+    for (auto& i : getOperation()->loaddata)
       if (&i != this && !i.setup.empty() && i.getName() != getName()) {
         logger
             << "Warning:Only a single load of an operation can specify a setup"
-            << endl;
+            << '\n';
         return;
       }
   }
@@ -233,7 +233,7 @@ Object* Load::finder(const DataValueDict& d) {
   const DataValue* hasName = d.get(Tags::name);
   string name;
   if (hasName) name = hasName->getString();
-  for (const auto & ld : oper->getLoads()) {
+  for (const auto& ld : oper->getLoads()) {
     if (ld.getResource() != res) continue;
     if (hasEffectiveStart && ld.getEffectiveStart() != effective_start)
       continue;

@@ -50,7 +50,7 @@ void SolverCreate::checkOperationCapacity(OperationPlan* opplan,
   do {
     if (getLogLevel() > 1) {
       if (!first_iteration)
-        logger << indentlevel << "  Rechecking capacity " << endl;
+        logger << indentlevel << "  Rechecking capacity\n";
       else
         first_iteration = false;
     }
@@ -108,7 +108,7 @@ void SolverCreate::checkOperationCapacity(OperationPlan* opplan,
       else
         data.state->a_date = orig_q_date_max + getMinimumDelay();
       if (getLogLevel() > 1)
-        logger << indentlevel << "Quitting capacity checking loop" << endl;
+        logger << indentlevel << "Quitting capacity checking loop\n";
       break;
     }
   }
@@ -365,8 +365,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
       // Pop actions from the command "stack" in the command list
       data.getCommandManager()->rollback(topcommand);
       // Echo a message
-      if (getLogLevel() > 1)
-        logger << indentlevel << "  Retrying new date." << endl;
+      if (getLogLevel() > 1) logger << indentlevel << "  Retrying new date.\n";
     } else if (opplan_strt_capacity &&
                opplan_strt_capacity != opplan->getStart() &&
                opplan->getQuantity() > ROUNDING_ERROR && data.state->a_qty)
@@ -378,7 +377,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
       a_qty = 0.0;
       matnext.setEnd(orig_q_date_max + data.getSolver()->getMinimumDelay());
       if (data.getSolver()->getLogLevel() > 1)
-        logger << indentlevel << "Quitting operation checking loop" << endl;
+        logger << indentlevel << "Quitting operation checking loop\n";
       break;
     }
   } while (!okay);  // Repeat the loop if the operation was moved and the
@@ -391,8 +390,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
     // The operationplan was moved early (because of a resource constraint)
     // and we can't properly trust the reply date in such cases...
     // We want to enforce rechecking the next date.
-    if (getLogLevel() > 1)
-      logger << indentlevel << "  Recheck capacity" << endl;
+    if (getLogLevel() > 1) logger << indentlevel << "  Recheck capacity\n";
 
     // Move the operationplan to the next date where the material is feasible
     if (flow_at_start)
@@ -569,7 +567,7 @@ void SolverCreate::solve(const Operation* oper, void* v) {
   if (getLogLevel() > 1)
     logger << ++indentlevel << "Operation '" << oper
            << "' is asked: " << data->state->q_qty << "  "
-           << data->state->q_date << endl;
+           << data->state->q_date << '\n';
 
   auto asked_date = data->state->q_date;
   auto asked_qty = data->state->q_qty;
@@ -619,7 +617,7 @@ void SolverCreate::solve(const Operation* oper, void* v) {
         if (getLogLevel() > 1)
           logger << indentlevel << "Operation '" << oper
                  << "' repeats ask with smaller post-operation delay: "
-                 << asked_qty << "  " << (asked_date - ask_early) << endl;
+                 << asked_qty << "  " << (asked_date - ask_early) << '\n';
       }
     }
   } while (repeat);
@@ -635,7 +633,7 @@ void SolverCreate::solve(const Operation* oper, void* v) {
     logger << indentlevel-- << "Operation '" << oper
            << "' answers: " << data->state->a_qty;
     if (!data->state->a_qty) logger << "  " << data->state->a_date;
-    logger << endl;
+    logger << '\n';
   }
 }
 
@@ -688,11 +686,11 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
         }
       }
       if (getLogLevel() > 1) {
-        logger << indentlevel << problemtext << endl;
+        logger << indentlevel << problemtext << '\n';
         logger << indentlevel << "Operation '" << oper
                << "' answers: " << data->state->a_qty;
         if (!data->state->a_qty) logger << "  " << data->state->a_date;
-        logger << endl;
+        logger << '\n';
       }
       if (qty_per) *qty_per = flow_qty_per;
       if (qty_fixed) *qty_fixed = flow_qty_fixed;
@@ -752,7 +750,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
       Date shortage_d;
       double shortage_q = 0.0;
       double z_produced = 0.0;
-      for (auto & flpln : data->state->curBuffer->getFlowPlans()) {
+      for (auto& flpln : data->state->curBuffer->getFlowPlans()) {
         if (flpln.isLastOnDate() && flpln.getOnhand() < -ROUNDING_ERROR &&
             !shortage_q) {
           // Loop mode 1: Scan for the start of a shortage period
@@ -792,7 +790,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
              << data->state->q_date;
     data->state->q_date = data->state->q_date_max =
         producing_flow->computeFlowToOperationDate(z, data->state->q_date);
-    if (getLogLevel() > 1) logger << " to " << data->state->q_date << endl;
+    if (getLogLevel() > 1) logger << " to " << data->state->q_date << '\n';
   }
 
   // Create the operation plan.
@@ -870,7 +868,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
              << data->state->a_date;
     data->state->a_date =
         producing_flow->computeOperationToFlowDate(z, data->state->a_date);
-    if (getLogLevel() > 1) logger << " to " << data->state->a_date << endl;
+    if (getLogLevel() > 1) logger << " to " << data->state->a_date << '\n';
   }
 
   // Ignore any constraints if we get a complete reply.
@@ -885,13 +883,13 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
     data->state->a_cost += tmp;
     if (data->logcosts && data->incostevaluation)
       logger << indentlevel << "     + cost on operation '" << oper
-             << "': " << tmp << endl;
+             << "': " << tmp << '\n';
   }
 
   // Verify the reply
   if (data->state->a_qty == 0 && data->state->a_date <= orig_q_date) {
     if (getLogLevel() > 1)
-      logger << indentlevel << "Applying lazy delay " << getLazyDelay() << endl;
+      logger << indentlevel << "Applying lazy delay " << getLazyDelay() << '\n';
     data->state->a_date = orig_q_date + getLazyDelay();
   }
   assert(data->state->a_qty >= 0);
@@ -913,7 +911,7 @@ void SolverCreate::solve(const OperationItemSupplier* o, void* v) {
     bool all_po = true;
     if (o->getOwner() &&
         o->getOwner()->hasType<OperationSplit, OperationAlternate>()) {
-      for (auto & alt : o->getOwner()->getSubOperations()) {
+      for (auto& alt : o->getOwner()->getSubOperations()) {
         if (alt->getOperation()->getPriority() &&
             !alt->getOperation()->hasType<OperationItemSupplier>()) {
           all_po = false;
@@ -955,11 +953,11 @@ void SolverCreate::solve(const OperationItemSupplier* o, void* v) {
       if (getLogLevel() > 1) {
         logger << ++indentlevel << "Operation '" << o
                << "' is asked: " << data->state->q_qty << "  "
-               << data->state->q_date << endl;
+               << data->state->q_date << '\n';
         logger << indentlevel-- << "Purchasing operation '" << o
                << "' replies 0. Requested qty/date: " << data->state->q_qty
                << "/" << data->state->q_date
-               << " Total OH/SS : " << total_onhand << "/" << total_ss << endl;
+               << " Total OH/SS : " << total_onhand << "/" << total_ss << '\n';
       }
       return;
     }
@@ -983,7 +981,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
            << "' is asked: " << data->state->q_qty << "  "
            << data->state->q_date;
     if (useDependencies) logger << " using step dependencies";
-    logger << endl;
+    logger << '\n';
   }
 
   // Find the total quantity to flow into the buffer.
@@ -1001,11 +999,11 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
           (!offset_flow || offset_flow->getOffset() < f->getOffset()))
         offset_flow = &*f;
       logger << "Deprecation warning: routing operation '" << oper
-             << "' shouldn't produce material" << endl;
+             << "' shouldn't produce material\n";
     }
-    for (auto & e : oper->getSubOperations()) {
+    for (auto& e : oper->getSubOperations()) {
       f = e->getOperation()->findFlow(data->state->curBuffer,
-                                         data->state->q_date);
+                                      data->state->q_date);
       if (f && f->isProducer()) {
         // Flow on routing steps
         flow_qty_per += f->getQuantity();
@@ -1075,7 +1073,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
     data->state->q_date = offset_flow->computeFlowToOperationDate(
         a->getOperationPlan(), data->state->q_date);
     a->getOperationPlan()->setEnd(data->state->q_date);
-    if (getLogLevel() > 1) logger << " to " << data->state->q_date << endl;
+    if (getLogLevel() > 1) logger << " to " << data->state->q_date << '\n';
   }
 
   // Quantity can be changed because of size constraints on the top operation
@@ -1126,7 +1124,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
               if (occurences->second.second > data->state->q_date)
                 logger << "' - setting requirement date to "
                        << data->state->q_date;
-              logger << endl;
+              logger << '\n';
             }
             if (occurences->second.second > data->state->q_date)
               occurences->second.second = data->state->q_date;
@@ -1137,7 +1135,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
               if (getLogLevel() > 1) {
                 logger << indentlevel
                        << "  Dependency updates requirement date to "
-                       << occurences->second.second << endl;
+                       << occurences->second.second << '\n';
               }
               data->state->q_date = occurences->second.second;
             }
@@ -1243,7 +1241,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
     data->state->a_cost += tmp;
     if (data->logcosts && data->incostevaluation)
       logger << indentlevel << "     + cost on operation '" << oper
-             << "': " << tmp << endl;
+             << "': " << tmp << '\n';
   }
 
   // Make other operationplans don't take this one as owner any more.
@@ -1258,7 +1256,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
              << data->state->a_date;
     data->state->a_date = offset_flow->computeOperationToFlowDate(
         a->getOperationPlan(), data->state->a_date);
-    if (getLogLevel() > 1) logger << " to " << data->state->a_date << endl;
+    if (getLogLevel() > 1) logger << " to " << data->state->a_date << '\n';
   }
 
   if (data->state->a_qty == 0.0 && data->state->a_date <= top_q_date) {
@@ -1269,7 +1267,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
     delay = getLazyDelay();
     if (getLogLevel() > 1)
       logger << indentlevel << "Applying lazy delay " << delay << " in routing"
-             << endl;
+             << '\n';
     data->state->a_date = top_q_date + delay;
   }
   data->hitMaxSize = data->state->a_qty == oper->getSizeMaximum();
@@ -1279,7 +1277,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
     logger << indentlevel-- << "Routing operation '" << oper
            << "' answers: " << data->state->a_qty;
     if (!data->state->a_qty) logger << "  " << data->state->a_date;
-    logger << endl;
+    logger << '\n';
   }
 }
 
@@ -1288,7 +1286,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
 void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   {
     Operation* curAlt = nullptr;
-    for (auto & altIter : oper->getSubOperations()) {
+    for (auto& altIter : oper->getSubOperations()) {
       if (altIter->getPriority() && !altIter->getEffective()) {
         if (curAlt) {
           // Multiple alternates operations are found.
@@ -1324,7 +1322,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   if (loglevel > 1)
     logger << ++indentlevel << "Alternate operation '" << oper
            << "' is asked: " << data->state->q_qty << "  "
-           << data->state->q_date << endl;
+           << data->state->q_date << '\n';
 
   // Make sure sub-operationplans know their owner & store the previous value
   OperationPlan* prev_owner_opplan = data->state->curOwnerOpplan;
@@ -1517,7 +1515,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
                  << data->state->q_date;
         data->state->q_date = data->state->q_date_max =
             sub_flow->computeFlowToOperationDate(nullptr, data->state->q_date);
-        if (getLogLevel() > 1) logger << " to " << data->state->q_date << endl;
+        if (getLogLevel() > 1) logger << " to " << data->state->q_date << '\n';
       }
 
       // Solve constraints on the sub operationplan
@@ -1527,7 +1525,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
         // Force a reply at the start of the effective period
         if (loglevel > 1)
           logger << indentlevel << "Operation '" << (*altIter)->getOperation()
-                 << "' answers: 0 " << (*altIter)->getEffectiveStart() << endl;
+                 << "' answers: 0 " << (*altIter)->getEffectiveStart() << '\n';
         data->state->a_qty = 0.0;
         data->state->a_date = (*altIter)->getEffectiveStart();
         if (data->logConstraints && data->constraints)
@@ -1538,7 +1536,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
         if (loglevel > 1)
           logger << indentlevel << "Alternate operation '" << oper
                  << "' tries alternate '" << (*altIter)->getOperation() << "' "
-                 << endl;
+                 << '\n';
         auto tmp_askQ = data->state->q_qty;
         auto tmp_askD = data->state->q_date;
         auto tmp_accept_partial_reply = data->accept_partial_reply;
@@ -1617,7 +1615,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
                  << data->state->a_date;
         data->state->a_date =
             sub_flow->computeOperationToFlowDate(nullptr, data->state->a_date);
-        if (getLogLevel() > 1) logger << " to " << data->state->a_date << endl;
+        if (getLogLevel() > 1) logger << " to " << data->state->a_date << '\n';
       }
 
       // Keep the lowest of all next-date answers on the effective alternates
@@ -1630,7 +1628,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
         logger << indentlevel << "Alternate operation '" << oper
                << "' evaluates alternate '" << (*altIter)->getOperation()
                << "': quantity " << data->state->a_qty << ", cost " << deltaCost
-               << ", penalty " << deltaPenalty << endl;
+               << ", penalty " << deltaPenalty << '\n';
       }
 
       // Process the result
@@ -1701,7 +1699,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       if (loglevel > 1)
         logger << indentlevel << "Alternate operation '" << oper
                << "' chooses alternate '" << bestAlternateSelection << "' "
-               << search << endl;
+               << search << '\n';
 
       // Create the top operationplan.
       // Note that both the top- and the sub-operation can have a flow in the
@@ -1782,7 +1780,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
     if (loglevel > 1)
       logger << indentlevel << "Alternate operation '" << oper
              << "' plans unconstrained on alternate '"
-             << firstAlternate->getOperation() << "' " << search << endl;
+             << firstAlternate->getOperation() << "' " << search << '\n';
 
     // Current behaviour:
     //   Unconstrained plan violates effective dates and generates a JIT
@@ -1857,7 +1855,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   if (data->state->a_qty == 0 && data->state->a_date <= origQDate) {
     if (getLogLevel() > 1)
       logger << indentlevel << "Applying lazy delay " << getLazyDelay()
-             << " in alternate" << endl;
+             << " in alternate\n";
     data->state->a_date = origQDate + getLazyDelay();
   }
   assert(data->state->a_qty >= 0);
@@ -1872,7 +1870,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
     data->state->a_cost += tmp;
     if (data->logcosts && data->incostevaluation)
       logger << indentlevel << "     + cost on operation '" << oper
-             << "': " << tmp << endl;
+             << "': " << tmp << '\n';
   }
 
   // Make sure other operationplans don't take this one as owner any more.
@@ -1890,7 +1888,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
     logger << indentlevel-- << "Alternate operation '" << oper
            << "' answers: " << data->state->a_qty;
     if (!data->state->a_qty) logger << "  " << data->state->a_date;
-    logger << endl;
+    logger << '\n';
   }
 }
 
@@ -1910,7 +1908,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
   if (loglevel > 1)
     logger << ++indentlevel << "Split operation '" << oper
            << "' is asked: " << data->state->q_qty << "  "
-           << data->state->q_date << endl;
+           << data->state->q_date << '\n';
 
   // Make sure sub-operationplans know their owner & store the previous value
   OperationPlan* prev_owner_opplan = data->state->curOwnerOpplan;
@@ -1923,10 +1921,9 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
       top_flow_qty_per += f->getQuantity();
       if (f->getQuantityFixed())
         logger << "Ignoring fixed operationmaterial production on a split "
-                  "operation"
-               << endl;
+                  "operation\n";
       logger << "Deprecation warning: split operation '" << oper
-             << "' shouldn't produce material" << endl;
+             << "' shouldn't produce material\n";
     }
   } else
     // We have a split operation as the delivery operation of a demand
@@ -1934,7 +1931,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
 
   // Compute the sum of all effective percentages
   int sum_percent = 0;
-  for (auto & iter : oper->getSubOperations()) {
+  for (auto& iter : oper->getSubOperations()) {
     if (iter->getEffective().within(data->state->q_date))
       sum_percent += iter->getPriority();
   }
@@ -1979,7 +1976,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
           if (f->getQuantityFixed())
             logger << "Ignoring fixed operationmaterial production on a split "
                       "suboperation"
-                   << endl;
+                   << '\n';
         }
       }
       auto flow_per = flow_qty_per + top_flow_qty_per;
@@ -2023,7 +2020,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
         if (loglevel > 1)
           logger << indentlevel << "  Split operation '" << oper
                  << "' asks alternate '" << (*iter)->getOperation()
-                 << "': " << asked << endl;
+                 << "': " << asked << '\n';
 
         // Due to minimum, maximum and multiple size constraints alternates can
         // plan a different quantity than requested. Asked quantity can thus go
@@ -2042,7 +2039,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
         if (loglevel > 1)
           logger << indentlevel << "  Split operation '" << oper
                  << "' gets answer from alternate '" << (*iter)->getOperation()
-                 << "': " << data->state->a_qty << endl;
+                 << "': " << data->state->a_qty << '\n';
       }
 
       // Evaluate the reply
@@ -2095,7 +2092,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
     logger << indentlevel-- << "Split operation '" << oper
            << "' answers: " << data->state->a_qty;
     if (!data->state->a_qty) logger << "  " << data->state->a_date;
-    logger << endl;
+    logger << '\n';
   }
 }
 
@@ -2140,7 +2137,7 @@ void Solver::createsBatches(Operation* oper, void* v) {
   //   If found:
   //      - delete them
   //      - increase quantity of the first one
-  if (loglevel > 1) logger << "Batch grouping " << oper << endl;
+  if (loglevel > 1) logger << "Batch grouping " << oper << '\n';
   auto opplan = oper->getOperationPlans();
   while (opplan != OperationPlan::end()) {
     if (opplan->getProposed()) {
@@ -2181,7 +2178,7 @@ void Solver::createsBatches(Operation* oper, void* v) {
         if (!ok) continue;
 
         if (loglevel > 1)
-          logger << "  Grouping " << tmp << " with " << &*opplan << endl;
+          logger << "  Grouping " << tmp << " with " << &*opplan << '\n';
         added += tmp->getQuantity();
         delete tmp;
       }
@@ -2294,7 +2291,7 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
                  << dpd->getBlockedBy();
           if (occurences->second.second > data.state->q_date)
             logger << "' - setting requirement date to " << data.state->q_date;
-          logger << endl;
+          logger << '\n';
         }
         if (occurences->second.second > data.state->q_date)
           occurences->second.second = data.state->q_date;
@@ -2304,7 +2301,7 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
         if (occurences->second.second < data.state->q_date) {
           if (getLogLevel() > 1) {
             logger << indentlevel << "  Dependency updates requirement date to "
-                   << occurences->second.second << endl;
+                   << occurences->second.second << '\n';
           }
           data.state->q_date = occurences->second.second;
         }
@@ -2347,13 +2344,13 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
             refuse = opplan->getEnd() + dpd->getHardSafetyLeadtime();
             if (getLogLevel() > 1) {
               logger << indentlevel << "  Waiting for dependency on " << &*o
-                     << endl;
+                     << '\n';
             }
           } else if (o->getProposed() || o->getApproved()) {
             // Try to reschedule the depencency
             if (getLogLevel() > 1)
               logger << indentlevel << "  Moving dependency early: " << &*o
-                     << endl;
+                     << '\n';
             auto bm = data.getCommandManager()->setBookmark();
             data.getCommandManager()->add(new CommandMoveOperationPlan(
                 &*o, Date::infinitePast, wished_date));
@@ -2364,14 +2361,14 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
                 logger << indentlevel
                        << "  Moving dependency failed. Earliest "
                           "date is "
-                       << (o->getEnd() + dpd->getHardSafetyLeadtime()) << endl;
+                       << (o->getEnd() + dpd->getHardSafetyLeadtime()) << '\n';
               refuse = o->getEnd() + dpd->getHardSafetyLeadtime();
               data.getCommandManager()->rollback(bm);
             } else {
               // Rescheduling was feasible
               if (getLogLevel() > 1)
                 logger << indentlevel
-                       << "  Moving approved dependency succeeded" << endl;
+                       << "  Moving approved dependency succeeded\n";
             }
           }
         }
@@ -2391,7 +2388,7 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
         // Note: we count on the rollback to undo this allocation if needed
         if (getLogLevel() > 1) {
           logger << indentlevel << "  Allocating from available supply on "
-                 << &*o << endl;
+                 << &*o << '\n';
         }
         new OperationPlanDependency(&*o, opplan, dpd);
         allocated += unpegged;
@@ -2431,7 +2428,7 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
               logger << indentlevel
                      << "  Compressing safety lead time between '"
                      << dpd->getOperation() << "' and '" << dpd->getBlockedBy()
-                     << "'" << endl;
+                     << "'\n";
             }
             data.state->q_date = data.state->a_date;
             bm->rollback();

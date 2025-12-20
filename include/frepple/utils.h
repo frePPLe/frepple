@@ -2803,7 +2803,9 @@ class PythonData : public DataValue {
   }
 
   /* Convert a Python number into a C++ bool. */
-  inline bool getBool() const override { return PyObject_IsTrue(obj) ? true : false; }
+  inline bool getBool() const override {
+    return PyObject_IsTrue(obj) ? true : false;
+  }
 
   /* Convert a Python number as a number of seconds into a frePPLe
    * Duration.
@@ -3035,7 +3037,7 @@ class Object : public PyObject {
                      ? PyObject::ob_type->tp_name
                      : "nullptr")
              << " object that is still referenced " << (PyObject::ob_refcnt - 1)
-             << " times" << endl;
+             << " times\n";
     if (dict) Py_DECREF(dict);
   }
 
@@ -5125,8 +5127,7 @@ class PooledString {
   /* Debugging function. */
   static void print() {
     lock_guard exclusive(pool_lock);
-    for (const auto & i : pool)
-      logger << "   " << i << endl;
+    for (const auto& i : pool) logger << "   " << i << '\n';
   }
 };
 
@@ -5968,7 +5969,7 @@ void HasHierarchy<T>::setOwner(T* fam) {
     if (t == this) {
       logger << "Warning: Ignoring invalid hierarchy relation between \""
              << this->getName() << "\" and \"" << fam->getName() << "\""
-             << endl;
+             << '\n';
       return;
     }
 
@@ -6059,7 +6060,7 @@ class MetaFieldString : public MetaFieldBase {
   };
 
   void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const override {
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6115,7 +6116,7 @@ class MetaFieldStringRef : public MetaFieldBase {
   };
 
   void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const override {
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6166,7 +6167,7 @@ class MetaFieldCommand : public MetaFieldBase {
   };
 
   void setField(Object* me, const DataValue& el,
-                        CommandManager*) const override {
+                CommandManager*) const override {
     (static_cast<Cls*>(me)->*cmdf)(el.getString());
   }
 
@@ -6194,7 +6195,7 @@ class MetaFieldBool : public MetaFieldBase {
   };
 
   void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const override {
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6254,7 +6255,7 @@ class MetaFieldDouble : public MetaFieldBase {
   };
 
   void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const override {
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6314,7 +6315,7 @@ class MetaFieldInt : public MetaFieldBase {
   };
 
   void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const override {
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6365,7 +6366,7 @@ class MetaFieldEnum : public MetaFieldBase {
   };
 
   void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const override {
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6420,7 +6421,7 @@ class MetaFieldShort : public MetaFieldBase {
   };
 
   void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const override {
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6472,7 +6473,7 @@ class MetaFieldUnsignedLong : public MetaFieldBase {
   };
 
   void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const override {
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6524,7 +6525,7 @@ class MetaFieldDuration : public MetaFieldBase {
   };
 
   void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const override {
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6576,7 +6577,7 @@ class MetaFieldDurationDouble : public MetaFieldBase {
   };
 
   void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const override {
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6633,7 +6634,7 @@ class MetaFieldDate : public MetaFieldBase {
   };
 
   void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const override {
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6684,7 +6685,7 @@ class MetaFieldPointer : public MetaFieldBase {
   };
 
   void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const override {
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "

@@ -163,7 +163,7 @@ Operation::~Operation() {
       if (j)
         j->next = next;
       else
-        logger << "Error: Corrupted Operation list on Item" << endl;
+        logger << "Error: Corrupted Operation list on Item\n";
     }
   }
 
@@ -288,7 +288,7 @@ PyObject* Operation::getFencePython(PyObject* self, PyObject*) {
 
 Duration Operation::getMaxEarly() const {
   Duration tmp = Duration::MAX;
-  for (const auto & ld : getLoads())
+  for (const auto& ld : getLoads())
     if (ld.getResource() && ld.getResource()->getMaxEarly() < tmp)
       tmp = ld.getResource()->getMaxEarly();
   return tmp;
@@ -296,7 +296,7 @@ Duration Operation::getMaxEarly() const {
 
 Duration OperationAlternate::getMaxEarly() const {
   Duration tmp = Operation::getMaxEarly();
-  for (auto & sub : getSubOperations()) {
+  for (auto& sub : getSubOperations()) {
     auto t = sub->getOperation()->getMaxEarly();
     // Note: skipping 0-priority
     if (sub->getPriority() && t < tmp) tmp = t;
@@ -306,7 +306,7 @@ Duration OperationAlternate::getMaxEarly() const {
 
 Duration OperationSplit::getMaxEarly() const {
   Duration tmp = Operation::getMaxEarly();
-  for (auto & sub : getSubOperations()) {
+  for (auto& sub : getSubOperations()) {
     auto t = sub->getOperation()->getMaxEarly();
     // Note: skipping 0-priority
     if (sub->getPriority() && t < tmp) tmp = t;
@@ -316,7 +316,7 @@ Duration OperationSplit::getMaxEarly() const {
 
 Duration OperationRouting::getMaxEarly() const {
   Duration tmp = Operation::getMaxEarly();
-  for (auto & sub : getSubOperations()) {
+  for (auto& sub : getSubOperations()) {
     auto t = sub->getOperation()->getMaxEarly();
     if (t < tmp) tmp = t;
   }
@@ -664,7 +664,7 @@ unsigned short Operation::collectCalendars(
     }
   } else {
     // Iterate over loads
-    for (const auto & g : loaddata) {
+    for (const auto& g : loaddata) {
       Resource* res = g.getResource();
       if (res->getAvailable()) {
         // c) resource
@@ -863,7 +863,7 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan,
   auto ldplan = opplan->beginLoadPlans();
   if (ldplan == opplan->endLoadPlans()) {
     // First case: This operationplan doesn't have any loadplans yet.
-    for (const auto & ld : getLoads()) {
+    for (const auto& ld : getLoads()) {
       if (ld.getSetup().empty() || !ld.getResource()->getSetupMatrix())
         // There is no setup on this load
         continue;
@@ -933,15 +933,14 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan,
 }
 
 Flow* Operation::findFlow(const Buffer* b, Date d) const {
-  for (const auto & fl : flowdata) {
+  for (const auto& fl : flowdata) {
     if (!fl.effectivity.within(d)) continue;
     if (fl.getBuffer() == b)
       return const_cast<Flow*>(&fl);
     else if (!fl.getBuffer() && fl.getItem() == b->getItem() &&
              getLocation() == b->getLocation())
       return const_cast<Flow*>(&fl);
-    else if (fl.getBuffer() && b->getBatch() &&
-             fl.getItem() == b->getItem() &&
+    else if (fl.getBuffer() && b->getBatch() && fl.getItem() == b->getItem() &&
              fl.getBuffer()->getLocation() == b->getLocation() &&
              !fl.getBuffer()->getBatch())
       // Generic buffer on flow matches a MTO buffer
@@ -1078,7 +1077,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
       // Not enough time found for the setup and the operation duration
       if (production_dates.getStart())
         logger << "Warning: Couldn't find available time on operation '" << this
-               << "'" << endl;
+               << "'\n";
       if (!execute)
         return OperationPlanState(production_dates, setup_dates.getEnd(), 0);
       else
@@ -1158,7 +1157,7 @@ bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool, bool) {
     // Verify we load no resources of type "default".
     // It's ok to merge operationplans which load "infinite" or "buckets"
     // resources.
-    for (const auto & i : getLoads())
+    for (const auto& i : getLoads())
       if (i.getResource()->hasType<ResourceDefault>()) return true;
 
     // Loop through candidates
@@ -1609,7 +1608,7 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
         // Not feasible
         if (production_dates.getStart())
           logger << "Warning: Couldn't find available time on operation '"
-                 << this << "'" << endl;
+                 << this << "'\n";
         if (!execute) return OperationPlanState(production_dates, 0.0);
         opplan->setQuantity(0, true, false);
         opplan->clearSetupEvent();
@@ -1618,7 +1617,7 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
         // Resize the quantity to be feasible
         if (production_dates.getStart())
           logger << "Warning: Couldn't find available time on operation '"
-                 << this << "'" << endl;
+                 << this << "'\n";
         double max_q;
         if (opplan->getQuantityCompleted() && production_wanted_duration)
           max_q = opplan->getQuantityRemaining() * production_duration /
@@ -1706,7 +1705,7 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
   bool realfirst = true;
   if (useDependencies()) {
     logger << "Warning: Method not supporting operation dependencies yet."
-           << endl;
+           << '\n';
   }
   if (e) {
     // Case 1: an end date is specified
@@ -1737,7 +1736,7 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
   } else {
     logger << "Warning: Updating a routing operationplan without start or end "
               "date argument"
-           << endl;
+           << '\n';
     return OperationPlanState(opplan);
   }
 }
@@ -1750,7 +1749,7 @@ bool OperationRouting::extraInstantiate(OperationPlan* o, bool createsubopplans,
     OperationPlan* p = nullptr;
     if (!use_start) {
       // Using the end date
-      for (auto & e : std::ranges::reverse_view(getSubOperations())) {
+      for (auto& e : std::ranges::reverse_view(getSubOperations())) {
         if (p) d -= e->getOperation()->getPostTime();
         p = e->getOperation()->createOperationPlan(
             o->getQuantity(), Date::infinitePast, d, o->getBatch(), nullptr, o,
@@ -1764,7 +1763,7 @@ bool OperationRouting::extraInstantiate(OperationPlan* o, bool createsubopplans,
       d = o->getStart();
       // Using the current date when both the start and end date are missing
       if (!d) d = Plan::instance().getCurrent();
-      for (auto & e : getSubOperations()) {
+      for (auto& e : getSubOperations()) {
         p = e->getOperation()->createOperationPlan(
             o->getQuantity(), d, Date::infinitePast, o->getBatch(), nullptr,
             nullptr, 0, true);
@@ -1814,8 +1813,7 @@ OperationPlanState OperationAlternate::setOperationPlanParameters(
 }
 
 bool OperationAlternate::extraInstantiate(OperationPlan* o,
-                                          bool createsubopplans,
-                                          bool ) {
+                                          bool createsubopplans, bool) {
   // Create a suboperationplan if one doesn't exist yet.
   // We use the first effective alternate by default.
   if (createsubopplans && !o->lastsubopplan) {
@@ -1837,8 +1835,8 @@ bool OperationAlternate::extraInstantiate(OperationPlan* o,
 }
 
 OperationPlanState OperationSplit::setOperationPlanParameters(
-    OperationPlan* opplan, double q, Date s, Date e, bool ,
-    bool execute, bool roundDown, bool ) const {
+    OperationPlan* opplan, double q, Date s, Date e, bool, bool execute,
+    bool roundDown, bool) const {
   // Invalid calls to this function
   if (!opplan || q < 0)
     throw LogicException("Incorrect parameters for split operationplan");
@@ -1858,7 +1856,7 @@ OperationPlanState OperationSplit::setOperationPlanParameters(
 }
 
 bool OperationSplit::extraInstantiate(OperationPlan* o, bool createsubopplans,
-                                      bool ) {
+                                      bool) {
   if (!createsubopplans || o->lastsubopplan)
     // Suboperationplans already exist. Nothing to do here.
     return true;
@@ -1866,7 +1864,7 @@ bool OperationSplit::extraInstantiate(OperationPlan* o, bool createsubopplans,
   // Compute the sum of all effective percentages.
   int sum_percent = 0;
   Date enddate = o->getEnd();
-  for (auto & altIter : getSubOperations()) {
+  for (auto& altIter : getSubOperations()) {
     if (altIter->getEffective().within(enddate))
       sum_percent += altIter->getPriority();
   }
@@ -1876,10 +1874,9 @@ bool OperationSplit::extraInstantiate(OperationPlan* o, bool createsubopplans,
     return true;
 
   // Create all child operationplans
-  for (auto & altIter : getSubOperations()) {
+  for (auto& altIter : getSubOperations()) {
     // Verify effectivity date and percentage > 0
-    if (!altIter->getPriority() ||
-        !altIter->getEffective().within(enddate))
+    if (!altIter->getPriority() || !altIter->getEffective().within(enddate))
       continue;
 
     // Find the first producing flow.
@@ -1902,7 +1899,7 @@ bool OperationSplit::extraInstantiate(OperationPlan* o, bool createsubopplans,
 }
 
 void Operation::addSubOperationPlan(OperationPlan* parent, OperationPlan* child,
-                                    bool ) {
+                                    bool) {
   // Check
   if (!parent) throw LogicException("Invalid parent for suboperationplan");
   if (!child) throw LogicException("Adding null suboperationplan");
@@ -2053,9 +2050,8 @@ void OperationRouting::addSubOperationPlan(OperationPlan* parent,
     // If not existing yet, find the correct position in the list
     if (!subopplan) {
       subopplan = parent->firstsubopplan;
-      for (auto & step : steps) {
-        if (subopplan &&
-            step->getOperation() == subopplan->getOperation())
+      for (auto& step : steps) {
+        if (subopplan && step->getOperation() == subopplan->getOperation())
           subopplan = subopplan->nextsubopplan;
         if (step->getOperation() == child->getOperation()) break;
       }
@@ -2329,9 +2325,8 @@ pair<Duration, Date> OperationAlternate::getDecoupledLeadTime(
   // Find the preferred alternate
   int curPrio = INT_MAX;
   Operation* suboper = nullptr;
-  for (auto & sub : getSubOperations()) {
-    if (sub->getPriority() < curPrio &&
-        sub->getEffective().within(startdate)) {
+  for (auto& sub : getSubOperations()) {
+    if (sub->getPriority() < curPrio && sub->getEffective().within(startdate)) {
       suboper = sub->getOperation();
       curPrio = sub->getPriority();
     }
@@ -2349,7 +2344,7 @@ pair<Duration, Date> OperationAlternate::getDecoupledLeadTime(
   }
 
   // Find the longest supply path for all flows on the top operation
-  for (const auto & fl : getFlows()) {
+  for (const auto& fl : getFlows()) {
     if (fl.getQuantity() >= 0 || fl.getBuffer()->getItem() == getItem())
       continue;
     auto tmp = fl.getBuffer()->getDecoupledLeadTime(qty2, startdate, false);
@@ -2367,7 +2362,7 @@ pair<Duration, Date> OperationSplit::getDecoupledLeadTime(
     double qty, Date startdate) const {
   Duration totalmax;
   Date enddatemax = startdate;
-  for (auto & sub : getSubOperations()) {
+  for (auto& sub : getSubOperations()) {
     if (!sub->getEffective().within(startdate))
       // This suboperation is not effective
       continue;
@@ -2384,7 +2379,7 @@ pair<Duration, Date> OperationSplit::getDecoupledLeadTime(
     }
 
     // Find the longest supply path for all flows on the top operation
-    for (const auto & fl : getFlows()) {
+    for (const auto& fl : getFlows()) {
       if (fl.getQuantity() >= 0 || fl.getBuffer()->getItem() == getItem())
         continue;
       auto tmp = fl.getBuffer()->getDecoupledLeadTime(qty2, startdate, false);
@@ -2427,12 +2422,12 @@ pair<Duration, Date> OperationRouting::getDecoupledLeadTime(
   // total routing.
   Duration nextStepsDuration;
   Duration totalmax;
-  for (auto & sub : std::ranges::reverse_view(getSubOperations())) {
+  for (auto& sub : std::ranges::reverse_view(getSubOperations())) {
     Duration maxSub;
     Operation* suboper = sub->getOperation();
 
     // Find the longest supply path for all flows
-    for (const auto & fl : suboper->getFlows()) {
+    for (const auto& fl : suboper->getFlows()) {
       if (fl.getQuantity() >= 0 || fl.getBuffer()->getItem() == getItem())
         continue;
       auto tmp = fl.getBuffer()->getDecoupledLeadTime(qty, startdate, false);
@@ -2454,7 +2449,7 @@ pair<Duration, Date> OperationRouting::getDecoupledLeadTime(
     } else
       logger
           << "Warning: suboperation of unsupported type for routing operation '"
-          << getName() << "'" << endl;
+          << getName() << "'\n";
 
     // Take the longest of all routing steps
     if (maxSub + nextStepsDuration > totalmax)
@@ -2463,7 +2458,7 @@ pair<Duration, Date> OperationRouting::getDecoupledLeadTime(
 
   // Compute the end date of the lead time
   Date enddate = startdate;
-  for (auto & sub : getSubOperations()) {
+  for (auto& sub : getSubOperations()) {
     enddate = sub->getOperation()->getDecoupledLeadTime(qty, enddate).second;
   }
 
@@ -2483,7 +2478,7 @@ pair<Duration, Date> OperationFixedTime::getDecoupledLeadTime(
   }
 
   // Find the longest supply path for all flows
-  for (const auto & fl : getFlows()) {
+  for (const auto& fl : getFlows()) {
     if (fl.getQuantity() >= 0 || fl.getBuffer()->getItem() == getItem())
       continue;
     auto tmp = fl.getBuffer()->getDecoupledLeadTime(qty, startdate, false);
@@ -2513,7 +2508,7 @@ pair<Duration, Date> OperationTimePer::getDecoupledLeadTime(
   }
 
   // Find the longest supply path for all flows
-  for (const auto & fl : getFlows()) {
+  for (const auto& fl : getFlows()) {
     if (fl.getQuantity() >= 0 || fl.getBuffer()->getItem() == getItem())
       continue;
     auto tmp = fl.getBuffer()->getDecoupledLeadTime(qty, startdate, false);
@@ -2577,7 +2572,7 @@ Operation* Operation::findFromName(string nm) {
       if (item && origin && destination) {
         // Find itemdistribution
         const ItemDistribution* item_dist = nullptr;
-        for (const auto & dist : item->getDistributions()) {
+        for (const auto& dist : item->getDistributions()) {
           if (origin == dist.getOrigin() &&
               (!dist.getDestination() ||
                destination == dist.getDestination()) &&
@@ -2643,7 +2638,7 @@ Operation* Operation::findFromName(string nm) {
 }
 
 void Operation::updateMTO() {
-  for (const auto & fl : getFlows()) {
+  for (const auto& fl : getFlows()) {
     auto i = fl.getItem();
     if (i && i->hasType<ItemMTO>()) {
       flags |= FLAGS_MTO;

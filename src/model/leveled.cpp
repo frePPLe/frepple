@@ -130,7 +130,7 @@ void HasLevel::computeLevels() {
 
 #ifdef CLUSTERDEBUG
       logger << "Investigating operation '" << g << "' - current cluster "
-             << g.cluster << endl;
+             << g.cluster << '\n';
 #endif
 
       // Do we need to activate the level search?
@@ -180,7 +180,7 @@ void HasLevel::computeLevels() {
 
 #ifdef CLUSTERDEBUG
         logger << "    Recursing in Operation '" << *(cur_oper)
-               << "' - current level " << cur_level << endl;
+               << "' - current level " << cur_level << '\n';
 #endif
         // Detect loops in the supply chain
         auto detectloop = visited.find(cur_oper);
@@ -192,7 +192,8 @@ void HasLevel::computeLevels() {
           continue;
 
         // Push sub operations on the stack
-        for (auto & i : std::ranges::reverse_view(cur_oper->getSubOperations())) {
+        for (auto& i :
+             std::ranges::reverse_view(cur_oper->getSubOperations())) {
           if (i->getOperation()->lvl < cur_level) {
             // Search level and cluster
             opstack.push(make_pair(i->getOperation(), cur_level));
@@ -239,7 +240,7 @@ void HasLevel::computeLevels() {
         }
 
         // Update level of resources linked to current operation
-        for (const auto & gres : cur_oper->getLoads()) {
+        for (const auto& gres : cur_oper->getLoads()) {
           stack<Resource*> rsrc;
           auto resptr = gres.getResource();
           while (resptr->getOwner()) resptr = resptr->getOwner();
@@ -254,7 +255,7 @@ void HasLevel::computeLevels() {
             if (!resptr->cluster) {
               resptr->cluster = cur_cluster;
               // Find more operations connected to this cluster by the resource
-              for (const auto & resops : resptr->getLoads()) {
+              for (const auto& resops : resptr->getLoads()) {
                 if (!resops.getOperation()->cluster) {
                   opstack.push(make_pair(resops.getOperation(), -1));
                   resops.getOperation()->cluster = cur_cluster;
@@ -270,7 +271,7 @@ void HasLevel::computeLevels() {
         }
 
         // Now loop through all flows of the operation
-        for (const auto & gflow : cur_oper->getFlows()) {
+        for (const auto& gflow : cur_oper->getFlows()) {
           cur_Flow = &gflow;
           cur_buf = cur_Flow->getBuffer();
 
@@ -320,7 +321,7 @@ void HasLevel::computeLevels() {
           while (Buffer* tmpbuf = buf_iter.next())
             if (!tmpbuf->cluster) {
               tmpbuf->cluster = cur_cluster;
-              for (const auto & buffl : tmpbuf->getFlows()) {
+              for (const auto& buffl : tmpbuf->getFlows()) {
                 if (!buffl.getOperation()->cluster) {
                   opstack.push(make_pair(buffl.getOperation(), -1));
                   buffl.getOperation()->cluster = cur_cluster;

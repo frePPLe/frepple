@@ -304,7 +304,7 @@ PyObject* ForecastBucket::create(PyTypeObject*, PyObject*, PyObject* kwds) {
             if (!attr.isA(ForecastBucket::tag_forecast) &&
                 !attr.isA(Tags::start) && !attr.isA(Tags::name) &&
                 !attr.isA(Tags::type) && !attr.isA(Tags::action)) {
-              logger << "   extra " << attr.getName() << endl;
+              logger << "   extra " << attr.getName() << '\n';
               const MetaFieldBase* fmeta =
                   fcstbckt->getType().findField(attr.getHash());
               if (!fmeta && fcstbckt->getType().category)
@@ -1016,7 +1016,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
   if (Cache::instance->getLogLevel() > 0)
     logger << "Cache reads forecast " << f->getForecastItem() << "   "
            << f->getForecastLocation() << "   " << f->getForecastCustomer()
-           << endl;
+           << '\n';
 
   // One off initialization
   auto dbconnection = Plan::instance().getDBconnection();
@@ -1058,10 +1058,10 @@ ForecastData::ForecastData(const ForecastBase* f) {
             stmt.setArgument(
                 4, currentdate + Duration(86400L * f->getHorizonFuture()));
           } catch (exception& e) {
-            logger << "Error creating prepared statement: " << e.what() << endl;
+            logger << "Error creating prepared statement: " << e.what() << '\n';
             db.closeConnection();
           } catch (...) {
-            logger << "Error creating prepared statement" << endl;
+            logger << "Error creating prepared statement\n";
             db.closeConnection();
           }
         }
@@ -1111,13 +1111,13 @@ ForecastData::ForecastData(const ForecastBase* f) {
             ++bckiter;
           if (bckiter == buckets.end()) {
             logger << "Time buckets not aligned: got " << st << ", " << nd
-                   << endl;
+                   << '\n';
             throw DataException("Forecastplan buckets not matching calendar");
           }
           if (bckiter->getStart() != st || bckiter->getEnd() != nd) {
             logger << "Time buckets not aligned: got " << st << ", " << nd
                    << " and expected " << bckiter->getStart() << ", "
-                   << bckiter->getEnd() << endl;
+                   << bckiter->getEnd() << '\n';
             throw DataException("Forecastplan buckets not matching calendar");
           }
 
@@ -1163,14 +1163,14 @@ ForecastData::ForecastData(const ForecastBase* f) {
 }
 
 void ForecastData::clearDirty() const {
-  for (const auto & bucket : buckets) bucket.clearDirty();
+  for (const auto& bucket : buckets) bucket.clearDirty();
   if (!buckets.empty()) buckets[0].getForecast()->clearDirty();
 }
 
 size_t ForecastData::getSize() const {
   size_t tmp = 0;
   size_t cnt = 0;
-  for (const auto & bucket : buckets) {
+  for (const auto& bucket : buckets) {
     ++cnt;
     tmp += bucket.getSize();
   }
@@ -1192,7 +1192,7 @@ void ForecastData::flush() {
     auto fcst = buckets[0].getForecast();
     logger << "Cache writes forecast " << fcst->getForecastItem() << "   "
            << fcst->getForecastLocation() << "   "
-           << fcst->getForecastCustomer() << endl;
+           << fcst->getForecastCustomer() << '\n';
   }
 
   auto dbconnection = Plan::instance().getDBconnection();
@@ -1275,8 +1275,8 @@ void ForecastData::flush() {
             stmt_begin = DatabasePreparedStatement(db, "begin_trx", "begin");
             stmt_end = DatabasePreparedStatement(db, "commit_trx", "commit");
           } catch (exception& e) {
-            logger << "Error creating forecastplan export:" << endl;
-            logger << e.what() << endl;
+            logger << "Error creating forecastplan export:\n";
+            logger << e.what() << '\n';
             db.closeConnection();
           } catch (...) {
             db.closeConnection();
@@ -1322,7 +1322,7 @@ void ForecastData::flush() {
               DatabaseResult(db, stmt);
             } catch (exception& e) {
               logger << "Exception caught when saving a forecast: " << e.what()
-                     << endl;
+                     << '\n';
               DatabaseStatement rollback("rollback");
               db.executeSQL(rollback);
               DatabaseResult(db, stmt_begin);
@@ -1337,7 +1337,7 @@ void ForecastData::flush() {
             DatabaseResult(db, stmt);
           } catch (exception& e) {
             logger << "Exception caught when saving a forecast: " << e.what()
-                   << endl;
+                   << '\n';
             // Roll back current transaction, and start a new one
             DatabaseStatement rollback("rollback");
             db.executeSQL(rollback);
@@ -1355,7 +1355,7 @@ void ForecastData::flush() {
       mode = 0;
       db = DatabaseReader(dbconnection);
     } catch (exception& e) {
-      logger << "Exception caught when saving a forecast: " << e.what() << endl;
+      logger << "Exception caught when saving a forecast: " << e.what() << '\n';
       break;
     }
 }
@@ -1661,13 +1661,13 @@ void ForecastBase::inspect(const string& msg) const {
          << getForecastItem() << ", " << getForecastLocation() << ", "
          << getForecastCustomer() << ": ";
   if (!msg.empty()) logger << msg;
-  logger << endl;
+  logger << '\n';
 
   auto fcstdata = getData();
   lock_guard<recursive_mutex> exclusive(fcstdata->lock);
   for (auto& bckt : fcstdata->getBuckets())
     logger << "    " << bckt.getStart() << " - " << bckt.getEnd() << ": "
-           << bckt.toString(false) << endl;
+           << bckt.toString(false) << '\n';
 }
 
 PyObject* Forecast::inspectPython(PyObject* self, PyObject* args) {
@@ -1745,7 +1745,7 @@ PyObject* Forecast::saveForecast(PyObject*, PyObject* args) {
                    << fcst->getForecastLocation() << "\t"
                    << fcst->getForecastCustomer() << "\t" << bckt.getStart()
                    << "\t" << bckt.getEnd() << "\t" << bckt.toString(false)
-                   << endl;
+                   << '\n';
     }
 
     // Close the output file

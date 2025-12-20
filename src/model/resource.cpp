@@ -89,13 +89,13 @@ void Resource::inspect(const string& msg, const short i) const {
   indent indentstring(i);
   logger << indentstring << "  Inspecting resource " << getName() << ": ";
   if (!msg.empty()) logger << msg;
-  logger << endl;
+  logger << '\n';
 
   Date earliest = Date::infiniteFuture;
   Date latest = Date::infinitePast;
   Date prev;
   unsigned int cnt = 0;
-  for (const auto & oo : getLoadPlans()) {
+  for (const auto& oo : getLoadPlans()) {
     if (oo.getEventType() != 1)
       ++cnt;
     else {
@@ -115,22 +115,22 @@ void Resource::inspect(const string& msg, const short i) const {
            << " qty:" << oo.getQuantity() << ", oh:" << oo.getOnhand();
     switch (oo.getEventType()) {
       case 1:
-        logger << ", " << oo.getOperationPlan() << endl;
+        logger << ", " << oo.getOperationPlan() << '\n';
         break;
       case 2:
-        logger << ", set onhand to " << oo.getOnhand() << endl;
+        logger << ", set onhand to " << oo.getOnhand() << '\n';
         break;
       case 3:
-        logger << ", update minimum to " << oo.getMin() << endl;
+        logger << ", update minimum to " << oo.getMin() << '\n';
         break;
       case 4:
-        logger << ", update maximum to " << oo.getMax() << endl;
+        logger << ", update maximum to " << oo.getMax() << '\n';
         break;
       case 5:
         logger << ", change setup to "
                << static_cast<const SetupEvent*>(&oo)->getSetup();
         if (oo.getOperationPlan()) logger << " on " << oo.getOperationPlan();
-        logger << endl;
+        logger << '\n';
         break;
     }
   }
@@ -176,7 +176,7 @@ void Resource::setToolPerPiece(bool b) {
 void Resource::setMaximum(double m) {
   if (m < 0) {
     logger << "Warning: Maximum capacity for resource '" << getName()
-           << "' must be postive" << endl;
+           << "' must be postive\n";
     return;
   }
 
@@ -194,15 +194,15 @@ void Resource::setMaximum(double m) {
   size_max = m;
 
   // Create or update a single timeline max event
-  for (auto & loadplan : loadplans)
+  for (auto& loadplan : loadplans)
     if (loadplan.getEventType() == 4) {
       // Update existing event
       static_cast<loadplanlist::EventMaxQuantity*>(&loadplan)->setMax(size_max);
       return;
     }
   // Create new event
-  auto* newEvent = new loadplanlist::EventMaxQuantity(
-      Date::infinitePast, &loadplans, size_max);
+  auto* newEvent = new loadplanlist::EventMaxQuantity(Date::infinitePast,
+                                                      &loadplans, size_max);
   loadplans.insert(newEvent);
 }
 
@@ -271,8 +271,7 @@ void ResourceBuckets::setMaximumCalendar(Calendar* c) {
        x.getDate() < maxEventDate; ++x)
     if (v != x.getValue() && x.getDate() >= minEventDate) {
       v = x.getValue();
-      auto* newBucket =
-          new loadplanlist::EventSetOnhand(x.getDate(), v);
+      auto* newBucket = new loadplanlist::EventSetOnhand(x.getDate(), v);
       loadplans.insert(newBucket);
     }
   size_max_cal->clearEventList();
@@ -389,7 +388,7 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o)
   end_date = PyIter_Next(bucketiterator);
   if (!end_date) {
     logger << "Warning: No valid buckets for exporting resource plan on '" << r
-           << "'" << endl;
+           << "'" << '\n';
     bucketiterator = nullptr;
     return;
   }
@@ -873,13 +872,13 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(
   // Create timeline structures for every bucket.
   if (debug) {
     logger << "Computing availability for resource '" << res
-           << "' with buckets from calendar '" << cal << "'" << endl;
-    logger << "   Size calendar: " << res->getMaximumCalendar() << endl;
-    logger << "   Availability calendar: " << res->getAvailable() << endl;
+           << "' with buckets from calendar '" << cal << "'\n";
+    logger << "   Size calendar: " << res->getMaximumCalendar() << '\n';
+    logger << "   Availability calendar: " << res->getAvailable() << '\n';
     logger << "   Location availability calendar: "
            << (res->getLocation() ? res->getLocation()->getAvailable()
                                   : nullptr)
-           << endl;
+           << '\n';
   }
   CalendarDefault::EventIterator res_max(res->getMaximumCalendar());
   CalendarDefault::EventIterator avail_res(res->getAvailable());
@@ -949,7 +948,7 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(
       res->getLoadPlans().insert(newBucket);
       if (debug)
         logger << "   => Bucket from " << bucketstart << " till "
-               << bckt.getDate() << ": " << available << endl;
+               << bckt.getDate() << ": " << available << '\n';
     }
 
     // Remember the bucket start

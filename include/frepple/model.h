@@ -209,8 +209,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
   /* Update the days on which the entry is valid. */
   void setDays(short p) {
     if (p < 0 || p > 127)
-      logger << "Warning: Calendar bucket days must be between 0 and 127"
-             << endl;
+      logger << "Warning: Calendar bucket days must be between 0 and 127\n";
     else
       days = p;
   }
@@ -224,8 +223,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
   void setStartTime(Duration t) {
     if (t > 86400L || t < 0L) {
       logger << "Warning: Calendar bucket start time must be between 0 and "
-                "86400 seconds"
-             << endl;
+                "86400 seconds\n";
       return;
     }
     starttime = t;
@@ -241,8 +239,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
   void setEndTime(Duration t) {
     if (t > 86400L || t < 0L) {
       logger << "Warning: Calendar bucket end time must be between 0 and 86400 "
-                "seconds"
-             << endl;
+                "seconds\n";
       return;
     }
     endtime = t;
@@ -1506,7 +1503,7 @@ class OperationDependency : public Object, public HasSource {
 
   void setQuantity(double q) {
     if (q < 0.0)
-      logger << "Warning: Dependency quantity must be greater than 1" << endl;
+      logger << "Warning: Dependency quantity must be greater than 1\n";
     else
       quantity = q;
   }
@@ -1517,14 +1514,14 @@ class OperationDependency : public Object, public HasSource {
 
   void setSafetyLeadtime(Duration d) {
     if (d < Duration(0L))
-      logger << "Warning: No negative safety lead time allowed" << endl;
+      logger << "Warning: No negative safety lead time allowed\n";
     else
       safety_leadtime = d;
   }
 
   void setHardSafetyLeadtime(Duration d) {
     if (d < Duration(0L))
-      logger << "Warning: No negative hard safety lead time allowed" << endl;
+      logger << "Warning: No negative hard safety lead time allowed\n";
     else
       hard_safety_leadtime = d;
   }
@@ -2984,7 +2981,7 @@ class Operation : public HasName<Operation>,
    */
   void setPostTime(Duration t) {
     if (t < Duration(0L))
-      logger << "Warning: No negative post-operation time allowed" << endl;
+      logger << "Warning: No negative post-operation time allowed\n";
     else {
       post_time = t;
       setChanged();
@@ -3222,7 +3219,7 @@ class Operation : public HasName<Operation>,
    */
   void setSizeMinimum(double f) {
     if (f < 0)
-      logger << "Warning: Operation can't have a negative minimum size" << endl;
+      logger << "Warning: Operation can't have a negative minimum size\n";
     else {
       size_minimum = f;
       setChanged();
@@ -3238,8 +3235,7 @@ class Operation : public HasName<Operation>,
   /* Sets the multiple size of operationplans. */
   void setSizeMultiple(double f) {
     if (f < 0)
-      logger << "Warning: Operation can't have a negative multiple size"
-             << endl;
+      logger << "Warning: Operation can't have a negative multiple size\n";
     else {
       size_multiple = f;
       setChanged();
@@ -3259,11 +3255,9 @@ class Operation : public HasName<Operation>,
   void setSizeMaximum(double f) {
     if (f < size_minimum)
       logger << "Warning: Operation maximum size must be higher than the "
-                "minimum size"
-             << endl;
+                "minimum size\n";
     else if (f <= 0)
-      logger << "Warning: Operation maximum size must be greater than 0"
-             << endl;
+      logger << "Warning: Operation maximum size must be greater than 0\n";
     else {
       size_maximum = f;
       setChanged();
@@ -3807,8 +3801,7 @@ class OperationFixedTime : public Operation {
    * operation are not automatically refreshed to reflect the change. */
   void setDuration(Duration t) {
     if (t < 0L)
-      logger << "Warning: FixedTime operation can't have a negative duration"
-             << endl;
+      logger << "Warning: FixedTime operation can't have a negative duration\n";
     else
       duration = t;
   }
@@ -3848,7 +3841,7 @@ class OperationFixedTime : public Operation {
 
  protected:
   bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
-                                bool use_start = false) override;
+                        bool use_start = false) override;
 
  private:
   /* Stores the lengh of the Operation. */
@@ -3869,8 +3862,7 @@ class OperationTimePer : public Operation {
   /* Sets the constant part of the operation time. */
   void setDuration(Duration t) {
     if (t < 0L)
-      logger << "Warning: TimePer operation can't have a negative duration"
-             << endl;
+      logger << "Warning: TimePer operation can't have a negative duration\n";
     else
       duration = t;
   }
@@ -3881,8 +3873,8 @@ class OperationTimePer : public Operation {
   /* Sets the time per unit of the operation time. */
   void setDurationPer(double t) {
     if (t < 0.0)
-      logger << "Warning: TimePer operation can't have a negative duration-per"
-             << endl;
+      logger
+          << "Warning: TimePer operation can't have a negative duration-per\n";
     else
       duration_per = t;
   }
@@ -3997,7 +3989,8 @@ class OperationRouting : public Operation {
    *   to start after the newly inserted one (except for confirmed
    * operationplans) that can't be touched.
    */
-  void addSubOperationPlan(OperationPlan*, OperationPlan*, bool = true) override;
+  void addSubOperationPlan(OperationPlan*, OperationPlan*,
+                           bool = true) override;
 
   /* Return the decoupled lead time of this operation. */
   pair<Duration, Date> getDecoupledLeadTime(double, Date) const override;
@@ -4034,7 +4027,7 @@ class OperationRouting : public Operation {
  protected:
   /* Extra logic to be used when instantiating an operationplan. */
   bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
-                                bool use_start = false) override;
+                        bool use_start = false) override;
 
  private:
   /* Stores a double linked list of all step suboperations. */
@@ -4074,7 +4067,8 @@ class OperationSplit : public Operation {
    *    resource requiring a specific setup.
    *  - An operationplan of any of the allowed suboperations.
    */
-  void addSubOperationPlan(OperationPlan*, OperationPlan*, bool = true) override;
+  void addSubOperationPlan(OperationPlan*, OperationPlan*,
+                           bool = true) override;
 
   /* Return the decoupled lead time of this operation.
    * Take the lead time of the longest operation.
@@ -4110,7 +4104,7 @@ class OperationSplit : public Operation {
  protected:
   /* Extra logic to be used when instantiating an operationplan. */
   bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
-                                bool use_start = false) override;
+                        bool use_start = false) override;
 
  private:
   /* List of all alternate operations. */
@@ -4152,7 +4146,8 @@ class OperationAlternate : public Operation {
    *    resource requiring a specific setup.
    *  - An operationplan of any of the allowed suboperations.
    */
-  void addSubOperationPlan(OperationPlan*, OperationPlan*, bool = true) override;
+  void addSubOperationPlan(OperationPlan*, OperationPlan*,
+                           bool = true) override;
 
   /* Return the decoupled lead time of this operation:
    * Take the lead time of the preferred operation
@@ -4188,7 +4183,7 @@ class OperationAlternate : public Operation {
  protected:
   /* Extra logic to be used when instantiating an operationplan. */
   bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
-                                bool use_start = false) override;
+                        bool use_start = false) override;
 
  private:
   /* List of all alternate operations. */
@@ -4207,8 +4202,7 @@ class OperationPlan::AlternateIterator {
 
   /* Copy constructor. */
   AlternateIterator(const AlternateIterator& other) : opplan(other.opplan) {
-    for (auto oper : other.opers)
-      opers.push_back(oper);
+    for (auto oper : other.opers) opers.push_back(oper);
     operIter = opers.begin();
   }
 
@@ -4216,8 +4210,7 @@ class OperationPlan::AlternateIterator {
   AlternateIterator& operator=(const AlternateIterator& other) {
     opplan = other.opplan;
     opers.clear();
-    for (auto oper : other.opers)
-      opers.push_back(oper);
+    for (auto oper : other.opers) opers.push_back(oper);
     operIter = opers.begin();
     return *this;
   }
@@ -4327,7 +4320,7 @@ class ItemDistribution
   /* Update the resource capacity used per distributed unit. */
   void setResourceQuantity(double d) {
     if (d < 0)
-      logger << "Warning: Resource_quantity must be positive" << endl;
+      logger << "Warning: Resource_quantity must be positive\n";
     else
       res_qty = d;
   }
@@ -4344,8 +4337,7 @@ class ItemDistribution
    */
   void setLeadTime(Duration p) {
     if (p < 0L)
-      logger << "Warning: ItemDistribution can't have a negative lead time"
-             << endl;
+      logger << "Warning: ItemDistribution can't have a negative lead time\n";
     else
       leadtime = p;
   }
@@ -4355,8 +4347,8 @@ class ItemDistribution
    */
   void setSizeMinimum(double f) {
     if (f < 0)
-      logger << "Warning: ItemDistribution can't have a negative minimum size"
-             << endl;
+      logger
+          << "Warning: ItemDistribution can't have a negative minimum size\n";
     else
       size_minimum = f;
   }
@@ -4367,8 +4359,8 @@ class ItemDistribution
   /* Sets the multiple size for shipments. */
   void setSizeMultiple(double f) {
     if (f < 0)
-      logger << "Warning: ItemDistribution can't have a negative multiple size"
-             << endl;
+      logger
+          << "Warning: ItemDistribution can't have a negative multiple size\n";
     else
       size_multiple = f;
   }
@@ -4380,11 +4372,10 @@ class ItemDistribution
   void setSizeMaximum(double f) {
     if (f < size_minimum)
       logger << "Warning: ItemDistribution maximum size must be higher than "
-                "the minimum size"
-             << endl;
+                "the minimum size\n";
     else if (f < 0)
-      logger << "Warning: ItemDistribution can't have a negative maximum size"
-             << endl;
+      logger
+          << "Warning: ItemDistribution can't have a negative maximum size\n";
     else
       size_maximum = f;
   }
@@ -4520,7 +4511,7 @@ class Item : public HasHierarchy<Item>, public HasDescription {
     if (w >= 0)
       weight = w;
     else
-      logger << "Warning: Item weight must be positive" << endl;
+      logger << "Warning: Item weight must be positive\n";
   }
 
   /* Return the volume of the item.
@@ -4533,7 +4524,7 @@ class Item : public HasHierarchy<Item>, public HasDescription {
     if (v >= 0)
       volume = v;
     else
-      logger << "Warning: Item volume must be positive" << endl;
+      logger << "Warning: Item volume must be positive\n";
   }
 
   /* Returns the unit of measure. */
@@ -4736,8 +4727,7 @@ class ItemSupplier : public Object,
    */
   void setSizeMinimum(double f) {
     if (f < 0)
-      logger << "Warning: ItemSupplier can't have a negative minimum size"
-             << endl;
+      logger << "Warning: ItemSupplier can't have a negative minimum size\n";
     else
       size_minimum = f;
   }
@@ -4748,8 +4738,7 @@ class ItemSupplier : public Object,
   /* Sets the multiple size for procurements. */
   void setSizeMultiple(double f) {
     if (f < 0)
-      logger << "Warning: ItemSupplier can't have a negative multiple size"
-             << endl;
+      logger << "Warning: ItemSupplier can't have a negative multiple size\n";
     else
       size_multiple = f;
   }
@@ -4761,11 +4750,9 @@ class ItemSupplier : public Object,
   void setSizeMaximum(double f) {
     if (f < size_minimum)
       logger << "Warning: ItemSupplier maximum size must be higher than the "
-                "minimum size"
-             << endl;
+                "minimum size\n";
     else if (f < 0)
-      logger << "Warning: ItemSupplier can't have a negative maximum size"
-             << endl;
+      logger << "Warning: ItemSupplier can't have a negative maximum size\n";
     else
       size_maximum = f;
   }
@@ -4817,7 +4804,7 @@ class ItemSupplier : public Object,
   /* Update the resource capacity used per purchased unit. */
   void setResourceQuantity(double d) {
     if (d < 0)
-      logger << "Warning: Resource_quantity must be positive" << endl;
+      logger << "Warning: Resource_quantity must be positive\n";
     else
       res_qty = d;
   }
@@ -4838,7 +4825,7 @@ class ItemSupplier : public Object,
    */
   void setLeadTime(Duration p) {
     if (p < 0L)
-      logger << "Warning: ItemSupplier can't have a negative lead time" << endl;
+      logger << "Warning: ItemSupplier can't have a negative lead time\n";
     else
       leadtime = p;
   }
@@ -5122,8 +5109,7 @@ class Buffer : public HasHierarchy<Buffer>,
   void setProducingOperation(Operation* o) {
     if (o && o->getHidden())
       logger << "Warning: avoid setting the producing operation to a hidden "
-                "operation"
-             << endl;
+                "operation\n";
     producing_operation = o;
     setChanged();
   }
@@ -5626,7 +5612,7 @@ class Flow : public Object,
     if (!o) return;
     if (o->hasType<OperationAlternate>()) {
       logger << "Deprecation warning: alternate operation '" << o
-             << "' shouldn't consume or produce material" << endl;
+             << "' shouldn't consume or produce material\n";
     }
     setPtrA(o, o->getFlows());
     // Note: This MTO update is called for every flow that is created.
@@ -5655,8 +5641,7 @@ class Flow : public Object,
   void setQuantity(double f) {
     if ((quantity > 0.0 && quantity_fixed < 0) ||
         (quantity < 0.0 && quantity_fixed > 0))
-      logger << "Warning: Quantity and quantity_fixed must have equal sign"
-             << endl;
+      logger << "Warning: Quantity and quantity_fixed must have equal sign\n";
     else
       quantity = f;
   }
@@ -5672,8 +5657,7 @@ class Flow : public Object,
   void setQuantityFixed(double f) {
     if ((quantity > 0.0 && quantity_fixed < 0) ||
         (quantity < 0.0 && quantity_fixed > 0))
-      logger << "Warning: Quantity and quantity_fixed must have equal sign"
-             << endl;
+      logger << "Warning: Quantity and quantity_fixed must have equal sign\n";
     else
       quantity_fixed = f;
   }
@@ -5728,7 +5712,7 @@ class Flow : public Object,
    */
   Flow* getAlternate() const {
     if (getName().empty() || !getOperation()) return nullptr;
-    for (const auto & h : getOperation()->getFlows()) {
+    for (const auto& h : getOperation()->getFlows()) {
       if (this == &h && getPriority()) return nullptr;
       if (getName() == h.getName() && h.getPriority())
         return const_cast<Flow*>(&h);
@@ -5739,7 +5723,7 @@ class Flow : public Object,
   /* Return whether the flow has alternates. */
   bool hasAlternates() const {
     if (getName().empty() || !getOperation()) return false;
-    for (const auto & h : getOperation()->getFlows())
+    for (const auto& h : getOperation()->getFlows())
       if (this != &h && getName() == h.getName() && h.getPriority())
         return true;
     return false;
@@ -5906,9 +5890,8 @@ class FlowTransferBatch : public Flow {
 
   void setTransferBatch(double d) {
     if (d < 0.0)
-      logger
-          << "Warning: Transfer batch size must be greater than or equal to 0"
-          << endl;
+      logger << "Warning: Transfer batch size must be greater than or equal to "
+                "0\n";
     else
       transferbatch = d;
   }
@@ -6587,7 +6570,7 @@ class Resource : public HasHierarchy<Resource>,
     if (c > 0)
       efficiency = c;
     else
-      logger << "Warning: Resource efficiency must be positive" << endl;
+      logger << "Warning: Resource efficiency must be positive\n";
   }
 
   bool getConstrained() const { return is_constrained; }
@@ -6711,7 +6694,7 @@ class Resource : public HasHierarchy<Resource>,
     if (c >= 0L)
       maxearly = c;
     else
-      logger << "Warning: MaxEarly must be positive" << endl;
+      logger << "Warning: MaxEarly must be positive\n";
   }
 
   /* Returns the available time between the two dates. */
@@ -7137,7 +7120,7 @@ class Load : public Object,
   /* Updates the quantity of the load. */
   void setQuantity(double f) {
     if (f < 0)
-      logger << "Warning: OperationResource quantity can't be negative" << endl;
+      logger << "Warning: OperationResource quantity can't be negative\n";
     else
       qty = f;
   }
@@ -7146,8 +7129,7 @@ class Load : public Object,
 
   void setQuantityFixed(double f) {
     if (f < 0)
-      logger << "Warning: OperationResource quantity_fixed can't be negative"
-             << endl;
+      logger << "Warning: OperationResource quantity_fixed can't be negative\n";
     else
       qtyfixed = f;
   }
@@ -7159,7 +7141,7 @@ class Load : public Object,
   Load* getAlternate() const {
     if (getName().empty() || !getOperation()) return nullptr;
     Load* first_zero = nullptr;
-    for (const auto & h : getOperation()->getLoads())
+    for (const auto& h : getOperation()->getLoads())
       if (getName() == h.getName()) {
         if (h.getPriority())
           return (this == &h) ? nullptr : const_cast<Load*>(&h);
@@ -7172,7 +7154,7 @@ class Load : public Object,
   /* Return whether the load has alternates. */
   bool hasAlternates() const {
     if (getName().empty() || !getOperation()) return false;
-    for (const auto & h : getOperation()->getLoads())
+    for (const auto& h : getOperation()->getLoads())
       if (this != &h && getName() == h.getName()) return true;
     return false;
   }
@@ -7336,8 +7318,7 @@ class LoadBucketizedPercentage : public Load {
   void setResource(Resource* r) override {
     if (r && !r->hasType<ResourceBuckets>())
       logger << "Warning: LoadBucketizedPercentage can only be associated with "
-                "ResourceBuckets"
-             << endl;
+                "ResourceBuckets\n";
     else
       Load::setResource(r);
   }
@@ -7346,7 +7327,7 @@ class LoadBucketizedPercentage : public Load {
 
   void setOffset(double d) {
     if (d < 0 || d > 100)
-      logger << "Warning: Load offset must be between 0 and 100" << endl;
+      logger << "Warning: Load offset must be between 0 and 100\n";
     else
       offset = d;
   }
@@ -7404,8 +7385,7 @@ class LoadBucketizedFromStart : public Load {
   void setResource(Resource* r) override {
     if (r && !r->hasType<ResourceBuckets>())
       logger << "Warning: LoadBucketizedFromStart can only be associated with "
-                "ResourceBuckets"
-             << endl;
+                "ResourceBuckets\n";
     else
       Load::setResource(r);
   }
@@ -7430,7 +7410,7 @@ class LoadBucketizedFromStart : public Load {
 
   void setOffset(Duration d) {
     if (d < Duration(0L))
-      logger << "Warning: Load offset must be positive" << endl;
+      logger << "Warning: Load offset must be positive\n";
     else
       offset = d;
   }
@@ -7472,8 +7452,7 @@ class LoadBucketizedFromEnd : public Load {
   void setResource(Resource* r) override {
     if (r && !r->hasType<ResourceBuckets>())
       logger << "Warning: LoadBucketizedFromEnd can only be associated with "
-                "ResourceBuckets"
-             << endl;
+                "ResourceBuckets\n";
     else
       Load::setResource(r);
   }
@@ -7498,7 +7477,7 @@ class LoadBucketizedFromEnd : public Load {
 
   void setOffset(Duration d) {
     if (d < Duration(0L))
-      logger << "Warning: Load offset must be positive" << endl;
+      logger << "Warning: Load offset must be positive\n";
     else
       offset = d;
   }
@@ -7636,7 +7615,7 @@ class Demand : public HasHierarchy<Demand>,
 
   static void setDefaultDeliveryDuration(Duration d) {
     if (d < 0L)
-      logger << "Warning: Delivery duration must be >= 0." << endl;
+      logger << "Warning: Delivery duration must be >= 0.\n";
     else
       DefaultDeliveryDuration = d;
   }
@@ -7699,7 +7678,7 @@ class Demand : public HasHierarchy<Demand>,
       flags |= STATUS_CANCELED;
       deleteOperationPlans();
     } else {
-      logger << "Warning: Demand status not recognized" << endl;
+      logger << "Warning: Demand status not recognized\n";
       return;
     }
   }
@@ -7742,7 +7721,7 @@ class Demand : public HasHierarchy<Demand>,
       flags |= STATUS_CANCELED;
       deleteOperationPlans();
     } else {
-      logger << "Warning: Demand status not recognized" << endl;
+      logger << "Warning: Demand status not recognized\n";
       return;
     }
   }
@@ -7829,7 +7808,7 @@ class Demand : public HasHierarchy<Demand>,
    */
   virtual void setMaxLateness(Duration m) {
     if (m < 0L)
-      logger << "Warning: The maximum demand lateness must be positive" << endl;
+      logger << "Warning: The maximum demand lateness must be positive\n";
     else
       maxLateness = m;
   }
@@ -7858,8 +7837,8 @@ class Demand : public HasHierarchy<Demand>,
    */
   virtual void setMinShipment(double m) {
     if (m < 0.0 && m != -1.0)
-      logger << "Warning: The minimum demand shipment quantity must be positive"
-             << endl;
+      logger
+          << "Warning: The minimum demand shipment quantity must be positive\n";
     else
       minShipment = m;
   }
@@ -8096,7 +8075,7 @@ class DemandGroup : public Demand {
       flags &= ~(POLICY_ALLTOGETHER + POLICY_INDEPENDENT);
       flags |= POLICY_INRATIO;
     } else {
-      logger << "Warning: Demand policy not recognized" << endl;
+      logger << "Warning: Demand policy not recognized\n";
       return;
     }
   }
@@ -8257,7 +8236,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
 
   void setOperationPlan(OperationPlan* o) {
     if (oper && oper != o)
-      logger << "Warning: Can't change the operationplan of a loadplan" << endl;
+      logger << "Warning: Can't change the operationplan of a loadplan\n";
     else
       oper = o;
   }
@@ -8757,7 +8736,7 @@ class Plan : public Plannable, public Object {
    */
   void setAutoFence(Duration l) {
     if (l < 0L)
-      logger << "Warning: Invalid autofence" << endl;
+      logger << "Warning: Invalid autofence\n";
     else
       autofence = l;
   }
@@ -9131,7 +9110,9 @@ class ProblemPrecedence : public Problem {
 
   string getEntity() const override { return "operation"; }
 
-  Object* getOwner() const override { return static_cast<OperationPlan*>(owner); }
+  Object* getOwner() const override {
+    return static_cast<OperationPlan*>(owner);
+  }
 
   const DateRange getDates() const override {
     auto o = static_cast<OperationPlan*>(getOwner());

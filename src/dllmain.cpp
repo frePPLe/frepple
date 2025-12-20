@@ -104,10 +104,10 @@ void FreppleInitialize(bool procesInitializationFiles) {
     PyGILState_Release(state);
   } catch (const exception& e) {
     PyGILState_Release(state);
-    logger << "Error: " << e.what() << endl;
+    logger << "Error: " << e.what() << '\n';
   } catch (...) {
     PyGILState_Release(state);
-    logger << "Error: unknown exception" << endl;
+    logger << "Error: unknown exception\n";
   }
 
   // Search for the initialization PY file
@@ -118,7 +118,7 @@ void FreppleInitialize(bool procesInitializationFiles) {
     try {
       PythonInterpreter::executeFile(init);
     } catch (...) {
-      logger << "Exception caught during execution of 'init.py'" << endl;
+      logger << "Exception caught during execution of 'init.py'\n";
       throw;
     }
   }
@@ -130,7 +130,7 @@ void FreppleInitialize(bool procesInitializationFiles) {
     try {
       XMLInputFile(init).parse(&Plan::instance(), true);
     } catch (...) {
-      logger << "Exception caught during execution of 'init.xml'" << endl;
+      logger << "Exception caught during execution of 'init.xml'\n";
       throw;
     }
   }
@@ -186,9 +186,9 @@ void FreppleExit() {
   Environment::setLogFile("");
 }
 
-void FreppleLog(const string& msg) { logger << msg << endl; }
+void FreppleLog(const string& msg) { logger << msg << '\n'; }
 
-extern "C" void FreppleLog(const char* msg) { logger << msg << endl; }
+extern "C" void FreppleLog(const char* msg) { logger << msg << '\n'; }
 
 extern "C" int FreppleWrapperInitialize() {
   try {

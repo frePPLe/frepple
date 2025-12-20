@@ -339,7 +339,7 @@ void PythonInterpreter::registerGlobalObject(const char* name, PyObject* obj,
   if (lock) PyGILState_Release(pythonstate);
 }
 
-PyObject* PythonInterpreter::python_log(PyObject* , PyObject* args) {
+PyObject* PythonInterpreter::python_log(PyObject*, PyObject* args) {
   // Pick up arguments
   char* data;
   if (!PyArg_ParseTuple(args, "s:log", &data)) return nullptr;
@@ -1030,7 +1030,7 @@ PythonData PythonFunction::call() const {
   PyObject* result = PyObject_CallFunction(func, "()");
   if (!result) {
     logger << "Error: Exception caught when calling Python function '"
-           << (func ? PyEval_GetFuncName(func) : "nullptr") << "'" << endl;
+           << (func ? PyEval_GetFuncName(func) : "nullptr") << "'\n";
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);
@@ -1043,7 +1043,7 @@ PythonData PythonFunction::call(const PyObject* p) const {
   PyObject* result = PyObject_CallFunction(func, "(O)", p);
   if (!result) {
     logger << "Error: Exception caught when calling Python function '"
-           << (func ? PyEval_GetFuncName(func) : "nullptr") << "'" << endl;
+           << (func ? PyEval_GetFuncName(func) : "nullptr") << "'\n";
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);
@@ -1056,7 +1056,7 @@ PythonData PythonFunction::call(const PyObject* p, const PyObject* q) const {
   PyObject* result = PyObject_CallFunction(func, "(OO)", p, q);
   if (!result) {
     logger << "Error: Exception caught when calling Python function '"
-           << (func ? PyEval_GetFuncName(func) : "nullptr") << "'" << endl;
+           << (func ? PyEval_GetFuncName(func) : "nullptr") << "'\n";
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);

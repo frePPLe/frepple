@@ -94,7 +94,7 @@ Demand::~Demand() {
       Demand* dmd = it->firstItemDemand;
       while (dmd && dmd->nextItemDemand != this) dmd = dmd->nextItemDemand;
       if (!dmd)
-        logger << "corrupted demand list for an item" << endl;
+        logger << "corrupted demand list for an item\n";
       else
         dmd->nextItemDemand = nextItemDemand;
     }
@@ -111,7 +111,7 @@ void Demand::deleteOperationPlans(bool deleteLocked, CommandManager* cmds) {
   while (true) {
     // Find a candidate to delete
     OperationPlan* candidate = nullptr;
-    for (auto & i : deli)
+    for (auto& i : deli)
       if (deleteLocked || i->getProposed()) {
         candidate = i;
         break;
@@ -171,7 +171,7 @@ void Demand::addDelivery(OperationPlan* o) {
   // Check if it is already in the list.
   // If it is, simply exit the function. No need to give a warning message
   // since it's harmless.
-  for (auto & i : deli)
+  for (auto& i : deli)
     if (i == o) return;
 
   // Add to the list of delivery operationplans.
@@ -185,7 +185,7 @@ void Demand::addDelivery(OperationPlan* o) {
   if (tmpOper && tmpOper != o->getOperation())
     logger << "Warning: Delivery Operation '" << o->getOperation()
            << "' different than expected '" << tmpOper << "' for demand '"
-           << this << "'" << endl;
+           << this << "'\n";
 }
 
 Operation* Demand::getDeliveryOperation() const {
@@ -253,8 +253,7 @@ Operation* Demand::getDeliveryOperation() const {
 
 double Demand::getPlannedQuantity() const {
   double delivered(0.0);
-  for (auto i : deli)
-    delivered += i->getQuantity();
+  for (auto i : deli) delivered += i->getQuantity();
   return delivered;
 }
 

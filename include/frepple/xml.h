@@ -25,8 +25,6 @@
  ***************************************************************************/
 
 #pragma once
-#ifndef FREPPLE_XML_H
-#define FREPPLE_XML_H
 
 #include "frepple/utils.h"
 
@@ -48,9 +46,9 @@
 #include <xercesc/util/XMLException.hpp>
 #include <xercesc/util/XMLUni.hpp>
 
-namespace frepple {
 
-namespace utils {
+
+namespace frepple::utils {
 
 // Forward declarations
 class XMLInput;
@@ -707,7 +705,4 @@ class XMLSerializerString : public XMLSerializer {
   ostringstream os;
 };
 
-}  // namespace utils
-}  // namespace frepple
-
-#endif  // End of FREPPLE_XML_H
+} // namespace frepple::utils

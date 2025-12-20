@@ -65,8 +65,7 @@ void SubOperation::setOwner(Operation* o) {
 
   if (o && !o->hasSubOperations()) {
     // Some operation types don't have suboperations
-    logger << "Warning: Operation '" << o << "' can't have suboperations"
-           << endl;
+    logger << "Warning: Operation '" << o << "' can't have suboperations\n";
     return;
   }
 

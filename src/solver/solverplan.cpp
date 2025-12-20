@@ -45,7 +45,7 @@ void LibrarySolver::initialize() {
   static bool init = false;
   if (init) {
     logger << "Warning: Calling frepple::LibrarySolver::initialize() more "
-           << "than once." << endl;
+           << "than once.\n";
     return;
   }
   init = true;
@@ -147,7 +147,7 @@ bool SolverCreate::isLeadTimeConstrained(const Operation* oper) const {
     return (constrts & PO_LEADTIME) > 0;
   else if (oper && oper->hasType<OperationSplit, OperationAlternate>()) {
     bool all_po = true;
-    for (auto & alt : oper->getSubOperations()) {
+    for (auto& alt : oper->getSubOperations()) {
       if (alt->getOperation()->getPriority() &&
           !(alt->getOperation()->hasType<OperationItemSupplier>() ||
             alt->getOperation()->getCategory() == "subcontractor")) {
@@ -252,7 +252,7 @@ void SolverCreate::SolverData::commit() {
 
   // Message
   if (solver->getLogLevel() > 0)
-    logger << "Start solving cluster " << cluster << endl;
+    logger << "Start solving cluster " << cluster << '\n';
 
   maskTemporaryShortages();
 
@@ -264,13 +264,15 @@ void SolverCreate::SolverData::commit() {
       // Step 1: Create a delivery operationplan for all demands
       solver->setPropagate(false);
       if (solver->getCreateDeliveries()) {
-        for (auto & demand : *demands) {
+        for (auto& demand : *demands) {
           if (solver->userexit_demand)
-            solver->userexit_demand.call(demand, PythonData(constrainedPlanning));
+            solver->userexit_demand.call(demand,
+                                         PythonData(constrainedPlanning));
 
           // Determine the quantity to be planned and the date for the planning
           // loop
-          double plan_qty = demand->getQuantity() - demand->getPlannedQuantity();
+          double plan_qty =
+              demand->getQuantity() - demand->getPlannedQuantity();
           if (demand->getDue() == Date::infiniteFuture ||
               demand->getDue() == Date::infinitePast)
             continue;
@@ -280,7 +282,8 @@ void SolverCreate::SolverData::commit() {
           if (!deliveryoper) continue;
 
           auto isGroupMember =
-              demand->getOwner() && demand->getOwner()->hasType<DemandGroup>() &&
+              demand->getOwner() &&
+              demand->getOwner()->hasType<DemandGroup>() &&
               static_cast<DemandGroup*>(demand->getOwner())->getPolicy() !=
                   Demand::POLICY_INDEPENDENT;
           auto due =
@@ -317,7 +320,7 @@ void SolverCreate::SolverData::commit() {
               }
             } catch (const exception& e) {
               logger << "Error creating delivery for '" << demand
-                     << "': " << e.what() << endl;
+                     << "': " << e.what() << '\n';
               getCommandManager()->rollback();
               break;
             }
@@ -382,14 +385,14 @@ void SolverCreate::SolverData::commit() {
                        << "' allocates from generic MTO buffer '"
                        << consumer->getBuffer()
                        << "' : " << -consumer->getQuantity() << " on "
-                       << consumer->getDate() << endl;
+                       << consumer->getDate() << '\n';
               consumer->setBuffer(&b);
             } else {
               if (getLogLevel() > 1)
                 logger << solver->indentlevel << "  Buffer '" << b
                        << "' allocates from generic MTO buffer '"
                        << consumer->getBuffer() << "' : " << available << " on "
-                       << consumer->getDate() << endl;
+                       << consumer->getDate() << '\n';
               auto extraflpln = new FlowPlan(consumer->getOperationPlan(),
                                              consumer->getFlow(),
                                              consumer->getDate(), -available);
@@ -424,7 +427,7 @@ void SolverCreate::SolverData::commit() {
             getCommandManager()->commit();
           } catch (const exception& e) {
             logger << "Error propagating through buffer '" << b
-                   << "': " << e.what() << endl;
+                   << "': " << e.what() << '\n';
             getCommandManager()->rollback();
           }
         }
@@ -480,24 +483,24 @@ void SolverCreate::SolverData::commit() {
           curdmd->getConstraints().clear();
           // Error message
           logger << "Error: Caught an exception while solving demand '"
-                 << curdmd << "':" << endl;
+                 << curdmd << "':\n";
           try {
             throw;
           } catch (const bad_exception&) {
             curdmd->getConstraints().push(new ProblemInvalidData(
                 curdmd, "Error: bad exception", "demand", curdmd->getDue(),
                 curdmd->getDue(), false));
-            logger << "  bad exception" << endl;
+            logger << "  bad exception\n";
           } catch (const exception& e) {
             curdmd->getConstraints().push(new ProblemInvalidData(
                 curdmd, "Error: " + string(e.what()), "demand",
                 curdmd->getDue(), curdmd->getDue(), false));
-            logger << "  " << e.what() << endl;
+            logger << "  " << e.what() << '\n';
           } catch (...) {
             curdmd->getConstraints().push(new ProblemInvalidData(
                 curdmd, "Error: unknown type", "demand", curdmd->getDue(),
                 curdmd->getDue(), false));
-            logger << "  Unknown type" << endl;
+            logger << "  Unknown type\n";
           }
         }
       } while (true);
@@ -558,15 +561,15 @@ void SolverCreate::SolverData::commit() {
 
     // Error message
     logger << "Error: Caught an exception while solving cluster " << cluster
-           << ":" << endl;
+           << ":\n";
     try {
       throw;
     } catch (const bad_exception&) {
-      logger << "  bad exception" << endl;
+      logger << "  bad exception\n";
     } catch (const exception& e) {
-      logger << "  " << e.what() << endl;
+      logger << "  " << e.what() << '\n';
     } catch (...) {
-      logger << "  Unknown type" << endl;
+      logger << "  Unknown type\n";
     }
 
     // Clean up the operationplans of this cluster
@@ -581,7 +584,7 @@ void SolverCreate::SolverData::commit() {
 
   // Message
   if (solver->getLogLevel() > 0)
-    logger << "End solving cluster " << cluster << endl;
+    logger << "End solving cluster " << cluster << '\n';
 }
 
 void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver,
@@ -589,7 +592,7 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver,
   safety_stock_planning = true;
   if (getLogLevel() > 0)
     logger << "Start safety stock replenishment pass for cluster " << cluster
-           << endl;
+           << '\n';
   vector<list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
   for (auto& buf : Buffer::all())
     if ((buf.getCluster() == cluster || cluster == -1) &&
@@ -630,23 +633,22 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver,
         getCommandManager()->commit();
       } catch (const bad_exception&) {
         logger << "Error: bad exception solving safety stock for " << *b
-               << endl;
+               << '\n';
         while (state > mystate) pop();
         getCommandManager()->rollback();
       } catch (const exception& e) {
         logger << "Error: exception solving safety stock for " << *b << ": "
-               << e.what() << endl;
+               << e.what() << '\n';
         while (state > mystate) pop();
         getCommandManager()->rollback();
       } catch (...) {
         logger << "Error: unknown exception solving safety stock for " << *b
-               << endl;
+               << '\n';
         while (state > mystate) pop();
         getCommandManager()->rollback();
       }
     }
-  if (getLogLevel() > 0)
-    logger << "Finished safety stock replenishment pass" << endl;
+  if (getLogLevel() > 0) logger << "Finished safety stock replenishment pass\n";
   safety_stock_planning = false;
 }
 
@@ -655,7 +657,7 @@ void SolverCreate::SolverData::scanExcess(bool constrained) {
   cleanup.setConstrained(constrained);
   cleanup.setPropagate(false);
   if (getLogLevel() > 0) {
-    logger << "Start scanning excess in cluster " << cluster << endl;
+    logger << "Start scanning excess in cluster " << cluster << '\n';
     cleanup.setLogLevel(getLogLevel());
   }
   vector<list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
@@ -671,23 +673,23 @@ void SolverCreate::SolverData::scanExcess(bool constrained) {
       try {
         b->solve(cleanup, this);
       } catch (const bad_exception&) {
-        logger << "Error: bad exception scanning excess for " << *b << endl;
+        logger << "Error: bad exception scanning excess for " << *b << '\n';
         while (state > mystate) pop();
         getCommandManager()->rollback();
       } catch (const exception& e) {
         logger << "Error: exception scanning excess for " << *b << ": "
-               << e.what() << endl;
+               << e.what() << '\n';
         while (state > mystate) pop();
         getCommandManager()->rollback();
       } catch (...) {
-        logger << "Error: unknown exception scanning excess for " << *b << endl;
+        logger << "Error: unknown exception scanning excess for " << *b << '\n';
         while (state > mystate) pop();
         getCommandManager()->rollback();
       }
     }
     getCommandManager()->commit();
   }
-  if (getLogLevel() > 0) logger << "Finished excess scan" << endl;
+  if (getLogLevel() > 0) logger << "Finished excess scan\n";
 }
 
 void SolverCreate::SolverData::maskTemporaryShortages() {
@@ -733,7 +735,7 @@ void SolverCreate::SolverData::maskTemporaryShortages() {
             if (getLogLevel() > 0)
               logger << "Warning: Masking temporary material shortage on '"
                      << buf.getName() << "' for " << opplan->getQuantity()
-                     << " during " << opplan->getDates() << endl;
+                     << " during " << opplan->getDates() << '\n';
           }
         }
       }
@@ -821,7 +823,7 @@ void SolverCreate::solve(void*) {
   // This deletion is not multi-threaded... But on the other hand we need to
   // loop through the operations only once
   if (getErasePreviousFirst()) {
-    if (getLogLevel() > 0) logger << "Deleting previous plan" << endl;
+    if (getLogLevel() > 0) logger << "Deleting previous plan\n";
     for (auto& e : Operation::all())
       if (cluster == -1 || e.getCluster() == cluster) e.deleteOperationPlans();
   }
@@ -967,7 +969,7 @@ PyObject* SolverCreate::markAutofence(PyObject* self, PyObject*) {
       }
       buf.setAutofence(!has_proposed_supply);
       if (has_proposed_supply && me->getLogLevel() > 1)
-        logger << buf << " deactivates autofence" << endl;
+        logger << buf << " deactivates autofence\n";
     }
   } catch (...) {
     Py_BLOCK_THREADS;

@@ -120,10 +120,10 @@ void OperatorDelete::solve(OperationPlan* o, void* v) {
 }
 
 void OperatorDelete::solve(const Resource* r, void* v) {
-  if (getLogLevel() > 0) logger << "Scanning " << r << " for excess" << endl;
+  if (getLogLevel() > 0) logger << "Scanning " << r << " for excess\n";
 
   // Loop over all operationplans on the resource
-  for (const auto & i : r->getLoadPlans()) {
+  for (const auto& i : r->getLoadPlans()) {
     if (i.getEventType() == 1)
       // Add all buffers into which material is produced to the stack
       pushBuffers(i.getOperationPlan(), false, true);
@@ -138,7 +138,7 @@ void OperatorDelete::solve(const Resource* r, void* v) {
 }
 
 void OperatorDelete::solve(const Demand* d, void* v) {
-  if (getLogLevel() > 1) logger << "Scanning " << d << " for excess" << endl;
+  if (getLogLevel() > 1) logger << "Scanning " << d << " for excess\n";
 
   // Delete all delivery operationplans.
   // Note that an extra loop is used to assure that our iterator doesn't get
@@ -185,7 +185,7 @@ void OperatorDelete::pushBuffers(OperationPlan* o, bool consuming,
 
     // Check if the buffer is already found on the stack
     bool found = false;
-    for (auto & j : std::ranges::reverse_view(buffersToScan)) {
+    for (auto& j : std::ranges::reverse_view(buffersToScan)) {
       if (j == i->getBuffer()) {
         found = true;
         break;
@@ -203,7 +203,7 @@ void OperatorDelete::pushBuffers(OperationPlan* o, bool consuming,
 }
 
 void OperatorDelete::solve(const Buffer* b, void* v) {
-  if (getLogLevel() > 1) logger << "Scanning buffer " << b << endl;
+  if (getLogLevel() > 1) logger << "Scanning buffer " << b << '\n';
 
   Buffer::flowplanlist::const_iterator fiter = b->getFlowPlans().begin();
   Buffer::flowplanlist::const_iterator fend = b->getFlowPlans().end();
@@ -276,7 +276,7 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
           // Log message
           if (getLogLevel() > 0)
             logger << "Removing shortage operationplan: "
-                   << fp->getOperationPlan() << endl;
+                   << fp->getOperationPlan() << '\n';
           // Delete operationplan
           if (cmds)
             cmds->add(new CommandDeleteOperationPlan(fp->getOperationPlan()));
@@ -290,7 +290,7 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
           cur_shortage -= oldsize_flowplan - newsize_flowplan;
           if (getLogLevel() > 0)
             logger << "Resizing shortage operationplan to " << newsize_opplan
-                   << ": " << fp->getOperationPlan() << endl;
+                   << ": " << fp->getOperationPlan() << '\n';
           // Resize operationplan
           if (cmds)
             // TODO Incorrect - need to resize the flowplan intead of the the
@@ -307,7 +307,7 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
       if (fiter2 == fend && cur_shortage <= -ROUNDING_ERROR) {
         unresolvable += cur_shortage;
         if (getLogLevel() > 0)
-          logger << "Can't resolve shortage problem in buffer " << b << endl;
+          logger << "Can't resolve shortage problem in buffer " << b << '\n';
       }
     }
   }
@@ -376,7 +376,7 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
         if (propagate) pushBuffers(fp->getOperationPlan(), true, false);
         // Log message
         if (getLogLevel() > 0)
-          logger << "Removing excess operationplan: " << topopplan << endl;
+          logger << "Removing excess operationplan: " << topopplan << '\n';
         // Delete operationplan
         if (cmds)
           cmds->add(new CommandDeleteOperationPlan(topopplan));
@@ -389,7 +389,7 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
         if (propagate) pushBuffers(fp->getOperationPlan(), true, false);
         if (getLogLevel() > 0)
           logger << "Resizing excess operationplan to " << newsize_opplan
-                 << ": " << topopplan << endl;
+                 << ": " << topopplan << '\n';
         // Resize operationplan
         if (cmds)
           cmds->add(new CommandMoveOperationPlan(topopplan, Date::infinitePast,

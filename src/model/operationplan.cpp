@@ -1357,7 +1357,7 @@ bool OperationPlan::mergeIfPossible() {
   // Verify we load no resources of type "default".
   // It's ok to merge operationplans which load "infinite" or "buckets"
   // resources.
-  for (const auto & i : oper->getLoads())
+  for (const auto& i : oper->getLoads())
     if (i.getResource()->hasType<ResourceDefault>()) return false;
 
   // Loop through candidates
@@ -1493,7 +1493,7 @@ bool OperationPlan::updateSetupTime() {
   if (setupevent && getSetupOverride() >= 0L && !getNoSetup()) {
     auto ldplan = beginLoadPlans();
     if (ldplan == endLoadPlans()) {
-      for (const auto & ld : getOperation()->getLoads())
+      for (const auto& ld : getOperation()->getLoads())
         if (ld.getResource() && ld.getResource()->getSetupMatrix()) {
           if (!setupevent->getTimeLine() && !getNoSetup()) {
             setupevent->setTimeLine(&(ld.getResource()->getLoadPlans()));
@@ -1815,10 +1815,10 @@ void OperationPlan::propagateStatus(bool log) {
     if (log) {
       if (firstlog) {
         firstlog = false;
-        logger << "Propagating " << this << endl;
+        logger << "Propagating " << this << '\n';
       }
       logger << "    Adjusting end date to " << Plan::instance().getCurrent()
-             << endl;
+             << '\n';
     }
     setEnd(Plan::instance().getCurrent(), true);
   }
@@ -1830,10 +1830,10 @@ void OperationPlan::propagateStatus(bool log) {
         if (log) {
           if (firstlog) {
             firstlog = false;
-            logger << "Propagating " << this << endl;
+            logger << "Propagating " << this << '\n';
           }
           logger << "    Changing status of previous routing step " << prev
-                 << endl;
+                 << '\n';
         }
         prev->appendInfo("Status propagated from following step");
         prev->setStatus(mystatus);
@@ -1854,9 +1854,9 @@ void OperationPlan::propagateStatus(bool log) {
       if (log) {
         if (firstlog) {
           firstlog = false;
-          logger << "Propagating " << this << endl;
+          logger << "Propagating " << this << '\n';
         }
-        logger << "    Marking routing as closed " << getOwner() << endl;
+        logger << "    Marking routing as closed " << getOwner() << '\n';
       }
     } else if (all_steps_completed && !getOwner()->getCompleted()) {
       getOwner()->appendInfo(
@@ -1866,9 +1866,9 @@ void OperationPlan::propagateStatus(bool log) {
       if (log) {
         if (firstlog) {
           firstlog = false;
-          logger << "Propagating " << this << endl;
+          logger << "Propagating " << this << '\n';
         }
-        logger << "    Marking routing as completed " << getOwner() << endl;
+        logger << "    Marking routing as completed " << getOwner() << '\n';
       }
     } else if (getOwner()->getProposed()) {
       for (auto subopplan = getOwner()->firstsubopplan; subopplan;
@@ -1884,9 +1884,9 @@ void OperationPlan::propagateStatus(bool log) {
       if (log) {
         if (firstlog) {
           firstlog = false;
-          logger << "Propagating " << this << endl;
+          logger << "Propagating " << this << '\n';
         }
-        logger << "    Marking routing as approved " << getOwner() << endl;
+        logger << "    Marking routing as approved " << getOwner() << '\n';
       }
     }
   }
@@ -1901,7 +1901,7 @@ void OperationPlan::propagateStatus(bool log) {
     // Get current status
     double closed_balance = 0.0;
     flowplanlist& tmline = myflpln->getBuffer()->getFlowPlans();
-    for (auto & flpln : tmline)
+    for (auto& flpln : tmline)
       if (flpln.getOperationPlan() &&
           (flpln.getOperationPlan()->getClosed() ||
            flpln.getOperationPlan()->getCompleted()) &&
@@ -1914,14 +1914,14 @@ void OperationPlan::propagateStatus(bool log) {
       if (log) {
         if (firstlog) {
           firstlog = false;
-          logger << "Propagating " << this << endl;
+          logger << "Propagating " << this << '\n';
         }
         logger << "    Available material balance on " << myflpln->getBuffer()
                << " short of " << closed_balance << " on " << myflpln->getDate()
-               << endl;
+               << '\n';
       }
       // 1) Correct the date of existing completed supply
-      for (auto & flpln : tmline)
+      for (auto& flpln : tmline)
         if (flpln.getQuantity() > 0.0 && flpln.getOperationPlan() &&
             (flpln.getOperationPlan()->getClosed() ||
              flpln.getOperationPlan()->getCompleted()) &&
@@ -1929,10 +1929,10 @@ void OperationPlan::propagateStatus(bool log) {
           if (log) {
             if (firstlog) {
               firstlog = false;
-              logger << "Propagating " << this << endl;
+              logger << "Propagating " << this << '\n';
             }
-            logger << "      Adjusting end date of "
-                   << flpln.getOperationPlan() << endl;
+            logger << "      Adjusting end date of " << flpln.getOperationPlan()
+                   << '\n';
           }
           flpln.getOperationPlan()->setStartAndEnd(
               flpln.getOperationPlan()->getStart() < myflpln->getDate()
@@ -1946,7 +1946,7 @@ void OperationPlan::propagateStatus(bool log) {
         }
       if (closed_balance < -ROUNDING_ERROR) {
         // 2) try changing the status of confirmed supply
-        for (auto & flpln : tmline)
+        for (auto& flpln : tmline)
           if (flpln.getQuantity() > 0.0 && flpln.getOperationPlan() &&
               flpln.getOperationPlan()->getConfirmed() &&
               !flpln.getOperationPlan()->getClosed() &&
@@ -1954,10 +1954,10 @@ void OperationPlan::propagateStatus(bool log) {
             if (log) {
               if (firstlog) {
                 firstlog = false;
-                logger << "Propagating " << this << endl;
+                logger << "Propagating " << this << '\n';
               }
               logger << "      Changing status of " << flpln.getOperationPlan()
-                     << endl;
+                     << '\n';
             }
             flpln.getOperationPlan()->setStatus(mystatus);
             flpln.getOperationPlan()->appendInfo(
@@ -1967,16 +1967,16 @@ void OperationPlan::propagateStatus(bool log) {
           }
         if (closed_balance < -ROUNDING_ERROR) {
           // 3) try changing the status of approved supply
-          for (auto & flpln : tmline)
+          for (auto& flpln : tmline)
             if (flpln.getQuantity() > 0.0 && flpln.getOperationPlan() &&
                 flpln.getOperationPlan()->getApproved()) {
               if (log) {
                 if (firstlog) {
                   firstlog = false;
-                  logger << "Propagating " << this << endl;
+                  logger << "Propagating " << this << '\n';
                 }
                 logger << "      Changing status of "
-                       << flpln.getOperationPlan() << endl;
+                       << flpln.getOperationPlan() << '\n';
               }
               flpln.getOperationPlan()->appendInfo(
                   "Changed status to keep the inventory positive");
@@ -1986,16 +1986,16 @@ void OperationPlan::propagateStatus(bool log) {
             }
           if (closed_balance < -ROUNDING_ERROR) {
             // 4) Try changing the status of proposed supply
-            for (auto & flpln : tmline)
+            for (auto& flpln : tmline)
               if (flpln.getQuantity() > 0.0 && flpln.getOperationPlan() &&
                   flpln.getOperationPlan()->getProposed()) {
                 if (log) {
                   if (firstlog) {
                     firstlog = false;
-                    logger << "Propagating " << this << endl;
+                    logger << "Propagating " << this << '\n';
                   }
                   logger << "      Changing status of "
-                         << flpln.getOperationPlan() << endl;
+                         << flpln.getOperationPlan() << '\n';
                 }
                 flpln.getOperationPlan()->appendInfo(
                     "Changed status to keep the inventory positive");
@@ -2008,10 +2008,10 @@ void OperationPlan::propagateStatus(bool log) {
               if (log) {
                 if (firstlog) {
                   firstlog = false;
-                  logger << "Propagating " << this << endl;
+                  logger << "Propagating " << this << '\n';
                 }
                 logger << "      Incrementing initial inventory with "
-                       << -closed_balance << endl;
+                       << -closed_balance << '\n';
               }
               myflpln->getBuffer()->setOnHand(
                   myflpln->getBuffer()->getOnHand() - closed_balance);
@@ -2279,7 +2279,7 @@ void OperationPlan::updatePurchaseOrder(Item* newitem, Location* newlocation,
   // Look for a matching operation replenishing this buffer.
   Operation* newoper = nullptr;
   destbuffer->getProducingOperation();
-  for (const auto & flowiter : destbuffer->getFlows()) {
+  for (const auto& flowiter : destbuffer->getFlows()) {
     if (!flowiter.getOperation()->hasType<OperationItemSupplier>()) continue;
     auto* opitemsupplier =
         static_cast<OperationItemSupplier*>(flowiter.getOperation());
@@ -2329,7 +2329,7 @@ void OperationPlan::updateDistributionOrder(Item* newitem, Location* neworigin,
   // Look for a matching operation replenishing this buffer.
   Operation* newoper = nullptr;
   destbuffer->getProducingOperation();
-  for (const auto & flowiter : destbuffer->getFlows()) {
+  for (const auto& flowiter : destbuffer->getFlows()) {
     if (!flowiter.getOperation()->hasType<OperationItemDistribution>() ||
         flowiter.getQuantity() <= 0)
       continue;
@@ -2550,7 +2550,7 @@ double OperationPlan::getEfficiency(Date d) const {
   LoadPlanIterator e = beginLoadPlans();
   if (e == endLoadPlans()) {
     // Use the operation loads
-    for (const auto & h : getOperation()->getLoads()) {
+    for (const auto& h : getOperation()->getLoads()) {
       double best_eff = 0.0;
       for (Resource::memberRecursiveIterator mmbr(h.getResource());
            !mmbr.empty(); ++mmbr) {
@@ -2588,7 +2588,7 @@ double OperationPlan::getEfficiency(Date d) const {
                       : inner->getResource()->getEfficiency();
             }
           double load_quantity = 1.0;
-          for (const auto & h : getOperation()->getLoads()) {
+          for (const auto& h : getOperation()->getLoads()) {
             if (e->getResource()->isMemberOf(h.getResource())) {
               load_quantity = h.getQuantity();
               break;

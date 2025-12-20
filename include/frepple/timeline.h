@@ -64,10 +64,10 @@ class TimeLine {
     Event* prev = nullptr;
     Date dt;
     unsigned short tp;
-    Event(unsigned short t, double q = 0.0) : qty(q), tp(t){};
+    Event(unsigned short t, double q = 0.0) : qty(q), tp(t) {};
 
    public:
-    ~Event() override{};
+    ~Event() override = default;
 
     /* Default constructor. */
     Event() : tp(0), qty(0) {}
@@ -283,7 +283,7 @@ class TimeLine {
    public:
     const_iterator() : cur(nullptr) {}
 
-    const_iterator(const Event* e) : cur(e){};
+    const_iterator(const Event* e) : cur(e) {};
 
     const_iterator(const iterator& c) : cur(c.cur) {}
 
@@ -331,7 +331,7 @@ class TimeLine {
    public:
     iterator() {}
 
-    iterator(Event* e) : const_iterator(e){};
+    iterator(Event* e) : const_iterator(e) {};
 
     Event& operator*() const { return *const_cast<Event*>(this->cur); }
 
@@ -701,7 +701,7 @@ void TimeLine<type>::erase(Event* e) {
     // Erasing the head
     first = e->next;
   else
-    logger << "Warning: corrupted timeline head" << endl;
+    logger << "Warning: corrupted timeline head\n";
 
   if (e->next)
     e->next->prev = e->prev;
@@ -709,7 +709,7 @@ void TimeLine<type>::erase(Event* e) {
     // Erasing the tail
     last = e->prev;
   else
-    logger << "Warning: corrupted timeline tail" << endl;
+    logger << "Warning: corrupted timeline tail\n";
 
   // Clear prev and next pointers
   e->prev = nullptr;
@@ -930,19 +930,19 @@ bool TimeLine<type>::check() const {
     if (i->getQuantity() > 0) expectedCumProd += i->getQuantity();
     if (fabs(expectedOH - i->oh) > ROUNDING_ERROR) {
       logger << "Error: timeline onhand value corrupted on " << i->getDate()
-             << endl;
+             << '\n';
       return false;
     }
     // Problem 2: The cumulative produced quantity isn't correct
     if (fabs(expectedCumProd - i->cum_prod) > ROUNDING_ERROR) {
       logger << "Error: timeline cumulative produced value corrupted on "
-             << i->getDate() << endl;
+             << i->getDate() << '\n';
       return false;
     }
     // Problem 3: Timeline is not sorted correctly
     if (prev && !(*prev < *i) &&
         fabs(prev->getQuantity() - i->getQuantity()) > ROUNDING_ERROR) {
-      logger << "Error: timeline sort corrupted on " << i->getDate() << endl;
+      logger << "Error: timeline sort corrupted on " << i->getDate() << '\n';
       return false;
     }
     prev = &*i;

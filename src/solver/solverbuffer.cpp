@@ -67,7 +67,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   if (getLogLevel() > 1)
     logger << ++indentlevel << "Buffer '" << b
            << "' is asked: " << data->state->q_qty << "  "
-           << data->state->q_date << endl;
+           << data->state->q_date << '\n';
 
   // Detect loops in the supply chain
   auto tmp_recent_buffers = data->recent_buffers;
@@ -91,14 +91,14 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             Date::infiniteFuture, false));
     }
     if (getLogLevel() > 1) {
-      logger << indentlevel << "Warning: " << o.str() << endl;
+      logger << indentlevel << "Warning: " << o.str() << '\n';
       if (data->state->a_qty)
         logger << indentlevel-- << "Buffer '" << b
-               << "' answers: " << data->state->a_qty << endl;
+               << "' answers: " << data->state->a_qty << '\n';
       else
         logger << indentlevel-- << "Buffer '" << b
                << "' answers short: " << data->state->a_qty << "  "
-               << data->state->a_date << endl;
+               << data->state->a_date << '\n';
     }
     return;
   } else
@@ -139,7 +139,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   bool firstmsg3 = true;
 
   bool hasTransferbatching = false;
-  for (const auto & fl : b->getFlows())
+  for (const auto& fl : b->getFlows())
     if (fl.hasType<FlowTransferBatch>()) {
       hasTransferbatching = true;
       break;
@@ -197,7 +197,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             approved_supply = static_cast<const FlowPlan*>(&*approvedscan);
             if (getLogLevel() > 1 && firstmsg1) {
               logger << indentlevel << "  Moving approved supply early: "
-                     << approved_supply->getOperationPlan() << endl;
+                     << approved_supply->getOperationPlan() << '\n';
               firstmsg1 = false;
             }
             auto before_move = data->getCommandManager()->setBookmark();
@@ -227,7 +227,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 if (getLogLevel() > 1)
                   logger << indentlevel
                          << "Moving approved supply failed: Earliest date is "
-                         << data->state->a_date << endl;
+                         << data->state->a_date << '\n';
                 if (data->state->a_date > requested_date) {
                   if (data->state->a_date < extraSupplyDate)
                     extraSupplyDate = data->state->a_date;
@@ -242,7 +242,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 // Move was feasible
                 if (getLogLevel() > 1)
                   logger << indentlevel << "Moving approved supply succeeded"
-                         << endl;
+                         << '\n';
                 increment_cur = false;
                 approved_supply->getOperationPlan()->appendInfo(
                     "Moved early to meet earlier requirement");
@@ -289,7 +289,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                       << indentlevel
                       << "Refuse to create extra supply because confirmed or "
                          "approved supply is already available at "
-                      << scanner->getDate() << endl;
+                      << scanner->getDate() << '\n';
                   firstmsg1 = false;
                 }
                 supply_exists_already = true;
@@ -349,7 +349,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                       << indentlevel
                       << "Refuse to create extra supply because confirmed or "
                          "approved generic-MTO supply is already available at "
-                      << extraConfirmedDate << endl;
+                      << extraConfirmedDate << '\n';
                   firstmsg1 = false;
                 }
                 supply_exists_already = true;
@@ -396,7 +396,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
               logger << indentlevel
                      << "Refuse to create extra supply because inventory "
                         "is already available on alternate material "
-                     << h->getBuffer()->getItem() << endl;
+                     << h->getBuffer()->getItem() << '\n';
               firstmsg2 = false;
             }
             if (shortage < -prev->getOnhand()) shortage = -prev->getOnhand();
@@ -428,7 +428,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                             "or approved supply is already available on "
                             "alternate material "
                          << h->getBuffer()->getItem() << " at "
-                         << scanner->getDate() << endl;
+                         << scanner->getDate() << '\n';
                   firstmsg3 = false;
                 }
                 if (shortage < -prev->getOnhand())
@@ -457,7 +457,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             data->broken_path = true;
             data->accept_partial_reply = true;
             if (getLogLevel() > 1)
-              logger << indentlevel << "  Supply path is broken here" << endl;
+              logger << indentlevel << "  Supply path is broken here\n";
           }
         } else
           while (theDate >= requested_date && loop &&
@@ -580,7 +580,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             }
             if (extraInventoryDate != Date::infiniteFuture && getLogLevel() > 1)
               logger << indentlevel << "Correcting new date to "
-                     << extraInventoryDate << endl;
+                     << extraInventoryDate << '\n';
           }
         }
       } else if (theDelta > unconfirmed_supply + ROUNDING_ERROR)
@@ -684,7 +684,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
     if (extraConfirmedDate == Date::infiniteFuture) {
       // It is possible there is confirmed supply AFTER the autofence date.
       // The reply date should never be later that the first confirmed supply.
-      for (const auto & scanner : b->getFlowPlans()) {
+      for (const auto& scanner : b->getFlowPlans()) {
         if (scanner.getDate() > requested_date &&
             scanner.getDate() < data->state->a_date &&
             scanner.getQuantity() > 0 && scanner.getEventType() == 1) {
@@ -693,7 +693,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             extraConfirmedDate = scanner.getDate();
             if (getLogLevel() > 1)
               logger << indentlevel << "Adjusting reply date to "
-                     << extraConfirmedDate << endl;
+                     << extraConfirmedDate << '\n';
             break;
           }
         }
@@ -740,7 +740,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
       data->state->a_cost += tmp;
       if (data->logcosts && data->incostevaluation)
         logger << indentlevel << "     + cost on buffer '" << b << "': " << tmp
-               << endl;
+               << '\n';
     }
   }
 
@@ -748,11 +748,11 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   if (getLogLevel() > 1) {
     if (data->state->a_qty)
       logger << indentlevel-- << "Buffer '" << b
-             << "' answers: " << data->state->a_qty << endl;
+             << "' answers: " << data->state->a_qty << '\n';
     else
       logger << indentlevel-- << "Buffer '" << b
              << "' answers short: " << data->state->a_qty << "  "
-             << data->state->a_date << endl;
+             << data->state->a_date << '\n';
   }
 }
 
@@ -764,7 +764,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
   if (getLogLevel() > 1) {
     indentlevel.level = 0;
     logger << ++indentlevel << "Buffer '" << b << "' solves for "
-           << (shortagesonly ? "shortages" : "safety stock") << endl;
+           << (shortagesonly ? "shortages" : "safety stock") << '\n';
   }
 
   // Scan the complete horizon
@@ -809,7 +809,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
 
       if (!b->getProducingOperation()) {
         if (getLogLevel())
-          logger << indentlevel << "   Warning: Can't replenish" << endl;
+          logger << indentlevel << "   Warning: Can't replenish\n";
         break;
       } else {
         do {
@@ -835,7 +835,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
                 (theOnHand > -ROUNDING_ERROR || getPlanType() == 2 ||
                  (getConstraints() & (MFG_LEADTIME + PO_LEADTIME)) == 0)) {
               bool exists = false;
-              for (const auto & f : b->getFlowPlans()) {
+              for (const auto& f : b->getFlowPlans()) {
                 if (f.getQuantity() <= 0 || f.getDate() < data->state->q_date)
                   continue;
                 if (f.getDate() >
@@ -923,7 +923,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
       if (loopcounter <= 0)
         logger << indentlevel
                << "  Warning: Hitting the max number of retries replenishing "
-               << b << endl;
+               << b << '\n';
       if (b->getIPFlag())
         data->hitMaxEarly = prev_hitMaxEarly;
       else if (!data->state->a_qty && data->hitMaxEarly == Duration(-1L))
@@ -952,7 +952,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
   // Message
   if (getLogLevel() > 1)
     logger << indentlevel-- << "Buffer '" << b << "' solved for "
-           << (shortagesonly ? "shortages" : "safety stock") << endl;
+           << (shortagesonly ? "shortages" : "safety stock") << '\n';
 }
 
 void SolverCreate::solve(const BufferInfinite* b, void* v) {
@@ -966,7 +966,7 @@ void SolverCreate::solve(const BufferInfinite* b, void* v) {
   if (getLogLevel() > 1)
     logger << ++indentlevel << "Infinite buffer '" << b
            << "' is asked: " << data->state->q_qty << "  "
-           << data->state->q_date << endl;
+           << data->state->q_date << '\n';
 
   // Reply whatever is requested, regardless of date, quantity or supply.
   // The demand is not propagated upstream either.
@@ -977,13 +977,13 @@ void SolverCreate::solve(const BufferInfinite* b, void* v) {
     data->state->a_cost += tmp;
     if (data->logcosts && data->incostevaluation)
       logger << indentlevel << "     + cost on buffer '" << b << "': " << tmp
-             << endl;
+             << '\n';
   }
 
   // Message
   if (getLogLevel() > 1)
     logger << indentlevel-- << "Infinite buffer '" << b
-           << "' answers: " << data->state->a_qty << endl;
+           << "' answers: " << data->state->a_qty << '\n';
 }
 
 }  // namespace frepple

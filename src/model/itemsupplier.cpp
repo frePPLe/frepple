@@ -126,7 +126,7 @@ PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args,
 
     // Create the ItemSupplier
     auto* l = new ItemSupplier(static_cast<Supplier*>(sup),
-                                       static_cast<Item*>(it), q2, eff);
+                               static_cast<Item*>(it), q2, eff);
 
     // Iterate over extra keywords, and set attributes.   @todo move this
     // responsibility to the readers...
@@ -262,7 +262,7 @@ OperationItemSupplier::~OperationItemSupplier() {
       OperationItemSupplier* i = supitem->firstOperation;
       while (i->nextOperation != this && i->nextOperation) i = i->nextOperation;
       if (!i)
-        logger << "Error: ItemSupplier operation list corrupted" << endl;
+        logger << "Error: ItemSupplier operation list corrupted\n";
       else
         i->nextOperation = nextOperation;
     }
@@ -277,7 +277,7 @@ void OperationItemSupplier::trimExcess(bool zero_or_minimum) const {
   // This method can only trim operations not loading a resource
   if (getLoads().begin() != getLoads().end()) return;
 
-  for (const auto & fliter : getFlows()) {
+  for (const auto& fliter : getFlows()) {
     if (fliter.getQuantity() <= 0)
       // Strange, shouldn't really happen
       continue;
@@ -350,7 +350,7 @@ Object* ItemSupplier::finder(const DataValueDict& d) {
   const DataValue* hasPriority = d.get(Tags::priority);
   int priority;
   if (hasPriority) priority = hasPriority->getInt();
-  for (const auto & fl : item->getSuppliers()) {
+  for (const auto& fl : item->getSuppliers()) {
     if (fl.getSupplier() != sup) continue;
     if (hasEffectiveStart && fl.getEffectiveStart() != effective_start)
       continue;

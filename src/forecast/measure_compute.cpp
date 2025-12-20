@@ -174,7 +174,7 @@ void ForecastMeasureComputed::compileMeasures() {
     c->compute_expression.register_symbol_table(symboltable);
     if (!parser.compile(c->compute_expression_string, c->compute_expression)) {
       logger << c->getName() << " error compiling expression \""
-             << c->compute_expression_string << "\"" << endl;
+             << c->compute_expression_string << "\"\n";
       ++errors;
     } else {
       // Get all dependent measures
@@ -194,7 +194,7 @@ void ForecastMeasureComputed::compileMeasures() {
       c->update_expression.register_symbol_table(symboltable);
       if (!parser.compile(c->update_expression_string, c->update_expression)) {
         logger << c->getName() << " error compiling update expression \""
-               << c->update_expression_string << "\"" << endl;
+               << c->update_expression_string << "\"\n";
         ++errors;
       } else {
         // Get all assignments

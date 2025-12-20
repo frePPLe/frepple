@@ -155,7 +155,7 @@ void XMLInput::startElement(const XMLCh* const, const XMLCh* const ename,
       if (!objects[objectindex].cls->category) {
         // No type attribute was registered, and we use the default of the
         // category
-        const MetaCategory& cat =
+        const auto& cat =
             static_cast<const MetaCategory&>(*objects[objectindex].cls);
         objects[objectindex].cls = cat.findClass(Tags::deflt.getHash());
         if (!objects[objectindex].cls)
@@ -838,7 +838,7 @@ void XMLDataValueDict::print() {
       logger << "   " << fields[i].field->getName().getName() << ": ";
     else
       logger << "   null: ";
-    Object* obj = static_cast<Object*>(fields[i].value.getObject());
+    auto* obj = static_cast<Object*>(fields[i].value.getObject());
     if (obj)
       logger << "pointer to " << obj->getType().type << endl;
     else
@@ -917,8 +917,8 @@ Keyword::tagtable& Keyword::getTags() {
 }
 
 void Keyword::printTags() {
-  for (auto i = getTags().begin(); i != getTags().end(); ++i)
-    logger << i->second->getName() << "   " << i->second->dw << endl;
+  for (auto & i : getTags())
+    logger << i.second->getName() << "   " << i.second->dw << endl;
 }
 
 void XMLInputFile::parse(Object* pRoot, bool validate) {

@@ -35,7 +35,7 @@ bool compare_location(const pair<Location*, double>& a,
 void SolverCreate::solve(const Demand* salesorder, void* v) {
   typedef list<pair<Location*, double> > SortedLocation;
   // Set a bookmark at the current command
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
   auto topcommand = data->getCommandManager()->setBookmark();
   auto topstate = data->state;
 
@@ -660,21 +660,21 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
 }
 
 void SolverCreate::scanExcess(CommandManager* mgr) {
-  for (auto i = mgr->begin(); i != mgr->end(); ++i)
-    if (i->isActive()) scanExcess(&*i);
+  for (auto & i : *mgr)
+    if (i.isActive()) scanExcess(&i);
 }
 
 void SolverCreate::scanExcess(CommandList* l) {
   // Loop over all newly created operationplans found in the command stack
-  for (auto cmd = l->begin(); cmd != l->end(); ++cmd) {
-    switch (cmd->getType()) {
+  for (auto & cmd : *l) {
+    switch (cmd.getType()) {
       case 1:
         // Recurse deeper into command lists
-        scanExcess(static_cast<CommandList*>(&*cmd));
+        scanExcess(static_cast<CommandList*>(&cmd));
         break;
       case 5:
         // Detect excess operationplans and undo them
-        auto createcmd = static_cast<CommandCreateOperationPlan*>(&*cmd);
+        auto createcmd = static_cast<CommandCreateOperationPlan*>(&cmd);
         if (createcmd->getOperationPlan()) {
           if (createcmd->getOperationPlan()->getQuantity() -
                   createcmd->getOperationPlan()->isExcess() <
@@ -714,9 +714,9 @@ void SolverCreate::scanExcess(CommandList* l) {
 }
 
 bool SolverCreate::hasOperationPlans(CommandManager* mgr) {
-  for (auto i = mgr->begin(); i != mgr->end(); ++i) {
-    if (i->isActive()) {
-      if (hasOperationPlans(&*i)) return true;
+  for (auto & i : *mgr) {
+    if (i.isActive()) {
+      if (hasOperationPlans(&i)) return true;
     }
   }
   return false;
@@ -724,16 +724,16 @@ bool SolverCreate::hasOperationPlans(CommandManager* mgr) {
 
 bool SolverCreate::hasOperationPlans(CommandList* l) {
   // Loop over all newly created operationplans found in the command stack
-  for (auto cmd = l->begin(); cmd != l->end(); ++cmd) {
-    switch (cmd->getType()) {
+  for (auto & cmd : *l) {
+    switch (cmd.getType()) {
       case 1:
         // Recurse deeper into command lists
-        if (hasOperationPlans(static_cast<CommandList*>(&*cmd))) return true;
+        if (hasOperationPlans(static_cast<CommandList*>(&cmd))) return true;
         break;
       case 5:
         // Command creating an operationplan
         auto opplan =
-            static_cast<CommandCreateOperationPlan*>(&*cmd)->getOperationPlan();
+            static_cast<CommandCreateOperationPlan*>(&cmd)->getOperationPlan();
         if (opplan->getQuantity() > 0.0 && !opplan->getDemand() &&
             !opplan->getOperation()->hasType<OperationItemDistribution>())
           // Return ok when we find an operation that is producing material

@@ -281,7 +281,7 @@ PyObject* ForecastBucket::create(PyTypeObject*, PyObject*, PyObject* kwds) {
 
     // Initialize the forecast.
     {
-      Forecast* fcst = static_cast<Forecast*>(pyfcst);
+      auto* fcst = static_cast<Forecast*>(pyfcst);
       auto data = fcst->getData();
       lock_guard<recursive_mutex> exclusive(data->lock);
 
@@ -555,7 +555,7 @@ void ForecastBase::setFields(DateRange& d, const DataValueDict& in,
       if (d.intersect(x.getDates())) {
         // Bucket intersects with daterange
         Duration o = x.getDates().overlap(d);
-        double percent = static_cast<double>(o);
+        auto percent = static_cast<double>(o);
         if (getDiscrete()) {
           // Rounding to discrete numbers
           carryover += total * percent;
@@ -914,7 +914,7 @@ double ForecastBucketData::getOrdersPlanned() const {
     for (auto& oo : buf->getFlowPlans()) {
       if (oo.getQuantity() >= 0 || oo.getEventType() != 1) continue;
       OperationPlan* opplan = static_cast<FlowPlan&>(oo).getOperationPlan();
-      DemandDefault* dmd = dynamic_cast<DemandDefault*>(opplan->getDemand());
+      auto* dmd = dynamic_cast<DemandDefault*>(opplan->getDemand());
       if (dmd && getDates().within(opplan->getEnd()) &&
           dmd->getCustomer() == getForecast()->getForecastCustomer())
         planned += opplan->getQuantity();
@@ -1163,16 +1163,16 @@ ForecastData::ForecastData(const ForecastBase* f) {
 }
 
 void ForecastData::clearDirty() const {
-  for (auto i = buckets.begin(); i != buckets.end(); ++i) i->clearDirty();
-  if (buckets.size() > 0) buckets[0].getForecast()->clearDirty();
+  for (const auto & bucket : buckets) bucket.clearDirty();
+  if (!buckets.empty()) buckets[0].getForecast()->clearDirty();
 }
 
 size_t ForecastData::getSize() const {
   size_t tmp = 0;
   size_t cnt = 0;
-  for (auto i = buckets.begin(); i != buckets.end(); ++i) {
+  for (const auto & bucket : buckets) {
     ++cnt;
-    tmp += i->getSize();
+    tmp += bucket.getSize();
   }
   return tmp;
 }
@@ -1612,7 +1612,7 @@ PyObject* Forecast::setValuePython2(PyObject*, PyObject*, PyObject* kwargs) {
       while (PyDict_Next(kwargs, &pos, &pykey, &pyvalue)) {
         PythonData key(pykey);
         PythonData value(pyvalue);
-        auto keystring = key.getString();
+        const auto& keystring = key.getString();
         if (keystring != "item" && keystring != "customer" &&
             keystring != "location" && keystring != "bucket" &&
             keystring != "startdate" && keystring != "enddate") {

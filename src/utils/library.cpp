@@ -267,7 +267,7 @@ void Environment::setProcessName() {
 void MetaClass::addClass(const string& a, const string& b, bool ,
                          creatorDefault f) {
   // Find or create the category
-  MetaCategory* cat =
+  auto* cat =
       const_cast<MetaCategory*>(MetaCategory::findCategoryByTag(a.c_str()));
 
   // Check for a valid category
@@ -318,31 +318,31 @@ MetaCategory::MetaCategory(const string& a, const string& gr, size_t sz,
 
 const MetaCategory* MetaCategory::findCategoryByTag(const char* c) {
   // Loop through all categories
-  CategoryMap::const_iterator i = categoriesByTag.find(Keyword::hash(c));
+  auto i = categoriesByTag.find(Keyword::hash(c));
   return (i != categoriesByTag.end()) ? i->second : nullptr;
 }
 
 const MetaCategory* MetaCategory::findCategoryByTag(const size_t h) {
   // Loop through all categories
-  CategoryMap::const_iterator i = categoriesByTag.find(h);
+  auto i = categoriesByTag.find(h);
   return (i != categoriesByTag.end()) ? i->second : nullptr;
 }
 
 const MetaCategory* MetaCategory::findCategoryByGroupTag(const char* c) {
   // Loop through all categories
-  CategoryMap::const_iterator i = categoriesByGroupTag.find(Keyword::hash(c));
+  auto i = categoriesByGroupTag.find(Keyword::hash(c));
   return (i != categoriesByGroupTag.end()) ? i->second : nullptr;
 }
 
 const MetaCategory* MetaCategory::findCategoryByGroupTag(const size_t h) {
   // Loop through all categories
-  CategoryMap::const_iterator i = categoriesByGroupTag.find(h);
+  auto i = categoriesByGroupTag.find(h);
   return (i != categoriesByGroupTag.end()) ? i->second : nullptr;
 }
 
 const MetaClass* MetaCategory::findClass(const char* c) const {
   // Look up in the registered classes
-  MetaCategory::ClassMap::const_iterator j = classes.find(Keyword::hash(c));
+  auto j = classes.find(Keyword::hash(c));
   return (j == classes.end()) ? nullptr : j->second;
 }
 
@@ -370,11 +370,10 @@ const MetaClass* MetaClass::findClass(PyObject* pytype) {
 void MetaClass::printClasses() {
   logger << "Registered classes:" << endl;
   // Loop through all categories
-  for (auto i = MetaCategory::categoriesByTag.begin();
-       i != MetaCategory::categoriesByTag.end(); ++i) {
-    logger << "  " << i->second->type << endl;
+  for (auto & i : MetaCategory::categoriesByTag) {
+    logger << "  " << i.second->type << endl;
     // Loop through the classes for the category
-    for (auto j = i->second->classes.begin(); j != i->second->classes.end();
+    for (auto j = i.second->classes.begin(); j != i.second->classes.end();
          ++j)
       if (j->first == Keyword::hash("default"))
         logger << "    default ( = " << j->second->type << " )" << j->second
@@ -385,14 +384,14 @@ void MetaClass::printClasses() {
 }
 
 const MetaFieldBase* MetaClass::findField(const Keyword& key) const {
-  for (auto i = fields.begin(); i != fields.end(); ++i)
-    if ((*i)->getName() == key) return *i;
+  for (auto field : fields)
+    if (field->getName() == key) return field;
   return nullptr;
 }
 
 const MetaFieldBase* MetaClass::findField(size_t h) const {
-  for (auto i = fields.begin(); i != fields.end(); ++i)
-    if ((*i)->getHash() == h) return *i;
+  for (auto field : fields)
+    if (field->getHash() == h) return field;
   return nullptr;
 }
 

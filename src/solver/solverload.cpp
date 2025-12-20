@@ -375,7 +375,7 @@ void SolverCreate::chooseResource(
 void SolverCreate::solve(const Load* l, void* v) {
   // Note: This method is only called for decrease loadplans and for the leading
   // load of an alternate group. See SolverCreate::checkOperation
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
 
   if ((!l->hasAlternates() && !l->getAlternate()) ||
       data->state->q_loadplan->getConfirmed()) {
@@ -394,11 +394,10 @@ void SolverCreate::solve(const Load* l, void* v) {
   list<const Load*> thealternates;
   const Load* x = l->hasAlternates() ? l : l->getAlternate();
   SearchMode search = l->getSearch();
-  for (auto i = l->getOperation()->getLoads().begin();
-       i != l->getOperation()->getLoads().end(); ++i)
-    if ((i->getAlternate() == x || &*i == x) && i->getPriority() &&
-        i->getEffective().within(data->state->q_loadplan->getDate()))
-      thealternates.push_back(&*i);
+  for (const auto & i : l->getOperation()->getLoads())
+    if ((i.getAlternate() == x || &i == x) && i.getPriority() &&
+        i.getEffective().within(data->state->q_loadplan->getDate()))
+      thealternates.push_back(&i);
 
   // 2) Sort the list
   thealternates.sort(sortLoad);  // @todo cpu-intensive - better is to maintain

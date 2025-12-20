@@ -1023,7 +1023,7 @@ void JSONDataValueDict::print() {
              << ": ";
     else
       logger << "  " << i << "   null: ";
-    Object* obj = static_cast<Object*>(fields[i].value.getObject());
+    auto* obj = static_cast<Object*>(fields[i].value.getObject());
     if (obj)
       logger << "pointer to " << obj->getType().type << endl;
     else

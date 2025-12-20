@@ -86,8 +86,8 @@ PeggingIterator::PeggingIterator(const Demand* d, short maxLvl)
       maxlevel(maxLvl) {
   initType(metadata);
   const Demand::OperationPlanList& deli = d->getDelivery();
-  for (auto opplaniter = deli.begin(); opplaniter != deli.end(); ++opplaniter) {
-    OperationPlan* t = (*opplaniter)->getTopOwner();
+  for (auto opplaniter : deli) {
+    OperationPlan* t = opplaniter->getTopOwner();
     updateStack(t, t->getQuantity(), 0.0, 0, 0L);
   }
 
@@ -358,9 +358,9 @@ void PeggingIterator::updateStack(const OperationPlan* op, double qty, double o,
   if (qty < ROUNDING_ERROR) return;
 
   // Check for loops in the pegging
-  for (auto e = states.begin(); e != states.end(); ++e) {
-    if (e->opplan == op && abs(e->quantity - qty) < ROUNDING_ERROR &&
-        abs(e->offset - o) < ROUNDING_ERROR)  // We've been here before...
+  for (auto & state : states) {
+    if (state.opplan == op && abs(state.quantity - qty) < ROUNDING_ERROR &&
+        abs(state.offset - o) < ROUNDING_ERROR)  // We've been here before...
       return;
   }
 

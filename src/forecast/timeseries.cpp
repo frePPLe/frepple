@@ -300,7 +300,7 @@ ForecastSolver::Metrics ForecastSolver::MovingAverage::generateForecast(
     short firstbckt, vector<double>& timeseries, unsigned int count,
     ForecastSolver* solver) {
   double error_smape, error_smape_weights;
-  double* clean_history = new double[count + 1];
+  auto* clean_history = new double[count + 1];
 
   // Loop over the outliers 'scan'/0 and 'filter'/1 modes
   double standarddeviation = 0.0;
@@ -1530,7 +1530,7 @@ void ForecastSolver::deleteOutliers(
 
         // Need to increment now and define a pointer to the problem, since the
         // problem can be deleted soon (which invalidates the iterator).
-        ProblemOutlier& problemOutlier = static_cast<ProblemOutlier&>(*j);
+        auto& problemOutlier = static_cast<ProblemOutlier&>(*j);
         ++j;
         if (!appliedMethod ||
             appliedMethod != problemOutlier.getForecastMethod())

@@ -96,26 +96,26 @@ class CacheEntry : public AbstractCacheEntry {
     // in the destruction of its object
   }
 
-  virtual void flush();
+  void flush() override;
 
-  virtual void expire() const {
+  void expire() const override {
     const_cast<CacheEntry<T, U>*>(this)->val.reset();
   }
 
-  virtual recursive_mutex* getLock() const {
+  recursive_mutex* getLock() const override {
     return val ? static_pointer_cast<T>(
                      const_cast<CacheEntry<T, U>*>(this)->val)
                      ->getLock()
                : nullptr;
   }
 
-  virtual void clearDirty() const {
+  void clearDirty() const override {
     AbstractCacheEntry::clearDirty();
     if (!val) return;
     static_pointer_cast<T>(val)->clearDirty();
   }
 
-  virtual size_t getSize() const {
+  size_t getSize() const override {
     return val ? static_pointer_cast<T>(val)->getSize() : 0;
   }
 
@@ -138,7 +138,7 @@ class Cache : public Object {
   };
 
   // Destructor
-  ~Cache() { setThreads(0); };
+  ~Cache() override { setThreads(0); };
 
   // Global cache instance
   static Cache* instance;
@@ -172,7 +172,7 @@ class Cache : public Object {
   static const MetaClass* metadata;
   static const MetaCategory* metacategory;
   static int initialize();
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   static const Keyword tag_write_immediately;
   static const Keyword tag_threads;

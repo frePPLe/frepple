@@ -90,15 +90,15 @@ void ResourceBuckets::updateProblems() {
   // Loop over all events
   Date startdate = Date::infinitePast;
   double load = 0.0;
-  for (auto iter = loadplans.begin(); iter != loadplans.end(); iter++) {
-    if (iter->getEventType() != 2)
-      load = iter->getOnhand();
+  for (auto & loadplan : loadplans) {
+    if (loadplan.getEventType() != 2)
+      load = loadplan.getOnhand();
     else {
       // Evaluate previous bucket
       if (load < -ROUNDING_ERROR)
-        new ProblemCapacityOverload(this, startdate, iter->getDate(), -load);
+        new ProblemCapacityOverload(this, startdate, loadplan.getDate(), -load);
       // Reset evaluation for the new bucket
-      startdate = iter->getDate();
+      startdate = loadplan.getDate();
       load = 0.0;
     }
   }

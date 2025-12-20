@@ -76,7 +76,7 @@ class JSONSerializer : public Serializer {
   /* Start writing a new object. This method will open a new tag.
    * Output: "TAG" : [
    */
-  void BeginList(const Keyword& t) {
+  void BeginList(const Keyword& t) override {
     if (formatted) {
       if (!first) *m_fp << ",\n" << indentstring;
       incIndent();
@@ -90,7 +90,7 @@ class JSONSerializer : public Serializer {
   /* Start writing a new object. This method will open a new tag.
    * Output: "TAG" : {
    */
-  void BeginObject(const Keyword& t) {
+  void BeginObject(const Keyword& t) override {
     if (formatted) {
       if (!first) *m_fp << ",\n" << indentstring;
       incIndent();
@@ -108,7 +108,7 @@ class JSONSerializer : public Serializer {
   /* Start writing a new object. This method will open a new tag.
    * Output: "TAG" : {
    */
-  void BeginObject(const Keyword& t, const string&) {
+  void BeginObject(const Keyword& t, const string&) override {
     if (formatted) {
       incIndent();
       if (first)
@@ -127,7 +127,7 @@ class JSONSerializer : public Serializer {
    * Output: "TAG" : {"TAG1": VAL1    (dictionary mode)
    *         {"TAG1": VAL1            (array mode)
    */
-  void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1) {
+  void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1) override {
     if (formatted) {
       incIndent();
       if (first)
@@ -147,7 +147,7 @@ class JSONSerializer : public Serializer {
    * Output: "TAG" : {"TAG1": VAL1    (dictionary mode)
    *         {"TAG1": VAL1            (array mode)
    */
-  void BeginObject(const Keyword& t, const Keyword& attr1, const int val1) {
+  void BeginObject(const Keyword& t, const Keyword& attr1, const int val1) override {
     if (formatted) {
       incIndent();
       if (first)
@@ -166,7 +166,7 @@ class JSONSerializer : public Serializer {
    * Output: "TAG" : {"TAG1": VAL1    (dictionary mode)
    *         {"TAG1": VAL1            (array mode)
    */
-  void BeginObject(const Keyword& t, const Keyword& attr1, const Date val1) {
+  void BeginObject(const Keyword& t, const Keyword& attr1, const Date val1) override {
     if (formatted) {
       incIndent();
       if (first)
@@ -186,7 +186,7 @@ class JSONSerializer : public Serializer {
    *         {"TAG1":"VAL1","TAG2":"VAL2"         (array mode)
    */
   void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1,
-                   const Keyword& attr2, const string& val2) {
+                   const Keyword& attr2, const string& val2) override {
     if (formatted) {
       incIndent();
       if (first)
@@ -210,7 +210,7 @@ class JSONSerializer : public Serializer {
    */
   void BeginObject(const Keyword& t, const Keyword& attr1,
                    const unsigned long& val1, const Keyword& attr2,
-                   const string& val2) {
+                   const string& val2) override {
     if (formatted) {
       incIndent();
       if (first)
@@ -232,7 +232,7 @@ class JSONSerializer : public Serializer {
    */
   void BeginObject(const Keyword& t, const Keyword& attr1, const int& val1,
                    const Keyword& attr2, const Date val2, const Keyword& attr3,
-                   const Date val3) {
+                   const Date val3) override {
     if (formatted) {
       incIndent();
       if (first)
@@ -252,7 +252,7 @@ class JSONSerializer : public Serializer {
   /* Write the closing tag of this object
    * Output: }
    */
-  void EndObject(const Keyword&) {
+  void EndObject(const Keyword&) override {
     if (formatted) {
       decIndent();
       *m_fp << "\n" << indentstring << "}";
@@ -265,7 +265,7 @@ class JSONSerializer : public Serializer {
   /* Write the closing tag of this object
    * Output: ]
    */
-  void EndList(const Keyword&) {
+  void EndList(const Keyword&) override {
     if (formatted) decIndent();
     *m_fp << "]";
     first = false;
@@ -275,7 +275,7 @@ class JSONSerializer : public Serializer {
   /* Write the string to the output. This method is used for passing text
    * straight into the output file.
    */
-  void writeString(const string& c) { *m_fp << c; }
+  void writeString(const string& c) override { *m_fp << c; }
 
   void resetFirst(bool t) { first = t; }
 
@@ -292,7 +292,7 @@ class JSONSerializer : public Serializer {
   /* Write an unsigned long value enclosed opening and closing tags.
    * Output: , "TAG": uint
    */
-  void writeElement(const Keyword& t, const long unsigned int val) {
+  void writeElement(const Keyword& t, const long unsigned int val) override {
     if (first)
       first = false;
     else if (formatted)
@@ -305,7 +305,7 @@ class JSONSerializer : public Serializer {
   /* Write an integer value enclosed opening and closing tags.
    * Output: ,"TAG": int
    */
-  void writeElement(const Keyword& t, const int val) {
+  void writeElement(const Keyword& t, const int val) override {
     if (first)
       first = false;
     else if (formatted)
@@ -318,7 +318,7 @@ class JSONSerializer : public Serializer {
   /* Write a double value enclosed opening and closing tags.
    * Output: ,"TAG": double
    */
-  void writeElement(const Keyword& t, const double val) {
+  void writeElement(const Keyword& t, const double val) override {
     if (first)
       first = false;
     else if (formatted)
@@ -328,7 +328,7 @@ class JSONSerializer : public Serializer {
     *m_fp << "\"" << t << "\":" << val;
   }
 
-  void writeElement(const Keyword& t, const PooledString& u, const double val) {
+  void writeElement(const Keyword& t, const PooledString& u, const double val) override {
     if (first)
       first = false;
     else if (formatted)
@@ -343,7 +343,7 @@ class JSONSerializer : public Serializer {
    * is written out as the string 'true' or 'false'.
    * Output: "TAG": true/false
    */
-  void writeElement(const Keyword& t, const bool val) {
+  void writeElement(const Keyword& t, const bool val) override {
     if (first)
       first = false;
     else if (formatted)
@@ -356,7 +356,7 @@ class JSONSerializer : public Serializer {
   /* Write a string value enclosed opening and closing tags.
    * Output: "TAG": "val"
    */
-  void writeElement(const Keyword& t, const string& val) {
+  void writeElement(const Keyword& t, const string& val) override {
     if (val.empty()) return;
     if (first)
       first = false;
@@ -368,7 +368,7 @@ class JSONSerializer : public Serializer {
     escape(val);
   }
 
-  void writeElement(const string& key, const string& val) {
+  void writeElement(const string& key, const string& val) override {
     if (val.empty()) return;
     if (first)
       first = false;
@@ -386,7 +386,7 @@ class JSONSerializer : public Serializer {
    *   "TAG_U": {"TAG_T": "string"}    (dictionary mode)
    *   {"TAG_T": "string"}             (array mode)
    */
-  void writeElement(const Keyword& u, const Keyword& t, const string& val) {
+  void writeElement(const Keyword& u, const Keyword& t, const string& val) override {
     if (val.empty()) {
       if (!mode.empty() && !mode.top()) {
         if (first)
@@ -415,7 +415,7 @@ class JSONSerializer : public Serializer {
   /* Writes an element with a long attribute.
    * Output: "TAG_U": {"TAG_T": long}
    */
-  void writeElement(const Keyword& u, const Keyword& t, const long val) {
+  void writeElement(const Keyword& u, const Keyword& t, const long val) override {
     if (first)
       first = false;
     else if (formatted)
@@ -429,7 +429,7 @@ class JSONSerializer : public Serializer {
   /* Writes an element with a date attribute.
    * Output: "TAG_U": {"TAG_T": date}
    */
-  void writeElement(const Keyword& u, const Keyword& t, const Date& val) {
+  void writeElement(const Keyword& u, const Keyword& t, const Date& val) override {
     if (first)
       first = false;
     else if (formatted)
@@ -444,7 +444,7 @@ class JSONSerializer : public Serializer {
    * Output: "TAG_U":{"TAG_T1":"val1","TAGT2":"val2"}
    */
   void writeElement(const Keyword& u, const Keyword& t1, const string& val1,
-                    const Keyword& t2, const string& val2) {
+                    const Keyword& t2, const string& val2) override {
     if (val1.empty()) {
       if (!mode.empty() && !mode.top()) {
         if (first)
@@ -476,7 +476,7 @@ class JSONSerializer : public Serializer {
    * Output: "TAG_U": {"TAG_T1": "val1","TAGT2": "val2"}
    */
   void writeElement(const Keyword& u, const Keyword& t1, unsigned long val1,
-                    const Keyword& t2, const string& val2) {
+                    const Keyword& t2, const string& val2) override {
     if (first)
       first = false;
     else if (formatted)
@@ -494,7 +494,7 @@ class JSONSerializer : public Serializer {
    */
   void writeElement(const Keyword& u, const Keyword& t1, short val1,
                     const Keyword& t2, unsigned long val2, const Keyword& t3,
-                    double val3) {
+                    double val3) override {
     if (first)
       first = false;
     else if (formatted)
@@ -509,7 +509,7 @@ class JSONSerializer : public Serializer {
   /* Writes a C-type character string.
    * Output: "TAG_T": "val"
    */
-  void writeElement(const Keyword& t, const char* val) {
+  void writeElement(const Keyword& t, const char* val) override {
     if (!val) return;
     if (first)
       first = false;
@@ -524,7 +524,7 @@ class JSONSerializer : public Serializer {
   /* Writes an timeperiod element.
    * Output: "TAG_T": "val"
    */
-  void writeElement(const Keyword& t, const Duration d) {
+  void writeElement(const Keyword& t, const Duration d) override {
     if (first)
       first = false;
     else if (formatted)
@@ -536,7 +536,7 @@ class JSONSerializer : public Serializer {
 
   /* Writes an date element.
    * Output: \<TAG_T\>d\</TAG_T\> /> */
-  void writeElement(const Keyword& t, const Date d) {
+  void writeElement(const Keyword& t, const Date d) override {
     if (first)
       first = false;
     else if (formatted)
@@ -548,7 +548,7 @@ class JSONSerializer : public Serializer {
 
   /* Writes an daterange element.
    * Output: \<TAG_T\>d\</TAG_T\> */
-  void writeElement(const Keyword& t, const DateRange& d) {
+  void writeElement(const Keyword& t, const DateRange& d) override {
     if (first)
       first = false;
     else if (formatted)
@@ -693,71 +693,71 @@ class JSONData : public DataValue {
   JSONData() : data_type(JSON_NULL) {}
 
   /* Destructor. */
-  virtual ~JSONData() {}
+  ~JSONData() override {}
 
-  virtual operator bool() const { return getBool(); }
+  operator bool() const override { return getBool(); }
 
-  virtual long getLong() const;
+  long getLong() const override;
 
-  virtual unsigned long getUnsignedLong() const;
+  unsigned long getUnsignedLong() const override;
 
-  virtual Duration getDuration() const;
+  Duration getDuration() const override;
 
-  virtual int getInt() const;
+  int getInt() const override;
 
-  virtual double getDouble() const;
+  double getDouble() const override;
 
-  virtual Date getDate() const;
+  Date getDate() const override;
 
-  virtual const string& getString() const;
+  const string& getString() const override;
 
-  virtual bool getBool() const;
+  bool getBool() const override;
 
-  virtual Object* getObject() const;
+  Object* getObject() const override;
 
   void setNull() { data_type = JSON_NULL; }
 
-  virtual void setLong(const long l) {
+  void setLong(const long l) override {
     data_type = JSON_LONG;
     data_long = l;
   }
 
-  virtual void setUnsignedLong(const unsigned long ul) {
+  void setUnsignedLong(const unsigned long ul) override {
     data_type = JSON_UNSIGNEDLONG;
     data_long = ul;
   }
 
-  virtual void setDuration(const Duration d) {
+  void setDuration(const Duration d) override {
     data_type = JSON_LONG;
     data_long = static_cast<long>(d);
   }
 
-  virtual void setInt(const int i) {
+  void setInt(const int i) override {
     data_type = JSON_INT;
     data_int = i;
   }
 
-  virtual void setDouble(const double d) {
+  void setDouble(const double d) override {
     data_type = JSON_DOUBLE;
     data_double = d;
   }
 
-  virtual void setDate(const Date d) {
+  void setDate(const Date d) override {
     data_type = JSON_LONG;
     data_long = static_cast<long>(d.getTicks());
   }
 
-  virtual void setString(const string& s) {
+  void setString(const string& s) override {
     data_type = JSON_STRING;
     data_string = s;
   }
 
-  virtual void setBool(const bool b) {
+  void setBool(const bool b) override {
     data_type = JSON_BOOL;
     data_bool = b;
   }
 
-  virtual void setObject(Object* o) {
+  void setObject(Object* o) override {
     data_type = JSON_OBJECT;
     data_object = o;
   }
@@ -933,7 +933,7 @@ class JSONDataValueDict : public DataValueDict {
   }
 
   /* Look up a certain keyword. */
-  const JSONData* get(const Keyword& key) const;
+  const JSONData* get(const Keyword& key) const override;
 
   /* Enlarge the dictiorary. */
   void enlarge() { ++nd; }

@@ -36,7 +36,7 @@ namespace frepple {
  */
 void SolverCreate::solve(const Buffer* b, void* v) {
   // Call the user exit
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
   if (userexit_buffer)
     userexit_buffer.call(b, PythonData(data->constrainedPlanning));
 
@@ -139,8 +139,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   bool firstmsg3 = true;
 
   bool hasTransferbatching = false;
-  for (auto fl = b->getFlows().begin(); fl != b->getFlows().end(); ++fl)
-    if (fl->hasType<FlowTransferBatch>()) {
+  for (const auto & fl : b->getFlows())
+    if (fl.hasType<FlowTransferBatch>()) {
       hasTransferbatching = true;
       break;
     }
@@ -151,7 +151,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
     increment_cur = true;
 
     if (&*cur && cur->getEventType() == 1) {
-      const FlowPlan* fplan = static_cast<const FlowPlan*>(&*cur);
+      const auto* fplan = static_cast<const FlowPlan*>(&*cur);
       if (!fplan->getOperationPlan()->getActivated() &&
           fplan->getQuantity() > 0 &&
           fplan->getOperationPlan()->getOperation() !=
@@ -684,15 +684,13 @@ void SolverCreate::solve(const Buffer* b, void* v) {
     if (extraConfirmedDate == Date::infiniteFuture) {
       // It is possible there is confirmed supply AFTER the autofence date.
       // The reply date should never be later that the first confirmed supply.
-      for (Buffer::flowplanlist::const_iterator scanner =
-               b->getFlowPlans().begin();
-           scanner != b->getFlowPlans().end(); ++scanner) {
-        if (scanner->getDate() > requested_date &&
-            scanner->getDate() < data->state->a_date &&
-            scanner->getQuantity() > 0 && scanner->getEventType() == 1) {
-          auto fplan = static_cast<const FlowPlan*>(&*scanner);
+      for (const auto & scanner : b->getFlowPlans()) {
+        if (scanner.getDate() > requested_date &&
+            scanner.getDate() < data->state->a_date &&
+            scanner.getQuantity() > 0 && scanner.getEventType() == 1) {
+          auto fplan = static_cast<const FlowPlan*>(&scanner);
           if (fplan->getOperationPlan()->getActivated()) {
-            extraConfirmedDate = scanner->getDate();
+            extraConfirmedDate = scanner.getDate();
             if (getLogLevel() > 1)
               logger << indentlevel << "Adjusting reply date to "
                      << extraConfirmedDate << endl;
@@ -759,7 +757,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
 }
 
 void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
   auto shortagesonly = getShortagesOnly();
 
   // Message
@@ -837,17 +835,16 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
                 (theOnHand > -ROUNDING_ERROR || getPlanType() == 2 ||
                  (getConstraints() & (MFG_LEADTIME + PO_LEADTIME)) == 0)) {
               bool exists = false;
-              for (auto f = b->getFlowPlans().begin();
-                   f != b->getFlowPlans().end(); ++f) {
-                if (f->getQuantity() <= 0 || f->getDate() < data->state->q_date)
+              for (const auto & f : b->getFlowPlans()) {
+                if (f.getQuantity() <= 0 || f.getDate() < data->state->q_date)
                   continue;
-                if (f->getDate() >
+                if (f.getDate() >
                     max(data->state->q_date, Plan::instance().getCurrent()) +
                         autofence)
                   break;
-                auto tmp = f->getOperationPlan();
+                auto tmp = f.getOperationPlan();
                 if (tmp && (tmp->getConfirmed() || tmp->getApproved()) &&
-                    f->getDate() > data->state->q_date) {
+                    f.getDate() > data->state->q_date) {
                   exists = true;
                   break;
                 }
@@ -959,7 +956,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
 }
 
 void SolverCreate::solve(const BufferInfinite* b, void* v) {
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
 
   // Call the user exit
   if (userexit_buffer)

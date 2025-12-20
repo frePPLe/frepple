@@ -202,12 +202,12 @@ Object* Flow::finder(const DataValueDict& d) {
   // Check operation
   const DataValue* tmp = d.get(Tags::operation);
   if (!tmp) return nullptr;
-  Operation* oper = static_cast<Operation*>(tmp->getObject());
+  auto* oper = static_cast<Operation*>(tmp->getObject());
 
   // Check buffer field
   tmp = d.get(Tags::buffer);
   if (!tmp) return nullptr;
-  Buffer* buf = static_cast<Buffer*>(tmp->getObject());
+  auto* buf = static_cast<Buffer*>(tmp->getObject());
 
   // Walk over all flows of the operation, and return
   // the first one with matching
@@ -223,15 +223,14 @@ Object* Flow::finder(const DataValueDict& d) {
   const DataValue* hasName = d.get(Tags::name);
   string name;
   if (hasName) name = hasName->getString();
-  for (Operation::flowlist::const_iterator fl = oper->getFlows().begin();
-       fl != oper->getFlows().end(); ++fl) {
-    if (fl->getBuffer() != buf) continue;
-    if (hasEffectiveStart && fl->getEffectiveStart() != effective_start)
+  for (const auto & fl : oper->getFlows()) {
+    if (fl.getBuffer() != buf) continue;
+    if (hasEffectiveStart && fl.getEffectiveStart() != effective_start)
       continue;
-    if (hasEffectiveEnd && fl->getEffectiveEnd() != effective_end) continue;
-    if (hasPriority && fl->getPriority() != priority) continue;
-    if (hasName && fl->getName() != name) continue;
-    return const_cast<Flow*>(&*fl);
+    if (hasEffectiveEnd && fl.getEffectiveEnd() != effective_end) continue;
+    if (hasPriority && fl.getPriority() != priority) continue;
+    if (hasName && fl.getName() != name) continue;
+    return const_cast<Flow*>(&fl);
   }
   return nullptr;
 }

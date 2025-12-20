@@ -94,7 +94,7 @@ int CalendarDefault::initialize() {
 /* Updates the value in a certain date range.
  * This will create a new bucket if required. */
 void Calendar::setValue(Date start, Date end, const double v) {
-  CalendarBucket* x = static_cast<CalendarBucket*>(findBucket(start));
+  auto* x = static_cast<CalendarBucket*>(findBucket(start));
   if (x && x->getStart() == start && x->getEnd() <= end)
     // We can update an existing bucket: it has the same start date
     // and ends before the new effective period ends.
@@ -314,7 +314,7 @@ CalendarBucket* Calendar::findBucket(Date d, bool fwd) const {
 }
 
 CalendarBucket* Calendar::addBucket(Date st, Date nd, double val) {
-  CalendarBucket* bckt = new CalendarBucket();
+  auto* bckt = new CalendarBucket();
   bckt->setCalendar(this);
   bckt->setStart(st);
   bckt->setEnd(nd);
@@ -664,7 +664,7 @@ PyObject* Calendar::setPythonValue(PyObject* self, PyObject* args,
                                    PyObject* kwdict) {
   try {
     // Pick up the calendar
-    CalendarDefault* cal = static_cast<CalendarDefault*>(self);
+    auto* cal = static_cast<CalendarDefault*>(self);
     if (!cal) throw LogicException("Can't set value of a nullptr calendar");
 
     // Parse the arguments

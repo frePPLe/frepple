@@ -277,7 +277,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan* o)
 
   // Construct a subcommand for all suboperationplans
   for (OperationPlan::iterator x(o); x != o->end(); ++x) {
-    CommandMoveOperationPlan* n = new CommandMoveOperationPlan(&*x);
+    auto* n = new CommandMoveOperationPlan(&*x);
     n->owner = this;
     if (firstCommand) {
       n->next = firstCommand;
@@ -302,7 +302,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan* o,
 
   // Construct a subcommand for all suboperationplans
   for (OperationPlan::iterator x(o); x != o->end(); ++x) {
-    CommandMoveOperationPlan* n = new CommandMoveOperationPlan(&*x);
+    auto* n = new CommandMoveOperationPlan(&*x);
     n->owner = this;
     if (firstCommand) {
       n->next = firstCommand;
@@ -315,7 +315,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan* o,
 void CommandMoveOperationPlan::restore(bool del) {
   // Restore all suboperationplans and (optionally) delete the subcommands
   for (auto* c = firstCommand; c;) {
-    CommandMoveOperationPlan* tmp = static_cast<CommandMoveOperationPlan*>(c);
+    auto* tmp = static_cast<CommandMoveOperationPlan*>(c);
     tmp->restore(del);
     c = c->next;
     if (del) delete tmp;
@@ -524,13 +524,13 @@ PyObject* printModelSize(PyObject*, PyObject*) {
     memsize = 0;
     for (auto o = Operation::begin(); o != Operation::end(); ++o) {
       memsize += o->getSize();
-      for (auto fl = o->getFlows().begin(); fl != o->getFlows().end(); ++fl) {
+      for (const auto & fl : o->getFlows()) {
         ++countFlows;
-        memFlows += fl->getSize();
+        memFlows += fl.getSize();
       }
-      for (auto ld = o->getLoads().begin(); ld != o->getLoads().end(); ++ld) {
+      for (const auto & ld : o->getLoads()) {
         ++countLoads;
-        memLoads += ld->getSize();
+        memLoads += ld.getSize();
       }
     }
     logger << "Operation             \t" << Operation::size() << "\t" << memsize

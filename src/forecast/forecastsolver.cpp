@@ -121,7 +121,7 @@ int ForecastSolver::initialize() {
 PyObject* ForecastSolver::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Create the solver
-    ForecastSolver* s = new ForecastSolver();
+    auto* s = new ForecastSolver();
 
     // Iterate over extra keywords, and set attributes.   @todo move this
     // responsibility to the readers...

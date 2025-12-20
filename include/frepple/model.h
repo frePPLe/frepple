@@ -150,7 +150,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
   CalendarBucket() { initType(metadata); }
 
   /* Destructor. */
-  ~CalendarBucket();
+  ~CalendarBucket() override;
 
   /* This is a factory method that creates a new bucket in a calendar.
    * It uses the calendar and id fields to identify existing buckets.
@@ -272,7 +272,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
     return f != names.end() ? f->second : nullptr;
   }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metacategory;
   static const MetaClass* metadata;
   static int initialize();
@@ -371,7 +371,7 @@ class Calendar : public HasName<Calendar>, public HasSource {
   /* Destructor, which cleans up the buckets too and all references to the
    * calendar from the core model.
    */
-  ~Calendar();
+  ~Calendar() override;
 
   /* Returns the value on the specified date. */
   double getValue(const Date, bool forward = true) const;
@@ -409,7 +409,7 @@ class Calendar : public HasName<Calendar>, public HasSource {
   CalendarBucket* addBucket(Date, Date, double);
 
   /* Return the memory size, including the event list. */
-  virtual size_t getSize() const {
+  size_t getSize() const override {
     auto tmp = Object::getSize();
     tmp += (sizeof(pair<Date, double>) + sizeof(void*) * 3) * eventlist.size();
     return tmp;
@@ -467,7 +467,7 @@ class Calendar : public HasName<Calendar>, public HasSource {
 
   static PyObject* getEvents(PyObject*, PyObject*);
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
   static const MetaCategory* metadata_alias;
 
@@ -523,7 +523,7 @@ class CalendarDefault : public Calendar {
   /* Default constructor. */
   explicit CalendarDefault() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 };
@@ -566,7 +566,7 @@ class Problem : public NonCopyable, public Object {
   static int initialize();
 
   /* Destructor. */
-  virtual ~Problem() {}
+  ~Problem() override {}
 
   /* Return the category of the problem. */
   const string& getName() const { return getType().type; }
@@ -593,7 +593,7 @@ class Problem : public NonCopyable, public Object {
    */
   virtual bool isFeasible() const = 0;
 
-  PyObject* str() const { return PythonData(getDescription()); }
+  PyObject* str() const override { return PythonData(getDescription()); }
 
   /* Returns an iterator to the very first problem. The iterator can be
    * incremented till it points past the very last problem. */
@@ -629,7 +629,7 @@ class Problem : public NonCopyable, public Object {
   virtual Object* getOwner() const = 0;
 
   /* Return a reference to the metadata structure. */
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   /* Storing metadata on this class. */
   static const MetaCategory* metadata;
@@ -831,7 +831,7 @@ class Solver : public Object {
   explicit Solver() {}
 
   /* Destructor. */
-  virtual ~Solver() {}
+  ~Solver() override {}
 
   static int initialize();
 
@@ -973,7 +973,7 @@ class Solver : public Object {
   /* Python method for grouping operationplans. */
   static PyObject* createsBatches(PyObject*, PyObject*);
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
   template <class Cls>
@@ -1042,7 +1042,7 @@ class Plannable : public HasProblems, public Solvable {
   }
 
   /* Implement the pure virtual function from the HasProblem class. */
-  Plannable* getEntity() const { return const_cast<Plannable*>(this); }
+  Plannable* getEntity() const override { return const_cast<Plannable*>(this); }
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
@@ -1224,7 +1224,7 @@ class Location : public HasHierarchy<Location>, public HasDescription {
   explicit Location() { initType(metadata); }
 
   /* Destructor. */
-  virtual ~Location();
+  ~Location() override;
 
   /* Returns the availability calendar of the location.
    * The availability calendar models the working hours and holidays. It
@@ -1245,7 +1245,7 @@ class Location : public HasHierarchy<Location>, public HasDescription {
     return distributions.begin();
   }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
   static int initialize();
 
@@ -1276,7 +1276,7 @@ class LocationDefault : public Location {
  public:
   explicit LocationDefault() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 };
@@ -1292,9 +1292,9 @@ class Customer : public HasHierarchy<Customer>, public HasDescription {
   explicit Customer() {}
 
   /* Destructor. */
-  virtual ~Customer();
+  ~Customer() override;
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
   static int initialize();
 
@@ -1322,7 +1322,7 @@ class CustomerDefault : public Customer {
   /* Default constructor. */
   explicit CustomerDefault() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 };
@@ -1338,7 +1338,7 @@ class Supplier : public HasHierarchy<Supplier>, public HasDescription {
   explicit Supplier() {}
 
   /* Destructor. */
-  virtual ~Supplier();
+  ~Supplier() override;
 
   /* Returns a constant reference to the list of items this supplier can
    * deliver. */
@@ -1347,7 +1347,7 @@ class Supplier : public HasHierarchy<Supplier>, public HasDescription {
   /* Returns an iterator over the list of items this supplier can deliver. */
   itemlist::const_iterator getItemIterator() const { return items.begin(); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
   static int initialize();
 
@@ -1371,7 +1371,7 @@ class SupplierDefault : public Supplier {
  public:
   explicit SupplierDefault() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 };
@@ -1406,7 +1406,7 @@ class SubOperation : public Object, public HasSource {
   explicit SubOperation() { initType(metadata); }
 
   /* Destructor. */
-  ~SubOperation();
+  ~SubOperation() override;
 
   Operation* getOwner() const { return owner; }
 
@@ -1432,7 +1432,7 @@ class SubOperation : public Object, public HasSource {
 
   void setEffective(DateRange d) { effective = d; }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metacategory;
   static const MetaClass* metadata;
   static int initialize();
@@ -1492,7 +1492,7 @@ class OperationDependency : public Object, public HasSource {
 
   explicit OperationDependency() { initType(metadata); }
 
-  ~OperationDependency();
+  ~OperationDependency() override;
 
   Operation* getOperation() const { return oper; }
 
@@ -1529,7 +1529,7 @@ class OperationDependency : public Object, public HasSource {
       hard_safety_leadtime = d;
   }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metacategory;
   static const MetaClass* metadata;
   static int initialize();
@@ -1577,7 +1577,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
   bool stateinfo = false;
 
  public:
-  virtual TimeLine<LoadPlan>* getTimeLine() const { return tmline; }
+  TimeLine<LoadPlan>* getTimeLine() const override { return tmline; }
 
   /* Default constructor. */
   SetupEvent() : TimeLine<LoadPlan>::Event(5) { initType(metadata); }
@@ -1603,7 +1603,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
   SetupEvent(OperationPlan* x);
 
   /* Destructor. */
-  virtual ~SetupEvent();
+  ~SetupEvent() override;
 
   void erase();
 
@@ -1654,7 +1654,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
     }
   }
 
-  virtual OperationPlan* getOperationPlan() const { return opplan; }
+  OperationPlan* getOperationPlan() const override { return opplan; }
 
   void setOperationPlan(OperationPlan* o) { opplan = o; }
 
@@ -1683,7 +1683,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
 
   static int initialize();
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
   template <class Cls>
@@ -1704,7 +1704,7 @@ class OperationPlanDependency : public Object {
   OperationPlanDependency(OperationPlan* first, OperationPlan* second,
                           OperationDependency* d = nullptr);
 
-  ~OperationPlanDependency();
+  ~OperationPlanDependency() override;
 
   OperationPlan* getFirst() const { return first; }
 
@@ -1714,7 +1714,7 @@ class OperationPlanDependency : public Object {
 
   double getQuantity() const;
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metacategory;
   static const MetaClass* metadata;
   static int initialize();
@@ -1928,7 +1928,7 @@ class OperationPlan : public Object,
   int getCluster() const;
 
   /* Destructor. */
-  virtual ~OperationPlan();
+  ~OperationPlan() override;
 
   virtual void setChanged(bool b = true);
 
@@ -2381,7 +2381,7 @@ class OperationPlan : public Object,
 
   static PyObject* calculateOperationTimePython(PyObject*, PyObject*);
 
-  PyObject* str() const;
+  PyObject* str() const override;
 
   /* Python factory method. */
   static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
@@ -2447,7 +2447,7 @@ class OperationPlan : public Object,
   /* Operationplans are never considered hidden, even if the operation they
    * instantiate is hidden. Only exception are stock operationplans.
    */
-  inline bool getHidden() const;
+  inline bool getHidden() const override;
 
   /* Searches for an OperationPlan with a given identifier.
    * Returns a nullptr pointer if no such OperationPlan can be found.
@@ -2461,15 +2461,15 @@ class OperationPlan : public Object,
   /* Problem detection is actually done by the Operation class. That class
    * actually "delegates" the responsability to this class, for efficiency.
    */
-  virtual void updateProblems();
+  void updateProblems() override;
 
   /* Implement the pure virtual function from the HasProblem class. */
-  inline Plannable* getEntity() const;
+  inline Plannable* getEntity() const override;
 
   /* Return the metadata. We return the metadata of the operation class,
    * not the one of the operationplan class!
    */
-  const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   static const MetaClass* metadata;
 
@@ -2966,7 +2966,7 @@ class Operation : public HasName<Operation>,
   explicit Operation() {}
 
   /* Destructor. */
-  virtual ~Operation();
+  ~Operation() override;
 
   virtual string getOrderType() const { return "MO"; }
 
@@ -3295,7 +3295,7 @@ class Operation : public HasName<Operation>,
                                   const OperationPlan*, bool forward = true,
                                   bool considerResourceCalendars = true) const;
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
   typedef list<SubOperation*> Operationlist;
 
@@ -3352,9 +3352,9 @@ class Operation : public HasName<Operation>,
   /* Update the search mode. */
   void setSearch(SearchMode a) { search = a; }
 
-  virtual void updateProblems();
+  void updateProblems() override;
 
-  void setHidden(bool b) {
+  void setHidden(bool b) override {
     auto hidden = getHidden();
     if (hidden != b) setChanged();
     if (b)
@@ -3363,7 +3363,7 @@ class Operation : public HasName<Operation>,
       flags &= ~FLAGS_HIDDEN;
   }
 
-  bool getHidden() const { return (flags & FLAGS_HIDDEN) != 0; }
+  bool getHidden() const override { return (flags & FLAGS_HIDDEN) != 0; }
 
   bool getMTO() const { return (flags & FLAGS_MTO) != 0; }
 
@@ -3814,13 +3814,13 @@ class OperationFixedTime : public Operation {
   }
 
   /* Return the decoupled lead time of this operation. */
-  virtual pair<Duration, Date> getDecoupledLeadTime(double, Date) const;
+  pair<Duration, Date> getDecoupledLeadTime(double, Date) const override;
 
   static int initialize();
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
   /* A operation of this type enforces the following rules on its
@@ -3838,7 +3838,7 @@ class OperationFixedTime : public Operation {
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
       bool preferEnd = true, bool execute = true, bool roundDown = true,
-      bool later = false) const;
+      bool later = false) const override;
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
@@ -3847,8 +3847,8 @@ class OperationFixedTime : public Operation {
   }
 
  protected:
-  virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
-                                bool use_start = false);
+  bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
+                                bool use_start = false) override;
 
  private:
   /* Stores the lengh of the Operation. */
@@ -3906,16 +3906,16 @@ class OperationTimePer : public Operation {
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
       bool preferEnd = true, bool execute = true, bool roundDown = true,
-      bool later = false) const;
+      bool later = false) const override;
 
   /* Return the decoupled lead time of this operation. */
-  virtual pair<Duration, Date> getDecoupledLeadTime(double, Date) const;
+  pair<Duration, Date> getDecoupledLeadTime(double, Date) const override;
 
   static int initialize();
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
   template <class Cls>
@@ -3947,12 +3947,12 @@ class OperationRouting : public Operation {
   explicit OperationRouting() { initType(metadata); }
 
   /* Destructor. */
-  ~OperationRouting();
+  ~OperationRouting() override;
 
-  virtual bool hasSubOperations() const { return true; }
+  bool hasSubOperations() const override { return true; }
 
   /* Returns the minimum maxearly of any load. */
-  virtual Duration getMaxEarly() const;
+  Duration getMaxEarly() const override;
 
   bool getHardPostTime() const { return hardposttime; }
 
@@ -3980,11 +3980,11 @@ class OperationRouting : public Operation {
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
       bool preferEnd = true, bool execute = true, bool roundDown = true,
-      bool later = false) const;
+      bool later = false) const override;
 
   double setOperationPlanQuantity(OperationPlan* oplan, double f,
                                   bool roundDown, bool upd, bool execute,
-                                  Date end) const;
+                                  Date end) const override;
 
   /* Add a new child operationplan.
    * When the third argument is true, we don't validate the insertion and just
@@ -3997,21 +3997,21 @@ class OperationRouting : public Operation {
    *   to start after the newly inserted one (except for confirmed
    * operationplans) that can't be touched.
    */
-  virtual void addSubOperationPlan(OperationPlan*, OperationPlan*, bool = true);
+  void addSubOperationPlan(OperationPlan*, OperationPlan*, bool = true) override;
 
   /* Return the decoupled lead time of this operation. */
-  virtual pair<Duration, Date> getDecoupledLeadTime(double, Date) const;
+  pair<Duration, Date> getDecoupledLeadTime(double, Date) const override;
 
   static int initialize();
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
   /* Return a list of all sub-operations. */
-  virtual Operationlist& getSubOperations() const {
+  Operationlist& getSubOperations() const override {
     return const_cast<Operationlist&>(steps);
   }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
   template <class Cls>
@@ -4024,7 +4024,7 @@ class OperationRouting : public Operation {
   }
 
   /* Return the memory size. */
-  virtual size_t getSize() const {
+  size_t getSize() const override {
     size_t tmp = Operation::getSize();
     // Add the memory for the steps: 3 pointers per step
     tmp += steps.size() * 3 * sizeof(Operation*);
@@ -4033,8 +4033,8 @@ class OperationRouting : public Operation {
 
  protected:
   /* Extra logic to be used when instantiating an operationplan. */
-  virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
-                                bool use_start = false);
+  bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
+                                bool use_start = false) override;
 
  private:
   /* Stores a double linked list of all step suboperations. */
@@ -4050,12 +4050,12 @@ class OperationSplit : public Operation {
   explicit OperationSplit() { initType(metadata); }
 
   /* Destructor. */
-  ~OperationSplit();
+  ~OperationSplit() override;
 
-  virtual bool hasSubOperations() const { return true; }
+  bool hasSubOperations() const override { return true; }
 
   /* Returns the minimum maxearly of any load. */
-  virtual Duration getMaxEarly() const;
+  Duration getMaxEarly() const override;
 
   /* A operation of this type enforces the following rules on its
    * operationplans:
@@ -4065,7 +4065,7 @@ class OperationSplit : public Operation {
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
       bool preferEnd = true, bool execute = true, bool roundDown = true,
-      bool later = false) const;
+      bool later = false) const override;
 
   /* Add a new child operationplan.
    * An alternate operationplan plan can have a maximum of 2
@@ -4074,22 +4074,22 @@ class OperationSplit : public Operation {
    *    resource requiring a specific setup.
    *  - An operationplan of any of the allowed suboperations.
    */
-  virtual void addSubOperationPlan(OperationPlan*, OperationPlan*, bool = true);
+  void addSubOperationPlan(OperationPlan*, OperationPlan*, bool = true) override;
 
   /* Return the decoupled lead time of this operation.
    * Take the lead time of the longest operation.
    */
-  virtual pair<Duration, Date> getDecoupledLeadTime(double, Date) const;
+  pair<Duration, Date> getDecoupledLeadTime(double, Date) const override;
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
-  virtual Operationlist& getSubOperations() const {
+  Operationlist& getSubOperations() const override {
     return const_cast<Operationlist&>(alternates);
   }
 
   static int initialize();
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
   template <class Cls>
@@ -4100,7 +4100,7 @@ class OperationSplit : public Operation {
   }
 
   /* Return the memory size. */
-  virtual size_t getSize() const {
+  size_t getSize() const override {
     size_t tmp = Operation::getSize();
     // Add the memory for the suboperation list: 3 pointers per alternates
     tmp += alternates.size() * 3 * sizeof(Operation*);
@@ -4109,8 +4109,8 @@ class OperationSplit : public Operation {
 
  protected:
   /* Extra logic to be used when instantiating an operationplan. */
-  virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
-                                bool use_start = false);
+  bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
+                                bool use_start = false) override;
 
  private:
   /* List of all alternate operations. */
@@ -4126,14 +4126,14 @@ class OperationAlternate : public Operation {
   explicit OperationAlternate() { initType(metadata); }
 
   /* Destructor. */
-  ~OperationAlternate();
+  ~OperationAlternate() override;
 
-  virtual bool hasSubOperations() const { return true; }
+  bool hasSubOperations() const override { return true; }
 
   /* Returns the minimum maxearly of any load. */
-  virtual Duration getMaxEarly() const;
+  Duration getMaxEarly() const override;
 
-  virtual string getOrderType() const { return "ALT"; }
+  string getOrderType() const override { return "ALT"; }
 
   /* A operation of this type enforces the following rules on its
    * operationplans:
@@ -4143,7 +4143,7 @@ class OperationAlternate : public Operation {
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
       bool preferEnd = true, bool execute = true, bool roundDown = true,
-      bool later = false) const;
+      bool later = false) const override;
 
   /* Add a new child operationplan.
    * An alternate operationplan plan can have a maximum of 2
@@ -4152,22 +4152,22 @@ class OperationAlternate : public Operation {
    *    resource requiring a specific setup.
    *  - An operationplan of any of the allowed suboperations.
    */
-  virtual void addSubOperationPlan(OperationPlan*, OperationPlan*, bool = true);
+  void addSubOperationPlan(OperationPlan*, OperationPlan*, bool = true) override;
 
   /* Return the decoupled lead time of this operation:
    * Take the lead time of the preferred operation
    */
-  virtual pair<Duration, Date> getDecoupledLeadTime(double, Date) const;
+  pair<Duration, Date> getDecoupledLeadTime(double, Date) const override;
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
-  virtual Operationlist& getSubOperations() const {
+  Operationlist& getSubOperations() const override {
     return const_cast<Operationlist&>(alternates);
   }
 
   static int initialize();
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
   template <class Cls>
@@ -4178,7 +4178,7 @@ class OperationAlternate : public Operation {
   }
 
   /* Return the memory size. */
-  virtual size_t getSize() const {
+  size_t getSize() const override {
     size_t tmp = Operation::getSize();
     // Add the memory for the suboperation list: 3 pointers per alternates
     tmp += alternates.size() * 3 * sizeof(Operation*);
@@ -4187,8 +4187,8 @@ class OperationAlternate : public Operation {
 
  protected:
   /* Extra logic to be used when instantiating an operationplan. */
-  virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
-                                bool use_start = false);
+  bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
+                                bool use_start = false) override;
 
  private:
   /* List of all alternate operations. */
@@ -4207,8 +4207,8 @@ class OperationPlan::AlternateIterator {
 
   /* Copy constructor. */
   AlternateIterator(const AlternateIterator& other) : opplan(other.opplan) {
-    for (auto i = other.opers.begin(); i != other.opers.end(); ++i)
-      opers.push_back(*i);
+    for (auto oper : other.opers)
+      opers.push_back(oper);
     operIter = opers.begin();
   }
 
@@ -4216,8 +4216,8 @@ class OperationPlan::AlternateIterator {
   AlternateIterator& operator=(const AlternateIterator& other) {
     opplan = other.opplan;
     opers.clear();
-    for (auto i = other.opers.begin(); i != other.opers.end(); ++i)
-      opers.push_back(*i);
+    for (auto oper : other.opers)
+      opers.push_back(oper);
     operIter = opers.begin();
     return *this;
   }
@@ -4259,7 +4259,7 @@ class ItemDistribution
   explicit ItemDistribution();
 
   /* Destructor. */
-  virtual ~ItemDistribution();
+  ~ItemDistribution() override;
 
   /* Search an existing object. */
   static Object* finder(const DataValueDict& k);
@@ -4269,7 +4269,7 @@ class ItemDistribution
 
   static int initialize();
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static const MetaCategory* metacategory;
 
@@ -4598,9 +4598,9 @@ class Item : public HasHierarchy<Item>, public HasDescription {
   int getCluster() const;
 
   /* Destructor. */
-  virtual ~Item();
+  ~Item() override;
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
   template <class Cls>
@@ -4670,7 +4670,7 @@ class ItemMTS : public Item {
   /* Default constructor. */
   explicit ItemMTS() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 };
@@ -4682,7 +4682,7 @@ class ItemMTO : public Item {
   /* Default constructor. */
   explicit ItemMTO() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 };
@@ -4705,7 +4705,7 @@ class ItemSupplier : public Object,
   explicit ItemSupplier(Supplier*, Item*, int, DateRange);
 
   /* Destructor. */
-  ~ItemSupplier();
+  ~ItemSupplier() override;
 
   /* Search an existing object. */
   static Object* finder(const DataValueDict&);
@@ -4846,7 +4846,7 @@ class ItemSupplier : public Object,
   /* Remove all purchasing operationplans. */
   void deleteOperationPlans(bool deleteLockedOpplans = false);
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static const MetaCategory* metacategory;
 
@@ -4948,7 +4948,7 @@ class OperationItemDistribution : public OperationFixedTime {
  public:
   ItemDistribution* getItemDistribution() const { return itemdist; }
 
-  virtual string getOrderType() const { return "DO"; }
+  string getOrderType() const override { return "DO"; }
 
   Buffer* getOrigin() const;
 
@@ -4960,13 +4960,13 @@ class OperationItemDistribution : public OperationFixedTime {
   explicit OperationItemDistribution(ItemDistribution*, Buffer*, Buffer*);
 
   /* Destructor. */
-  virtual ~OperationItemDistribution();
+  ~OperationItemDistribution() override;
 
   static int initialize();
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
   template <class Cls>
@@ -5007,7 +5007,7 @@ class OperationItemSupplier : public OperationFixedTime {
  public:
   ItemSupplier* getItemSupplier() const { return supitem; }
 
-  virtual string getOrderType() const { return "PO"; }
+  string getOrderType() const override { return "PO"; }
 
   Buffer* getBuffer() const;
 
@@ -5017,13 +5017,13 @@ class OperationItemSupplier : public OperationFixedTime {
   explicit OperationItemSupplier(ItemSupplier*, Buffer*);
 
   /* Destructor. */
-  virtual ~OperationItemSupplier();
+  ~OperationItemSupplier() override;
 
   static int initialize();
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
   template <class Cls>
@@ -5217,7 +5217,7 @@ class Buffer : public HasHierarchy<Buffer>,
   static int initialize();
 
   /* Destructor. */
-  virtual ~Buffer();
+  ~Buffer() override;
 
   /* Returns the available material on hand immediately after (which is the
    * default) or immediately before a given date.
@@ -5249,7 +5249,7 @@ class Buffer : public HasHierarchy<Buffer>,
 
   flowlist::const_iterator getFlowIterator() const { return flows.begin(); }
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
   /* Returns a reference to the list of all flow plans of this buffer. */
   const flowplanlist& getFlowPlans() const { return flowplans; }
@@ -5273,16 +5273,16 @@ class Buffer : public HasHierarchy<Buffer>,
    */
   void deleteOperationPlans(bool deleteLockedOpplans = false);
 
-  virtual void updateProblems();
+  void updateProblems() override;
 
-  void setHidden(bool b) {
+  void setHidden(bool b) override {
     if (hidden != b) setChanged();
     hidden = b;
   }
 
-  bool getHidden() const { return hidden; }
+  bool getHidden() const override { return hidden; }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
   /* This function matches producing and consuming operationplans
@@ -5405,7 +5405,7 @@ class OperationInventory : public OperationFixedTime {
   friend class Buffer;
 
  private:
-  virtual ~OperationInventory() {}
+  ~OperationInventory() override {}
 
  public:
   explicit OperationInventory(Buffer*);
@@ -5414,9 +5414,9 @@ class OperationInventory : public OperationFixedTime {
 
   static int initialize();
 
-  virtual string getOrderType() const { return "STCK"; }
+  string getOrderType() const override { return "STCK"; }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
   template <class Cls>
@@ -5436,7 +5436,7 @@ class OperationDelivery : public OperationFixedTime {
   explicit OperationDelivery();
 
   /* Destructor. */
-  virtual ~OperationDelivery() {}
+  ~OperationDelivery() override {}
 
   /* Return the delivery buffer. */
   Buffer* getBuffer() const;
@@ -5446,9 +5446,9 @@ class OperationDelivery : public OperationFixedTime {
 
   static int initialize();
 
-  virtual string getOrderType() const { return "DLVR"; }
+  string getOrderType() const override { return "DLVR"; }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
   template <class Cls>
@@ -5558,7 +5558,7 @@ class BufferDefault : public Buffer {
  public:
   explicit BufferDefault() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 };
@@ -5577,8 +5577,8 @@ class BufferInfinite : public Buffer {
     initType(metadata);
   }
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
-  virtual const MetaClass& getType() const { return *metadata; }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 };
@@ -5593,7 +5593,7 @@ class Flow : public Object,
              public HasSource {
  public:
   /* Destructor. */
-  virtual ~Flow();
+  ~Flow() override;
 
   /* Constructor. */
   explicit Flow(Operation* o, Buffer* b, double q) : quantity(q) {
@@ -5728,11 +5728,10 @@ class Flow : public Object,
    */
   Flow* getAlternate() const {
     if (getName().empty() || !getOperation()) return nullptr;
-    for (auto h = getOperation()->getFlows().begin();
-         h != getOperation()->getFlows().end(); ++h) {
-      if (this == &*h && getPriority()) return nullptr;
-      if (getName() == h->getName() && h->getPriority())
-        return const_cast<Flow*>(&*h);
+    for (const auto & h : getOperation()->getFlows()) {
+      if (this == &h && getPriority()) return nullptr;
+      if (getName() == h.getName() && h.getPriority())
+        return const_cast<Flow*>(&h);
     }
     return nullptr;
   }
@@ -5740,9 +5739,8 @@ class Flow : public Object,
   /* Return whether the flow has alternates. */
   bool hasAlternates() const {
     if (getName().empty() || !getOperation()) return false;
-    for (auto h = getOperation()->getFlows().begin();
-         h != getOperation()->getFlows().end(); ++h)
-      if (this != &*h && getName() == h->getName() && h->getPriority())
+    for (const auto & h : getOperation()->getFlows())
+      if (this != &h && getName() == h.getName() && h.getPriority())
         return true;
     return false;
   }
@@ -5755,7 +5753,7 @@ class Flow : public Object,
 
   /* A flow is considered hidden when either its buffer or operation
    * are hidden. */
-  virtual bool getHidden() const {
+  bool getHidden() const override {
     return (getBuffer() && getBuffer()->getHidden()) ||
            (getOperation() && getOperation()->getHidden());
   }
@@ -5768,9 +5766,9 @@ class Flow : public Object,
 
   string getTypeName() const { return getType().type; }
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
   template <class Cls>
@@ -5848,15 +5846,15 @@ class FlowStart : public Flow {
   /* This constructor is called from the plan begin_element function. */
   explicit FlowStart() {}
 
-  virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
+  pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const override;
 
-  virtual Date computeFlowToOperationDate(const OperationPlan*, Date);
+  Date computeFlowToOperationDate(const OperationPlan*, Date) override;
 
-  virtual Date computeOperationToFlowDate(const OperationPlan*, Date);
+  Date computeOperationToFlowDate(const OperationPlan*, Date) override;
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 };
 
 /* This class defines a material flow to/from a buffer, linked with an
@@ -5873,15 +5871,15 @@ class FlowEnd : public Flow {
 
   /* This method holds the logic the compute the date and quantity of a
    * flowplan. */
-  virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
+  pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const override;
 
-  virtual Date computeFlowToOperationDate(const OperationPlan*, Date);
+  Date computeFlowToOperationDate(const OperationPlan*, Date) override;
 
-  virtual Date computeOperationToFlowDate(const OperationPlan*, Date);
+  Date computeOperationToFlowDate(const OperationPlan*, Date) override;
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 };
 
@@ -5915,9 +5913,9 @@ class FlowTransferBatch : public Flow {
       transferbatch = d;
   }
 
-  virtual Date computeFlowToOperationDate(const OperationPlan*, Date);
+  Date computeFlowToOperationDate(const OperationPlan*, Date) override;
 
-  virtual Date computeOperationToFlowDate(const OperationPlan*, Date);
+  Date computeOperationToFlowDate(const OperationPlan*, Date) override;
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
@@ -5927,11 +5925,11 @@ class FlowTransferBatch : public Flow {
 
   /* This method holds the logic the compute the date and quantity of a
    * flowplan. */
-  virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
+  pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const override;
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 };
 
@@ -5981,7 +5979,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   static const MetaClass* metadata;
   static const MetaCategory* metacategory;
   static int initialize();
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   explicit FlowPlan(OperationPlan*, const Flow*);
 
@@ -6040,7 +6038,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   void setBuffer(Buffer*);
 
   /* Returns the operationplan owning this flowplan. */
-  virtual OperationPlan* getOperationPlan() const { return oper; }
+  OperationPlan* getOperationPlan() const override { return oper; }
 
   /* Return the status of the operationplanmaterial.
    * The status string is one of the following:
@@ -6095,7 +6093,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   Duration getPeriodOfCover() const;
 
   /* Destructor. */
-  virtual ~FlowPlan() {
+  ~FlowPlan() override {
     assert(buf);
     buf->setChanged();
     buf->flowplans.erase(this);
@@ -6138,12 +6136,12 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   bool getFeasible() const;
 
   /* Return a pointer to the timeline data structure owning this flowplan. */
-  TimeLine<FlowPlan>* getTimeLine() const { return &(buf->flowplans); }
+  TimeLine<FlowPlan>* getTimeLine() const override { return &(buf->flowplans); }
 
   /* Returns true when the flowplan is hidden.
    * This is determined by looking at whether the flow is hidden or not.
    */
-  bool getHidden() const { return fl->getHidden(); }
+  bool getHidden() const override { return fl->getHidden(); }
 
   void setDate(Date d) {
     if (getConfirmed()) {
@@ -6204,7 +6202,7 @@ class SetupMatrixRule : public Object, public HasSource {
   void setSetupMatrix(SetupMatrix*);
 
   /* Destructor. */
-  ~SetupMatrixRule();
+  ~SetupMatrixRule() override;
 
   static int initialize();
 
@@ -6391,7 +6389,7 @@ class SetupMatrixRuleDefault : public SetupMatrixRule {
     initType(metadata);
   }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 };
@@ -6422,11 +6420,11 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource {
                              INT_MAX) {}
 
   /* Destructor. */
-  ~SetupMatrix();
+  ~SetupMatrix() override;
 
   static int initialize();
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
   /* Returns an iterator to go through the list of rules. */
@@ -6483,7 +6481,7 @@ class SetupMatrixDefault : public SetupMatrix {
  public:
   explicit SetupMatrixDefault() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 };
@@ -6497,7 +6495,7 @@ class Skill : public HasName<Skill>, public HasSource {
   explicit Skill() { initType(metadata); }
 
   /* Destructor. */
-  ~Skill();
+  ~Skill() override;
 
   typedef Association<Resource, Skill, ResourceSkill>::ListB resourcelist;
 
@@ -6508,7 +6506,7 @@ class Skill : public HasName<Skill>, public HasSource {
 
   static int initialize();
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
   template <class Cls>
@@ -6534,7 +6532,7 @@ class SkillDefault : public Skill {
  public:
   explicit SkillDefault() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 };
@@ -6563,7 +6561,7 @@ class Resource : public HasHierarchy<Resource>,
   explicit Resource() { setMaximum(1); }
 
   /* Destructor. */
-  virtual ~Resource();
+  ~Resource() override;
 
   /* Updates the size of a resource, when it is time-dependent. */
   virtual void setMaximumCalendar(Calendar*);
@@ -6673,7 +6671,7 @@ class Resource : public HasHierarchy<Resource>,
   /* Updates the location of this resource. */
   void setLocation(Location* i) { loc = i; }
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
   /* Deletes all operationplans loading this resource. The boolean parameter
    * controls whether we delete also locked operationplans or not.
@@ -6681,21 +6679,21 @@ class Resource : public HasHierarchy<Resource>,
   void deleteOperationPlans(bool = false);
 
   /* Recompute the problems of this resource. */
-  virtual void updateProblems();
+  void updateProblems() override;
 
   /* Update the setup time of all operationplans on the resource. */
   void updateSetupTime() const;
 
   void setOwner(Resource*);
 
-  void setHidden(bool b) {
+  void setHidden(bool b) override {
     if (hidden != b) setChanged();
     hidden = b;
   }
 
-  bool getHidden() const { return hidden; }
+  bool getHidden() const override { return hidden; }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
   /* Returns true when this resource capacity represents time.
@@ -6901,7 +6899,7 @@ class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator> {
   PlanIterator(Resource*, PyObject*);
 
   /* Destructor. */
-  ~PlanIterator();
+  ~PlanIterator() override;
 
  private:
   /* Structure for iterating over a resource. */
@@ -6925,7 +6923,7 @@ class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator> {
   PyObject* bucketiterator;
 
   /* Python function to iterate over the periods. */
-  PyObject* iternext();
+  PyObject* iternext() override;
 
   double bucket_available;
   double bucket_load;
@@ -6949,11 +6947,11 @@ class ResourceDefault : public Resource {
  public:
   explicit ResourceDefault() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 
-  virtual double getUtilization(Date, Date) const;
+  double getUtilization(Date, Date) const override;
 };
 
 /* This class represents a resource that'll never have any
@@ -6966,12 +6964,12 @@ class ResourceInfinite : public Resource {
     initType(metadata);
   }
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
-  virtual const MetaClass& getType() const { return *metadata; }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 
-  virtual double getUtilization(Date, Date) const;
+  double getUtilization(Date, Date) const override;
 };
 
 /* This class represents a resource whose capacity is defined per
@@ -6981,14 +6979,14 @@ class ResourceBuckets : public Resource {
   /* Default constructor. */
   explicit ResourceBuckets() { initType(metadata); }
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
-  virtual const MetaClass& getType() const { return *metadata; }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 
-  virtual void updateProblems();
+  void updateProblems() override;
 
-  virtual bool isTime() { return computedFromCalendars; }
+  bool isTime() override { return computedFromCalendars; }
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
@@ -6998,10 +6996,10 @@ class ResourceBuckets : public Resource {
 
   double getMaxBucketCapacity() const;
 
-  virtual double getUtilization(Date, Date) const;
+  double getUtilization(Date, Date) const override;
 
   /* Updates the time buckets and the quantity per time bucket. */
-  virtual void setMaximumCalendar(Calendar*);
+  void setMaximumCalendar(Calendar*) override;
 
   /* Compute the availability of the resource per bucket. */
   static PyObject* computeBucketAvailability(PyObject*, PyObject*);
@@ -7025,7 +7023,7 @@ class ResourceSkill : public Object,
   explicit ResourceSkill(Skill*, Resource*, int, DateRange);
 
   /* Destructor. */
-  ~ResourceSkill();
+  ~ResourceSkill() override;
 
   /* Initialize the class. */
   static int initialize();
@@ -7044,7 +7042,7 @@ class ResourceSkill : public Object,
   /* Returns the skill. */
   Skill* getSkill() const { return getPtrB(); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
   /* Updates the skill. This method can only be called on an instance. */
@@ -7078,7 +7076,7 @@ class ResourceSkillDefault : public ResourceSkill {
   /* This constructor is called from the plan begin_element function. */
   explicit ResourceSkillDefault() {}
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 };
 
@@ -7111,7 +7109,7 @@ class Load : public Object,
   }
 
   /* Destructor. */
-  ~Load();
+  ~Load() override;
 
   /* Search an existing object. */
   static Object* finder(const DataValueDict& k);
@@ -7161,13 +7159,12 @@ class Load : public Object,
   Load* getAlternate() const {
     if (getName().empty() || !getOperation()) return nullptr;
     Load* first_zero = nullptr;
-    for (auto h = getOperation()->getLoads().begin();
-         h != getOperation()->getLoads().end(); ++h)
-      if (getName() == h->getName()) {
-        if (h->getPriority())
-          return (this == &*h) ? nullptr : const_cast<Load*>(&*h);
+    for (const auto & h : getOperation()->getLoads())
+      if (getName() == h.getName()) {
+        if (h.getPriority())
+          return (this == &h) ? nullptr : const_cast<Load*>(&h);
         else if (!first_zero)
-          first_zero = const_cast<Load*>(&*h);
+          first_zero = const_cast<Load*>(&h);
       }
     return (this == first_zero) ? nullptr : first_zero;
   }
@@ -7175,9 +7172,8 @@ class Load : public Object,
   /* Return whether the load has alternates. */
   bool hasAlternates() const {
     if (getName().empty() || !getOperation()) return false;
-    for (auto h = getOperation()->getLoads().begin();
-         h != getOperation()->getLoads().end(); ++h)
-      if (this != &*h && getName() == h->getName()) return true;
+    for (const auto & h : getOperation()->getLoads())
+      if (this != &h && getName() == h.getName()) return true;
     return false;
   }
 
@@ -7214,18 +7210,18 @@ class Load : public Object,
 
   static int initialize();
 
-  bool getHidden() const {
+  bool getHidden() const override {
     return hidden || (getResource() && getResource()->getHidden()) ||
            (getOperation() && getOperation()->getHidden());
   }
 
   bool getHiddenLoad() const { return hidden; }
 
-  void setHidden(bool b) { hidden = b; }
+  void setHidden(bool b) override { hidden = b; }
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
   /* Default constructor. */
@@ -7304,9 +7300,9 @@ class LoadDefault : public Load {
   /* This constructor is called from the plan begin_element function. */
   explicit LoadDefault() {}
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 };
 
@@ -7337,7 +7333,7 @@ class LoadBucketizedPercentage : public Load {
   /* This constructor is called from the plan begin_element function. */
   explicit LoadBucketizedPercentage() {}
 
-  void setResource(Resource* r) {
+  void setResource(Resource* r) override {
     if (r && !r->hasType<ResourceBuckets>())
       logger << "Warning: LoadBucketizedPercentage can only be associated with "
                 "ResourceBuckets"
@@ -7355,20 +7351,20 @@ class LoadBucketizedPercentage : public Load {
       offset = d;
   }
 
-  Date getLoadplanDate(const LoadPlan*) const;
+  Date getLoadplanDate(const LoadPlan*) const override;
 
-  Date getOperationPlanDate(const LoadPlan*, Date, bool = true) const;
+  Date getOperationPlanDate(const LoadPlan*, Date, bool = true) const override;
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
     m->addDoubleField<Cls>(Tags::offset, &Cls::getOffset, &Cls::setOffset);
   }
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
   static int initialize();
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
  private:
@@ -7405,7 +7401,7 @@ class LoadBucketizedFromStart : public Load {
   /* This constructor is called from the plan begin_element function. */
   explicit LoadBucketizedFromStart() {}
 
-  void setResource(Resource* r) {
+  void setResource(Resource* r) override {
     if (r && !r->hasType<ResourceBuckets>())
       logger << "Warning: LoadBucketizedFromStart can only be associated with "
                 "ResourceBuckets"
@@ -7414,20 +7410,20 @@ class LoadBucketizedFromStart : public Load {
       Load::setResource(r);
   }
 
-  Date getLoadplanDate(const LoadPlan*) const;
+  Date getLoadplanDate(const LoadPlan*) const override;
 
-  Date getOperationPlanDate(const LoadPlan*, Date, bool = true) const;
+  Date getOperationPlanDate(const LoadPlan*, Date, bool = true) const override;
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
     m->addDurationField<Cls>(Tags::offset, &Cls::getOffset, &Cls::setOffset);
   }
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
   static int initialize();
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
   Duration getOffset() const { return offset; }
@@ -7473,7 +7469,7 @@ class LoadBucketizedFromEnd : public Load {
   /* This constructor is called from the plan begin_element function. */
   explicit LoadBucketizedFromEnd() {}
 
-  void setResource(Resource* r) {
+  void setResource(Resource* r) override {
     if (r && !r->hasType<ResourceBuckets>())
       logger << "Warning: LoadBucketizedFromEnd can only be associated with "
                 "ResourceBuckets"
@@ -7482,20 +7478,20 @@ class LoadBucketizedFromEnd : public Load {
       Load::setResource(r);
   }
 
-  Date getLoadplanDate(const LoadPlan*) const;
+  Date getLoadplanDate(const LoadPlan*) const override;
 
-  Date getOperationPlanDate(const LoadPlan*, Date, bool = true) const;
+  Date getOperationPlanDate(const LoadPlan*, Date, bool = true) const override;
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
     m->addDurationField<Cls>(Tags::offset, &Cls::getOffset, &Cls::setOffset);
   }
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
   static int initialize();
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
   Duration getOffset() const { return offset; }
@@ -7560,10 +7556,10 @@ class Demand : public HasHierarchy<Demand>,
    * Deleting the demand will also delete all delivery operation
    * plans (including locked ones).
    */
-  virtual ~Demand();
+  ~Demand() override;
 
   /* Return the memory size. */
-  virtual size_t getSize() const {
+  size_t getSize() const override {
     auto tmp = Object::getSize() + sizeof(list<OperationPlan*>);
     // Add the memory for the list of deliveries: 2 pointers per delivery
     for (auto iter = deli.begin(); iter != deli.end(); ++iter)
@@ -7820,7 +7816,7 @@ class Demand : public HasHierarchy<Demand>,
 
   static int initialize();
 
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
   /* Return the maximum delay allowed in satisfying this demand.
    * The default value is infinite.
@@ -7869,11 +7865,11 @@ class Demand : public HasHierarchy<Demand>,
   }
 
   /* Recompute the problems. */
-  virtual void updateProblems() {}
+  void updateProblems() override {}
 
   /* Specifies whether of not this demand is to be hidden from
    * serialization. The default value is false. */
-  void setHidden(bool b) {
+  void setHidden(bool b) override {
     if (b)
       flags |= HIDDEN;
     else
@@ -7881,9 +7877,9 @@ class Demand : public HasHierarchy<Demand>,
   }
 
   /* Returns true if this demand is to be hidden from serialization. */
-  bool getHidden() const { return flags & HIDDEN; }
+  bool getHidden() const override { return flags & HIDDEN; }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
   PeggingIterator getPegging() const;
@@ -8054,7 +8050,7 @@ class DemandDefault : public Demand {
  public:
   explicit DemandDefault() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 
@@ -8070,7 +8066,7 @@ class DemandGroup : public Demand {
  public:
   explicit DemandGroup() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 
@@ -8105,22 +8101,22 @@ class DemandGroup : public Demand {
     }
   }
 
-  virtual int getCluster() const {
+  int getCluster() const override {
     auto firstmember = getFirstChild();
     if (!firstmember) return 0;
     auto dlvr = firstmember->getDeliveryOperation();
     return dlvr ? dlvr->getCluster() : 0;
   }
 
-  virtual double getQuantity() const { return 0.0; }
+  double getQuantity() const override { return 0.0; }
 
-  virtual int getPriority() const;
+  int getPriority() const override;
 
-  virtual void setPriority(int i);
+  void setPriority(int i) override;
 
-  virtual Date getDue() const;
+  Date getDue() const override;
 
-  virtual void setDue(Date d);
+  void setDue(Date d) override;
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
@@ -8156,7 +8152,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
   explicit LoadPlan(OperationPlan*, SetupEvent*, bool start = true);
 
   /* Return the operationplan owning this loadplan. */
-  virtual OperationPlan* getOperationPlan() const { return oper; }
+  OperationPlan* getOperationPlan() const override { return oper; }
 
   /* Return the operation. */
   Operation* getOperation() const { return oper->getOperation(); }
@@ -8208,7 +8204,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
   void setStatus(const string&);
 
   /* Destructor. */
-  virtual ~LoadPlan();
+  ~LoadPlan() override;
 
   /* This function needs to be called whenever the loadplan date or
    * quantity are changed.
@@ -8216,7 +8212,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
   void update();
 
   /* Return a pointer to the timeline data structure owning this loadplan. */
-  TimeLine<LoadPlan>* getTimeLine() const { return &(res->loadplans); }
+  TimeLine<LoadPlan>* getTimeLine() const override { return &(res->loadplans); }
 
   /* Returns the current setup of the resource. */
   string getSetup() const {
@@ -8243,7 +8239,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
   /* Returns true when the loadplan is hidden.
    * This is determined by looking at whether the load is hidden or not.
    */
-  bool getHidden() const {
+  bool getHidden() const override {
     return getQuantity() < 0 || (getLoad() && getLoad()->getHidden());
   }
 
@@ -8287,7 +8283,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
   static int initialize();
   static const MetaCategory* metacategory;
   static const MetaClass* metadata;
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
@@ -8422,7 +8418,7 @@ class LoadPlan::AlternateIterator {
   AlternateIterator(const LoadPlan*);
 
   AlternateIterator(const AlternateIterator&& other)
-      : ldplan(other.ldplan), resources(move(other.resources)) {
+      : ldplan(other.ldplan), resources(other.resources) {
     resIter = resources.begin();
   }
 
@@ -8648,7 +8644,7 @@ class OperationPlan::ProblemIterator : public Problem::iterator {
   ProblemIterator(const OperationPlan*, bool include_related = true);
 
   /* Advance the iterator. */
-  ProblemIterator& operator++();
+  ProblemIterator& operator++() override;
 };
 
 inline OperationPlan::ProblemIterator OperationPlan::getProblems() const {
@@ -8726,7 +8722,7 @@ class Plan : public Plannable, public Object {
    * In single-threaded applications this function is called properly, when
    * the static plan variable is deleted.
    */
-  ~Plan();
+  ~Plan() override;
 
   /* Returns the plan name. */
   const string& getName() const { return name; }
@@ -8813,10 +8809,10 @@ class Plan : public Plannable, public Object {
   /* Initialize the class. */
   static int initialize();
 
-  virtual void updateProblems() {};
+  void updateProblems() override {};
 
   /* This method basically solves the whole planning problem. */
-  virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
+  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
 
   Location::iterator getLocations() const { return Location::begin(); }
 
@@ -8860,7 +8856,7 @@ class Plan : public Plannable, public Object {
 
   void setloglimit(unsigned long l) { Environment::setloglimit(l); }
 
-  const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static const MetaCategory* metacategory;
 
@@ -8963,7 +8959,7 @@ class Plan : public Plannable, public Object {
  */
 class ProblemBeforeCurrent : public Problem {
  public:
-  string getDescription() const {
+  string getDescription() const override {
     ostringstream ch;
     ch << "Operation '"
        << (oper ? oper
@@ -8972,7 +8968,7 @@ class ProblemBeforeCurrent : public Problem {
     return ch.str();
   }
 
-  bool isFeasible() const {
+  bool isFeasible() const override {
     return oper ? false
                 : static_cast<OperationPlan*>(getOwner())->getConfirmed();
   }
@@ -8985,18 +8981,18 @@ class ProblemBeforeCurrent : public Problem {
   explicit ProblemBeforeCurrent(Operation* o, Date st, Date nd)
       : oper(o), start(st), end(nd) {}
 
-  ~ProblemBeforeCurrent() { removeProblem(); }
+  ~ProblemBeforeCurrent() override { removeProblem(); }
 
-  string getEntity() const { return "operation"; }
+  string getEntity() const override { return "operation"; }
 
-  Object* getOwner() const {
+  Object* getOwner() const override {
     return oper ? static_cast<Object*>(oper)
                 : static_cast<OperationPlan*>(owner);
   }
 
-  const DateRange getDates() const {
+  const DateRange getDates() const override {
     if (oper) return DateRange(start, end);
-    OperationPlan* o = static_cast<OperationPlan*>(getOwner());
+    auto* o = static_cast<OperationPlan*>(getOwner());
     if (o->getConfirmed())
       return DateRange(o->getEnd(), Plan::instance().getCurrent());
     else {
@@ -9014,7 +9010,7 @@ class ProblemBeforeCurrent : public Problem {
   }
 
   /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   /* Storing metadata on this class. */
   static const MetaClass* metadata;
@@ -9030,7 +9026,7 @@ class ProblemBeforeCurrent : public Problem {
  */
 class ProblemAwaitSupply : public Problem {
  public:
-  string getDescription() const {
+  string getDescription() const override {
     ostringstream ch;
     if (for_buffer)
       ch << "Buffer '" << static_cast<Buffer*>(getOwner());
@@ -9040,7 +9036,7 @@ class ProblemAwaitSupply : public Problem {
     return ch.str();
   }
 
-  bool isFeasible() const { return true; }
+  bool isFeasible() const override { return true; }
 
   explicit ProblemAwaitSupply(Buffer* b, Date st, Date nd)
       : Problem(b), dates(st, nd), for_buffer(true) {}
@@ -9048,21 +9044,21 @@ class ProblemAwaitSupply : public Problem {
   explicit ProblemAwaitSupply(Operation* b, Date st, Date nd)
       : Problem(b), dates(st, nd), for_buffer(false) {}
 
-  ~ProblemAwaitSupply() { removeProblem(); }
+  ~ProblemAwaitSupply() override { removeProblem(); }
 
-  string getEntity() const { return "material"; }
+  string getEntity() const override { return "material"; }
 
-  Object* getOwner() const {
+  Object* getOwner() const override {
     if (for_buffer)
       return static_cast<Buffer*>(owner);
     else
       return static_cast<Operation*>(owner);
   }
 
-  const DateRange getDates() const { return dates; }
+  const DateRange getDates() const override { return dates; }
 
   /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   /* Storing metadata on this class. */
   static const MetaClass* metadata;
@@ -9078,14 +9074,14 @@ class ProblemAwaitSupply : public Problem {
  */
 class ProblemSyncDemand : public Problem {
  public:
-  string getDescription() const {
+  string getDescription() const override {
     ostringstream ch;
     ch << "Demand '" << static_cast<Demand*>(getOwner())
        << "' is synchronized with " << synced_with;
     return ch.str();
   }
 
-  bool isFeasible() const { return true; }
+  bool isFeasible() const override { return true; }
 
   explicit ProblemSyncDemand(Demand* b, Date st, Date nd)
       : synced_with(b), dates(st, nd) {}
@@ -9095,16 +9091,16 @@ class ProblemSyncDemand : public Problem {
     if (b) dates.setStartAndEnd(b->getDue(), b->getDeliveryDate());
   }
 
-  ~ProblemSyncDemand() { removeProblem(); }
+  ~ProblemSyncDemand() override { removeProblem(); }
 
-  string getEntity() const { return "demand"; }
+  string getEntity() const override { return "demand"; }
 
-  Object* getOwner() const { return static_cast<Demand*>(owner); }
+  Object* getOwner() const override { return static_cast<Demand*>(owner); }
 
-  const DateRange getDates() const { return dates; }
+  const DateRange getDates() const override { return dates; }
 
   /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   /* Storing metadata on this class. */
   static const MetaClass* metadata;
@@ -9119,25 +9115,25 @@ class ProblemSyncDemand : public Problem {
  */
 class ProblemPrecedence : public Problem {
  public:
-  string getDescription() const {
-    OperationPlan* o = static_cast<OperationPlan*>(getOwner());
+  string getDescription() const override {
+    auto* o = static_cast<OperationPlan*>(getOwner());
     return string("Operation '") + o->getOperation()->getName() +
            "' starts before preceding operation ends";
   }
 
-  bool isFeasible() const { return false; }
+  bool isFeasible() const override { return false; }
 
   explicit ProblemPrecedence(OperationPlan* o, bool add = true) : Problem(o) {
     if (add) addProblem();
   }
 
-  ~ProblemPrecedence() { removeProblem(); }
+  ~ProblemPrecedence() override { removeProblem(); }
 
-  string getEntity() const { return "operation"; }
+  string getEntity() const override { return "operation"; }
 
-  Object* getOwner() const { return static_cast<OperationPlan*>(owner); }
+  Object* getOwner() const override { return static_cast<OperationPlan*>(owner); }
 
-  const DateRange getDates() const {
+  const DateRange getDates() const override {
     auto o = static_cast<OperationPlan*>(getOwner());
     if (o->getNextSubOpplan())
       return DateRange(o->getNextSubOpplan()->getStart(), o->getEnd());
@@ -9146,7 +9142,7 @@ class ProblemPrecedence : public Problem {
   }
 
   /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   /* Storing metadata on this class. */
   static const MetaClass* metadata;
@@ -9157,9 +9153,9 @@ class ProblemPrecedence : public Problem {
  */
 class ProblemInvalidData : public Problem {
  public:
-  string getDescription() const { return description; }
+  string getDescription() const override { return description; }
 
-  bool isFeasible() const { return false; }
+  bool isFeasible() const override { return false; }
 
   explicit ProblemInvalidData(HasProblems* o, const string& d, const string& e,
                               Date st, Date nd, bool add = true)
@@ -9167,13 +9163,13 @@ class ProblemInvalidData : public Problem {
     if (add) addProblem();
   }
 
-  ~ProblemInvalidData() { removeProblem(); }
+  ~ProblemInvalidData() override { removeProblem(); }
 
-  string getEntity() const { return entity; }
+  string getEntity() const override { return entity; }
 
-  const DateRange getDates() const { return dates; }
+  const DateRange getDates() const override { return dates; }
 
-  Object* getOwner() const {
+  Object* getOwner() const override {
     if (entity == "demand") return static_cast<Demand*>(owner);
     if (entity == "buffer" || entity == "material")
       return static_cast<Buffer*>(owner);
@@ -9185,7 +9181,7 @@ class ProblemInvalidData : public Problem {
   }
 
   /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   /* Storing metadata on this class. */
   static const MetaClass* metadata;
@@ -9202,9 +9198,9 @@ class ProblemInvalidData : public Problem {
  */
 class ProblemCapacityOverload : public Problem {
  public:
-  string getDescription() const;
+  string getDescription() const override;
 
-  bool isFeasible() const { return false; }
+  bool isFeasible() const override { return false; }
 
   ProblemCapacityOverload(Resource* r, Date st, Date nd, double q,
                           bool add = true)
@@ -9214,18 +9210,18 @@ class ProblemCapacityOverload : public Problem {
 
   void setOperation(Operation* o) { oper = o; }
 
-  ~ProblemCapacityOverload() { removeProblem(); }
+  ~ProblemCapacityOverload() override { removeProblem(); }
 
-  string getEntity() const { return "capacity"; }
+  string getEntity() const override { return "capacity"; }
 
-  Object* getOwner() const { return static_cast<Resource*>(owner); }
+  Object* getOwner() const override { return static_cast<Resource*>(owner); }
 
-  const DateRange getDates() const { return dr; }
+  const DateRange getDates() const override { return dr; }
 
   Resource* getResource() const { return static_cast<Resource*>(getOwner()); }
 
   /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   /* Storing metadata on this class. */
   static const MetaClass* metadata;
@@ -9245,9 +9241,9 @@ class ProblemCapacityOverload : public Problem {
  */
 class ProblemMaterialShortage : public Problem {
  public:
-  string getDescription() const;
+  string getDescription() const override;
 
-  bool isFeasible() const { return false; }
+  bool isFeasible() const override { return false; }
 
   ProblemMaterialShortage(Buffer* b, Date st, Date nd, double q,
                           bool add = true)
@@ -9255,18 +9251,18 @@ class ProblemMaterialShortage : public Problem {
     if (add) addProblem();
   }
 
-  string getEntity() const { return "material"; }
+  string getEntity() const override { return "material"; }
 
-  Object* getOwner() const { return static_cast<Buffer*>(owner); }
+  Object* getOwner() const override { return static_cast<Buffer*>(owner); }
 
-  ~ProblemMaterialShortage() { removeProblem(); }
+  ~ProblemMaterialShortage() override { removeProblem(); }
 
-  const DateRange getDates() const { return dr; }
+  const DateRange getDates() const override { return dr; }
 
   Buffer* getBuffer() const { return static_cast<Buffer*>(getOwner()); }
 
   /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   /* Storing metadata on this class. */
   static const MetaClass* metadata;
@@ -9281,25 +9277,25 @@ class ProblemMaterialShortage : public Problem {
 
 class ConstraintPurchasingLeadTime : public Problem {
  public:
-  string getDescription() const {
+  string getDescription() const override {
     ostringstream ch;
     ch << "Purchasing lead time on '" << static_cast<Operation*>(getOwner())
        << "'";
     return ch.str();
   }
 
-  bool isFeasible() const { return false; }
+  bool isFeasible() const override { return false; }
 
   explicit ConstraintPurchasingLeadTime(Operation* o, Date st, Date nd)
       : Problem(o), start(st), end(nd) {}
 
-  ~ConstraintPurchasingLeadTime() { removeProblem(); }
+  ~ConstraintPurchasingLeadTime() override { removeProblem(); }
 
-  string getEntity() const { return "operation"; }
+  string getEntity() const override { return "operation"; }
 
-  Object* getOwner() const { return static_cast<Operation*>(owner); }
+  Object* getOwner() const override { return static_cast<Operation*>(owner); }
 
-  const DateRange getDates() const { return DateRange(start, end); }
+  const DateRange getDates() const override { return DateRange(start, end); }
 
   void update(Operation* o, Date st, Date nd) {
     owner = o;
@@ -9308,7 +9304,7 @@ class ConstraintPurchasingLeadTime : public Problem {
   }
 
   /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   /* Storing metadata on this class. */
   static const MetaClass* metadata;
@@ -9320,25 +9316,25 @@ class ConstraintPurchasingLeadTime : public Problem {
 
 class ConstraintManufacturingLeadTime : public Problem {
  public:
-  string getDescription() const {
+  string getDescription() const override {
     ostringstream ch;
     ch << "Manufacturing lead time on '" << static_cast<Operation*>(getOwner())
        << "'";
     return ch.str();
   }
 
-  bool isFeasible() const { return true; }
+  bool isFeasible() const override { return true; }
 
   explicit ConstraintManufacturingLeadTime(Operation* o, Date st, Date nd)
       : Problem(o), start(st), end(nd) {}
 
-  ~ConstraintManufacturingLeadTime() { removeProblem(); }
+  ~ConstraintManufacturingLeadTime() override { removeProblem(); }
 
-  string getEntity() const { return "operation"; }
+  string getEntity() const override { return "operation"; }
 
-  Object* getOwner() const { return static_cast<Operation*>(owner); }
+  Object* getOwner() const override { return static_cast<Operation*>(owner); }
 
-  const DateRange getDates() const { return DateRange(start, end); }
+  const DateRange getDates() const override { return DateRange(start, end); }
 
   void update(Operation* o, Date st, Date nd) {
     owner = o;
@@ -9347,7 +9343,7 @@ class ConstraintManufacturingLeadTime : public Problem {
   }
 
   /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   /* Storing metadata on this class. */
   static const MetaClass* metadata;
@@ -9359,25 +9355,25 @@ class ConstraintManufacturingLeadTime : public Problem {
 
 class ConstraintDistributionLeadTime : public Problem {
  public:
-  string getDescription() const {
+  string getDescription() const override {
     ostringstream ch;
     ch << "Distribution lead time on '" << static_cast<Operation*>(getOwner())
        << "'";
     return ch.str();
   }
 
-  bool isFeasible() const { return true; }
+  bool isFeasible() const override { return true; }
 
   explicit ConstraintDistributionLeadTime(Operation* o, Date st, Date nd)
       : Problem(o), start(st), end(nd) {}
 
-  ~ConstraintDistributionLeadTime() { removeProblem(); }
+  ~ConstraintDistributionLeadTime() override { removeProblem(); }
 
-  string getEntity() const { return "operation"; }
+  string getEntity() const override { return "operation"; }
 
-  Object* getOwner() const { return static_cast<Operation*>(owner); }
+  Object* getOwner() const override { return static_cast<Operation*>(owner); }
 
-  const DateRange getDates() const { return DateRange(start, end); }
+  const DateRange getDates() const override { return DateRange(start, end); }
 
   void update(Operation* o, Date st, Date nd) {
     owner = o;
@@ -9386,7 +9382,7 @@ class ConstraintDistributionLeadTime : public Problem {
   }
 
   /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   /* Storing metadata on this class. */
   static const MetaClass* metadata;
@@ -9398,21 +9394,21 @@ class ConstraintDistributionLeadTime : public Problem {
 
 class ConstraintOverdueDemand : public Problem {
  public:
-  string getDescription() const { return "Demand is overdue"; }
+  string getDescription() const override { return "Demand is overdue"; }
 
-  bool isFeasible() const { return true; }
+  bool isFeasible() const override { return true; }
 
   explicit ConstraintOverdueDemand(Demand* o, bool add = true) : Problem(o) {
     if (add) addProblem();
   }
 
-  ~ConstraintOverdueDemand() { removeProblem(); }
+  ~ConstraintOverdueDemand() override { removeProblem(); }
 
-  Object* getOwner() const { return static_cast<Demand*>(owner); }
+  Object* getOwner() const override { return static_cast<Demand*>(owner); }
 
-  string getEntity() const { return "demand"; }
+  string getEntity() const override { return "demand"; }
 
-  const DateRange getDates() const {
+  const DateRange getDates() const override {
     return DateRange(static_cast<Demand*>(owner)->getDue(),
                      Plan::instance().getCurrent());
   }
@@ -9424,7 +9420,7 @@ class ConstraintOverdueDemand : public Problem {
   }
 
   /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   /* Storing metadata on this class. */
   static const MetaClass* metadata;
@@ -9453,25 +9449,25 @@ class CommandCreateOperationPlan : public Command {
                : nullptr;
   }
 
-  void commit() {
+  void commit() override {
     if (opplan) {
       opplan->activate();
       opplan = nullptr;  // Avoid executing / initializing more than once
     }
   }
 
-  virtual void rollback() {
+  void rollback() override {
     delete opplan;
     opplan = nullptr;
   }
 
-  virtual ~CommandCreateOperationPlan() {
+  ~CommandCreateOperationPlan() override {
     if (opplan) delete opplan;
   }
 
   OperationPlan* getOperationPlan() const { return opplan; }
 
-  virtual short getType() const { return 5; }
+  short getType() const override { return 5; }
 
  private:
   /* Pointer to the newly created operationplan. */
@@ -9487,12 +9483,12 @@ class CommandDeleteOperationPlan : public Command {
   /* Constructor. */
   CommandDeleteOperationPlan(OperationPlan* o);
 
-  virtual void commit() {
+  void commit() override {
     if (opplan) delete opplan;
     opplan = nullptr;
   }
 
-  virtual void rollback() {
+  void rollback() override {
     if (opplan) {
       opplan->createFlowLoads();
       opplan->insertInOperationplanList();
@@ -9509,9 +9505,9 @@ class CommandDeleteOperationPlan : public Command {
     opplan = nullptr;
   }
 
-  virtual ~CommandDeleteOperationPlan() { rollback(); }
+  ~CommandDeleteOperationPlan() override { rollback(); }
 
-  virtual short getType() const { return 6; }
+  short getType() const override { return 6; }
 
  private:
   /* Pointer to the operationplan being deleted.
@@ -9540,13 +9536,13 @@ class CommandMoveOperationPlan : public Command {
   CommandMoveOperationPlan(OperationPlan*);
 
   /* Commit the changes. */
-  virtual void commit() {
+  void commit() override {
     opplan->mergeIfPossible();
     opplan = nullptr;
   }
 
   /* Undo the changes. */
-  virtual void rollback() {
+  void rollback() override {
     restore(true);
     opplan = nullptr;
   }
@@ -9557,7 +9553,7 @@ class CommandMoveOperationPlan : public Command {
   void restore(bool = false);
 
   /* Destructor. */
-  virtual ~CommandMoveOperationPlan() {
+  ~CommandMoveOperationPlan() override {
     if (opplan) rollback();
   }
 
@@ -9591,7 +9587,7 @@ class CommandMoveOperationPlan : public Command {
   /* Return the dates of the original operationplan. */
   DateRange getDates() const { return DateRange(state.start, state.end); }
 
-  virtual short getType() const { return 7; }
+  short getType() const override { return 7; }
 
  private:
   /* This is a pointer to the operationplan being moved. */
@@ -9642,7 +9638,7 @@ class PeggingIterator : public NonCopyable, public Object {
   }
 
   /* Destructor. */
-  virtual ~PeggingIterator() {}
+  ~PeggingIterator() override {}
 
   /* Return true if this is a downstream iterator. */
   inline bool isDownstream() const { return downstream; }
@@ -9681,7 +9677,7 @@ class PeggingIterator : public NonCopyable, public Object {
 
   PeggingIterator* next();
 
-  PyObject* iternext() {
+  PyObject* iternext() override {
     auto tmp = next();
     if (tmp) Py_IncRef(this);
     return tmp;
@@ -9693,7 +9689,7 @@ class PeggingIterator : public NonCopyable, public Object {
   /* Initialize the class. */
   static int initialize();
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
   template <class Cls>
@@ -9782,7 +9778,7 @@ class PeggingDemandIterator : public NonCopyable, public Object {
   /* Advance to the next demand. */
   PeggingDemandIterator* next();
 
-  PyObject* iternext() {
+  PyObject* iternext() override {
     auto tmp = next();
     if (tmp) Py_IncRef(this);
     return tmp;
@@ -9791,7 +9787,7 @@ class PeggingDemandIterator : public NonCopyable, public Object {
   /* Initialize the class. */
   static int initialize();
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
   Demand* getDemand() const {
@@ -9987,7 +9983,7 @@ class OperationPlan::InterruptionIterator : public Object {
   Date getEnd() const { return end; }
 
   /* Return a reference to the metadata structure. */
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   static int intitialize();
   static const MetaCategory* metacategory;
@@ -10009,7 +10005,7 @@ class CalendarEventIterator : public PythonExtension<CalendarEventIterator> {
  private:
   Calendar::EventIterator eventiter;
   bool forward;
-  PyObject* iternext();
+  PyObject* iternext() override;
 };
 
 class FlowPlanIterator : public PythonExtension<FlowPlanIterator> {
@@ -10033,7 +10029,7 @@ class FlowPlanIterator : public PythonExtension<FlowPlanIterator> {
     opplaniter = new OperationPlan::FlowPlanIterator(o->beginFlowPlans());
   }
 
-  ~FlowPlanIterator() {
+  ~FlowPlanIterator() override {
     if (buffer_or_opplan)
       delete bufiter;
     else
@@ -10055,7 +10051,7 @@ class FlowPlanIterator : public PythonExtension<FlowPlanIterator> {
    * operationplan. */
   bool buffer_or_opplan;
 
-  PyObject* iternext();
+  PyObject* iternext() override;
 };
 
 class LoadPlanIterator : public PythonExtension<LoadPlanIterator> {
@@ -10076,7 +10072,7 @@ class LoadPlanIterator : public PythonExtension<LoadPlanIterator> {
     opplaniter = new OperationPlan::LoadPlanIterator(o->beginLoadPlans());
   }
 
-  ~LoadPlanIterator() {
+  ~LoadPlanIterator() override {
     if (resource_or_opplan)
       delete resiter;
     else
@@ -10098,7 +10094,7 @@ class LoadPlanIterator : public PythonExtension<LoadPlanIterator> {
    * operationplan. */
   bool resource_or_opplan;
 
-  PyObject* iternext();
+  PyObject* iternext() override;
 };
 
 /* This Python function is used for reading XML input.

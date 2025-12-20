@@ -113,7 +113,7 @@ int CommandManager::initialize() {
 }
 
 CommandManager::Bookmark* CommandManager::setBookmark() {
-  Bookmark* n = new Bookmark(currentBookmark);
+  auto* n = new Bookmark(currentBookmark);
   lastBookmark->nextBookmark = n;
   n->prevBookmark = lastBookmark;
   lastBookmark = n;

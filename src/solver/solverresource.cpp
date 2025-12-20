@@ -36,7 +36,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
     return;
   }
 
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
 
   // Call the user exit
   if (userexit_resource)
@@ -355,7 +355,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
 }
 
 void SolverCreate::solveUnconstrained(const Resource* res, void* v) {
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
 
   // Call the user exit
   if (userexit_resource)
@@ -391,7 +391,7 @@ void SolverCreate::solveUnconstrained(const Resource* res, void* v) {
 }
 
 void SolverCreate::solve(const ResourceBuckets* res, void* v) {
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
   if (!res->getConstrained() || !data->state->q_loadplan->getLoad()) {
     solveUnconstrained(res, v);
     return;

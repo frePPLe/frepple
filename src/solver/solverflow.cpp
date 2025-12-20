@@ -39,7 +39,7 @@ void SolverCreate::solve(const Flow* fl,
   // - for the leading flow of an alternate group
   // - for the first transfer batch in a series
   // See SolverCreate::checkOperation
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
 
   if (fl->hasAlternates()) {
     // CASE I: It is an alternate flow.
@@ -49,11 +49,10 @@ void SolverCreate::solve(const Flow* fl,
     // 1) collect a list of alternates
     list<const Flow*> thealternates;
     const Flow* x = fl->hasAlternates() ? fl : fl->getAlternate();
-    for (auto i = fl->getOperation()->getFlows().begin();
-         i != fl->getOperation()->getFlows().end(); ++i)
-      if ((i->getAlternate() == x || &*i == x) &&
-          i->getEffective().within(data->state->q_flowplan->getDate()))
-        thealternates.push_front(&*i);
+    for (const auto & i : fl->getOperation()->getFlows())
+      if ((i.getAlternate() == x || &i == x) &&
+          i.getEffective().within(data->state->q_flowplan->getDate()))
+        thealternates.push_front(&i);
 
     // 2) Sort the list
     thealternates.sort(sortFlow);

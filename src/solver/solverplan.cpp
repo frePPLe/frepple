@@ -85,7 +85,7 @@ int SolverCreate::initialize() {
 PyObject* SolverCreate::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Create the solver
-    SolverCreate* s = new SolverCreate();
+    auto* s = new SolverCreate();
 
     // Iterate over extra keywords, and set attributes.   @todo move this
     // responsibility to the readers...
@@ -147,11 +147,10 @@ bool SolverCreate::isLeadTimeConstrained(const Operation* oper) const {
     return (constrts & PO_LEADTIME) > 0;
   else if (oper && oper->hasType<OperationSplit, OperationAlternate>()) {
     bool all_po = true;
-    for (auto alt = oper->getSubOperations().begin();
-         alt != oper->getSubOperations().end(); ++alt) {
-      if ((*alt)->getOperation()->getPriority() &&
-          !((*alt)->getOperation()->hasType<OperationItemSupplier>() ||
-            (*alt)->getOperation()->getCategory() == "subcontractor")) {
+    for (auto & alt : oper->getSubOperations()) {
+      if (alt->getOperation()->getPriority() &&
+          !(alt->getOperation()->hasType<OperationItemSupplier>() ||
+            alt->getOperation()->getCategory() == "subcontractor")) {
         all_po = false;
         break;
       }
@@ -265,41 +264,41 @@ void SolverCreate::SolverData::commit() {
       // Step 1: Create a delivery operationplan for all demands
       solver->setPropagate(false);
       if (solver->getCreateDeliveries()) {
-        for (auto i = demands->begin(); i != demands->end(); ++i) {
+        for (auto & demand : *demands) {
           if (solver->userexit_demand)
-            solver->userexit_demand.call(*i, PythonData(constrainedPlanning));
+            solver->userexit_demand.call(demand, PythonData(constrainedPlanning));
 
           // Determine the quantity to be planned and the date for the planning
           // loop
-          double plan_qty = (*i)->getQuantity() - (*i)->getPlannedQuantity();
-          if ((*i)->getDue() == Date::infiniteFuture ||
-              (*i)->getDue() == Date::infinitePast)
+          double plan_qty = demand->getQuantity() - demand->getPlannedQuantity();
+          if (demand->getDue() == Date::infiniteFuture ||
+              demand->getDue() == Date::infinitePast)
             continue;
 
           // Select delivery operation
-          Operation* deliveryoper = (*i)->getDeliveryOperation();
+          Operation* deliveryoper = demand->getDeliveryOperation();
           if (!deliveryoper) continue;
 
           auto isGroupMember =
-              (*i)->getOwner() && (*i)->getOwner()->hasType<DemandGroup>() &&
-              static_cast<DemandGroup*>((*i)->getOwner())->getPolicy() !=
+              demand->getOwner() && demand->getOwner()->hasType<DemandGroup>() &&
+              static_cast<DemandGroup*>(demand->getOwner())->getPolicy() !=
                   Demand::POLICY_INDEPENDENT;
           auto due =
-              isGroupMember ? (*i)->getOwner()->getDue() : (*i)->getDue();
+              isGroupMember ? demand->getOwner()->getDue() : demand->getDue();
           while (plan_qty > ROUNDING_ERROR) {
             // Respect minimum shipment quantities
-            if (plan_qty < (*i)->getMinShipment())
-              plan_qty = (*i)->getMinShipment();
+            if (plan_qty < demand->getMinShipment())
+              plan_qty = demand->getMinShipment();
             state->curBuffer = nullptr;
             state->q_qty = plan_qty;
             state->q_date = due;
             state->a_cost = 0.0;
             state->a_penalty = 0.0;
-            state->curDemand = *i;
+            state->curDemand = demand;
             state->curOwnerOpplan = nullptr;
             state->blockedOpplan = nullptr;
             state->dependency = nullptr;
-            state->curBatch = (*i)->getBatch();
+            state->curBatch = demand->getBatch();
             dependency_list.clear();
             state->a_qty = 0;
             try {
@@ -317,7 +316,7 @@ void SolverCreate::SolverData::commit() {
                   due = state->a_date;
               }
             } catch (const exception& e) {
-              logger << "Error creating delivery for '" << *i
+              logger << "Error creating delivery for '" << demand
                      << "': " << e.what() << endl;
               getCommandManager()->rollback();
               break;
@@ -872,7 +871,7 @@ PyObject* SolverCreate::solve(PyObject* self, PyObject* args,
   }
 
   // Free Python interpreter for other threads
-  SolverCreate* sol = static_cast<SolverCreate*>(self);
+  auto* sol = static_cast<SolverCreate*>(self);
   auto prev_cluster = sol->getCluster();
   Py_BEGIN_ALLOW_THREADS;
   try {
@@ -919,7 +918,7 @@ PyObject* SolverCreate::commit(PyObject* self, PyObject*) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {
-    SolverCreate* me = static_cast<SolverCreate*>(self);
+    auto* me = static_cast<SolverCreate*>(self);
     assert(me->commands.getCommandManager());
     me->scanExcess(me->commands.getCommandManager());
     me->commands.getCommandManager()->commit();
@@ -937,7 +936,7 @@ PyObject* SolverCreate::rollback(PyObject* self, PyObject*) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {
-    SolverCreate* me = static_cast<SolverCreate*>(self);
+    auto* me = static_cast<SolverCreate*>(self);
     assert(me->commands.getCommandManager());
     me->commands.getCommandManager()->rollback();
   } catch (...) {
@@ -954,7 +953,7 @@ PyObject* SolverCreate::markAutofence(PyObject* self, PyObject*) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {
-    SolverCreate* me = static_cast<SolverCreate*>(self);
+    auto* me = static_cast<SolverCreate*>(self);
     for (auto& buf : Buffer::all()) {
       // A buffer should have autofence active if it doesn't have proposed
       // replenishments
@@ -1003,7 +1002,7 @@ PyObject* SolverPropagateStatus::create(PyTypeObject*, PyObject*,
                                         PyObject* kwds) {
   try {
     // Create the solver
-    SolverPropagateStatus* s = new SolverPropagateStatus();
+    auto* s = new SolverPropagateStatus();
 
     // Iterate over extra keywords, and set attributes.   @todo move this
     // responsibility to the readers...

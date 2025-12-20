@@ -103,7 +103,7 @@ PyObject* ItemDistribution::create(PyTypeObject* pytype, PyObject* args,
     */
 
     // Create the ItemDistribution
-    ItemDistribution* l = new ItemDistribution();
+    auto* l = new ItemDistribution();
     l->setItem(static_cast<Item*>(it));
 
     // Iterate over extra keywords, and set attributes.   @todo move this
@@ -270,14 +270,14 @@ OperationItemDistribution::~OperationItemDistribution() {
 }
 
 Buffer* OperationItemDistribution::getOrigin() const {
-  for (auto i = getFlows().begin(); i != getFlows().end(); ++i)
-    if (i->getQuantity() < 0.0) return i->getBuffer();
+  for (const auto & i : getFlows())
+    if (i.getQuantity() < 0.0) return i.getBuffer();
   return nullptr;
 }
 
 Buffer* OperationItemDistribution::getDestination() const {
-  for (auto i = getFlows().begin(); i != getFlows().end(); ++i)
-    if (i->getQuantity() > 0.0) return i->getBuffer();
+  for (const auto & i : getFlows())
+    if (i.getQuantity() > 0.0) return i.getBuffer();
   return nullptr;
 }
 
@@ -295,7 +295,7 @@ Object* ItemDistribution::finder(const DataValueDict& d) {
   // Check destination field
   tmp = d.get(Tags::destination);
   if (!tmp) return nullptr;
-  Location* destination = static_cast<Location*>(tmp->getObject());
+  auto* destination = static_cast<Location*>(tmp->getObject());
 
   // Walk over all suppliers of the item, and return
   // the first one with matching

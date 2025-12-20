@@ -23,6 +23,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <ranges>
+
 #include "frepple/solver.h"
 
 namespace frepple {
@@ -50,7 +52,7 @@ PyObject* OperatorDelete::create(PyTypeObject* pytype, PyObject* args,
                                  PyObject* kwds) {
   try {
     // Create the solver
-    OperatorDelete* s = new OperatorDelete();
+    auto* s = new OperatorDelete();
 
     // Iterate over extra keywords, and set attributes.   @todo move this
     // responsibility to the readers...
@@ -121,11 +123,10 @@ void OperatorDelete::solve(const Resource* r, void* v) {
   if (getLogLevel() > 0) logger << "Scanning " << r << " for excess" << endl;
 
   // Loop over all operationplans on the resource
-  for (Resource::loadplanlist::const_iterator i = r->getLoadPlans().begin();
-       i != r->getLoadPlans().end(); ++i) {
-    if (i->getEventType() == 1)
+  for (const auto & i : r->getLoadPlans()) {
+    if (i.getEventType() == 1)
       // Add all buffers into which material is produced to the stack
-      pushBuffers(i->getOperationPlan(), false, true);
+      pushBuffers(i.getOperationPlan(), false, true);
   }
 
   // Process all buffers found, and their upstream colleagues
@@ -146,10 +147,9 @@ void OperatorDelete::solve(const Demand* d, void* v) {
     // Find a candidate operationplan to delete
     OperationPlan* candidate = nullptr;
     const Demand::OperationPlanList& deli = d->getDelivery();
-    for (Demand::OperationPlanList::const_iterator i = deli.begin();
-         i != deli.end(); ++i)
-      if ((*i)->getProposed()) {
-        candidate = *i;
+    for (auto i : deli)
+      if (i->getProposed()) {
+        candidate = i;
         break;
       }
     if (!candidate) break;
@@ -185,9 +185,8 @@ void OperatorDelete::pushBuffers(OperationPlan* o, bool consuming,
 
     // Check if the buffer is already found on the stack
     bool found = false;
-    for (vector<Buffer*>::const_reverse_iterator j = buffersToScan.rbegin();
-         j != buffersToScan.rend(); ++j) {
-      if (*j == i->getBuffer()) {
+    for (auto & j : std::ranges::reverse_view(buffersToScan)) {
+      if (j == i->getBuffer()) {
         found = true;
         break;
       }
@@ -241,7 +240,7 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
           --fiter2;
           continue;
         }
-        FlowPlan* fp =
+        auto* fp =
             const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter2));
         if (!fp->getOperationPlan()->getProposed()) {
           // This consumer is locked
@@ -428,7 +427,7 @@ PyObject* OperatorDelete::solve(PyObject* self, PyObject* args) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {
-    OperatorDelete* sol = static_cast<OperatorDelete*>(self);
+    auto* sol = static_cast<OperatorDelete*>(self);
     switch (objtype) {
       case 0:
         // Delete all excess

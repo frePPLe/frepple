@@ -109,7 +109,7 @@ PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args,
     }
 
     // Create the resourceskill
-    ResourceSkill* l = new ResourceSkill(static_cast<Skill*>(skill),
+    auto* l = new ResourceSkill(static_cast<Skill*>(skill),
                                          static_cast<Resource*>(res), q2, eff);
 
     // Iterate over extra keywords, and set attributes.   @todo move this
@@ -151,12 +151,12 @@ Object* ResourceSkill::finder(const DataValueDict& d) {
   // Check resource
   const DataValue* tmp = d.get(Tags::resource);
   if (!tmp) return nullptr;
-  Resource* res = static_cast<Resource*>(tmp->getObject());
+  auto* res = static_cast<Resource*>(tmp->getObject());
 
   // Check skill field
   tmp = d.get(Tags::skill);
   if (!tmp) return nullptr;
-  Skill* skill = static_cast<Skill*>(tmp->getObject());
+  auto* skill = static_cast<Skill*>(tmp->getObject());
 
   // Walk over all skills of the resource, and return
   // the first one with matching

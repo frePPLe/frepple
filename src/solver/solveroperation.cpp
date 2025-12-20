@@ -558,7 +558,7 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
 }
 
 void SolverCreate::solve(const Operation* oper, void* v) {
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
   data->state->a_date = Date::infiniteFuture;
 
   // Call the user exit
@@ -737,7 +737,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
           data->state->curDemand, data->state->curOwnerOpplan, true, false);
     } else {
       // There is no owner operationplan yet. We need a new command.
-      CommandCreateOperationPlan* a = new CommandCreateOperationPlan(
+      auto* a = new CommandCreateOperationPlan(
           oper, opplan_qty, Date::infinitePast, max_short_date,
           data->state->curDemand, data->state->curBatch,
           data->state->curOwnerOpplan, true, false);
@@ -752,17 +752,16 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
       Date shortage_d;
       double shortage_q = 0.0;
       double z_produced = 0.0;
-      for (auto flpln = data->state->curBuffer->getFlowPlans().begin();
-           flpln != data->state->curBuffer->getFlowPlans().end(); ++flpln) {
-        if (flpln->isLastOnDate() && flpln->getOnhand() < -ROUNDING_ERROR &&
+      for (auto & flpln : data->state->curBuffer->getFlowPlans()) {
+        if (flpln.isLastOnDate() && flpln.getOnhand() < -ROUNDING_ERROR &&
             !shortage_q) {
           // Loop mode 1: Scan for the start of a shortage period
-          shortage_q = flpln->getOnhand();
-          shortage_d = flpln->getDate();
-        } else if (shortage_q && flpln->getOperationPlan() == z) {
+          shortage_q = flpln.getOnhand();
+          shortage_d = flpln.getDate();
+        } else if (shortage_q && flpln.getOperationPlan() == z) {
           // Loop mode 2: See how many transfer batches are required to fill the
           // shortage
-          z_produced += flpln->getQuantity();
+          z_produced += flpln.getQuantity();
           if (shortage_q + z_produced < -ROUNDING_ERROR)
             // Not enough yet
             continue;
@@ -770,7 +769,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
           // Now we need to move the operationplan such that the current
           // transfer batch aligns with the shortage date.
           Duration delta;
-          oper->calculateOperationTime(z, shortage_d, flpln->getDate(), &delta);
+          oper->calculateOperationTime(z, shortage_d, flpln.getDate(), &delta);
           DateRange newdate =
               oper->calculateOperationTime(z, z->getStart(), delta, false);
           z->setStart(newdate.getStart(), false, false);
@@ -909,15 +908,14 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
 }
 
 void SolverCreate::solve(const OperationItemSupplier* o, void* v) {
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
   if (o->getPriority() && o->getBuffer()) {
     bool all_po = true;
     if (o->getOwner() &&
         o->getOwner()->hasType<OperationSplit, OperationAlternate>()) {
-      for (auto alt = o->getOwner()->getSubOperations().begin();
-           alt != o->getOwner()->getSubOperations().end(); ++alt) {
-        if ((*alt)->getOperation()->getPriority() &&
-            !(*alt)->getOperation()->hasType<OperationItemSupplier>()) {
+      for (auto & alt : o->getOwner()->getSubOperations()) {
+        if (alt->getOperation()->getPriority() &&
+            !alt->getOperation()->hasType<OperationItemSupplier>()) {
           all_po = false;
           break;
         }
@@ -972,7 +970,7 @@ void SolverCreate::solve(const OperationItemSupplier* o, void* v) {
 
 // No need to take post- and pre-operation times into account
 void SolverCreate::solve(const OperationRouting* oper, void* v) {
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
   auto useDependencies = oper->useDependencies();
 
   // Call the user exit
@@ -1005,9 +1003,8 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
       logger << "Deprecation warning: routing operation '" << oper
              << "' shouldn't produce material" << endl;
     }
-    for (auto e = oper->getSubOperations().begin();
-         e != oper->getSubOperations().end(); ++e) {
-      f = (*e)->getOperation()->findFlow(data->state->curBuffer,
+    for (auto & e : oper->getSubOperations()) {
+      f = e->getOperation()->findFlow(data->state->curBuffer,
                                          data->state->q_date);
       if (f && f->isProducer()) {
         // Flow on routing steps
@@ -1064,7 +1061,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   if (flow_qty_fixed && !flow_qty_per) data->accept_partial_reply = true;
 
   // Create the top operationplan
-  CommandCreateOperationPlan* a = new CommandCreateOperationPlan(
+  auto* a = new CommandCreateOperationPlan(
       oper, a_qty, Date::infinitePast, data->state->q_date,
       data->state->curDemand, data->state->curBatch,
       data->state->curOwnerOpplan, false, false);
@@ -1291,15 +1288,14 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
 void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   {
     Operation* curAlt = nullptr;
-    for (auto altIter = oper->getSubOperations().begin();
-         altIter != oper->getSubOperations().end(); ++altIter) {
-      if ((*altIter)->getPriority() && !(*altIter)->getEffective()) {
+    for (auto & altIter : oper->getSubOperations()) {
+      if (altIter->getPriority() && !altIter->getEffective()) {
         if (curAlt) {
           // Multiple alternates operations are found.
           curAlt = nullptr;
           break;
         } else
-          curAlt = (*altIter)->getOperation();
+          curAlt = altIter->getOperation();
       }
     }
     if (curAlt) {
@@ -1310,7 +1306,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
     }
   }
 
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
   Date origQDate = data->state->q_date;
   double origQqty = data->state->q_qty;
   double origQtyMin = data->state->q_qty_min;
@@ -1478,7 +1474,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       // Create the top operationplan.
       // Note that both the top- and the sub-operation can have a flow in the
       // requested buffer
-      CommandCreateOperationPlan* a = new CommandCreateOperationPlan(
+      auto* a = new CommandCreateOperationPlan(
           oper, a_qty, Date::infinitePast, ask_date, d, data->state->curBatch,
           prev_owner_opplan, false, false);
       if (!prev_owner_opplan) data->getCommandManager()->add(a);
@@ -1710,7 +1706,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       // Create the top operationplan.
       // Note that both the top- and the sub-operation can have a flow in the
       // requested buffer
-      CommandCreateOperationPlan* a = new CommandCreateOperationPlan(
+      auto* a = new CommandCreateOperationPlan(
           oper, a_qty, Date::infinitePast, bestQDate, d, data->state->curBatch,
           prev_owner_opplan, false, false);
       if (!prev_owner_opplan) data->getCommandManager()->add(a);
@@ -1807,7 +1803,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       // Create the top operationplan.
       // Note that both the top- and the sub-operation can have a flow in the
       // requested buffer
-      CommandCreateOperationPlan* a = new CommandCreateOperationPlan(
+      auto* a = new CommandCreateOperationPlan(
           oper, a_qty, Date::infinitePast, origQDate, d, data->state->curBatch,
           prev_owner_opplan, false, false);
       if (!prev_owner_opplan) data->getCommandManager()->add(a);
@@ -1899,7 +1895,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
 }
 
 void SolverCreate::solve(const OperationSplit* oper, void* v) {
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
   Date origQDate = data->state->q_date;
   double origQqty = data->state->q_qty;
   Buffer* buf = data->state->curBuffer;
@@ -1938,10 +1934,9 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
 
   // Compute the sum of all effective percentages
   int sum_percent = 0;
-  for (auto iter = oper->getSubOperations().begin();
-       iter != oper->getSubOperations().end(); ++iter) {
-    if ((*iter)->getEffective().within(data->state->q_date))
-      sum_percent += (*iter)->getPriority();
+  for (auto & iter : oper->getSubOperations()) {
+    if (iter->getEffective().within(data->state->q_date))
+      sum_percent += iter->getPriority();
   }
   if (!sum_percent)
     // Oops, no effective suboperations found.
@@ -2108,7 +2103,7 @@ PyObject* Solver::createsBatches(PyObject* self, PyObject* args) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {
-    SolverCreate* me = static_cast<SolverCreate*>(self);
+    auto* me = static_cast<SolverCreate*>(self);
     for (auto& o : Operation::all()) me->createsBatches(&o, &me->getCommands());
   } catch (...) {
     Py_BLOCK_THREADS;
@@ -2137,7 +2132,7 @@ void Solver::createsBatches(Operation* oper, void* v) {
         ld->getResource()->getConstrained())
       return;
 
-  Solver* solver = static_cast<Solver*>(v);
+  auto* solver = static_cast<Solver*>(v);
   auto loglevel = solver->getLogLevel();
 
   // Loop over all operationplans of the operation

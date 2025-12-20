@@ -450,7 +450,7 @@ Object* FlowPlan::reader(const MetaClass* cat, const DataValueDict& in,
   Object* opplanobject = opplanElement->getObject();
   if (!opplanobject || !opplanobject->hasType<OperationPlan>())
     throw DataException("Invalid operationplan field");
-  OperationPlan* opplan = static_cast<OperationPlan*>(opplanobject);
+  auto* opplan = static_cast<OperationPlan*>(opplanobject);
 
   // Pick up the item.
   const DataValue* itemElement = in.get(Tags::item);

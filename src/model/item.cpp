@@ -104,13 +104,12 @@ Date Item::findEarliestPurchaseOrder(const PooledString& batch) const {
   bufferIterator buf_iter(this);
   while (Buffer* buf = buf_iter.next()) {
     if (buf->getBatch() != batch) continue;
-    for (auto flpln = buf->getFlowPlans().begin();
-         flpln != buf->getFlowPlans().end(); ++flpln) {
-      if (flpln->getDate() >= earliest) break;
-      auto opplan = flpln->getOperationPlan();
+    for (auto & flpln : buf->getFlowPlans()) {
+      if (flpln.getDate() >= earliest) break;
+      auto opplan = flpln.getOperationPlan();
       if (opplan && opplan->getOperation()->hasType<OperationItemSupplier>() &&
           opplan->getProposed()) {
-        earliest = flpln->getDate();
+        earliest = flpln.getDate();
         break;
       }
     }

@@ -67,7 +67,7 @@ class TimeLine {
     Event(unsigned short t, double q = 0.0) : qty(q), tp(t){};
 
    public:
-    virtual ~Event(){};
+    ~Event() override{};
 
     /* Default constructor. */
     Event() : tp(0), qty(0) {}
@@ -206,7 +206,7 @@ class TimeLine {
       this->initType(EventPythonType->type_object());
     }
 
-    virtual OperationPlan* getOperationPlan() const { return nullptr; }
+    OperationPlan* getOperationPlan() const override { return nullptr; }
   };
 
   /* A timeline event representing a change of the minimum target. */
@@ -222,7 +222,7 @@ class TimeLine {
     EventMinQuantity* prevMin = nullptr;
 
    public:
-    virtual TimeLine<type>* getTimeLine() const { return tmline; }
+    TimeLine<type>* getTimeLine() const override { return tmline; }
 
     EventMinQuantity(Date d, TimeLine<type>* t, double f = 0.0)
         : Event(3), newMin(f), tmline(t) {
@@ -232,14 +232,14 @@ class TimeLine {
 
     void setMin(double f) { newMin = f; }
 
-    virtual double getMin(bool inclusive = true) const {
+    double getMin(bool inclusive = true) const override {
       if (inclusive)
         return newMin;
       else
         return prevMin ? prevMin->newMin : 0.0;
     }
 
-    virtual OperationPlan* getOperationPlan() const { return nullptr; }
+    OperationPlan* getOperationPlan() const override { return nullptr; }
   };
 
   /* A timeline event representing a change of the maximum target. */
@@ -255,7 +255,7 @@ class TimeLine {
     EventMaxQuantity* prevMax = nullptr;
 
    public:
-    virtual TimeLine<type>* getTimeLine() const { return tmline; }
+    TimeLine<type>* getTimeLine() const override { return tmline; }
 
     EventMaxQuantity(Date d, TimeLine<type>* t, double f = 0.0)
         : Event(4), newMax(f), tmline(t) {
@@ -265,14 +265,14 @@ class TimeLine {
 
     void setMax(double f) { newMax = f; }
 
-    virtual double getMax(bool inclusive = true) const {
+    double getMax(bool inclusive = true) const override {
       if (inclusive)
         return newMax;
       else
         return prevMax ? prevMax->newMax : 0.0;
     }
 
-    virtual OperationPlan* getOperationPlan() const { return nullptr; }
+    OperationPlan* getOperationPlan() const override { return nullptr; }
   };
 
   /* This is bi-directional iterator through the timeline. */
@@ -305,7 +305,7 @@ class TimeLine {
     Event* next() {
       // Only use the change events
       while (cur && cur->getEventType() != 1) cur = cur->next;
-      Event* tmp = const_cast<Event*>(cur);
+      auto* tmp = const_cast<Event*>(cur);
       if (cur) cur = cur->next;
       return tmp;
     }
@@ -616,7 +616,7 @@ void TimeLine<type>::insert(Event* e) {
     case 2:
       // Insert in the list of setOnhand
       {
-        EventSetOnhand* m = static_cast<EventSetOnhand*>(e);
+        auto* m = static_cast<EventSetOnhand*>(e);
         if (!lastSet || m->getDate() >= lastSet->getDate()) {
           // New last setOnhand
           m->prevSet = lastSet;
@@ -639,7 +639,7 @@ void TimeLine<type>::insert(Event* e) {
     case 3:
       // Insert in the list of minima
       {
-        EventMinQuantity* m = static_cast<EventMinQuantity*>(e);
+        auto* m = static_cast<EventMinQuantity*>(e);
         if (!lastMin || m->getDate() >= lastMin->getDate()) {
           // New last minimum
           m->prevMin = lastMin;
@@ -656,7 +656,7 @@ void TimeLine<type>::insert(Event* e) {
     case 4:
       // Insert in the list of maxima
       {
-        EventMaxQuantity* m = static_cast<EventMaxQuantity*>(e);
+        auto* m = static_cast<EventMaxQuantity*>(e);
         if (!lastMax || m->getDate() >= lastMax->getDate()) {
           // New last maximum
           m->prevMax = lastMax;
@@ -719,7 +719,7 @@ void TimeLine<type>::erase(Event* e) {
     case 2:
       // Remove from the list of setonhand
       {
-        EventSetOnhand* m = static_cast<EventSetOnhand*>(e);
+        auto* m = static_cast<EventSetOnhand*>(e);
         if (lastSet == e)
           // New last set
           lastSet = m->prevSet;
@@ -733,7 +733,7 @@ void TimeLine<type>::erase(Event* e) {
     case 3:
       // Remove from the list of minima
       {
-        EventMinQuantity* m = static_cast<EventMinQuantity*>(e);
+        auto* m = static_cast<EventMinQuantity*>(e);
         if (lastMin == e)
           // New last minimum
           lastMin = m->prevMin;
@@ -747,7 +747,7 @@ void TimeLine<type>::erase(Event* e) {
     case 4:
       // Remove from the list of maxima
       {
-        EventMaxQuantity* m = static_cast<EventMaxQuantity*>(e);
+        auto* m = static_cast<EventMaxQuantity*>(e);
         if (lastMax == e)
           // New last maximum
           lastMax = m->prevMax;

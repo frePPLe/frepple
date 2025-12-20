@@ -359,7 +359,7 @@ void Cache::workerthread(Cache* me, int index) {
     }
 
     // Define lower cache threshold as 80% of the maximum cache size
-    unsigned long threshold = static_cast<unsigned long>(me->max_objects * 0.8);
+    auto threshold = static_cast<unsigned long>(me->max_objects * 0.8);
 
     // Determine whether or not we want to reduce the cache size now
     bool reduce_size = me->count > threshold;

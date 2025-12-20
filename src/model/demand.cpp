@@ -111,9 +111,9 @@ void Demand::deleteOperationPlans(bool deleteLocked, CommandManager* cmds) {
   while (true) {
     // Find a candidate to delete
     OperationPlan* candidate = nullptr;
-    for (auto i = deli.begin(); i != deli.end(); ++i)
-      if (deleteLocked || (*i)->getProposed()) {
-        candidate = *i;
+    for (auto & i : deli)
+      if (deleteLocked || i->getProposed()) {
+        candidate = i;
         break;
       }
     if (!candidate) break;
@@ -160,7 +160,7 @@ OperationPlan* Demand::getLatestDelivery() const {
 OperationPlan* Demand::getEarliestDelivery() const {
   const Demand::OperationPlanList& l = getDelivery();
   OperationPlan* last = nullptr;
-  for (auto i = l.begin(); i != l.end(); ++i) last = *i;
+  for (auto i : l) last = i;
   return last;
 }
 
@@ -171,8 +171,8 @@ void Demand::addDelivery(OperationPlan* o) {
   // Check if it is already in the list.
   // If it is, simply exit the function. No need to give a warning message
   // since it's harmless.
-  for (auto i = deli.begin(); i != deli.end(); ++i)
-    if (*i == o) return;
+  for (auto & i : deli)
+    if (i == o) return;
 
   // Add to the list of delivery operationplans.
   deli.push_front(o);
@@ -253,8 +253,8 @@ Operation* Demand::getDeliveryOperation() const {
 
 double Demand::getPlannedQuantity() const {
   double delivered(0.0);
-  for (auto i = deli.begin(); i != deli.end(); ++i)
-    delivered += (*i)->getQuantity();
+  for (auto i : deli)
+    delivered += i->getQuantity();
   return delivered;
 }
 
@@ -262,7 +262,7 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args,
                                 PyObject* kwds) {
   try {
     // Pick up the demand
-    Demand* dmd = static_cast<Demand*>(self);
+    auto* dmd = static_cast<Demand*>(self);
     if (!dmd) throw LogicException("Can't add a contraint to a null demand");
 
     // Parse the arguments

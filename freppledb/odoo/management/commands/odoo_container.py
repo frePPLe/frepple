@@ -395,8 +395,7 @@ class Command(BaseCommand):
                             limit 1
                             ),
                         webtoken_key = '%s',
-                        frepple_server = '%s',
-                        disclose_stack_trace = true
+                        frepple_server = '%s'
                     """
                     % (
                         get_databases()[DEFAULT_DB_ALIAS].get(

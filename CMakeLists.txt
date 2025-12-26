@@ -328,3 +328,14 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   )
 endif()
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+find_program(run-clang-tidy NAMES run-clang-tidy)
+if(run-clang-tidy)
+  add_custom_target(run-clang-tidy
+    COMMAND run-clang-tidy -p build -checks='-*,modernize-*,performance-*,-modernize-use-trailing-return-type' '-header-filter=.*' -fix 'include/*' 'src/*'
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  )
+endif()
+

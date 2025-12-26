@@ -149,8 +149,7 @@ Most of the configuration is happening on frePPLe side.
 * **Configuring the connector - frePPLe side**
 
   * | **Edit the configuration file djangosettings.py**
-    | The file is found under /etc/frepple (linux) or <install folder>\bin\custom
-      (Windows).
+    | The file is found under /etc/frepple.
     | Assure that the freppledb.openbravo is included in the setting
       INSTALLED_APPS which defines the enabled extensions. By default
       it is not enabled.

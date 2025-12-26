@@ -586,19 +586,11 @@ class Date {
    * day of the year, hour, minutes, seconds
    */
   inline void getInfo(struct tm* tm_struct) const {
-// The standard library function localtime() is not re-entrant: the same
-// static structure is used for all calls. In a multi-threaded environment
-// the function is not to be used.
-#ifdef HAVE_LOCALTIME_R
+    // The standard library function localtime() is not re-entrant: the same
+    // static structure is used for all calls. In a multi-threaded environment
+    // the function is not to be used.
     // The POSIX standard defines a re-entrant version of the function.
     localtime_r(&lval, tm_struct);
-#elif defined(WIN32)
-    // Microsoft uses another function name with, of course, a different
-    // name and a different order of arguments.
-    localtime_s(tm_struct, &lval);
-#else
-#error A multi-threading safe localtime function is required
-#endif
   }
 
   /* Constructor initialized with a long value. */
@@ -747,35 +739,19 @@ class DateDetail {
  public:
   /* Constructor from a date. */
   inline DateDetail(const Date& d) : val(d.lval) {
-// The standard library function localtime() is not re-entrant: the same
-// static structure is used for all calls. In a multi-threaded environment
-// the function is not to be used.
-#ifdef HAVE_LOCALTIME_R
+    // The standard library function localtime() is not re-entrant: the same
+    // static structure is used for all calls. In a multi-threaded environment
+    // the function is not to be used.
     // The POSIX standard defines a re-entrant version of the function.
     localtime_r(&(d.lval), &time_info);
-#elif defined(WIN32)
-    // Microsoft uses another function name with, of course, a different
-    // name and a different order of arguments.
-    localtime_s(&time_info, &val);
-#else
-#error A multi-threading safe localtime function is required
-#endif
   }
 
   inline DateDetail(const Date* d) : val(d->lval) {
-// The standard library function localtime() is not re-entrant: the same
-// static structure is used for all calls. In a multi-threaded environment
-// the function is not to be used.
-#ifdef HAVE_LOCALTIME_R
+    // The standard library function localtime() is not re-entrant: the same
+    // static structure is used for all calls. In a multi-threaded environment
+    // the function is not to be used.
     // The POSIX standard defines a re-entrant version of the function.
     localtime_r(&(d->lval), &time_info);
-#elif defined(WIN32)
-    // Microsoft uses another function name with, of course, a different
-    // name and a different order of arguments.
-    localtime_s(&time_info, &val);
-#else
-#error A multi-threading safe localtime function is required
-#endif
   }
 
   /* Convert a DateDetail object into a Date object. */
@@ -3092,11 +3068,7 @@ class Object : public PyObject {
   /* Delete a property if it is set. */
   void deleteProperty(const string&);
 
-  /* Retrieve a string property.
-   * This method needs to be defined inline. On windows the function
-   * otherwise can allocate and release the string in different modules,
-   * resulting in a nasty crash.
-   */
+  /* Retrieve a string property. */
   string getStringProperty(const string& name, const string& def = "") const {
     if (!dict)
       // Not a single property has been defined
@@ -6054,7 +6026,10 @@ class MetaFieldString : public MetaFieldBase {
   MetaFieldString(const Keyword& n, getFunction getfunc,
                   setFunction setfunc = nullptr, string dflt = "",
                   unsigned int c = BASE)
-      : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(std::move(dflt)) {
+      : MetaFieldBase(n, c),
+        getf(getfunc),
+        setf(setfunc),
+        def(std::move(dflt)) {
     if (getfunc == nullptr)
       throw DataException("Getter function can't be nullptr");
   };
@@ -6110,7 +6085,10 @@ class MetaFieldStringRef : public MetaFieldBase {
   MetaFieldStringRef(const Keyword& n, getFunction getfunc,
                      setFunction setfunc = nullptr, string dflt = "",
                      unsigned int c = BASE)
-      : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(std::move(dflt)) {
+      : MetaFieldBase(n, c),
+        getf(getfunc),
+        setf(setfunc),
+        def(std::move(dflt)) {
     if (getfunc == nullptr)
       throw DataException("Getter function can't be nullptr");
   };

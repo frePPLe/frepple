@@ -25,13 +25,8 @@
 
 // These headers are required for the loading of dynamic libraries and the
 // detection of the number of cores.
-#ifdef WIN32
-#include <windows.h>
-#else
 #include <dlfcn.h>
 #include <unistd.h>
-#endif
-
 #include <sys/stat.h>
 
 #include "frepple/utils.h"

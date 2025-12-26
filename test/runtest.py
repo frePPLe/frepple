@@ -134,11 +134,8 @@ def runTestSuite():
 
     # Update the search path for shared libraries, such that the modules
     # can be picked up.
-    #  LD_LIBRARY_PATH variable for Linux, Solaris
-    #  LIBPATH for AIX
-    #  SHLIB_PATH for HPUX
-    #  PATH for windows
-    # We set all variables anyway.
+    # Different platforms use different environment variables for this, and we
+    # set all.
     for var in ("LD_LIBRARY_PATH", "LIBPATH", "SHLIB_PATH", "PATH"):
         if var in os.environ:
             os.environ[var] += os.pathsep + os.environ["FREPPLE_HOME"]

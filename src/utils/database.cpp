@@ -23,10 +23,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(WIN32)
-#include <WinSock2.h>
-#endif
-
 #include <deque>
 #include <thread>
 

@@ -46,17 +46,9 @@ if __name__ == "__main__":
             # Linux install layout
             os.path.join(curdir, "..", "share", "frepple", "venv"),
         ):
-            if (
-                # Linux
-                os.name != "nt"
-                and os.path.isfile(os.path.join(candidate, "bin", "python3"))
-                and os.path.isfile(os.path.join(candidate, "bin", "activate"))
-            ) or (
-                # Windows
-                os.name == "nt"
-                and os.path.isfile(os.path.join(candidate, "Scripts", "python.exe"))
-                and os.path.isfile(os.path.join(candidate, "Scripts", "activate"))
-            ):
+            if os.path.isfile(
+                os.path.join(candidate, "bin", "python3")
+            ) and os.path.isfile(os.path.join(candidate, "bin", "activate")):
                 os.environ["VIRTUAL_ENV"] = candidate
                 venv = candidate
                 break
@@ -64,25 +56,17 @@ if __name__ == "__main__":
     # Activate Python virtual environment
     if venv:
         prev_length = len(sys.path)
-        if os.name == "nt":
-            os.environ["PATH"] = os.pathsep.join(
-                [os.path.join(venv, "Scripts")]
-                + os.environ.get("PATH", "").split(os.pathsep)
+        os.environ["PATH"] = os.pathsep.join(
+            [os.path.join(venv, "bin")] + os.environ.get("PATH", "").split(os.pathsep)
+        )
+        path = os.path.realpath(
+            os.path.join(
+                venv,
+                "lib",
+                "python%d.%d" % sys.version_info[:2],
+                "site-packages",
             )
-            path = os.path.realpath(os.path.join(venv, "Lib", "site-packages"))
-        else:
-            os.environ["PATH"] = os.pathsep.join(
-                [os.path.join(venv, "bin")]
-                + os.environ.get("PATH", "").split(os.pathsep)
-            )
-            path = os.path.realpath(
-                os.path.join(
-                    venv,
-                    "lib",
-                    "python%d.%d" % sys.version_info[:2],
-                    "site-packages",
-                )
-            )
+        )
         site.addsitedir(path)
         sys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]
         sys.real_prefix = sys.prefix

@@ -1,10 +1,6 @@
 # Uncomment the next line to see the compiler commands
 # set(CMAKE_VERBOSE_MAKEFILE ON)
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/frepple.rc.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/frepple.rc"
-)
-configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/frepple.ico"
   "${CMAKE_CURRENT_BINARY_DIR}/frepple.ico"
   COPYONLY
@@ -100,7 +96,6 @@ add_dependencies(forecast solver)
 add_library(frepple SHARED
   dllmain.cpp
   tags.cpp
-  "${CMAKE_CURRENT_BINARY_DIR}/frepple.rc"
 )
 target_link_libraries(frepple PUBLIC utils)
 target_link_libraries(frepple PUBLIC model)
@@ -108,22 +103,8 @@ target_link_libraries(frepple PUBLIC solver)
 target_link_libraries(frepple PUBLIC xerces-c)
 target_link_libraries(frepple PUBLIC forecast)
 
-if(WIN32)
-  target_link_libraries(frepple PRIVATE libpq)
-  target_link_libraries(frepple PRIVATE ${Python3_LIBRARIES})
-  set_target_properties(frepple PROPERTIES LINK_FLAGS "/ignore:4099")
-  file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/bin/frepple.exe" frepple-exe)
-  string(REPLACE "\\" "\\\\" frepple-exe-escaped "${frepple-exe}")
-  add_custom_command(
-    TARGET frepple
-    PRE_LINK
-    COMMAND WMIC PROCESS WHERE ExecutablePath='${frepple-exe-escaped}' DELETE
-    COMMENT "Kill running frepple processes"
-  )
-else()
-  target_link_libraries(frepple PRIVATE pq)
-  target_link_libraries(frepple PRIVATE ${Python3_LIBRARIES})
-endif()
+target_link_libraries(frepple PRIVATE pq)
+target_link_libraries(frepple PRIVATE ${Python3_LIBRARIES})
 
 install(
   TARGETS frepple
@@ -134,7 +115,6 @@ install(
 add_executable(frepple-main
   main.cpp
   "${CMAKE_SOURCE_DIR}/include/freppleinterface.h"
-  "${CMAKE_CURRENT_BINARY_DIR}/frepple.rc"
 )
 target_link_libraries(frepple-main LINK_PUBLIC frepple)
 set_target_properties(frepple-main PROPERTIES

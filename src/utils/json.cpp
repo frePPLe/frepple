@@ -135,7 +135,6 @@ void JSONInputFile::parse(Object* pRoot) {
   else if (filesystem::is_directory(p)) {
     // Data is a directory: loop through all *.json files now. No recursion in
     // subdirectories is done.
-    // The code is unfortunately different for Windows & Linux. Sigh...
     for (const auto& entry : filesystem::directory_iterator(p)) {
       if (entry.is_regular_file() && entry.path().extension() == ".json")
         JSONInputFile(entry.path().string().c_str()).parse(pRoot);

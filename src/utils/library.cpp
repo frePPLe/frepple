@@ -40,8 +40,7 @@
 #include <sys/prctl.h>
 #endif
 
-namespace frepple {
-namespace utils {
+namespace frepple::utils {
 
 // Static stringpool table
 set<string> PooledString::pool;
@@ -480,5 +479,4 @@ Object* MetaCategory::ControllerDefault(const MetaClass* cat,
   return nullptr;
 }
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

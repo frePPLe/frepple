@@ -32,8 +32,7 @@
 
 #include "frepple/database.h"
 
-namespace frepple {
-namespace utils {
+namespace frepple::utils {
 
 DatabaseWriter* DatabaseWriter::instance = nullptr;
 
@@ -435,5 +434,4 @@ PGresult* DatabaseTransaction::execute(PGconn* conn) {
   return res;
 }
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

@@ -29,8 +29,7 @@
 
 #include <filesystem>
 
-namespace frepple {
-namespace utils {
+namespace frepple::utils {
 
 std::hash<string> Keyword::hasher;
 xercesc::XMLTranscoder* XMLInput::utf8_encoder = nullptr;
@@ -947,5 +946,4 @@ void XMLInputFile::parse(Object* pRoot, bool validate) {
   }
 }
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

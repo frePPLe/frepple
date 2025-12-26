@@ -33,8 +33,7 @@
 #include "frepple/utils.h"
 #include "frepple/xml.h"
 
-namespace frepple {
-namespace utils {
+namespace frepple::utils {
 
 PyObject* PythonLogicException = nullptr;
 PyObject* PythonDataException = nullptr;
@@ -1221,5 +1220,4 @@ extern "C" PyObject* str_handler(PyObject* self) {
   }
 }
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

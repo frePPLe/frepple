@@ -32,8 +32,7 @@
  * the parsing of the data. */
 // #define PARSE_DEBUG
 
-namespace frepple {
-namespace utils {
+namespace frepple::utils {
 
 // This is used as a dummy field to indicate situations where we need to
 // set a property field on an object.
@@ -1037,5 +1036,4 @@ const JSONData* JSONDataValueDict::get(const Keyword& key) const {
   return nullptr;
 }
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

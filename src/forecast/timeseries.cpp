@@ -1004,9 +1004,8 @@ void ForecastSolver::Seasonal::detectCycle(vector<double>& timeseries,
 ForecastSolver::Metrics
     ForecastSolver::Seasonal::generateForecast  // TODO No outlier detection in
                                                 // this method
-    (const Forecast* fcst, vector<ForecastBucketData>& bucketdata,
-     short firstbckt, vector<double>& timeseries, unsigned int count,
-     ForecastSolver* solver) {
+    (const Forecast* fcst, vector<ForecastBucketData>&, short,
+     vector<double>& timeseries, unsigned int count, ForecastSolver* solver) {
   // Check for seasonal cycles
   detectCycle(timeseries, count);
 
@@ -1491,9 +1490,8 @@ void ForecastSolver::Croston::applyForecast(
 //
 
 ForecastSolver::Metrics ForecastSolver::Manual::generateForecast(
-    const Forecast* fcst, vector<ForecastBucketData>& bucketdata,
-    short firstbckt, vector<double>& timeseries, unsigned int count,
-    ForecastSolver* solver) {
+    const Forecast*, vector<ForecastBucketData>&, short, vector<double>&,
+    unsigned int, ForecastSolver*) {
   // Return dummy metrics.
   return Metrics(0, 0, true);
 }

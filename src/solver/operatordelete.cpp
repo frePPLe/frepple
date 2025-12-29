@@ -48,8 +48,7 @@ int OperatorDelete::initialize() {
   return x.typeReady();
 }
 
-PyObject* OperatorDelete::create(PyTypeObject* pytype, PyObject* args,
-                                 PyObject* kwds) {
+PyObject* OperatorDelete::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Create the solver
     auto* s = new OperatorDelete();
@@ -85,7 +84,7 @@ PyObject* OperatorDelete::create(PyTypeObject* pytype, PyObject* args,
   }
 }
 
-void OperatorDelete::solve(void* v) {
+void OperatorDelete::solve(void*) {
   // Loop over all buffers Push to stack, in order of level TODO
   // Clean up all buffers in the list
   while (!buffersToScan.empty()) {
@@ -95,7 +94,7 @@ void OperatorDelete::solve(void* v) {
   }
 }
 
-void OperatorDelete::solve(OperationPlan* o, void* v) {
+void OperatorDelete::solve(OperationPlan* o, void*) {
   if (!o) return;  // Null argument passed
 
   // Mark all buffers.
@@ -119,7 +118,7 @@ void OperatorDelete::solve(OperationPlan* o, void* v) {
   }
 }
 
-void OperatorDelete::solve(const Resource* r, void* v) {
+void OperatorDelete::solve(const Resource* r, void*) {
   if (getLogLevel() > 0) logger << "Scanning " << r << " for excess\n";
 
   // Loop over all operationplans on the resource
@@ -137,7 +136,7 @@ void OperatorDelete::solve(const Resource* r, void* v) {
   }
 }
 
-void OperatorDelete::solve(const Demand* d, void* v) {
+void OperatorDelete::solve(const Demand* d, void*) {
   if (getLogLevel() > 1) logger << "Scanning " << d << " for excess\n";
 
   // Delete all delivery operationplans.
@@ -202,7 +201,7 @@ void OperatorDelete::pushBuffers(OperationPlan* o, bool consuming,
     pushBuffers(&*subopplan, consuming, producing);
 }
 
-void OperatorDelete::solve(const Buffer* b, void* v) {
+void OperatorDelete::solve(const Buffer* b, void*) {
   if (getLogLevel() > 1) logger << "Scanning buffer " << b << '\n';
 
   Buffer::flowplanlist::const_iterator fiter = b->getFlowPlans().begin();

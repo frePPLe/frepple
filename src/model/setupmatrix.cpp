@@ -88,7 +88,7 @@ SetupMatrix::~SetupMatrix() {
     if (m.getSetupMatrix() == this) m.setSetupMatrix(nullptr);
 }
 
-Object* SetupMatrixRule::reader(const MetaClass* cat, const DataValueDict& atts,
+Object* SetupMatrixRule::reader(const MetaClass*, const DataValueDict& atts,
                                 CommandManager* mgr) {
   // Pick up the setupmatrix
   const DataValue* matrix_val = atts.get(Tags::setupmatrix);

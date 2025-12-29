@@ -202,8 +202,6 @@ void SolverCreate::solve(const Flow* fl,
     data->state->q_qty_min =
         -fl->getQuantityFixed() - data->state->q_qty_min * fl->getQuantity();
     data->state->q_date = data->state->q_flowplan->getDate();
-    double extra_supply = 0.0;
-    auto orig_q_date = data->state->q_date;
 
     if (data->state->q_qty != 0.0) {
       /*

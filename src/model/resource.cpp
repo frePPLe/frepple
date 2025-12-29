@@ -105,7 +105,7 @@ void Resource::inspect(const string& msg, const short i) const {
     prev = oo.getDate();
   }
 
-  for (const auto & oo : getLoadPlans()) {
+  for (const auto& oo : getLoadPlans()) {
     if (cnt > 100) {
       // Skip uninteresting events
       if (oo.getDate() < earliest - Duration(7L * 24L * 3600L)) continue;
@@ -279,14 +279,15 @@ void ResourceBuckets::setMaximumCalendar(Calendar* c) {
 
 double ResourceBuckets::getMaxBucketCapacity() const {
   double tmp = 0.0;
-  for (const auto & loadplan : loadplans)
-    if (loadplan.getEventType() == 2 && loadplan.getOnhand() > tmp) tmp = loadplan.getOnhand();
+  for (const auto& loadplan : loadplans)
+    if (loadplan.getEventType() == 2 && loadplan.getOnhand() > tmp)
+      tmp = loadplan.getOnhand();
   return tmp;
 }
 
 void Resource::deleteOperationPlans(bool deleteLocked) {
   // Delete the operationplans
-  for (auto & load : loads)
+  for (auto& load : loads)
     OperationPlan::deleteOperationPlans(load.getOperation(), deleteLocked);
 
   // Mark to recompute the problems
@@ -412,7 +413,7 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o)
   }
 
   // Initialize the iterator for all resources
-  for (auto & i : res_list) {
+  for (auto& i : res_list) {
     i.ldplaniter =
         Resource::loadplanlist::iterator(i.res->getLoadPlans().begin());
     i.bucketized = i.res->hasType<ResourceBuckets>();
@@ -555,7 +556,7 @@ PyObject* Resource::PlanIterator::iternext() {
     Date cpp_end_date = PythonData(end_date).getDate();
 
     // Find the load of all resources in this bucket
-    for (auto & i : res_list) {
+    for (auto& i : res_list) {
       i.cur_date = cpp_end_date;
       if (i.bucketized) {
         // Bucketized resource
@@ -998,7 +999,7 @@ double ResourceBuckets::getUtilization(Date st, Date nd) const {
   return summax ? sumload / summax : sumload;
 }
 
-double ResourceInfinite::getUtilization(Date st, Date nd) const {
+double ResourceInfinite::getUtilization(Date, Date) const {
   // Life can be simple sometimes...
   return 0.0;
 }

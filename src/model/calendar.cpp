@@ -320,7 +320,7 @@ CalendarBucket* Calendar::addBucket(Date st, Date nd, double val) {
   return bckt;
 }
 
-Object* CalendarBucket::reader(const MetaClass* cat, const DataValueDict& atts,
+Object* CalendarBucket::reader(const MetaClass*, const DataValueDict& atts,
                                CommandManager* mgr) {
   // Pick up the calendar
   const DataValue* cal_val = atts.get(Tags::calendar);
@@ -658,8 +658,7 @@ void Calendar::buildEventList(Date includedate) {
   }
 }
 
-PyObject* Calendar::setPythonValue(PyObject* self, PyObject* args,
-                                   PyObject* kwdict) {
+PyObject* Calendar::setPythonValue(PyObject* self, PyObject* args, PyObject*) {
   try {
     // Pick up the calendar
     auto* cal = static_cast<CalendarDefault*>(self);

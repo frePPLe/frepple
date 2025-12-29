@@ -113,7 +113,6 @@ void SolverCreate::chooseResource(
   double beforeCost = data->state->a_cost;
   double beforePenalty = data->state->a_penalty;
   OperationPlanState originalOpplan(lplan->getOperationPlan());
-  double originalLoadplanQuantity = lplan->getQuantity();
   setLogLevel(0);  // Silence during this loop
 
   // Create flow and loadplans
@@ -421,7 +420,6 @@ void SolverCreate::solve(const Load* l, void* v) {
   double beforeCost = data->state->a_cost;
   double beforePenalty = data->state->a_penalty;
   OperationPlanState originalOpplan(lplan->getOperationPlan());
-  double originalLoadplanQuantity = data->state->q_loadplan->getQuantity();
   for (auto i = thealternates.begin(); i != thealternates.end();) {
     const Load* curload = *i;
     data->state->q_loadplan = lplan;  // because q_loadplan can change!

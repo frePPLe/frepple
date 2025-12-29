@@ -137,7 +137,7 @@ void Load::setSetupString(const string& n) {
   setup = n;
 }
 
-PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds) {
+PyObject* Load::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Pick up the operation
     PyObject* oper = PyDict_GetItemString(kwds, "operation");

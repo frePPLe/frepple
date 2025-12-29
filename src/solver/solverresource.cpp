@@ -101,10 +101,6 @@ void SolverCreate::solve(const Resource* res, void* v) {
         // Skip setup change events
         if (cur->getEventType() == 5) continue;
 
-        const LoadPlan* ldplan = nullptr;
-        if (cur->getEventType() == 1)
-          ldplan = static_cast<const LoadPlan*>(&*cur);
-
         // Not interested if date doesn't change
         if (cur->getDate() == curdate) continue;
 
@@ -135,11 +131,6 @@ void SolverCreate::solve(const Resource* res, void* v) {
 
           // Not interested if date doesn't change or setup end events
           if (cur->getDate() == curdate || cur->getEventType() == 5) continue;
-
-          // Loadplan event
-          const LoadPlan* ldplan = nullptr;
-          if (cur->getEventType() == 1)
-            ldplan = static_cast<const LoadPlan*>(&*cur);
 
           // We are below the max limit now.
           if (cur->getOnhand() < prevMax + ROUNDING_ERROR && curdate < prevdate)
@@ -202,7 +193,6 @@ void SolverCreate::solve(const Resource* res, void* v) {
       HasOverload = false;
       newDate = Date::infinitePast;
       curMax = data->state->q_loadplan->getMax();
-      double curOnhand = data->state->q_loadplan->getOnhand();
 
       // Find how many uncommitted operationplans are loading the resource
       // before the loadplan.
@@ -243,7 +233,6 @@ void SolverCreate::solve(const Resource* res, void* v) {
         if (cur != res->getLoadPlans().end() &&
             cur->getDate() == loadpl->getDate())
           continue;
-        curOnhand = loadpl->getOnhand();
 
         // Check if overloaded
         if (loadpl->getOnhand() - ignored > curMax + ROUNDING_ERROR)
@@ -672,7 +661,6 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
               opplan->setStart(tmp);
             } else {
               // Only a part of the requirement fits in the bucket
-              Date oldEnd = opplan->getEnd();
               double oldQty = opplan->getQuantity();
               double efficiency =
                   data->state->q_loadplan->getResource()

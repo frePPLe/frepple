@@ -2094,7 +2094,7 @@ void OperationPlan::setDemand(Demand* l) {
   }
 }
 
-PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args,
+PyObject* OperationPlan::create(PyTypeObject* , PyObject* ,
                                 PyObject* kwds) {
   try {
     // Find or create the C++ object
@@ -2427,7 +2427,7 @@ void OperationPlan::clear() {
   for (auto& o : Operation::all()) o.deleteOperationPlans();
 }
 
-PyObject* OperationPlan::createIterator(PyObject* self, PyObject* args) {
+PyObject* OperationPlan::createIterator(PyObject* , PyObject* args) {
   // Check arguments
   PyObject* pyoper = nullptr;
   if (!PyArg_ParseTuple(args, "|O:operationplans", &pyoper)) return nullptr;
@@ -2690,7 +2690,7 @@ double OperationPlan::getSetupCost() const {
     return 0.0;
 }
 
-PyObject* OperationPlan::getColorPython(PyObject* self, PyObject* args) {
+PyObject* OperationPlan::getColorPython(PyObject* self, PyObject*) {
   auto* opplan = static_cast<OperationPlan*>(self);
   // No color for delivery, stock or alternate operationplans
   if (opplan->getOrderType() == "DLVR")

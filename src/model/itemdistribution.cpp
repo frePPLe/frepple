@@ -72,7 +72,7 @@ ItemDistribution::~ItemDistribution() {
   HasLevel::triggerLazyRecomputation();
 }
 
-PyObject* ItemDistribution::create(PyTypeObject* pytype, PyObject* args,
+PyObject* ItemDistribution::create(PyTypeObject* , PyObject* ,
                                    PyObject* kwds) {
   try {
     // Pick up the item

@@ -2096,7 +2096,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
   }
 }
 
-PyObject* Solver::createsBatches(PyObject* self, PyObject* args) {
+PyObject* Solver::createsBatches(PyObject* self, PyObject* ) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {

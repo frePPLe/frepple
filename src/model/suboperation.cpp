@@ -114,8 +114,7 @@ void SubOperation::setPriority(int pr) {
   }
 }
 
-PyObject* SubOperation::create(PyTypeObject* pytype, PyObject* args,
-                               PyObject* kwds) {
+PyObject* SubOperation::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Pick up the operation
     PyObject* oper = PyDict_GetItemString(kwds, "operation");

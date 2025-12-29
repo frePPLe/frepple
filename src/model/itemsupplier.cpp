@@ -92,8 +92,7 @@ ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, const DateRange& e) {
   HasLevel::triggerLazyRecomputation();
 }
 
-PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args,
-                               PyObject* kwds) {
+PyObject* ItemSupplier::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Pick up the supplier
     PyObject* sup = PyDict_GetItemString(kwds, "supplier");

@@ -136,7 +136,7 @@ void OperationDependency::setBlockedBy(Operation* o) {
   }
 }
 
-PyObject* OperationDependency::create(PyTypeObject* pytype, PyObject* args,
+PyObject* OperationDependency::create(PyTypeObject*, PyObject*,
                                       PyObject* kwds) {
   try {
     // Pick up the operation
@@ -202,7 +202,10 @@ void Operation::addDependency(OperationDependency* dpd) {
   }
   // Insert at the end of the list. Scales O(n).
   auto before_end = dependencies.before_begin();
-  for (auto& _ : dependencies) ++before_end;
+  for (auto& _ : dependencies) {
+    (void)_;
+    ++before_end;
+  }
   dependencies.insert_after(before_end, dpd);
 }
 

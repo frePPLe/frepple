@@ -76,8 +76,7 @@ ResourceSkill::~ResourceSkill() {
 
 /* @todo this method implementation is not generic enough and not extendible by
  * subclasses. */
-PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args,
-                                PyObject* kwds) {
+PyObject* ResourceSkill::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Pick up the skill
     PyObject* skill = PyDict_GetItemString(kwds, "skill");
@@ -110,7 +109,7 @@ PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args,
 
     // Create the resourceskill
     auto* l = new ResourceSkill(static_cast<Skill*>(skill),
-                                         static_cast<Resource*>(res), q2, eff);
+                                static_cast<Resource*>(res), q2, eff);
 
     // Iterate over extra keywords, and set attributes.   @todo move this
     // responsibility to the readers...

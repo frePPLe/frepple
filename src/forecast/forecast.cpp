@@ -246,8 +246,8 @@ Object* ForecastBucket::reader(const MetaClass*, const DataValueDict& in,
     for (auto& fcstbktdata : data->getBuckets()) {
       if (fcstbktdata.getDates().within(strt)) {
         fcstbckt = fcstbktdata.getOrCreateForecastBucket();
-        if (fcstbckt && !nd || (nd && fcstbckt->getStartDate() <= nd &&
-                                fcstbckt->getEndDate() >= nd))
+        if ((fcstbckt && !nd) || (nd && fcstbckt->getStartDate() <= nd &&
+                                  fcstbckt->getEndDate() >= nd))
           // A single bucket is being updated
           return fcstbckt;
         break;
@@ -603,11 +603,10 @@ void Forecast::setItem(Item* i) {
   if (getLocation() && i && getCustomer()) {
     auto exists = findForecast(i, getCustomer(), getLocation());
     if (exists) {
-      if (exists->isAggregate()) {
+      if (exists->isAggregate())
         // Replace existing element
-        eraseFromHash(exists);
         delete exists;
-      } else
+      else
         // Already exists
         throw DataException(
             "Duplicate forecast for item, location and customer");
@@ -631,11 +630,10 @@ void Forecast::setCustomer(Customer* i) {
   if (getLocation() && getItem() && i) {
     auto exists = findForecast(getItem(), i, getLocation());
     if (exists) {
-      if (exists->isAggregate()) {
+      if (exists->isAggregate())
         // Replace existing element
-        eraseFromHash(exists);
         delete exists;
-      } else
+      else
         // Already exists
         throw DataException(
             "Duplicate forecast for item, location and customer");
@@ -659,11 +657,10 @@ void Forecast::setLocation(Location* i) {
   if (i && getItem() && getCustomer()) {
     auto exists = findForecast(getItem(), getCustomer(), i);
     if (exists) {
-      if (exists->isAggregate()) {
+      if (exists->isAggregate())
         // Replace existing element
-        eraseFromHash(exists);
         delete exists;
-      } else
+      else
         // Already exists
         throw DataException(
             "Duplicate forecast for item, location and customer");
@@ -1057,7 +1054,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
                 3, currentdate - Duration(86400L * f->getHorizonHistory()));
             stmt.setArgument(
                 4, currentdate + Duration(86400L * f->getHorizonFuture()));
-          } catch (exception& e) {
+          } catch (const exception& e) {
             logger << "Error creating prepared statement: " << e.what() << '\n';
             db.closeConnection();
           } catch (...) {
@@ -1155,7 +1152,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
 
       // Successfully completed
       return;
-    } catch (DatabaseBadConnection) {
+    } catch (const DatabaseBadConnection&) {
       // Try again with a new connection
       mode = 0;
       db = DatabaseReader(dbconnection);
@@ -1218,7 +1215,8 @@ void ForecastData::flush() {
             str << ") as ( values ";
             int argcounter = 0;
             for (short r = 0; r < 10; ++r) {
-              str << "($" << ++argcounter << ", $" << ++argcounter;
+              str << "($" << ++argcounter;
+              str << ", $" << ++argcounter;
               for (auto msr = ForecastMeasure::begin();
                    msr != ForecastMeasure::end(); ++msr) {
                 if (msr->getStored())
@@ -1274,7 +1272,7 @@ void ForecastData::flush() {
                                              str.str(), argcounter + 3);
             stmt_begin = DatabasePreparedStatement(db, "begin_trx", "begin");
             stmt_end = DatabasePreparedStatement(db, "commit_trx", "commit");
-          } catch (exception& e) {
+          } catch (const exception& e) {
             logger << "Error creating forecastplan export:\n";
             logger << e.what() << '\n';
             db.closeConnection();
@@ -1320,7 +1318,7 @@ void ForecastData::flush() {
             // All records in prepared statements are full now
             try {
               DatabaseResult(db, stmt);
-            } catch (exception& e) {
+            } catch (const exception& e) {
               logger << "Exception caught when saving a forecast: " << e.what()
                      << '\n';
               DatabaseStatement rollback("rollback");
@@ -1335,7 +1333,7 @@ void ForecastData::flush() {
           while (argcount < argmax - 4) stmt.setArgument(++argcount, "");
           try {
             DatabaseResult(db, stmt);
-          } catch (exception& e) {
+          } catch (const exception& e) {
             logger << "Exception caught when saving a forecast: " << e.what()
                    << '\n';
             // Roll back current transaction, and start a new one
@@ -1350,11 +1348,11 @@ void ForecastData::flush() {
 
       // Successful execution
       return;
-    } catch (DatabaseBadConnection) {
+    } catch (const DatabaseBadConnection&) {
       // Try again with a new connection
       mode = 0;
       db = DatabaseReader(dbconnection);
-    } catch (exception& e) {
+    } catch (const exception& e) {
       logger << "Exception caught when saving a forecast: " << e.what() << '\n';
       break;
     }

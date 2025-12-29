@@ -1211,6 +1211,8 @@ class ForecastBase {
     return PooledString::nullstring;
   }
 
+  virtual ~ForecastBase() {}
+
   virtual Item* getForecastItem() const = 0;
 
   virtual Location* getForecastLocation() const = 0;
@@ -1712,6 +1714,8 @@ class ForecastKey : public ForecastBase {
   ForecastKey(Item* i = nullptr, Location* l = nullptr, Customer* c = nullptr)
       : it(i), loc(l), cust(c) {}
 
+  ~ForecastKey() override {};
+
   Item* getForecastItem() const override { return it; }
 
   Location* getForecastLocation() const override { return loc; }
@@ -1724,7 +1728,7 @@ class ForecastKey : public ForecastBase {
   Customer* cust = nullptr;
 };
 
-class ForecastAggregated : public ForecastBase, public Object {
+class ForecastAggregated : public ForecastBase {
  private:
   Item* it = nullptr;
   Location* loc = nullptr;
@@ -1735,6 +1739,11 @@ class ForecastAggregated : public ForecastBase, public Object {
       : it(i), loc(l), cust(c) {
     insertInHash(this);
     if (c) c->incNumberOfDemands();
+  }
+
+  ~ForecastAggregated() override {
+    eraseFromHash(this);
+    if (cust) cust->decNumberOfDemands();
   }
 
   Item* getForecastItem() const override { return it; }

@@ -71,7 +71,10 @@ int SolverCreate::initialize() {
   x.supportgetattro();
   x.supportsetattro();
   x.supportcreate(create);
-  x.addMethod("solve", solve, METH_VARARGS, "run the solver");
+  x.addMethod(
+      "solve",
+      static_cast<PyObject* (*)(PyObject*, PyObject*, PyObject*)>(solve),
+      METH_VARARGS, "run the solver");
   x.addMethod("commit", commit, METH_NOARGS, "commit the plan changes");
   x.addMethod("rollback", rollback, METH_NOARGS, "rollback the plan changes");
   x.addMethod("createsBatches", createsBatches, METH_NOARGS,

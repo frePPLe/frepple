@@ -40,6 +40,8 @@ namespace frepple {
  */
 class OperatorDelete : public Solver {
  public:
+  using Solver::solve;
+
   /* Constructor. */
   OperatorDelete(CommandManager* c = nullptr) : cmds(c) { initType(metadata); }
 
@@ -126,6 +128,9 @@ class OperatorDelete : public Solver {
  * - 3: Trace the status of all entities.
  */
 class SolverCreate : public Solver {
+ public:
+  using Solver::solve;
+
  protected:
   /* This variable stores the constraint which the solver should respect.
    * By default all constraints are enabled. */
@@ -1073,6 +1078,8 @@ class SolverCreate : public Solver {
 
 class SolverPropagateStatus : public Solver {
  public:
+  using Solver::solve;
+
   SolverPropagateStatus() { initType(metadata); }
 
   /* Python method for running the solver. */

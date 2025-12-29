@@ -592,7 +592,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
               dynamic_cast<const FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
-              (iter.getMaxLevel() > 0))
+              (iter.getMaxLevel() > 0)) {
             if (opplan->getOwner() &&
                 opplan->getOwner()
                     ->getOperation()
@@ -601,6 +601,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
               topopplan = opplan->getOwner();
             else
               topopplan = opplan;
+          }
           iter.updateStack(
               topopplan, topopplan->getQuantity() * newqty / f->getQuantity(),
               topopplan->getQuantity() * newoffset / f->getQuantity(), lvl,
@@ -631,15 +632,16 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
               dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
-              (iter.getMaxLevel() > 0))
+              (iter.getMaxLevel() > 0)) {
             if (opplan->getOwner() &&
                 opplan->getOwner()
                     ->getOperation()
                     ->hasType<OperationRouting>() &&
-                !(iter.getMaxLevel() > 0))
+                !(iter.getMaxLevel() > 0)) {
               topopplan = opplan->getOwner();
-            else
+            } else
               topopplan = opplan;
+          }
           iter.updateStack(
               topopplan, topopplan->getQuantity() * newqty / f->getQuantity(),
               topopplan->getQuantity() * newoffset / f->getQuantity(), lvl,
@@ -687,7 +689,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
               dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
-              (iter.getMaxLevel() > 0))
+              (iter.getMaxLevel() > 0)) {
             if (opplan->getOwner() && opplan->getOwner()
                                           ->getOperation()
                                           ->hasType<OperationRouting>()) {
@@ -702,6 +704,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
 
             } else
               topopplan = opplan;
+          }
           iter.updateStack(
               topopplan, -topopplan->getQuantity() * newqty / f->getQuantity(),
               -topopplan->getQuantity() * newoffset / f->getQuantity(), lvl,
@@ -732,7 +735,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
               dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
-              (iter.getMaxLevel() > 0))
+              (iter.getMaxLevel() > 0)) {
             if (opplan->getOwner() && opplan->getOwner()
                                           ->getOperation()
                                           ->hasType<OperationRouting>()) {
@@ -746,6 +749,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
               }
             } else
               topopplan = opplan;
+          }
           iter.updateStack(
               topopplan, -topopplan->getQuantity() * newqty / f->getQuantity(),
               -topopplan->getQuantity() * newoffset / f->getQuantity(), lvl,

@@ -85,7 +85,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=date-time")
 set(CMAKE_CXX_FLAGS_PROFILING "${CMAKE_CXX_FLAGS_DEBUG} -DNDEBUG")
 set(CMAKE_C_FLAGS_PROFILING "${CMAKE_C_FLAGS_DEBUG} -DNDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wuninitialized -Wunused -Wswitch -Wunused-parameter") # -Wall -Wextra -Wpedantic")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wuninitialized -Wunused -Wswitch -Wunused-parameter -Wall") # -Wextra
 set(CMAKE_EXE_LINKER_FLAGS_PROFILING "")
 set(CMAKE_SHARED_LINKER_FLAGS_PROFILING "")
 

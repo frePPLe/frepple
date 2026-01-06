@@ -684,8 +684,11 @@ class OdooSendRecommendations(PlanTask):
                     if not description:
                         description = "Stock replenishment"
                     yield {
+                        "tab": "purchase",
                         "type": "purchase",
-                        "data": {"partner_id": int(j.supplier.name.rsplit(" ", 1)[1])},
+                        "res_partner_id": int(
+                            i.itemsupplier.supplier.name.rsplit(" ", 1)[1]
+                        ),
                         "product_id": int(j.item.subcategory.split(",")[1]),
                         "startdate": j.start.isoformat(),
                         "enddate": j.end.isoformat(),
@@ -708,7 +711,6 @@ class OdooSendRecommendations(PlanTask):
                     or not i.item.source
                     or "odoo" not in i.item.source
                 ):
-                    print("Skipping operation", i.name, i.owner, i.source, i.item, i.item.source if i.item else None)                  )
                     continue
                 for j in i.operationplans:
                     # We are sending the proposed MOs due to start within the new week
@@ -740,7 +742,8 @@ class OdooSendRecommendations(PlanTask):
                     if not description:
                         description = "Stock replenishment"
                     yield {
-                        "type": "mrp",
+                        "tab": "mrp",
+                        "type": "produce",
                         "data": {"bom_id": int(i.name.rsplit(" ", 1)[1])},
                         "product_id": int(i.item.subcategory.split(",")[1]),
                         "startdate": j.start.isoformat(),
@@ -783,10 +786,9 @@ class OdooSendRecommendations(PlanTask):
                 description = f"{so[0]} will be shipped {(late_date - i.due).days} days late on {late_date.strftime("%Y-%m-%d")}"
                 so_count += 1
                 yield {
-                    "type": "sale",
-                    "data": {
-                        "constraints": [c.description for c in i.constraints],
-                    },
+                    "tab": "sale",
+                    "type": "latedelivery",
+                    "data": {"constraints": [c.description for c in i.constraints]},
                     "sale_order_line_id": so[1],
                     "product_id": int(i.item.subcategory.split(",")[1]),
                     "startdate": i.due.isoformat(),

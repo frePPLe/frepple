@@ -24,8 +24,8 @@ const store = useOperationplansStore();
 const currentOperationplan = store.operationplan;
 
 const filteredUpstream = computed(() => {
-  if (!store.operationplan.value.upstreamoperationplans) return [];
-  return store.operationplan.value.upstreamoperationplans.filter(peg => peg[11] != 2);
+  if (!store.operationplan.value?.upstreamoperationplans) return [];
+  return store.operationplan.value?.upstreamoperationplans.filter(peg => peg[11] != 2);
 });
 
 </script>

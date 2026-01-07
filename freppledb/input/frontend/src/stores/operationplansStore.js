@@ -64,7 +64,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     rows: [],    // table columns to be (de)selected
     frozen: 0,
     currentFilter: '', // preferences.favorites
-    widgets: [],
+    widgets: {},
     sidx: 'batch',
     sord: 'asc',
     favorites: [],  // for filters
@@ -103,6 +103,110 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     getPreferences(state) {
       state.preferences = window.preferences;
+
+      state.preferences.widgets = {   // TO BE REMOVED, ONLY FOR DEV
+        "widgets": [
+          {
+            "name": "column1",
+            "cols": [
+              {
+                "width": 6,
+                "widgets": [
+                  [
+                    "operationplan",
+                    {
+                      "collapsed": false
+                    }
+                  ],
+                  [
+                    "inventorygraph",
+                    {
+                      "collapsed": false
+                    }
+                  ]
+                ]
+              }
+            ],
+            "$$hashKey": "object:22"
+          },
+          {
+            "name": "column2",
+            "cols": [
+              {
+                "width": 6,
+                "widgets": [
+                  [
+                    "supplyposition",
+                    {
+                      "collapsed": false
+                    }
+                  ],
+                  [
+                    "inventorydata",
+                    {
+                      "collapsed": false
+                    }
+                  ],
+                  [
+                    "operationproblems",
+                    {
+                      "collapsed": false
+                    }
+                  ],
+                  [
+                    "operationresources",
+                    {
+                      "collapsed": false
+                    }
+                  ],
+                  [
+                    "operationflowplans",
+                    {
+                      "collapsed": false
+                    }
+                  ],
+                  [
+                    "operationdemandpegging",
+                    {
+                      "collapsed": false
+                    }
+                  ]
+                ]
+              }
+            ],
+            "$$hashKey": "object:23"
+          },
+          {
+            "name": "column3",
+            "cols": [
+              {
+                "width": 12,
+                "widgets": [
+                  [
+                    "networkstatus",
+                    {
+                      "collapsed": false
+                    }
+                  ],
+                  [
+                    "downstreamoperationplans",
+                    {
+                      "collapsed": false
+                    }
+                  ],
+                  [
+                    "upstreamoperationplans",
+                    {
+                      "collapsed": false
+                    }
+                  ]
+                ]
+              }
+            ],
+            "$$hashKey": "object:24"
+          }
+        ]
+      };
     },
   },
 
@@ -276,6 +380,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     // Preferences
     setPreferences(preferences) {
       this.preferences = preferences;
+      window.preferences = preferences;
     },
 
     async savePreferences() {
@@ -292,6 +397,109 @@ export const useOperationplansStore = defineStore('operationplans', {
         if (this.dataRowHeight !== null) {
           this.preferences.height = this.dataRowHeight;
         }
+        this.preferences.widgets = {
+          "widgets": [
+            {
+              "name": "column1",
+              "cols": [
+                {
+                  "width": 6,
+                  "widgets": [
+                    [
+                      "operationplan",
+                      {
+                        "collapsed": false
+                      }
+                    ],
+                    [
+                      "inventorygraph",
+                      {
+                        "collapsed": false
+                      }
+                    ]
+                  ]
+                }
+              ],
+              "$$hashKey": "object:22"
+            },
+            {
+              "name": "column2",
+              "cols": [
+                {
+                  "width": 6,
+                  "widgets": [
+                    [
+                      "supplyposition",
+                      {
+                        "collapsed": false
+                      }
+                    ],
+                    [
+                      "inventorydata",
+                      {
+                        "collapsed": false
+                      }
+                    ],
+                    [
+                      "operationproblems",
+                      {
+                        "collapsed": false
+                      }
+                    ],
+                    [
+                      "operationresources",
+                      {
+                        "collapsed": false
+                      }
+                    ],
+                    [
+                      "operationflowplans",
+                      {
+                        "collapsed": false
+                      }
+                    ],
+                    [
+                      "operationdemandpegging",
+                      {
+                        "collapsed": false
+                      }
+                    ]
+                  ]
+                }
+              ],
+              "$$hashKey": "object:23"
+            },
+            {
+              "name": "column3",
+              "cols": [
+                {
+                  "width": 12,
+                  "widgets": [
+                    [
+                      "networkstatus",
+                      {
+                        "collapsed": false
+                      }
+                    ],
+                    [
+                      "downstreamoperationplans",
+                      {
+                        "collapsed": false
+                      }
+                    ],
+                    [
+                      "upstreamoperationplans",
+                      {
+                        "collapsed": false
+                      }
+                    ]
+                  ]
+                }
+              ],
+              "$$hashKey": "object:24"
+            }
+          ]
+        };
 
         // Call your backend service here if needed
         // const result = await operationplanService.savePreferences(this.preferences);
@@ -308,6 +516,7 @@ export const useOperationplansStore = defineStore('operationplans', {
       } finally {
         this.loading = false;
       }
+      console.log('414 Preferences saved:', this.preferences);
     },
 
     async save(data) {

@@ -156,6 +156,11 @@ onMounted(() => {
     }
   };
 
+  const handleTriggerSave = (e) => {
+    console.log("save triggered");
+
+  }
+
   const handleDisplayOnPanel = (e) => {
     // This event may carry either { rowid, cellname, value } or the row object directly (legacy calls)
     const detail = e?.detail;
@@ -190,6 +195,7 @@ onMounted(() => {
   rootEl.addEventListener('allSelect', handleAllSelectEvent);
   rootEl.addEventListener('processAggregatedInfo', handleProcessAggregatedInfo);
   rootEl.addEventListener('displayonpanel', handleDisplayOnPanel);
+  rootEl.addEventListener('triggerSave', handleTriggerSave);
 
   // Save references to handlers so they can be removed on unmount
   appElement.value = {
@@ -204,11 +210,12 @@ onMounted(() => {
   };
 });
 
-// onMounted(() => {
+onMounted(() => {
 //   if (!store.operationplan) {
 //     store.loadOperationplans(1391);
 //   }
-// });
+
+});
 
 onUnmounted(() => {
   const info = appElement.value;
@@ -229,41 +236,64 @@ onUnmounted(() => {
 
 <template>
   <div class="row">
-    <OperationplanFormCard />
-    <BuffersCard />
-    <DemandPeggingCard />
-    <DownstreamCard />
-    <InventoryDataCard />
-    <InventoryGraphCard :key="store.operationplan?.reference || 'empty'"/>
-    <NetworkStatusCard />
-    <ProblemsCard />
-    <ResourcesCard />
-    <SupplyInformationCard />
-    <UpstreamCard />
+<!--    <OperationplanFormCard />-->
+<!--    <BuffersCard />-->
+<!--    <DemandPeggingCard />-->
+<!--    <DownstreamCard />-->
+<!--    <InventoryDataCard />-->
+<!--    <InventoryGraphCard :key="store.operationplan?.reference || 'empty'"/>-->
+<!--    <NetworkStatusCard />-->
+<!--    <ProblemsCard />-->
+<!--    <ResourcesCard />-->
+<!--    <SupplyInformationCard />-->
+<!--    <UpstreamCard />-->
 
-<!--    <div-->
-<!--        v-for="col in preferences.widgets"-->
-<!--        :key="col.name"-->
-<!--        class="widget-list col-12"-->
-<!--        :class="`col-lg-{{store.widgets.length}}`"-->
-<!--        :data-widget="col.name"-->
-<!--        :data-widget-width="col.cols?.[0]?.width"-->
-<!--    >-->
-<!--      <div v-for="(widget, index) in col.cols?.[0]?.widgets || []" :key="index">-->
-<!--        <div-->
-<!--            v-if="shouldShowWidget(widget[0])"-->
-<!--            class="card widget mb-3"-->
-<!--            :data-widget="widget[0]"-->
-<!--        >-->
-<!--          <component-->
-<!--              :is="getWidgetComponent(widget[0])"-->
-<!--              :operationplan="store.operationplan"-->
-<!--              :is-loading="store.loading"-->
-<!--              :error="store.error"-->
-<!--          />-->
+<!--    <div class="row">-->
+<!--      <div data-ng-class="['widget-list', 'col-12', 'col-lg-' + col['cols'][0].width]" data-ng-repeat="col in preferences['widgets']" data-widget="{{col['name']}}" data-widget-width="{{col['cols'][0].width}}">-->
+<!--        <div data-ng-repeat="widget in col['cols'][0]['widgets']">-->
+<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'operationplan'" id="attributes-operationplan" data="operationplan" showoperationplan-drv></div>-->
+<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'inventorygraph'" id="attributes-inventorygraph" data-ng-show="operationplan.id !== -1 && operationplan.inventoryreport != undefined" data="operationplan" showinventorygraph-drv></div>-->
+<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'inventorydata'" id="attributes-inventorydata" data-ng-show="operationplan.id !== -1 && operationplan.inventoryreport != undefined" data="operationplan" showinventorydata-drv></div>-->
+<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'operationproblems'" id="attributes-operationproblems" data-ng-show="operationplan.id !== -1 && operationplan.problems != undefined" data="operationplan" showproblemspanel-drv></div>-->
+<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'operationresources'" id="attributes-operationresources" data-ng-show="operationplan.id !== -1 && operationplan.loadplans != undefined" data="operationplan" data-mode="mode" showresourcespanel-drv></div>-->
+<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'operationflowplans'" id="attributes-operationflowplans" data-ng-show="operationplan.id !== -1 && operationplan.flowplans != undefined" data="operationplan" showbufferspanel-drv></div>-->
+<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'operationdemandpegging'" id="attributes-operationdemandpegging" data-ng-show="operationplan.id !== -1 && operationplan.pegging_demand.length > 0" data="operationplan" showoperationpeggingpanel-drv></div>-->
+<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'networkstatus'" id="attributes-networkstatus" data-ng-show="operationplan.network !== undefined" data="operationplan" shownetworkstatus-drv></div>-->
+<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'downstreamoperationplans'" id="attributes-downstreamoperationplans" data-ng-show="operationplan.downstreamoperationplans !== undefined" data="operationplan" showdownstreamoperationplans-drv></div>-->
+<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'upstreamoperationplans'" id="attributes-upstreamoperationplans" data-ng-show="operationplan.upstreamoperationplans !== undefined" data="operationplan" showupstreamoperationplans-drv></div>-->
+<!--          &lt;!&ndash; -->
+<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'supplyinformation'" id="attributes-supplyinformation" data-ng-show="operationplan.attributes !== undefined" data="operationplan" showsupplyinformation-drv></div>-->
+<!--          &ndash;&gt;-->
+<!--          &lt;!&ndash; Extra in Enterprise Edition. &ndash;&gt;-->
+<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'supplyposition'" id="attributes-supplyposition" data-ng-show="operationplan.id !== -1 && operationplan.invstatus !== undefined" data="operationplan" showsupplypositionpanel-drv></div>-->
 <!--        </div>-->
 <!--      </div>-->
 <!--    </div>-->
+
+
+    <div
+        v-for="col in preferences.widgets"
+        :key="col.name"
+        class="widget-list col-12"
+        :class="'col-lg-' + col['cols'][0].width"
+        :data-widget="col.name"
+        :data-widget-width="col.cols?.[0]?.width"
+    >
+      <div v-for="(widget, index) in col.cols?.[0]?.widgets || []" :key="index">
+        <div
+            v-if="shouldShowWidget(widget[0])"
+            class="card widget mb-3"
+            :data-widget="widget[0]"
+        >
+          <component
+              :is="getWidgetComponent(widget[0])"
+              :operationplan="store.operationplan"
+              :is-loading="store.loading"
+              :error="store.error"
+          />
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Modal -->

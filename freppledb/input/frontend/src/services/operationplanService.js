@@ -22,6 +22,7 @@ export const operationplanService = {
   },
 
   async savePreferences(preferencesData) {
+    console.log(26, preferencesData);
     return api.post('settings/', preferencesData );
   }
 };

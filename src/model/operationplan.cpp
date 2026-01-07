@@ -167,7 +167,7 @@ void OperationPlan::restore(const OperationPlanState& x) {
   if (!SetupMatrix::empty()) scanSetupTimes();
 }
 
-Object* OperationPlan::createOperationPlan(const MetaClass* cat,
+Object* OperationPlan::createOperationPlan(const MetaClass*,
                                            const DataValueDict& in,
                                            CommandManager* mgr) {
   // Pick up the action attribute
@@ -298,7 +298,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       if (!dmdval)
         throw DataException("Empty demand field");
       else if (dmdval->getType().category != Demand::metadata) {
-        Demand* tmp = dynamic_cast<Demand*>(dmdval);
+        auto* tmp = dynamic_cast<Demand*>(dmdval);
         if (!tmp)
           throw DataException(
               "Demand field on operationplan must be of type demand");
@@ -467,7 +467,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     for (auto flowiter = destbuffer->getFlows().begin();
          flowiter != destbuffer->getFlows().end() && !operval; ++flowiter) {
       if (!flowiter->getOperation()->hasType<OperationItemSupplier>()) continue;
-      OperationItemSupplier* opitemsupplier =
+      auto* opitemsupplier =
           static_cast<OperationItemSupplier*>(flowiter->getOperation());
       if (supval) {
         if (static_cast<Supplier*>(supval)->isMemberOf(
@@ -485,7 +485,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
         throw DataException("Supplier is needed on this purchase order");
       // Note: We know that we need to create a new one. An existing one would
       // have created an operation on the buffer already.
-      ItemSupplier* itemsupplier = new ItemSupplier();
+      auto* itemsupplier = new ItemSupplier();
       itemsupplier->setSupplier(static_cast<Supplier*>(supval));
       itemsupplier->setItem(static_cast<Item*>(itemval));
       itemsupplier->setLocation(static_cast<Location*>(locval));
@@ -545,7 +545,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
         if (!flowiter->getOperation()->hasType<OperationItemDistribution>() ||
             flowiter->getQuantity() <= 0)
           continue;
-        OperationItemDistribution* opitemdist =
+        auto* opitemdist =
             static_cast<OperationItemDistribution*>(flowiter->getOperation());
         // Origin must match as well
         if (orival) {
@@ -773,7 +773,7 @@ bool OperationPlan::assignReference() {
     if (getName() < referenceMax) {
       // The assigned id potentially clashes with an existing operationplan.
       // Check whether it clashes with existing operationplans
-      OperationPlan* opplan = static_cast<OperationPlan*>(st.find(getName()));
+      auto* opplan = static_cast<OperationPlan*>(st.find(getName()));
       if (opplan != st.end() && opplan->getOperation() != oper) return false;
     } else
       // The new operationplan definitely doesn't clash with existing id's.
@@ -1357,9 +1357,8 @@ bool OperationPlan::mergeIfPossible() {
   // Verify we load no resources of type "default".
   // It's ok to merge operationplans which load "infinite" or "buckets"
   // resources.
-  for (Operation::loadlist::const_iterator i = oper->getLoads().begin();
-       i != oper->getLoads().end(); ++i)
-    if (i->getResource()->hasType<ResourceDefault>()) return false;
+  for (const auto& i : oper->getLoads())
+    if (i.getResource()->hasType<ResourceDefault>()) return false;
 
   // Loop through candidates
   for (OperationPlan::iterator x(oper); x != OperationPlan::end(); ++x) {
@@ -1482,7 +1481,7 @@ void OperationPlan::scanSetupTimes() {
   */
 }
 
-bool OperationPlan::updateSetupTime(bool report) {
+bool OperationPlan::updateSetupTime() {
   // TODO The setOperationplanParameter methods are a better/more generic/more
   // robust place to put this logic
   Date end_of_setup = getSetupEnd();
@@ -1494,13 +1493,12 @@ bool OperationPlan::updateSetupTime(bool report) {
   if (setupevent && getSetupOverride() >= 0L && !getNoSetup()) {
     auto ldplan = beginLoadPlans();
     if (ldplan == endLoadPlans()) {
-      for (auto ld = getOperation()->getLoads().begin();
-           ld != getOperation()->getLoads().end(); ++ld)
-        if (ld->getResource() && ld->getResource()->getSetupMatrix()) {
+      for (const auto& ld : getOperation()->getLoads())
+        if (ld.getResource() && ld.getResource()->getSetupMatrix()) {
           if (!setupevent->getTimeLine() && !getNoSetup()) {
-            setupevent->setTimeLine(&(ld->getResource()->getLoadPlans()));
+            setupevent->setTimeLine(&(ld.getResource()->getLoadPlans()));
           }
-          get<0>(setup) = ld->getResource();
+          get<0>(setup) = ld.getResource();
           break;
         }
     } else {
@@ -1817,10 +1815,10 @@ void OperationPlan::propagateStatus(bool log) {
     if (log) {
       if (firstlog) {
         firstlog = false;
-        logger << "Propagating " << this << endl;
+        logger << "Propagating " << this << '\n';
       }
       logger << "    Adjusting end date to " << Plan::instance().getCurrent()
-             << endl;
+             << '\n';
     }
     setEnd(Plan::instance().getCurrent(), true);
   }
@@ -1832,10 +1830,10 @@ void OperationPlan::propagateStatus(bool log) {
         if (log) {
           if (firstlog) {
             firstlog = false;
-            logger << "Propagating " << this << endl;
+            logger << "Propagating " << this << '\n';
           }
           logger << "    Changing status of previous routing step " << prev
-                 << endl;
+                 << '\n';
         }
         prev->appendInfo("Status propagated from following step");
         prev->setStatus(mystatus);
@@ -1856,9 +1854,9 @@ void OperationPlan::propagateStatus(bool log) {
       if (log) {
         if (firstlog) {
           firstlog = false;
-          logger << "Propagating " << this << endl;
+          logger << "Propagating " << this << '\n';
         }
-        logger << "    Marking routing as closed " << getOwner() << endl;
+        logger << "    Marking routing as closed " << getOwner() << '\n';
       }
     } else if (all_steps_completed && !getOwner()->getCompleted()) {
       getOwner()->appendInfo(
@@ -1868,9 +1866,9 @@ void OperationPlan::propagateStatus(bool log) {
       if (log) {
         if (firstlog) {
           firstlog = false;
-          logger << "Propagating " << this << endl;
+          logger << "Propagating " << this << '\n';
         }
-        logger << "    Marking routing as completed " << getOwner() << endl;
+        logger << "    Marking routing as completed " << getOwner() << '\n';
       }
     } else if (getOwner()->getProposed()) {
       for (auto subopplan = getOwner()->firstsubopplan; subopplan;
@@ -1886,9 +1884,9 @@ void OperationPlan::propagateStatus(bool log) {
       if (log) {
         if (firstlog) {
           firstlog = false;
-          logger << "Propagating " << this << endl;
+          logger << "Propagating " << this << '\n';
         }
-        logger << "    Marking routing as approved " << getOwner() << endl;
+        logger << "    Marking routing as approved " << getOwner() << '\n';
       }
     }
   }
@@ -1903,12 +1901,12 @@ void OperationPlan::propagateStatus(bool log) {
     // Get current status
     double closed_balance = 0.0;
     flowplanlist& tmline = myflpln->getBuffer()->getFlowPlans();
-    for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-      if (flpln->getOperationPlan() &&
-          (flpln->getOperationPlan()->getClosed() ||
-           flpln->getOperationPlan()->getCompleted()) &&
-          flpln->getDate() <= myflpln->getDate())
-        closed_balance += flpln->getQuantity();
+    for (auto& flpln : tmline)
+      if (flpln.getOperationPlan() &&
+          (flpln.getOperationPlan()->getClosed() ||
+           flpln.getOperationPlan()->getCompleted()) &&
+          flpln.getDate() <= myflpln->getDate())
+        closed_balance += flpln.getQuantity();
 
     if (closed_balance < -ROUNDING_ERROR) {
       // Things don't add up here.
@@ -1916,93 +1914,93 @@ void OperationPlan::propagateStatus(bool log) {
       if (log) {
         if (firstlog) {
           firstlog = false;
-          logger << "Propagating " << this << endl;
+          logger << "Propagating " << this << '\n';
         }
         logger << "    Available material balance on " << myflpln->getBuffer()
                << " short of " << closed_balance << " on " << myflpln->getDate()
-               << endl;
+               << '\n';
       }
       // 1) Correct the date of existing completed supply
-      for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-        if (flpln->getQuantity() > 0.0 && flpln->getOperationPlan() &&
-            (flpln->getOperationPlan()->getClosed() ||
-             flpln->getOperationPlan()->getCompleted()) &&
-            flpln->getDate() > myflpln->getDate()) {
+      for (auto& flpln : tmline)
+        if (flpln.getQuantity() > 0.0 && flpln.getOperationPlan() &&
+            (flpln.getOperationPlan()->getClosed() ||
+             flpln.getOperationPlan()->getCompleted()) &&
+            flpln.getDate() > myflpln->getDate()) {
           if (log) {
             if (firstlog) {
               firstlog = false;
-              logger << "Propagating " << this << endl;
+              logger << "Propagating " << this << '\n';
             }
-            logger << "      Adjusting end date of "
-                   << flpln->getOperationPlan() << endl;
+            logger << "      Adjusting end date of " << flpln.getOperationPlan()
+                   << '\n';
           }
-          flpln->getOperationPlan()->setStartAndEnd(
-              flpln->getOperationPlan()->getStart() < myflpln->getDate()
-                  ? flpln->getOperationPlan()->getStart()
+          flpln.getOperationPlan()->setStartAndEnd(
+              flpln.getOperationPlan()->getStart() < myflpln->getDate()
+                  ? flpln.getOperationPlan()->getStart()
                   : myflpln->getDate(),
               myflpln->getDate());
-          flpln->getOperationPlan()->appendInfo(
+          flpln.getOperationPlan()->appendInfo(
               "Changed end date to keep the inventory positive");
-          closed_balance += flpln->getQuantity();
+          closed_balance += flpln.getQuantity();
           if (closed_balance >= -ROUNDING_ERROR) break;
         }
       if (closed_balance < -ROUNDING_ERROR) {
         // 2) try changing the status of confirmed supply
-        for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-          if (flpln->getQuantity() > 0.0 && flpln->getOperationPlan() &&
-              flpln->getOperationPlan()->getConfirmed() &&
-              !flpln->getOperationPlan()->getClosed() &&
-              !flpln->getOperationPlan()->getCompleted()) {
+        for (auto& flpln : tmline)
+          if (flpln.getQuantity() > 0.0 && flpln.getOperationPlan() &&
+              flpln.getOperationPlan()->getConfirmed() &&
+              !flpln.getOperationPlan()->getClosed() &&
+              !flpln.getOperationPlan()->getCompleted()) {
             if (log) {
               if (firstlog) {
                 firstlog = false;
-                logger << "Propagating " << this << endl;
+                logger << "Propagating " << this << '\n';
               }
-              logger << "      Changing status of " << flpln->getOperationPlan()
-                     << endl;
+              logger << "      Changing status of " << flpln.getOperationPlan()
+                     << '\n';
             }
-            flpln->getOperationPlan()->setStatus(mystatus);
-            flpln->getOperationPlan()->appendInfo(
+            flpln.getOperationPlan()->setStatus(mystatus);
+            flpln.getOperationPlan()->appendInfo(
                 "Changed status to keep the inventory positive");
-            closed_balance += flpln->getQuantity();
+            closed_balance += flpln.getQuantity();
             if (closed_balance >= -ROUNDING_ERROR) break;
           }
         if (closed_balance < -ROUNDING_ERROR) {
           // 3) try changing the status of approved supply
-          for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-            if (flpln->getQuantity() > 0.0 && flpln->getOperationPlan() &&
-                flpln->getOperationPlan()->getApproved()) {
+          for (auto& flpln : tmline)
+            if (flpln.getQuantity() > 0.0 && flpln.getOperationPlan() &&
+                flpln.getOperationPlan()->getApproved()) {
               if (log) {
                 if (firstlog) {
                   firstlog = false;
-                  logger << "Propagating " << this << endl;
+                  logger << "Propagating " << this << '\n';
                 }
                 logger << "      Changing status of "
-                       << flpln->getOperationPlan() << endl;
+                       << flpln.getOperationPlan() << '\n';
               }
-              flpln->getOperationPlan()->appendInfo(
+              flpln.getOperationPlan()->appendInfo(
                   "Changed status to keep the inventory positive");
-              flpln->getOperationPlan()->setStatus(mystatus);
-              closed_balance += flpln->getQuantity();
+              flpln.getOperationPlan()->setStatus(mystatus);
+              closed_balance += flpln.getQuantity();
               if (closed_balance >= -ROUNDING_ERROR) break;
             }
           if (closed_balance < -ROUNDING_ERROR) {
             // 4) Try changing the status of proposed supply
-            for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-              if (flpln->getQuantity() > 0.0 && flpln->getOperationPlan() &&
-                  flpln->getOperationPlan()->getProposed()) {
+            for (auto& flpln : tmline)
+              if (flpln.getQuantity() > 0.0 && flpln.getOperationPlan() &&
+                  flpln.getOperationPlan()->getProposed()) {
                 if (log) {
                   if (firstlog) {
                     firstlog = false;
-                    logger << "Propagating " << this << endl;
+                    logger << "Propagating " << this << '\n';
                   }
                   logger << "      Changing status of "
-                         << flpln->getOperationPlan() << endl;
+                         << flpln.getOperationPlan() << '\n';
                 }
-                flpln->getOperationPlan()->appendInfo(
+                flpln.getOperationPlan()->appendInfo(
                     "Changed status to keep the inventory positive");
-                flpln->getOperationPlan()->setStatus(mystatus);
-                closed_balance += flpln->getQuantity();
+                flpln.getOperationPlan()->setStatus(mystatus);
+                closed_balance += flpln.getQuantity();
                 if (closed_balance >= -ROUNDING_ERROR) break;
               }
             // 5) Finally, update the initial inventory
@@ -2010,10 +2008,10 @@ void OperationPlan::propagateStatus(bool log) {
               if (log) {
                 if (firstlog) {
                   firstlog = false;
-                  logger << "Propagating " << this << endl;
+                  logger << "Propagating " << this << '\n';
                 }
                 logger << "      Incrementing initial inventory with "
-                       << -closed_balance << endl;
+                       << -closed_balance << '\n';
               }
               myflpln->getBuffer()->setOnHand(
                   myflpln->getBuffer()->getOnHand() - closed_balance);
@@ -2096,7 +2094,7 @@ void OperationPlan::setDemand(Demand* l) {
   }
 }
 
-PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args,
+PyObject* OperationPlan::create(PyTypeObject* , PyObject* ,
                                 PyObject* kwds) {
   try {
     // Find or create the C++ object
@@ -2281,11 +2279,10 @@ void OperationPlan::updatePurchaseOrder(Item* newitem, Location* newlocation,
   // Look for a matching operation replenishing this buffer.
   Operation* newoper = nullptr;
   destbuffer->getProducingOperation();
-  for (auto flowiter = destbuffer->getFlows().begin();
-       flowiter != destbuffer->getFlows().end(); ++flowiter) {
-    if (!flowiter->getOperation()->hasType<OperationItemSupplier>()) continue;
-    OperationItemSupplier* opitemsupplier =
-        static_cast<OperationItemSupplier*>(flowiter->getOperation());
+  for (const auto& flowiter : destbuffer->getFlows()) {
+    if (!flowiter.getOperation()->hasType<OperationItemSupplier>()) continue;
+    auto* opitemsupplier =
+        static_cast<OperationItemSupplier*>(flowiter.getOperation());
     if (newsupplier) {
       if (newsupplier->isMemberOf(
               opitemsupplier->getItemSupplier()->getSupplier()))
@@ -2296,7 +2293,7 @@ void OperationPlan::updatePurchaseOrder(Item* newitem, Location* newlocation,
 
   // No matching operation is found.
   if (!newoper && getSupplier()) {
-    ItemSupplier* itemsupplier = new ItemSupplier();
+    auto* itemsupplier = new ItemSupplier();
     itemsupplier->setSupplier(newsupplier);
     itemsupplier->setItem(newitem);
     itemsupplier->setLocation(newlocation);
@@ -2332,13 +2329,12 @@ void OperationPlan::updateDistributionOrder(Item* newitem, Location* neworigin,
   // Look for a matching operation replenishing this buffer.
   Operation* newoper = nullptr;
   destbuffer->getProducingOperation();
-  for (auto flowiter = destbuffer->getFlows().begin();
-       flowiter != destbuffer->getFlows().end(); ++flowiter) {
-    if (!flowiter->getOperation()->hasType<OperationItemDistribution>() ||
-        flowiter->getQuantity() <= 0)
+  for (const auto& flowiter : destbuffer->getFlows()) {
+    if (!flowiter.getOperation()->hasType<OperationItemDistribution>() ||
+        flowiter.getQuantity() <= 0)
       continue;
-    OperationItemDistribution* opitemdist =
-        static_cast<OperationItemDistribution*>(flowiter->getOperation());
+    auto* opitemdist =
+        static_cast<OperationItemDistribution*>(flowiter.getOperation());
     // Origin must match as well
     if (neworigin) {
       for (auto fl = opitemdist->getFlows().begin();
@@ -2431,7 +2427,7 @@ void OperationPlan::clear() {
   for (auto& o : Operation::all()) o.deleteOperationPlans();
 }
 
-PyObject* OperationPlan::createIterator(PyObject* self, PyObject* args) {
+PyObject* OperationPlan::createIterator(PyObject* , PyObject* args) {
   // Check arguments
   PyObject* pyoper = nullptr;
   if (!PyArg_ParseTuple(args, "|O:operationplans", &pyoper)) return nullptr;
@@ -2554,13 +2550,12 @@ double OperationPlan::getEfficiency(Date d) const {
   LoadPlanIterator e = beginLoadPlans();
   if (e == endLoadPlans()) {
     // Use the operation loads
-    for (auto h = getOperation()->getLoads().begin();
-         h != getOperation()->getLoads().end(); ++h) {
+    for (const auto& h : getOperation()->getLoads()) {
       double best_eff = 0.0;
-      for (Resource::memberRecursiveIterator mmbr(h->getResource());
+      for (Resource::memberRecursiveIterator mmbr(h.getResource());
            !mmbr.empty(); ++mmbr) {
         if (!mmbr->isGroup() &&
-            (!h->getSkill() || mmbr->hasSkill(h->getSkill(), d))) {
+            (!h.getSkill() || mmbr->hasSkill(h.getSkill(), d))) {
           auto my_eff =
               mmbr->getEfficiencyCalendar()
                   ? mmbr->getEfficiencyCalendar()->getValue(d ? d : getStart())
@@ -2593,10 +2588,9 @@ double OperationPlan::getEfficiency(Date d) const {
                       : inner->getResource()->getEfficiency();
             }
           double load_quantity = 1.0;
-          for (auto h = getOperation()->getLoads().begin();
-               h != getOperation()->getLoads().end(); ++h) {
-            if (e->getResource()->isMemberOf(h->getResource())) {
-              load_quantity = h->getQuantity();
+          for (const auto& h : getOperation()->getLoads()) {
+            if (e->getResource()->isMemberOf(h.getResource())) {
+              load_quantity = h.getQuantity();
               break;
             }
           }
@@ -2696,8 +2690,8 @@ double OperationPlan::getSetupCost() const {
     return 0.0;
 }
 
-PyObject* OperationPlan::getColorPython(PyObject* self, PyObject* args) {
-  OperationPlan* opplan = static_cast<OperationPlan*>(self);
+PyObject* OperationPlan::getColorPython(PyObject* self, PyObject*) {
+  auto* opplan = static_cast<OperationPlan*>(self);
   // No color for delivery, stock or alternate operationplans
   if (opplan->getOrderType() == "DLVR")
     return Py_BuildValue("(dO)", 999999.0, Py_None);

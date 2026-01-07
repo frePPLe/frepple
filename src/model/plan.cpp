@@ -60,7 +60,7 @@ int Plan::initialize() {
   return tmp;
 }
 
-PyObject* Plan::setBaseClass(PyObject* self, PyObject* args) {
+PyObject* Plan::setBaseClass(PyObject*, PyObject* args) {
   PyObject* class_cpp = nullptr;
   PyObject* class_py = nullptr;
   if (!PyArg_ParseTuple(args, "OO:setBaseClass", &class_cpp, &class_py))

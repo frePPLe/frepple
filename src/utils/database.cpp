@@ -23,17 +23,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(WIN32)
-#include <WinSock2.h>
-#endif
-
 #include <deque>
 #include <thread>
 
 #include "frepple/database.h"
 
-namespace frepple {
-namespace utils {
+namespace frepple::utils {
 
 DatabaseWriter* DatabaseWriter::instance = nullptr;
 
@@ -44,7 +39,7 @@ void DatabaseReader::assureConnection() {
   conn = PQconnectdb(connectionstring.c_str());
   if (PQstatus(conn) != CONNECTION_OK) {
     stringstream o;
-    o << "Database error: Connection failed: " << PQerrorMessage(conn) << endl;
+    o << "Database error: Connection failed: " << PQerrorMessage(conn) << '\n';
     PQfinish(conn);
     conn = nullptr;
     throw RuntimeException(o.str());
@@ -63,8 +58,8 @@ void DatabaseReader::executeSQL(DatabaseStatement& stmt) {
   PGresult* res = stmt.execute(conn);
   if (PQresultStatus(res) != PGRES_COMMAND_OK) {
     stringstream o;
-    o << "Database error: " << PQerrorMessage(conn) << endl
-      << "   statement: " << stmt << endl;
+    o << "Database error: " << PQerrorMessage(conn)
+      << "\n   statement: " << stmt << '\n';
     PQclear(res);
     throw RuntimeException(o.str());
   }
@@ -79,14 +74,14 @@ DatabaseResult::DatabaseResult(DatabaseReader& db, DatabaseStatement& stmt) {
   }
   if (PQresultStatus(res) != PGRES_TUPLES_OK) {
     stringstream o;
-    o << "Database error: " << db.getError() << endl
-      << "   statement: " << stmt << endl;
+    o << "Database error: " << db.getError() << "\n   statement: " << stmt
+      << '\n';
     PQclear(res);
     throw RuntimeException(o.str());
   }
 }
 
-PyObject* runDatabaseThread(PyObject* self, PyObject* args, PyObject* kwds) {
+PyObject* runDatabaseThread(PyObject*, PyObject* args, PyObject*) {
   // Pick up arguments
   const char* con = "";
   if (!PyArg_ParseTuple(args, "|s:runDatabaseThread", &con)) return nullptr;
@@ -296,7 +291,7 @@ void DatabaseWriter::pushStatement(const string& sql, const string& arg1,
 }
 
 void DatabaseWriter::workerthread(DatabaseWriter* writer) {
-  logger << "Initialized database writer" << endl;
+  logger << "Initialized database writer\n";
 
   // Endless loop
   PGconn* conn = nullptr;
@@ -316,7 +311,7 @@ void DatabaseWriter::workerthread(DatabaseWriter* writer) {
         // Queue is empty
         if (conn && Date::now() - idle_since > Duration(600L)) {
           logger << "Closing idle database connection at " << Date::now()
-                 << endl;
+                 << '\n';
           PQfinish(conn);
           conn = nullptr;
         }
@@ -332,7 +327,7 @@ void DatabaseWriter::workerthread(DatabaseWriter* writer) {
         conn = PQconnectdb(writer->connectionstring.c_str());
         if (PQstatus(conn) != CONNECTION_OK) {
           logger << "Database thread error: Connection failed: "
-                 << PQerrorMessage(conn) << endl;
+                 << PQerrorMessage(conn) << '\n';
           PQfinish(conn);
           return;
         }
@@ -341,15 +336,15 @@ void DatabaseWriter::workerthread(DatabaseWriter* writer) {
                             "'")
               .execute(conn);
         logger << "Opening connection for database writer at " << Date::now()
-               << endl;
+               << '\n';
       }
 
       // Execute the statement
       PGresult* res = stmt->execute(conn);
       if (PQresultStatus(res) != PGRES_COMMAND_OK) {
         logger << "Database thread error: statement failed: "
-               << PQerrorMessage(conn) << endl;
-        logger << "  Statement: " << stmt << endl;
+               << PQerrorMessage(conn) << '\n';
+        logger << "  Statement: " << stmt << '\n';
         // TODO Catch dropped connections PGRES_FATAL_ERROR and then call
         // PQreset(conn) to reconnect automatically
       }
@@ -363,7 +358,7 @@ void DatabaseWriter::workerthread(DatabaseWriter* writer) {
 
   // Finalize
   if (conn) PQfinish(conn);
-  logger << "Finished database writer thread" << endl;
+  logger << "Finished database writer thread\n";
 }
 
 PGresult* DatabaseStatement::execute(PGconn* conn) {
@@ -383,7 +378,7 @@ PGresult* DatabaseTransaction::execute(PGconn* conn) {
   PGresult* res = PQexec(conn, "BEGIN TRANSACTION");
   if (PQresultStatus(res) != PGRES_COMMAND_OK) {
     logger << "Database thread error: transaction start failed: "
-           << PQerrorMessage(conn) << endl;
+           << PQerrorMessage(conn) << '\n';
     return res;
   }
   PQclear(res);
@@ -403,8 +398,8 @@ PGresult* DatabaseTransaction::execute(PGconn* conn) {
         // After rollback we'll return the resultstatus object we have
         // at the moment of the failure. Hence no call to PQClear.
         logger << "Database thread error: statement failed: "
-               << PQerrorMessage(conn) << endl;
-        logger << "  Statement: " << stmt << endl;
+               << PQerrorMessage(conn) << '\n';
+        logger << "  Statement: " << stmt << '\n';
         rollback = true;
       } else
         PQclear(res);
@@ -419,7 +414,7 @@ PGresult* DatabaseTransaction::execute(PGconn* conn) {
     PGresult* res2 = PQexec(conn, "ROLLBACK");
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
       logger << "Database thread error: transaction rollback failed: "
-             << PQerrorMessage(conn) << endl;
+             << PQerrorMessage(conn) << '\n';
       PQclear(res);
       return res2;
     }
@@ -427,7 +422,7 @@ PGresult* DatabaseTransaction::execute(PGconn* conn) {
     PGresult* res2 = PQexec(conn, "COMMIT");
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
       logger << "Database thread error: transaction commit failed: "
-             << PQerrorMessage(conn) << endl;
+             << PQerrorMessage(conn) << '\n';
       PQclear(res);
       return res2;
     }
@@ -435,5 +430,4 @@ PGresult* DatabaseTransaction::execute(PGconn* conn) {
   return res;
 }
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

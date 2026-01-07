@@ -1,6 +1,6 @@
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.28)
 
 # The version is defined in 2 places:
 #  - pyproject.toml
@@ -32,32 +32,14 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   endif()
 endif()
 
-# Check third party libraries
 if(WIN32)
-  # Some hard-coded paths for third party libraries on Windows.
-  set(XERCESC_FOLDER "/develop/xerces-c-3.2.3")
+  message(FATAL_ERROR "Frepple doesn't support Windows any longer")
+endif()
 
-  if(EXISTS "${XERCESC_FOLDER}")
-    include_directories("${XERCESC_FOLDER}/include")
-    list(APPEND CMAKE_REQUIRED_INCLUDES "${XERCESC_FOLDER}/include")
-    add_library(xerces-c STATIC IMPORTED)
-    set_target_properties(xerces-c PROPERTIES
-      IMPORTED_LOCATION_DEBUG "${XERCESC_FOLDER}/lib/xerces-c_3D.lib"
-      IMPORTED_LOCATION_RELEASE "${XERCESC_FOLDER}/lib/xerces-c_3.lib"
-      IMPORTED_LOCATION_MINSIZEREL "${XERCESC_FOLDER}/lib/xerces-c_3.lib"
-      IMPORTED_LOCATION_RELWITHDEBINFO "${XERCESC_FOLDER}/lib/xerces-c_3.lib"
-    )
-  endif()
-
-  # PostgreSQL ZIP-installer from https://www.enterprisedb.com/download-postgresql-binaries
-  # Used to embed PostgreSQL in frepple's windows installer
-  set(POSTGRES_FOLDER "c:/develop/pgsql")
-else()
-  find_library(xerces-c NAMES xerces-c)
-
-  if(NOT xerces-c)
-    message(FATAL_ERROR "xerces-c library not found")
-  endif()
+# Check third party libraries
+find_library(xerces-c NAMES xerces-c)
+if(NOT xerces-c)
+  message(FATAL_ERROR "xerces-c library not found")
 endif()
 
 if(UNIX)
@@ -72,13 +54,8 @@ else()
 endif()
 
 # Check python and create the virtualenv
-if(WIN32)
-  set(Python3_VENV "${PROJECT_SOURCE_DIR}/venv/Scripts")
-else()
-  set(Python3_VENV "${PROJECT_SOURCE_DIR}/venv/bin")
-endif()
-
-find_package(Python3 3.8 COMPONENTS Interpreter Development REQUIRED)
+set(Python3_VENV "${PROJECT_SOURCE_DIR}/venv/bin")
+find_package(Python3 3.12 COMPONENTS Interpreter Development REQUIRED)
 add_custom_command(
   OUTPUT venv.stamp
   DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt" "${CMAKE_CURRENT_SOURCE_DIR}/requirements.dev.txt"
@@ -105,21 +82,12 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-if(WIN32)
-  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MT")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /EHsc /MP8 ")
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG /MTd /EHsc /MP8 ")
-  add_definitions("-D_CRT_SECURE_NO_DEPRECATE")
-else()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=date-time")
-  set(CMAKE_CXX_FLAGS_PROFILING "${CMAKE_CXX_FLAGS_DEBUG} -DNDEBUG")
-  set(CMAKE_C_FLAGS_PROFILING "${CMAKE_C_FLAGS_DEBUG} -DNDEBUG")
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wuninitialized -Wunused -Wswitch")
-  set(CMAKE_EXE_LINKER_FLAGS_PROFILING "")
-  set(CMAKE_SHARED_LINKER_FLAGS_PROFILING "")
-endif()
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=date-time")
+set(CMAKE_CXX_FLAGS_PROFILING "${CMAKE_CXX_FLAGS_DEBUG} -DNDEBUG")
+set(CMAKE_C_FLAGS_PROFILING "${CMAKE_C_FLAGS_DEBUG} -DNDEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wuninitialized -Wunused -Wswitch -Wunused-parameter -Wall") # -Wextra
+set(CMAKE_EXE_LINKER_FLAGS_PROFILING "")
+set(CMAKE_SHARED_LINKER_FLAGS_PROFILING "")
 
 include(CheckIncludeFile)
 include(CheckIncludeFileCXX)
@@ -139,13 +107,11 @@ check_function_exists(prctl HAVE_PRCTL)
 
 # Verify third party header files
 check_include_file_cxx("xercesc/util/XercesDefs.hpp" HAVE_XERCESC)
-
 if(NOT ${HAVE_XERCESC})
   message(FATAL_ERROR "xerces-c include headers not found")
 endif()
 
 find_program(pg_config NAMES pg_config)
-
 if(pg_config)
   execute_process(
     COMMAND ${pg_config} --libdir
@@ -362,3 +328,14 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   )
 endif()
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+find_program(run-clang-tidy NAMES run-clang-tidy)
+if(run-clang-tidy)
+  add_custom_target(run-clang-tidy
+    COMMAND run-clang-tidy -p build -checks='-*,modernize-*,performance-*,-modernize-use-trailing-return-type' '-header-filter=.*' -fix 'include/*' 'src/*'
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  )
+endif()
+

@@ -24,12 +24,8 @@
  ***************************************************************************/
 
 #pragma once
-#ifndef TIMELINE
-#define TIMELINE
 
-#ifndef DOXYGEN
 #include <cmath>
-#endif
 
 extern PythonType* EventPythonType;
 
@@ -68,10 +64,10 @@ class TimeLine {
     Event* prev = nullptr;
     Date dt;
     unsigned short tp;
-    Event(unsigned short t, double q = 0.0) : qty(q), tp(t){};
+    Event(unsigned short t, double q = 0.0) : qty(q), tp(t) {};
 
    public:
-    virtual ~Event(){};
+    ~Event() override = default;
 
     /* Default constructor. */
     Event() : tp(0), qty(0) {}
@@ -210,7 +206,7 @@ class TimeLine {
       this->initType(EventPythonType->type_object());
     }
 
-    virtual OperationPlan* getOperationPlan() const { return nullptr; }
+    OperationPlan* getOperationPlan() const override { return nullptr; }
   };
 
   /* A timeline event representing a change of the minimum target. */
@@ -226,7 +222,7 @@ class TimeLine {
     EventMinQuantity* prevMin = nullptr;
 
    public:
-    virtual TimeLine<type>* getTimeLine() const { return tmline; }
+    TimeLine<type>* getTimeLine() const override { return tmline; }
 
     EventMinQuantity(Date d, TimeLine<type>* t, double f = 0.0)
         : Event(3), newMin(f), tmline(t) {
@@ -236,14 +232,14 @@ class TimeLine {
 
     void setMin(double f) { newMin = f; }
 
-    virtual double getMin(bool inclusive = true) const {
+    double getMin(bool inclusive = true) const override {
       if (inclusive)
         return newMin;
       else
         return prevMin ? prevMin->newMin : 0.0;
     }
 
-    virtual OperationPlan* getOperationPlan() const { return nullptr; }
+    OperationPlan* getOperationPlan() const override { return nullptr; }
   };
 
   /* A timeline event representing a change of the maximum target. */
@@ -259,7 +255,7 @@ class TimeLine {
     EventMaxQuantity* prevMax = nullptr;
 
    public:
-    virtual TimeLine<type>* getTimeLine() const { return tmline; }
+    TimeLine<type>* getTimeLine() const override { return tmline; }
 
     EventMaxQuantity(Date d, TimeLine<type>* t, double f = 0.0)
         : Event(4), newMax(f), tmline(t) {
@@ -269,14 +265,14 @@ class TimeLine {
 
     void setMax(double f) { newMax = f; }
 
-    virtual double getMax(bool inclusive = true) const {
+    double getMax(bool inclusive = true) const override {
       if (inclusive)
         return newMax;
       else
         return prevMax ? prevMax->newMax : 0.0;
     }
 
-    virtual OperationPlan* getOperationPlan() const { return nullptr; }
+    OperationPlan* getOperationPlan() const override { return nullptr; }
   };
 
   /* This is bi-directional iterator through the timeline. */
@@ -287,7 +283,7 @@ class TimeLine {
    public:
     const_iterator() : cur(nullptr) {}
 
-    const_iterator(const Event* e) : cur(e){};
+    const_iterator(const Event* e) : cur(e) {};
 
     const_iterator(const iterator& c) : cur(c.cur) {}
 
@@ -309,7 +305,7 @@ class TimeLine {
     Event* next() {
       // Only use the change events
       while (cur && cur->getEventType() != 1) cur = cur->next;
-      Event* tmp = const_cast<Event*>(cur);
+      auto* tmp = const_cast<Event*>(cur);
       if (cur) cur = cur->next;
       return tmp;
     }
@@ -335,7 +331,7 @@ class TimeLine {
    public:
     iterator() {}
 
-    iterator(Event* e) : const_iterator(e){};
+    iterator(Event* e) : const_iterator(e) {};
 
     Event& operator*() const { return *const_cast<Event*>(this->cur); }
 
@@ -620,7 +616,7 @@ void TimeLine<type>::insert(Event* e) {
     case 2:
       // Insert in the list of setOnhand
       {
-        EventSetOnhand* m = static_cast<EventSetOnhand*>(e);
+        auto* m = static_cast<EventSetOnhand*>(e);
         if (!lastSet || m->getDate() >= lastSet->getDate()) {
           // New last setOnhand
           m->prevSet = lastSet;
@@ -643,7 +639,7 @@ void TimeLine<type>::insert(Event* e) {
     case 3:
       // Insert in the list of minima
       {
-        EventMinQuantity* m = static_cast<EventMinQuantity*>(e);
+        auto* m = static_cast<EventMinQuantity*>(e);
         if (!lastMin || m->getDate() >= lastMin->getDate()) {
           // New last minimum
           m->prevMin = lastMin;
@@ -660,7 +656,7 @@ void TimeLine<type>::insert(Event* e) {
     case 4:
       // Insert in the list of maxima
       {
-        EventMaxQuantity* m = static_cast<EventMaxQuantity*>(e);
+        auto* m = static_cast<EventMaxQuantity*>(e);
         if (!lastMax || m->getDate() >= lastMax->getDate()) {
           // New last maximum
           m->prevMax = lastMax;
@@ -705,7 +701,7 @@ void TimeLine<type>::erase(Event* e) {
     // Erasing the head
     first = e->next;
   else
-    logger << "Warning: corrupted timeline head" << endl;
+    logger << "Warning: corrupted timeline head\n";
 
   if (e->next)
     e->next->prev = e->prev;
@@ -713,7 +709,7 @@ void TimeLine<type>::erase(Event* e) {
     // Erasing the tail
     last = e->prev;
   else
-    logger << "Warning: corrupted timeline tail" << endl;
+    logger << "Warning: corrupted timeline tail\n";
 
   // Clear prev and next pointers
   e->prev = nullptr;
@@ -723,7 +719,7 @@ void TimeLine<type>::erase(Event* e) {
     case 2:
       // Remove from the list of setonhand
       {
-        EventSetOnhand* m = static_cast<EventSetOnhand*>(e);
+        auto* m = static_cast<EventSetOnhand*>(e);
         if (lastSet == e)
           // New last set
           lastSet = m->prevSet;
@@ -737,7 +733,7 @@ void TimeLine<type>::erase(Event* e) {
     case 3:
       // Remove from the list of minima
       {
-        EventMinQuantity* m = static_cast<EventMinQuantity*>(e);
+        auto* m = static_cast<EventMinQuantity*>(e);
         if (lastMin == e)
           // New last minimum
           lastMin = m->prevMin;
@@ -751,7 +747,7 @@ void TimeLine<type>::erase(Event* e) {
     case 4:
       // Remove from the list of maxima
       {
-        EventMaxQuantity* m = static_cast<EventMaxQuantity*>(e);
+        auto* m = static_cast<EventMaxQuantity*>(e);
         if (lastMax == e)
           // New last maximum
           lastMax = m->prevMax;
@@ -934,24 +930,22 @@ bool TimeLine<type>::check() const {
     if (i->getQuantity() > 0) expectedCumProd += i->getQuantity();
     if (fabs(expectedOH - i->oh) > ROUNDING_ERROR) {
       logger << "Error: timeline onhand value corrupted on " << i->getDate()
-             << endl;
+             << '\n';
       return false;
     }
     // Problem 2: The cumulative produced quantity isn't correct
     if (fabs(expectedCumProd - i->cum_prod) > ROUNDING_ERROR) {
       logger << "Error: timeline cumulative produced value corrupted on "
-             << i->getDate() << endl;
+             << i->getDate() << '\n';
       return false;
     }
     // Problem 3: Timeline is not sorted correctly
     if (prev && !(*prev < *i) &&
         fabs(prev->getQuantity() - i->getQuantity()) > ROUNDING_ERROR) {
-      logger << "Error: timeline sort corrupted on " << i->getDate() << endl;
+      logger << "Error: timeline sort corrupted on " << i->getDate() << '\n';
       return false;
     }
     prev = &*i;
   }
   return true;
 }
-
-#endif

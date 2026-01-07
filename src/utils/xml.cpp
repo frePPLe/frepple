@@ -29,8 +29,7 @@
 
 #include <filesystem>
 
-namespace frepple {
-namespace utils {
+namespace frepple::utils {
 
 std::hash<string> Keyword::hasher;
 xercesc::XMLTranscoder* XMLInput::utf8_encoder = nullptr;
@@ -52,7 +51,7 @@ XMLInput::XMLInput() : objects(maxobjects), data(maxdata) {
         xercesc::XMLPlatformUtils::fgTransService->makeNewTranscoderFor(
             "UTF-8", resCode, 10240);
     if (!XMLInput::utf8_encoder)
-      logger << "Can't initialize UTF-8 transcoder: reason " << resCode << endl;
+      logger << "Can't initialize UTF-8 transcoder: reason " << resCode << '\n';
   }
 }
 
@@ -73,7 +72,7 @@ void XMLInput::processingInstruction(const XMLCh* const target,
           xercesc::XMLString::release(&value);
           throw;
         } else
-          logger << "Continuing after data error: " << e.what() << endl;
+          logger << "Continuing after data error: " << e.what() << '\n';
       }
     }
     xercesc::XMLString::release(&type);
@@ -85,8 +84,8 @@ void XMLInput::processingInstruction(const XMLCh* const target,
   }
 }
 
-void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const ename,
-                            const XMLCh* const qname,
+void XMLInput::startElement(const XMLCh* const, const XMLCh* const ename,
+                            const XMLCh* const,
                             const xercesc::Attributes& atts) {
   string ename_utf8 = transcodeUTF8(ename);
 
@@ -111,7 +110,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const ename,
            << ((objectindex >= 0 && objects[objectindex].cls)
                    ? objects[objectindex].cls->type
                    : "none")
-           << ")" << endl;
+           << ")\n";
 
   // Look up the field
   data[dataindex].hash = Keyword::hash(ename_utf8);
@@ -134,7 +133,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const ename,
 
     if (loglevel)
       logger << "Starting object #" << objectindex << " ("
-             << objects[objectindex].cls->type << ")" << endl;
+             << objects[objectindex].cls->type << ")\n";
 
     if (!objects[objectindex].cls->category) {
       // Category metadata passed: replace it with the concrete type
@@ -155,7 +154,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const ename,
       if (!objects[objectindex].cls->category) {
         // No type attribute was registered, and we use the default of the
         // category
-        const MetaCategory& cat =
+        const auto& cat =
             static_cast<const MetaCategory&>(*objects[objectindex].cls);
         objects[objectindex].cls = cat.findClass(Tags::deflt.getHash());
         if (!objects[objectindex].cls)
@@ -232,13 +231,13 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const ename,
       }
       if (ok != 3) {
         data[dataindex].hash = 0;  // Mark the field as invalid
-        logger << "Warning: property missing name and/or value field" << endl;
+        logger << "Warning: property missing name and/or value field\n";
       }
     } else {
       // Ignore this element
       reading = false;
       ++ignore;
-      logger << "Warning: Ignoring XML element '" << ename_utf8 << "'" << endl;
+      logger << "Warning: Ignoring XML element '" << ename_utf8 << "'\n";
     }
   } else if (data[dataindex].field->isPointer()) {
     // Increment object index
@@ -255,7 +254,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const ename,
 
     if (loglevel)
       logger << "Starting object #" << objectindex << " ("
-             << objects[objectindex].cls->type << ")" << endl;
+             << objects[objectindex].cls->type << ")\n";
 
     if (!objects[objectindex].cls->category) {
       // Category metadata passed: replace it with the concrete type
@@ -319,8 +318,8 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const ename,
     reading = false;
 }
 
-void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
-                          const XMLCh* const qname) {
+void XMLInput::endElement(const XMLCh* const, const XMLCh* const,
+                          const XMLCh* const ename) {
   string ename_utf8 = transcodeUTF8(ename);
 
   // Currently ignoring all input?
@@ -340,7 +339,7 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
            << ((objectindex >= 0 && objects[objectindex].cls)
                    ? objects[objectindex].cls->type
                    : "none")
-           << ")" << endl;
+           << ")\n";
 
   // Ignore content between tags
   reading = false;
@@ -351,14 +350,14 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
       if (loglevel)
         logger << "Updating field "
                << data[dataindex].field->getName().getName()
-               << " on the root object" << endl;
+               << " on the root object\n";
       data[dataindex].field->setField(objects[objectindex].object,
                                       data[dataindex].value,
                                       getCommandManager());
     } else if (!data[dataindex].name.empty()) {
       if (loglevel)
         logger << "Updating property " << data[dataindex].name
-               << " on the root object" << endl;
+               << " on the root object\n";
       objects[objectindex].object->setProperty(
           data[dataindex].name, data[dataindex].value, 4, getCommandManager());
       data[dataindex].name = "";
@@ -538,7 +537,7 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
     if (!objectindex) return;
 
     if (loglevel) {
-      logger << "Creating object " << objects[objectindex].cls->type << endl;
+      logger << "Creating object " << objects[objectindex].cls->type << '\n';
       dict.print();
     }
 
@@ -599,14 +598,14 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
     if (abortOnDataException)
       throw;
     else
-      logger << "Continuing after data error: " << e.what() << endl;
+      logger << "Continuing after data error: " << e.what() << '\n';
   }
 
   // Update indexes for data and object
   dataindex = objects[objectindex--].start - 1;
 }
 
-void XMLInput::characters(const XMLCh* const c, const XMLSize_t n) {
+void XMLInput::characters(const XMLCh* const c, const XMLSize_t) {
   if (reading && dataindex >= 0)
     data[dataindex].value.appendString(transcodeUTF8(c));
 }
@@ -615,7 +614,7 @@ void XMLInput::warning(const xercesc::SAXParseException& e) {
   char* message = xercesc::XMLString::transcode(e.getMessage());
   logger << "Warning: " << message;
   if (e.getLineNumber() > 0) logger << " at line: " << e.getLineNumber();
-  logger << endl;
+  logger << '\n';
   xercesc::XMLString::release(&message);
 }
 
@@ -688,7 +687,7 @@ void XMLInput::parse(xercesc::InputSource& in, Object* pRoot, bool validate) {
       objects[0].hash = pRoot->getType().typetag->getHash();
       if (loglevel)
         logger << "Starting root object #" << objectindex << " ("
-               << objects[objectindex].cls->type << ")" << endl;
+               << objects[objectindex].cls->type << ")\n";
     } else {
       // Don't process any of the input data. We'll just let the parser
       // check the validity of the XML document.
@@ -838,11 +837,11 @@ void XMLDataValueDict::print() {
       logger << "   " << fields[i].field->getName().getName() << ": ";
     else
       logger << "   null: ";
-    Object* obj = static_cast<Object*>(fields[i].value.getObject());
+    auto* obj = static_cast<Object*>(fields[i].value.getObject());
     if (obj)
-      logger << "pointer to " << obj->getType().type << endl;
+      logger << "pointer to " << obj->getType().type << '\n';
     else
-      logger << fields[i].value.getString() << endl;
+      logger << fields[i].value.getString() << '\n';
   }
 }
 
@@ -917,8 +916,8 @@ Keyword::tagtable& Keyword::getTags() {
 }
 
 void Keyword::printTags() {
-  for (auto i = getTags().begin(); i != getTags().end(); ++i)
-    logger << i->second->getName() << "   " << i->second->dw << endl;
+  for (auto& i : getTags())
+    logger << i.second->getName() << "   " << i.second->dw << '\n';
 }
 
 void XMLInputFile::parse(Object* pRoot, bool validate) {
@@ -947,5 +946,4 @@ void XMLInputFile::parse(Object* pRoot, bool validate) {
   }
 }
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

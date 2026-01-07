@@ -24,8 +24,6 @@
  ***************************************************************************/
 
 #pragma once
-#ifndef FREPPLE_UTILS_H
-#define FREPPLE_UTILS_H
 
 /* Python.h has to be included first. */
 #define PY_SSIZE_T_CLEAN
@@ -201,7 +199,7 @@ class StreambufWrapper : public filebuf {
 
   unsigned long long getLogLimit() const { return max_size; }
 
-  virtual int sync();
+  int sync() override;
 
  private:
   unsigned long long start_size = 0;
@@ -265,7 +263,7 @@ inline ostream& operator<<(ostream& os, const indent& i) {
 class DataException : public logic_error {
  public:
   DataException(const char* c) : logic_error(c) {}
-  DataException(const string s) : logic_error(s) {}
+  DataException(const string& s) : logic_error(s) {}
 };
 
 /* An exception of this type is thrown when the library gets in an
@@ -277,7 +275,7 @@ class DataException : public logic_error {
 class LogicException : public logic_error {
  public:
   LogicException(const char* c) : logic_error(c) {}
-  LogicException(const string s) : logic_error(s) {}
+  LogicException(const string& s) : logic_error(s) {}
 };
 
 /* An exception of this type is thrown when the library runs into
@@ -293,7 +291,7 @@ class LogicException : public logic_error {
 class RuntimeException : public runtime_error {
  public:
   RuntimeException(const char* c) : runtime_error(c) {}
-  RuntimeException(const string s) : runtime_error(s) {}
+  RuntimeException(const string& s) : runtime_error(s) {}
 };
 
 /* Python exception class matching with frepple::LogicException. */
@@ -580,7 +578,7 @@ class Date {
 
   /* A private constructor used to create the infinitePast and
    * infiniteFuture constants. */
-  Date(const char* s, bool dummy) { parse(s); }
+  Date(const char* s, bool) { parse(s); }
 
  public:
   /* A utility function that uses the C function localtime to compute the
@@ -588,19 +586,11 @@ class Date {
    * day of the year, hour, minutes, seconds
    */
   inline void getInfo(struct tm* tm_struct) const {
-// The standard library function localtime() is not re-entrant: the same
-// static structure is used for all calls. In a multi-threaded environment
-// the function is not to be used.
-#ifdef HAVE_LOCALTIME_R
+    // The standard library function localtime() is not re-entrant: the same
+    // static structure is used for all calls. In a multi-threaded environment
+    // the function is not to be used.
     // The POSIX standard defines a re-entrant version of the function.
     localtime_r(&lval, tm_struct);
-#elif defined(WIN32)
-    // Microsoft uses another function name with, of course, a different
-    // name and a different order of arguments.
-    localtime_s(tm_struct, &lval);
-#else
-#error A multi-threading safe localtime function is required
-#endif
   }
 
   /* Constructor initialized with a long value. */
@@ -749,35 +739,19 @@ class DateDetail {
  public:
   /* Constructor from a date. */
   inline DateDetail(const Date& d) : val(d.lval) {
-// The standard library function localtime() is not re-entrant: the same
-// static structure is used for all calls. In a multi-threaded environment
-// the function is not to be used.
-#ifdef HAVE_LOCALTIME_R
+    // The standard library function localtime() is not re-entrant: the same
+    // static structure is used for all calls. In a multi-threaded environment
+    // the function is not to be used.
     // The POSIX standard defines a re-entrant version of the function.
     localtime_r(&(d.lval), &time_info);
-#elif defined(WIN32)
-    // Microsoft uses another function name with, of course, a different
-    // name and a different order of arguments.
-    localtime_s(&time_info, &val);
-#else
-#error A multi-threading safe localtime function is required
-#endif
   }
 
   inline DateDetail(const Date* d) : val(d->lval) {
-// The standard library function localtime() is not re-entrant: the same
-// static structure is used for all calls. In a multi-threaded environment
-// the function is not to be used.
-#ifdef HAVE_LOCALTIME_R
+    // The standard library function localtime() is not re-entrant: the same
+    // static structure is used for all calls. In a multi-threaded environment
+    // the function is not to be used.
     // The POSIX standard defines a re-entrant version of the function.
     localtime_r(&(d->lval), &time_info);
-#elif defined(WIN32)
-    // Microsoft uses another function name with, of course, a different
-    // name and a different order of arguments.
-    localtime_s(&time_info, &val);
-#else
-#error A multi-threading safe localtime function is required
-#endif
   }
 
   /* Convert a DateDetail object into a Date object. */
@@ -1262,13 +1236,13 @@ class PythonType : public NonCopyable {
 
   /* Updates tp_name. */
   void setName(const string& n) {
-    string* name = new string("frepple." + n);
+    auto* name = new string("frepple." + n);
     table.tp_name = const_cast<char*>(name->c_str());
   }
 
   /* Updates tp_doc. */
   void setDoc(const string& n) {
-    string* doc = new string(n);
+    auto* doc = new string(n);
     table.tp_doc = const_cast<char*>(doc->c_str());
   }
 
@@ -1404,7 +1378,7 @@ class MetaFieldBase {
    * Only the size that is additional to the class instance size needs
    * to be reported here.
    */
-  virtual size_t getSize(const Object* o) const { return 0; }
+  virtual size_t getSize(const Object*) const { return 0; }
 
   bool getFlag(unsigned int i) const { return (flags & i) != 0; }
 
@@ -1699,10 +1673,9 @@ class MetaClass : public NonCopyable {
 
   template <class Cls, class Iter, class Ptr>
   inline void addIteratorField(const Keyword& k1, const Keyword& k2, string nm,
-                               string doc,
                                Iter (Cls::*getfunc)(void) const = nullptr,
                                unsigned int c = BASE) {
-    PythonIterator<Iter, Ptr>::initialize(nm, doc);
+    PythonIterator<Iter, Ptr>::initialize(nm);
     fields.push_back(
         new MetaFieldIterator<Cls, Iter, PythonIterator<Iter, Ptr>, Ptr>(
             k1, k2, getfunc, c));
@@ -1840,7 +1813,7 @@ class MetaCategory : public MetaClass {
                                    CommandManager* = nullptr);
 
   /* Destructor. */
-  virtual ~MetaCategory() {}
+  ~MetaCategory() override {}
 
   /* Template constructor. */
   template <class cls>
@@ -1944,12 +1917,12 @@ class FunctorStatic : public Functor {
 
   /* Remove a signal subscriber. */
   static void disconnect(const Signal a) {
-    MetaClass& t =
+    auto& t =
         const_cast<MetaClass&>(static_cast<const MetaClass&>(*T::metadata));
     // Loop through all subscriptions
     for (auto i = t.subscribers[a].begin(); i != t.subscribers[a].end(); ++i) {
       // Try casting the functor to the right type
-      FunctorStatic<T, U>* f = dynamic_cast<FunctorStatic<T, U>*>(*i);
+      auto* f = dynamic_cast<FunctorStatic<T, U>*>(*i);
       if (f) {
         // Casting was successfull. Delete the functor.
         delete *i;
@@ -1965,7 +1938,7 @@ class FunctorStatic : public Functor {
   /* This is the callback method. The functor will call the static callback
    * method of the subscribing class.
    */
-  virtual bool callback(Object* v, const Signal a) const {
+  bool callback(Object* v, const Signal a) const override {
     return U::callback(static_cast<T*>(v), a);
   }
 };
@@ -1989,12 +1962,12 @@ class FunctorInstance : public Functor {
 
   /* Disconnect from a signal. */
   static void disconnect(U* u, const Signal a) {
-    MetaClass& t =
+    auto& t =
         const_cast<MetaClass&>(static_cast<const MetaClass&>(T::metadata));
     // Loop through all subscriptions
     for (auto i = t.subscribers[a].begin(); i != t.subscribers[a].end(); ++i) {
       // Try casting the functor to the right type
-      FunctorInstance<T, U>* f = dynamic_cast<FunctorInstance<T, U>*>(*i);
+      auto* f = dynamic_cast<FunctorInstance<T, U>*>(*i);
       if (f && f->instance == u) {
         // Casting was successfull. Delete the functor.
         delete *i;
@@ -2011,7 +1984,7 @@ class FunctorInstance : public Functor {
 
  private:
   /* This is the callback method. */
-  virtual bool callback(Object* v, const Signal a) const {
+  bool callback(Object* v, const Signal a) const override {
     return instance ? instance->callback(static_cast<T*>(v), a) : true;
   }
 
@@ -2200,7 +2173,7 @@ class Serializer {
   }
 
   Object* pushCurrentObject(Object* o) {
-    Object* t = const_cast<Object*>(currentObject);
+    auto* t = const_cast<Object*>(currentObject);
     currentObject = o;
     return t;
   }
@@ -2322,7 +2295,7 @@ class DataKeyword {
   bool operator<(const DataKeyword& o) const { return hash < o.hash; }
 
   /* String comparison. */
-  bool operator==(const string o) const { return o == ch; }
+  bool operator==(const string& o) const { return o == ch; }
 };
 
 /* This abstract class represents a variant data type.
@@ -2435,7 +2408,7 @@ class XMLData : public DataValue {
   Object* m_obj = nullptr;
 
  public:
-  virtual operator bool() const { return !m_strData.empty() && !m_obj; }
+  operator bool() const override { return !m_strData.empty() && !m_obj; }
 
   /* Default constructor. */
   XMLData() {}
@@ -2450,7 +2423,7 @@ class XMLData : public DataValue {
   }
 
   /* Destructor. */
-  virtual ~XMLData() {}
+  ~XMLData() override {}
 
   /* Re-initializes an existing element. Using this method we can avoid
    * destroying and recreating XMLData objects too frequently. Instead
@@ -2473,27 +2446,27 @@ class XMLData : public DataValue {
   /* Return the data field. */
   const char* getData() const { return m_strData.c_str(); }
 
-  virtual long getLong() const { return atol(getData()); }
+  long getLong() const override { return atol(getData()); }
 
-  virtual unsigned long getUnsignedLong() const { return atol(getData()); }
+  unsigned long getUnsignedLong() const override { return atol(getData()); }
 
-  virtual Duration getDuration() const { return Duration(getData()); }
+  Duration getDuration() const override { return Duration(getData()); }
 
-  virtual int getInt() const { return atoi(getData()); }
+  int getInt() const override { return atoi(getData()); }
 
   // Return the value as a double.
   // This conversion should be done with the C-locale, where a dot is used
   // as a decimal separator. Otherwise values in XML data files will be
   // read incorrectly!
-  virtual double getDouble() const { return atof(getData()); }
+  double getDouble() const override { return atof(getData()); }
 
-  virtual Date getDate() const { return Date(getData()); }
+  Date getDate() const override { return Date(getData()); }
 
   /* Returns the string value of the XML data. The xerces library takes care
    * of appropriately unescaping special character sequences. */
-  virtual const string& getString() const { return m_strData; }
+  const string& getString() const override { return m_strData; }
 
-  virtual vector<string> getStringList() const {
+  vector<string> getStringList() const override {
     throw LogicException("Not implemented");
   }
 
@@ -2506,46 +2479,46 @@ class XMLData : public DataValue {
    * case insensitive. It thus matches a wider range of values:
    *   {t.*, T.*, f.*, F.*, 1.*, 0.*}</p>
    */
-  bool getBool() const;
+  bool getBool() const override;
 
-  Object* getObject() const { return m_obj; }
+  Object* getObject() const override { return m_obj; }
 
-  virtual void setLong(const long l) {
+  void setLong(const long l) override {
     std::ostringstream o;
     o << l;
     m_strData = o.str();
   }
 
-  virtual void setUnsignedLong(const unsigned long l) {
+  void setUnsignedLong(const unsigned long l) override {
     std::ostringstream o;
     o << l;
     m_strData = o.str();
   }
 
-  virtual void setDuration(const Duration d) { m_strData = string(d); }
+  void setDuration(const Duration d) override { m_strData = string(d); }
 
-  virtual void setInt(const int i) {
+  void setInt(const int i) override {
     std::ostringstream o;
     o << i;
     m_strData = o.str();
   }
 
-  virtual void setDouble(const double d) {
+  void setDouble(const double d) override {
     std::ostringstream o;
     o << d;
     m_strData = o.str();
   }
 
-  virtual void setDate(const Date d) { m_strData = string(d); }
+  void setDate(const Date d) override { m_strData = string(d); }
 
-  virtual void setString(const string& v) {
+  void setString(const string& v) override {
     m_strData = v;
     m_obj = nullptr;
   }
 
-  virtual void setBool(const bool b) { m_strData = b ? "true" : "false"; }
+  void setBool(const bool b) override { m_strData = b ? "true" : "false"; }
 
-  virtual void setObject(Object* o) { m_obj = o; }
+  void setObject(Object* o) override { m_obj = o; }
 };
 
 /* This class groups some functions used to interact with the operating
@@ -2579,7 +2552,7 @@ class Environment {
    *   - The library directory as configured during the compilation.
    *     This applies only to linux / unix.
    */
-  static string searchFile(const string);
+  static string searchFile(const string&);
 
   /* Returns the number of processor cores on your machine. */
   static int getProcessorCores();
@@ -2639,7 +2612,7 @@ class PythonData : public DataValue {
   explicit PythonData() : obj(Py_None) { Py_INCREF(obj); }
 
   /* Destructor. */
-  ~PythonData() {
+  ~PythonData() override {
     if (obj) Py_DECREF(obj);
   }
 
@@ -2672,7 +2645,7 @@ class PythonData : public DataValue {
   }
 
   /* Check for null value. */
-  operator bool() const { return obj != nullptr && obj != Py_None; }
+  operator bool() const override { return obj != nullptr && obj != Py_None; }
 
   /* Assignment operator. */
   PythonData& operator=(const PythonData& o) {
@@ -2697,7 +2670,7 @@ class PythonData : public DataValue {
   }
 
   /* Convert a Python string into a C++ string. */
-  inline const string& getString() const {
+  inline const string& getString() const override {
     if (obj == Py_None)
       const_cast<PythonData*>(this)->result = "";
     else if (PyUnicode_Check(obj)) {
@@ -2720,10 +2693,10 @@ class PythonData : public DataValue {
   /* Return a list of strings.
    * We return values and not references, which is not the most efficient...
    */
-  vector<string> getStringList() const;
+  vector<string> getStringList() const override;
 
   /* Extract an unsigned long from the Python object. */
-  unsigned long getUnsignedLong() const {
+  unsigned long getUnsignedLong() const override {
     if (obj == Py_None) return 0;
     if (PyUnicode_Check(obj)) {
       PyObject* t = PyFloat_FromString(obj);
@@ -2742,10 +2715,10 @@ class PythonData : public DataValue {
 
   /* Convert a Python datetime.date or datetime.datetime object into a
    * frePPLe date. */
-  Date getDate() const;
+  Date getDate() const override;
 
   /* Convert a Python number or string into a C++ double. */
-  inline double getDouble() const {
+  inline double getDouble() const override {
     if (obj == Py_None) return 0;
     if (PyUnicode_Check(obj)) {
       PyObject* t = PyFloat_FromString(obj);
@@ -2758,7 +2731,7 @@ class PythonData : public DataValue {
   }
 
   /* Convert a Python number or string into a C++ integer. */
-  inline int getInt() const {
+  inline int getInt() const override {
     if (obj == Py_None) return 0;
     if (PyUnicode_Check(obj)) {
       PyObject* t = PyFloat_FromString(obj);
@@ -2782,7 +2755,7 @@ class PythonData : public DataValue {
   }
 
   /* Convert a Python number into a C++ long. */
-  inline long getLong() const {
+  inline long getLong() const override {
     if (obj == Py_None) return 0;
     if (PyUnicode_Check(obj)) {
       PyObject* t = PyFloat_FromString(obj);
@@ -2806,18 +2779,20 @@ class PythonData : public DataValue {
   }
 
   /* Convert a Python number into a C++ bool. */
-  inline bool getBool() const { return PyObject_IsTrue(obj) ? true : false; }
+  inline bool getBool() const override {
+    return PyObject_IsTrue(obj) ? true : false;
+  }
 
   /* Convert a Python number as a number of seconds into a frePPLe
    * Duration.
    * A Duration is represented as a number of seconds in Python.
    */
-  Duration getDuration() const;
+  Duration getDuration() const override;
 
   /* Return the frePPle Object referred to by the Python value.
    * If it points to a non-frePPLe object, the return value is nullptr.
    */
-  Object* getObject() const;
+  Object* getObject() const override;
 
   /* Constructor from a pointer to an Object.
    * The metadata of the Object instances allow us to create a Python
@@ -2853,35 +2828,35 @@ class PythonData : public DataValue {
   /* Convert a frePPLe date into a Python datetime.datetime object. */
   PythonData(const Date val) { setDate(val); }
 
-  virtual void setLong(const long val) {
+  void setLong(const long val) override {
     if (obj) Py_DECREF(obj);
     obj = PyLong_FromLong(val);
   }
 
-  virtual void setUnsignedLong(const unsigned long val) {
+  void setUnsignedLong(const unsigned long val) override {
     if (obj) Py_DECREF(obj);
     obj = PyLong_FromUnsignedLong(val);
   }
 
-  virtual void setDuration(const Duration val) {
+  void setDuration(const Duration val) override {
     if (obj) Py_DECREF(obj);
     // A duration is represented as a number of seconds in Python
     obj = PyLong_FromLong(val);
   }
 
-  virtual void setInt(const int val) {
+  void setInt(const int val) override {
     if (obj) Py_DECREF(obj);
     obj = PyLong_FromLong(val);
   }
 
-  virtual void setDouble(const double val) {
+  void setDouble(const double val) override {
     if (obj) Py_DECREF(obj);
     obj = PyFloat_FromDouble(val);
   }
 
-  virtual void setDate(const Date);
+  void setDate(const Date) override;
 
-  virtual void setString(const string& val) {
+  void setString(const string& val) override {
     if (obj) Py_DECREF(obj);
     if (val.empty()) {
       obj = Py_None;
@@ -2891,13 +2866,13 @@ class PythonData : public DataValue {
       obj = PyUnicode_FromString(val.c_str());
   }
 
-  virtual void setBool(const bool val) {
+  void setBool(const bool val) override {
     if (obj) Py_DECREF(obj);
     obj = val ? Py_True : Py_False;
     Py_INCREF(obj);
   }
 
-  virtual void setObject(Object*);
+  void setObject(Object*) override;
 };
 
 /* This call is a wrapper around a Python function that can be
@@ -2934,7 +2909,7 @@ class PythonFunction : public PythonData {
   }
 
   /* Destructor. */
-  ~PythonFunction() {
+  ~PythonFunction() override {
     if (func) {
       Py_DECREF(func);
     }
@@ -2949,7 +2924,7 @@ class PythonFunction : public PythonData {
   }
 
   /* Conversion operator to bool. */
-  operator bool() const { return func != nullptr; }
+  operator bool() const override { return func != nullptr; }
 
   /* Call the Python function without arguments. */
   PythonData call() const;
@@ -2995,7 +2970,7 @@ class PythonDataValueDict : public DataValueDict {
  public:
   PythonDataValueDict(PyObject* a) : kwds(a) {}
 
-  virtual const DataValue* get(const Keyword& k) const {
+  const DataValue* get(const Keyword& k) const override {
     if (!kwds) return nullptr;
     PyObject* val = PyDict_GetItemString(kwds, k.getName().c_str());
     if (!val) return nullptr;
@@ -3038,7 +3013,7 @@ class Object : public PyObject {
                      ? PyObject::ob_type->tp_name
                      : "nullptr")
              << " object that is still referenced " << (PyObject::ob_refcnt - 1)
-             << " times" << endl;
+             << " times\n";
     if (dict) Py_DECREF(dict);
   }
 
@@ -3048,7 +3023,7 @@ class Object : public PyObject {
 
   /* Mark the object as hidden or not. Hidden objects are not exported
    * and are used only as dummy constructs. */
-  virtual void setHidden(bool b) {}
+  virtual void setHidden(bool) {}
 
   /* Method to set a custom property.
    * Avaialable types:
@@ -3073,7 +3048,7 @@ class Object : public PyObject {
   void setDoubleProperty(const string&, double);
 
   /* Update a string property. */
-  void setStringProperty(const string&, string);
+  void setStringProperty(const string&, const string&);
 
   /* Check whether a property with a certain name is set. */
   bool hasProperty(const string&) const;
@@ -3093,11 +3068,7 @@ class Object : public PyObject {
   /* Delete a property if it is set. */
   void deleteProperty(const string&);
 
-  /* Retrieve a string property.
-   * This method needs to be defined inline. On windows the function
-   * otherwise can allocate and release the string in different modules,
-   * resulting in a nasty crash.
-   */
+  /* Retrieve a string property. */
   string getStringProperty(const string& name, const string& def = "") const {
     if (!dict)
       // Not a single property has been defined
@@ -3167,8 +3138,7 @@ class Object : public PyObject {
   /* Template function that generates a factory method callable
    * from Python. */
   template <class T>
-  static PyObject* create(PyTypeObject* pytype, PyObject* args,
-                          PyObject* kwds) {
+  static PyObject* create(PyTypeObject*, PyObject*, PyObject* kwds) {
     try {
       // Find or create the C++ object
       PythonDataValueDict atts(kwds);
@@ -3247,7 +3217,7 @@ class Object : public PyObject {
    * Subclasses are expected to implement an override if the type supports
    * gettattro.
    */
-  virtual PyObject* getattro(const DataKeyword& attr) {
+  virtual PyObject* getattro(const DataKeyword&) {
     PyErr_SetString(PythonLogicException, "Missing method 'getattro'");
     return nullptr;
   }
@@ -3256,7 +3226,7 @@ class Object : public PyObject {
    * Subclasses are expected to implement an override if the type supports
    * compare.
    */
-  virtual int compare(const PyObject* other) const {
+  virtual int compare(const PyObject*) const {
     throw LogicException("Missing method 'compare'");
   }
 
@@ -3273,7 +3243,7 @@ class Object : public PyObject {
    * Subclasses are expected to implement an override if the type supports
    * calls.
    */
-  virtual PyObject* call(const PythonData& args, const PythonData& kwds) {
+  virtual PyObject* call(const PythonData&, const PythonData&) {
     PyErr_SetString(PythonLogicException, "Missing method 'call'");
     return nullptr;
   }
@@ -3323,7 +3293,7 @@ class PythonExtension : public Object, public NonCopyable {
   }
 
   /* Destructor. */
-  virtual ~PythonExtension() {}
+  ~PythonExtension() override {}
 
   /* This method keeps the type information object for your extension. */
   static PythonType& getPythonType() {
@@ -3379,22 +3349,18 @@ class PythonIterator : public Object {
   }
 
   static int initialize() {
-    // Initialize the type
     auto& x = getPythonType();
     if (!DATACLASS::metadata)
       throw LogicException("Iterator for " + string(typeid(DATACLASS).name()) +
                            " initialized before its data class");
     x.setName(DATACLASS::metadata->type + "Iterator");
-    x.setDoc("frePPLe iterator for " + DATACLASS::metadata->type);
     x.supportiter();
     return x.typeReady();
   }
 
-  static int initialize(string nm, string doc) {
-    // Initialize the type
+  static int initialize(const string& nm) {
     auto& x = getPythonType();
     x.setName(nm);
-    x.setDoc(nm);
     x.supportiter();
     return x.typeReady();
   }
@@ -3420,14 +3386,12 @@ class PythonIterator : public Object {
     this->initType(getPythonType().type_object());
   }
 
-  static PyObject* create(PyObject* self, PyObject* args) {
-    return new MYCLASS();
-  }
+  static PyObject* create(PyObject*, PyObject*) { return new MYCLASS(); }
 
  private:
   ITERCLASS iter;
 
-  virtual PyObject* iternext() {
+  PyObject* iternext() override {
     PyObject* result = iter.next();
     if (!result) return nullptr;
     Py_INCREF(result);
@@ -3463,7 +3427,7 @@ class PythonIteratorClass : public Object {
     return x.typeReady();
   }
 
-  static int initialize(string nm, string doc) {
+  static int initialize(const string& nm, const string& doc) {
     // Initialize the type
     auto& x = getPythonType();
     x.setName(nm);
@@ -3500,7 +3464,7 @@ class PythonIteratorClass : public Object {
  private:
   ITERCLASS iter;
 
-  virtual PyObject* iternext() {
+  PyObject* iternext() override {
     PyObject* result = iter.next();
     if (!result) return nullptr;
     Py_INCREF(result);
@@ -3528,7 +3492,7 @@ class ThreadGroup : public NonCopyable {
 
   /* Add a new function to be called and its argument. */
   void add(callable func, void* arg1, int arg2 = 0, void* arg3 = nullptr) {
-    callables.push(make_tuple(func, arg1, arg2, arg3));
+    callables.emplace(func, arg1, arg2, arg3);
   }
 
   /* Execute all functions and wait for them to finish. */
@@ -3624,7 +3588,7 @@ class Tree : public NonCopyable {
 
     /* Return a pointer to the node following this one. */
     TreeNode* increment() const {
-      TreeNode* node = const_cast<TreeNode*>(this);
+      auto* node = const_cast<TreeNode*>(this);
       if (node->right != nullptr) {
         node = node->right;
         while (node->left != nullptr) node = node->left;
@@ -3641,7 +3605,7 @@ class Tree : public NonCopyable {
 
     /* Return a pointer to the node preceding this one. */
     TreeNode* decrement() const {
-      TreeNode* node = const_cast<TreeNode*>(this);
+      auto* node = const_cast<TreeNode*>(this);
       if (node->color == Color::red && node->parent->parent == node)
         node = node->right;
       else if (node->left != nullptr) {
@@ -3800,7 +3764,7 @@ class Tree : public NonCopyable {
 
     // Erase all elements
     for (auto x = begin(); x != end(); x = begin()) {
-      Object* o = dynamic_cast<Object*>(x);
+      auto* o = dynamic_cast<Object*>(x);
       if (o && o->getType().raiseEvent(o, SIG_REMOVE))
         delete (x);  // The destructor calls the erase method
       else
@@ -4258,19 +4222,19 @@ class CommandSetField : public Command {
 
  public:
   /* Constructor. */
-  CommandSetField(Object* o, const MetaFieldBase* f, const DataValue& d)
+  CommandSetField(Object* o, const MetaFieldBase* f, const DataValue&)
       : obj(o), fld(f) {
     if (!obj || !fld) return;
     fld->getField(obj, olddata);
   }
 
   /* Destructor. */
-  virtual ~CommandSetField() {
+  ~CommandSetField() override {
     if (obj && fld) fld->setField(obj, olddata);
   }
 
   /* Undoes the field change. */
-  virtual void rollback() {
+  void rollback() override {
     if (!obj || !fld) return;
     fld->setField(obj, olddata);
     obj = nullptr;
@@ -4279,7 +4243,7 @@ class CommandSetField : public Command {
 
   /* Committing the change - nothing to be done as the change
    * is realized when creating the command. */
-  virtual void commit() {
+  void commit() override {
     obj = nullptr;
     fld = nullptr;
   }
@@ -4288,7 +4252,7 @@ class CommandSetField : public Command {
 
   Object* getObject() const { return obj; }
 
-  virtual short getType() const { return 2; }
+  short getType() const override { return 2; }
 };
 
 /* A command to update a property on an object. */
@@ -4308,16 +4272,16 @@ class CommandSetProperty : public Command {
   CommandSetProperty(Object*, const string&, const DataValue&, short);
 
   /* Destructor. */
-  virtual ~CommandSetProperty() {
+  ~CommandSetProperty() override {
     if (obj && !name.empty()) rollback();
   }
 
   /* Undoes the field change. */
-  virtual void rollback();
+  void rollback() override;
 
   /* Committing the change - nothing to be done as the change
    * is realized when creating the command. */
-  virtual void commit() {
+  void commit() override {
     obj = nullptr;
     name = "";
   }
@@ -4326,7 +4290,7 @@ class CommandSetProperty : public Command {
 
   Object* getObject() const { return obj; }
 
-  virtual short getType() const { return 3; }
+  short getType() const override { return 3; }
 };
 
 /* A command to create a new object.
@@ -4344,17 +4308,17 @@ class CommandCreateObject : public Command {
   CommandCreateObject(Object* o) : obj(o) {}
 
   /* Destructor. */
-  virtual ~CommandCreateObject() {
+  ~CommandCreateObject() override {
     if (obj) rollback();
   }
 
   /* Committing the change - nothing to be done as the change
    * is realized before the command is created.
    */
-  virtual void commit() { obj = nullptr; }
+  void commit() override { obj = nullptr; }
 
   /* Undoes the creation change. */
-  virtual void rollback() {
+  void rollback() override {
     if (obj) {
       // Check for setfield commands on this object, and invalidate them.
       for (auto cmd = getNext(); cmd; cmd = cmd->getNext()) {
@@ -4385,7 +4349,7 @@ class CommandCreateObject : public Command {
     obj = nullptr;
   }
 
-  virtual short getType() const { return 4; }
+  short getType() const override { return 4; }
 };
 
 /* A container command to group a series of commands together.
@@ -4455,12 +4419,12 @@ class CommandList : public Command {
   /* Undoes all actions on the list.
    * At the end it also clears the list of actions.
    */
-  virtual void rollback();
+  void rollback() override;
 
   /* Commits all actions on its list.
    * At the end it also clears the list of actions.
    */
-  virtual void commit();
+  void commit() override;
 
   /* Returns true if no commands have been added yet to the list. */
   bool empty() const { return !firstCommand; }
@@ -4473,9 +4437,9 @@ class CommandList : public Command {
    * have been committed or undone. If this is not the case a warning
    * will be printed.
    */
-  virtual ~CommandList();
+  ~CommandList() override;
 
-  virtual short getType() const { return 1; }
+  short getType() const override { return 1; }
 };
 
 /* This class allows management of tasks with supporting commiting them,
@@ -4629,7 +4593,7 @@ class CommandManager : public Object {
   }
 
   /* Destructor. */
-  ~CommandManager() {
+  ~CommandManager() override {
     for (auto i = lastBookmark; i && i != &firstBookmark;) {
       Bookmark* tmp = i;
       i = i->prevBookmark;
@@ -4838,7 +4802,7 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
   /* Returns a STL-like iterator to the start of the entity list. */
   static iterator begin() { return st.begin(); }
 
-  static PyObject* createIterator(PyObject* self, PyObject* args) {
+  static PyObject* createIterator(PyObject*, PyObject*) {
     return new PythonIterator<iterator, T>(st.begin());
   }
 
@@ -4871,13 +4835,13 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
   }
 
   /* Destructor. */
-  ~HasName() { st.erase(this); }
+  ~HasName() override { st.erase(this); }
 
   /* Return the name as the string representation in Python. */
-  virtual PyObject* str() const { return PythonData(getName()); }
+  PyObject* str() const override { return PythonData(getName()); }
 
   /* Comparison operator for Python. */
-  int compare(const PyObject* other) const {
+  int compare(const PyObject* other) const override {
     return getName().compare(static_cast<const T*>(other)->getName());
   }
 
@@ -5135,8 +5099,7 @@ class PooledString {
   /* Debugging function. */
   static void print() {
     lock_guard exclusive(pool_lock);
-    for (auto i = pool.begin(); i != pool.end(); ++i)
-      logger << "   " << *i << endl;
+    for (const auto& i : pool) logger << "   " << i << '\n';
   }
 };
 
@@ -5380,7 +5343,7 @@ class HasHierarchy : public HasName<T> {
    * In this way the deletion of nodes doesn't create "dangling branches"
    * in the hierarchy. We just "collapse" a certain level.
    */
-  ~HasHierarchy();
+  ~HasHierarchy() override;
 
   /* Return a member iterator. */
   memberIterator getMembers() const { return this; }
@@ -5871,7 +5834,7 @@ class Association {
     void setEffectiveEnd(Date d) { effectivity.setEnd(d); }
 
     /* Update the effectivity range. */
-    void setEffective(DateRange dr) { effectivity = dr; }
+    void setEffective(const DateRange& dr) { effectivity = dr; }
 
     /* Get the start date of the effectivity range. */
     Date getEffectiveStart() const { return effectivity.getStart(); }
@@ -5978,7 +5941,7 @@ void HasHierarchy<T>::setOwner(T* fam) {
     if (t == this) {
       logger << "Warning: Ignoring invalid hierarchy relation between \""
              << this->getName() << "\" and \"" << fam->getName() << "\""
-             << endl;
+             << '\n';
       return;
     }
 
@@ -6063,13 +6026,16 @@ class MetaFieldString : public MetaFieldBase {
   MetaFieldString(const Keyword& n, getFunction getfunc,
                   setFunction setfunc = nullptr, string dflt = "",
                   unsigned int c = BASE)
-      : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(dflt) {
+      : MetaFieldBase(n, c),
+        getf(getfunc),
+        setf(setfunc),
+        def(std::move(dflt)) {
     if (getfunc == nullptr)
       throw DataException("Getter function can't be nullptr");
   };
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {
+  void setField(Object* me, const DataValue& el,
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6080,11 +6046,11 @@ class MetaFieldString : public MetaFieldBase {
     (static_cast<Cls*>(me)->*setf)(el.getString());
   }
 
-  virtual void getField(Object* me, DataValue& el) const {
+  void getField(Object* me, DataValue& el) const override {
     el.setString((static_cast<Cls*>(me)->*getf)());
   }
 
-  virtual void writeField(Serializer& output) const {
+  void writeField(Serializer& output) const override {
     if (output.getServiceMode()) {
       if (getFlag(DONT_SERIALIZE_SVC)) return;
     } else {
@@ -6094,7 +6060,7 @@ class MetaFieldString : public MetaFieldBase {
     if (tmp != def) output.writeElement(getName(), tmp);
   }
 
-  virtual size_t getSize(const Object* o) const {
+  size_t getSize(const Object* o) const override {
     return (static_cast<const Cls*>(o)->*getf)().size();
   }
 
@@ -6119,13 +6085,16 @@ class MetaFieldStringRef : public MetaFieldBase {
   MetaFieldStringRef(const Keyword& n, getFunction getfunc,
                      setFunction setfunc = nullptr, string dflt = "",
                      unsigned int c = BASE)
-      : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(dflt) {
+      : MetaFieldBase(n, c),
+        getf(getfunc),
+        setf(setfunc),
+        def(std::move(dflt)) {
     if (getfunc == nullptr)
       throw DataException("Getter function can't be nullptr");
   };
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {
+  void setField(Object* me, const DataValue& el,
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6136,11 +6105,11 @@ class MetaFieldStringRef : public MetaFieldBase {
     (static_cast<Cls*>(me)->*setf)(el.getString());
   }
 
-  virtual void getField(Object* me, DataValue& el) const {
+  void getField(Object* me, DataValue& el) const override {
     el.setString((static_cast<Cls*>(me)->*getf)());
   }
 
-  virtual void writeField(Serializer& output) const {
+  void writeField(Serializer& output) const override {
     if (output.getServiceMode()) {
       if (getFlag(DONT_SERIALIZE_SVC)) return;
     } else {
@@ -6150,7 +6119,7 @@ class MetaFieldStringRef : public MetaFieldBase {
     if (tmp != def) output.writeElement(getName(), tmp);
   }
 
-  virtual size_t getSize(const Object* o) const {
+  size_t getSize(const Object* o) const override {
     return (static_cast<const Cls*>(o)->*getf)().size();
   }
 
@@ -6175,14 +6144,14 @@ class MetaFieldCommand : public MetaFieldBase {
     if (!cmdf) throw DataException("Command function can't be nullptr");
   };
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {
+  void setField(Object* me, const DataValue& el,
+                CommandManager*) const override {
     (static_cast<Cls*>(me)->*cmdf)(el.getString());
   }
 
-  virtual void getField(Object* me, DataValue& el) const {}
+  void getField(Object*, DataValue&) const override {}
 
-  virtual void writeField(Serializer& output) const {}
+  void writeField(Serializer&) const override {}
 
  protected:
   cmdFunction cmdf;
@@ -6203,8 +6172,8 @@ class MetaFieldBool : public MetaFieldBase {
       throw DataException("Getter function can't be nullptr");
   };
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {
+  void setField(Object* me, const DataValue& el,
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6215,11 +6184,11 @@ class MetaFieldBool : public MetaFieldBase {
     (static_cast<Cls*>(me)->*setf)(el.getBool());
   }
 
-  virtual void getField(Object* me, DataValue& el) const {
+  void getField(Object* me, DataValue& el) const override {
     el.setBool((static_cast<Cls*>(me)->*getf)());
   }
 
-  virtual void writeField(Serializer& output) const {
+  void writeField(Serializer& output) const override {
     if (output.getServiceMode()) {
       if (getFlag(DONT_SERIALIZE_SVC)) return;
     } else {
@@ -6263,8 +6232,8 @@ class MetaFieldDouble : public MetaFieldBase {
       throw DataException("Getter function can't be nullptr");
   };
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {
+  void setField(Object* me, const DataValue& el,
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6275,11 +6244,11 @@ class MetaFieldDouble : public MetaFieldBase {
     (static_cast<Cls*>(me)->*setf)(el.getDouble());
   }
 
-  virtual void getField(Object* me, DataValue& el) const {
+  void getField(Object* me, DataValue& el) const override {
     el.setDouble((static_cast<Cls*>(me)->*getf)());
   }
 
-  virtual void writeField(Serializer& output) const {
+  void writeField(Serializer& output) const override {
     if (output.getServiceMode()) {
       if (getFlag(DONT_SERIALIZE_SVC)) return;
     } else {
@@ -6323,8 +6292,8 @@ class MetaFieldInt : public MetaFieldBase {
       throw DataException("Getter function can't be nullptr");
   };
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {
+  void setField(Object* me, const DataValue& el,
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6335,11 +6304,11 @@ class MetaFieldInt : public MetaFieldBase {
     (static_cast<Cls*>(me)->*setf)(el.getInt());
   }
 
-  virtual void getField(Object* me, DataValue& el) const {
+  void getField(Object* me, DataValue& el) const override {
     el.setInt((static_cast<Cls*>(me)->*getf)());
   }
 
-  virtual void writeField(Serializer& output) const {
+  void writeField(Serializer& output) const override {
     if (output.getServiceMode()) {
       if (getFlag(DONT_SERIALIZE_SVC)) return;
     } else {
@@ -6374,8 +6343,8 @@ class MetaFieldEnum : public MetaFieldBase {
       throw DataException("Getter function can't be nullptr");
   };
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {
+  void setField(Object* me, const DataValue& el,
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6386,12 +6355,12 @@ class MetaFieldEnum : public MetaFieldBase {
     (static_cast<Cls*>(me)->*setf)(el.getString());
   }
 
-  virtual void getField(Object* me, DataValue& el) const {
+  void getField(Object* me, DataValue& el) const override {
     el.setInt(static_cast<std::underlying_type_t<Enum>>(
         (static_cast<Cls*>(me)->*getf)()));
   }
 
-  virtual void writeField(Serializer& output) const {
+  void writeField(Serializer& output) const override {
     if (output.getServiceMode()) {
       if (getFlag(DONT_SERIALIZE_SVC)) return;
     } else {
@@ -6429,8 +6398,8 @@ class MetaFieldShort : public MetaFieldBase {
       throw DataException("Getter function can't be nullptr");
   };
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {
+  void setField(Object* me, const DataValue& el,
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6441,11 +6410,11 @@ class MetaFieldShort : public MetaFieldBase {
     (static_cast<Cls*>(me)->*setf)(el.getInt());
   }
 
-  virtual void getField(Object* me, DataValue& el) const {
+  void getField(Object* me, DataValue& el) const override {
     el.setInt((static_cast<Cls*>(me)->*getf)());
   }
 
-  virtual void writeField(Serializer& output) const {
+  void writeField(Serializer& output) const override {
     if (output.getServiceMode()) {
       if (getFlag(DONT_SERIALIZE_SVC)) return;
     } else {
@@ -6481,8 +6450,8 @@ class MetaFieldUnsignedLong : public MetaFieldBase {
       throw DataException("Getter function can't be nullptr");
   };
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {
+  void setField(Object* me, const DataValue& el,
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6493,11 +6462,11 @@ class MetaFieldUnsignedLong : public MetaFieldBase {
     (static_cast<Cls*>(me)->*setf)(el.getUnsignedLong());
   }
 
-  virtual void getField(Object* me, DataValue& el) const {
+  void getField(Object* me, DataValue& el) const override {
     el.setUnsignedLong((static_cast<Cls*>(me)->*getf)());
   }
 
-  virtual void writeField(Serializer& output) const {
+  void writeField(Serializer& output) const override {
     if (output.getServiceMode()) {
       if (getFlag(DONT_SERIALIZE_SVC)) return;
     } else {
@@ -6533,8 +6502,8 @@ class MetaFieldDuration : public MetaFieldBase {
       throw DataException("Getter function can't be nullptr");
   };
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {
+  void setField(Object* me, const DataValue& el,
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6545,11 +6514,11 @@ class MetaFieldDuration : public MetaFieldBase {
     (static_cast<Cls*>(me)->*setf)(el.getDuration());
   }
 
-  virtual void getField(Object* me, DataValue& el) const {
+  void getField(Object* me, DataValue& el) const override {
     el.setDuration((static_cast<Cls*>(me)->*getf)());
   }
 
-  virtual void writeField(Serializer& output) const {
+  void writeField(Serializer& output) const override {
     if (output.getServiceMode()) {
       if (getFlag(DONT_SERIALIZE_SVC)) return;
     } else {
@@ -6585,8 +6554,8 @@ class MetaFieldDurationDouble : public MetaFieldBase {
       throw DataException("Getter function can't be nullptr");
   };
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {
+  void setField(Object* me, const DataValue& el,
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6598,11 +6567,11 @@ class MetaFieldDurationDouble : public MetaFieldBase {
         Duration::parse2double(el.getString().c_str()));
   }
 
-  virtual void getField(Object* me, DataValue& el) const {
+  void getField(Object* me, DataValue& el) const override {
     el.setDouble((static_cast<Cls*>(me)->*getf)());
   }
 
-  virtual void writeField(Serializer& output) const {
+  void writeField(Serializer& output) const override {
     if (output.getServiceMode()) {
       if (getFlag(DONT_SERIALIZE_SVC)) return;
     } else {
@@ -6642,8 +6611,8 @@ class MetaFieldDate : public MetaFieldBase {
       throw DataException("Getter function can't be nullptr");
   };
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {
+  void setField(Object* me, const DataValue& el,
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6654,11 +6623,11 @@ class MetaFieldDate : public MetaFieldBase {
     (static_cast<Cls*>(me)->*setf)(el.getDate());
   }
 
-  virtual void getField(Object* me, DataValue& el) const {
+  void getField(Object* me, DataValue& el) const override {
     el.setDate((static_cast<Cls*>(me)->*getf)());
   }
 
-  virtual void writeField(Serializer& output) const {
+  void writeField(Serializer& output) const override {
     if (output.getServiceMode()) {
       if (getFlag(DONT_SERIALIZE_SVC)) return;
     } else {
@@ -6693,8 +6662,8 @@ class MetaFieldPointer : public MetaFieldBase {
       throw DataException("Getter function can't be nullptr");
   };
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {
+  void setField(Object* me, const DataValue& el,
+                CommandManager* cmd) const override {
     if (setf == nullptr) {
       ostringstream o;
       o << "Can't set field " << getName().getName() << " on class "
@@ -6725,11 +6694,11 @@ class MetaFieldPointer : public MetaFieldBase {
     }
   }
 
-  virtual void getField(Object* me, DataValue& el) const {
+  void getField(Object* me, DataValue& el) const override {
     el.setObject((static_cast<Cls*>(me)->*getf)());
   }
 
-  virtual void writeField(Serializer& output) const {
+  void writeField(Serializer& output) const override {
     if (output.getServiceMode()) {
       if (getFlag(DONT_SERIALIZE_SVC)) return;
     } else {
@@ -6770,9 +6739,9 @@ class MetaFieldPointer : public MetaFieldBase {
     }
   }
 
-  virtual bool isPointer() const { return true; }
+  bool isPointer() const override { return true; }
 
-  virtual const MetaClass* getClass() const { return Ptr::metadata; }
+  const MetaClass* getClass() const override { return Ptr::metadata; }
 
  protected:
   /* Get function. */
@@ -6789,14 +6758,13 @@ class MetaFieldFunction : public MetaFieldBase {
                     unsigned int c = DONT_SERIALIZE)
       : MetaFieldBase(n, c), thefunction(f) {};
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {}
+  void setField(Object*, const DataValue&, CommandManager*) const override {}
 
-  virtual HandlerFunction getFunction() const { return thefunction; }
+  HandlerFunction getFunction() const override { return thefunction; }
 
-  virtual void getField(Object* me, DataValue& el) const {}
+  void getField(Object*, DataValue&) const override {}
 
-  virtual void writeField(Serializer& output) const {}
+  void writeField(Serializer&) const override {}
 
  protected:
   HandlerFunction thefunction;
@@ -6811,18 +6779,17 @@ class MetaFieldIterator : public MetaFieldBase {
                     getFunction getfunc = nullptr, unsigned int c = BASE)
       : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n) {};
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {}
+  void setField(Object*, const DataValue&, CommandManager*) const override {}
 
-  virtual void getField(Object* me, DataValue& el) const {
+  void getField(Object* me, DataValue& el) const override {
     // This code is Python-specific. Only from Python can we call
     // this method. Not generic, but good enough...
     // TODO avoid calling the copy constructor here to improve performance!
-    PyIter* o = new PyIter((static_cast<Cls*>(me)->*getf)());
+    auto* o = new PyIter((static_cast<Cls*>(me)->*getf)());
     el.setObject(o);
   }
 
-  virtual void writeField(Serializer& output) const {
+  void writeField(Serializer& output) const override {
     // Check whether this field matches the intended content detail
     switch (output.getContentType()) {
       case MANDATORY:
@@ -6894,11 +6861,11 @@ class MetaFieldIterator : public MetaFieldBase {
     if (getFlag(FORCE_BASE)) output.setForceBase(tmp_force_base);
   }
 
-  virtual bool isGroup() const { return true; }
+  bool isGroup() const override { return true; }
 
-  virtual const MetaClass* getClass() const { return Ptr::metadata; }
+  const MetaClass* getClass() const override { return Ptr::metadata; }
 
-  virtual const Keyword* getKeyword() const { return &singleKeyword; }
+  const Keyword* getKeyword() const override { return &singleKeyword; }
 
  protected:
   /* Get function. */
@@ -6916,17 +6883,16 @@ class MetaFieldIteratorClass : public MetaFieldBase {
                          getFunction getfunc = nullptr, unsigned int c = BASE)
       : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n) {};
 
-  virtual void setField(Object* me, const DataValue& el,
-                        CommandManager* cmd) const {}
+  void setField(Object*, const DataValue&, CommandManager*) const override {}
 
-  virtual void getField(Object* me, DataValue& el) const {
+  void getField(Object* me, DataValue& el) const override {
     // This code is Python-specific. Only from Python can we call
     // this method. Not generic, but good enough...
     auto tmp = new Iter((static_cast<Cls*>(me)->*getf)());
     el.setObject(tmp);
   }
 
-  virtual void writeField(Serializer& output) const {
+  void writeField(Serializer& output) const override {
     // Check whether this field matches the intended content detail
     switch (output.getContentType()) {
       case MANDATORY:
@@ -6997,11 +6963,11 @@ class MetaFieldIteratorClass : public MetaFieldBase {
     if (getFlag(FORCE_BASE)) output.setForceBase(tmp_force_base);
   }
 
-  virtual bool isGroup() const { return true; }
+  bool isGroup() const override { return true; }
 
-  virtual const MetaClass* getClass() const { return Iter::metadata; }
+  const MetaClass* getClass() const override { return Iter::metadata; }
 
-  virtual const Keyword* getKeyword() const { return &singleKeyword; }
+  const Keyword* getKeyword() const override { return &singleKeyword; }
 
  protected:
   /* Get function. */
@@ -7287,40 +7253,6 @@ class MemoryPool {
       append(n);
     }
 
-    // void erase(T&) {
-    // for (auto p = first; p; p = p->next)
-    //   if (p->msr == k) {
-    //     // Unlink from the list
-    //     if (p->prev)
-    //       p->prev->next = p->next;
-    //     else
-    //       first = p->next;
-    //     if (p->next)
-    //       p->next->prev = p->prev;
-    //     else
-    //       last = p->prev;
-
-    //     // Add to free list
-    //     p->addToFree();
-    //     return;
-    //   }
-    //}
-
-    // void MeasureList::erase(MeasureValue* p) {
-    //   // Unlink from the list
-    //   if (p->prev)
-    //     p->prev->next = p->next;
-    //   else
-    //     first = p->next;
-    //   if (p->next)
-    //     p->next->prev = p->prev;
-    //   else
-    //     last = p->prev;
-
-    //   // Add to free list
-    //   p->addToFree();
-    // }
-
     class iterator {
      private:
       MemoryObject* ptr = nullptr;
@@ -7417,5 +7349,3 @@ class MemoryPool {
 
 }  // namespace utils
 }  // namespace frepple
-
-#endif  // End of FREPPLE_UTILS_H

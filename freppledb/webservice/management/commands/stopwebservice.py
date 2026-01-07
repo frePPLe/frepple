@@ -130,7 +130,7 @@ class Command(BaseCommand):
             if options["wait"]:
                 waitTillNotRunning(database=database)
 
-            if os.name != "nt" and checkRunning(database):
+            if checkRunning(database):
                 try:
                     # Emergency brake
                     os.system("fuser -k %s/tcp" % server.split(":")[-1])

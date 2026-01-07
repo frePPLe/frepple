@@ -48,7 +48,7 @@ int Solver::initialize() {
   return x.typeReady();
 }
 
-PyObject* Solver::solve(PyObject* self, PyObject* args) {
+PyObject* Solver::solve(PyObject* self, PyObject*) {
   Py_BEGIN_ALLOW_THREADS;
   try {
     static_cast<Solver*>(self)->solve();

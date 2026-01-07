@@ -89,50 +89,48 @@ void Resource::inspect(const string& msg, const short i) const {
   indent indentstring(i);
   logger << indentstring << "  Inspecting resource " << getName() << ": ";
   if (!msg.empty()) logger << msg;
-  logger << endl;
+  logger << '\n';
 
   Date earliest = Date::infiniteFuture;
   Date latest = Date::infinitePast;
   Date prev;
-  unsigned int cnt;
-  for (loadplanlist::const_iterator oo = getLoadPlans().begin();
-       oo != getLoadPlans().end(); ++oo) {
-    if (oo->getEventType() != 1)
+  unsigned int cnt = 0;
+  for (const auto& oo : getLoadPlans()) {
+    if (oo.getEventType() != 1)
       ++cnt;
     else {
-      if (oo->getDate() > latest) latest = oo->getDate();
-      if (oo->getDate() < earliest) earliest = prev;
+      if (oo.getDate() > latest) latest = oo.getDate();
+      if (oo.getDate() < earliest) earliest = prev;
     }
-    prev = oo->getDate();
+    prev = oo.getDate();
   }
 
-  for (loadplanlist::const_iterator oo = getLoadPlans().begin();
-       oo != getLoadPlans().end(); ++oo) {
+  for (const auto& oo : getLoadPlans()) {
     if (cnt > 100) {
       // Skip uninteresting events
-      if (oo->getDate() < earliest - Duration(7L * 24L * 3600L)) continue;
-      if (oo->getDate() > latest + Duration(7L * 24L * 3600L)) break;
+      if (oo.getDate() < earliest - Duration(7L * 24L * 3600L)) continue;
+      if (oo.getDate() > latest + Duration(7L * 24L * 3600L)) break;
     }
-    logger << indentstring << "    " << oo->getDate()
-           << " qty:" << oo->getQuantity() << ", oh:" << oo->getOnhand();
-    switch (oo->getEventType()) {
+    logger << indentstring << "    " << oo.getDate()
+           << " qty:" << oo.getQuantity() << ", oh:" << oo.getOnhand();
+    switch (oo.getEventType()) {
       case 1:
-        logger << ", " << oo->getOperationPlan() << endl;
+        logger << ", " << oo.getOperationPlan() << '\n';
         break;
       case 2:
-        logger << ", set onhand to " << oo->getOnhand() << endl;
+        logger << ", set onhand to " << oo.getOnhand() << '\n';
         break;
       case 3:
-        logger << ", update minimum to " << oo->getMin() << endl;
+        logger << ", update minimum to " << oo.getMin() << '\n';
         break;
       case 4:
-        logger << ", update maximum to " << oo->getMax() << endl;
+        logger << ", update maximum to " << oo.getMax() << '\n';
         break;
       case 5:
         logger << ", change setup to "
-               << static_cast<const SetupEvent*>(&*oo)->getSetup();
-        if (oo->getOperationPlan()) logger << " on " << oo->getOperationPlan();
-        logger << endl;
+               << static_cast<const SetupEvent*>(&oo)->getSetup();
+        if (oo.getOperationPlan()) logger << " on " << oo.getOperationPlan();
+        logger << '\n';
         break;
     }
   }
@@ -178,7 +176,7 @@ void Resource::setToolPerPiece(bool b) {
 void Resource::setMaximum(double m) {
   if (m < 0) {
     logger << "Warning: Maximum capacity for resource '" << getName()
-           << "' must be postive" << endl;
+           << "' must be postive\n";
     return;
   }
 
@@ -196,16 +194,15 @@ void Resource::setMaximum(double m) {
   size_max = m;
 
   // Create or update a single timeline max event
-  for (loadplanlist::iterator oo = loadplans.begin(); oo != loadplans.end();
-       oo++)
-    if (oo->getEventType() == 4) {
+  for (auto& loadplan : loadplans)
+    if (loadplan.getEventType() == 4) {
       // Update existing event
-      static_cast<loadplanlist::EventMaxQuantity*>(&*oo)->setMax(size_max);
+      static_cast<loadplanlist::EventMaxQuantity*>(&loadplan)->setMax(size_max);
       return;
     }
   // Create new event
-  loadplanlist::EventMaxQuantity* newEvent = new loadplanlist::EventMaxQuantity(
-      Date::infinitePast, &loadplans, size_max);
+  auto* newEvent = new loadplanlist::EventMaxQuantity(Date::infinitePast,
+                                                      &loadplans, size_max);
   loadplans.insert(newEvent);
 }
 
@@ -237,7 +234,7 @@ void Resource::setMaximumCalendar(Calendar* c) {
        x.getDate() < Date::infiniteFuture; ++x)
     if (curMax != x.getValue()) {
       curMax = x.getValue();
-      loadplanlist::EventMaxQuantity* newBucket =
+      auto* newBucket =
           new loadplanlist::EventMaxQuantity(x.getDate(), &loadplans, curMax);
       loadplans.insert(newBucket);
     }
@@ -274,8 +271,7 @@ void ResourceBuckets::setMaximumCalendar(Calendar* c) {
        x.getDate() < maxEventDate; ++x)
     if (v != x.getValue() && x.getDate() >= minEventDate) {
       v = x.getValue();
-      loadplanlist::EventSetOnhand* newBucket =
-          new loadplanlist::EventSetOnhand(x.getDate(), v);
+      auto* newBucket = new loadplanlist::EventSetOnhand(x.getDate(), v);
       loadplans.insert(newBucket);
     }
   size_max_cal->clearEventList();
@@ -283,15 +279,16 @@ void ResourceBuckets::setMaximumCalendar(Calendar* c) {
 
 double ResourceBuckets::getMaxBucketCapacity() const {
   double tmp = 0.0;
-  for (auto oo = loadplans.begin(); oo != loadplans.end(); ++oo)
-    if (oo->getEventType() == 2 && oo->getOnhand() > tmp) tmp = oo->getOnhand();
+  for (const auto& loadplan : loadplans)
+    if (loadplan.getEventType() == 2 && loadplan.getOnhand() > tmp)
+      tmp = loadplan.getOnhand();
   return tmp;
 }
 
 void Resource::deleteOperationPlans(bool deleteLocked) {
   // Delete the operationplans
-  for (loadlist::iterator i = loads.begin(); i != loads.end(); ++i)
-    OperationPlan::deleteOperationPlans(i->getOperation(), deleteLocked);
+  for (auto& load : loads)
+    OperationPlan::deleteOperationPlans(load.getOperation(), deleteLocked);
 
   // Mark to recompute the problems
   setChanged();
@@ -359,7 +356,7 @@ void Resource::setOwner(Resource* o) {
 
 extern "C" PyObject* Resource::plan(PyObject* self, PyObject* args) {
   // Get the resource model
-  Resource* resource = static_cast<Resource*>(self);
+  auto* resource = static_cast<Resource*>(self);
 
   // Parse the Python arguments
   PyObject* buckets = nullptr;
@@ -392,7 +389,7 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o)
   end_date = PyIter_Next(bucketiterator);
   if (!end_date) {
     logger << "Warning: No valid buckets for exporting resource plan on '" << r
-           << "'" << endl;
+           << "'" << '\n';
     bucketiterator = nullptr;
     return;
   }
@@ -416,53 +413,53 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o)
   }
 
   // Initialize the iterator for all resources
-  for (auto i = res_list.begin(); i != res_list.end(); ++i) {
-    i->ldplaniter =
-        Resource::loadplanlist::iterator(i->res->getLoadPlans().begin());
-    i->bucketized = i->res->hasType<ResourceBuckets>();
-    i->cur_date = PythonData(end_date).getDate();
-    i->prev_date = i->cur_date;
-    i->cur_size = 0.0;
-    i->cur_load = 0.0;
-    i->cur_load_confirmed = 0.0;
+  for (auto& i : res_list) {
+    i.ldplaniter =
+        Resource::loadplanlist::iterator(i.res->getLoadPlans().begin());
+    i.bucketized = i.res->hasType<ResourceBuckets>();
+    i.cur_date = PythonData(end_date).getDate();
+    i.prev_date = i.cur_date;
+    i.cur_size = 0.0;
+    i.cur_load = 0.0;
+    i.cur_load_confirmed = 0.0;
 
-    if (i->bucketized) {
+    if (i.bucketized) {
       // Scan forward to the first relevant bucket
-      while (i->ldplaniter != i->res->getLoadPlans().end() &&
-             (i->ldplaniter->getEventType() != 2 ||
-              i->ldplaniter->getDate() < i->cur_date))
-        ++(i->ldplaniter);
+      while (i.ldplaniter != i.res->getLoadPlans().end() &&
+             (i.ldplaniter->getEventType() != 2 ||
+              i.ldplaniter->getDate() < i.cur_date))
+        ++(i.ldplaniter);
     } else {
       // Initialize unavailability iterators
-      i->prev_value = true;
-      if (i->res->getLocation() && i->res->getLocation()->getAvailable()) {
-        i->unavailLocIter = Calendar::EventIterator(
-            i->res->getLocation()->getAvailable(), i->cur_date);
-        i->prev_value =
-            (i->unavailLocIter.getCalendar()->getValue(i->cur_date) != 0);
+      i.prev_value = true;
+      if (i.res->getLocation() && i.res->getLocation()->getAvailable()) {
+        i.unavailLocIter = Calendar::EventIterator(
+            i.res->getLocation()->getAvailable(), i.cur_date);
+        i.prev_value =
+            (i.unavailLocIter.getCalendar()->getValue(i.cur_date) != 0);
       }
-      if (i->res->getAvailable()) {
-        i->unavailIter =
-            Calendar::EventIterator(i->res->getAvailable(), i->cur_date);
-        if (i->prev_value)
-          i->prev_value =
-              (i->unavailIter.getCalendar()->getValue(i->cur_date) != 0);
+      if (i.res->getAvailable()) {
+        i.unavailIter =
+            Calendar::EventIterator(i.res->getAvailable(), i.cur_date);
+        if (i.prev_value)
+          i.prev_value =
+              (i.unavailIter.getCalendar()->getValue(i.cur_date) != 0);
       }
 
       // Advance loadplan iterator just beyond the starting date
-      i->cur_load_confirmed = 0.0;
-      while (i->ldplaniter != i->res->getLoadPlans().end() &&
-             i->ldplaniter->getDate() <= i->cur_date) {
-        unsigned short tp = i->ldplaniter->getEventType();
+      i.cur_load_confirmed = 0.0;
+      while (i.ldplaniter != i.res->getLoadPlans().end() &&
+             i.ldplaniter->getDate() <= i.cur_date) {
+        unsigned short tp = i.ldplaniter->getEventType();
         if (tp == 4)
           // New max size
-          i->cur_size = i->ldplaniter->getMax();
+          i.cur_size = i.ldplaniter->getMax();
         else if (tp == 1) {
-          i->cur_load = i->ldplaniter->getOnhand();
-          if (!i->ldplaniter->getOperationPlan()->getProposed())
-            i->cur_load_confirmed += i->ldplaniter->getQuantity();
+          i.cur_load = i.ldplaniter->getOnhand();
+          if (!i.ldplaniter->getOperationPlan()->getProposed())
+            i.cur_load_confirmed += i.ldplaniter->getQuantity();
         }
-        ++(i->ldplaniter);
+        ++(i.ldplaniter);
       }
     }
   }
@@ -559,31 +556,31 @@ PyObject* Resource::PlanIterator::iternext() {
     Date cpp_end_date = PythonData(end_date).getDate();
 
     // Find the load of all resources in this bucket
-    for (auto i = res_list.begin(); i != res_list.end(); ++i) {
-      i->cur_date = cpp_end_date;
-      if (i->bucketized) {
+    for (auto& i : res_list) {
+      i.cur_date = cpp_end_date;
+      if (i.bucketized) {
         // Bucketized resource
-        while (i->ldplaniter != i->res->getLoadPlans().end() &&
-               i->ldplaniter->getDate() < cpp_end_date) {
+        while (i.ldplaniter != i.res->getLoadPlans().end() &&
+               i.ldplaniter->getDate() < cpp_end_date) {
           // At this point ldplaniter points to a bucket start event in the
           // current reporting bucket
-          if (i->res->isTime())
-            bucket_available += i->ldplaniter->getOnhand() / 3600;
+          if (i.res->isTime())
+            bucket_available += i.ldplaniter->getOnhand() / 3600;
           else
-            bucket_available += i->ldplaniter->getOnhand();
+            bucket_available += i.ldplaniter->getOnhand();
 
           // Advance the loadplan iterator to the start of the next bucket
-          ++(i->ldplaniter);
-          while (i->ldplaniter != i->res->getLoadPlans().end() &&
-                 i->ldplaniter->getEventType() != 2) {
-            if (i->ldplaniter->getEventType() == 1) {
-              auto tmp = -i->ldplaniter->getQuantity();
-              if (i->res->isTime()) tmp /= 3600;
+          ++(i.ldplaniter);
+          while (i.ldplaniter != i.res->getLoadPlans().end() &&
+                 i.ldplaniter->getEventType() != 2) {
+            if (i.ldplaniter->getEventType() == 1) {
+              auto tmp = -i.ldplaniter->getQuantity();
+              if (i.res->isTime()) tmp /= 3600;
               bucket_load += tmp;
-              if (!i->ldplaniter->getOperationPlan()->getProposed())
+              if (!i.ldplaniter->getOperationPlan()->getProposed())
                 bucket_load_confirmed += tmp;
             }
-            ++(i->ldplaniter);
+            ++(i.ldplaniter);
           }
         }
       } else {
@@ -591,39 +588,39 @@ PyObject* Resource::PlanIterator::iternext() {
 
         // Measure from beginning of the bucket till the first event in this
         // bucket
-        if (i->ldplaniter != i->res->getLoadPlans().end() &&
-            i->ldplaniter->getDate() < i->cur_date)
-          update(&*i, i->ldplaniter->getDate());
+        if (i.ldplaniter != i.res->getLoadPlans().end() &&
+            i.ldplaniter->getDate() < i.cur_date)
+          update(&i, i.ldplaniter->getDate());
 
         // Advance the loadplan iterator to the next event date
-        while (i->ldplaniter != i->res->getLoadPlans().end() &&
-               i->ldplaniter->getDate() <= i->cur_date) {
+        while (i.ldplaniter != i.res->getLoadPlans().end() &&
+               i.ldplaniter->getDate() <= i.cur_date) {
           // Measure from the previous event till the current one
-          update(&*i, i->ldplaniter->getDate());
+          update(&i, i.ldplaniter->getDate());
 
           // Process the event
-          unsigned short tp = i->ldplaniter->getEventType();
+          unsigned short tp = i.ldplaniter->getEventType();
           if (tp == 4)
             // New max size
-            i->cur_size = i->ldplaniter->getMax();
+            i.cur_size = i.ldplaniter->getMax();
           else if (tp == 1) {
-            i->cur_load = i->ldplaniter->getOnhand();
-            if (!i->ldplaniter->getOperationPlan()->getProposed())
-              i->cur_load_confirmed += i->ldplaniter->getQuantity();
+            i.cur_load = i.ldplaniter->getOnhand();
+            if (!i.ldplaniter->getOperationPlan()->getProposed())
+              i.cur_load_confirmed += i.ldplaniter->getQuantity();
           }
           // Move to the next event
-          ++(i->ldplaniter);
+          ++(i.ldplaniter);
         }
 
         // Measure from the previous event till the end of the bucket
-        update(&*i, i->cur_date);
+        update(&i, i.cur_date);
       }
 
       // Measure setup
-      if (i->res->getSetupMatrix() && !i->bucketized) {
+      if (i.res->getSetupMatrix() && !i.bucketized) {
         DateRange bckt(cpp_start_date, cpp_end_date);
-        for (auto j = i->res->getLoadPlans().begin();
-             j != i->res->getLoadPlans().end(); ++j) {
+        for (auto j = i.res->getLoadPlans().begin();
+             j != i.res->getLoadPlans().end(); ++j) {
           auto opplan = j->getOperationPlan();
           if (opplan && j->getQuantity() < 0) {
             auto strt = opplan->getStart() > cpp_start_date ? opplan->getStart()
@@ -846,7 +843,7 @@ Duration Resource::getAvailable(Date start, Date end) const {
 extern "C" PyObject* ResourceBuckets::computeBucketAvailability(
     PyObject* self, PyObject* args) {
   // Get the resource model
-  ResourceBuckets* res = static_cast<ResourceBuckets*>(self);
+  auto* res = static_cast<ResourceBuckets*>(self);
 
   // Parse the Python arguments
   PyObject* pycal = nullptr;
@@ -857,7 +854,7 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(
     PyErr_SetString(PythonDataException, "argument must be of type calendar");
     return nullptr;
   }
-  Calendar* cal = static_cast<Calendar*>(pycal);
+  auto* cal = static_cast<Calendar*>(pycal);
 
   // Mark as changed
   res->setChanged();
@@ -876,13 +873,13 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(
   // Create timeline structures for every bucket.
   if (debug) {
     logger << "Computing availability for resource '" << res
-           << "' with buckets from calendar '" << cal << "'" << endl;
-    logger << "   Size calendar: " << res->getMaximumCalendar() << endl;
-    logger << "   Availability calendar: " << res->getAvailable() << endl;
+           << "' with buckets from calendar '" << cal << "'\n";
+    logger << "   Size calendar: " << res->getMaximumCalendar() << '\n';
+    logger << "   Availability calendar: " << res->getAvailable() << '\n';
     logger << "   Location availability calendar: "
            << (res->getLocation() ? res->getLocation()->getAvailable()
                                   : nullptr)
-           << endl;
+           << '\n';
   }
   CalendarDefault::EventIterator res_max(res->getMaximumCalendar());
   CalendarDefault::EventIterator avail_res(res->getAvailable());
@@ -947,12 +944,12 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(
 
     // Create an event for this bucket in the timeline
     if (bucketstart > minEventDate) {
-      loadplanlist::EventSetOnhand* newBucket =
+      auto* newBucket =
           new loadplanlist::EventSetOnhand(bucketstart, available);
       res->getLoadPlans().insert(newBucket);
       if (debug)
         logger << "   => Bucket from " << bucketstart << " till "
-               << bckt.getDate() << ": " << available << endl;
+               << bckt.getDate() << ": " << available << '\n';
     }
 
     // Remember the bucket start
@@ -1002,7 +999,7 @@ double ResourceBuckets::getUtilization(Date st, Date nd) const {
   return summax ? sumload / summax : sumload;
 }
 
-double ResourceInfinite::getUtilization(Date st, Date nd) const {
+double ResourceInfinite::getUtilization(Date, Date) const {
   // Life can be simple sometimes...
   return 0.0;
 }

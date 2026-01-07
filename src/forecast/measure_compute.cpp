@@ -133,8 +133,7 @@ void ForecastMeasureComputed::appendDependents(
     if (i != this) i->appendDependents(l);
 }
 
-PyObject* ForecastMeasureComputed::compileMeasuresPython(PyObject* self,
-                                                         PyObject* args) {
+PyObject* ForecastMeasureComputed::compileMeasuresPython(PyObject*, PyObject*) {
   try {
     compileMeasures();
   } catch (...) {
@@ -175,14 +174,14 @@ void ForecastMeasureComputed::compileMeasures() {
     c->compute_expression.register_symbol_table(symboltable);
     if (!parser.compile(c->compute_expression_string, c->compute_expression)) {
       logger << c->getName() << " error compiling expression \""
-             << c->compute_expression_string << "\"" << endl;
+             << c->compute_expression_string << "\"\n";
       ++errors;
     } else {
       // Get all dependent measures
       deque<exprtk::parser<double>::dependent_entity_collector::symbol_t>
           symbol_list;
       parser.dec().symbols(symbol_list);
-      for (auto i : symbol_list) {
+      for (const auto& i : symbol_list) {
         if (i.second == exprtk::parser<double>::e_st_variable) {
           auto m = const_cast<ForecastMeasure*>(find(i.first));
           if (m) m->dependents.push_back(c);
@@ -195,14 +194,14 @@ void ForecastMeasureComputed::compileMeasures() {
       c->update_expression.register_symbol_table(symboltable);
       if (!parser.compile(c->update_expression_string, c->update_expression)) {
         logger << c->getName() << " error compiling update expression \""
-               << c->update_expression_string << "\"" << endl;
+               << c->update_expression_string << "\"\n";
         ++errors;
       } else {
         // Get all assignments
         deque<exprtk::parser<double>::dependent_entity_collector::symbol_t>
             symbol_list;
         parser.dec().assignment_symbols(symbol_list);
-        for (auto i : symbol_list) {
+        for (const auto& i : symbol_list) {
           if (i.second == exprtk::parser<double>::e_st_variable) {
             auto m = const_cast<ForecastMeasure*>(find(i.first));
             if (m) c->assignments.push_back(m);

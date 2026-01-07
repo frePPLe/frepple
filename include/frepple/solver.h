@@ -40,11 +40,13 @@ namespace frepple {
  */
 class OperatorDelete : public Solver {
  public:
+  using Solver::solve;
+
   /* Constructor. */
   OperatorDelete(CommandManager* c = nullptr) : cmds(c) { initType(metadata); }
 
   /* Destructor. */
-  virtual ~OperatorDelete() {}
+  ~OperatorDelete() override {}
 
   /* Python method for running the solver. */
   static PyObject* solve(PyObject*, PyObject*);
@@ -56,7 +58,7 @@ class OperatorDelete : public Solver {
   CommandManager* getCommandManager() const { return cmds; }
 
   /* Remove all entities for excess material that can be removed. */
-  void solve(void* v = nullptr);
+  void solve(void* v = nullptr) override;
 
   /* Remove an operationplan and all its upstream supply.
    * The argument operationplan is invalid when this function returns!
@@ -64,20 +66,20 @@ class OperatorDelete : public Solver {
   void solve(OperationPlan*, void* = nullptr);
 
   /* Remove excess from a buffer and all its upstream colleagues. */
-  void solve(const Buffer*, void* = nullptr);
+  void solve(const Buffer*, void* = nullptr) override;
 
   /* Empty solve method for infinite buffers. */
-  void solve(const BufferInfinite*, void* = nullptr) {}
+  void solve(const BufferInfinite*, void* = nullptr) override {}
 
   /* Remove excess starting from a single demand. */
-  void solve(const Demand*, void* = nullptr);
+  void solve(const Demand*, void* = nullptr) override;
 
   /* Remove excess operations on a resource. */
-  void solve(const Resource*, void* = nullptr);
+  void solve(const Resource*, void* = nullptr) override;
 
   static int initialize();
   static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
   /* Auxilary function to push consuming or producing buffers of an
@@ -126,6 +128,9 @@ class OperatorDelete : public Solver {
  * - 3: Trace the status of all entities.
  */
 class SolverCreate : public Solver {
+ public:
+  using Solver::solve;
+
  protected:
   /* This variable stores the constraint which the solver should respect.
    * By default all constraints are enabled. */
@@ -163,9 +168,9 @@ class SolverCreate : public Solver {
    *  - The date asked for takes into account the post-operation time
    *    of the operation.
    */
-  void solve(const Operation*, void* = nullptr);
+  void solve(const Operation*, void* = nullptr) override;
 
-  void solve(const OperationItemSupplier*, void* = nullptr);
+  void solve(const OperationItemSupplier*, void* = nullptr) override;
 
   /* Behavior of this solver method is:
    *  - Asks each of the routing steps for the requested quantity, starting
@@ -173,7 +178,7 @@ class SolverCreate : public Solver {
    *    The time requested for the operation is based on the start date of
    *    the next routing step.
    */
-  void solve(const OperationRouting*, void* = nullptr);
+  void solve(const OperationRouting*, void* = nullptr) override;
 
   /* Behavior of this solver method is:
    *  - The solver asks each alternate for the percentage of the requested
@@ -200,7 +205,7 @@ class SolverCreate : public Solver {
    *  - For each effective alternate suboperation we create 1
    *    suboperationplan of the top operationplan.
    */
-  void solve(const OperationSplit*, void* = nullptr);
+  void solve(const OperationSplit*, void* = nullptr) override;
 
   /* Behavior of this solver method is:
    *  - The solver loops through each alternate operation in order of
@@ -214,14 +219,14 @@ class SolverCreate : public Solver {
    *  - The solver properly considers the quantity_per of all flows producing
    *    into the requested buffer, if such a buffer is specified.
    */
-  void solve(const OperationAlternate*, void* = nullptr);
+  void solve(const OperationAlternate*, void* = nullptr) override;
 
   /* Behavior of this solver method:
    *  - No propagation to upstream buffers at all, even if a producing
    *    operation has been specified.
    *  - Always give an answer for the full quantity on the requested date.
    */
-  void solve(const BufferInfinite*, void* = nullptr);
+  void solve(const BufferInfinite*, void* = nullptr) override;
 
   /* Behavior of this solver method:
    *  - Consider 0 as the hard minimum limit. It is not possible
@@ -239,7 +244,7 @@ class SolverCreate : public Solver {
    *    for satisfying a certain demand that change will not be considered.
    *  - The solver completely ignores the maximum target.
    */
-  void solve(const Buffer*, void* = nullptr);
+  void solve(const Buffer*, void* = nullptr) override;
 
   /* Called by the previous method to solve for safety stock only. */
   void solveSafetyStock(const Buffer*, void* = nullptr);
@@ -249,7 +254,7 @@ class SolverCreate : public Solver {
    *    It is called from a solve(Operation*) method and passes on the
    *    control to a solve(Buffer*) method.
    */
-  void solve(const Flow*, void* = nullptr);
+  void solve(const Flow*, void* = nullptr) override;
 
   /* Behavior of this solver method:
    *  - The operationplan is checked for a capacity overload. When detected
@@ -265,14 +270,14 @@ class SolverCreate : public Solver {
    *    The result of the search is returned as the answer-date to the
    *    solver.
    */
-  void solve(const Resource*, void* = nullptr);
+  void solve(const Resource*, void* = nullptr) override;
 
   void solveUnconstrained(const Resource*, void* = nullptr);
 
   /* Behavior of this solver method:
    *  - Always return OK.
    */
-  void solve(const ResourceInfinite* r, void* v = nullptr) {
+  void solve(const ResourceInfinite* r, void* v = nullptr) override {
     solveUnconstrained(r, v);
   }
 
@@ -288,7 +293,7 @@ class SolverCreate : public Solver {
    *    And we return the start date of that bucket as the answer-date to
    *    the solver.
    */
-  void solve(const ResourceBuckets*, void* = nullptr);
+  void solve(const ResourceBuckets*, void* = nullptr) override;
 
   /* Behavior of this solver method:
    *  - This method simply passes on the request to the referenced resource.
@@ -296,7 +301,7 @@ class SolverCreate : public Solver {
    *    thus gain a bit in performance), but we wanted to include it anyway
    *    to make the solver as generic and future-proof as possible.
    */
-  void solve(const Load*, void* = nullptr);
+  void solve(const Load*, void* = nullptr) override;
 
   /* Choose a resource.
    * Normally the chosen resource is simply the resource specified on the
@@ -314,7 +319,7 @@ class SolverCreate : public Solver {
    * This method is normally called from within the main solve method, but
    * it can also be called independently to plan a certain demand.
    */
-  void solve(const Demand*, void* = nullptr);
+  void solve(const Demand*, void* = nullptr) override;
 
   /* This is the main solver method that will appropriately call the other
    * solve methods.
@@ -322,7 +327,7 @@ class SolverCreate : public Solver {
    * the demand_comparison() method. For each of demand the solve(Demand*)
    * method is called to plan it.
    */
-  void solve(void* v = nullptr);
+  void solve(void* v = nullptr) override;
 
   /* Constructor. */
   SolverCreate() : commands(this) {
@@ -378,11 +383,11 @@ class SolverCreate : public Solver {
   }
 
   /* Destructor. */
-  virtual ~SolverCreate() {}
+  ~SolverCreate() override {}
 
   static int initialize();
   static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
   /* Static constant for constraint types. */
@@ -1073,17 +1078,19 @@ class SolverCreate : public Solver {
 
 class SolverPropagateStatus : public Solver {
  public:
+  using Solver::solve;
+
   SolverPropagateStatus() { initType(metadata); }
 
   /* Python method for running the solver. */
   static PyObject* solve(PyObject*, PyObject*);
 
   /* Solve all infeasibilities by delaying operationplans. */
-  virtual void solve(void* v = nullptr);
+  void solve(void* v = nullptr) override;
 
   static int initialize();
   static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 };
 

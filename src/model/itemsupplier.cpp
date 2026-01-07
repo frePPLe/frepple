@@ -81,7 +81,7 @@ ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u) {
   HasLevel::triggerLazyRecomputation();
 }
 
-ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange e) {
+ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, const DateRange& e) {
   setSupplier(s);
   setItem(r);
   setPriority(u);
@@ -92,8 +92,7 @@ ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange e) {
   HasLevel::triggerLazyRecomputation();
 }
 
-PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args,
-                               PyObject* kwds) {
+PyObject* ItemSupplier::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Pick up the supplier
     PyObject* sup = PyDict_GetItemString(kwds, "supplier");
@@ -125,8 +124,8 @@ PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args,
     }
 
     // Create the ItemSupplier
-    ItemSupplier* l = new ItemSupplier(static_cast<Supplier*>(sup),
-                                       static_cast<Item*>(it), q2, eff);
+    auto* l = new ItemSupplier(static_cast<Supplier*>(sup),
+                               static_cast<Item*>(it), q2, eff);
 
     // Iterate over extra keywords, and set attributes.   @todo move this
     // responsibility to the readers...
@@ -262,7 +261,7 @@ OperationItemSupplier::~OperationItemSupplier() {
       OperationItemSupplier* i = supitem->firstOperation;
       while (i->nextOperation != this && i->nextOperation) i = i->nextOperation;
       if (!i)
-        logger << "Error: ItemSupplier operation list corrupted" << endl;
+        logger << "Error: ItemSupplier operation list corrupted\n";
       else
         i->nextOperation = nextOperation;
     }
@@ -277,8 +276,8 @@ void OperationItemSupplier::trimExcess(bool zero_or_minimum) const {
   // This method can only trim operations not loading a resource
   if (getLoads().begin() != getLoads().end()) return;
 
-  for (auto fliter = getFlows().begin(); fliter != getFlows().end(); ++fliter) {
-    if (fliter->getQuantity() <= 0)
+  for (const auto& fliter : getFlows()) {
+    if (fliter.getQuantity() <= 0)
       // Strange, shouldn't really happen
       continue;
     FlowPlan* candidate = nullptr;
@@ -286,8 +285,8 @@ void OperationItemSupplier::trimExcess(bool zero_or_minimum) const {
     double oh = 0;
     double excess_min = DBL_MAX;
 
-    for (auto flplniter = fliter->getBuffer()->getFlowPlans().begin();
-         flplniter != fliter->getBuffer()->getFlowPlans().end(); ++flplniter) {
+    for (auto flplniter = fliter.getBuffer()->getFlowPlans().begin();
+         flplniter != fliter.getBuffer()->getFlowPlans().end(); ++flplniter) {
       // For any operationplan we get the onhand when its successor
       // replenishment arrives. If that onhand is higher than the minimum
       // onhand value we can resize it.
@@ -296,7 +295,7 @@ void OperationItemSupplier::trimExcess(bool zero_or_minimum) const {
       if (flplniter->getEventType() == 3 && zero_or_minimum)
         curmin = flplniter->getMin();
       else if (flplniter->getEventType() == 1) {
-        const FlowPlan* flpln = static_cast<const FlowPlan*>(&*flplniter);
+        const auto* flpln = static_cast<const FlowPlan*>(&*flplniter);
         if (oh - curmin < excess_min) {
           excess_min = oh - curmin;
           if (excess_min < 0) excess_min = 0;
@@ -337,7 +336,7 @@ Object* ItemSupplier::finder(const DataValueDict& d) {
   // Check supplier field
   tmp = d.get(Tags::supplier);
   if (!tmp) return nullptr;
-  Supplier* sup = static_cast<Supplier*>(tmp->getObject());
+  auto* sup = static_cast<Supplier*>(tmp->getObject());
 
   // Walk over all suppliers of the item, and return
   // the first one with matching
@@ -350,14 +349,13 @@ Object* ItemSupplier::finder(const DataValueDict& d) {
   const DataValue* hasPriority = d.get(Tags::priority);
   int priority;
   if (hasPriority) priority = hasPriority->getInt();
-  for (auto fl = item->getSuppliers().begin(); fl != item->getSuppliers().end();
-       ++fl) {
-    if (fl->getSupplier() != sup) continue;
-    if (hasEffectiveStart && fl->getEffectiveStart() != effective_start)
+  for (const auto& fl : item->getSuppliers()) {
+    if (fl.getSupplier() != sup) continue;
+    if (hasEffectiveStart && fl.getEffectiveStart() != effective_start)
       continue;
-    if (hasEffectiveEnd && fl->getEffectiveEnd() != effective_end) continue;
-    if (hasPriority && fl->getPriority() != priority) continue;
-    return const_cast<ItemSupplier*>(&*fl);
+    if (hasEffectiveEnd && fl.getEffectiveEnd() != effective_end) continue;
+    if (hasPriority && fl.getPriority() != priority) continue;
+    return const_cast<ItemSupplier*>(&fl);
   }
   return nullptr;
 }

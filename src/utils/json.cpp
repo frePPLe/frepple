@@ -32,8 +32,7 @@
  * the parsing of the data. */
 // #define PARSE_DEBUG
 
-namespace frepple {
-namespace utils {
+namespace frepple::utils {
 
 // This is used as a dummy field to indicate situations where we need to
 // set a property field on an object.
@@ -41,7 +40,7 @@ MetaFieldBool<Demand> JSONInput::useProperty(Tags::booleanproperty,
                                              &Demand::getHidden,
                                              &Demand::setHidden);
 
-PyObject* saveJSONfile(PyObject* self, PyObject* args) {
+PyObject* saveJSONfile(PyObject*, PyObject* args) {
   // Pick up arguments
   char* filename;
   char* content = nullptr;
@@ -136,7 +135,6 @@ void JSONInputFile::parse(Object* pRoot) {
   else if (filesystem::is_directory(p)) {
     // Data is a directory: loop through all *.json files now. No recursion in
     // subdirectories is done.
-    // The code is unfortunately different for Windows & Linux. Sigh...
     for (const auto& entry : filesystem::directory_iterator(p)) {
       if (entry.is_regular_file() && entry.path().extension() == ".json")
         JSONInputFile(entry.path().string().c_str()).parse(pRoot);
@@ -162,7 +160,7 @@ void JSONInputFile::parse(Object* pRoot) {
   }
 }
 
-PyObject* readJSONfile(PyObject* self, PyObject* args) {
+PyObject* readJSONfile(PyObject*, PyObject* args) {
   // Pick up arguments
   char* filename = nullptr;
   if (!PyArg_ParseTuple(args, "s:readJSONfile", &filename)) return nullptr;
@@ -185,7 +183,7 @@ PyObject* readJSONfile(PyObject* self, PyObject* args) {
   return Py_BuildValue("");
 }
 
-PyObject* readJSONdata(PyObject* self, PyObject* args) {
+PyObject* readJSONdata(PyObject*, PyObject* args) {
   // Pick up arguments
   char* data;
   if (!PyArg_ParseTuple(args, "s:readJSONdata", &data)) return nullptr;
@@ -236,7 +234,7 @@ void JSONInput::parse(Object* pRoot, char* buffer) {
       throw DataException(o.str());
     }
   } catch (const exception& e) {
-    logger << "Parsing error near position " << buf.Tell() << endl;
+    logger << "Parsing error near position " << buf.Tell() << '\n';
     throw;
   }
 }
@@ -387,7 +385,7 @@ bool JSONInput::Double(double d) {
   return true;
 }
 
-bool JSONInput::String(const char* str, rapidjson::SizeType length, bool copy) {
+bool JSONInput::String(const char* str, rapidjson::SizeType, bool) {
   if (dataindex < 0) return true;
 
   // Note: JSON allows NULLs in the string values. FrePPLe doesn't, and the
@@ -436,12 +434,12 @@ bool JSONInput::StartObject() {
   logger << "Starting object #" << objectindex << " (type "
          << (objects[objectindex].cls ? objects[objectindex].cls->type
                                       : "nullptr")
-         << ")" << endl;
+         << ")\n";
 #endif
   return true;
 }
 
-bool JSONInput::Key(const char* str, rapidjson::SizeType length, bool copy) {
+bool JSONInput::Key(const char* str, rapidjson::SizeType, bool) {
   if (++dataindex >= maxdata)
     // You're joking?
     throw DataException("JSON-document nested excessively deep");
@@ -468,13 +466,13 @@ bool JSONInput::Key(const char* str, rapidjson::SizeType length, bool copy) {
          << ((objectindex >= 0 && objects[objectindex].cls)
                  ? objects[objectindex].cls->type
                  : "none")
-         << ")" << endl;
+         << ")\n";
 #endif
 
   return true;
 }
 
-bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
+bool JSONInput::EndObject(rapidjson::SizeType) {
   // Build a dictionary with all fields of this model
   JSONDataValueDict dict(data, objects[objectindex].start, dataindex);
 
@@ -688,7 +686,7 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
          << ((objectindex >= 0 && objects[objectindex].cls)
                  ? objects[objectindex].cls->type
                  : "none")
-         << "):" << endl;
+         << "):\n";
   dict.print();
 #endif
 
@@ -777,14 +775,14 @@ bool JSONInput::EndObject(rapidjson::SizeType memberCount) {
 
 bool JSONInput::StartArray() {
 #ifdef PARSE_DEBUG
-  logger << "Starting array" << endl;
+  logger << "Starting array\n";
 #endif
   return true;
 }
 
-bool JSONInput::EndArray(rapidjson::SizeType elementCount) {
+bool JSONInput::EndArray(rapidjson::SizeType) {
 #ifdef PARSE_DEBUG
-  logger << "Ending array" << endl;
+  logger << "Ending array\n";
 #endif
   return true;
 }
@@ -1023,11 +1021,11 @@ void JSONDataValueDict::print() {
              << ": ";
     else
       logger << "  " << i << "   null: ";
-    Object* obj = static_cast<Object*>(fields[i].value.getObject());
+    auto* obj = static_cast<Object*>(fields[i].value.getObject());
     if (obj)
-      logger << "pointer to " << obj->getType().type << endl;
+      logger << "pointer to " << obj->getType().type << '\n';
     else
-      logger << fields[i].value.getString() << endl;
+      logger << fields[i].value.getString() << '\n';
   }
 }
 
@@ -1037,5 +1035,4 @@ const JSONData* JSONDataValueDict::get(const Keyword& key) const {
   return nullptr;
 }
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

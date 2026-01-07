@@ -292,8 +292,7 @@ void FlowPlan::setQuantityRaw(double q) {
 }
 
 pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,
-                                           bool update, bool execute,
-                                           short mode) {
+                                           bool, bool execute, short mode) {
   // TODO argument "update" isn't used
   if (getConfirmed()) {
     // Confirmed flowplans take any quantity, regardless of the
@@ -442,15 +441,15 @@ PyObject* FlowPlanIterator::iternext() {
   return const_cast<FlowPlan*>(fl);
 }
 
-Object* FlowPlan::reader(const MetaClass* cat, const DataValueDict& in,
-                         CommandManager* mgr) {
+Object* FlowPlan::reader(const MetaClass*, const DataValueDict& in,
+                         CommandManager*) {
   // Pick up the operationplan attribute. An error is reported if it's missing.
   const DataValue* opplanElement = in.get(Tags::operationplan);
   if (!opplanElement) throw DataException("Missing operationplan field");
   Object* opplanobject = opplanElement->getObject();
   if (!opplanobject || !opplanobject->hasType<OperationPlan>())
     throw DataException("Invalid operationplan field");
-  OperationPlan* opplan = static_cast<OperationPlan*>(opplanobject);
+  auto* opplan = static_cast<OperationPlan*>(opplanobject);
 
   // Pick up the item.
   const DataValue* itemElement = in.get(Tags::item);
@@ -514,8 +513,7 @@ Object* FlowPlan::reader(const MetaClass* cat, const DataValueDict& in,
   return new FlowPlan(opplan, correctflow);
 }
 
-PyObject* FlowPlan::create(PyTypeObject* pytype, PyObject* args,
-                           PyObject* kwds) {
+PyObject* FlowPlan::create(PyTypeObject*, PyObject* , PyObject* kwds) {
   try {
     // Find or create the C++ object
     PythonDataValueDict atts(kwds);

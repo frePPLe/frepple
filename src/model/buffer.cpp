@@ -148,31 +148,31 @@ void Buffer::inspect(const string& msg, const short i) const {
   indent indentstring(i);
   logger << indentstring << "  Inspecting buffer " << getName() << ": ";
   if (!msg.empty()) logger << msg;
-  logger << endl;
+  logger << '\n';
 
   double curmin = 0.0;
   double curmax = 0.0;
-  for (auto oo = getFlowPlans().begin(); oo != getFlowPlans().end(); ++oo) {
-    if (oo->getEventType() == 3)
-      curmin = oo->getMin();
-    else if (oo->getEventType() == 4)
-      curmax = oo->getMax();
-    logger << indentstring << "    " << oo->getDate()
-           << " qty:" << oo->getQuantity() << ", oh:" << oo->getOnhand();
+  for (const auto& oo : getFlowPlans()) {
+    if (oo.getEventType() == 3)
+      curmin = oo.getMin();
+    else if (oo.getEventType() == 4)
+      curmax = oo.getMax();
+    logger << indentstring << "    " << oo.getDate()
+           << " qty:" << oo.getQuantity() << ", oh:" << oo.getOnhand();
     if (curmin) logger << ", min:" << curmin;
     if (curmax) logger << ", max:" << curmax;
-    switch (oo->getEventType()) {
+    switch (oo.getEventType()) {
       case 1:
-        logger << ", " << oo->getOperationPlan() << endl;
+        logger << ", " << oo.getOperationPlan() << '\n';
         break;
       case 2:
-        logger << ", set onhand to " << oo->getOnhand() << endl;
+        logger << ", set onhand to " << oo.getOnhand() << '\n';
         break;
       case 3:
-        logger << ", update minimum to " << oo->getMin() << endl;
+        logger << ", update minimum to " << oo.getMin() << '\n';
         break;
       case 4:
-        logger << ", update maximum to " << oo->getMax() << endl;
+        logger << ", update maximum to " << oo.getMax() << '\n';
     }
   }
 }
@@ -284,11 +284,11 @@ Buffer* OperationInventory::getBuffer() const {
 
 double Buffer::getOnHand() const {
   string invop = "Inventory " + string(getName());
-  for (auto i = flowplans.begin(); i != flowplans.end(); ++i) {
-    if (i->getDate())
+  for (const auto& flowplan : flowplans) {
+    if (flowplan.getDate())
       return 0.0;  // Inventory event is always at start of horizon
-    if (i->getEventType() != 1) continue;
-    const FlowPlan* fp = static_cast<const FlowPlan*>(&*i);
+    if (flowplan.getEventType() != 1) continue;
+    const auto* fp = static_cast<const FlowPlan*>(&flowplan);
     if (fp->getFlow()->getOperation()->getName() == invop &&
         fabs(fp->getQuantity()) > ROUNDING_ERROR)
       return fp->getQuantity();
@@ -302,12 +302,13 @@ double Buffer::getOnHand(Date d, bool after) const {
     return tmp == flowplans.end() ? 0.0 : tmp->getOnhand();
   }
   double tmp(0.0);
-  for (auto oo = flowplans.begin(); oo != flowplans.end(); ++oo) {
-    if ((after && oo->getDate() > d) || (!after && oo->getDate() >= d))
+  for (const auto& flowplan : flowplans) {
+    if ((after && flowplan.getDate() > d) ||
+        (!after && flowplan.getDate() >= d))
       // Found a flowplan with a later date.
       // Return the onhand after the previous flowplan.
       return tmp;
-    tmp = oo->getOnhand();
+    tmp = flowplan.getOnhand();
   }
   // Found no flowplan: either we have specified a date later than the
   // last flowplan, either there are no flowplans at all.
@@ -376,10 +377,10 @@ void Buffer::setMinimum(double m) {
   min_val = m;
 
   // Create or update a single timeline min event
-  for (auto oo = flowplans.begin(); oo != flowplans.end(); oo++)
-    if (oo->getEventType() == 3) {
+  for (auto& flowplan : flowplans)
+    if (flowplan.getEventType() == 3) {
       // Update existing event
-      static_cast<flowplanlist::EventMinQuantity*>(&*oo)->setMin(min_val);
+      static_cast<flowplanlist::EventMinQuantity*>(&flowplan)->setMin(min_val);
       return;
     }
 
@@ -421,7 +422,7 @@ void Buffer::setMinimumCalendar(Calendar* cal) {
        ++x)
     if (curMin != x.getValue()) {
       curMin = x.getValue();
-      flowplanlist::EventMinQuantity* newBucket =
+      auto* newBucket =
           new flowplanlist::EventMinQuantity(x.getDate(), &flowplans, curMin);
       flowplans.insert(newBucket);
     }
@@ -492,7 +493,7 @@ void Buffer::setMaximumCalendar(Calendar* cal) {
        ++x)
     if (curMax != x.getValue()) {
       curMax = x.getValue();
-      flowplanlist::EventMaxQuantity* newBucket =
+      auto* newBucket =
           new flowplanlist::EventMaxQuantity(x.getDate(), &flowplans, curMax);
       flowplans.insert(newBucket);
     }
@@ -501,8 +502,8 @@ void Buffer::setMaximumCalendar(Calendar* cal) {
 
 void Buffer::deleteOperationPlans(bool deleteLocked) {
   // Delete the operationplans
-  for (auto i = flows.begin(); i != flows.end(); ++i)
-    OperationPlan::deleteOperationPlans(i->getOperation(), deleteLocked);
+  for (auto& flow : flows)
+    OperationPlan::deleteOperationPlans(flow.getOperation(), deleteLocked);
 
   // Mark to recompute the problems
   setChanged();
@@ -526,7 +527,7 @@ Buffer::~Buffer() {
       Buffer* buf = it->firstItemBuffer;
       while (buf && buf->nextItemBuffer != this) buf = buf->nextItemBuffer;
       if (!buf)
-        logger << "Error: Corrupted buffer list for an item" << endl;
+        logger << "Error: Corrupted buffer list for an item\n";
       else
         buf->nextItemBuffer = nextItemBuffer;
     }
@@ -591,7 +592,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
               dynamic_cast<const FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
-              (iter.getMaxLevel() > 0))
+              (iter.getMaxLevel() > 0)) {
             if (opplan->getOwner() &&
                 opplan->getOwner()
                     ->getOperation()
@@ -600,6 +601,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
               topopplan = opplan->getOwner();
             else
               topopplan = opplan;
+          }
           iter.updateStack(
               topopplan, topopplan->getQuantity() * newqty / f->getQuantity(),
               topopplan->getQuantity() * newoffset / f->getQuantity(), lvl,
@@ -630,15 +632,16 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
               dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
-              (iter.getMaxLevel() > 0))
+              (iter.getMaxLevel() > 0)) {
             if (opplan->getOwner() &&
                 opplan->getOwner()
                     ->getOperation()
                     ->hasType<OperationRouting>() &&
-                !(iter.getMaxLevel() > 0))
+                !(iter.getMaxLevel() > 0)) {
               topopplan = opplan->getOwner();
-            else
+            } else
               topopplan = opplan;
+          }
           iter.updateStack(
               topopplan, topopplan->getQuantity() * newqty / f->getQuantity(),
               topopplan->getQuantity() * newoffset / f->getQuantity(), lvl,
@@ -686,7 +689,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
               dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
-              (iter.getMaxLevel() > 0))
+              (iter.getMaxLevel() > 0)) {
             if (opplan->getOwner() && opplan->getOwner()
                                           ->getOperation()
                                           ->hasType<OperationRouting>()) {
@@ -701,6 +704,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
 
             } else
               topopplan = opplan;
+          }
           iter.updateStack(
               topopplan, -topopplan->getQuantity() * newqty / f->getQuantity(),
               -topopplan->getQuantity() * newoffset / f->getQuantity(), lvl,
@@ -731,7 +735,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
               dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
-              (iter.getMaxLevel() > 0))
+              (iter.getMaxLevel() > 0)) {
             if (opplan->getOwner() && opplan->getOwner()
                                           ->getOperation()
                                           ->hasType<OperationRouting>()) {
@@ -745,6 +749,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
               }
             } else
               topopplan = opplan;
+          }
           iter.updateStack(
               topopplan, -topopplan->getQuantity() * newqty / f->getQuantity(),
               -topopplan->getQuantity() * newoffset / f->getQuantity(), lvl,
@@ -813,8 +818,8 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc,
 }
 
 bool Buffer::hasConsumingFlows() const {
-  for (auto fl = getFlows().begin(); fl != getFlows().end(); ++fl)
-    if (fl->isConsumer()) return true;
+  for (const auto& fl : getFlows())
+    if (fl.isConsumer()) return true;
   return false;
 }
 
@@ -848,8 +853,7 @@ void Buffer::buildProducingOperation() {
       if (producing_operation &&
           producing_operation != uninitializedProducing) {
         if (producing_operation->hasType<OperationItemSupplier>()) {
-          OperationItemSupplier* o =
-              static_cast<OperationItemSupplier*>(producing_operation);
+          auto* o = static_cast<OperationItemSupplier*>(producing_operation);
           if (o->getItemSupplier() == supitem)
             // Already exists
             continue;
@@ -859,8 +863,7 @@ void Buffer::buildProducingOperation() {
               producing_operation->getSubOperations());
           while (SubOperation* o = subiter.next())
             if (o->getOperation()->hasType<OperationItemSupplier>()) {
-              OperationItemSupplier* s =
-                  static_cast<OperationItemSupplier*>(o->getOperation());
+              auto* s = static_cast<OperationItemSupplier*>(o->getOperation());
               if (s->getItemSupplier() == supitem) {
                 // Already exists
                 exists = true;
@@ -879,20 +882,20 @@ void Buffer::buildProducingOperation() {
       if (producing_operation &&
           producing_operation != uninitializedProducing) {
         // We're not the first
-        SubOperation* subop = new SubOperation();
+        auto* subop = new SubOperation();
         subop->setOperation(oper);
         subop->setPriority(supitem->getPriority());
         subop->setEffective(supitem->getEffective());
         if (!producing_operation->hasType<OperationAlternate>()) {
           // We are the second: create an alternate and add 2 suboperations
-          OperationAlternate* superop = new OperationAlternate();
+          auto* superop = new OperationAlternate();
           stringstream o;
           o << "Replenish " << getName();
           superop->setName(o.str());
           superop->setHidden(true);
           if (oper->getSearch() != SearchMode::PRIORITY)
             superop->setSearch(oper->getSearch());
-          SubOperation* subop2 = new SubOperation();
+          auto* subop2 = new SubOperation();
           subop2->setOperation(producing_operation);
           // Note that priority and effectivity are at default values.
           // If not, the alternate would already have been created.
@@ -924,7 +927,7 @@ void Buffer::buildProducingOperation() {
           producing_operation = oper;
         else {
           // Already create an alternate now
-          OperationAlternate* superop = new OperationAlternate();
+          auto* superop = new OperationAlternate();
           producing_operation = superop;
           stringstream o;
           o << "Replenish " << getName();
@@ -932,7 +935,7 @@ void Buffer::buildProducingOperation() {
           superop->setHidden(true);
           if (oper->getSearch() != SearchMode::PRIORITY)
             superop->setSearch(oper->getSearch());
-          SubOperation* subop = new SubOperation();
+          auto* subop = new SubOperation();
           subop->setOperation(oper);
           subop->setPriority(supitem->getPriority());
           subop->setEffective(supitem->getEffective());
@@ -966,7 +969,7 @@ void Buffer::buildProducingOperation() {
       if (producing_operation &&
           producing_operation != uninitializedProducing) {
         if (producing_operation->hasType<OperationItemDistribution>()) {
-          OperationItemDistribution* o =
+          auto* o =
               static_cast<OperationItemDistribution*>(producing_operation);
           if (o->getItemDistribution() == itemdist)
             // Already exists
@@ -977,7 +980,7 @@ void Buffer::buildProducingOperation() {
               producing_operation->getSubOperations());
           while (SubOperation* o = subiter.next())
             if (o->getOperation()->hasType<OperationItemDistribution>()) {
-              OperationItemDistribution* s =
+              auto* s =
                   static_cast<OperationItemDistribution*>(o->getOperation());
               if (s->getItemDistribution() == itemdist) {
                 // Already exists
@@ -998,20 +1001,20 @@ void Buffer::buildProducingOperation() {
       if (producing_operation &&
           producing_operation != uninitializedProducing) {
         // We're not the first
-        SubOperation* subop = new SubOperation();
+        auto* subop = new SubOperation();
         subop->setOperation(oper);
         subop->setPriority(itemdist->getPriority());
         subop->setEffective(itemdist->getEffective());
         if (!producing_operation->hasType<OperationAlternate>()) {
           // We are the second: create an alternate and add 2 suboperations
-          OperationAlternate* superop = new OperationAlternate();
+          auto* superop = new OperationAlternate();
           stringstream o;
           o << "Replenish " << getName();
           superop->setName(o.str());
           superop->setHidden(true);
           if (oper->getSearch() != SearchMode::PRIORITY)
             superop->setSearch(oper->getSearch());
-          SubOperation* subop2 = new SubOperation();
+          auto* subop2 = new SubOperation();
           subop2->setOperation(producing_operation);
           // Note that priority and effectivity are at default values.
           // If not, the alternate would already have been created.
@@ -1043,7 +1046,7 @@ void Buffer::buildProducingOperation() {
           producing_operation = oper;
         else {
           // Already create an alternate now
-          OperationAlternate* superop = new OperationAlternate();
+          auto* superop = new OperationAlternate();
           producing_operation = superop;
           stringstream o;
           o << "Replenish " << getName();
@@ -1051,7 +1054,7 @@ void Buffer::buildProducingOperation() {
           superop->setHidden(true);
           if (oper->getSearch() != SearchMode::PRIORITY)
             superop->setSearch(oper->getSearch());
-          SubOperation* subop = new SubOperation();
+          auto* subop = new SubOperation();
           subop->setOperation(oper);
           subop->setPriority(itemdist->getPriority());
           subop->setEffective(itemdist->getEffective());
@@ -1107,20 +1110,20 @@ void Buffer::buildProducingOperation() {
       if (producing_operation &&
           producing_operation != uninitializedProducing) {
         // We're not the first
-        SubOperation* subop = new SubOperation();
+        auto* subop = new SubOperation();
         subop->setOperation(itemoper);
         subop->setPriority(itemoper->getPriority());
         subop->setEffective(itemoper->getEffective());
         if (!producing_operation->hasType<OperationAlternate>()) {
           // We are the second: create an alternate and add 2 suboperations
-          OperationAlternate* superop = new OperationAlternate();
+          auto* superop = new OperationAlternate();
           stringstream o;
           o << "Replenish " << getName();
           superop->setName(o.str());
           superop->setHidden(true);
           if (itemoper->getSearch() != SearchMode::PRIORITY)
             superop->setSearch(itemoper->getSearch());
-          SubOperation* subop2 = new SubOperation();
+          auto* subop2 = new SubOperation();
           subop2->setOperation(producing_operation);
           // Note that priority and effectivity are at default values.
           // If not, the alternate would already have been created.
@@ -1153,7 +1156,7 @@ void Buffer::buildProducingOperation() {
           producing_operation = itemoper;
         else {
           // Already create an alternate now
-          OperationAlternate* superop = new OperationAlternate();
+          auto* superop = new OperationAlternate();
           producing_operation = superop;
           stringstream o;
           o << "Replenish " << getName();
@@ -1161,7 +1164,7 @@ void Buffer::buildProducingOperation() {
           superop->setHidden(true);
           if (itemoper->getSearch() != SearchMode::PRIORITY)
             superop->setSearch(itemoper->getSearch());
-          SubOperation* subop = new SubOperation();
+          auto* subop = new SubOperation();
           subop->setOperation(itemoper);
           subop->setPriority(itemoper->getPriority());
           subop->setEffective(itemoper->getEffective());
@@ -1176,17 +1179,17 @@ void Buffer::buildProducingOperation() {
   // or operations with 0 priority are skipped.
   if (producing_operation == uninitializedProducing) {
     const Flow* found = nullptr;
-    for (auto tmp = getFlows().begin(); tmp != getFlows().end(); ++tmp) {
-      if (tmp->getQuantity() > 0 &&
-          !tmp->getOperation()->hasType<OperationInventory>() &&
-          tmp->getOperation()->getPriority()) {
+    for (const auto& tmp : getFlows()) {
+      if (tmp.getQuantity() > 0 &&
+          !tmp.getOperation()->hasType<OperationInventory>() &&
+          tmp.getOperation()->getPriority()) {
         if (found) {
           // Found a second operation producing this item. Abort the mission...
           found = nullptr;
           break;
         } else
           // Found a first operation producing this item
-          found = &*tmp;
+          found = &tmp;
       }
     }
     if (found) producing_operation = found->getOperation();
@@ -1336,7 +1339,7 @@ PyObject* Buffer::availableOnhandPython(PyObject* self, PyObject* args) {
   }
 }
 
-Buffer* Buffer::findFromName(string nm) {
+Buffer* Buffer::findFromName(const string& nm) {
   // Check if it exists
   Buffer* buf = Buffer::find(nm);
   if (buf) return buf;

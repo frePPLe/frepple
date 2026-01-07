@@ -187,7 +187,7 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
     if (!ok)
       logger << "Warning: Resource isn't matching the resource specified on "
                 "the load"
-             << endl;
+             << '\n';
 
     // New resource must have the required skill
     if (getLoad()->getSkill()) {
@@ -199,8 +199,7 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
           break;
         }
       if (!ok)
-        logger << "Warning: Resource misses the skill specified on the load"
-               << endl;
+        logger << "Warning: Resource misses the skill specified on the load\n";
     }
   }
 
@@ -403,7 +402,7 @@ bool LoadPlan::getFeasible() const {
   return true;
 }
 
-Object* LoadPlan::reader(const MetaClass* cat, const DataValueDict& in,
+Object* LoadPlan::reader(const MetaClass*, const DataValueDict& in,
                          CommandManager* mgr) {
   // Pick up the operationplan attribute. An error is reported if it's missing.
   const DataValue* opplanElement = in.get(Tags::operationplan);
@@ -411,7 +410,7 @@ Object* LoadPlan::reader(const MetaClass* cat, const DataValueDict& in,
   Object* opplanobject = opplanElement->getObject();
   if (!opplanobject || !opplanobject->hasType<OperationPlan>())
     throw DataException("Invalid operationplan field");
-  OperationPlan* opplan = static_cast<OperationPlan*>(opplanobject);
+  auto* opplan = static_cast<OperationPlan*>(opplanobject);
 
   // Pick up the resource.
   const DataValue* resourceElement = in.get(Tags::resource);
@@ -420,7 +419,7 @@ Object* LoadPlan::reader(const MetaClass* cat, const DataValueDict& in,
   if (!resourceobject ||
       resourceobject->getType().category != Resource::metadata)
     throw DataException("Invalid resource field");
-  Resource* res = static_cast<Resource*>(resourceobject);
+  auto* res = static_cast<Resource*>(resourceobject);
 
   // Find the load on the operationplan that has the same top resource.
   // If multiple exist, we pick up the first one.
@@ -490,8 +489,7 @@ Object* LoadPlan::reader(const MetaClass* cat, const DataValueDict& in,
   throw LogicException("Unreachable code reached");
 }
 
-PyObject* LoadPlan::create(PyTypeObject* pytype, PyObject* args,
-                           PyObject* kwds) {
+PyObject* LoadPlan::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Find or create the C++ object
     PythonDataValueDict atts(kwds);

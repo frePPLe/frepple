@@ -32,7 +32,7 @@ namespace frepple {
 // READ XML INPUT FILE
 //
 
-PyObject* readXMLfile(PyObject* self, PyObject* args) {
+PyObject* readXMLfile(PyObject*, PyObject* args) {
   // Pick up arguments
   char* filename = nullptr;
   int validate(1), validate_only(0);
@@ -81,7 +81,7 @@ PyObject* readXMLfile(PyObject* self, PyObject* args) {
 // READ XML INPUT STRING
 //
 
-PyObject* readXMLdata(PyObject* self, PyObject* args) {
+PyObject* readXMLdata(PyObject*, PyObject* args) {
   // Pick up arguments
   char* data;
   int validate(1), validate_only(0), loglevel(0);
@@ -119,7 +119,7 @@ PyObject* readXMLdata(PyObject* self, PyObject* args) {
 // SAVE MODEL TO XML
 //
 
-PyObject* saveXMLfile(PyObject* self, PyObject* args) {
+PyObject* saveXMLfile(PyObject*, PyObject* args) {
   // Pick up arguments
   char* filename;
   char* content = nullptr;
@@ -158,7 +158,7 @@ PyObject* saveXMLfile(PyObject* self, PyObject* args) {
 // SAVE PLAN SUMMARY TO TEXT FILE
 //
 
-PyObject* savePlan(PyObject* self, PyObject* args) {
+PyObject* savePlan(PyObject*, PyObject* args) {
   // Pick up arguments
   const char* filename = "plan.out";
   if (!PyArg_ParseTuple(args, "s:saveplan", &filename)) return nullptr;
@@ -180,7 +180,7 @@ PyObject* savePlan(PyObject* self, PyObject* args) {
           auto oh = round(oo.getOnhand() * 1000) / 1000;
           if (fabs(oh) < ROUNDING_ERROR) oh = 0.0;
           textoutput << "BUFFER\t" << buf << '\t' << oo.getDate() << '\t'
-                     << oo.getQuantity() << '\t' << oh << endl;
+                     << oo.getQuantity() << '\t' << oh << '\n';
         }
     }
 
@@ -195,7 +195,7 @@ PyObject* savePlan(PyObject* self, PyObject* args) {
           textoutput << "\tlater than " << gdem.getDue();
         else if (pp->getEnd() < gdem.getDue())
           textoutput << "\tearlier than " << gdem.getDue();
-        textoutput << endl;
+        textoutput << '\n';
         planned += pp->getQuantity();
       }
       if (gdem.getStatus() != Demand::STATUS_CLOSED &&
@@ -203,10 +203,10 @@ PyObject* savePlan(PyObject* self, PyObject* args) {
         auto delta = planned - gdem.getQuantity();
         if (delta < -ROUNDING_ERROR)
           textoutput << "DEMAND\t" << gdem << "\tplanned " << -delta
-                     << " units short" << endl;
+                     << " units short\n";
         else if (delta > ROUNDING_ERROR)
           textoutput << "DEMAND\t" << gdem << "\tplanned " << delta
-                     << " units too much" << endl;
+                     << " units too much\n";
       }
     }
 
@@ -217,7 +217,7 @@ PyObject* savePlan(PyObject* self, PyObject* args) {
         if (qq.getEventType() == 1 && qq.getQuantity() != 0.0) {
           textoutput << "RESOURCE\t" << gres << '\t' << qq.getDate() << '\t'
                      << qq.getQuantity() << '\t'
-                     << (round(qq.getOnhand() * 1000) / 1000) << endl;
+                     << (round(qq.getOnhand() * 1000) / 1000) << '\n';
         }
     }
 
@@ -233,14 +233,14 @@ PyObject* savePlan(PyObject* self, PyObject* args) {
                  << rr->getQuantity();
       if (rr->getBatch()) textoutput << "\t" << rr->getBatch();
       if (!rr->getProposed()) textoutput << "\t" << rr->getStatus();
-      textoutput << endl;
+      textoutput << '\n';
     }
 
     // Write the problem summary.
     Problem::iterator gprob;
     while (Problem* p = gprob.next()) {
       textoutput << "PROBLEM\t" << p->getType().type << '\t'
-                 << p->getDescription() << '\t' << p->getDates() << endl;
+                 << p->getDescription() << '\t' << p->getDates() << '\n';
     }
 
     // Write the constraint summary
@@ -249,7 +249,7 @@ PyObject* savePlan(PyObject* self, PyObject* args) {
       while (Problem* prob = i.next()) {
         textoutput << "DEMAND CONSTRAINT\t" << gdem << '\t'
                    << prob->getDescription() << '\t' << prob->getDates()
-                   << endl;
+                   << '\n';
       }
     }
 
@@ -277,7 +277,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan* o)
 
   // Construct a subcommand for all suboperationplans
   for (OperationPlan::iterator x(o); x != o->end(); ++x) {
-    CommandMoveOperationPlan* n = new CommandMoveOperationPlan(&*x);
+    auto* n = new CommandMoveOperationPlan(&*x);
     n->owner = this;
     if (firstCommand) {
       n->next = firstCommand;
@@ -302,7 +302,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan* o,
 
   // Construct a subcommand for all suboperationplans
   for (OperationPlan::iterator x(o); x != o->end(); ++x) {
-    CommandMoveOperationPlan* n = new CommandMoveOperationPlan(&*x);
+    auto* n = new CommandMoveOperationPlan(&*x);
     n->owner = this;
     if (firstCommand) {
       n->next = firstCommand;
@@ -315,7 +315,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan* o,
 void CommandMoveOperationPlan::restore(bool del) {
   // Restore all suboperationplans and (optionally) delete the subcommands
   for (auto* c = firstCommand; c;) {
-    CommandMoveOperationPlan* tmp = static_cast<CommandMoveOperationPlan*>(c);
+    auto* tmp = static_cast<CommandMoveOperationPlan*>(c);
     tmp->restore(del);
     c = c->next;
     if (del) delete tmp;
@@ -364,7 +364,7 @@ CommandDeleteOperationPlan::CommandDeleteOperationPlan(OperationPlan* o)
 // DELETE MODEL
 //
 
-PyObject* eraseModel(PyObject* self, PyObject* args) {
+PyObject* eraseModel(PyObject*, PyObject* args) {
   // Pick up arguments
   PyObject* obj = nullptr;
   if (!PyArg_ParseTuple(args, "|O:erase", &obj)) return nullptr;
@@ -414,7 +414,7 @@ PyObject* eraseModel(PyObject* self, PyObject* args) {
 // PRINT MODEL SIZE
 //
 
-PyObject* printModelSize(PyObject* self, PyObject* args) {
+PyObject* printModelSize(PyObject*, PyObject*) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
 
@@ -423,23 +423,21 @@ PyObject* printModelSize(PyObject* self, PyObject* args) {
     size_t count, memsize;
 
     // Intro
-    logger << endl
-           << "Size information of frePPLe " << PACKAGE_VERSION << " ("
-           << __DATE__ << ")" << endl
-           << endl;
+    logger << "\nSize information of frePPLe " << PACKAGE_VERSION << " ("
+           << __DATE__ << ")\n\n";
 
     // Print the number of clusters
-    logger << "Clusters: " << HasLevel::getNumberOfClusters() << endl << endl;
+    logger << "Clusters: " << HasLevel::getNumberOfClusters() << "\n\n";
 
     // Header for memory size
-    logger << "Memory usage:" << endl;
-    logger << "Model                 \tCount\tMemory" << endl;
-    logger << "-----                 \t-----\t------" << endl;
+    logger << "Memory usage:\n";
+    logger << "Model                 \tCount\tMemory\n";
+    logger << "-----                 \t-----\t------\n";
 
     // Plan
     size_t total = Plan::instance().getSize();
     logger << "Plan                  \t1\t" << Plan::instance().getSize()
-           << endl;
+           << '\n';
 
     // Locations
     memsize = 0;
@@ -452,28 +450,28 @@ PyObject* printModelSize(PyObject* self, PyObject* args) {
       }
     }
     logger << "Location              \t" << Location::size() << "\t" << memsize
-           << endl;
+           << '\n';
     total += memsize;
 
     // Customers
     memsize = 0;
     for (auto& c : Customer::all()) memsize += c.getSize();
     logger << "Customer              \t" << Customer::size() << "\t" << memsize
-           << endl;
+           << '\n';
     total += memsize;
 
     // Suppliers
     memsize = 0;
     for (auto& c : Supplier::all()) memsize += c.getSize();
     logger << "Supplier              \t" << Supplier::size() << "\t" << memsize
-           << endl;
+           << '\n';
     total += memsize;
 
     // Buffers
     memsize = 0;
     for (auto& b : Buffer::all()) memsize += b.getSize();
     logger << "Buffer                \t" << Buffer::size() << "\t" << memsize
-           << endl;
+           << '\n';
     total += memsize;
 
     // Setup matrices
@@ -488,9 +486,9 @@ PyObject* printModelSize(PyObject* self, PyObject* args) {
       }
     }
     logger << "Setup matrix          \t" << SetupMatrix::size() << "\t"
-           << memsize << endl;
+           << memsize << '\n';
     logger << "Setup matrix rules    \t" << countSetupRules << "\t"
-           << memSetupRules << endl;
+           << memSetupRules << '\n';
     total += memsize;
     total += memSetupRules;
 
@@ -498,7 +496,7 @@ PyObject* printModelSize(PyObject* self, PyObject* args) {
     memsize = 0;
     for (auto& r : Resource::all()) memsize += r.getSize();
     logger << "Resource              \t" << Resource::size() << "\t" << memsize
-           << endl;
+           << '\n';
     total += memsize;
 
     // Skills and resourceskills
@@ -513,9 +511,9 @@ PyObject* printModelSize(PyObject* self, PyObject* args) {
       }
     }
     logger << "Skill                 \t" << Skill::size() << "\t" << memsize
-           << endl;
+           << '\n';
     logger << "Resource skill        \t" << countResourceSkills << "\t"
-           << memResourceSkills << endl;
+           << memResourceSkills << '\n';
     total += memsize;
     total += memResourceSkills;
 
@@ -524,21 +522,21 @@ PyObject* printModelSize(PyObject* self, PyObject* args) {
     memsize = 0;
     for (auto o = Operation::begin(); o != Operation::end(); ++o) {
       memsize += o->getSize();
-      for (auto fl = o->getFlows().begin(); fl != o->getFlows().end(); ++fl) {
+      for (const auto& fl : o->getFlows()) {
         ++countFlows;
-        memFlows += fl->getSize();
+        memFlows += fl.getSize();
       }
-      for (auto ld = o->getLoads().begin(); ld != o->getLoads().end(); ++ld) {
+      for (const auto& ld : o->getLoads()) {
         ++countLoads;
-        memLoads += ld->getSize();
+        memLoads += ld.getSize();
       }
     }
     logger << "Operation             \t" << Operation::size() << "\t" << memsize
-           << endl;
+           << '\n';
     logger << "Operation material    \t" << countFlows << "\t" << memFlows
-           << endl;
+           << '\n';
     logger << "operation resource    \t" << countLoads << "\t" << memLoads
-           << endl;
+           << '\n';
     total += memsize + memFlows + memLoads;
 
     // Calendars and calendar buckets
@@ -553,10 +551,10 @@ PyObject* printModelSize(PyObject* self, PyObject* args) {
       }
     }
     logger << "Calendar              \t" << Calendar::size() << "\t" << memsize
-           << endl;
+           << '\n';
     total += memsize;
     logger << "Calendar buckets      \t" << countBuckets << "\t" << memBuckets
-           << endl;
+           << '\n';
     total += memBuckets;
 
     // Items
@@ -570,11 +568,11 @@ PyObject* printModelSize(PyObject* self, PyObject* args) {
       }
     }
     logger << "Item                  \t" << Item::size() << "\t" << memsize
-           << endl;
+           << '\n';
     logger << "Item suppliers        \t" << countItemSuppliers << "\t"
-           << memItemSuppliers << endl;
+           << memItemSuppliers << '\n';
     logger << "Item distributions    \t" << countItemDistributions << "\t"
-           << memItemDistributions << endl;
+           << memItemDistributions << '\n';
     total += memsize + memItemSuppliers + memItemDistributions;
 
     // Demands
@@ -589,9 +587,9 @@ PyObject* printModelSize(PyObject* self, PyObject* args) {
       }
     }
     logger << "Demand                \t" << Demand::size() << "\t" << memsize
-           << endl;
+           << '\n';
     logger << "Constraints           \t" << c_count << "\t" << c_memsize
-           << endl;
+           << '\n';
     total += memsize + c_memsize;
 
     // Operationplans
@@ -604,19 +602,19 @@ PyObject* printModelSize(PyObject* self, PyObject* args) {
       countflowplans += j->sizeFlowPlans();
     }
     total += memsize;
-    logger << "OperationPlan         \t" << count << "\t" << memsize << endl;
+    logger << "OperationPlan         \t" << count << "\t" << memsize << '\n';
 
     // Flowplans
     memsize = countflowplans * sizeof(FlowPlan);
     total += memsize;
     logger << "OperationPlan material\t" << countflowplans << "\t" << memsize
-           << endl;
+           << '\n';
 
     // Loadplans
     memsize = countloadplans * sizeof(LoadPlan);
     total += memsize;
     logger << "OperationPlan resource\t" << countloadplans << "\t" << memsize
-           << endl;
+           << '\n';
 
     // Problems
     memsize = count = 0;
@@ -626,22 +624,22 @@ PyObject* printModelSize(PyObject* self, PyObject* args) {
       memsize += pr->getSize();
     }
     total += memsize;
-    logger << "Problem               \t" << count << "\t" << memsize << endl;
+    logger << "Problem               \t" << count << "\t" << memsize << '\n';
 
     // Shared string pool
     auto tmp = PooledString::getSize();
     logger << "String pool           \t" << tmp.first << "\t" << tmp.second
-           << endl;
+           << '\n';
     total += tmp.second;
 
     // Cached objects - only for the enterprise branch
     tmp = Cache::instance->getStatus();
     logger << "Memory cache          \t" << tmp.first << "\t" << tmp.second
-           << endl;
+           << '\n';
     total += tmp.second;
 
     // TOTAL
-    logger << "Total                 \t\t" << total << endl << endl;
+    logger << "Total                 \t\t" << total << "\n\n";
   } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();

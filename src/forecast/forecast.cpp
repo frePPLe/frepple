@@ -219,7 +219,7 @@ int ForecastBucket::initialize() {
   return x.typeReady();
 }
 
-Object* ForecastBucket::reader(const MetaClass* cat, const DataValueDict& in,
+Object* ForecastBucket::reader(const MetaClass*, const DataValueDict& in,
                                CommandManager* mgr) {
   // Pick up the forecast attribute. An error is reported if it's missing.
   const DataValue* fcstElement = in.get(ForecastBucket::tag_forecast);
@@ -246,8 +246,8 @@ Object* ForecastBucket::reader(const MetaClass* cat, const DataValueDict& in,
     for (auto& fcstbktdata : data->getBuckets()) {
       if (fcstbktdata.getDates().within(strt)) {
         fcstbckt = fcstbktdata.getOrCreateForecastBucket();
-        if (fcstbckt && !nd || (nd && fcstbckt->getStartDate() <= nd &&
-                                fcstbckt->getEndDate() >= nd))
+        if ((fcstbckt && !nd) || (nd && fcstbckt->getStartDate() <= nd &&
+                                  fcstbckt->getEndDate() >= nd))
           // A single bucket is being updated
           return fcstbckt;
         break;
@@ -265,8 +265,7 @@ Object* ForecastBucket::reader(const MetaClass* cat, const DataValueDict& in,
   return nullptr;
 }
 
-PyObject* ForecastBucket::create(PyTypeObject* pytype, PyObject* args,
-                                 PyObject* kwds) {
+PyObject* ForecastBucket::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Pick up the forecast. An error is reported if it's missing or has a
     // wrong data type.
@@ -282,7 +281,7 @@ PyObject* ForecastBucket::create(PyTypeObject* pytype, PyObject* args,
 
     // Initialize the forecast.
     {
-      Forecast* fcst = static_cast<Forecast*>(pyfcst);
+      auto* fcst = static_cast<Forecast*>(pyfcst);
       auto data = fcst->getData();
       lock_guard<recursive_mutex> exclusive(data->lock);
 
@@ -305,7 +304,7 @@ PyObject* ForecastBucket::create(PyTypeObject* pytype, PyObject* args,
             if (!attr.isA(ForecastBucket::tag_forecast) &&
                 !attr.isA(Tags::start) && !attr.isA(Tags::name) &&
                 !attr.isA(Tags::type) && !attr.isA(Tags::action)) {
-              logger << "   extra " << attr.getName() << endl;
+              logger << "   extra " << attr.getName() << '\n';
               const MetaFieldBase* fmeta =
                   fcstbckt->getType().findField(attr.getHash());
               if (!fmeta && fcstbckt->getType().category)
@@ -479,7 +478,7 @@ void ForecastBucket::setOrdersAdjustment(double v) {
   Measures::ordersadjustment->disaggregate(data->getBuckets()[bucketindex], v);
 }
 
-bool Forecast::callback(Calendar* l, const Signal a) {
+bool Forecast::callback(Calendar* l, const Signal) {
   // This function is called when a calendar is about to be deleted.
   // If that calendar happens to be the one defining calendar buckets, we
   // reset the calendar pointer to null.
@@ -556,7 +555,7 @@ void ForecastBase::setFields(DateRange& d, const DataValueDict& in,
       if (d.intersect(x.getDates())) {
         // Bucket intersects with daterange
         Duration o = x.getDates().overlap(d);
-        double percent = static_cast<double>(o);
+        auto percent = static_cast<double>(o);
         if (getDiscrete()) {
           // Rounding to discrete numbers
           carryover += total * percent;
@@ -604,11 +603,10 @@ void Forecast::setItem(Item* i) {
   if (getLocation() && i && getCustomer()) {
     auto exists = findForecast(i, getCustomer(), getLocation());
     if (exists) {
-      if (exists->isAggregate()) {
+      if (exists->isAggregate())
         // Replace existing element
-        eraseFromHash(exists);
         delete exists;
-      } else
+      else
         // Already exists
         throw DataException(
             "Duplicate forecast for item, location and customer");
@@ -632,11 +630,10 @@ void Forecast::setCustomer(Customer* i) {
   if (getLocation() && getItem() && i) {
     auto exists = findForecast(getItem(), i, getLocation());
     if (exists) {
-      if (exists->isAggregate()) {
+      if (exists->isAggregate())
         // Replace existing element
-        eraseFromHash(exists);
         delete exists;
-      } else
+      else
         // Already exists
         throw DataException(
             "Duplicate forecast for item, location and customer");
@@ -660,11 +657,10 @@ void Forecast::setLocation(Location* i) {
   if (i && getItem() && getCustomer()) {
     auto exists = findForecast(getItem(), getCustomer(), i);
     if (exists) {
-      if (exists->isAggregate()) {
+      if (exists->isAggregate())
         // Replace existing element
-        eraseFromHash(exists);
         delete exists;
-      } else
+      else
         // Already exists
         throw DataException(
             "Duplicate forecast for item, location and customer");
@@ -915,7 +911,7 @@ double ForecastBucketData::getOrdersPlanned() const {
     for (auto& oo : buf->getFlowPlans()) {
       if (oo.getQuantity() >= 0 || oo.getEventType() != 1) continue;
       OperationPlan* opplan = static_cast<FlowPlan&>(oo).getOperationPlan();
-      DemandDefault* dmd = dynamic_cast<DemandDefault*>(opplan->getDemand());
+      auto* dmd = dynamic_cast<DemandDefault*>(opplan->getDemand());
       if (dmd && getDates().within(opplan->getEnd()) &&
           dmd->getCustomer() == getForecast()->getForecastCustomer())
         planned += opplan->getQuantity();
@@ -1017,7 +1013,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
   if (Cache::instance->getLogLevel() > 0)
     logger << "Cache reads forecast " << f->getForecastItem() << "   "
            << f->getForecastLocation() << "   " << f->getForecastCustomer()
-           << endl;
+           << '\n';
 
   // One off initialization
   auto dbconnection = Plan::instance().getDBconnection();
@@ -1058,11 +1054,11 @@ ForecastData::ForecastData(const ForecastBase* f) {
                 3, currentdate - Duration(86400L * f->getHorizonHistory()));
             stmt.setArgument(
                 4, currentdate + Duration(86400L * f->getHorizonFuture()));
-          } catch (exception& e) {
-            logger << "Error creating prepared statement: " << e.what() << endl;
+          } catch (const exception& e) {
+            logger << "Error creating prepared statement: " << e.what() << '\n';
             db.closeConnection();
           } catch (...) {
-            logger << "Error creating prepared statement" << endl;
+            logger << "Error creating prepared statement\n";
             db.closeConnection();
           }
         }
@@ -1081,7 +1077,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
              prevDate <= hrzn_end; prevDate = i.getDate(), ++i) {
           if (prevDate && i.getDate() > hrzn_start &&
               i.getDate() != Date::infiniteFuture)
-            dates.push_back(DateRange(prevDate, i.getDate()));
+            dates.emplace_back(prevDate, i.getDate());
         }
       }
 
@@ -1089,7 +1085,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
       if (buckets.empty()) {
         short cnt = 0;
         buckets.reserve(dates.size());
-        for (auto b : dates)
+        for (const auto& b : dates)
           buckets.emplace_back(f, b.getStart(), b.getEnd(), cnt++, mode == 2);
       }
 
@@ -1112,13 +1108,13 @@ ForecastData::ForecastData(const ForecastBase* f) {
             ++bckiter;
           if (bckiter == buckets.end()) {
             logger << "Time buckets not aligned: got " << st << ", " << nd
-                   << endl;
+                   << '\n';
             throw DataException("Forecastplan buckets not matching calendar");
           }
           if (bckiter->getStart() != st || bckiter->getEnd() != nd) {
             logger << "Time buckets not aligned: got " << st << ", " << nd
                    << " and expected " << bckiter->getStart() << ", "
-                   << bckiter->getEnd() << endl;
+                   << bckiter->getEnd() << '\n';
             throw DataException("Forecastplan buckets not matching calendar");
           }
 
@@ -1156,7 +1152,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
 
       // Successfully completed
       return;
-    } catch (DatabaseBadConnection) {
+    } catch (const DatabaseBadConnection&) {
       // Try again with a new connection
       mode = 0;
       db = DatabaseReader(dbconnection);
@@ -1164,16 +1160,16 @@ ForecastData::ForecastData(const ForecastBase* f) {
 }
 
 void ForecastData::clearDirty() const {
-  for (auto i = buckets.begin(); i != buckets.end(); ++i) i->clearDirty();
-  if (buckets.size() > 0) buckets[0].getForecast()->clearDirty();
+  for (const auto& bucket : buckets) bucket.clearDirty();
+  if (!buckets.empty()) buckets[0].getForecast()->clearDirty();
 }
 
 size_t ForecastData::getSize() const {
   size_t tmp = 0;
   size_t cnt = 0;
-  for (auto i = buckets.begin(); i != buckets.end(); ++i) {
+  for (const auto& bucket : buckets) {
     ++cnt;
-    tmp += i->getSize();
+    tmp += bucket.getSize();
   }
   return tmp;
 }
@@ -1193,7 +1189,7 @@ void ForecastData::flush() {
     auto fcst = buckets[0].getForecast();
     logger << "Cache writes forecast " << fcst->getForecastItem() << "   "
            << fcst->getForecastLocation() << "   "
-           << fcst->getForecastCustomer() << endl;
+           << fcst->getForecastCustomer() << '\n';
   }
 
   auto dbconnection = Plan::instance().getDBconnection();
@@ -1219,7 +1215,8 @@ void ForecastData::flush() {
             str << ") as ( values ";
             int argcounter = 0;
             for (short r = 0; r < 10; ++r) {
-              str << "($" << ++argcounter << ", $" << ++argcounter;
+              str << "($" << ++argcounter;
+              str << ", $" << ++argcounter;
               for (auto msr = ForecastMeasure::begin();
                    msr != ForecastMeasure::end(); ++msr) {
                 if (msr->getStored())
@@ -1275,9 +1272,9 @@ void ForecastData::flush() {
                                              str.str(), argcounter + 3);
             stmt_begin = DatabasePreparedStatement(db, "begin_trx", "begin");
             stmt_end = DatabasePreparedStatement(db, "commit_trx", "commit");
-          } catch (exception& e) {
-            logger << "Error creating forecastplan export:" << endl;
-            logger << e.what() << endl;
+          } catch (const exception& e) {
+            logger << "Error creating forecastplan export:\n";
+            logger << e.what() << '\n';
             db.closeConnection();
           } catch (...) {
             db.closeConnection();
@@ -1321,9 +1318,9 @@ void ForecastData::flush() {
             // All records in prepared statements are full now
             try {
               DatabaseResult(db, stmt);
-            } catch (exception& e) {
+            } catch (const exception& e) {
               logger << "Exception caught when saving a forecast: " << e.what()
-                     << endl;
+                     << '\n';
               DatabaseStatement rollback("rollback");
               db.executeSQL(rollback);
               DatabaseResult(db, stmt_begin);
@@ -1336,9 +1333,9 @@ void ForecastData::flush() {
           while (argcount < argmax - 4) stmt.setArgument(++argcount, "");
           try {
             DatabaseResult(db, stmt);
-          } catch (exception& e) {
+          } catch (const exception& e) {
             logger << "Exception caught when saving a forecast: " << e.what()
-                   << endl;
+                   << '\n';
             // Roll back current transaction, and start a new one
             DatabaseStatement rollback("rollback");
             db.executeSQL(rollback);
@@ -1351,12 +1348,12 @@ void ForecastData::flush() {
 
       // Successful execution
       return;
-    } catch (DatabaseBadConnection) {
+    } catch (const DatabaseBadConnection&) {
       // Try again with a new connection
       mode = 0;
       db = DatabaseReader(dbconnection);
-    } catch (exception& e) {
-      logger << "Exception caught when saving a forecast: " << e.what() << endl;
+    } catch (const exception& e) {
+      logger << "Exception caught when saving a forecast: " << e.what() << '\n';
       break;
     }
 }
@@ -1388,7 +1385,7 @@ string ForecastBucketData::toString(bool add_dates, bool sorted) const {
   o << "{";
   bool first = true;
   if (add_dates) {
-    o << "\"startdate\":\"" << getStart() << "\",\"enddate\":\"" << getEnd()
+    o << R"("startdate":")" << getStart() << R"(","enddate":")" << getEnd()
       << "\"";
     first = false;
   }
@@ -1423,13 +1420,12 @@ string ForecastData::toString() const {
 }
 
 CommandSetForecastData::CommandSetForecastData(ForecastBucketData* b,
-                                               const ForecastMeasure* k,
-                                               double newvalue)
+                                               const ForecastMeasure* k, double)
     : owner(b->getForecast()->getData()), fcstbucket(b), key(k) {
   oldvalue = key->getValue(*b);
 }
 
-void Forecast::parse(Object* o, const DataValueDict& in, CommandManager* mgr) {
+void Forecast::parse(Object*, const DataValueDict& in, CommandManager* mgr) {
   // TODO currently only the JSON parser calls this function
 
   // Validate the forecast field
@@ -1557,8 +1553,7 @@ PyObject* Forecast::setValuePython(PyObject* self, PyObject* args,
   return Py_BuildValue("");
 }
 
-PyObject* Forecast::setValuePython2(PyObject* self, PyObject* args,
-                                    PyObject* kwargs) {
+PyObject* Forecast::setValuePython2(PyObject*, PyObject*, PyObject* kwargs) {
   // Keyword arguments are:
   //  bucket, startdate, enddate, item, location, customer, plus measure
   //  names
@@ -1615,7 +1610,7 @@ PyObject* Forecast::setValuePython2(PyObject* self, PyObject* args,
       while (PyDict_Next(kwargs, &pos, &pykey, &pyvalue)) {
         PythonData key(pykey);
         PythonData value(pyvalue);
-        auto keystring = key.getString();
+        const auto& keystring = key.getString();
         if (keystring != "item" && keystring != "customer" &&
             keystring != "location" && keystring != "bucket" &&
             keystring != "startdate" && keystring != "enddate") {
@@ -1633,8 +1628,7 @@ PyObject* Forecast::setValuePython2(PyObject* self, PyObject* args,
   return Py_BuildValue("");
 }
 
-PyObject* Forecast::getValuePython(PyObject* self, PyObject* args,
-                                   PyObject* kwdict) {
+PyObject* Forecast::getValuePython(PyObject* self, PyObject* args, PyObject*) {
   try {
     // Parse the arguments
     PyObject* pydate;
@@ -1665,13 +1659,13 @@ void ForecastBase::inspect(const string& msg) const {
          << getForecastItem() << ", " << getForecastLocation() << ", "
          << getForecastCustomer() << ": ";
   if (!msg.empty()) logger << msg;
-  logger << endl;
+  logger << '\n';
 
   auto fcstdata = getData();
   lock_guard<recursive_mutex> exclusive(fcstdata->lock);
   for (auto& bckt : fcstdata->getBuckets())
     logger << "    " << bckt.getStart() << " - " << bckt.getEnd() << ": "
-           << bckt.toString(false) << endl;
+           << bckt.toString(false) << '\n';
 }
 
 PyObject* Forecast::inspectPython(PyObject* self, PyObject* args) {
@@ -1688,7 +1682,7 @@ PyObject* Forecast::inspectPython(PyObject* self, PyObject* args) {
   }
 }
 
-PyObject* Forecast::saveForecast(PyObject* self, PyObject* args) {
+PyObject* Forecast::saveForecast(PyObject*, PyObject* args) {
   // Pick up arguments
   const char* filename = "plan.out";
   if (!PyArg_ParseTuple(args, "s:saveforecast", &filename)) return nullptr;
@@ -1749,7 +1743,7 @@ PyObject* Forecast::saveForecast(PyObject* self, PyObject* args) {
                    << fcst->getForecastLocation() << "\t"
                    << fcst->getForecastCustomer() << "\t" << bckt.getStart()
                    << "\t" << bckt.getEnd() << "\t" << bckt.toString(false)
-                   << endl;
+                   << '\n';
     }
 
     // Close the output file
@@ -1766,7 +1760,7 @@ PyObject* Forecast::saveForecast(PyObject* self, PyObject* args) {
 }
 
 PyObject* ForecastBucket::getMeasurePython(PyObject* self, PyObject* args,
-                                           PyObject* kwdict) {
+                                           PyObject*) {
   try {
     // Parse the arguments
     char* pymeasure = nullptr;
@@ -1786,7 +1780,7 @@ PyObject* ForecastBucket::getMeasurePython(PyObject* self, PyObject* args,
   return Py_BuildValue("");
 }
 
-PyObject* ForecastBucket::setMeasurePython(PyObject* self, PyObject* args,
+PyObject* ForecastBucket::setMeasurePython(PyObject* self, PyObject*,
                                            PyObject* kwdict) {
   try {
     // Update the forecastbucket with each keyword argument

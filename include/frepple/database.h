@@ -23,8 +23,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef DATABASE_H
-#define DATABASE_H
+#pragma once
 
 #ifdef POSTGRESQL_LIBPQ_FE_H
 #include <postgresql/libpq-fe.h>
@@ -36,8 +35,8 @@
 
 using namespace frepple;
 
-namespace frepple {
-namespace utils {
+
+namespace frepple::utils {
 
 class DatabaseReader;
 
@@ -315,7 +314,7 @@ class DatabaseStatement : public DatabaseStatementBase {
   }
 
   /* Execute the statement on a database connection. */
-  virtual PGresult* execute(PGconn*);
+  PGresult* execute(PGconn*) override;
 
  private:
   static const short MAXPARAMS = 16;
@@ -340,7 +339,7 @@ class DatabaseTransaction : public DatabaseStatementBase {
   void pushStatement(DatabaseStatementBase* p) { statements.push_back(p); }
 
   /* Execute the statement on a database connection. */
-  virtual PGresult* execute(PGconn* conn);
+  PGresult* execute(PGconn* conn) override;
 };
 
 inline ostream& operator<<(ostream& os, const DatabaseStatement& stmt) {
@@ -438,7 +437,7 @@ class DatabasePreparedStatement : public DatabaseStatementBase {
   int getArgs() const { return args; }
 
   /* Execute the statement on a database connection. */
-  virtual PGresult* execute(PGconn* conn) {
+  PGresult* execute(PGconn* conn) override {
     if (!args)
       return PQexecPrepared(conn, name.c_str(), 0, nullptr, nullptr, nullptr,
                             0);
@@ -500,8 +499,8 @@ class DatabaseResult : public NonCopyable {
     if (PQresultStatus(res) != PGRES_TUPLES_OK &&
         PQresultStatus(res) != PGRES_COMMAND_OK) {
       stringstream o;
-      o << "Database error: " << db.getError() << endl
-        << "   statement: " << stmt << endl;
+      o << "Database error: " << db.getError() << '\n'
+        << "   statement: " << stmt << '\n';
       PQclear(res);
       throw RuntimeException(o.str());
     }
@@ -667,7 +666,6 @@ class DatabaseWriter : public NonCopyable {
   thread worker;
 };
 
-}  // namespace utils
-}  // namespace frepple
+} // namespace frepple::utils
 
-#endif
+

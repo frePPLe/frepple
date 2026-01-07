@@ -33,8 +33,7 @@
 #include "frepple/utils.h"
 #include "frepple/xml.h"
 
-namespace frepple {
-namespace utils {
+namespace frepple::utils {
 
 PyObject* PythonLogicException = nullptr;
 PyObject* PythonDataException = nullptr;
@@ -68,30 +67,27 @@ void Object::writeElement(Serializer* o, const Keyword& tag,
     case MANDATORY:
       // Write references only
       if (meta.category)
-        for (auto i = meta.category->getFields().begin();
-             i != meta.category->getFields().end(); ++i)
-          if ((*i)->getFlag(MANDATORY)) (*i)->writeField(*o);
-      for (auto i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-        if ((*i)->getFlag(MANDATORY)) (*i)->writeField(*o);
+        for (auto i : meta.category->getFields())
+          if (i->getFlag(MANDATORY)) i->writeField(*o);
+      for (auto i : meta.getFields())
+        if (i->getFlag(MANDATORY)) i->writeField(*o);
       break;
     case BASE:
       // Write only the fields required to successfully save&restore the object.
       if (meta.category)
-        for (auto i = meta.category->getFields().begin();
-             i != meta.category->getFields().end(); ++i)
-          if ((*i)->getFlag(BASE + MANDATORY)) (*i)->writeField(*o);
-      for (auto i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-        if ((*i)->getFlag(BASE + MANDATORY)) (*i)->writeField(*o);
+        for (auto i : meta.category->getFields())
+          if (i->getFlag(BASE + MANDATORY)) i->writeField(*o);
+      for (auto i : meta.getFields())
+        if (i->getFlag(BASE + MANDATORY)) i->writeField(*o);
       writeProperties(*o);
       break;
     case DETAIL:
       // Write detailed info on the object.
       if (meta.category)
-        for (auto i = meta.category->getFields().begin();
-             i != meta.category->getFields().end(); ++i)
-          if ((*i)->getFlag(DETAIL + MANDATORY)) (*i)->writeField(*o);
-      for (auto i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-        if ((*i)->getFlag(DETAIL + MANDATORY)) (*i)->writeField(*o);
+        for (auto i : meta.category->getFields())
+          if (i->getFlag(DETAIL + MANDATORY)) i->writeField(*o);
+      for (auto i : meta.getFields())
+        if (i->getFlag(DETAIL + MANDATORY)) i->writeField(*o);
       writeProperties(*o);
       break;
     case PLAN:
@@ -284,9 +280,9 @@ void PythonInterpreter::registerGlobalMethod(const char* name,
   // Define a new method object.
   // We need are leaking the memory allocated for it to assure the data
   // are available at all times to Python.
-  string* leakingName = new string(name);
-  string* leakingDoc = new string(doc);
-  PyMethodDef* newMethod = new PyMethodDef;
+  auto* leakingName = new string(name);
+  auto* leakingDoc = new string(doc);
+  auto* newMethod = new PyMethodDef;
   newMethod->ml_name = leakingName->c_str();
   newMethod->ml_meth = method;
   newMethod->ml_flags = flags;
@@ -342,7 +338,7 @@ void PythonInterpreter::registerGlobalObject(const char* name, PyObject* obj,
   if (lock) PyGILState_Release(pythonstate);
 }
 
-PyObject* PythonInterpreter::python_log(PyObject* self, PyObject* args) {
+PyObject* PythonInterpreter::python_log(PyObject*, PyObject* args) {
   // Pick up arguments
   char* data;
   if (!PyArg_ParseTuple(args, "s:log", &data)) return nullptr;
@@ -528,7 +524,7 @@ PythonType* Object::registerPythonType(int size, const type_info* t) {
     if (*i == *t) return i;
 
   // Not found in the vector, so create a new one
-  PythonType* cachedTypePtr = new PythonType(size, t);
+  auto* cachedTypePtr = new PythonType(size, t);
   table.push_back(cachedTypePtr);
   return cachedTypePtr;
 }
@@ -677,7 +673,7 @@ void Object::setDoubleProperty(const string& name, double value) {
   PyGILState_Release(pythonstate);
 }
 
-void Object::setStringProperty(const string& name, string value) {
+void Object::setStringProperty(const string& name, const string& value) {
   // Adding the new key-value pair to the dictionary.
   auto pythonstate = PyGILState_Ensure();
   if (!dict) {
@@ -912,7 +908,7 @@ void PythonType::addMethod(const char* method_name, PyCFunction f, int flags,
     while (table.tp_methods[i].ml_name) i++;
     if (i % methodArraySize == methodArraySize - 1) {
       // Allocation of a bigger buffer is required
-      PyMethodDef* tmp = new PyMethodDef[i + 1 + methodArraySize];
+      auto* tmp = new PyMethodDef[i + 1 + methodArraySize];
       for (unsigned short j = 0; j < i; j++) tmp[j] = table.tp_methods[j];
       delete[] table.tp_methods;
       table.tp_methods = tmp;
@@ -1033,7 +1029,7 @@ PythonData PythonFunction::call() const {
   PyObject* result = PyObject_CallFunction(func, "()");
   if (!result) {
     logger << "Error: Exception caught when calling Python function '"
-           << (func ? PyEval_GetFuncName(func) : "nullptr") << "'" << endl;
+           << (func ? PyEval_GetFuncName(func) : "nullptr") << "'\n";
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);
@@ -1046,7 +1042,7 @@ PythonData PythonFunction::call(const PyObject* p) const {
   PyObject* result = PyObject_CallFunction(func, "(O)", p);
   if (!result) {
     logger << "Error: Exception caught when calling Python function '"
-           << (func ? PyEval_GetFuncName(func) : "nullptr") << "'" << endl;
+           << (func ? PyEval_GetFuncName(func) : "nullptr") << "'\n";
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);
@@ -1059,7 +1055,7 @@ PythonData PythonFunction::call(const PyObject* p, const PyObject* q) const {
   PyObject* result = PyObject_CallFunction(func, "(OO)", p, q);
   if (!result) {
     logger << "Error: Exception caught when calling Python function '"
-           << (func ? PyEval_GetFuncName(func) : "nullptr") << "'" << endl;
+           << (func ? PyEval_GetFuncName(func) : "nullptr") << "'\n";
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);
@@ -1075,7 +1071,7 @@ extern "C" PyObject* getattro_handler(PyObject* self, PyObject* name) {
     }
 
     // Find the field
-    Object* cpp_self = static_cast<Object*>(self);
+    auto* cpp_self = static_cast<Object*>(self);
     PyObject* name_utf8 = PyUnicode_AsUTF8String(name);
     char* fname = PyBytes_AsString(name_utf8);
     const MetaFieldBase* fmeta =
@@ -1130,7 +1126,7 @@ extern "C" int setattro_handler(PyObject* self, PyObject* name,
     PythonData field(value);
 
     // Find the field
-    Object* cpp_self = static_cast<Object*>(self);
+    auto* cpp_self = static_cast<Object*>(self);
     PyObject* name_utf8 = PyUnicode_AsUTF8String(name);
     char* fname = PyBytes_AsString(name_utf8);
     const MetaFieldBase* fmeta =
@@ -1224,5 +1220,4 @@ extern "C" PyObject* str_handler(PyObject* self) {
   }
 }
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

@@ -23,8 +23,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef FREPPLE_H
-#define FREPPLE_H
+#pragma once
 
 /** @file frepple.h
  * @brief Public header file for C++.
@@ -37,5 +36,3 @@
  */
 #include "frepple/model.h"
 #include "frepple/solver.h"
-
-#endif

@@ -94,7 +94,7 @@ int CalendarDefault::initialize() {
 /* Updates the value in a certain date range.
  * This will create a new bucket if required. */
 void Calendar::setValue(Date start, Date end, const double v) {
-  CalendarBucket* x = static_cast<CalendarBucket*>(findBucket(start));
+  auto* x = static_cast<CalendarBucket*>(findBucket(start));
   if (x && x->getStart() == start && x->getEnd() <= end)
     // We can update an existing bucket: it has the same start date
     // and ends before the new effective period ends.
@@ -189,16 +189,14 @@ CalendarBucket::~CalendarBucket() {
 
 void CalendarBucket::setEnd(const Date d) {
   if (d < startdate)
-    logger << "Warning: Calendar bucket end must be later than its start"
-           << endl;
+    logger << "Warning: Calendar bucket end must be later than its start\n";
   else
     enddate = d;
 }
 
 void CalendarBucket::setStart(const Date d) {
   if (d > enddate)
-    logger << "Warning: Calendar bucket start must be earlier than its end"
-           << endl;
+    logger << "Warning: Calendar bucket start must be earlier than its end\n";
   else {
     startdate = d;
     updateSort();
@@ -314,7 +312,7 @@ CalendarBucket* Calendar::findBucket(Date d, bool fwd) const {
 }
 
 CalendarBucket* Calendar::addBucket(Date st, Date nd, double val) {
-  CalendarBucket* bckt = new CalendarBucket();
+  auto* bckt = new CalendarBucket();
   bckt->setCalendar(this);
   bckt->setStart(st);
   bckt->setEnd(nd);
@@ -322,7 +320,7 @@ CalendarBucket* Calendar::addBucket(Date st, Date nd, double val) {
   return bckt;
 }
 
-Object* CalendarBucket::reader(const MetaClass* cat, const DataValueDict& atts,
+Object* CalendarBucket::reader(const MetaClass*, const DataValueDict& atts,
                                CommandManager* mgr) {
   // Pick up the calendar
   const DataValue* cal_val = atts.get(Tags::calendar);
@@ -660,11 +658,10 @@ void Calendar::buildEventList(Date includedate) {
   }
 }
 
-PyObject* Calendar::setPythonValue(PyObject* self, PyObject* args,
-                                   PyObject* kwdict) {
+PyObject* Calendar::setPythonValue(PyObject* self, PyObject* args, PyObject*) {
   try {
     // Pick up the calendar
-    CalendarDefault* cal = static_cast<CalendarDefault*>(self);
+    auto* cal = static_cast<CalendarDefault*>(self);
     if (!cal) throw LogicException("Can't set value of a nullptr calendar");
 
     // Parse the arguments
@@ -736,7 +733,7 @@ string CalendarBucket::getName() const {
   // We don't store the name field on the calendar bucket.
   // We just do an inefficient linear loop here (since you won't call this
   // method too often anyway).
-  for (auto f : names)
+  for (const auto& f : names)
     if (f.second == this) return f.first;
   return "";
 }

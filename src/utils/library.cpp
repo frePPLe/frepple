@@ -25,13 +25,8 @@
 
 // These headers are required for the loading of dynamic libraries and the
 // detection of the number of cores.
-#ifdef WIN32
-#include <windows.h>
-#else
 #include <dlfcn.h>
 #include <unistd.h>
-#endif
-
 #include <sys/stat.h>
 
 #include "frepple/utils.h"
@@ -40,8 +35,7 @@
 #include <sys/prctl.h>
 #endif
 
-namespace frepple {
-namespace utils {
+namespace frepple::utils {
 
 // Static stringpool table
 set<string> PooledString::pool;
@@ -82,7 +76,7 @@ void LibraryUtils::initialize() {
   static bool init = false;
   if (init) {
     logger << "Warning: Calling frepple::LibraryUtils::initialize() more "
-           << "than once." << endl;
+           << "than once.\n";
     return;
   }
   init = true;
@@ -97,7 +91,7 @@ void LibraryUtils::initialize() {
     throw RuntimeException("Error registering command manager");
 }
 
-string Environment::searchFile(const string filename) {
+string Environment::searchFile(const string& filename) {
 #ifdef _MSC_VER
   static char pathseperator = '\\';
 #else
@@ -181,7 +175,7 @@ int StreambufWrapper::sync() {
     cur_size = 0;
     auto r = filebuf::sync();
     Environment::truncateLogFile(start_size);
-    logger << "\nTruncated some output here...\n" << endl;
+    logger << "\nTruncated some output here...\n\n";
     return r;
   } else
     return filebuf::sync();
@@ -189,7 +183,7 @@ int StreambufWrapper::sync() {
 
 void Environment::setLogFile(const string& x) {
   // Bye bye message
-  if (!logfilename.empty()) logger << "Stop logging at " << Date::now() << endl;
+  if (!logfilename.empty()) logger << "Stop logging at " << Date::now() << '\n';
 
   // Close an eventual existing log file.
   if (logfile.is_open()) logfile.close();
@@ -225,7 +219,7 @@ void Environment::setLogFile(const string& x) {
 
   // Print a nice header
   logger << "Start logging frePPLe " << PACKAGE_VERSION << " (" << __DATE__
-         << ") at " << Date::now() << endl;
+         << ") at " << Date::now() << '\n';
 }
 
 void Environment::truncateLogFile(unsigned long long sz) {
@@ -237,7 +231,7 @@ void Environment::truncateLogFile(unsigned long long sz) {
 #ifdef HAVE_TRUNCATE
   // Resize the file
   if (truncate(logfilename.c_str(), sz))
-    logger << "Error: Failed to truncate log file" << endl;
+    logger << "Error: Failed to truncate log file\n";
 #else
 #error "This platform doesn't have a file resizing api."
 #endif
@@ -264,10 +258,10 @@ void Environment::setProcessName() {
 #endif
 }
 
-void MetaClass::addClass(const string& a, const string& b, bool def,
+void MetaClass::addClass(const string& a, const string& b, bool,
                          creatorDefault f) {
   // Find or create the category
-  MetaCategory* cat =
+  auto* cat =
       const_cast<MetaCategory*>(MetaCategory::findCategoryByTag(a.c_str()));
 
   // Check for a valid category
@@ -318,31 +312,31 @@ MetaCategory::MetaCategory(const string& a, const string& gr, size_t sz,
 
 const MetaCategory* MetaCategory::findCategoryByTag(const char* c) {
   // Loop through all categories
-  CategoryMap::const_iterator i = categoriesByTag.find(Keyword::hash(c));
+  auto i = categoriesByTag.find(Keyword::hash(c));
   return (i != categoriesByTag.end()) ? i->second : nullptr;
 }
 
 const MetaCategory* MetaCategory::findCategoryByTag(const size_t h) {
   // Loop through all categories
-  CategoryMap::const_iterator i = categoriesByTag.find(h);
+  auto i = categoriesByTag.find(h);
   return (i != categoriesByTag.end()) ? i->second : nullptr;
 }
 
 const MetaCategory* MetaCategory::findCategoryByGroupTag(const char* c) {
   // Loop through all categories
-  CategoryMap::const_iterator i = categoriesByGroupTag.find(Keyword::hash(c));
+  auto i = categoriesByGroupTag.find(Keyword::hash(c));
   return (i != categoriesByGroupTag.end()) ? i->second : nullptr;
 }
 
 const MetaCategory* MetaCategory::findCategoryByGroupTag(const size_t h) {
   // Loop through all categories
-  CategoryMap::const_iterator i = categoriesByGroupTag.find(h);
+  auto i = categoriesByGroupTag.find(h);
   return (i != categoriesByGroupTag.end()) ? i->second : nullptr;
 }
 
 const MetaClass* MetaCategory::findClass(const char* c) const {
   // Look up in the registered classes
-  MetaCategory::ClassMap::const_iterator j = classes.find(Keyword::hash(c));
+  auto j = classes.find(Keyword::hash(c));
   return (j == classes.end()) ? nullptr : j->second;
 }
 
@@ -368,31 +362,29 @@ const MetaClass* MetaClass::findClass(PyObject* pytype) {
 }
 
 void MetaClass::printClasses() {
-  logger << "Registered classes:" << endl;
+  logger << "Registered classes:\n";
   // Loop through all categories
-  for (auto i = MetaCategory::categoriesByTag.begin();
-       i != MetaCategory::categoriesByTag.end(); ++i) {
-    logger << "  " << i->second->type << endl;
+  for (auto& i : MetaCategory::categoriesByTag) {
+    logger << "  " << i.second->type << '\n';
     // Loop through the classes for the category
-    for (auto j = i->second->classes.begin(); j != i->second->classes.end();
-         ++j)
+    for (auto j = i.second->classes.begin(); j != i.second->classes.end(); ++j)
       if (j->first == Keyword::hash("default"))
         logger << "    default ( = " << j->second->type << " )" << j->second
-               << endl;
+               << '\n';
       else
-        logger << "    " << j->second->type << j->second << endl;
+        logger << "    " << j->second->type << j->second << '\n';
   }
 }
 
 const MetaFieldBase* MetaClass::findField(const Keyword& key) const {
-  for (auto i = fields.begin(); i != fields.end(); ++i)
-    if ((*i)->getName() == key) return *i;
+  for (auto field : fields)
+    if (field->getName() == key) return field;
   return nullptr;
 }
 
 const MetaFieldBase* MetaClass::findField(size_t h) const {
-  for (auto i = fields.begin(); i != fields.end(); ++i)
-    if ((*i)->getHash() == h) return *i;
+  for (auto field : fields)
+    if (field->getHash() == h) return field;
   return nullptr;
 }
 
@@ -482,5 +474,4 @@ Object* MetaCategory::ControllerDefault(const MetaClass* cat,
   return nullptr;
 }
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

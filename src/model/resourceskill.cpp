@@ -60,7 +60,7 @@ ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u) {
   initType(metadata);
 }
 
-ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u, DateRange e) {
+ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u, const DateRange& e) {
   setSkill(s);
   setResource(r);
   setPriority(u);
@@ -76,8 +76,7 @@ ResourceSkill::~ResourceSkill() {
 
 /* @todo this method implementation is not generic enough and not extendible by
  * subclasses. */
-PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args,
-                                PyObject* kwds) {
+PyObject* ResourceSkill::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Pick up the skill
     PyObject* skill = PyDict_GetItemString(kwds, "skill");
@@ -109,8 +108,8 @@ PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args,
     }
 
     // Create the resourceskill
-    ResourceSkill* l = new ResourceSkill(static_cast<Skill*>(skill),
-                                         static_cast<Resource*>(res), q2, eff);
+    auto* l = new ResourceSkill(static_cast<Skill*>(skill),
+                                static_cast<Resource*>(res), q2, eff);
 
     // Iterate over extra keywords, and set attributes.   @todo move this
     // responsibility to the readers...
@@ -151,12 +150,12 @@ Object* ResourceSkill::finder(const DataValueDict& d) {
   // Check resource
   const DataValue* tmp = d.get(Tags::resource);
   if (!tmp) return nullptr;
-  Resource* res = static_cast<Resource*>(tmp->getObject());
+  auto* res = static_cast<Resource*>(tmp->getObject());
 
   // Check skill field
   tmp = d.get(Tags::skill);
   if (!tmp) return nullptr;
-  Skill* skill = static_cast<Skill*>(tmp->getObject());
+  auto* skill = static_cast<Skill*>(tmp->getObject());
 
   // Walk over all skills of the resource, and return
   // the first one with matching

@@ -36,7 +36,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
     return;
   }
 
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
 
   // Call the user exit
   if (userexit_resource)
@@ -47,11 +47,11 @@ void SolverCreate::solve(const Resource* res, void* v) {
     if (!data->constrainedPlanning || !isConstrained())
       logger << ++indentlevel << "Resource '" << res
              << "' is asked in unconstrained mode: " << (-data->state->q_qty)
-             << "  " << data->state->q_operationplan->getDates() << endl;
+             << "  " << data->state->q_operationplan->getDates() << '\n';
     else
       logger << ++indentlevel << "Resource '" << res
              << "' is asked: " << (-data->state->q_qty) << "  "
-             << data->state->q_operationplan->getDates() << endl;
+             << data->state->q_operationplan->getDates() << '\n';
   }
 
   // Initialize some variables
@@ -101,10 +101,6 @@ void SolverCreate::solve(const Resource* res, void* v) {
         // Skip setup change events
         if (cur->getEventType() == 5) continue;
 
-        const LoadPlan* ldplan = nullptr;
-        if (cur->getEventType() == 1)
-          ldplan = static_cast<const LoadPlan*>(&*cur);
-
         // Not interested if date doesn't change
         if (cur->getDate() == curdate) continue;
 
@@ -135,11 +131,6 @@ void SolverCreate::solve(const Resource* res, void* v) {
 
           // Not interested if date doesn't change or setup end events
           if (cur->getDate() == curdate || cur->getEventType() == 5) continue;
-
-          // Loadplan event
-          const LoadPlan* ldplan = nullptr;
-          if (cur->getEventType() == 1)
-            ldplan = static_cast<const LoadPlan*>(&*cur);
 
           // We are below the max limit now.
           if (cur->getOnhand() < prevMax + ROUNDING_ERROR && curdate < prevdate)
@@ -202,7 +193,6 @@ void SolverCreate::solve(const Resource* res, void* v) {
       HasOverload = false;
       newDate = Date::infinitePast;
       curMax = data->state->q_loadplan->getMax();
-      double curOnhand = data->state->q_loadplan->getOnhand();
 
       // Find how many uncommitted operationplans are loading the resource
       // before the loadplan.
@@ -243,7 +233,6 @@ void SolverCreate::solve(const Resource* res, void* v) {
         if (cur != res->getLoadPlans().end() &&
             cur->getDate() == loadpl->getDate())
           continue;
-        curOnhand = loadpl->getOnhand();
 
         // Check if overloaded
         if (loadpl->getOnhand() - ignored > curMax + ROUNDING_ERROR)
@@ -284,7 +273,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
     if (iterations >= getResourceIterationMax())
       logger << indentlevel << "Warning: no free capacity slot found on " << res
              << " after " << getResourceIterationMax()
-             << " iterations. Last date: " << newDate << endl;
+             << " iterations. Last date: " << newDate << '\n';
     data->state->q_loadplan = old_q_loadplan;
 
     // Set the date where a next trial date can happen
@@ -319,7 +308,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
       data->state->a_cost += tmp;
       if (data->logcosts && data->incostevaluation)
         logger << indentlevel << "     + cost on resource '" << res
-               << "': " << tmp << endl;
+               << "': " << tmp << '\n';
     }
 
     // Setup cost
@@ -350,12 +339,12 @@ void SolverCreate::solve(const Resource* res, void* v) {
         data->state->q_operationplan->getQuantity() < currentOpplan.quantity)
       logger << " with reduced quantity "
              << data->state->q_operationplan->getQuantity();
-    logger << endl;
+    logger << '\n';
   }
 }
 
 void SolverCreate::solveUnconstrained(const Resource* res, void* v) {
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
 
   // Call the user exit
   if (userexit_resource)
@@ -365,7 +354,7 @@ void SolverCreate::solveUnconstrained(const Resource* res, void* v) {
   if (getLogLevel() > 1 && data->state->q_qty < 0)
     logger << ++indentlevel << "Unconstrained resource '" << res
            << "' is asked: " << (-data->state->q_qty) << "  "
-           << data->state->q_operationplan->getDates() << endl;
+           << data->state->q_operationplan->getDates() << '\n';
 
   // @todo Need to make the setups feasible - move to earlier dates till
   // max_early fence is reached
@@ -381,17 +370,17 @@ void SolverCreate::solveUnconstrained(const Resource* res, void* v) {
     data->state->a_cost += tmp;
     if (data->logcosts && data->incostevaluation)
       logger << indentlevel << "     + cost on resource '" << res
-             << "': " << tmp << endl;
+             << "': " << tmp << '\n';
   }
 
   // Message
   if (getLogLevel() > 1 && data->state->q_qty < 0)
     logger << indentlevel-- << "Unconstrained resource '" << res
-           << "' answers: " << data->state->a_qty << endl;
+           << "' answers: " << data->state->a_qty << '\n';
 }
 
 void SolverCreate::solve(const ResourceBuckets* res, void* v) {
-  SolverData* data = static_cast<SolverData*>(v);
+  auto* data = static_cast<SolverData*>(v);
   if (!res->getConstrained() || !data->state->q_loadplan->getLoad()) {
     solveUnconstrained(res, v);
     return;
@@ -406,7 +395,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
   if (getLogLevel() > 1 && data->state->q_qty < 0)
     logger << ++indentlevel << "Bucketized resource '" << res
            << "' is asked: " << (-data->state->q_qty) << "  "
-           << opplan->getDates() << endl;
+           << opplan->getDates() << '\n';
 
   // Set a flag for the checkOperation method to mark that bucketized resources
   // are involved
@@ -672,7 +661,6 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
               opplan->setStart(tmp);
             } else {
               // Only a part of the requirement fits in the bucket
-              Date oldEnd = opplan->getEnd();
               double oldQty = opplan->getQuantity();
               double efficiency =
                   data->state->q_loadplan->getResource()
@@ -898,7 +886,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
     data->state->a_cost += tmp;
     if (data->logcosts && data->incostevaluation)
       logger << indentlevel << "     + cost on resource '" << res
-             << "': " << tmp << endl;
+             << "': " << tmp << '\n';
 
     // Build-ahead penalty: 5% of the cost   @todo buildahead penalty is
     // hardcoded
@@ -926,7 +914,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
     else if (originalOpplan.start > data->state->q_operationplan->getStart())
       logger << " using earlier capacity "
              << data->state->q_operationplan->getStart();
-    logger << endl;
+    logger << '\n';
   }
 }
 

@@ -595,9 +595,9 @@ class OdooSendRecommendations(PlanTask):
                         print(o)
                     first = False
                 else:
-                    print(f",{o}", file=f)
+                    print(f",\n{o}", file=f, end="")
                     if loglevel:
-                        print(f",{o}")
+                        print(f",\n{o}", end="")
             print("]}", file=f)
             if loglevel:
                 print("]}")
@@ -653,13 +653,12 @@ class OdooSendRecommendations(PlanTask):
                 ):
                     continue
                 for j in i.operationplans:
-                    # We are sending the proposed POs within the lead time of the item
+                    # We are sending the proposed POs due to be ordered within the max(lead time of the item, 15 days)
                     if (
-                        not j.status == "proposed"
-                        or not j.item.source == "odoo_1"
-                        or not j.supplier.source == "odoo_1"
+                        j.status != "proposed"
                         or j.start
-                        > frepple.settings.current + timedelta(seconds=i.duration)
+                        > frepple.settings.current
+                        + timedelta(seconds=max(i.duration, 15 * 24 * 3600))
                     ):
                         continue
 
@@ -685,22 +684,87 @@ class OdooSendRecommendations(PlanTask):
                     if not description:
                         description = "Stock replenishment"
                     yield {
+                        "tab": "purchase",
                         "type": "purchase",
-                        "data": {"supplier_id": int(j.supplier.name.rsplit(" ", 1)[1])},
+                        "res_partner_id": int(
+                            i.itemsupplier.supplier.name.rsplit(" ", 1)[1]
+                        ),
                         "product_id": int(j.item.subcategory.split(",")[1]),
                         "startdate": j.start.isoformat(),
                         "enddate": j.end.isoformat(),
                         "quantity": j.quantity,
-                        "description": f"We recommend to purchase material {j.item.name}\n{description}",
+                        "description": f"We recommend to purchase {j.item.name}\\n{description}",
                     }
             if not self.loglevel:
                 print(f"Generated {po_count} purchase recommendations")
 
         def generateManufacturingRecommendations(self):
+            import frepple
+
+            mo_count = 0
+            for i in frepple.operations():
+                if (
+                    (i.owner and isinstance(i.owner, frepple.operation_routing))
+                    or not i.source
+                    or "odoo" not in i.source
+                    or not i.item
+                    or not i.item.source
+                    or "odoo" not in i.item.source
+                ):
+                    continue
+                for j in i.operationplans:
+                    if (
+                        j.status == "proposed"
+                        and j.start <= frepple.settings.current + timedelta(days=7)
+                    ):
+                        # Newly proposed MOs due to start within the new week
+                        sales_orders = []
+                        forecast = []
+                        # Get the demand linked to that MO
+                        for p in j.pegging_demand:
+                            if isinstance(
+                                p.demand,
+                                (
+                                    frepple.demand_forecastbucket,
+                                    frepple.demand_forecast,
+                                ),
+                            ):
+                                forecast.append(p.demand.name)
+                            else:
+                                sales_orders.append(p.demand.name)
+                        description = ""
+                        if sales_orders:
+                            description = (
+                                f"Required for sales orders {",".join(sales_orders)}"
+                            )
+                        if forecast:
+                            description = f"{description}{"\n" if sales_orders else ""}Required for forecast {",".join(forecast)}"
+                        mo_count += 1
+                        if not description:
+                            description = "Stock replenishment"
+                        yield {
+                            "tab": "mrp",
+                            "type": "produce",
+                            "data": {"bom_id": int(i.name.rsplit(" ", 1)[1])},
+                            "product_id": int(i.item.subcategory.split(",")[1]),
+                            "startdate": j.start.isoformat(),
+                            "enddate": j.end.isoformat(),
+                            "quantity": j.quantity,
+                            "description": f"We recommend to produce {i.item.name}\\n{description}",
+                        }
+                    elif j.status == "approved" and j.info:
+                        yield {
+                            "tab": "mrp",
+                            "type": "reschedule",
+                            "mrp_production_id": j.reference,  # Name will be converted to id in odoo
+                            "product_id": int(i.item.subcategory.split(",")[1]),
+                            "startdate": j.start.isoformat(),
+                            "enddate": j.end.isoformat(),
+                            "quantity": j.quantity,
+                            "description": f"We recommend to reschedule {j.reference}\\n{j.info}",
+                        }
             if not self.loglevel:
-                print("Generated 2 MO recommendations")
-            if False:
-                yield None  # Dummy
+                print(f"Generated {mo_count} manufacturing recommendations")
 
         def generateSalesOrderRecommendations(self):
             import frepple
@@ -723,7 +787,7 @@ class OdooSendRecommendations(PlanTask):
                     continue
                 late_quantity = 0
                 late_date = None
-                so = i.name.split(" ", 1)
+                so = i.name.split(" ")
                 for j in i.operationplans:
                     if j.end > i.due:
                         late_quantity += j.quantity
@@ -734,11 +798,10 @@ class OdooSendRecommendations(PlanTask):
                 description = f"{so[0]} will be shipped {(late_date - i.due).days} days late on {late_date.strftime("%Y-%m-%d")}"
                 so_count += 1
                 yield {
-                    "type": "sale",
-                    "data": {
-                        "constraints": [c.description for c in i.constraints],
-                        "so_line_id": so[1],
-                    },
+                    "tab": "sale",
+                    "type": "latedelivery",
+                    "data": {"constraints": [c.description for c in i.constraints]},
+                    "sale_order_line_id": so[1],
                     "product_id": int(i.item.subcategory.split(",")[1]),
                     "startdate": i.due.isoformat(),
                     "enddate": late_date.isoformat() if late_date else None,

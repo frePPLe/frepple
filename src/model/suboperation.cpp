@@ -65,8 +65,7 @@ void SubOperation::setOwner(Operation* o) {
 
   if (o && !o->hasSubOperations()) {
     // Some operation types don't have suboperations
-    logger << "Warning: Operation '" << o << "' can't have suboperations"
-           << endl;
+    logger << "Warning: Operation '" << o << "' can't have suboperations\n";
     return;
   }
 
@@ -80,7 +79,7 @@ void SubOperation::setOwner(Operation* o) {
   // Insert at new owner
   if (oper && owner) oper->owner = owner;
   if (owner) {
-    Operation::Operationlist::iterator iter = owner->getSubOperations().begin();
+    auto iter = owner->getSubOperations().begin();
     while (iter != owner->getSubOperations().end() &&
            prio >= (*iter)->getPriority())
       ++iter;
@@ -107,7 +106,7 @@ void SubOperation::setPriority(int pr) {
   if (owner) {
     // Maintain the list in order of priority
     owner->getSubOperations().remove(this);
-    Operation::Operationlist::iterator iter = owner->getSubOperations().begin();
+    auto iter = owner->getSubOperations().begin();
     while (iter != owner->getSubOperations().end() &&
            prio >= (*iter)->getPriority())
       ++iter;
@@ -115,8 +114,7 @@ void SubOperation::setPriority(int pr) {
   }
 }
 
-PyObject* SubOperation::create(PyTypeObject* pytype, PyObject* args,
-                               PyObject* kwds) {
+PyObject* SubOperation::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Pick up the operation
     PyObject* oper = PyDict_GetItemString(kwds, "operation");
@@ -133,7 +131,7 @@ PyObject* SubOperation::create(PyTypeObject* pytype, PyObject* args,
           "field 'operation' of suboperation must be of type operation");
 
     // Pick up the type and create the suboperation
-    SubOperation* l = new SubOperation();
+    auto* l = new SubOperation();
     if (oper) l->setOperation(static_cast<Operation*>(oper));
     if (owner) l->setOwner(static_cast<Operation*>(owner));
 

@@ -60,8 +60,7 @@ void usage() {
          "     directory where the initialization files init.xml, init.py,\n"
          "     frepple.xsd and module libraries will be searched.\n"
          "\nReturn codes: 0 when successful, non-zero in case of errors\n"
-         "\nMore information on this program: http://www.frepple.com\n\n"
-      << endl;
+         "\nMore information on this program: http://www.frepple.com\n\n\n";
 }
 
 void handler(int sig) {
@@ -136,7 +135,7 @@ void handler(int sig) {
     default:
       o << "signal " << sig;
   }
-  o << endl;
+  o << '\n';
   FreppleLog(o.str().c_str());
   exit(sig);
 }
@@ -204,8 +203,7 @@ int main(int argc, char* argv[]) {
         else {
           if (strcmp(argv[i], "-?") && strcmp(argv[i], "-h") &&
               strcmp(argv[i], "-help"))
-            cout << "\nError: Option '" << argv[i] << "' not recognized."
-                 << endl;
+            cout << "\nError: Option '" << argv[i] << "' not recognized.\n";
           usage();
           return EXIT_FAILURE;
         }

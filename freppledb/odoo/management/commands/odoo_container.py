@@ -242,12 +242,9 @@ class Command(BaseCommand):
                     "docker",
                     "run",
                     "--rm",
+                    "--add-host",
+                    "host.docker.internal:host-gateway",
                 ]
-                + (
-                    ["--add-host", "host.docker.internal:host-gateway"]
-                    if os.name != "nt"
-                    else []
-                )
                 + [
                     "-v",
                     "%s:/var/lib/odoo" % name,
@@ -291,12 +288,9 @@ class Command(BaseCommand):
                         "docker",
                         "run",
                         "--rm",
+                        "--add-host",
+                        "host.docker.internal:host-gateway",
                     ]
-                    + (
-                        ["--add-host", "host.docker.internal:host-gateway"]
-                        if os.name != "nt"
-                        else []
-                    )
                     + [
                         "-v",
                         "%s:/var/lib/odoo" % name,
@@ -338,13 +332,8 @@ class Command(BaseCommand):
                 [
                     "docker",
                     "run",
-                    "--rm",
+                    "--rm","--add-host", "host.docker.internal:host-gateway"
                 ]
-                + (
-                    ["--add-host", "host.docker.internal:host-gateway"]
-                    if os.name != "nt"
-                    else []
-                )
                 + [
                     "-v",
                     "%s:/var/lib/odoo" % name,
@@ -395,8 +384,7 @@ class Command(BaseCommand):
                             limit 1
                             ),
                         webtoken_key = '%s',
-                        frepple_server = '%s',
-                        disclose_stack_trace = true
+                        frepple_server = '%s'
                     """
                     % (
                         get_databases()[DEFAULT_DB_ALIAS].get(
@@ -553,13 +541,10 @@ class Command(BaseCommand):
                 "%s:/var/lib/odoo" % name,
                 "--restart",
                 "always",
+                "--add-host",
+                "host.docker.internal:host-gateway",
             ]
             + ([i for i in options["docker_arg"]] if options["docker_arg"] else [])
-            + (
-                ["--add-host", "host.docker.internal:host-gateway"]
-                if os.name != "nt"
-                else []
-            )
             + [
                 "-e",
                 "HOST=%s"

@@ -181,7 +181,7 @@ frepple.compileMeasures()
 			<item name="All-surface tennis ball pack"/>
 			<customer name="Generic customer"/>
 			<location name="Tennis shop Brussels"/>
-			<calendar name="planningbuckets"/>    
+			<calendar name="planningbuckets"/>
 			<buckets>
 				<bucket>
 					<start>2013-01-01T00:00:00</start>

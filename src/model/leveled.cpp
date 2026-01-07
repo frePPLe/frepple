@@ -24,6 +24,7 @@
  ***************************************************************************/
 
 #include <climits>
+#include <ranges>
 
 #include "frepple/model.h"
 
@@ -129,7 +130,7 @@ void HasLevel::computeLevels() {
 
 #ifdef CLUSTERDEBUG
       logger << "Investigating operation '" << g << "' - current cluster "
-             << g.cluster << endl;
+             << g.cluster << '\n';
 #endif
 
       // Do we need to activate the level search?
@@ -164,7 +165,7 @@ void HasLevel::computeLevels() {
       // Note that as soon as push an operation on the stack we set its
       // cluster and/or level. This is avoid that operations are needlessly
       // pushed a second time on the stack.
-      opstack.push(make_pair(&g, search_level ? 0 : -1));
+      opstack.emplace(&g, search_level ? 0 : -1);
       visited.clear();
       g.cluster = cur_cluster;
       if (search_level) g.lvl = 0;
@@ -179,7 +180,7 @@ void HasLevel::computeLevels() {
 
 #ifdef CLUSTERDEBUG
         logger << "    Recursing in Operation '" << *(cur_oper)
-               << "' - current level " << cur_level << endl;
+               << "' - current level " << cur_level << '\n';
 #endif
         // Detect loops in the supply chain
         auto detectloop = visited.find(cur_oper);
@@ -191,17 +192,17 @@ void HasLevel::computeLevels() {
           continue;
 
         // Push sub operations on the stack
-        for (auto i = cur_oper->getSubOperations().rbegin();
-             i != cur_oper->getSubOperations().rend(); ++i) {
-          if ((*i)->getOperation()->lvl < cur_level) {
+        for (auto& i :
+             std::ranges::reverse_view(cur_oper->getSubOperations())) {
+          if (i->getOperation()->lvl < cur_level) {
             // Search level and cluster
-            opstack.push(make_pair((*i)->getOperation(), cur_level));
-            (*i)->getOperation()->lvl = cur_level;
-            (*i)->getOperation()->cluster = cur_cluster;
-          } else if (!(*i)->getOperation()->cluster) {
+            opstack.emplace(i->getOperation(), cur_level);
+            i->getOperation()->lvl = cur_level;
+            i->getOperation()->cluster = cur_cluster;
+          } else if (!i->getOperation()->cluster) {
             // Search for clusters information only
-            opstack.push(make_pair((*i)->getOperation(), -1));
-            (*i)->getOperation()->cluster = cur_cluster;
+            opstack.emplace(i->getOperation(), -1);
+            i->getOperation()->cluster = cur_cluster;
           }
           // else: no search required
         }
@@ -210,12 +211,12 @@ void HasLevel::computeLevels() {
         if (cur_oper->getOwner()) {
           if (cur_oper->getOwner()->lvl < cur_level) {
             // Search level and cluster
-            opstack.push(make_pair(cur_oper->getOwner(), cur_level));
+            opstack.emplace(cur_oper->getOwner(), cur_level);
             cur_oper->getOwner()->lvl = cur_level;
             cur_oper->getOwner()->cluster = cur_cluster;
           } else if (!cur_oper->getOwner()->cluster) {
             // Search for clusters information only
-            opstack.push(make_pair(cur_oper->getOwner(), -1));
+            opstack.emplace(cur_oper->getOwner(), -1);
             cur_oper->getOwner()->cluster = cur_cluster;
           }
           // else: no search required
@@ -227,22 +228,21 @@ void HasLevel::computeLevels() {
           if (new_oper == cur_oper) new_oper = dpd->getBlockedBy();
           if (new_oper->lvl < cur_level + 1) {
             // Search level and cluster
-            opstack.push(make_pair(new_oper, cur_level + 1));
+            opstack.emplace(new_oper, cur_level + 1);
             new_oper->lvl = cur_level + 1;
             new_oper->cluster = cur_cluster;
           } else if (!new_oper->cluster) {
             // Search for clusters information only
-            opstack.push(make_pair(new_oper, -1));
+            opstack.emplace(new_oper, -1);
             new_oper->cluster = cur_cluster;
           }
           // else: no search required
         }
 
         // Update level of resources linked to current operation
-        for (auto gres = cur_oper->getLoads().begin();
-             gres != cur_oper->getLoads().end(); ++gres) {
+        for (const auto& gres : cur_oper->getLoads()) {
           stack<Resource*> rsrc;
-          auto resptr = gres->getResource();
+          auto resptr = gres.getResource();
           while (resptr->getOwner()) resptr = resptr->getOwner();
           rsrc.push(resptr);
           while (!rsrc.empty()) {
@@ -255,11 +255,10 @@ void HasLevel::computeLevels() {
             if (!resptr->cluster) {
               resptr->cluster = cur_cluster;
               // Find more operations connected to this cluster by the resource
-              for (auto resops = resptr->getLoads().begin();
-                   resops != resptr->getLoads().end(); ++resops) {
-                if (!resops->getOperation()->cluster) {
-                  opstack.push(make_pair(resops->getOperation(), -1));
-                  resops->getOperation()->cluster = cur_cluster;
+              for (const auto& resops : resptr->getLoads()) {
+                if (!resops.getOperation()->cluster) {
+                  opstack.emplace(resops.getOperation(), -1);
+                  resops.getOperation()->cluster = cur_cluster;
                 }
               }
             }
@@ -272,9 +271,8 @@ void HasLevel::computeLevels() {
         }
 
         // Now loop through all flows of the operation
-        for (auto gflow = cur_oper->getFlows().begin();
-             gflow != cur_oper->getFlows().end(); ++gflow) {
-          cur_Flow = &*gflow;
+        for (const auto& gflow : cur_oper->getFlows()) {
+          cur_Flow = &gflow;
           cur_buf = cur_Flow->getBuffer();
 
           // Check whether the level search needs to continue
@@ -297,11 +295,11 @@ void HasLevel::computeLevels() {
                        ->getPriority())) {
                 if (buffl->getOperation()->lvl < cur_level + 1 &&
                     &*buffl != cur_Flow && buffl->isProducer()) {
-                  opstack.push(make_pair(buffl->getOperation(), cur_level + 1));
+                  opstack.emplace(buffl->getOperation(), cur_level + 1);
                   buffl->getOperation()->lvl = cur_level + 1;
                   buffl->getOperation()->cluster = cur_cluster;
                 } else if (!buffl->getOperation()->cluster) {
-                  opstack.push(make_pair(buffl->getOperation(), -1));
+                  opstack.emplace(buffl->getOperation(), -1);
                   buffl->getOperation()->cluster = cur_cluster;
                 }
                 if (cur_level + 1 > numberOfLevels)
@@ -310,7 +308,7 @@ void HasLevel::computeLevels() {
               }
               // Check cluster recursion
               else if (!buffl->getOperation()->cluster) {
-                opstack.push(make_pair(buffl->getOperation(), -1));
+                opstack.emplace(buffl->getOperation(), -1);
                 buffl->getOperation()->cluster = cur_cluster;
               }
             }
@@ -323,11 +321,10 @@ void HasLevel::computeLevels() {
           while (Buffer* tmpbuf = buf_iter.next())
             if (!tmpbuf->cluster) {
               tmpbuf->cluster = cur_cluster;
-              for (auto buffl = tmpbuf->getFlows().begin();
-                   buffl != tmpbuf->getFlows().end(); ++buffl) {
-                if (!buffl->getOperation()->cluster) {
-                  opstack.push(make_pair(buffl->getOperation(), -1));
-                  buffl->getOperation()->cluster = cur_cluster;
+              for (const auto& buffl : tmpbuf->getFlows()) {
+                if (!buffl.getOperation()->cluster) {
+                  opstack.emplace(buffl.getOperation(), -1);
+                  buffl.getOperation()->cluster = cur_cluster;
                 }
               }
             }
@@ -339,7 +336,7 @@ void HasLevel::computeLevels() {
           for (auto m = it->second->getMembers(); m != Demand::end(); ++m) {
             auto dlvr = m->getDeliveryOperation();
             if (dlvr && !dlvr->cluster) {
-              opstack.push(make_pair(dlvr, -1));
+              opstack.emplace(dlvr, -1);
               dlvr->cluster = cur_cluster;
             }
           }

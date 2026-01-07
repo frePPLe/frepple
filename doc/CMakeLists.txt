@@ -1,10 +1,8 @@
 
-if(NOT WIN32)
-  INSTALL(
-    FILES frepple.1 frepplectl.1
-    DESTINATION "${CMAKE_INSTALL_MANDIR}"
-  )
-endif()
+INSTALL(
+  FILES frepple.1 frepplectl.1
+  DESTINATION "${CMAKE_INSTALL_MANDIR}"
+)
 
 add_custom_target(
   doc

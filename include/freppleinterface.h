@@ -34,8 +34,6 @@
  */
 
 #pragma once
-#ifndef FREPPLE_INTERFACE_H
-#define FREPPLE_INTERFACE_H
 
 #ifdef __cplusplus
 #include <string>
@@ -173,5 +171,3 @@ int FreppleWrapperExit();
 #ifdef __cplusplus
 }  // End of "extern C"
 #endif
-
-#endif  // End of FREPPLE_INTERFACE_H

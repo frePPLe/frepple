@@ -24,8 +24,6 @@
  ***************************************************************************/
 
 #pragma once
-#ifndef FREPPLE_CACHE_H
-#define FREPPLE_CACHE_H
 
 #include <atomic>
 
@@ -33,9 +31,7 @@
 
 using namespace std;
 
-namespace frepple {
-
-namespace utils {
+namespace frepple::utils {
 
 class AbstractCacheEntry {
   friend class Cache;
@@ -98,26 +94,26 @@ class CacheEntry : public AbstractCacheEntry {
     // in the destruction of its object
   }
 
-  virtual void flush();
+  void flush() override;
 
-  virtual void expire() const {
+  void expire() const override {
     const_cast<CacheEntry<T, U>*>(this)->val.reset();
   }
 
-  virtual recursive_mutex* getLock() const {
+  recursive_mutex* getLock() const override {
     return val ? static_pointer_cast<T>(
                      const_cast<CacheEntry<T, U>*>(this)->val)
                      ->getLock()
                : nullptr;
   }
 
-  virtual void clearDirty() const {
+  void clearDirty() const override {
     AbstractCacheEntry::clearDirty();
     if (!val) return;
     static_pointer_cast<T>(val)->clearDirty();
   }
 
-  virtual size_t getSize() const {
+  size_t getSize() const override {
     return val ? static_pointer_cast<T>(val)->getSize() : 0;
   }
 
@@ -135,12 +131,11 @@ class Cache : public Object {
   Cache() {
     initType(metadata);
     for (auto c = threads; c > 0; --c)
-      workers.push(
-          thread(workerthread, this, static_cast<int>(workers.size())));
+      workers.emplace(workerthread, this, static_cast<int>(workers.size()));
   };
 
   // Destructor
-  ~Cache() { setThreads(0); };
+  ~Cache() override { setThreads(0); };
 
   // Global cache instance
   static Cache* instance;
@@ -151,7 +146,7 @@ class Cache : public Object {
 
   void setMaximum(unsigned long s) {
     if (s <= 0) {
-      logger << "Warning: Cache object limit must be bigger than 0" << endl;
+      logger << "Warning: Cache object limit must be bigger than 0\n";
       return;
     }
     max_objects = s;
@@ -174,7 +169,7 @@ class Cache : public Object {
   static const MetaClass* metadata;
   static const MetaCategory* metacategory;
   static int initialize();
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   static const Keyword tag_write_immediately;
   static const Keyword tag_threads;
@@ -305,7 +300,4 @@ shared_ptr<T> CacheEntry<T, U>::getValue(const U* key) const {
   }
 }
 
-}  // namespace utils
-}  // namespace frepple
-
-#endif  // End of FREPPLE_CACHE_H
+}  // namespace frepple::utils

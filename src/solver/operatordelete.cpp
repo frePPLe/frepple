@@ -23,6 +23,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <ranges>
+
 #include "frepple/solver.h"
 
 namespace frepple {
@@ -46,11 +48,10 @@ int OperatorDelete::initialize() {
   return x.typeReady();
 }
 
-PyObject* OperatorDelete::create(PyTypeObject* pytype, PyObject* args,
-                                 PyObject* kwds) {
+PyObject* OperatorDelete::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Create the solver
-    OperatorDelete* s = new OperatorDelete();
+    auto* s = new OperatorDelete();
 
     // Iterate over extra keywords, and set attributes.   @todo move this
     // responsibility to the readers...
@@ -83,7 +84,7 @@ PyObject* OperatorDelete::create(PyTypeObject* pytype, PyObject* args,
   }
 }
 
-void OperatorDelete::solve(void* v) {
+void OperatorDelete::solve(void*) {
   // Loop over all buffers Push to stack, in order of level TODO
   // Clean up all buffers in the list
   while (!buffersToScan.empty()) {
@@ -93,7 +94,7 @@ void OperatorDelete::solve(void* v) {
   }
 }
 
-void OperatorDelete::solve(OperationPlan* o, void* v) {
+void OperatorDelete::solve(OperationPlan* o, void*) {
   if (!o) return;  // Null argument passed
 
   // Mark all buffers.
@@ -117,15 +118,14 @@ void OperatorDelete::solve(OperationPlan* o, void* v) {
   }
 }
 
-void OperatorDelete::solve(const Resource* r, void* v) {
-  if (getLogLevel() > 0) logger << "Scanning " << r << " for excess" << endl;
+void OperatorDelete::solve(const Resource* r, void*) {
+  if (getLogLevel() > 0) logger << "Scanning " << r << " for excess\n";
 
   // Loop over all operationplans on the resource
-  for (Resource::loadplanlist::const_iterator i = r->getLoadPlans().begin();
-       i != r->getLoadPlans().end(); ++i) {
-    if (i->getEventType() == 1)
+  for (const auto& i : r->getLoadPlans()) {
+    if (i.getEventType() == 1)
       // Add all buffers into which material is produced to the stack
-      pushBuffers(i->getOperationPlan(), false, true);
+      pushBuffers(i.getOperationPlan(), false, true);
   }
 
   // Process all buffers found, and their upstream colleagues
@@ -136,8 +136,8 @@ void OperatorDelete::solve(const Resource* r, void* v) {
   }
 }
 
-void OperatorDelete::solve(const Demand* d, void* v) {
-  if (getLogLevel() > 1) logger << "Scanning " << d << " for excess" << endl;
+void OperatorDelete::solve(const Demand* d, void*) {
+  if (getLogLevel() > 1) logger << "Scanning " << d << " for excess\n";
 
   // Delete all delivery operationplans.
   // Note that an extra loop is used to assure that our iterator doesn't get
@@ -146,10 +146,9 @@ void OperatorDelete::solve(const Demand* d, void* v) {
     // Find a candidate operationplan to delete
     OperationPlan* candidate = nullptr;
     const Demand::OperationPlanList& deli = d->getDelivery();
-    for (Demand::OperationPlanList::const_iterator i = deli.begin();
-         i != deli.end(); ++i)
-      if ((*i)->getProposed()) {
-        candidate = *i;
+    for (auto i : deli)
+      if (i->getProposed()) {
+        candidate = i;
         break;
       }
     if (!candidate) break;
@@ -185,9 +184,8 @@ void OperatorDelete::pushBuffers(OperationPlan* o, bool consuming,
 
     // Check if the buffer is already found on the stack
     bool found = false;
-    for (vector<Buffer*>::const_reverse_iterator j = buffersToScan.rbegin();
-         j != buffersToScan.rend(); ++j) {
-      if (*j == i->getBuffer()) {
+    for (auto& j : std::ranges::reverse_view(buffersToScan)) {
+      if (j == i->getBuffer()) {
         found = true;
         break;
       }
@@ -203,8 +201,8 @@ void OperatorDelete::pushBuffers(OperationPlan* o, bool consuming,
     pushBuffers(&*subopplan, consuming, producing);
 }
 
-void OperatorDelete::solve(const Buffer* b, void* v) {
-  if (getLogLevel() > 1) logger << "Scanning buffer " << b << endl;
+void OperatorDelete::solve(const Buffer* b, void*) {
+  if (getLogLevel() > 1) logger << "Scanning buffer " << b << '\n';
 
   Buffer::flowplanlist::const_iterator fiter = b->getFlowPlans().begin();
   Buffer::flowplanlist::const_iterator fend = b->getFlowPlans().end();
@@ -241,7 +239,7 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
           --fiter2;
           continue;
         }
-        FlowPlan* fp =
+        auto* fp =
             const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter2));
         if (!fp->getOperationPlan()->getProposed()) {
           // This consumer is locked
@@ -277,7 +275,7 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
           // Log message
           if (getLogLevel() > 0)
             logger << "Removing shortage operationplan: "
-                   << fp->getOperationPlan() << endl;
+                   << fp->getOperationPlan() << '\n';
           // Delete operationplan
           if (cmds)
             cmds->add(new CommandDeleteOperationPlan(fp->getOperationPlan()));
@@ -291,7 +289,7 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
           cur_shortage -= oldsize_flowplan - newsize_flowplan;
           if (getLogLevel() > 0)
             logger << "Resizing shortage operationplan to " << newsize_opplan
-                   << ": " << fp->getOperationPlan() << endl;
+                   << ": " << fp->getOperationPlan() << '\n';
           // Resize operationplan
           if (cmds)
             // TODO Incorrect - need to resize the flowplan intead of the the
@@ -308,7 +306,7 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
       if (fiter2 == fend && cur_shortage <= -ROUNDING_ERROR) {
         unresolvable += cur_shortage;
         if (getLogLevel() > 0)
-          logger << "Can't resolve shortage problem in buffer " << b << endl;
+          logger << "Can't resolve shortage problem in buffer " << b << '\n';
       }
     }
   }
@@ -377,7 +375,7 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
         if (propagate) pushBuffers(fp->getOperationPlan(), true, false);
         // Log message
         if (getLogLevel() > 0)
-          logger << "Removing excess operationplan: " << topopplan << endl;
+          logger << "Removing excess operationplan: " << topopplan << '\n';
         // Delete operationplan
         if (cmds)
           cmds->add(new CommandDeleteOperationPlan(topopplan));
@@ -390,7 +388,7 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
         if (propagate) pushBuffers(fp->getOperationPlan(), true, false);
         if (getLogLevel() > 0)
           logger << "Resizing excess operationplan to " << newsize_opplan
-                 << ": " << topopplan << endl;
+                 << ": " << topopplan << '\n';
         // Resize operationplan
         if (cmds)
           cmds->add(new CommandMoveOperationPlan(topopplan, Date::infinitePast,
@@ -428,7 +426,7 @@ PyObject* OperatorDelete::solve(PyObject* self, PyObject* args) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {
-    OperatorDelete* sol = static_cast<OperatorDelete*>(self);
+    auto* sol = static_cast<OperatorDelete*>(self);
     switch (objtype) {
       case 0:
         // Delete all excess

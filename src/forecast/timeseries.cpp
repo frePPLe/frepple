@@ -128,7 +128,7 @@ void ForecastSolver::computeBaselineForecast(const Forecast* fcst) {
         while (i < next_data) {
           if (getLogLevel() > 2)
             logger << fcst << ": filling missing data point for "
-                   << bckt_end->getDates() << " with " << val << endl;
+                   << bckt_end->getDates() << " with " << val << '\n';
           timeseries[i] = val;
           no_data[i] = false;
           ++i;
@@ -180,19 +180,16 @@ void ForecastSolver::computeBaselineForecast(const Forecast* fcst) {
   } else if (inactive_buckets >= DeadAfterInactivity) {
     // If the part has not been active recenty, switch to manual or the forced
     // methods unless a new demand is present in the future
-    bool foundFutureDemand=false;
-    for (auto bckt_iter = bckt_end;
-       bckt_iter != end;
-       ++bckt_iter) {
-        if (Measures::orderstotal->getValue(*bckt_iter) +
-            Measures::ordersadjustment->getValue(*bckt_iter) !=
-        0.0) {
-          foundFutureDemand = true;
-          break;
-        }
+    bool foundFutureDemand = false;
+    for (auto bckt_iter = bckt_end; bckt_iter != end; ++bckt_iter) {
+      if (Measures::orderstotal->getValue(*bckt_iter) +
+              Measures::ordersadjustment->getValue(*bckt_iter) !=
+          0.0) {
+        foundFutureDemand = true;
+        break;
+      }
     }
-    if (!foundFutureDemand)
-      qualifiedmethods[numberOfMethods++] = &manual;
+    if (!foundFutureDemand) qualifiedmethods[numberOfMethods++] = &manual;
   } else {
     if (zero > Croston::getMinIntermittence() * historycount) {
       // If there are too many zeros: use croston or moving average.
@@ -217,8 +214,7 @@ void ForecastSolver::computeBaselineForecast(const Forecast* fcst) {
     if (getLogLevel() > 0)
       logger << fcst
              << ": Warning: The specified forecast methods are potentially not "
-                "suitable!"
-             << endl;
+                "suitable!\n";
     if (fcst->methods & Forecast::METHOD_MOVINGAVERAGE)
       qualifiedmethods[numberOfMethods++] = &moving_avg;
     if (fcst->methods & Forecast::METHOD_CROSTON)
@@ -279,7 +275,7 @@ void ForecastSolver::computeBaselineForecast(const Forecast* fcst) {
     if (getLogLevel() > 0)
       logger << fcst << ": chosen method: " << fcst->getMethod()
              << ", standard deviation: " << fcst->getDeviation()
-             << ", smape error: " << fcst->getSMAPEerror() << endl;
+             << ", smape error: " << fcst->getSMAPEerror() << '\n';
     qualifiedmethods[best_method]->applyForecast(
         const_cast<Forecast*>(fcst), data->getBuckets(),
         bckt_plan_end->getIndex(), !getAutocommit() ? commands : nullptr);
@@ -300,7 +296,7 @@ ForecastSolver::Metrics ForecastSolver::MovingAverage::generateForecast(
     short firstbckt, vector<double>& timeseries, unsigned int count,
     ForecastSolver* solver) {
   double error_smape, error_smape_weights;
-  double* clean_history = new double[count + 1];
+  auto* clean_history = new double[count + 1];
 
   // Loop over the outliers 'scan'/0 and 'filter'/1 modes
   double standarddeviation = 0.0;
@@ -382,7 +378,7 @@ ForecastSolver::Metrics ForecastSolver::MovingAverage::generateForecast(
   if (solver->getLogLevel() > 0)
     logger << (fcst ? fcst->getName() : "") << ": moving average : "
            << "smape " << error_smape << ", forecast " << avg
-           << ", standard deviation " << standarddeviation << endl;
+           << ", standard deviation " << standarddeviation << '\n';
   delete[] clean_history;
   return ForecastSolver::Metrics(error_smape, standarddeviation, false);
 }
@@ -565,7 +561,7 @@ ForecastSolver::Metrics ForecastSolver::SingleExponential::generateForecast(
              << ": single exponential : iteration " << iteration << ": alfa "
              << alfa << ", smape "
              << (error_smape_weights ? error_smape / error_smape_weights : 0.0)
-             << endl;
+             << '\n';
 
     // New alfa
     alfa += delta;
@@ -592,7 +588,7 @@ ForecastSolver::Metrics ForecastSolver::SingleExponential::generateForecast(
            << "alfa " << best_alfa << ", smape " << best_smape << ", "
            << iteration << " iterations"
            << ", forecast " << f_i << ", standard deviation "
-           << best_standarddeviation << endl;
+           << best_standarddeviation << '\n';
   return ForecastSolver::Metrics(best_smape, best_standarddeviation, false);
 }
 
@@ -857,7 +853,7 @@ ForecastSolver::Metrics ForecastSolver::DoubleExponential::generateForecast(
              << ": double exponential : iteration " << iteration << ": alfa "
              << alfa << ", gamma " << gamma << ", smape "
              << (error_smape_weights ? error_smape / error_smape_weights : 0)
-             << endl;
+             << '\n';
 
     // New values for the next iteration
     alfa += delta_alfa;
@@ -891,7 +887,7 @@ ForecastSolver::Metrics ForecastSolver::DoubleExponential::generateForecast(
            << best_smape << ", " << iteration << " iterations"
            << ", constant " << constant_i << ", trend " << trend_i
            << ", forecast " << (trend_i + constant_i) << ", standard deviation "
-           << best_standarddeviation << endl;
+           << best_standarddeviation << '\n';
   return ForecastSolver::Metrics(best_smape, best_standarddeviation, false);
 }
 
@@ -1008,9 +1004,8 @@ void ForecastSolver::Seasonal::detectCycle(vector<double>& timeseries,
 ForecastSolver::Metrics
     ForecastSolver::Seasonal::generateForecast  // TODO No outlier detection in
                                                 // this method
-    (const Forecast* fcst, vector<ForecastBucketData>& bucketdata,
-     short firstbckt, vector<double>& timeseries, unsigned int count,
-     ForecastSolver* solver) {
+    (const Forecast* fcst, vector<ForecastBucketData>&, short,
+     vector<double>& timeseries, unsigned int count, ForecastSolver* solver) {
   // Check for seasonal cycles
   detectCycle(timeseries, count);
 
@@ -1210,7 +1205,7 @@ ForecastSolver::Metrics
              << iteration << ": alfa " << alfa << ", beta " << beta
              << ", smape "
              << (error_smape_weights ? error_smape / error_smape_weights : 0.0)
-             << endl;
+             << '\n';
 
     // New values for the next iteration
     alfa += delta_alfa;
@@ -1257,7 +1252,7 @@ ForecastSolver::Metrics
            << ", period " << period << ", constant " << L_i << ", trend " << T_i
            << ", forecast " << ((L_i + T_i / period) * S_i[count % period])
            << ", standard deviation " << best_standarddeviation
-           << ", autocorrelation " << autocorrelation << endl;
+           << ", autocorrelation " << autocorrelation << '\n';
 
   // If the autocorrelation is high enough (ie there is a very obvious
   // seasonal pattern) the third element in the return struct is "true".
@@ -1332,7 +1327,7 @@ ForecastSolver::Metrics ForecastSolver::Croston::generateForecast(
       logger << (fcst ? fcst->getName() : "") << ": croston : "
              << "alfa " << min_alfa << ", smape " << 0 << ", " << 0
              << " iterations"
-             << ", forecast " << 0 << ", standard deviation " << 0 << endl;
+             << ", forecast " << 0 << ", standard deviation " << 0 << '\n';
     return ForecastSolver::Metrics(0, 0, false);
   }
 
@@ -1441,7 +1436,7 @@ ForecastSolver::Metrics ForecastSolver::Croston::generateForecast(
       logger << (fcst ? fcst->getName() : "") << ": croston: iteration "
              << iteration << ": alfa " << alfa << ", smape "
              << (error_smape_weights ? error_smape / error_smape_weights : 0.0)
-             << endl;
+             << '\n';
 
     // New alfa
     if (delta)
@@ -1460,7 +1455,7 @@ ForecastSolver::Metrics ForecastSolver::Croston::generateForecast(
            << "alfa " << best_alfa << ", smape " << best_smape << ", "
            << iteration << " iterations"
            << ", forecast " << f_i << ", standard deviation "
-           << best_standarddeviation << endl;
+           << best_standarddeviation << '\n';
   return ForecastSolver::Metrics(best_smape, best_standarddeviation, false);
 }
 
@@ -1495,9 +1490,8 @@ void ForecastSolver::Croston::applyForecast(
 //
 
 ForecastSolver::Metrics ForecastSolver::Manual::generateForecast(
-    const Forecast* fcst, vector<ForecastBucketData>& bucketdata,
-    short firstbckt, vector<double>& timeseries, unsigned int count,
-    ForecastSolver* solver) {
+    const Forecast*, vector<ForecastBucketData>&, short, vector<double>&,
+    unsigned int, ForecastSolver*) {
   // Return dummy metrics.
   return Metrics(0, 0, true);
 }
@@ -1530,7 +1524,7 @@ void ForecastSolver::deleteOutliers(
 
         // Need to increment now and define a pointer to the problem, since the
         // problem can be deleted soon (which invalidates the iterator).
-        ProblemOutlier& problemOutlier = static_cast<ProblemOutlier&>(*j);
+        auto& problemOutlier = static_cast<ProblemOutlier&>(*j);
         ++j;
         if (!appliedMethod ||
             appliedMethod != problemOutlier.getForecastMethod())

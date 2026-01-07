@@ -30,8 +30,7 @@
 // Uncomment the line below to enable detailed integrity checks of the cache
 // #define DEBUG_CACHE
 
-namespace frepple {
-namespace utils {
+namespace frepple::utils {
 
 Cache* Cache::instance = nullptr;
 const MetaClass* Cache::metadata;
@@ -68,7 +67,7 @@ int Cache::initialize() {
   return tmp;
 }
 
-PyObject* Cache::pythonFlush(PyObject* self, PyObject* args) {
+PyObject* Cache::pythonFlush(PyObject* self, PyObject*) {
   auto c = static_cast<Cache*>(self);
   Py_BEGIN_ALLOW_THREADS;
   try {
@@ -97,7 +96,7 @@ void Cache::flush() {
 #endif
 }
 
-PyObject* Cache::pythonClear(PyObject* self, PyObject* args) {
+PyObject* Cache::pythonClear(PyObject* self, PyObject*) {
   auto c = static_cast<Cache*>(self);
   Py_BEGIN_ALLOW_THREADS;
   try {
@@ -249,15 +248,15 @@ void AbstractCacheEntry::removeFromCache() const {
       try {
         const_cast<AbstractCacheEntry*>(this)->flush();
       } catch (const exception& e) {
-        logger << "Warning : exception flushing cache: " << e.what() << endl;
+        logger << "Warning : exception flushing cache: " << e.what() << '\n';
       } catch (...) {
-        logger << "Warning : exception flushing cache" << endl;
+        logger << "Warning : exception flushing cache\n";
       }
     }
   }
 }
 
-PyObject* Cache::pythonPrintStatus(PyObject* self, PyObject* args) {
+PyObject* Cache::pythonPrintStatus(PyObject* self, PyObject*) {
   auto c = static_cast<Cache*>(self);
   Py_BEGIN_ALLOW_THREADS;
   try {
@@ -273,7 +272,7 @@ PyObject* Cache::pythonPrintStatus(PyObject* self, PyObject* args) {
 
 void Cache::setThreads(int i) {
   if (i < 0) {
-    logger << "Warning: Cache thread must be bigger than or equal to 0" << endl;
+    logger << "Warning: Cache thread must be bigger than or equal to 0\n";
     return;
   }
   if (i > threads) {
@@ -281,8 +280,7 @@ void Cache::setThreads(int i) {
     auto extra = i - threads;
     threads = i;
     while (extra > 0) {
-      workers.push(
-          thread(workerthread, this, static_cast<int>(workers.size())));
+      workers.emplace(workerthread, this, static_cast<int>(workers.size()));
       --extra;
     }
   } else if (i < threads) {
@@ -299,10 +297,10 @@ void Cache::setThreads(int i) {
 }
 
 void Cache::printStatus() {
-  logger << "Cache status: " << endl
-         << "   " << count << " objects (max " << max_objects << ")" << endl
+  logger << "Cache status:\n"
+         << "   " << count << " objects (max " << max_objects << ")\n"
          << "   " << stats_reads << " reads and " << stats_writes << " writes"
-         << endl;
+         << '\n';
 }
 
 void AbstractCacheEntry::markDirty() {
@@ -359,7 +357,7 @@ void Cache::workerthread(Cache* me, int index) {
     }
 
     // Define lower cache threshold as 80% of the maximum cache size
-    unsigned long threshold = static_cast<unsigned long>(me->max_objects * 0.8);
+    auto threshold = static_cast<unsigned long>(me->max_objects * 0.8);
 
     // Determine whether or not we want to reduce the cache size now
     bool reduce_size = me->count > threshold;
@@ -470,9 +468,9 @@ void Cache::workerthread(Cache* me, int index) {
         }
       } catch (const exception& e) {
         logger << "Warning : exception on cache worker thread: " << e.what()
-               << endl;
+               << '\n';
       } catch (...) {
-        logger << "Warning : exception on cache worker thread" << endl;
+        logger << "Warning : exception on cache worker thread\n";
       }
     }
   }
@@ -540,5 +538,4 @@ void Cache::checkIntegrity() const {
     throw DataException("ERROR: mismatch in dirty count");
 }
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

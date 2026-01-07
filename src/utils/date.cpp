@@ -28,8 +28,7 @@
 
 #include "frepple/utils.h"
 
-namespace frepple {
-namespace utils {
+namespace frepple::utils {
 
 string Date::format("%Y-%m-%dT%H:%M:%S");
 string DateRange::separator = " / ";
@@ -614,5 +613,4 @@ char* Date::strptime(const char* buf, const char* fmt, struct tm* tm) {
 
 #endif
 
-}  // namespace utils
-}  // namespace frepple
+}  // namespace frepple::utils

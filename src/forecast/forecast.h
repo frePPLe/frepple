@@ -24,8 +24,6 @@
  ***************************************************************************/
 
 #pragma once
-#ifndef FORECAST_H
-#define FORECAST_H
 
 // Configure the expression parser
 #define exprtk_disable_comments
@@ -124,7 +122,7 @@ class ForecastMeasure : public HasName<ForecastMeasure> {
 
   pair<double, bool> getValueAndFound(const ForecastBucketData& f) const;
 
-  void setName(const string& newname) {
+  void setName(const string& newname) override {
     hashedname = newname;
     HasName<ForecastMeasure>::setName(newname);
   }
@@ -190,7 +188,7 @@ class ForecastMeasure : public HasName<ForecastMeasure> {
 
   static int initialize();
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
   template <class Cls>
@@ -236,7 +234,7 @@ class ForecastMeasureAggregated : public ForecastMeasure {
  public:
   explicit ForecastMeasureAggregated() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 
@@ -257,11 +255,11 @@ class ForecastMeasureAggregated : public ForecastMeasure {
 
   double disaggregate(ForecastBase* fcst, Date startdate, Date enddate,
                       double val, bool multiply = false, double remainder = 0.0,
-                      CommandManager* mgr = nullptr) const;
+                      CommandManager* mgr = nullptr) const override;
 
   double disaggregate(ForecastBucketData& bckt, double val,
                       bool multiple = false, double remainder = 0.0,
-                      CommandManager* mgr = nullptr) const;
+                      CommandManager* mgr = nullptr) const override;
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
@@ -316,7 +314,7 @@ class ForecastMeasureAggregatedPlanned : public ForecastMeasureAggregated {
  public:
   explicit ForecastMeasureAggregatedPlanned() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 
@@ -332,14 +330,14 @@ class ForecastMeasureAggregatedPlanned : public ForecastMeasureAggregated {
     initType(metadata);
   }
 
-  virtual bool isLeaf(const ForecastBase* f) const;
+  bool isLeaf(const ForecastBase* f) const override;
 };
 
 class ForecastMeasureLocal : public ForecastMeasure {
  public:
   explicit ForecastMeasureLocal() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 
@@ -356,13 +354,13 @@ class ForecastMeasureLocal : public ForecastMeasure {
 
   double disaggregate(ForecastBase* fcst, Date startdate, Date enddate,
                       double val, bool multiply = false, double remainder = 0.0,
-                      CommandManager* mgr = nullptr) const;
+                      CommandManager* mgr = nullptr) const override;
 
   double disaggregate(ForecastBucketData& bckt, double val,
                       bool multiple = false, double remainder = 0.0,
-                      CommandManager* mgr = nullptr) const;
+                      CommandManager* mgr = nullptr) const override;
 
-  virtual bool isLeaf(const ForecastBase* f) const;
+  bool isLeaf(const ForecastBase* f) const override;
 };
 
 class ForecastMeasureComputed : public ForecastMeasureAggregated {
@@ -377,7 +375,7 @@ class ForecastMeasureComputed : public ForecastMeasureAggregated {
     setComputeExpression(expr);
     initType(metadata);
   }
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 
@@ -456,7 +454,7 @@ class ForecastMeasureComputedPlanned : public ForecastMeasureComputed {
  public:
   explicit ForecastMeasureComputedPlanned() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 
@@ -466,14 +464,14 @@ class ForecastMeasureComputedPlanned : public ForecastMeasureComputed {
     initType(metadata);
   }
 
-  virtual bool isLeaf(const ForecastBase* f) const;
+  bool isLeaf(const ForecastBase* f) const override;
 };
 
 class ForecastMeasureTemp : public ForecastMeasure {
  public:
   explicit ForecastMeasureTemp() { initType(metadata); }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static int initialize();
 
@@ -483,14 +481,13 @@ class ForecastMeasureTemp : public ForecastMeasure {
     initType(metadata);
   }
 
-  virtual double disaggregate(ForecastBase*, Date, Date, double, bool = false,
-                              double = 0.0,
-                              CommandManager* mgr = nullptr) const {
+  double disaggregate(ForecastBase*, Date, Date, double, bool = false,
+                      double = 0.0, CommandManager* = nullptr) const override {
     return 0.0;
   }
 
-  virtual double disaggregate(ForecastBucketData&, double, bool = false,
-                              double = 0.0, CommandManager* = nullptr) const {
+  double disaggregate(ForecastBucketData&, double, bool = false, double = 0.0,
+                      CommandManager* = nullptr) const override {
     return 0.0;
   };
 };
@@ -670,12 +667,12 @@ class MeasurePagePool {
   static MeasurePagePool measurepages_default;
   static MeasurePagePool measurepages_temp;
 
-  MeasurePagePool(string n) : name(n) {}
+  MeasurePagePool(string n) : name(std::move(n)) {}
 
   void releaseEmptyPages();
   static pair<double, double> check(const string& = "");
 
-  static PyObject* releaseEmptyPagesPython(PyObject* self, PyObject* args) {
+  static PyObject* releaseEmptyPagesPython(PyObject*, PyObject*) {
     measurepages_default.releaseEmptyPages();
     measurepages_temp.releaseEmptyPages();
     auto stats = check();
@@ -695,9 +692,9 @@ class ForecastBucketData {
   ForecastBucketData(ForecastBucketData&& other)
       : fcstbkt(other.fcstbkt),
         fcst(other.fcst),
-        index(other.index),
         dates(other.dates),
-        measures(move(other.measures)) {}
+        index(other.index),
+        measures(other.measures) {}
 
   ForecastBucketData(const ForecastBucketData&) = delete;
 
@@ -853,24 +850,24 @@ class CommandSetForecastData : public Command {
  public:
   CommandSetForecastData(ForecastBucketData*, const ForecastMeasure*, double);
 
-  void commit() {
+  void commit() override {
     if (fcstbucket) {
       fcstbucket = nullptr;
       owner = nullptr;
     }
   }
 
-  virtual void rollback() {
+  void rollback() override {
     if (fcstbucket) key->update(*fcstbucket, oldvalue);
     fcstbucket = nullptr;
     owner = nullptr;
   }
 
-  virtual ~CommandSetForecastData() {
+  ~CommandSetForecastData() override {
     if (fcstbucket) rollback();
   }
 
-  virtual short getType() const { return 8; }
+  short getType() const override { return 8; }
 
  private:
   // This forecastdata pointer is needed to increase its reference count
@@ -907,7 +904,7 @@ class ForecastBucket : public Demand {
   /* Constructor. */
   ForecastBucket(Forecast*, const DateRange&, short index);
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
   static const MetaCategory* metacategory;
 
@@ -930,7 +927,7 @@ class ForecastBucket : public Demand {
 
   void setForecastBaseline(double);
 
-  virtual void writeProperties(Serializer&) const;
+  void writeProperties(Serializer&) const override;
 
   double getForecastOverride() const;
 
@@ -993,7 +990,7 @@ class ForecastBucket : public Demand {
 
   void reduceDeliveries(double, CommandManager* = nullptr);
 
-  virtual Duration getDeliveryDuration() { return 0L; }
+  Duration getDeliveryDuration() override { return 0L; }
 
   /* A flag to mark at which date with a forecasting bucket the forecast
    * is due.
@@ -1014,7 +1011,7 @@ class ForecastBucket : public Demand {
     else if (v == DUEATEND)
       DueWithinBucket = 2;
     else
-      logger << "Warning: Invalid value for DueWithinBucket" << endl;
+      logger << "Warning: Invalid value for DueWithinBucket\n";
   }
 
   static const string& getDueWithinBucket() {
@@ -1164,7 +1161,7 @@ class ForecastBucket : public Demand {
   /* This method doesn't do anything.
    * It is used as a dummy handler when some read-only fields are updated.
    */
-  void dummySink(double d) {}
+  void dummySink(double) {}
 };
 
 class ForecastBase {
@@ -1213,6 +1210,8 @@ class ForecastBase {
   virtual const string& getForecastName() const {
     return PooledString::nullstring;
   }
+
+  virtual ~ForecastBase() {}
 
   virtual Item* getForecastItem() const = 0;
 
@@ -1435,17 +1434,17 @@ class Forecast : public Demand, public ForecastBase {
   static const unsigned long METHOD_MANUAL = 32;
   static const unsigned long METHOD_ALL = 31;
 
-  virtual bool isAggregate() const { return false; }
+  bool isAggregate() const override { return false; }
 
-  virtual Item* getForecastItem() const { return getItem(); }
+  Item* getForecastItem() const override { return getItem(); }
 
-  virtual Location* getForecastLocation() const { return getLocation(); }
+  Location* getForecastLocation() const override { return getLocation(); }
 
-  virtual Customer* getForecastCustomer() const { return getCustomer(); }
+  Customer* getForecastCustomer() const override { return getCustomer(); }
 
-  virtual const string& getForecastName() const { return getName(); }
+  const string& getForecastName() const override { return getName(); }
 
-  virtual Duration getDeliveryDuration() { return 0L; }
+  Duration getDeliveryDuration() override { return 0L; }
 
   static void parse(Object* o, const DataValueDict& in, CommandManager* cmdmgr);
 
@@ -1453,10 +1452,10 @@ class Forecast : public Demand, public ForecastBase {
   explicit Forecast() { initType(metadata); }
 
   /* Destructor. */
-  ~Forecast();
+  ~Forecast() override;
 
   /* Updates the quantity of the forecast. This method is empty. */
-  virtual void setQuantity(double f) {
+  void setQuantity(double) override {
     throw DataException("Can't set quantity of a forecast");
   }
 
@@ -1523,7 +1522,7 @@ class Forecast : public Demand, public ForecastBase {
    * forecast method which returns the lowest forecast error.
    * The default value is 31, which enables all forecast methods.
    */
-  unsigned long getMethods() const { return methods; }
+  unsigned long getMethods() const override { return methods; }
 
   /* Updates computed flag. */
   void setMethods(unsigned long b) {
@@ -1564,7 +1563,7 @@ class Forecast : public Demand, public ForecastBase {
     else if (method == 0)
       return none;
     else {
-      logger << "method" << method << endl;
+      logger << "method" << method << '\n';
       throw LogicException("Unknown forecast method");
     }
   }
@@ -1573,7 +1572,7 @@ class Forecast : public Demand, public ForecastBase {
   void setMethod(unsigned int n) { method = n; }
 
   /* Returns whether forecast instance is a leaf node. */
-  bool isLeaf() const;
+  bool isLeaf() const override;
 
   /* Normally, we compute what is a leaf and what's not.
    * In some cases we already know in advance and can set it explicitly already.
@@ -1583,7 +1582,7 @@ class Forecast : public Demand, public ForecastBase {
   /** Returns whether fractional forecasts are allowed or not.<br>
    * The default is true.
    */
-  virtual bool getDiscrete() const { return discrete; }
+  bool getDiscrete() const override { return discrete; }
 
   /* Updates forecast discreteness flag. */
   void setDiscrete(const bool b) { discrete = b; }
@@ -1592,25 +1591,25 @@ class Forecast : public Demand, public ForecastBase {
    * The default is true.
    * This field should be set correctly before any calculations are done.
    */
-  bool getPlanned() const { return planned; }
+  bool getPlanned() const override { return planned; }
 
   /* Updates forecast planned flag. */
   void setPlanned(const bool b);
 
   /* Update the item to be planned. */
-  virtual void setItem(Item*);
+  void setItem(Item*) override;
 
   /* Update the location to be planned. */
   virtual void setLocation(Location*);
 
   /* Update the customer. */
-  virtual void setCustomer(Customer*);
+  void setCustomer(Customer*) override;
 
   /* Update the maximum allowed lateness for planning. */
-  void setMaxLateness(Duration);
+  void setMaxLateness(Duration) override;
 
   /* Update the minumum allowed shipment quantity for planning. */
-  void setMinShipment(double);
+  void setMinShipment(double) override;
 
   /* Specify a bucket calendar for the forecast. Once forecasted
    * quantities have been entered for the forecast, the calendar
@@ -1618,7 +1617,7 @@ class Forecast : public Demand, public ForecastBase {
   static void setCalendar_static(Calendar* c) {
     if (calptr && c != calptr)
       logger << "Warning: Forecasting buckets can't be changed once specified"
-             << endl;
+             << '\n';
     else
       calptr = c;
   }
@@ -1626,7 +1625,7 @@ class Forecast : public Demand, public ForecastBase {
   void setCalendar(Calendar* c) {
     if (calptr && c != calptr)
       logger << "Warning: Forecasting buckets can't be changed once specified"
-             << endl;
+             << '\n';
     else
       calptr = c;
   }
@@ -1643,10 +1642,10 @@ class Forecast : public Demand, public ForecastBase {
    * higher priority level. The method also updates the priority
    * in all buckets.
    */
-  virtual void setPriority(int);
+  void setPriority(int) override;
 
   /* Updates the due date of the demand. */
-  virtual void setDue(const Date& d) {
+  virtual void setDue(const Date&) {
     throw DataException("Can't set due date of a forecast");
   }
 
@@ -1658,11 +1657,11 @@ class Forecast : public Demand, public ForecastBase {
 
   void setSMAPEerror(double e) { smape_error = e; }
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
 
   /* Return the memory size. */
-  size_t getSize() const {
+  size_t getSize() const override {
     return Demand::getSize() +
            sizeof(Forecast*) * 3;  // overhead of forecast tree
   }
@@ -1715,11 +1714,13 @@ class ForecastKey : public ForecastBase {
   ForecastKey(Item* i = nullptr, Location* l = nullptr, Customer* c = nullptr)
       : it(i), loc(l), cust(c) {}
 
-  Item* getForecastItem() const { return it; }
+  ~ForecastKey() override {};
 
-  Location* getForecastLocation() const { return loc; }
+  Item* getForecastItem() const override { return it; }
 
-  Customer* getForecastCustomer() const { return cust; }
+  Location* getForecastLocation() const override { return loc; }
+
+  Customer* getForecastCustomer() const override { return cust; }
 
  private:
   Item* it = nullptr;
@@ -1727,7 +1728,7 @@ class ForecastKey : public ForecastBase {
   Customer* cust = nullptr;
 };
 
-class ForecastAggregated : public ForecastBase, public Object {
+class ForecastAggregated : public ForecastBase {
  private:
   Item* it = nullptr;
   Location* loc = nullptr;
@@ -1740,11 +1741,16 @@ class ForecastAggregated : public ForecastBase, public Object {
     if (c) c->incNumberOfDemands();
   }
 
-  Item* getForecastItem() const { return it; }
+  ~ForecastAggregated() override {
+    eraseFromHash(this);
+    if (cust) cust->decNumberOfDemands();
+  }
 
-  Location* getForecastLocation() const { return loc; }
+  Item* getForecastItem() const override { return it; }
 
-  Customer* getForecastCustomer() const { return cust; }
+  Location* getForecastLocation() const override { return loc; }
+
+  Customer* getForecastCustomer() const override { return cust; }
 };
 
 inline Forecast* ForecastBucket::getForecast() const {
@@ -1863,7 +1869,7 @@ class ForecastSolver : public Solver {
       if (i < 1) {
         logger
             << "Warning: Moving average needs to smooth over at least 1 bucket"
-            << endl;
+            << '\n';
         i = 1;
       }
     }
@@ -1871,25 +1877,25 @@ class ForecastSolver : public Solver {
     /* Forecast evaluation. */
     Metrics generateForecast(const Forecast*, vector<ForecastBucketData>&,
                              short, vector<double>&, unsigned int,
-                             ForecastSolver*);
+                             ForecastSolver*) override;
 
     /* Forecast value updating. */
     void applyForecast(Forecast*, vector<ForecastBucketData>&, short,
-                       CommandManager*);
+                       CommandManager*) override;
 
     /* Update the initial value for the alfa parameter. */
     static void setDefaultOrder(int x) {
       if (x < 1)
         logger
             << "Warning: Parameter MovingAverage.order needs to be at least 1"
-            << endl;
+            << '\n';
       else
         defaultorder = x;
     }
 
     static int getDefaultOrder() { return defaultorder; }
 
-    unsigned int getCode() { return Forecast::METHOD_MOVINGAVERAGE; }
+    unsigned int getCode() override { return Forecast::METHOD_MOVINGAVERAGE; }
   };
 
   /* A class to perform single exponential smoothing on a time series.
@@ -1930,18 +1936,17 @@ class ForecastSolver : public Solver {
     /* Forecast evaluation. */
     Metrics generateForecast(const Forecast*, vector<ForecastBucketData>&,
                              short, vector<double>&, unsigned int,
-                             ForecastSolver*);
+                             ForecastSolver*) override;
 
     /* Forecast value updating. */
     void applyForecast(Forecast*, vector<ForecastBucketData>&, short,
-                       CommandManager*);
+                       CommandManager*) override;
 
     /* Update the initial value for the alfa parameter. */
     static void setInitialAlfa(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter SingleExponential.initialAlfa must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         initial_alfa = x;
     }
@@ -1952,8 +1957,7 @@ class ForecastSolver : public Solver {
     static void setMinAlfa(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter SingleExponential.minAlfa must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         min_alfa = x;
     }
@@ -1964,15 +1968,14 @@ class ForecastSolver : public Solver {
     static void setMaxAlfa(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter SingleExponential.maxAlfa must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         max_alfa = x;
     }
 
     static double getMaxAlfa() { return max_alfa; }
 
-    unsigned int getCode() { return Forecast::METHOD_CONSTANT; }
+    unsigned int getCode() override { return Forecast::METHOD_CONSTANT; }
   };
 
   /* A class to perform double exponential smoothing on a time
@@ -2041,18 +2044,17 @@ class ForecastSolver : public Solver {
     /* Forecast evaluation. */
     Metrics generateForecast(const Forecast*, vector<ForecastBucketData>&,
                              short, vector<double>&, unsigned int,
-                             ForecastSolver*);
+                             ForecastSolver*) override;
 
     /* Forecast value updating. */
     void applyForecast(Forecast*, vector<ForecastBucketData>&, short,
-                       CommandManager*);
+                       CommandManager*) override;
 
     /* Update the initial value for the alfa parameter. */
     static void setInitialAlfa(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter DoubleExponential.initialAlfa must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         initial_alfa = x;
     }
@@ -2063,8 +2065,7 @@ class ForecastSolver : public Solver {
     static void setMinAlfa(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter DoubleExponential.minAlfa must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         min_alfa = x;
     }
@@ -2075,8 +2076,7 @@ class ForecastSolver : public Solver {
     static void setMaxAlfa(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter DoubleExponential.maxAlfa must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         max_alfa = x;
     }
@@ -2093,8 +2093,7 @@ class ForecastSolver : public Solver {
     static void setInitialGamma(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter DoubleExponential.initialGamma must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         initial_gamma = x;
     }
@@ -2105,8 +2104,7 @@ class ForecastSolver : public Solver {
     static void setMinGamma(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter DoubleExponential.minGamma must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         min_gamma = x;
     }
@@ -2117,8 +2115,7 @@ class ForecastSolver : public Solver {
     static void setMaxGamma(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter DoubleExponential.maxGamma must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         max_gamma = x;
     }
@@ -2129,15 +2126,14 @@ class ForecastSolver : public Solver {
     static void setDampenTrend(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter DoubleExponential.dampenTrend must be "
-                  "between 0 and 1"
-               << endl;
+                  "between 0 and 1\n";
       else
         dampenTrend = x;
     }
 
     static double getDampenTrend() { return dampenTrend; }
 
-    unsigned int getCode() { return Forecast::METHOD_TREND; }
+    unsigned int getCode() override { return Forecast::METHOD_TREND; }
   };
 
   /* A class to perform seasonal forecasting on a time
@@ -2252,17 +2248,17 @@ class ForecastSolver : public Solver {
     /* Forecast evaluation. */
     Metrics generateForecast(const Forecast*, vector<ForecastBucketData>&,
                              short, vector<double>&, unsigned int,
-                             ForecastSolver*);
+                             ForecastSolver*) override;
 
     /* Forecast value updating. */
     void applyForecast(Forecast*, vector<ForecastBucketData>&, short,
-                       CommandManager*);
+                       CommandManager*) override;
 
     /* Update the minimum period that can be detected. */
     static void setMinPeriod(int x) {
       if (x <= 1)
-        logger << "Warning: Parameter Seasonal.minPeriod must be greater than 1"
-               << endl;
+        logger
+            << "Warning: Parameter Seasonal.minPeriod must be greater than 1\n";
       else
         min_period = x;
     }
@@ -2274,7 +2270,7 @@ class ForecastSolver : public Solver {
       if (x <= 1 || x > 80)
         logger
             << "Warning: Parameter Seasonal.maxPeriod must be between 1 and 80"
-            << endl;
+            << '\n';
       else
         max_period = x;
     }
@@ -2287,8 +2283,7 @@ class ForecastSolver : public Solver {
     static void setMinAutocorrelation(double d) {
       if (d <= 0.0 || d > 1.0)
         logger << "Warning: Parameter Seasonal.minAutocorrelation must be "
-                  "between 0.0 and 1.0"
-               << endl;
+                  "between 0.0 and 1.0\n";
       else
         min_autocorrelation = d;
     }
@@ -2303,8 +2298,7 @@ class ForecastSolver : public Solver {
     static void setMaxAutocorrelation(double d) {
       if (d <= 0.0 || d > 1.0)
         logger << "Warning: Parameter Seasonal.maxAutocorrelation must be "
-                  "between 0.0 and 1.0"
-               << endl;
+                  "between 0.0 and 1.0\n";
       else
         max_autocorrelation = d;
     }
@@ -2316,7 +2310,7 @@ class ForecastSolver : public Solver {
       if (x < 0 || x > 1.0)
         logger
             << "Warning: Parameter Seasonal.initialAlfa must be between 0 and 1"
-            << endl;
+            << '\n';
       else
         initial_alfa = x;
     }
@@ -2326,8 +2320,8 @@ class ForecastSolver : public Solver {
     /* Update the minimum value for the alfa parameter. */
     static void setMinAlfa(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Seasonal.minAlfa must be between 0 and 1"
-               << endl;
+        logger
+            << "Warning: Parameter Seasonal.minAlfa must be between 0 and 1\n";
       else
         min_alfa = x;
     }
@@ -2337,8 +2331,8 @@ class ForecastSolver : public Solver {
     /* Update the maximum value for the alfa parameter. */
     static void setMaxAlfa(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Seasonal.maxAlfa must be between 0 and 1"
-               << endl;
+        logger
+            << "Warning: Parameter Seasonal.maxAlfa must be between 0 and 1\n";
       else
         max_alfa = x;
     }
@@ -2350,7 +2344,7 @@ class ForecastSolver : public Solver {
       if (x < 0 || x > 1.0)
         logger
             << "Warning: Parameter Seasonal.initialBeta must be between 0 and 1"
-            << endl;
+            << '\n';
       else
         initial_beta = x;
     }
@@ -2360,8 +2354,8 @@ class ForecastSolver : public Solver {
     /* Update the minimum value for the beta parameter. */
     static void setMinBeta(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Seasonal.minBeta must be between 0 and 1"
-               << endl;
+        logger
+            << "Warning: Parameter Seasonal.minBeta must be between 0 and 1\n";
       else
         min_beta = x;
     }
@@ -2371,8 +2365,8 @@ class ForecastSolver : public Solver {
     /* Update the maximum value for the beta parameter. */
     static void setMaxBeta(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Seasonal.maxBeta must be between 0 and 1"
-               << endl;
+        logger
+            << "Warning: Parameter Seasonal.maxBeta must be between 0 and 1\n";
       else
         max_beta = x;
     }
@@ -2384,8 +2378,7 @@ class ForecastSolver : public Solver {
      */
     static void setGamma(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Seasonal.gamma must be between 0 and 1"
-               << endl;
+        logger << "Warning: Parameter Seasonal.gamma must be between 0 and 1\n";
       else
         gamma = x;
     }
@@ -2403,7 +2396,7 @@ class ForecastSolver : public Solver {
 
     static double getDampenTrend() { return dampenTrend; }
 
-    unsigned int getCode() { return Forecast::METHOD_SEASONAL; }
+    unsigned int getCode() override { return Forecast::METHOD_SEASONAL; }
   };
 
   /* A class to calculate a forecast with Croston's method. */
@@ -2450,18 +2443,18 @@ class ForecastSolver : public Solver {
     /* Forecast evaluation. */
     Metrics generateForecast(const Forecast*, vector<ForecastBucketData>&,
                              short, vector<double>&, unsigned int,
-                             ForecastSolver*);
+                             ForecastSolver*) override;
 
     /* Forecast value updating. */
     void applyForecast(Forecast*, vector<ForecastBucketData>&, short,
-                       CommandManager*);
+                       CommandManager*) override;
 
     /* Update the initial value for the alfa parameter. */
     static void setInitialAlfa(double x) {
       if (x < 0 || x > 1.0)
         logger
             << "Warning: Parameter Croston.initialAlfa must be between 0 and 1"
-            << endl;
+            << '\n';
       else
         initial_alfa = x;
     }
@@ -2471,8 +2464,8 @@ class ForecastSolver : public Solver {
     /* Update the minimum value for the alfa parameter. */
     static void setMinAlfa(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Croston.minAlfa must be between 0 and 1"
-               << endl;
+        logger
+            << "Warning: Parameter Croston.minAlfa must be between 0 and 1\n";
       else
         min_alfa = x;
     }
@@ -2482,8 +2475,8 @@ class ForecastSolver : public Solver {
     /* Decay rate for dying items. */
     static void setDecayRate(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Croston.decayRate must be between 0 and 1"
-               << endl;
+        logger
+            << "Warning: Parameter Croston.decayRate must be between 0 and 1\n";
       else
         decay_rate = x;
     }
@@ -2493,8 +2486,8 @@ class ForecastSolver : public Solver {
     /* Update the maximum value for the alfa parameter. */
     static void setMaxAlfa(double x) {
       if (x < 0 || x > 1.0)
-        logger << "Warning: Parameter Croston.maxAlfa must be between 0 and 1"
-               << endl;
+        logger
+            << "Warning: Parameter Croston.maxAlfa must be between 0 and 1\n";
       else
         max_alfa = x;
     }
@@ -2505,8 +2498,7 @@ class ForecastSolver : public Solver {
     static void setMinIntermittence(double x) {
       if (x < 0 || x > 1.0)
         logger << "Warning: Parameter Croston.minIntermittence must be between "
-                  "0 and 1"
-               << endl;
+                  "0 and 1\n";
       else
         min_intermittence = x;
     }
@@ -2514,7 +2506,7 @@ class ForecastSolver : public Solver {
     /* Return the minimum intermittence before applying this method. */
     static double getMinIntermittence() { return min_intermittence; }
 
-    unsigned int getCode() { return Forecast::METHOD_CROSTON; }
+    unsigned int getCode() override { return Forecast::METHOD_CROSTON; }
   };
 
   /* A dummy forecast class that generates baseline forecast of 0. */
@@ -2526,13 +2518,13 @@ class ForecastSolver : public Solver {
     /* Forecast evaluation. */
     Metrics generateForecast(const Forecast*, vector<ForecastBucketData>&,
                              short, vector<double>&, unsigned int,
-                             ForecastSolver*);
+                             ForecastSolver*) override;
 
     /* Forecast value updating. */
     void applyForecast(Forecast*, vector<ForecastBucketData>&, short,
-                       CommandManager*);
+                       CommandManager*) override;
 
-    unsigned int getCode() { return Forecast::METHOD_MANUAL; }
+    unsigned int getCode() override { return Forecast::METHOD_MANUAL; }
   };
 
   /* Default constructor. */
@@ -2541,7 +2533,7 @@ class ForecastSolver : public Solver {
     commands = &default_commands;
   }
 
-  ~ForecastSolver() {
+  ~ForecastSolver() override {
     if (commands) commands->commit();
   }
 
@@ -2552,18 +2544,18 @@ class ForecastSolver : public Solver {
    *     forecast. The method searches for a matching forecast, and then
    *     decreasing the net forecast.
    */
-  void solve(const Demand*, void* = nullptr);
+  void solve(const Demand*, void* = nullptr) override;
 
   /* This is the main solver method. */
-  void solve(void* v = nullptr) { solve(true, true, -1); }
+  void solve(void* = nullptr) override { solve(true, true, -1); }
   void solve(bool run_fcst = true, bool run_netting = true, int cluster = -1);
 
   /* Python interface for the solve method. */
   static PyObject* solve(PyObject*, PyObject*, PyObject*);
 
-  virtual const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
   static const MetaClass* metadata;
-  virtual size_t getSize() const { return sizeof(ForecastSolver); }
+  size_t getSize() const override { return sizeof(ForecastSolver); }
   static int initialize();
   static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 
@@ -2620,7 +2612,7 @@ class ForecastSolver : public Solver {
     if (t <= 0.5 || t > 1.0) {
       logger
           << "Warning: Parameter Forecast.smapeAlfa must be between 0.5 and 1.0"
-          << endl;
+          << '\n';
       return;
     }
     Forecast_SmapeAlfa = t;
@@ -2638,7 +2630,7 @@ class ForecastSolver : public Solver {
   void setForecastIterations(unsigned long t) {
     if (t <= 0)
       logger << "Warning: Parameter Forecast.Iterations must be bigger than 0"
-             << endl;
+             << '\n';
     else
       Forecast_Iterations = t;
   }
@@ -2647,14 +2639,7 @@ class ForecastSolver : public Solver {
   unsigned long getForecastIterations() const { return Forecast_Iterations; }
 
   /* Updates the value of the Forecast_Skip module parameter. */
-  void setForecastSkip(unsigned long t) {
-    if (t < 0)
-      logger << "Warning: Parameter Forecast.Skip must be bigger than or equal "
-                "to 0"
-             << endl;
-    else
-      Forecast_Skip = t;
-  }
+  void setForecastSkip(unsigned long t) { Forecast_Skip = t; }
 
   /* Return the number of timeseries values used to initialize the
    * algorithm. The forecast error is not counted for these buckets.
@@ -2667,7 +2652,7 @@ class ForecastSolver : public Solver {
   void setForecastMaxDeviation(double d) {
     if (d <= 0)
       logger << "Warning: Parameter Forecast.maxDeviation must be bigger than 0"
-             << endl;
+             << '\n';
     else
       Forecast_maxDeviation = d;
   }
@@ -2681,7 +2666,7 @@ class ForecastSolver : public Solver {
     if (d <= 0)
       logger
           << "Warning: Parameter Forecast.deadAfterInactivity must be positive"
-          << endl;
+          << '\n';
     else
       Forecast_DeadAfterInactivity = d;
   }
@@ -3159,7 +3144,7 @@ class ProblemOutlier : public Problem {
   ForecastSolver::ForecastMethod* method;
 
  public:
-  string getDescription() const {
+  string getDescription() const override {
     ostringstream ch;
     /* The format is expected as is by the widget. Changing this format needs
        adaptation at widget level
@@ -3171,7 +3156,7 @@ class ProblemOutlier : public Problem {
     return ch.str();
   }
 
-  bool isFeasible() const { return true; }
+  bool isFeasible() const override { return true; }
 
   double getWeight() const { return getForecastBucket()->getOrdersTotal(); }
 
@@ -3182,27 +3167,29 @@ class ProblemOutlier : public Problem {
     method = fm;
   }
 
-  ~ProblemOutlier() { removeProblem(); }
+  ~ProblemOutlier() override { removeProblem(); }
 
-  string getEntity() const { return "demand"; }
+  string getEntity() const override { return "demand"; }
 
   ForecastSolver::ForecastMethod* getForecastMethod() { return method; }
 
   void setForecastMethod(ForecastSolver::ForecastMethod* m) { method = m; }
 
-  const DateRange getDates() const {
+  const DateRange getDates() const override {
     return DateRange(getForecastBucket()->getStartDate(),
                      getForecastBucket()->getEndDate());
   }
 
-  Object* getOwner() const { return static_cast<ForecastBucket*>(owner); }
+  Object* getOwner() const override {
+    return static_cast<ForecastBucket*>(owner);
+  }
 
   ForecastBucket* getForecastBucket() const {
     return static_cast<ForecastBucket*>(owner);
   }
 
   /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
+  const MetaClass& getType() const override { return *metadata; }
 
   /* Storing metadata on this class. */
   static const MetaClass* metadata;
@@ -3236,4 +3223,3 @@ void ForecastMeasure::resetMeasure(short mode, Measures*... measures) {
 }
 
 }  // namespace frepple
-#endif

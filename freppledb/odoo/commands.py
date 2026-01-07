@@ -523,7 +523,8 @@ class OdooSendRecommendations(PlanTask):
         import frepple
 
         odoo_folder = getOdooFolder(database)
-        if odoo_folder:
+        metadata = None
+        if odoo_folder and "odoofromfiles" in os.environ:
             try:
                 # Mode 1:  Retrieve odoo metadata for callback
                 with open(
@@ -532,7 +533,7 @@ class OdooSendRecommendations(PlanTask):
                     metadata = json.load(f)
                 authentication = f"Bearer {metadata.pop("token")}"
             except Exception:
-                metadata = None
+                pass
         if not metadata:
             # Mode 2: Build metadata from parameters
             metadata = {

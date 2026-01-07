@@ -169,13 +169,19 @@ class OdooReadData(PlanTask):
         # Set the environment variable ODOO_FOLDER if you want frePPLe
         # to read that file rather than the data at url.
         odoo_folder = getOdooFolder(database)
-        if os.access(os.path.join(odoo_folder, "odoodata.xml"), os.F_OK | os.R_OK):
+        if (
+            os.access(os.path.join(odoo_folder, "odoodata.xml"), os.F_OK | os.R_OK)
+            and "odoofromfiles" in os.environ
+        ):
             print(f"Loading data from {odoo_folder}/odoodata.xml")
             with open(os.path.join(odoo_folder, "odoodata.xml"), encoding="utf-8") as f:
                 frepple.readXMLdata(
                     f.read().translate({ord(i): None for i in "\f\v\b"}), False, False
                 )
-        elif os.access(os.path.join(odoo_folder, "odoodata.xml.gz"), os.F_OK | os.R_OK):
+        elif (
+            os.access(os.path.join(odoo_folder, "odoodata.xml.gz"), os.F_OK | os.R_OK)
+            and "odoofromfiles" in os.environ
+        ):
             print(f"Loading data from {odoo_folder}/odoodata.xml.gz")
             with gzip.open(
                 os.path.join(odoo_folder, "odoodata.xml.gz"),
@@ -185,7 +191,10 @@ class OdooReadData(PlanTask):
                 frepple.readXMLdata(
                     f.read().translate({ord(i): None for i in "\f\v\b"}), False, False
                 )
-        elif os.access(os.path.join(odoo_folder, "odoodata.json"), os.F_OK | os.R_OK):
+        elif (
+            os.access(os.path.join(odoo_folder, "odoodata.json"), os.F_OK | os.R_OK)
+            and "odoofromfiles" in os.environ
+        ):
             print(f"Loading data from {odoo_folder}/odoodata.json")
             with open(
                 os.path.join(odoo_folder, "odoodata.json"), encoding="utf-8"
@@ -193,8 +202,9 @@ class OdooReadData(PlanTask):
                 frepple.readJSONdata(
                     f.read().translate({ord(i): None for i in "\f\v\b"})
                 )
-        elif os.access(
-            os.path.join(odoo_folder, "odoodata.json.gz"), os.F_OK | os.R_OK
+        elif (
+            os.access(os.path.join(odoo_folder, "odoodata.json.gz"), os.F_OK | os.R_OK)
+            and "odoofromfiles" in os.environ
         ):
             print(f"Loading data from {odoo_folder}/odoodata.json.gz")
             with gzip.open(

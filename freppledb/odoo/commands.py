@@ -693,7 +693,7 @@ class OdooSendRecommendations(PlanTask):
                         "startdate": j.start.isoformat(),
                         "enddate": j.end.isoformat(),
                         "quantity": j.quantity,
-                        "description": f"We recommend to purchase material {j.item.name}\\n{description}",
+                        "description": f"We recommend to purchase {j.item.name}\\n{description}",
                     }
             if not self.loglevel:
                 print(f"Generated {po_count} purchase recommendations")
@@ -749,7 +749,7 @@ class OdooSendRecommendations(PlanTask):
                         "startdate": j.start.isoformat(),
                         "enddate": j.end.isoformat(),
                         "quantity": j.quantity,
-                        "description": f"We recommend to produce material {i.item.name}\\n{description}",
+                        "description": f"We recommend to produce {i.item.name}\\n{description}",
                     }
             if not self.loglevel:
                 print(f"Generated {mo_count} manufacturing recommendations")

@@ -38,9 +38,7 @@ rect.opplan {
 <script type="module" src="http://localhost:5173/static/src/main.js"></script>
 <script type="module" src="http://localhost:5173/static/@vite/client"></script>
 {% else %}
-<script src="{{STATIC_URL}}js/frepple-common.min.js"></script>
-<script src="{{STATIC_URL}}js/frepple-input.min.js"></script>
-<script src="{{STATIC_URL}}js/frepple-operationplandetail.min.js"></script>
+<script src="{{STATIC_URL}}input/main.js"></script>
 {% endif %}
 <script>
 
@@ -161,10 +159,6 @@ rect.opplan {
   var viewstart = new Date(horizonstart.getTime());
   var viewend = new Date(horizonend.getTime());
 
-  // function zoom(factor) {
-  //   gantt.zoom(factor, "#ganttheader");
-  //   angular.element('#controller').scope().zoom();
-  // }
 
   $(function() {
     $("#workarea").css('overflow-x','visible');
@@ -192,53 +186,7 @@ rect.opplan {
       });
       document.getElementById('app').dispatchEvent(event);
     });
-  //   $("#actionsul li, button#actions1").on('click', function() {
-  //     angular.element('#controller').scope().refreshstatus($("#actions").val());
-  //   });
-  //   $("#gridmode").on('click', function() {
-  //     angular.element('#controller').scope().setMode("table");
-  //   });
-  //   $("#kanbanmode").on('click', function() {
-  //     angular.element('#controller').scope().setMode("kanban");
-  //   });
-  //   $("#calendarmonth").on('click', function() {
-  //     angular.element('#controller').scope().setMode("calendarmonth");
-  //   });
-  //   $("#calendarweek").on('click', function() {
-  //     angular.element('#controller').scope().setMode("calendarweek");
-  //   });
-  //   $("#calendarday").on('click', function() {
-  //     angular.element('#controller').scope().setMode("calendarday");
-  //   });
-  //   $("#showTop").on('click', function() {
-  //     angular.element('#controller').scope().toggleShowTop();
-  //   });
-  //   $("#showChildren").on('click', function() {
-  //     angular.element('#controller').scope().toggleShowChildren();
-  //   });
-  //   $('#zoomin').on("click", function() { zoom(0.5); });
-  //   $('#zoomout').on("click", function() { zoom(2); });
-  //   {% if showGantt %}
-  //   $("#ganttmode").on('click', function() {
-  //     angular.element('#controller').scope().setMode("gantt");
-  //   });
-  //   $("#zoomin, #zoomout").removeClass("d-none");
-  //   {% endif %}
-  // });
-  // function checkrows(grid, selection) {
-  //   var selectiondata = [];
-  //   jQuery.each(selection , function(index,item){
-  //     selectiondata.push(grid.getRowData(item));
-  //   });
-  //   if (selectiondata.length > 1) {
-  //     angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
-  //   } else if (selectiondata.length === 1) {
-  //     angular.element('#controller').scope().displayInfo(selectiondata[0]);
-  //   } else {
-  //     angular.element('#controller').scope().displayInfo(undefined);
-  //   }
-  // }
-  //
+  
   // // Controller will call this function to pass values to the grid
   function displayongrid(id, columnid, value) {
     console.log( "displayongrid called with id: " + id + ", columnid: " + columnid + ", value: " + value);
@@ -310,7 +258,6 @@ rect.opplan {
 {% block tabs %}{% if args %}{% tabs model %}{% endif %}{% endblock %}
 
 {% block actions %}
-  TEMPLATE FOR VUE
   {% if reportkey == "freppledb.input.views.manufacturing.ManufacturingOrderList" %}<div class="btn-group" role="group">
     <button id="showTop" type="button" class="btn btn-sm btn-outline-primary{% if noautofilter or "showTop" not in preferences or preferences.showTop %} active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display top level"|capfirst|force_escape %}">
       <svg width="100%" height="1.2em" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">

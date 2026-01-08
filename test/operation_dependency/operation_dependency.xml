@@ -668,7 +668,7 @@
 											<item name="11. material 5">
 												<itemsuppliers>
 													<itemsupplier>
-														<supplier name="10. supplier"/>
+														<supplier name="11. supplier"/>
 														<leadtime>P50D</leadtime>
 														<priority>1</priority>
 													</itemsupplier>

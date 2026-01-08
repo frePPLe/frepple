@@ -116,7 +116,7 @@ OPERATION	Purchase 11. material 1 @ X from 11. supplier	2022-12-20T00:00:00	2022
 OPERATION	Purchase 11. material 2 @ X from 11. supplier	2022-12-06T00:00:00	2022-12-26T00:00:00	2
 OPERATION	Purchase 11. material 3 @ factory from 11. supplier	2022-11-27T00:00:00	2022-12-27T00:00:00	2
 OPERATION	Purchase 11. material 4 @ factory from 11. supplier	2022-11-18T00:00:00	2022-12-28T00:00:00	2
-OPERATION	Purchase 11. material 5 @ X from 10. supplier	2022-11-09T00:00:00	2022-12-29T00:00:00	2
+OPERATION	Purchase 11. material 5 @ X from 11. supplier	2022-11-09T00:00:00	2022-12-29T00:00:00	2
 PROBLEM	overload	Resource '11. Resource' has capacity shortage of 1	2022-12-29T00:00:00 / 2022-12-30T00:00:00
 PROBLEM	precedence	Operation '8. task X2 step 2' starts before preceding operation ends	2022-12-15T00:00:00 / 2022-12-15T00:00:00
 PROBLEM	precedence	Operation '9. task X2 step 3' starts before preceding operation ends	2022-12-30T00:00:00 / 2022-12-30T00:00:00

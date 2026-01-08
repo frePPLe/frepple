@@ -206,22 +206,25 @@ void SolverCreate::solve(const Buffer* b, void* v) {
               // Move approved supply early
               auto newDate =
                   approved_supply->computeFlowToOperationDate(theDate);
+              OperationPlan* opplan_to_move =
+                  approved_supply->getOperationPlan();
+              if (opplan_to_move->getOwner() &&
+                  opplan_to_move->getOwner()
+                      ->getOperation()
+                      ->hasType<OperationRouting>())
+                opplan_to_move = opplan_to_move->getOwner();
               if (approved_supply->getFlow()->hasType<FlowEnd>())
                 data->getCommandManager()->add(new CommandMoveOperationPlan(
-                    approved_supply->getOperationPlan(), Date::infinitePast,
-                    newDate));
+                    opplan_to_move, Date::infinitePast, newDate));
               else
                 data->getCommandManager()->add(new CommandMoveOperationPlan(
-                    approved_supply->getOperationPlan(), newDate,
-                    Date::infinitePast));
+                    opplan_to_move, newDate, Date::infinitePast));
               // Ask solver for feasibility check on existing opplan.
-              data->push(approved_supply->getOperationPlan()->getQuantity(),
-                         newDate);
+              data->push(opplan_to_move->getQuantity(), newDate);
               data->state->keepAssignments =
-                  Plan::instance().getMoveApprovedEarly() == 1
-                      ? approved_supply->getOperationPlan()
-                      : nullptr;
-              checkOperation(approved_supply->getOperationPlan(), *data);
+                  Plan::instance().getMoveApprovedEarly() == 1 ? opplan_to_move
+                                                               : nullptr;
+              checkOperation(opplan_to_move, *data);
               if (data->state->a_qty <= ROUNDING_ERROR) {
                 // Move wasn't feasible. Need to disallow new replenishments.
                 if (getLogLevel() > 1)

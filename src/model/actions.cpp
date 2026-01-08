@@ -294,13 +294,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan* o,
     : opplan(o), state(o), firstCommand(nullptr) {
   if (!opplan) return;
 
-  // Update the settings
-  assert(opplan->getOperation());
-  opplan->setOperationPlanParameters(
-      newQty == -1.0 ? opplan->getQuantity() : newQty, newstart, newend, true,
-      true, roundDown, later);
-
-  // Construct a subcommand for all suboperationplans
+  // Construct a subcommand for all children (BEFORE updating the parent)
   for (OperationPlan::iterator x(o); x != o->end(); ++x) {
     auto* n = new CommandMoveOperationPlan(&*x);
     n->owner = this;
@@ -310,6 +304,11 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan* o,
     }
     firstCommand = n;
   }
+
+  // Move the parent operationplan and its children
+  opplan->setOperationPlanParameters(
+      newQty == -1.0 ? opplan->getQuantity() : newQty, newstart, newend, true,
+      true, roundDown, later);
 }
 
 void CommandMoveOperationPlan::restore(bool del) {

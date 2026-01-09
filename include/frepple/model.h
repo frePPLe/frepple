@@ -5590,7 +5590,8 @@ class Flow : public Object,
   }
 
   /* Constructor. */
-  explicit Flow(Operation* o, Buffer* b, double q, const DateRange& e) : quantity(q) {
+  explicit Flow(Operation* o, Buffer* b, double q, const DateRange& e)
+      : quantity(q) {
     setBuffer(b);
     setOperation(o);
     setEffective(e);
@@ -9270,7 +9271,7 @@ class ConstraintPurchasingLeadTime : public Problem {
   explicit ConstraintPurchasingLeadTime(Operation* o, Date st, Date nd)
       : Problem(o), start(st), end(nd) {}
 
-  ~ConstraintPurchasingLeadTime() override { removeProblem(); }
+  ~ConstraintPurchasingLeadTime() override {}
 
   string getEntity() const override { return "operation"; }
 
@@ -9309,7 +9310,7 @@ class ConstraintManufacturingLeadTime : public Problem {
   explicit ConstraintManufacturingLeadTime(Operation* o, Date st, Date nd)
       : Problem(o), start(st), end(nd) {}
 
-  ~ConstraintManufacturingLeadTime() override { removeProblem(); }
+  ~ConstraintManufacturingLeadTime() override {}
 
   string getEntity() const override { return "operation"; }
 

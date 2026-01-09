@@ -527,6 +527,7 @@ void Problem::List::erase(Object& p) {
       else
         first = x->nextProblem;
       x = x->nextProblem;
+      tmp->owner = nullptr;
       delete tmp;
     } else {
       prev = x;

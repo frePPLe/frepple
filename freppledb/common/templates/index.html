@@ -10,6 +10,11 @@
   $(function() {
     widget.init(dashboard.save);
 
+    $(".widget .panel-close").click(function(e) {
+       $(e.target).closest(".widget").remove();
+       dashboard.save("true");
+    });
+
     $("#horizonbucketsul li a").click(function(){
       $("#horizonbuckets1").html($(this).text() + '  <span class="caret"></span>');
       $("#horizonbuckets").val($(this).prop('name'));

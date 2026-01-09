@@ -116,7 +116,7 @@ OPERATION	Purchase 11. material 1 @ X from 11. supplier	2023-02-11T00:00:00	2023
 OPERATION	Purchase 11. material 2 @ X from 11. supplier	2023-01-28T00:00:00	2023-02-17T00:00:00	2
 OPERATION	Purchase 11. material 3 @ factory from 11. supplier	2023-01-19T00:00:00	2023-02-18T00:00:00	2
 OPERATION	Purchase 11. material 4 @ factory from 11. supplier	2023-01-10T00:00:00	2023-02-19T00:00:00	2
-OPERATION	Purchase 11. material 5 @ X from 10. supplier	2023-01-01T00:00:00	2023-02-20T00:00:00	2
+OPERATION	Purchase 11. material 5 @ X from 11. supplier	2023-01-01T00:00:00	2023-02-20T00:00:00	2
 DEMAND CONSTRAINT	10. constrained material and capacity	Manufacturing lead time on '10. constrained material and capacity'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
 DEMAND CONSTRAINT	10. constrained material and capacity	Manufacturing lead time on '10. task 1'	2022-12-31T00:00:00 / 2023-01-01T00:00:00
 DEMAND CONSTRAINT	10. constrained material and capacity	Manufacturing lead time on '10. task 2'	2022-12-31T00:00:00 / 2023-01-01T00:00:00

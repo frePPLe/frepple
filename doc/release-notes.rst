@@ -28,14 +28,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | The connector is still experimental and for testing purposes only.
   | With odoo 19 the connector has been refactored into a real next-generation.
 
-  | Please see .... for more details.
-  |    OR
-  | Here is short list of the main changes:
-      - ...
-
 - | It's now possible to run the odoo import as part of the plan generation.
   | In practice, you'll always run the plan right after the import, isn't it?
     So, we made it now a checkbox in the plan generation options.
+
+- | A link back to odoo is now displayed in the upper right corner.
 
 - | When exporting manufacturing orders from frePPLe to Odoo, the connectors are
     now sending the consumed and produced items. This can be useful in situations

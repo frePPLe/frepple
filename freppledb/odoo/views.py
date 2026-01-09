@@ -531,7 +531,9 @@ def SubmittedFromOdoo(request):
             status="Waiting",
             user=request.user,
             arguments="--constraint=po_lt,mfg_lt,capa --plantype=1 "
-            "--env=odoo_read_1,fcst,supply,nowebservice,noexportstatic,noexport,odoo_write_1",
+            "--env=odoo_read_1,fcst,supply,odoo_write_1,odoofromfiles --background",
+            # Minimal run without a database needs other arguments
+            # "--env=odoo_read_1,fcst,supply,odoo_write_1,odoofromfiles,nowebservice,noexportstatic,noexport",
         ).save(using=request.database)
         launchWorker(database=request.database)
 

@@ -60,12 +60,6 @@ The following widgets are available:
 * | **Analyze late demands**
   | Shows a short list of items with the most late demands.
 
-* | **Late orders**
-  | Shows the most urgent orders that are planned late.
-
-* | **Short orders**
-  | Shows the most urgent orders that are unplanned or incompletely planned.
-
 * | **Purchase order analysis**
   | Shows the urgency of the existing (locked) purchase orders.
 
@@ -77,13 +71,13 @@ The following widgets are available:
     shipped on time.
 
 * | **Demand history**
-  | Displays the historical evolution of the open sales orders. 
+  | Displays the historical evolution of the open sales orders.
 
 * | **Inventory history**
-  | Displays the historical evolution of the inventory. 
+  | Displays the historical evolution of the inventory.
 
 * | **Inventory evolution**
-  | This widgets shows the archived inventory value from the past, followed 
+  | This widgets shows the archived inventory value from the past, followed
     with the projected evolution of the inventory value in the future.
 
 * | **Inventory by location**
@@ -91,7 +85,7 @@ The following widgets are available:
 
 * | **Inventory by item**
   | This widget shows the items which take up the most inventory value.
-  
+
 * | **Inventory analysis**
   | Display an analysis of which item-locations have stockout risks.
   | Depending on the stockout risk, a red/yellow/green color code is assigned.

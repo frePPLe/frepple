@@ -48,6 +48,13 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | You never heard about it? No worries, nobody actually used it because the low
     level metrics of the plan are not practical, user-friendly or actionable.
 
+- | The "delivery performance" widget on the home screen has been enhanced to display
+    a summary of the orders and forecasts that are planned on time, late and short.
+  | The speedometer is replaced with a pie chart.
+
+- | The "short orders" and "late orders" widget on the home screen have been removed.
+    They were simply not very usable in production-size datasets.
+
 9.12.0 (2025-11-14)
 ===================
 

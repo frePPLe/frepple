@@ -44,6 +44,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models.fields import AutoField
 from django.db.models.fields.related import ForeignKey
+from django.db.models.functions import Now
 from django.views.decorators.cache import never_cache
 from django.shortcuts import render
 from django.utils.html import escape
@@ -265,10 +266,10 @@ class TaskReport(GridReport):
         try:
             if not worker_alive or datetime.now() - datetime.strptime(
                 worker_alive, "%Y-%m-%d %H:%M:%S"
-            ) > timedelta(0, 30):
+            ) > timedelta(seconds=30):
                 Task.objects.using(request.database).filter(
                     status__iexact="waiting",
-                    submitted__lte=datetime.now() - timedelta(0, 30),
+                    submitted__lte=Now() - timedelta(seconds=30),
                 ).update(status="Canceled")
         except Exception:
             pass

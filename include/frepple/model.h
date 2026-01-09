@@ -3599,8 +3599,15 @@ class OperationPlan::iterator {
 
   /* Constructor. The iterator will loop only over the suboperationplans
    * of the operationplan passed. */
-  iterator(const OperationPlan* x) : op(Operation::end()), mode(2) {
-    opplan = x ? x->firstsubopplan : nullptr;
+  iterator(const OperationPlan* x, bool forward = true,
+           OperationPlan* strt = nullptr)
+      : op(Operation::end()), mode(forward ? 2 : 5) {
+    if (!x)
+      opplan = nullptr;
+    else if (strt)
+      opplan = strt;
+    else
+      opplan = forward ? x->firstsubopplan : x->lastsubopplan;
   }
 
   /* Constructor. The iterator will loop over all operationplans. */
@@ -3642,6 +3649,8 @@ class OperationPlan::iterator {
         opplan = opplan->nextsubopplan;
       else if (mode == 4)
         opplan = opplan->prev;
+      else if (mode == 5)
+        opplan = opplan->prevsubopplan;
       else
         opplan = opplan->next;
     }
@@ -3664,6 +3673,8 @@ class OperationPlan::iterator {
       opplan = opplan->nextsubopplan;
     else if (mode == 4)
       opplan = opplan->prev;
+    else if (mode == 5)
+      opplan = opplan->prevsubopplan;
     else
       opplan = opplan->next;
     // Move to a new operation
@@ -3692,7 +3703,7 @@ class OperationPlan::iterator {
 
  private:
   /* A pointer to current operationplan. */
-  OperationPlan* opplan;
+  OperationPlan* opplan = nullptr;
 
   /* An iterator over the operations. */
   Operation::iterator op;
@@ -3701,8 +3712,8 @@ class OperationPlan::iterator {
    * 1) iterate over operationplan instances of operation
    * 2) iterate over suboperationplans of an operationplan
    * 3) iterate over all operationplans
-   * 4) iterate over operationplan instances of operation, same as 1 but
-   * backward in time
+   * 4) same as 1, but backward in time
+   * 5) same as 2, but backward in time
    */
   short mode;
 };

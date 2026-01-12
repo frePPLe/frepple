@@ -495,10 +495,6 @@ Object* OperationPlan::createOperationPlan(const MetaClass*,
       // Create operation plan
       opplan = static_cast<Operation*>(operval)->createOperationPlan(
           quantity, start, end, batch, nullptr, nullptr, 0, false, id);
-      new ProblemInvalidData(opplan,
-                             "Purchase order '" + opplan->getReference() +
-                                 "' on unauthorized supplier ",
-                             "operationplan", start, end);
     } else
       // Create the operationplan
       opplan = static_cast<Operation*>(operval)->createOperationPlan(

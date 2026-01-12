@@ -9,7 +9,7 @@
 */
 
 <script setup lang="js">
-import { computed, ref, onMounted, onUnmounted } from 'vue';
+import {computed, ref, onMounted, onUnmounted} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
 import OperationplanFormCard from '@/components/OperationplanFormCard.vue';
@@ -92,7 +92,7 @@ function shouldShowWidget(widgetName) {
     'operationproblems': () => store.operationplan.problems !== undefined || store.operationplan.info !== undefined,
     'operationresources': () => store.operationplan.loadplans !== undefined,
     'operationflowplans': () => store.operationplan.flowplans !== undefined,
-    'operationdemandpegging': () => store.operationplan !== undefined,
+    'operationdemandpegging': () => store.operationplan !== undefined && store.operationplan.id !== -1,
     'networkstatus': () => store.operationplan.network !== undefined,
     'downstreamoperationplans': () => store.operationplan.downstreamoperationplans !== undefined,
     'upstreamoperationplans': () => store.operationplan.upstreamoperationplans !== undefined,
@@ -121,7 +121,7 @@ onMounted(() => {
     if (detail.execute === 'displayInfo') {
       if (detail.selectedRows.length > 1) {
         handleAllSelectEvent(e);
-      } else if (detail.selectedRows.length === 1){
+      } else if (detail.selectedRows.length < 2){
         store.loadOperationplans([detail.reference], detail.status, detail.selectedRows);
       }
     }
@@ -210,13 +210,6 @@ onMounted(() => {
   };
 });
 
-onMounted(() => {
-//   if (!store.operationplan) {
-//     store.loadOperationplans(1391);
-//   }
-
-});
-
 onUnmounted(() => {
   const info = appElement.value;
   if (info && info.rootEl && info.handlers) {
@@ -236,40 +229,6 @@ onUnmounted(() => {
 
 <template>
   <div class="row">
-<!--    <OperationplanFormCard />-->
-<!--    <BuffersCard />-->
-<!--    <DemandPeggingCard />-->
-<!--    <DownstreamCard />-->
-<!--    <InventoryDataCard />-->
-<!--    <InventoryGraphCard :key="store.operationplan?.reference || 'empty'"/>-->
-<!--    <NetworkStatusCard />-->
-<!--    <ProblemsCard />-->
-<!--    <ResourcesCard />-->
-<!--    <SupplyInformationCard />-->
-<!--    <UpstreamCard />-->
-
-<!--    <div class="row">-->
-<!--      <div data-ng-class="['widget-list', 'col-12', 'col-lg-' + col['cols'][0].width]" data-ng-repeat="col in preferences['widgets']" data-widget="{{col['name']}}" data-widget-width="{{col['cols'][0].width}}">-->
-<!--        <div data-ng-repeat="widget in col['cols'][0]['widgets']">-->
-<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'operationplan'" id="attributes-operationplan" data="operationplan" showoperationplan-drv></div>-->
-<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'inventorygraph'" id="attributes-inventorygraph" data-ng-show="operationplan.id !== -1 && operationplan.inventoryreport != undefined" data="operationplan" showinventorygraph-drv></div>-->
-<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'inventorydata'" id="attributes-inventorydata" data-ng-show="operationplan.id !== -1 && operationplan.inventoryreport != undefined" data="operationplan" showinventorydata-drv></div>-->
-<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'operationproblems'" id="attributes-operationproblems" data-ng-show="operationplan.id !== -1 && operationplan.problems != undefined" data="operationplan" showproblemspanel-drv></div>-->
-<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'operationresources'" id="attributes-operationresources" data-ng-show="operationplan.id !== -1 && operationplan.loadplans != undefined" data="operationplan" data-mode="mode" showresourcespanel-drv></div>-->
-<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'operationflowplans'" id="attributes-operationflowplans" data-ng-show="operationplan.id !== -1 && operationplan.flowplans != undefined" data="operationplan" showbufferspanel-drv></div>-->
-<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'operationdemandpegging'" id="attributes-operationdemandpegging" data-ng-show="operationplan.id !== -1 && operationplan.pegging_demand.length > 0" data="operationplan" showoperationpeggingpanel-drv></div>-->
-<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'networkstatus'" id="attributes-networkstatus" data-ng-show="operationplan.network !== undefined" data="operationplan" shownetworkstatus-drv></div>-->
-<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'downstreamoperationplans'" id="attributes-downstreamoperationplans" data-ng-show="operationplan.downstreamoperationplans !== undefined" data="operationplan" showdownstreamoperationplans-drv></div>-->
-<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'upstreamoperationplans'" id="attributes-upstreamoperationplans" data-ng-show="operationplan.upstreamoperationplans !== undefined" data="operationplan" showupstreamoperationplans-drv></div>-->
-<!--          &lt;!&ndash; -->
-<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'supplyinformation'" id="attributes-supplyinformation" data-ng-show="operationplan.attributes !== undefined" data="operationplan" showsupplyinformation-drv></div>-->
-<!--          &ndash;&gt;-->
-<!--          &lt;!&ndash; Extra in Enterprise Edition. &ndash;&gt;-->
-<!--          <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'supplyposition'" id="attributes-supplyposition" data-ng-show="operationplan.id !== -1 && operationplan.invstatus !== undefined" data="operationplan" showsupplypositionpanel-drv></div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-
 
     <div
         v-for="col in preferences.widgets"

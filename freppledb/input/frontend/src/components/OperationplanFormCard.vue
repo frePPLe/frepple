@@ -148,9 +148,8 @@ function changeEdit() {
   <div class="card">
     <div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_operationplanpanel" aria-expanded="false" aria-controls="widget_operationplanpanel">
       <h5 class="card-title text-capitalize me-auto">
-        <span v-if="store.selectedOperationplans.length !== 0 && !store.operationplan.reference && !store.operationplan.operationplan__reference"  class="">{{ ttt('no selection') }}</span>
-        <span v-if="isMultipleOrNone"  class="">{{ ttt('selected') }}&nbsp;{{ store.selectedOperationplans.length || 0 }}</span>
-        <span v-if="store.operationplan.type"  class="">{{ opptype[store.operationplan.type] }}</span>
+        <span v-if="isMultipleOrNone"  class="">{{ ttt('selected') }}&nbsp;{{ store.selectedOperationplans.length }}</span>
+        <span v-if="store.operationplan.type"  class="pl3 text-capitalize">{{ opptype[store.operationplan.type] }}</span>
       </h5>
       <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
     </div>
@@ -312,19 +311,6 @@ function changeEdit() {
             <input v-if="!isMultipleOrNone && store.operationplan.hasOwnProperty('store.operationplan__quantity')" class="form-control" type="number" v-model="store.operationplan.operationplan__quantity" @input="setEditValue('quantity', $event.target.value)" :readonly="!editable">
           </td>
         </tr>
-        <!--
-        <tr v-if="store.operationplan.type === 'MO' || (operationplan.id === -1 && (operationplan.colmodel?.quantity_completed|| store.operationplan.colmodel?.operationplan__quantity_completed))">
-          <td><b class="text-capitalize">{{ttt('quantity completed')}}</b>&nbsp;
-            <small v-if="isMultipleOrNone && !operationplan.colmodel?.operationplan__quantity_completed">({{ ttt(operationplan.colmodel?.quantity_completed.type) }})</small>
-            <small v-if="isMultipleOrNone && store.operationplan.colmodel?.operationplan__quantity_completed">({{ ttt(operationplan.colmodel?.operationplan__quantity_completed.type) }})</small>
-          </td>
-          <td>
-            <span v-if="isMultipleOrNone">{{(operationplan.operationplan__quantity_completed|| store.operationplan.quantity_completed || 0)|number}}</span>
-            <input v-if="operationplan.id !== -1 && !operationplan.hasOwnProperty('operationplan__quantity_completed')" class="form-control" type="number" v-model="store.operationplan.quantity_completed" @input="setEditValue('setTo', $event.target.value)"" :readonly="!editable">
-            <input v-if='operationplan.id !== -1&& store.operationplan.hasOwnProperty("operationplan__quantity_completed")' class="form-control" type="number" v-model="store.operationplan.operationplan__quantity_completed" @input="setEditValue('setTo', $event.target.value)"" :readonly="!editable">
-          </td>
-        </tr>
-        -->
         <tr v-for="([key, value]) in filteredColmodel" :key="key">
           <td><b class="text-capitalize">{{ttt(value.label)}}</b>&nbsp;
             <small>({{ ttt(value.type) }} - {{key}})</small>

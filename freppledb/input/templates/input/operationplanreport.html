@@ -33,12 +33,11 @@ rect.opplan {
 
 {% block extrahead %}{{block.super}}
 <script src="{{STATIC_URL}}js/d3.min.js"></script>
+<script src="{{STATIC_URL}}js/angular.min.js"></script>
 
 {% if debug_js %}
 <script type="module" src="http://localhost:5173/static/src/main.js"></script>
 <script type="module" src="http://localhost:5173/static/@vite/client"></script>
-{% else %}
-<script src="{{STATIC_URL}}input/main.js"></script>
 {% endif %}
 <script>
 
@@ -186,7 +185,7 @@ rect.opplan {
       });
       document.getElementById('app').dispatchEvent(event);
     });
-  
+
   // // Controller will call this function to pass values to the grid
   function displayongrid(id, columnid, value) {
     console.log( "displayongrid called with id: " + id + ", columnid: " + columnid + ", value: " + value);
@@ -324,16 +323,22 @@ displayGrid({% if preferences.mode != "kanban" and preferences.mode != "gantt" a
 {% block extra_grid %}
 
 onSelectRow: function(rowid, status) {
-  const event = new CustomEvent('singleSelect', {
+  const rowData = $("#grid").getRowData(rowid);
+<!--  console.log('++++operationReport.html onSelectRow ', rowid, status, $("#grid").getRowData(rowid));-->
+  const reference = rowData.operationplan__reference || rowid;
+
+  const references = $("#grid").jqGrid('getGridParam', 'selarrrow').filter(x => x.id !== 'cb').map(x => x.operationplan__reference || x.id);
+  const event = new CustomEvent("singleSelect", {
     detail: {
       execute: 'displayInfo',
-      reference: rowid,
+      reference: reference,
       status: status,
-      selectedRows: $(this).jqGrid('getGridParam', 'selarrrow')
+      selectedRows: references,
     }
+
   });
   document.getElementById('app').dispatchEvent(event);
-  console.log('operationReport.html singleSelect ', rowid, status, $(this).jqGrid('getGridParam', 'selarrrow'));
+  console.log('operationReport.html singleSelect ', $(this).jqGrid('getGridParam', 'selarrrow'), jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
 },
 onSelectAll: function(aRowids, status){
   const event = new CustomEvent('allSelect', {
@@ -469,4 +474,10 @@ loadComplete: function(data) {
 {% block after_table %}
 <div id="app"></div>
 <div id="popup" class="modal fade in" role="dialog" style="z-index: 10000"></div>
+{% if not DEBUG_JS %}
+<script src="{{STATIC_URL}}input/main.js"></script>
+<script src="{{STATIC_URL}}js/frepple-common.min.js"></script>
+<script src="{{STATIC_URL}}js/frepple-input.min.js"></script>
+<script src="{{STATIC_URL}}js/frepple-operationplandetail.min.js"></script>
+{% endif %}
 {% endblock %}

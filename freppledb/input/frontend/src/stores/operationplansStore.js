@@ -9,7 +9,7 @@
  */
 
 import {toRaw} from "vue";
-import {operationplanService} from "@/services/operationplanService.js";7
+import {operationplanService} from "@/services/operationplanService.js";
 
 /**
  * @typedef {Object} OperationplansState
@@ -20,7 +20,6 @@ import {operationplanService} from "@/services/operationplanService.js";7
  * @property {boolean} showTop - Show top level operations
  * @property {boolean} showChildren - Show child level operations
  * @property {Array} operationplan - single operationplans
- // * @property {Array} operationplans - object with operationplans with id as key // {id: operationplan}
  * @property {Array} selectedOperationplans - Multiple selected operationplans   // list of ids
  * @property {boolean} loading - Loading state
  * @property {Object} error - Error state
@@ -223,16 +222,15 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     async loadOperationplans(references = [], selectedFlag, selectedRows) {
-      if (references.length === 0) return;
       console.log(120, toRaw(references), selectedFlag, toRaw(selectedRows));
       this.selectedOperationplans.length = 0
       this.selectedOperationplans.push(...selectedRows);
-      if (selectedFlag === false) {
+      if (references.length === 0) {
+        this.operationplan = new Operationplan();
+      } else if (selectedFlag === false) {
         if (this.selectedOperationplans.length === 1) {
           console.log(126, this.selectedOperationplans[0]);
           await this.loadOperationplans(selectedRows, true, selectedRows);
-          // const parsedId = parseInt(selectedRows[0]);
-          // this.operationplan.id = isNaN(parsedId) ? -1 : parsedId;
         }
       } else {
         console.log(134, 'loadOperationplans: ', references, toRaw(this.selectedOperationplans));
@@ -252,12 +250,9 @@ export const useOperationplansStore = defineStore('operationplans', {
             console.log(135, operationplan, parseInt(operationplanReference));
 
             this.operationplan = new Operationplan(operationplan);
-            // const parsedId = parseInt(operationplanReference);
-            // this.operationplan.id = isNaN(parsedId) ? -1 : parsedId;
           } else {
             console.log("152 aggregated info: ");
-          // this.operationplan = new Operationplan({id: -1});
-          this.operationplan = new Operationplan();
+            this.operationplan = new Operationplan();
           }
         } catch (error) {
           this.error = {
@@ -270,9 +265,6 @@ export const useOperationplansStore = defineStore('operationplans', {
         } finally {
           this.loading = false;
         }
-        // } else { //  calculate aggregated info
-        //   this.operationplan = new Operationplan({id: -1});
-        // }
       }
     },
 
@@ -397,109 +389,7 @@ export const useOperationplansStore = defineStore('operationplans', {
         if (this.dataRowHeight !== null) {
           this.preferences.height = this.dataRowHeight;
         }
-        this.preferences.widgets = {
-          "widgets": [
-            {
-              "name": "column1",
-              "cols": [
-                {
-                  "width": 6,
-                  "widgets": [
-                    [
-                      "operationplan",
-                      {
-                        "collapsed": false
-                      }
-                    ],
-                    [
-                      "inventorygraph",
-                      {
-                        "collapsed": false
-                      }
-                    ]
-                  ]
-                }
-              ],
-              "$$hashKey": "object:22"
-            },
-            {
-              "name": "column2",
-              "cols": [
-                {
-                  "width": 6,
-                  "widgets": [
-                    [
-                      "supplyposition",
-                      {
-                        "collapsed": false
-                      }
-                    ],
-                    [
-                      "inventorydata",
-                      {
-                        "collapsed": false
-                      }
-                    ],
-                    [
-                      "operationproblems",
-                      {
-                        "collapsed": false
-                      }
-                    ],
-                    [
-                      "operationresources",
-                      {
-                        "collapsed": false
-                      }
-                    ],
-                    [
-                      "operationflowplans",
-                      {
-                        "collapsed": false
-                      }
-                    ],
-                    [
-                      "operationdemandpegging",
-                      {
-                        "collapsed": false
-                      }
-                    ]
-                  ]
-                }
-              ],
-              "$$hashKey": "object:23"
-            },
-            {
-              "name": "column3",
-              "cols": [
-                {
-                  "width": 12,
-                  "widgets": [
-                    [
-                      "networkstatus",
-                      {
-                        "collapsed": false
-                      }
-                    ],
-                    [
-                      "downstreamoperationplans",
-                      {
-                        "collapsed": false
-                      }
-                    ],
-                    [
-                      "upstreamoperationplans",
-                      {
-                        "collapsed": false
-                      }
-                    ]
-                  ]
-                }
-              ],
-              "$$hashKey": "object:24"
-            }
-          ]
-        };
+        this.preferences.widgets = {};
 
         // Call your backend service here if needed
         // const result = await operationplanService.savePreferences(this.preferences);
@@ -663,13 +553,16 @@ export const useOperationplansStore = defineStore('operationplans', {
 
         });
       });
-      console.log(460, 'dateKeys: ', dateKeys);
+      console.log(460, 'dateKeys: ', dateKeys, aggregatedopplan.colmodel);
       dateKeys.forEach((key) => {
-        aggregatedopplan[key] = aggregatedopplan[key].format('YYYY-MM-DD[T]HH:mm:ss');
+        aggregatedopplan[key] = aggregatedopplan.colmodel[key].format('YYYY-MM-DD[T]HH:mm:ss');
       })
+      // dateKeys.forEach((key) => {
+      //   aggregatedopplan[key] = aggregatedopplan[key].format('YYYY-MM-DD[T]HH:mm:ss');
+      // })
 
-      // aggregatedopplan.start = aggregatedopplan.startdate.format('YYYY-MM-DD[T]HH:mm:ss');
-      // aggregatedopplan.end = aggregatedopplan.enddate.format('YYYY-MM-DD[T]HH:mm:ss');
+      aggregatedopplan.start = aggregatedopplan.startdate.format('YYYY-MM-DD[T]HH:mm:ss');
+      aggregatedopplan.end = aggregatedopplan.enddate.format('YYYY-MM-DD[T]HH:mm:ss');
 
       console.log(262, 'aggColModel: ', aggregatedopplan);
       // this.operationplan = new Operationplan(aggregatedopplan, aggColModel)

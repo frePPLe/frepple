@@ -12,4 +12,8 @@ if (import.meta.env.DEV) {
   app.config.devtools = true;
   app.config.performance = true;
 }
-app.mount('#app');
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => app.mount('#app'));
+} else {
+  app.mount('#app');
+}

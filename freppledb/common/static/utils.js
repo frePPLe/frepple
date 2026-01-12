@@ -1,42 +1,67 @@
-import { ref as o } from "vue";
-const s = (t) => t == null, m = (t) => t && typeof t == "object", f = (t) => s(t) || Array.isArray(t) && t.length === 0 || m(t) && Object.keys(t).length === 0 || typeof t == "string" && t.trim().length === 0, u = (t) => t === "" || t === null || t === void 0 ? !1 : !isNaN(parseFloat(t)) && isFinite(t), l = () => {
-  const t = o(window.database);
-  return t.value === "default" ? "" : `/${t.value}`;
-}, d = (t, n) => {
-  if (!t) return "";
-  const e = new Date(t);
-  return moment(e).format(window.datetimeformat);
+import { ref as m } from "vue";
+const g = (e) => e == null, F = (e) => e && typeof e == "object", w = (e) => g(e) || Array.isArray(e) && e.length === 0 || F(e) && Object.keys(e).length === 0 || typeof e == "string" && e.trim().length === 0, a = (e) => e === "" || e === null || e === void 0 ? !1 : !isNaN(parseFloat(e)) && isFinite(e), S = () => {
+  const e = m(window.database);
+  return e.value === "default" ? "" : `/${e.value}`;
+}, y = (e, t) => {
+  if (!e) return "";
+  const o = new Date(e);
+  return moment(o).format(window.datetimeformat);
 };
-function p(t, n = { reactive: !1 }) {
-  return o(window[t]);
+function h(e, t = { reactive: !1 }) {
+  return m(window[e]);
 }
-const w = (t, n) => {
-  if (!t) return "";
-  const e = new Date(t);
-  return moment(e).format(window.dateformat);
-}, y = (t) => {
-  if (!t) return "";
-  const n = new Date(t);
-  return moment(n).format("HH:mm:ss");
+const j = (e, t) => {
+  if (!e) return "";
+  const o = new Date(e);
+  return moment(o).format(window.dateformat);
+}, N = (e) => {
+  if (!e) return "";
+  const t = new Date(e);
+  return moment(t).format("HH:mm:ss");
 };
-function b(t, n = 300) {
-  let e;
-  return function(...r) {
-    const i = () => {
-      e = null, t.apply(this, r);
+function x(e, t = 300) {
+  let o;
+  return function(...n) {
+    const r = () => {
+      o = null, e.apply(this, n);
     };
-    clearTimeout(e), e = setTimeout(i, n), e || t.apply(this, r);
+    clearTimeout(o), o = setTimeout(r, t), o || e.apply(this, n);
   };
 }
+const O = (e, t = 6) => {
+  if (typeof e > "u" || e === "")
+    return "";
+  if (a(e)) {
+    e *= 1;
+    const d = e < 0, n = Math.abs(e);
+    let r = 0;
+    n > 1e5 || t <= 0 ? r = String(parseFloat(e.toFixed())) : n > 1e4 || t <= 1 ? r = String(parseFloat(e.toFixed(1))) : n > 1e3 || t <= 2 ? r = String(parseFloat(e.toFixed(2))) : n > 100 || t <= 3 ? r = String(parseFloat(e.toFixed(3))) : n > 10 || t <= 4 ? r = String(parseFloat(e.toFixed(4))) : n > 1 || t <= 5 ? r = String(parseFloat(e.toFixed(5))) : r = String(parseFloat(e.toFixed(t)));
+    let i = (d ? "-" : "") + r;
+    const l = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator") || ".";
+    l !== "." && (i = i.replace(".", l));
+    const p = jQuery("#grid").jqGrid("getGridRes", "formatter.number.thousandsSeparator") || ",";
+    {
+      let s = i.lastIndexOf(l);
+      s = s > -1 ? s : i.length;
+      let f = l === void 0 ? "" : i.substring(s), c = -1, u;
+      for (u = s; u > 0; u--)
+        c++, c % 3 === 0 && u !== s && (!d || u > 1) && (f = p + f), f = i.charAt(u - 1) + f;
+      i = f;
+    }
+    return i;
+  }
+  return (e == null ? void 0 : e.toLocaleString()) || "0";
+};
 export {
-  w as dateFormat,
-  d as dateTimeFormat,
-  b as debouncedInputHandler,
-  p as getDjangoTemplateVariable,
-  l as getURLprefix,
-  f as isBlank,
-  s as isEmpty,
-  u as isNumeric,
-  m as isObject,
-  y as timeFormat
+  j as dateFormat,
+  y as dateTimeFormat,
+  x as debouncedInputHandler,
+  h as getDjangoTemplateVariable,
+  S as getURLprefix,
+  w as isBlank,
+  g as isEmpty,
+  a as isNumeric,
+  F as isObject,
+  O as numberFormat,
+  N as timeFormat
 };

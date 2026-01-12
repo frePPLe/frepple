@@ -94,6 +94,63 @@ function debouncedInputHandler(func, delay = 300) {
   };
 }
 
+const numberFormat = (nData, maxdecimals = 6) => {
+  // Number formatting function copied from free-jqgrid.
+  // Adapted to show a max number of decimal places.
+  if (typeof (nData) === 'undefined' || nData === '')
+    return '';
+
+  const isNumber = isNumeric(nData);
+
+  if (isNumber) {
+    nData *= 1;
+    const bNegative = (nData < 0);
+    const absData = Math.abs(nData);
+    let nOutput = 0.0;
+
+    if (absData > 100000 || maxdecimals <= 0)
+      nOutput = String(parseFloat(nData.toFixed()));
+    else if (absData > 10000 || maxdecimals <= 1)
+      nOutput = String(parseFloat(nData.toFixed(1)));
+    else if (absData > 1000 || maxdecimals <= 2)
+      nOutput = String(parseFloat(nData.toFixed(2)));
+    else if (absData > 100 || maxdecimals <= 3)
+      nOutput = String(parseFloat(nData.toFixed(3)));
+    else if (absData > 10 || maxdecimals <= 4)
+      nOutput = String(parseFloat(nData.toFixed(4)));
+    else if (absData > 1 || maxdecimals <= 5)
+      nOutput = String(parseFloat(nData.toFixed(5)));
+    else
+      nOutput = String(parseFloat(nData.toFixed(maxdecimals)));
+
+    let sOutput = (bNegative ? "-" : "") + nOutput;
+
+    const sDecimalSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator") || ".";
+    if (sDecimalSeparator !== ".")
+      // Replace the "."
+      sOutput = sOutput.replace(".", sDecimalSeparator);
+    const sThousandsSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.thousandsSeparator") || ",";
+    if (sThousandsSeparator) {
+      let nDotIndex = sOutput.lastIndexOf(sDecimalSeparator);
+      nDotIndex = (nDotIndex > -1) ? nDotIndex : sOutput.length;
+      // we cut the part after the point for integer numbers
+      // it will prevent storing/restoring of wrong numbers during inline editing
+      let sNewOutput = sDecimalSeparator === undefined ? "" : sOutput.substring(nDotIndex);
+      let nCount = -1, i;
+      for (i = nDotIndex; i > 0; i--) {
+        nCount++;
+        if ((nCount % 3 === 0) && (i !== nDotIndex) && (!bNegative || (i > 1))) {
+          sNewOutput = sThousandsSeparator + sNewOutput;
+        }
+        sNewOutput = sOutput.charAt(i - 1) + sNewOutput;
+      }
+      sOutput = sNewOutput;
+    }
+    return sOutput;
+  }
+  return nData?.toLocaleString() || '0';
+}
+
 export {
   isEmpty,
   isObject,
@@ -103,6 +160,7 @@ export {
   dateTimeFormat,
   dateFormat,
   timeFormat,
+  numberFormat,
   getDjangoTemplateVariable,
   debouncedInputHandler,
 };

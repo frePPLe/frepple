@@ -49,12 +49,22 @@ from .runworker import launchWorker, runTask
 
 
 class TaskScheduler:
+    _instance = None
+    _mutex = Lock()
+
     def __init__(self):
         self.sched = {}
-        self.mutex = Lock()
+
+    def __new__(cls, *args, **kwargs):
+        # Singleton class, only 1 instance is created per process
+        if cls._instance is None:
+            with cls._mutex:
+                if cls._instance is None:
+                    cls._instance = super().__new__(cls)
+        return cls._instance
 
     def start(self):
-        with self.mutex:
+        with self._mutex:
             for db in (
                 Scenario.objects.using(DEFAULT_DB_ALIAS)
                 .filter(status="In use", info__has_key="has_schedule")
@@ -81,7 +91,7 @@ class TaskScheduler:
         self.waitNextEvent()
 
     def waitNextEvent(self, database=None):
-        with self.mutex:
+        with self._mutex:
             now = datetime.now()
             dbs = (
                 Scenario.objects.using(DEFAULT_DB_ALIAS)

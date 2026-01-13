@@ -641,9 +641,126 @@ void Problem::List::push(Problem* p) {
   Py_INCREF(p);
 }
 
-void Problem::List::clean(const Demand* d) const {
+void Problem::List::clean(Demand* d) const {
   // Check all manufacturing lead time constraints, and keep only the
   // critical path.
+  auto& constraints = d->getConstraints();
+  if (constraints.empty()) return;
+
+  set<Operation*> critical_path;
+  Date start_critical_path = Date::infiniteFuture;
+  vector<OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
+  short lvl_prev = -1;
+  for (PeggingIterator p(d); p; --p) {
+    // Check for loops in the pegging
+    auto* m = p.getOperationPlan();
+    short lvl_cnt = lvl_prev;
+    bool loops = false;
+    for (auto* o : opplans) {
+      if (--lvl_cnt < -1) break;
+      if (o == m) {
+        loops = true;
+        break;
+      }
+    }
+    if (loops) continue;
+
+    // Evaluate when we identified end-to-end path.
+    short lvl = p.getLevel();
+    if (lvl <= lvl_prev && lvl_prev >= 0) {
+      bool in_critical_path = false;
+      for (auto lvl_cnt = lvl_prev; lvl_cnt >= 0; --lvl_cnt) {
+        if (!in_critical_path)
+          for (auto p = constraints.begin(); p != constraints.end(); ++p) {
+            if (p->hasType<ConstraintDistributionLeadTime,
+                           ConstraintManufacturingLeadTime,
+                           ConstraintPurchasingLeadTime>()) {
+              auto* oper = static_cast<Operation*>(p->getOwner());
+              if (oper == opplans[lvl_cnt]->getOperation() &&
+                  p->getStart() < start_critical_path) {
+                // New critical path identified
+                start_critical_path = opplans[lvl_cnt]->getStart();
+                if (!critical_path.empty()) critical_path.clear();
+                in_critical_path = true;
+              }
+            }
+          }
+
+        if (in_critical_path)
+          critical_path.insert(opplans[lvl_cnt]->getOperation());
+      }
+    }
+
+    // Prepare next level
+    if (lvl >= opplans.size()) opplans.resize(lvl + 5);
+    opplans[lvl] = p.getOperationPlan();
+    lvl_prev = lvl;
+  }
+
+  // Evaluate the final end-to-end path.
+  if (lvl_prev > 0) {
+    bool in_critical_path = false;
+    for (auto lvl_cnt = lvl_prev; lvl_cnt >= 0; --lvl_cnt) {
+      if (!in_critical_path)
+        for (auto p = constraints.begin(); p != constraints.end(); ++p) {
+          if (p->hasType<ConstraintDistributionLeadTime,
+                         ConstraintManufacturingLeadTime,
+                         ConstraintPurchasingLeadTime>()) {
+            auto* oper = static_cast<Operation*>(p->getOwner());
+            if (oper == opplans[lvl_cnt]->getOperation() &&
+                p->getStart() < start_critical_path) {
+              // New critical path identified
+              start_critical_path = opplans[lvl_cnt]->getStart();
+              if (!critical_path.empty()) critical_path.clear();
+              in_critical_path = true;
+            }
+          }
+        }
+
+      if (in_critical_path)
+        critical_path.insert(opplans[lvl_cnt]->getOperation());
+    }
+  }
+
+  // Critical path is now identified.
+  // Now remove any constraint that is not on that path.
+  for (auto p = constraints.begin(); p != constraints.end();) {
+    bool keep = true;
+    if (p->hasType<ConstraintDistributionLeadTime,
+                   ConstraintManufacturingLeadTime,
+                   ConstraintPurchasingLeadTime>()) {
+      auto* oper = static_cast<Operation*>(p->getOwner());
+      if (!critical_path.contains(oper)) keep = false;
+    } else if (p->hasType<ProblemCapacityOverload>()) {
+      auto res = static_cast<Resource*>(p->getOwner());
+      keep = false;
+      for (auto o : critical_path) {
+        for (const auto& ld : o->getLoads()) {
+          if (ld.getResource() == res) {
+            keep = true;
+            break;
+          }
+        }
+        if (keep) break;
+      }
+    } else if (p->hasType<ProblemAwaitSupply>()) {
+      auto ow = p->getOwner();
+      if (ow->hasType<Buffer>()) {
+      } else if (ow->hasType<Operation>()) {
+        if (!critical_path.contains(static_cast<Operation*>(ow))) keep = false;
+      }
+    }
+    logger << " Constraint " << (keep ? "keep" : "delete") << "  "
+           << p->getDescription() << '\n';
+    if (keep)
+      ++p;
+    else {
+      auto tmp = &*p;
+      constraints.unlink(tmp);
+      ++p;
+      delete tmp;
+    }
+  }
 }
 
 }  // namespace frepple

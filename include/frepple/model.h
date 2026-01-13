@@ -782,11 +782,22 @@ class Problem::List {
   /* Get the last problem on the list. */
   Problem* top() const;
 
-  /* Cut the list in two parts . */
-  Problem* unlink(Problem* p) {
-    Problem* tmp = p->nextProblem;
-    p->nextProblem = nullptr;
-    return tmp;
+  /* Remove an element from the list. */
+  void unlink(Problem* p) {
+    if (first == p) {
+      first = p->nextProblem;
+      p->owner = nullptr;
+      p->resetReferenceCount();
+    } else {
+      for (auto* l = first; l; l = l->nextProblem) {
+        if (l->nextProblem == p) {
+          l->nextProblem = p->nextProblem;
+          p->owner = nullptr;
+          p->resetReferenceCount();
+          break;
+        }
+      }
+    }
   }
 
   /* Remove all problems with a specific owner. */
@@ -807,7 +818,7 @@ class Problem::List {
   void transfer(HasProblems*);
 
   /* Postprocessing of a constraint list to keep it user-friendly. */
-  void clean(const Demand*) const;
+  void clean(Demand*) const;
 
  private:
   /* Pointer to the head of the list. */

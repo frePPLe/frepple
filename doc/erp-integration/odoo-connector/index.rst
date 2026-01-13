@@ -9,9 +9,9 @@ Odoo integration
 FrePPLe provides an integration with `Odoo <https://www.odoo.com>`_, a leading open source business management suite.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    overview
-   using-the-connector-in-odoo
-   using-the-connector-in-frepple
-   installation-and-configuration
+   odoo-before-v19/index.rst
+   odoo-from-v19/index.rst
+

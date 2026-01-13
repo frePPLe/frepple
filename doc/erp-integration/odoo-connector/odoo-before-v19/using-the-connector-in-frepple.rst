@@ -1,6 +1,11 @@
 Using the connector in frePPLe
 ------------------------------
 
+.. important::
+
+   This page applies to odoo v16, v17and v18.
+   See `this page <../odoo-from-v19/using-the-connector-in-frepple.html>`_ for v19.
+
 The odoo integration brings new functionality to the user interface.
 
 * | **Task "Import data from Odoo"**

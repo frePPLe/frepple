@@ -4,7 +4,7 @@ Order quoting screen
 
   .. Important::
 
-     This module is only available in the Enterprise Edition.
+     This module is only available in the Enterprise and Cloud Editions.
 
 The order quoting screen lets you fill in a form with all information for
 a new order. It allows you to quickly calculate the feasible delivery date

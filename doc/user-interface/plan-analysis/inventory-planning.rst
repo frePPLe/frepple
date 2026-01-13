@@ -5,7 +5,7 @@ Inventory planning screen
 
   .. Important::
 
-     This module is only available in the Enterprise Edition.
+     This module is only available in the Enterprise and CLoud Editions.
 
 
 The inventory planning screen allows the management of the inventory policies

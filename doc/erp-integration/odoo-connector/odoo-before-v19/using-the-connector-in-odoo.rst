@@ -1,6 +1,11 @@
 Addition of menus in Odoo
 -------------------------
 
+.. important::
+
+   This page applies to odoo v16, v17and v18.
+   See `this page <../odoo-from-v19/using-the-connector-in-odoo.html>`_ for v19.
+
 After installation, users find the following additional features in odoo:
 
 * | The sales menu has a link to the **frePPLe forecast editor screen**.
@@ -42,6 +47,11 @@ After installation, users find the following additional features in odoo:
 Addition of extra views and fields in Odoo
 ------------------------------------------
 
+.. important::
+
+   This page applies to odoo v16, v17and v18.
+   See `this page <../odoo-from-v19/using-the-connector-in-odoo.html#addition-of-extra-views-and-fields-in-odoo>`_ for v19.
+
 * | Because some manufacturing concepts do not exist in odoo, the manufacturing app
     has been enhanced to include the following objects.
 
@@ -77,6 +87,11 @@ Addition of extra views and fields in Odoo
 
 Quoting capabilities
 --------------------
+
+.. important::
+
+   This page applies to odoo v16, v17and v18.
+   See `this page <../odoo-from-v19/using-the-connector-in-odoo.html#quoting-capabilities>`_ for v19.
 
 Starting from Odoo 17, the connectors also allow the planner to use the frePPLe quoting
 module from Odoo.
@@ -129,11 +144,3 @@ group.
 
      From the main screen of the *Frepple Quotes*, a *bulk quote* action is also available to allow the planner
      to compute a promised date for multiple lines at a time.
-
-
-
-
-
-
-
-

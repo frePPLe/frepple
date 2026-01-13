@@ -2,8 +2,8 @@
 Policies
 ========
 
-Two fields on the sales order table (and the forecast table for the enterprise version) 
-configure what deliveries are being accepted by the customer:
+Two fields on the sales order and forecast tables configure what deliveries
+are being accepted by the customer:
 
 .. image:: _images/policies-sales-orders.png
    :alt: Sales order table for demand policies.

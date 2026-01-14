@@ -92,16 +92,14 @@ function shouldShowWidget(widgetName) {
     'operationproblems': () => store.operationplan.problems !== undefined || store.operationplan.info !== undefined,
     'operationresources': () => store.operationplan.loadplans !== undefined,
     'operationflowplans': () => store.operationplan.flowplans !== undefined,
-    'operationdemandpegging': () => store.operationplan !== undefined && store.operationplan.id !== -1,
+    'operationdemandpegging': () => store.operationplan.pegging_demand !== undefined,
     'networkstatus': () => store.operationplan.network !== undefined,
     'downstreamoperationplans': () => store.operationplan.downstreamoperationplans !== undefined,
     'upstreamoperationplans': () => store.operationplan.upstreamoperationplans !== undefined,
     'supplyinformation': () => store.operationplan !== undefined,
   };
 
-  // Special handling for certain widgets
   return widgetName === 'operationplan' ||
-      widgetName === 'operationdemandpegging' ||
       (widgetConditions[widgetName] && widgetConditions[widgetName]());
 }
 
@@ -118,7 +116,10 @@ onMounted(() => {
   const handleSingleSelectEvent = (e) => {
     const detail = e?.detail || {};
     if (detail.execute === 'displayInfo') {
-      if (detail.selectedRows.length > 1) {
+      if (detail.selectedRows.length === 0) {
+        store.undo()
+      }
+      else if (detail.selectedRows.length > 1) {
         handleAllSelectEvent(e);
       } else if (detail.selectedRows.length < 2){
         store.loadOperationplans([detail.reference], detail.status, detail.selectedRows);
@@ -131,6 +132,10 @@ onMounted(() => {
 
   const handleAllSelectEvent = (e) => {
     const detail = e?.detail || {};
+    if (detail.status === false) {
+      store.undo();
+      return;
+    }
     const ids = detail.selectedRows || [];
     const selectiondata = [];
     try {

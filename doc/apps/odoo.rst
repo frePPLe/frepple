@@ -10,7 +10,7 @@ for full details on this integration.
 
 .. Important::
 
-   This app requires configuring steps on both odoo and frepple side
+   This app requires configuring steps on both Odoo and frepple side
 
    Be sure to follow all steps on `this page <../erp-integration/odoo-connector/installation-and-configuration.html>`_
    after installation of this app.

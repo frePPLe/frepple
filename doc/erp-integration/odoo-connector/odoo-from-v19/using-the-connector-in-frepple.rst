@@ -3,28 +3,27 @@ Using the connector in frePPLe
 
 .. important::
 
-   This page applies to odoo v19.
+   This page applies to Odoo 19.
    See `this page <../odoo-before-v19/using-the-connector-in-frepple.html>`_ for earlier versions.
 
-The odoo integration brings new functionality to the user interface.
+The Odoo integration brings new functionality to the user interface.
+
+* | **Plan generation options to "import Odoo data" and "send recommendations to odoo"**
+  | These options are used to assure the frepple is based on the latest Odoo data, and
+    will publish a list of recommendations to odoo.
+
+  .. image:: _images/plan_generation.png
+   :alt: Plan generation
 
 * | **Task "Import data from Odoo"**
   | The execute screen has an *import data from odoo* command that
-    allows to import the Odoo data in frePPLe database and then generate a plan.
+    allows to import the Odoo data in frePPLe database.
 
   .. image:: _images/odoo_import.png
    :alt: Import data from odoo
 
-  | The connector distinguishes different modes to retrieve data from Odoo. This
-    allows us to schedule the interfacing of larger and/or slowly changing data
-    volumes (eg sales order history over the last few years as required for the
-    forecast calculation) from the extraction of data elements that need to be
-    retrieved whenever the plan is generated (eg open sales orders, current
-    inventory).
-  | Using the argument odoo_read_1 or odoo_read_2 specific the requested data
-    extraction mode. By default all data elements are extracted in mode 1.
-    It requires customization of the Odoo addon to define for which
-    data elements you want to use mode 2.
+  | We no longer recommend using this task. Instead, you use the "import Odoo data"
+    checkbox in the plan generation task to achieve the same result.
 
 * | **Task "Pull all demand history from Odoo"**
   | The execute screen has a *pull all demand history from odoo* command that
@@ -40,12 +39,14 @@ The odoo integration brings new functionality to the user interface.
   .. image:: _images/odoo_pull_so_history.png
    :alt: Pull all demand history from Odoo
 
-
 * | **Task "Export data to Odoo"**
 
-  | The plan exported to odoo is a subset of the plan which passes
+  | The plan exported to Odoo is a subset of the plan which passes
     certain filter conditions. The remaining part of the plan can
     only be exported manually from frePPLe to Odoo: see below.
+
+  | We no longer recommend using this task. Instead, you use the "send recommendations to odoo"
+    checkbox in the plan generation task to publish back planning results to odoo.
 
   .. image:: _images/odoo_export.png
    :alt: Export data to odoo
@@ -67,7 +68,11 @@ The odoo integration brings new functionality to the user interface.
     individual purchase, manufacturing and distribution
     orders.**
 
-  | Users select a number of proposed tranactions, and click the "export to odoo"
+  | We no longer recommend this option. Sending the recommendations as part of
+    the plan generation provides an odoo-native user workflow to work with recommended
+    purchase orders and manufacturing orders.
+
+  | Users select a number of proposed transactions, and click the "export to odoo"
     button. This immediately creates the matching transaction in odoo.
 
   | A typical usage is to automatically export the proposed purchase for

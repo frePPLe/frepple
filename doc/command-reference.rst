@@ -624,8 +624,8 @@ tables for users, permissions, task log, etc...).
 Import data from odoo
 ---------------------
 
-This command is only active when the odoo integration app is installed. It brings
-all planning relevant data from odoo into the frePPLe database.
+This command is only active when the Odoo integration app is installed. It brings
+all planning relevant data from Odoo into the frePPLe database.
 
 See :doc:`/erp-integration/odoo-connector/using-the-connector-in-frepple`
 
@@ -653,7 +653,7 @@ See :doc:`/erp-integration/odoo-connector/using-the-connector-in-frepple`
 Pull demand history from odoo
 -----------------------------
 
-This command is only active when the odoo integration app is installed. It pulls all
+This command is only active when the Odoo integration app is installed. It pulls all
 the demand history in Odoo into the frePPLe database using the XML RPC API of Odoo.
 
 See :doc:`/erp-integration/odoo-connector/using-the-connector-in-frepple`
@@ -682,7 +682,7 @@ See :doc:`/erp-integration/odoo-connector/using-the-connector-in-frepple`
 Export data to odoo
 -------------------
 
-This command is only active when the odoo integration app is installed. It
+This command is only active when the Odoo integration app is installed. It
 publishes part of the plan from frepple into odoo.
 
 See :doc:`/erp-integration/odoo-connector/using-the-connector-in-frepple`

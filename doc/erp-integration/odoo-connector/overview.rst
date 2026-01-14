@@ -6,7 +6,7 @@ Before going into the technical details, you might want to take one step back an
 and why advanced planning is required for complex environments.
 
 .. image:: _images/odoo_planning_complexity.png
-   :alt: Import data from odoo
+   :alt: Import data from Odoo
    :scale: 50%
 
 
@@ -28,11 +28,11 @@ The connector provides the following functionality:
     logging in a second application.
 
 * | Easy to customize.
-  | Implemented as an odoo addon module, it is easy to customize the connector
+  | Implemented as an Odoo addon module, it is easy to customize the connector
     to your needs.
 
 * | The integration has been developed and tested with the latest versions of Odoo.
-  | We support the last 3 versions of Odoo connectors (currently the v15, v16, v17 and v18).
+  | We support the last 3 versions of Odoo connectors (currently the 17 and 18 and 19).
 
 Below are the slides presented during the Odoo user conference in October 2022 where we describe how frePPLe
 solves Odoo customer business cases.

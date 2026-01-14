@@ -1,8 +1,8 @@
-===============
-Odoo before v19
-===============
+==============
+Odoo before 19
+==============
 
-This documentation applies to the odoo-frepple integration for the odoo versions 16, 17 and 18.
+This documentation applies to the Odoo-frepple integration for the Odoo versions 16, 17 and 18.
 
 .. toctree::
    :maxdepth: 1

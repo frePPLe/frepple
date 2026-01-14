@@ -24,21 +24,21 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Odoo integration
 
-- | Added support for odoo 19.
+- | Added support for Odoo 19.
   | The connector is still experimental and for testing purposes only.
-  | With odoo 19 the connector has been refactored into a real next-generation.
+  | With Odoo 19 the connector has been refactored into a real next-generation.
 
-- | It's now possible to run the odoo import as part of the plan generation.
+- | It's now possible to run the Odoo import as part of the plan generation.
   | In practice, you'll always run the plan right after the import, isn't it?
     So, we made it now a checkbox in the plan generation options.
 
-- | A link back to odoo is now displayed in the upper right corner.
+- | A link back to Odoo is now displayed in the upper right corner.
 
 - | When exporting manufacturing orders from frePPLe to Odoo, the connectors are
     now sending the consumed and produced items. This can be useful in situations
     where alternate materials exist.
 
-- | User accessing frepple from the odoo user interface could end up in
+- | User accessing frepple from the Odoo user interface could end up in
     scenarios to which they don't have access. We now redirect them automatically to
     a scenario to which they have access.
 
@@ -93,9 +93,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 16, 17, 18: Exclude scrap and return locations when calculating the on hand when
     expiration dates are enabled on the Odoo side.
 
-- | 17, 18: Updated logic for synchronizing odoo users to frepple in multi-company setups.
-  | Earlier releases activated frepple access only in the default company of an odoo user.
-  | Now we activate the frepple access in all allowed companies of an odoo user.
+- | 17, 18: Updated logic for synchronizing Odoo users to frepple in multi-company setups.
+  | Earlier releases activated frepple access only in the default company of an Odoo user.
+  | Now we activate the frepple access in all allowed companies of an Odoo user.
 
 - | 17, 18: Bug fix for the due date quoting module in multi-company setups.
   | The quote message was sent to the frepple instance of the user's default company.
@@ -146,7 +146,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | 17, 18: Remove the truncation of very long item or operation names.
 
-- | 17, 18: New field "quantity multiple" on the odoo BOM.
+- | 17, 18: New field "quantity multiple" on the Odoo BOM.
   | Manufacturing orders for that BOM will have a quantity that is multiple of this value.
 
 9.10.0 (2025-08-29)
@@ -199,7 +199,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     updates are not supported yet.
 
 - | 17, 18: Quoting service bug fix.
-  | Quotes created by the quoting servers weren't erased after a new odoo import.  These records stayed
+  | Quotes created by the quoting servers weren't erased after a new Odoo import.  These records stayed
     around in the frepple database.
   | This applies to Enterprise and Cloud Editions only.
 
@@ -246,16 +246,16 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 .. rubric:: Odoo integration
 
 - | Added connector development mode.
-  | When this option is enabled, odoo reads the inbound and outbound files directly
+  | When this option is enabled, Odoo reads the inbound and outbound files directly
     from github.
   | This speeds up your developments, since it skips redeploying the connectors after
-    each commit on your odoo connector github repository.
+    each commit on your Odoo connector github repository.
 
 - | Improved the readability of the Odoo connector log in debug mode.
   | When the parameter odoo.loglevel is different from 0, the log file of the import displays the
     raw data received from odoo.
 
-- | Bug Fix: confirmed MOs exported to Odoo with the odoo export command had
+- | Bug Fix: confirmed MOs exported to Odoo with the Odoo export command had
     their status incorrectly changed to approved.
 
 9.8.0 (2025-05-16)
@@ -298,17 +298,17 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | 17, 18: Improved support for kit (aka phantom) bill of materials.
 
-- | 17, 18: New field "post operation time" on odoo BOM operations.
+- | 17, 18: New field "post operation time" on Odoo BOM operations.
   | This field maps into the post-operation time field in frePPLe, which defines a time
     gap frepple tries to leave between the operations.
 
-- | 17, 18: New field "workcenter quantity" on odoo BOM operations.
+- | 17, 18: New field "workcenter quantity" on Odoo BOM operations.
   | With this field you specify multiple work centers are used in parallel on the operation.
 
-- | 17, 18: New field "constrained" on odoo work centers.
+- | 17, 18: New field "constrained" on Odoo work centers.
   | The fields specifies whether that work center should be planned in finite capacity mode or not.
 
-- | All odoo versions: The material consumption of work orders wasn't correctly
+- | All Odoo versions: The material consumption of work orders wasn't correctly
     processed if they weren't consumed on the first step.
 
 .. rubric:: Installation
@@ -356,7 +356,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     considered. Frepple incorrectly planned for the full quantity rather than only the
     quantity that isn't reserved yet.
 
-- | Exports to odoo are now possible from the resource detail and inventory detail screens
+- | Exports to Odoo are now possible from the resource detail and inventory detail screens
     is now possible.
 
 .. rubric:: Production planning
@@ -464,10 +464,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Odoo integration
 
-- | 18: Keep the language selection of a user identical in odoo and frepple.
+- | 18: Keep the language selection of a user identical in Odoo and frepple.
   | Displaying both user interfaces in a different language isn't very nice, isn't it?
 
-- | 18: Synchronize products tags from odoo into the item category in frepple.
+- | 18: Synchronize products tags from Odoo into the item category in frepple.
 
 .. rubric:: Integration
 
@@ -489,24 +489,24 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Odoo integration
 
-- | 18: Initial support for odoo 18. This is still experimental and for testing purposes only.
+- | 18: Initial support for Odoo 18. This is still experimental and for testing purposes only.
 
-- | 17, 18: Improvements for multi-warehouse odoo configurations.
+- | 17, 18: Improvements for multi-warehouse Odoo configurations.
 
-- | 17, 18: Ability to export a remark from frepple into odoo on
+- | 17, 18: Ability to export a remark from frepple into Odoo on
     manufacturing orders, distribution orders or purchase orders.
   | The remark shows up in the "source" field in odoo.
 
-- | 17, 18: Blanket order is now populated in odoo when exporting purchase orders from frePPLe.
+- | 17, 18: Blanket order is now populated in Odoo when exporting purchase orders from frePPLe.
 
-- | 17, 18: Various bug fixes to support configurations where odoo schedules work orders,
+- | 17, 18: Various bug fixes to support configurations where Odoo schedules work orders,
     while frepple only plans at the manufacturing order level.
 
-- | The odoo database, company, user can now be configured in the djangosettings configuration
+- | The Odoo database, company, user can now be configured in the djangosettings configuration
     file.
   | This improves security and also eases configuration and deployments.
 
-- | Extra robustness to deal with control characters in the odoo data.
+- | Extra robustness to deal with control characters in the Odoo data.
   | Amazing what strange data one finds in an ERP system...
 
 .. rubric:: Production planning
@@ -615,18 +615,18 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Odoo integration
 
-- | 17: Added support for multi-database odoo configurations.
+- | 17: Added support for multi-database Odoo configurations.
 
 - | 15, 16, 17: Subcontracting should respect the purchasing minimum quantity
     rather than the bill of material minimum quantity.
 
-- | 17: Performance improvements of about 20% to 30% when importing odoo data into frepple.
+- | 17: Performance improvements of about 20% to 30% when importing Odoo data into frepple.
 
-- | 17: Partial support for multi-warehouse odoo configurations.
+- | 17: Partial support for multi-warehouse Odoo configurations.
   | In previous connector version we handled it through customization.
   | Now we map the stock routes into item distributions and place the BOMs in
     the correct manufacturing locations.
-  | The current mapping does NOT handle all possible odoo configurations yet. It may work
+  | The current mapping does NOT handle all possible Odoo configurations yet. It may work
     for your setup or may not.
 
 9.1.0 (2024-07-05)
@@ -747,7 +747,7 @@ and we couldn't stay behind :-)
 
 .. rubric:: Odoo integration
 
-- | 15, 16, 17: The shipping policy on odoo sales orders is now mapped.
+- | 15, 16, 17: The shipping policy on Odoo sales orders is now mapped.
   | The connector already had it for a while as an inactive option that was commented out.
     The default behavior is changing now.
 
@@ -763,11 +763,11 @@ and we couldn't stay behind :-)
 
 - | 16, 17: Correct handling of locked purchase orders.
 
-- | 16, 17: New mapping for odoo reorder points, which uses the new buffer.maximum field.
+- | 16, 17: New mapping for Odoo reorder points, which uses the new buffer.maximum field.
 
 - | The "odoo export" command now sends back information on the planned delivery date of every
     open sales order.
-  | This can be valuable feedback in odoo to the sales team.
+  | This can be valuable feedback in Odoo to the sales team.
 
 .. rubric:: System administration
 
@@ -857,10 +857,10 @@ and we couldn't stay behind :-)
 .. rubric:: Odoo integration
 
 - | Switching work orders to alternate work centers in a pool is now fully supported.
-  | Existing assigment were already sent from odoo to frePPLe. When reassiging
+  | Existing assigment were already sent from Odoo to frePPLe. When reassiging
     in frePPLe the new assignment is communicated back to odoo.
 
-- | 15, 16, 17: The mapping of calendars now includes the odoo identifier.
+- | 15, 16, 17: The mapping of calendars now includes the Odoo identifier.
   | This is needed to guarantuee uniquess of the calendars.
 
 - | 15, 16, 17: The frePPLe item name is now mapped to the Odoo product internal reference,
@@ -1054,7 +1054,7 @@ and we couldn't stay behind :-)
 
 - | 15 & 16: The reference of bill of materials is now mapped into the operation description field.
 
-- | 12: Backport of some recent developments to this older odoo version: working hour calendars,
+- | 12: Backport of some recent developments to this older Odoo version: working hour calendars,
     resource calendars, manufacturing orders material reservations.
 
 .. rubric:: Documentation
@@ -1142,7 +1142,7 @@ and we couldn't stay behind :-)
 .. rubric:: Odoo integration
 
 - | The approval button to export a proposed purchase order, distribution order
-    or manufacturing order from frePPLe to odoo is now a button rather than a
+    or manufacturing order from frePPLe to Odoo is now a button rather than a
     dropdown. Saves you a click.
 
 - | 15 & 16: Handle the corner case where a purchase order has an ordering
@@ -1153,7 +1153,7 @@ and we couldn't stay behind :-)
 
 - | 15 & 16: Addition of parameter odoo.delta that prevents the connectors from reading
     the entire sales order history. The usage of this parameter should reduce
-    the duration of the odoo import task for companies with a signifiant number of sales
+    the duration of the Odoo import task for companies with a signifiant number of sales
     order records.
 
 - | Bug fix: Reordering rules on zero-stock buffers were incorrectly ignored.
@@ -1228,7 +1228,7 @@ and ask us any questions you may have.
 
 - | 15 & 16: Usability improvements to skill maintenance.
 
-- | Bug fix: Item supplier records were not synced from odoo if the source field
+- | Bug fix: Item supplier records were not synced from Odoo if the source field
     of the supplier is edited.
 
 7.3.0 (2023/04/14)
@@ -1270,7 +1270,7 @@ and ask us any questions you may have.
 
 .. rubric:: Odoo integration
 
-- | 15 & 16: The progress of work orders is now synchronised between odoo and frepple.
+- | 15 & 16: The progress of work orders is now synchronised between Odoo and frepple.
   | Earlier releases only interfaced at the level of the manufacturing orders, and completely
     left the detail of the progress to odoo. However, when the duration and complexity of
     manufacturing orders is increasing, the more detailed level of the work orders
@@ -1279,7 +1279,7 @@ and ask us any questions you may have.
     correctly capture the details of its progress. Odoo allows manual editing (of
     materials, work centers, durations, dependencies, ...) at the manufacturing order level.
     Only with a dedicated operation can we assure that frepple correctly represents the
-    odoo data.
+    Odoo data.
 
 - | 15 & 16: On manufacturing orders the connector now picks up the quantity actually
     produced instead of only the quantity.
@@ -1341,7 +1341,7 @@ and ask us any questions you may have.
 
 .. rubric:: Odoo integration
 
-- | The frepple connector is now available from the odoo app store.
+- | The frepple connector is now available from the Odoo app store.
   | You can downloaded and install from https://apps.odoo.com/apps/modules/16.0/frepple/
   | Hint: Feel free to give us some stars and leave some feedback there :-)
 
@@ -1366,7 +1366,7 @@ and ask us any questions you may have.
   | We put the earliest order start and end date of the exported frepple records in these
     fields. This makes it easier to quickly evaluate the urgency of the RFQs in the list.
 
-- | 14 & 15 & 16: Bug fix. When a material was manually deleted from an odoo manufacturing order,
+- | 14 & 15 & 16: Bug fix. When a material was manually deleted from an Odoo manufacturing order,
     frepple was still using it.
 
 - | 14 & 15 & 16: Bug fix. Workcenter skills were not synchronised.
@@ -1463,7 +1463,7 @@ and ask us any questions you may have.
     divided instead of multiplied by uom conversion factor and vice versa.
 
 - | 14 & 15 & 16: When planners manually approve purchase and manufacturing orders, the
-    odoo transaction is mark with that planner as responsible.
+    Odoo transaction is mark with that planner as responsible.
   | In previous releases, the generic account running the frepple connector was used
     instead. Which isn't very useful or handy...
 
@@ -1482,16 +1482,16 @@ and ask us any questions you may have.
     of odoo. Frepple only plans with the unreserved materials.
   | When this flag is false, frepple plans with the full material availability
     regardless of any reserved quantities in odoo. The implicit assumption is that
-    any reservations will be unreserved in odoo when needed.
+    any reservations will be unreserved in Odoo when needed.
 
 - | v14 & 15 & 16: Access rights to frepple are now configurable per user in odoo.
     The connector will also automatically synchronize the list of authorised users
-    between odoo and frepple.
+    between Odoo and frepple.
 
 - | v14 & 15 & 16: Performance optimization by allowing gzip compression of the web
-    traffic between the odoo and frepple servers.
+    traffic between the Odoo and frepple servers.
   | This will only give an improvement when you have a proxy server in front of
-    odoo that does this compression.
+    Odoo that does this compression.
 
 .. rubric:: System administration
 
@@ -1562,7 +1562,7 @@ and ask us any questions you may have.
     e.g. when the bill of material is changed, or when the user manually edited the
     materials on the manufacturing order.
 
-- | v14: Bug fix for mapping odoo reorderpoints to frepple.
+- | v14: Bug fix for mapping Odoo reorderpoints to frepple.
 
 6.24.0 (2022/07/29)
 ===================
@@ -1597,9 +1597,9 @@ and ask us any questions you may have.
 - | v14: Bug fix, subcontractor lead time was interpreted by frepple in
     working hours rather than calendar days.
 
-- | v14: Bug fix for mapping odoo reorderpoints to frepple.
+- | v14: Bug fix for mapping Odoo reorderpoints to frepple.
 
-- | v14: Bug fixes for multi-company odoo configurations.
+- | v14: Bug fixes for multi-company Odoo configurations.
 
 - | v14: Bug fix, manufacturing orders in the status "to close" were
     incorrectly being ignored.
@@ -1636,14 +1636,14 @@ and ask us any questions you may have.
 
 - | A new parameter odoo.allowSharedOwnership allows users to edit records
     read from odoo.
-  | By default records read from odoo aren't editable in frepple. You loose your
+  | By default records read from Odoo aren't editable in frepple. You loose your
     edits with every run of the connector.
-  | If this flag is set to true you can override the odoo data if the source field
+  | If this flag is set to true you can override the Odoo data if the source field
     of the overridden records is also edited.
 
 - | V12: Performance improvement for reading large amounts of product templates.
   | We noticed that the runtime increases exponentially as the number of product
-    templates goes up. Newer odoo releases don't show the same inefficiency.
+    templates goes up. Newer Odoo releases don't show the same inefficiency.
 
 .. rubric:: System administration
 
@@ -1684,9 +1684,9 @@ and ask us any questions you may have.
 
 .. rubric:: Odoo integration
 
-- | V14: Connector is improved to handle deep odoo location hierarchies.
+- | V14: Connector is improved to handle deep Odoo location hierarchies.
 
-- | V14: Extra links from the odoo menus to the frepple screens.
+- | V14: Extra links from the Odoo menus to the frepple screens.
 
 - | V14: Bug fix. Sales orders with an individual as customer were not picked up.
     Only orders from a company did go through.
@@ -1696,10 +1696,10 @@ and ask us any questions you may have.
     instance. This is useful to debug data and connector issues. By default this option
     is not active for security reasons.
 
-- | V14: Ability to limit the data to a single odoo company only.
+- | V14: Ability to limit the data to a single Odoo company only.
   | By default, the connector extracts data for all allowed companies the connector user
     has access to into a single frepple dataset.
-  | With the new option you can separate the frepple datasets per odoo company.
+  | With the new option you can separate the frepple datasets per Odoo company.
 
 .. rubric:: User interface
 
@@ -1858,10 +1858,10 @@ and ask us any questions you may have.
     first routing step. With the extra mapping we can now consume some components
     at other steps.
 
-- | V14: Changed naming convention for operations in frePPLe. With the odoo id at the end, the
+- | V14: Changed naming convention for operations in frePPLe. With the Odoo id at the end, the
     new name "item @ location id" is more readable than "id item @ location".
 
-- | V14: Changed naming convention for customers in frePPLe. With the odoo id at the end, the
+- | V14: Changed naming convention for customers in frePPLe. With the Odoo id at the end, the
     new name "name id" is more readable than "id name".
 
 .. rubric:: Supported operating systems
@@ -1883,7 +1883,7 @@ and ask us any questions you may have.
 
 - | V14: Handling of multi-timezone situations when importing and exporting manufacturing orders,
     purchase orders and distribution orders.
-  | When the frepple and odoo servers reside in different timezone things get mixed up in
+  | When the frepple and Odoo servers reside in different timezone things get mixed up in
     previous releases.
 
 6.18.0 (2021/11/5)
@@ -2392,8 +2392,8 @@ and ask us any questions you may have.
 
 .. rubric:: Odoo integration
 
-- The odoo addon is moved to its own github repository: https://github.com/frePPLe/odoo
-  We hope this makes it easier for odoo implementation partners to install the addon and
+- The Odoo addon is moved to its own github repository: https://github.com/frePPLe/odoo
+  We hope this makes it easier for Odoo implementation partners to install the addon and
   contribute enhancements.
 
 .. rubric:: Windows installer
@@ -2552,11 +2552,11 @@ and ask us any questions you may have.
 
 .. rubric:: Odoo connector
 
-- Adding support for odoo v13.
+- Adding support for Odoo v13.
 
 - v12 and v13: Export of multiple POs for the same supplier will create a single PO in odoo
   with multiple lines. If the exported POs also contain multiple lines for the same product,
-  then a single PO Line is created in odoo with the sum of the quantities and the minimum
+  then a single PO Line is created in Odoo with the sum of the quantities and the minimum
   planned date of all exported records for that product.
 
 6.2.0 (2020/01/17)

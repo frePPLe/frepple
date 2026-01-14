@@ -152,17 +152,16 @@ Odoo integration
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+
 | **Maintain all data in odoo**           | All master data and transactions are managed by Odoo.                      | - Doc :doc:`erp-integration/odoo-connector/overview`                          |
-|                                         | The frepple connector is an odoo addon that synchronizes all planning      |                                                                               |
+|                                         | The frepple connector is an Odoo addon that synchronizes all planning      |                                                                               |
 |                                         | to frePPLe.                                                                |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Publish manufacturing orders          | Publish planning results back to odoo.                                     | - Doc :doc:`erp-integration/odoo-connector/overview`                          |
 | and purchase orders**                   | With a simple click the planners can create manufacturing orders and       |                                                                               |
 |                                         | purchase orders in odoo.                                                   |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Integrated user interface**           | The frepple user interface is integrated in odoo. Users log in odoo and    | - `Live demo odoo 14 <https://odoo14.frepple.com/>`__                         |
-|                                         | can navigate from odoo to all frepple screens.                             | - `Live demo odoo 15 <https://odoo15.frepple.com/>`__                         |
-|                                         |                                                                            | - `Live demo odoo 16 <https://odoo16.frepple.com/>`__                         |
-|                                         |                                                                            | - `Live demo odoo 17 <https://odoo17.frepple.com/>`__                         |
+| **Integrated user interface**           | The frepple user interface is integrated in odoo. Users log in Odoo and    | - `Live demo Odoo 17 <https://odoo17.frepple.com/>`__                         |
+|                                         | can navigate from Odoo to all frepple screens.                             | - `Live demo Odoo 18 <https://odoo18.frepple.com/>`__                         |
+|                                         |                                                                            | - `Live demo Odoo 19 <https://odoo19.frepple.com/>`__                         |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 
 |

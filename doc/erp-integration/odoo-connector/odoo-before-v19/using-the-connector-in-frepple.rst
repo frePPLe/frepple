@@ -3,10 +3,10 @@ Using the connector in frePPLe
 
 .. important::
 
-   This page applies to odoo v16, v17and v18.
-   See `this page <../odoo-from-v19/using-the-connector-in-frepple.html>`_ for v19.
+   This page applies to Odoo 16, 17 and 18.
+   See `this page <../odoo-from-v19/using-the-connector-in-frepple.html>`_ for 19.
 
-The odoo integration brings new functionality to the user interface.
+The Odoo integration brings new functionality to the user interface.
 
 * | **Task "Import data from Odoo"**
   | The execute screen has an *import data from odoo* command that
@@ -43,7 +43,7 @@ The odoo integration brings new functionality to the user interface.
 
 * | **Task "Export data to Odoo"**
 
-  | The plan exported to odoo is a subset of the plan which passes
+  | The plan exported to Odoo is a subset of the plan which passes
     certain filter conditions. The remaining part of the plan can
     only be exported manually from frePPLe to Odoo: see below.
 

@@ -3,12 +3,12 @@ Installation and configuration
 
 .. important::
 
-   This page applies to odoo v19.
+   This page applies to Odoo 19.
    See `this page <../odoo-before-v19/installation-and-configuration.html>`_ for earlier versions.
 
 The connector has 2 components:
 
-* | An odoo addon:
+* | An Odoo addon:
   | All mapping logic between the Odoo and frePPLe data models is in this
     module. The results are accessible on the URL http://odoo_host/frepple/xml
     from which the planning engine will read data in its native XML data format
@@ -29,10 +29,10 @@ The section below describes the installation and configuration of these.
     | The addon is also available from the `odoo app store <https://apps.odoo.com/apps/modules/16.0/frepple/>`_
 
   * | **Configure the Odoo server**
-    | If your odoo instance is running in multi-database mode you need to
+    | If your Odoo instance is running in multi-database mode you need to
       add the frePPLe addon as a server wide module. This is achieved by updating an
       option in the Odoo configuration file odoo.conf: "server_wide_modules = web,frepple"
-    | You can skip this step for single-database odoo configurations.
+    | You can skip this step for single-database Odoo configurations.
 
   * | **Configure the Odoo addon**
     | The module adds some configuration on the company. You can edit these
@@ -64,34 +64,34 @@ The section below describes the installation and configuration of these.
         reservations of odoo. Frepple only plans with the unreserved materials.
       | When this flag is false, frepple plans with the full material availability
         regardless of any reserved quantities in odoo. The implicit assumption is
-        that any reservations will be unreserved in odoo when needed.
+        that any reservations will be unreserved in Odoo when needed.
 
-    .. image:: ../_images/odoo-settings.png
+    .. image:: _images/odoo-settings.png
        :alt: Configuring the Odoo add-on.
 
   * | **Review time zone setting**
-    | The time zone preference of the odoo user utilized by the connector is important.
+    | The time zone preference of the Odoo user utilized by the connector is important.
       Odoo sends all dates to frepple converted to this timezone, and frepple returns dates
       in this timezone.
 
   * | You can run a **quick test** of the above by opening a web browser to the URL
       http\://<host>:<port>/frepple/xml?database=<db>&language=<language>&company=<company>.
-      The parameters db and company determine which odoo database to connect to.
+      The parameters db and company determine which Odoo database to connect to.
     | After providing the login details, an XML document will be displayed with
       the data that frePPLe will read from Odoo.
-    | Note that sometimes, for large odoo dataset, the above link can return an error because of a timeout
+    | Note that sometimes, for large Odoo dataset, the above link can return an error because of a timeout
       issue. If that is happening, you need to update parameters *limit_time_cpu* and *limit_time_real*
-      in the odoo configuration file and increase their value.
+      in the Odoo configuration file and increase their value.
 
   * | **Odoo tuning**
     | The frepple connector is an atypical addon that may require some adjustments on your
-      odoo configuration. It can run for a few minutes and return a large output to the client.
+      Odoo configuration. It can run for a few minutes and return a large output to the client.
     | To accomodate this traffic, you'll need to review:
 
-    * | Assure the limit_time_cpu and limit_time_real are configured correctly in your odoo config file.
-        If the threshold is too short, odoo will abort the connector before its done.
+    * | Assure the limit_time_cpu and limit_time_real are configured correctly in your Odoo config file.
+        If the threshold is too short, Odoo will abort the connector before its done.
 
-    * | When using a nginx proxy in before your odoo server, assure that the max_response_body_size
+    * | When using a nginx proxy in before your Odoo server, assure that the max_response_body_size
         allows big datasets to be returned to the client.
 
     * | We strongly recommend using a separate PostgreSQL database cluster for frepple. This is 1)
@@ -99,10 +99,10 @@ The section below describes the installation and configuration of these.
         to be running fully independent.
 
   * | **Connector development mode**
-    | To speed up development of the odoo connector, you can configure the connector to read
+    | To speed up development of the Odoo connector, you can configure the connector to read
       the inbound and outbound files directly from github.
     | This speeds up your developments, since it skips redeploying the connectors after
-      each commit on your odoo connector github repository.
+      each commit on your Odoo connector github repository.
 
     | To enable this option, you need to uncomment and edit two sections in the frepplexml.py file.
 
@@ -111,7 +111,7 @@ The section below describes the installation and configuration of these.
 
     | You should enable this option with github repositories you can trust 100%. Using it with
       repositories you don't control is a big security risk, since it allows anyone to run arbitrary
-      code on your odoo server.
+      code on your Odoo server.
 
 * **Configuring the connector - frePPLe side**
 
@@ -123,19 +123,6 @@ The section below describes the installation and configuration of these.
 
     * | Update the DATABASE section such that the SECRET_WEBTOKEN_KEY setting of each
         scenario is equal to the web token key configured in Odoo.
-
-    * | Make sure the setting MIDDLEWARE doesn't include the
-        "django.middleware.clickjacking.XFrameOptionsMiddleware" class.
-
-    * | If frePPLe and Odoo are installed on 2 different domains (example: https://myfrepple.frepple.com
-        and https://myodoo.odoo.com), then following lines need to be added:
-
-        .. code-block:: Python
-
-           CONTENT_SECURITY_POLICY = "frame-ancestors 'self' domain-of-your-odoo-server;"
-           X_FRAME_OPTIONS = None
-           SESSION_COOKIE_SAMESITE = "none"
-           CSRF_COOKIE_SAMESITE = "none"               # NOTE: "none", not None
 
   * **Configure parameters**
 
@@ -150,13 +137,13 @@ The section below describes the installation and configuration of these.
 
     * | odoo.db:
       | Odoo database to connect to.
-      | The parameter can be left blank for odoo setups with a single database.
+      | The parameter can be left blank for Odoo setups with a single database.
 
     * | odoo.user:
       | Odoo user for the connection.
 
     * | odoo.password:
-      | Password for the connection (or even better, an API key of the odoo user).
+      | Password for the connection (or even better, an API key of the Odoo user).
 
     * | odoo.company:
       | Company name for which to create purchase quotation and
@@ -168,14 +155,14 @@ The section below describes the installation and configuration of these.
       | The default value is en_US.
 
     * | odoo.singlecompany:
-      | When false (the default) the connector downloads all allowed companies for the odoo integration
+      | When false (the default) the connector downloads all allowed companies for the Odoo integration
         user.
       | When true the connector only downloads the data of the configured odoo.company.
 
     * | odoo.allowSharedOwnership:
-      | By default records read from odoo aren't editable in frepple. You loose your
+      | By default records read from Odoo aren't editable in frepple. You loose your
         edits with every run of the connector.
-      | If this flag is set to true you can override the odoo data if the source field
+      | If this flag is set to true you can override the Odoo data if the source field
         of the overridden records is also edited.
 
     * | odoo.delta:
@@ -185,7 +172,7 @@ The section below describes the installation and configuration of these.
         sales orders into frePPLe.
       | The value of parameter odoo.delta can then be reduced to only import sales orders with a last modified
         date within the last odoo.delta days.
-      | The usage of this parameter can significantly shorten the duration of the import odoo workflow for
+      | The usage of this parameter can significantly shorten the duration of the import Odoo workflow for
         companies with a significant number of sales order records.
 
 * **Configuring access rights**
@@ -198,11 +185,11 @@ The section below describes the installation and configuration of these.
     | The access is not granted by default.
     | You'll need to switch to developer mode to edit this access right.
 
-  * | All odoo users with the "frepple user" permission are automatically synchronised
+  * | All Odoo users with the "frepple user" permission are automatically synchronised
       with frepple.
-    | Of course, you can add additional users in frepple beyond these odoo users.
+    | Of course, you can add additional users in frepple beyond these Odoo users.
 
-  * | These odoo users are added to the "odoo users" group in frepple. The members of
+  * | These Odoo users are added to the "odoo users" group in frepple. The members of
       that group get complete permissions in frepple.
     | You can change the default permissions of the group.
     | You can also grant additional priviliges to a user beyond the privileges of the group.

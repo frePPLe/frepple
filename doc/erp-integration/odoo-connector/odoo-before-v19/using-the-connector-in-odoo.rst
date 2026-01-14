@@ -3,8 +3,8 @@ Addition of menus in Odoo
 
 .. important::
 
-   This page applies to odoo v16, v17and v18.
-   See `this page <../odoo-from-v19/using-the-connector-in-odoo.html>`_ for v19.
+   This page applies to Odoo 16, 17 and 18.
+   See `this page <../odoo-from-v19/using-the-connector-in-odoo.html>`_ for 19.
 
 After installation, users find the following additional features in odoo:
 
@@ -49,8 +49,8 @@ Addition of extra views and fields in Odoo
 
 .. important::
 
-   This page applies to odoo v16, v17and v18.
-   See `this page <../odoo-from-v19/using-the-connector-in-odoo.html#addition-of-extra-views-and-fields-in-odoo>`_ for v19.
+   This page applies to Odoo 16, 17and 18.
+   See `this page <../odoo-from-v19/using-the-connector-in-odoo.html#addition-of-extra-views-and-fields-in-odoo>`_ for 19.
 
 * | Because some manufacturing concepts do not exist in odoo, the manufacturing app
     has been enhanced to include the following objects.
@@ -90,8 +90,8 @@ Quoting capabilities
 
 .. important::
 
-   This page applies to odoo v16, v17and v18.
-   See `this page <../odoo-from-v19/using-the-connector-in-odoo.html#quoting-capabilities>`_ for v19.
+   This page applies to Odoo 16, 17and 18.
+   See `this page <../odoo-from-v19/using-the-connector-in-odoo.html#quoting-capabilities>`_ for 19.
 
 Starting from Odoo 17, the connectors also allow the planner to use the frePPLe quoting
 module from Odoo.

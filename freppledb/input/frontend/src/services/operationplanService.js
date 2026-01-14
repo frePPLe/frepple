@@ -13,7 +13,6 @@ import { api } from './api.js';
 
 export const operationplanService = {
   async getOperationplanDetails(params) {
-    console.log(21, params);
     return api.get('operationplan/?reference=' + params.reference, {});
   },
 
@@ -22,7 +21,6 @@ export const operationplanService = {
   },
 
   async savePreferences(preferencesData) {
-    console.log(26, preferencesData);
     return api.post('settings/', preferencesData );
   }
 };

@@ -12,6 +12,7 @@
 import { computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from "@/stores/operationplansStore.js";
+import {numberFormat} from "@common/utils.js";
 
 const { t: ttt } = useI18n({
   useScope: 'global',
@@ -36,14 +37,6 @@ const networkData = computed(() => {
 const hasNetworkData = computed(() => {
   return networkData.value.length > 0;
 });
-
-// Format number using grid formatter
-function formatNumber(value) {
-  if (typeof window.grid !== 'undefined' && window.grid.formatNumber) {
-    return window.grid.formatNumber(value);
-  }
-  return value?.toLocaleString() || '0';
-}
 
 // HTML encode for security
 function htmlEncode(str) {
@@ -176,11 +169,11 @@ onMounted(() => {
           </td>
 
           <!-- Onhand column -->
-          <td>{{ formatNumber(network[3]) }}</td>
+          <td>{{ numberFormat(network[3]) }}</td>
 
           <!-- Purchase orders column -->
           <td>
-            {{ formatNumber(network[4]) }}
+            {{ numberFormat(network[4]) }}
             <a
                 v-if="network[4] > 0"
                 :href="buildPurchaseOrderUrl(network[0], network[2])"
@@ -192,7 +185,7 @@ onMounted(() => {
 
           <!-- Distribution orders column -->
           <td>
-            {{ formatNumber(network[5]) }}
+            {{ numberFormat(network[5]) }}
             <a
                 v-if="network[5] != 0"
                 :href="buildDistributionOrderUrl(network[0], network[2])"
@@ -204,7 +197,7 @@ onMounted(() => {
 
           <!-- Manufacturing orders column -->
           <td>
-            {{ formatNumber(network[6]) }}
+            {{ numberFormat(network[6]) }}
             <a
                 v-if="network[6] > 0"
                 :href="buildManufacturingOrderUrl(network[0], network[2])"
@@ -216,7 +209,7 @@ onMounted(() => {
 
           <!-- Overdue sales orders column -->
           <td>
-            {{ formatNumber(network[7]) }}
+            {{ numberFormat(network[7]) }}
             <a
                 v-if="network[7] > 0"
                 :href="buildOverdueSalesOrderUrl(network[0], network[2], network[9])"
@@ -228,7 +221,7 @@ onMounted(() => {
 
           <!-- Sales orders column -->
           <td>
-            {{ formatNumber(network[8]) }}
+            {{ numberFormat(network[8]) }}
             <a
                 v-if="network[8] > 0"
                 :href="buildSalesOrderUrl(network[0], network[2], network[9])"

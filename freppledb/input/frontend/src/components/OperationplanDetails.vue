@@ -117,7 +117,6 @@ onMounted(() => {
 
   const handleSingleSelectEvent = (e) => {
     const detail = e?.detail || {};
-    console.log(115, detail);
     if (detail.execute === 'displayInfo') {
       if (detail.selectedRows.length > 1) {
         handleAllSelectEvent(e);
@@ -126,14 +125,12 @@ onMounted(() => {
       }
     }
     else {
-      console.log('[OperationplanDetails] singleSelect: row data not found for', detail.name);
       store.undo();
     }
   };
 
   const handleAllSelectEvent = (e) => {
     const detail = e?.detail || {};
-    console.log(126, detail);
     const ids = detail.selectedRows || [];
     const selectiondata = [];
     try {
@@ -144,13 +141,12 @@ onMounted(() => {
       const colModel = window.jQuery('#grid').jqGrid ? window.jQuery('#grid').jqGrid('getGridParam', 'colModel') : undefined;
       store.processAggregatedInfo(selectiondata, colModel);
     } catch (err) {
-      console.error(141, err);
+      console.error("Error in All Select Event Handler", err);
     }
   };
 
   const handleProcessAggregatedInfo = (e) => {
     const detail = e?.detail || {};
-    console.log(143, detail);
     if (detail.selectiondata) {
       store.processAggregatedInfo(detail.selectiondata, detail.colModel);
     }
@@ -164,7 +160,6 @@ onMounted(() => {
   const handleDisplayOnPanel = (e) => {
     // This event may carry either { rowid, cellname, value } or the row object directly (legacy calls)
     const detail = e?.detail;
-    console.log('[OperationplanDetails] displayonpanel', detail);
     if (!detail) return;
 
     // If detail has rowid, fetch row data
@@ -183,7 +178,6 @@ onMounted(() => {
 
   const handleUndoEvent = (e) => {
     const detail = e?.detail || {};
-    console.log(178, "undo",detail);
     if (detail.execute === 'undo') {
       store.undo();
     }
@@ -228,28 +222,30 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="row">
+  <div class="row" >
 
     <div
         v-for="col in preferences.widgets"
         :key="col.name"
         class="widget-list col-12"
-        :class="'col-lg-' + col['cols'][0].width"
+        :class="'col-lg-' + (col.cols?.[0].width || '6')"
         :data-widget="col.name"
-        :data-widget-width="col.cols?.[0]?.width"
+        :data-widget-width="(col.cols?.[0].width || '6')"
     >
-      <div v-for="(widget, index) in col.cols?.[0]?.widgets || []" :key="index">
-        <div
-            v-if="shouldShowWidget(widget[0])"
-            class="card widget mb-3"
-            :data-widget="widget[0]"
-        >
-          <component
-              :is="getWidgetComponent(widget[0])"
-              :operationplan="store.operationplan"
-              :is-loading="store.loading"
-              :error="store.error"
-          />
+      <div v-if="col.cols?.[0]">
+        <div v-for="(widget, index) in col.cols[0].widgets || []" :key="index">
+          <div
+              v-if="shouldShowWidget(widget[0])"
+              class="card widget mb-3"
+              :data-widget="widget[0]"
+          >
+            <component
+                :is="getWidgetComponent(widget[0])"
+                :operationplan="store.operationplan"
+                :is-loading="store.loading"
+                :error="store.error"
+            />
+          </div>
         </div>
       </div>
     </div>

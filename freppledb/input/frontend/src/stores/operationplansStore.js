@@ -222,18 +222,15 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     async loadOperationplans(references = [], selectedFlag, selectedRows) {
-      console.log(120, toRaw(references), selectedFlag, toRaw(selectedRows));
       this.selectedOperationplans.length = 0
-      this.selectedOperationplans.push(...selectedRows);
+      this.selectedOperationplans.push(...toRaw(selectedRows));
       if (references.length === 0) {
         this.operationplan = new Operationplan();
       } else if (selectedFlag === false) {
         if (this.selectedOperationplans.length === 1) {
-          console.log(126, this.selectedOperationplans[0]);
           await this.loadOperationplans(selectedRows, true, selectedRows);
         }
       } else {
-        console.log(134, 'loadOperationplans: ', references, toRaw(this.selectedOperationplans));
         this.operationplan = new Operationplan();
         this.loading = true;
         this.error.showError = false;
@@ -247,11 +244,8 @@ export const useOperationplansStore = defineStore('operationplans', {
           // Update the store with the fetched data
           const operationplan = toRaw(response.responseData.value)[0];
           if (this.selectedOperationplans.length === 1) {
-            console.log(135, operationplan, parseInt(operationplanReference));
-
             this.operationplan = new Operationplan(operationplan);
           } else {
-            console.log("152 aggregated info: ");
             this.operationplan = new Operationplan();
           }
         } catch (error) {
@@ -390,12 +384,7 @@ export const useOperationplansStore = defineStore('operationplans', {
           this.preferences.height = this.dataRowHeight;
         }
         this.preferences.widgets = {};
-
-        // Call your backend service here if needed
-        // const result = await operationplanService.savePreferences(this.preferences);
         await operationplanService.savePreferences({ "freppledb.input.views.manufacturing.ManufacturingOrderList": this.preferences });
-
-        console.log('Preferences saved:', this.preferences);
       } catch (error) {
         this.setError({
           title: 'Error',
@@ -406,7 +395,6 @@ export const useOperationplansStore = defineStore('operationplans', {
       } finally {
         this.loading = false;
       }
-      console.log('414 Preferences saved:', this.preferences);
     },
 
     async save(data) {
@@ -414,10 +402,9 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     undo() {
-      console.log(318, 'undo: ');
       this.operationplan = new Operationplan();
       this.editForm = {setQuantity: null, setStart: "", setEnd: "", setRemark: ""};
-      this.selectedOperationplans = [];
+      this.selectedOperationplans.length = 0;
     },
 
     // Error handling
@@ -449,7 +436,6 @@ export const useOperationplansStore = defineStore('operationplans', {
     // Process aggregated info for multiple selections
     processAggregatedInfo(operationplans, colModel) {
       this.selectedOperationplans = operationplans;
-      console.log(260, 'processAggregatedInfo: ', operationplans, colModel);
 
       const aggColModel = [];
       const aggregatedopplan = {colmodel: {}};
@@ -468,7 +454,6 @@ export const useOperationplansStore = defineStore('operationplans', {
       });
 
       const dateKeys  = new Set(["enddate", "startdate"]);
-
       operationplans.forEach((opplan) => {
         aggColModel.forEach((field) => {
           if (field[2] === 'sum') {
@@ -510,7 +495,6 @@ export const useOperationplansStore = defineStore('operationplans', {
             } else if (field[3] === 'date') {
               temp = new moment(opplan[field[1]], datetimeformat);
               if (temp._d !== 'Invalid Date') {
-                console.log(415, temp, aggregatedopplan[field[1]]);
                 if (aggregatedopplan[field[1]] === null || temp.isAfter(aggregatedopplan[field[1]]))
                   aggregatedopplan[field[1]] = temp;
               }
@@ -538,8 +522,7 @@ export const useOperationplansStore = defineStore('operationplans', {
               }
             } else if (field[3] === 'date') {
               dateKeys.add(field[1]);
-              temp = new moment(opplan[field[1]], datetimeformat);
-              console.log(442, temp);
+              const temp = new moment(opplan[field[1]], datetimeformat);
               if (temp._d !== 'Invalid Date') {
                 if (aggregatedopplan[field[1]] === null) {
                   aggregatedopplan[field[1]] = temp;
@@ -553,30 +536,24 @@ export const useOperationplansStore = defineStore('operationplans', {
 
         });
       });
-      console.log(460, 'dateKeys: ', dateKeys, aggregatedopplan.colmodel);
+
       dateKeys.forEach((key) => {
-        aggregatedopplan[key] = aggregatedopplan.colmodel[key].format('YYYY-MM-DD[T]HH:mm:ss');
+        aggregatedopplan[key] = aggregatedopplan[key].format('YYYY-MM-DD[T]HH:mm:ss');
       })
-      // dateKeys.forEach((key) => {
-      //   aggregatedopplan[key] = aggregatedopplan[key].format('YYYY-MM-DD[T]HH:mm:ss');
-      // })
 
-      aggregatedopplan.start = aggregatedopplan.startdate.format('YYYY-MM-DD[T]HH:mm:ss');
-      aggregatedopplan.end = aggregatedopplan.enddate.format('YYYY-MM-DD[T]HH:mm:ss');
-
-      console.log(262, 'aggColModel: ', aggregatedopplan);
-      // this.operationplan = new Operationplan(aggregatedopplan, aggColModel)
+      // aggregatedopplan.start = aggregatedopplan.startdate.format('YYYY-MM-DD[T]HH:mm:ss');
+      // aggregatedopplan.end = aggregatedopplan.enddate.format('YYYY-MM-DD[T]HH:mm:ss');
       this.operationplan = new Operationplan(aggregatedopplan);
     },
 
     setEditFormValues(field, value) {
-      console.log(466, 'setEditFormValues: ', field, value);
+      console.log(550, 'setEditFormValues: ', field, value);
       window.displayongrid(this.operationplan.reference, field, value);
       this.editForm[field] = value;
     },
 
     applyOperationplanChanges() {
-      console.log(470, 'applyOperationplanChanges');
+      console.log(556, 'applyOperationplanChanges');
     }
   }
 })

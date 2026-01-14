@@ -12,6 +12,7 @@
 import { computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from "@/stores/operationplansStore.js";
+import {numberFormat} from "@common/utils.js";
 
 const { t: ttt } = useI18n({
   useScope: 'global',
@@ -40,14 +41,6 @@ const loadplans = computed(() => {
 const hasLoadplans = computed(() => {
   return loadplans.value.length > 0;
 });
-
-// Format number using grid formatter
-function formatNumber(value) {
-  if (typeof window.grid !== 'undefined' && window.grid.formatNumber) {
-    return window.grid.formatNumber(value);
-  }
-  return value?.toLocaleString() || '0';
-}
 
 // HTML encode for security
 function htmlEncode(str) {
@@ -243,7 +236,7 @@ onMounted(() => {
           </td>
 
           <!-- Quantity column -->
-          <td>{{ formatNumber(loadplan.quantity) }}</td>
+          <td>{{ numberFormat(loadplan.quantity) }}</td>
         </tr>
         </tbody>
       </table>

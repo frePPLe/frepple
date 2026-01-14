@@ -14,6 +14,7 @@ import { useI18n } from 'vue-i18n';
 import {useOperationplansStore} from "@/stores/operationplansStore.js";
 import { isNumeric, debouncedInputHandler } from "@common/../../static/utils.js";
 import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js';
+import {numberFormat} from "../../../../common/frontend/src/utils.js";
 useBootstrapTooltips();
 
 const { t: ttt } = useI18n({
@@ -54,8 +55,6 @@ const validationErrors = ref({
 });
 
 const editable = true;
-// eslint-disable-next-line no-undef
-const formatNumber = window.grid.formatNumber;
 // eslint-disable-next-line no-undef
 const actions = window.actions;
 
@@ -149,7 +148,7 @@ function changeEdit() {
     <div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_operationplanpanel" aria-expanded="false" aria-controls="widget_operationplanpanel">
       <h5 class="card-title text-capitalize me-auto">
         <span v-if="isMultipleOrNone"  class="">{{ ttt('selected') }}&nbsp;{{ store.selectedOperationplans.length }}</span>
-        <span v-if="store.operationplan.type"  class="pl3 text-capitalize">{{ opptype[store.operationplan.type] }}</span>
+        <span v-if="store.operationplan.type && !isMultipleOrNone"  class="pl3 text-capitalize">{{ opptype[store.operationplan.type] }}</span>
       </h5>
       <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
     </div>
@@ -255,8 +254,8 @@ function changeEdit() {
             <b class="text-capitalize" v-if="store.operationplan.type == 'MO' || isMultipleOrNone">{{ttt('start date')}}</b>
             <b class="text-capitalize" v-if="store.operationplan.type == 'PO'">{{ttt('ordering date')}}</b>
             <b class="text-capitalize" v-if="store.operationplan.type == 'DO'">{{ttt('shipping date')}}</b>
-            <b class="text-capitalize" v-if="store.operationplan.colmodel?.startdate">{{ttt(store.operationplan.colmodel.startdate.label)}}</b>
-            <b class="text-capitalize" v-if="store.operationplan.colmodel?.operationplan__startdate">{{ttt(store.operationplan.colmodel.operationplan__startdate.label)}}</b>&nbsp;
+<!--            <b class="text-capitalize" v-if="store.operationplan.colmodel?.operationplan__startdate">{{ttt(store.operationplan.colmodel.operationplan__startdate.label)}}</b>&nbsp;-->
+<!--            <b class="text-capitalize" v-if="store.operationplan.colmodel?.startdate">{{ttt(store.operationplan.colmodel.startdate.label)}}</b>-->
             <small v-if="store.operationplan.colmodel?.startdate || isMultipleOrNone">({{ ttt(store.operationplan.colmodel?.startdate.type || 'min') }})</small>
             <small v-if="store.operationplan.colmodel?.operationplan__startdate">({{ ttt(store.operationplan.colmodel?.operationplan__startdate.type) }})</small>
           </td>
@@ -283,8 +282,8 @@ function changeEdit() {
             <b class="text-capitalize" v-if="store.operationplan.type == 'MO' || isMultipleOrNone">{{ttt('end date')}}</b>
             <b class="text-capitalize" v-if="store.operationplan.type == 'PO'">{{ttt('receipt date')}}</b>
             <b class="text-capitalize" v-if="store.operationplan.type == 'DO'">{{ttt('receipt date')}}</b>
-            <b class="text-capitalize" v-if="store.operationplan.colmodel?.enddate">{{ttt(store.operationplan.colmodel.enddate.label)}}</b>
-            <b class="text-capitalize" v-if="store.operationplan.colmodel?.operationplan__enddate">{{ttt(store.operationplan.colmodel.operationplan__enddate.label)}}</b>&nbsp;
+<!--            <b class="text-capitalize" v-if="store.operationplan.colmodel?.enddate">{{ttt(store.operationplan.colmodel.enddate.label)}}</b>-->
+<!--            <b class="text-capitalize" v-if="store.operationplan.colmodel?.operationplan__enddate">{{ttt(store.operationplan.colmodel.operationplan__enddate.label)}}</b>&nbsp;-->
             <small v-if="store.operationplan.colmodel?.enddate || isMultipleOrNone">({{ ttt(store.operationplan.colmodel?.enddate.type || 'max') }})</small>
             <small v-if="store.operationplan.colmodel?.operationplan__enddate">({{ ttt(store.operationplan.colmodel?.operationplan__enddate.type) }})</small>
           </td>
@@ -306,7 +305,7 @@ function changeEdit() {
             <small v-if="isMultipleOrNone && store.operationplan.colmodel && store.operationplan.colmodel['operationplan__quantity']">({{ ttt(store.operationplan.colmodel.operationplan__quantity.type) }})</small>
           </td>
           <td>
-            <span v-if="isMultipleOrNone">{{ formatNumber(store.operationplan.operationplan__quantity || store.operationplan.quantity || 0) }}</span>
+            <span v-if="isMultipleOrNone">{{ numberFormat(store.operationplan.operationplan__quantity || store.operationplan.quantity || 0) }}</span>
             <input v-if="!isMultipleOrNone && !store.operationplan.hasOwnProperty('store.operationplan__quantity')" class="form-control" type="number" v-model="store.operationplan.quantity" @input="setEditValue('quantity', $event.target.value)" :readonly="!editable">
             <input v-if="!isMultipleOrNone && store.operationplan.hasOwnProperty('store.operationplan__quantity')" class="form-control" type="number" v-model="store.operationplan.operationplan__quantity" @input="setEditValue('quantity', $event.target.value)" :readonly="!editable">
           </td>
@@ -315,7 +314,7 @@ function changeEdit() {
           <td><b class="text-capitalize">{{ttt(value.label)}}</b>&nbsp;
             <small>({{ ttt(value.type) }} - {{key}})</small>
           </td>
-          <td v-if="['number', 'color', 'currency', 'currencyWithBlanks'].includes(value['formatter'])">{{formatNumber(store.operationplan[key])}}</td>
+          <td v-if="['number', 'color', 'currency', 'currencyWithBlanks'].includes(value['formatter'])">{{numberFormat(store.operationplan[key])}}</td>
           <td v-if="value['formatter'] === 'date'">{{store.operationplan[key]}}</td>
           <td v-if="!['date', 'number', 'color', 'currency', 'currencyWithBlanks'].includes(value['formatter'])">{{store.operationplan[key]}}</td>
         </tr>

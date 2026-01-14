@@ -12,6 +12,10 @@
 import { computed } from "vue";
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
+import { numberFormat } from "@common/utils.js";
+
+const urlPrefix = computed(() => window.url_prefix || '');
+const adminEscape = (str) => window.admin_escape(str);
 
 const { t: ttt } = useI18n({
   useScope: 'global',
@@ -21,12 +25,12 @@ const { t: ttt } = useI18n({
 const store = useOperationplansStore();
 
 const hasFlowplans = computed(() => {
-  const op = store.operationplan.value;
+  const op = store.operationplan;
   return op && op.flowplans && Array.isArray(op.flowplans) && op.flowplans.length > 0;
 });
 
 const flowplans = computed(() => {
-  return store.operationplan.value?.flowplans || [];
+  return store.operationplan.flowplans || [];
 });
 
 </script>
@@ -69,7 +73,7 @@ const flowplans = computed(() => {
         <tr
             v-for="(flowplan, index) in flowplans"
             :key="index"
-            :class="{ 'border-top': isFirstProducer(index) }"
+            :class="(index===0 && flowplan.quantity > 0) ? 'border-top' : ''"
         >
           <!-- Item column - with or without alternates -->
           <td v-if="!flowplan.alternates" style="white-space: nowrap">
@@ -126,10 +130,10 @@ const flowplans = computed(() => {
           <td>{{ flowplan.buffer?.location }}</td>
 
           <!-- Quantity column -->
-          <td>{{ formatNumber(flowplan.quantity) }}</td>
+          <td>{{ numberFormat(flowplan.quantity) }}</td>
 
           <!-- Onhand column -->
-          <td>{{ formatNumber(flowplan.onhand) }}</td>
+          <td>{{ numberFormat(flowplan.onhand) }}</td>
 
           <!-- Date column -->
 <!--          <td style="white-space: nowrap">{{ formatDatetime(flowplan.date) }}</td>-->

@@ -327,7 +327,6 @@ onSelectRow: function(rowid, status) {
   const reference = rowData.operationplan__reference ? rowData.operationplan__reference : rowid;
 
   const references = $("#grid").jqGrid('getGridParam', 'selarrrow').filter(x => x.id !== 'cb').map(x => x.operationplan__reference ? x.operationplan__reference : x);
-  console.log(330, references, rowid, rowData);
   const event = new CustomEvent("singleSelect", {
     detail: {
       execute: 'displayInfo',

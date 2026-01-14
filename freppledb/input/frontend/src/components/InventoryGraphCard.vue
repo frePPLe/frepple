@@ -12,8 +12,9 @@
 import { computed, onMounted, watch, ref, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from "@/stores/operationplansStore.js";
+import { numberFormat } from "@common/utils.js";
 
-const { t: ttt, n: formatNumber } = useI18n({
+const { t: ttt } = useI18n({
   useScope: 'global',
   inheritLocale: true
 });
@@ -244,15 +245,15 @@ function drawGraph() {
               const tiptext = `
             <div style="text-align:center; font-weight:bold">${d.bucket}</div>
             <table>
-              <tr><td class="text-capitalize pe-3">${ttt('start inventory')}</td><td class="text-end">${formatNumber(d.startinv)}</td></tr>
-              <tr><td class="text-capitalize pe-3">${ttt('produced total')}</td><td class="text-end">+&nbsp;${formatNumber(d.produced_total)}</td></tr>
-              <tr><td class="text-capitalize pe-3 px-3">${ttt('produced proposed')}</td><td class="text-end">${formatNumber(d.produced_proposed)}</td></tr>
-              <tr><td class="text-capitalize pe-3 px-3">${ttt('produced confirmed')}</td><td class="text-end">${formatNumber(d.produced_confirmed)}</td></tr>
-              <tr><td class="text-capitalize pe-3">${ttt('consumed total')}</td><td class="text-end">-&nbsp;${formatNumber(d.consumed_total)}</td></tr>
-              <tr><td class="text-capitalize pe-3 px-3">${ttt('consumed proposed')}</td><td class="text-end">${formatNumber(d.consumed_proposed)}</td></tr>
-              <tr><td class="text-capitalize pe-3 px-3">${ttt('consumed confirmed')}</td><td class="text-end">${formatNumber(d.consumed_confirmed)}</td></tr>
-              <tr><td class="text-capitalize pe-3">${ttt('end inventory')}</td><td class="text-end">=&nbsp;${formatNumber(d.endinv)}</td></tr>
-              <tr><td class="text-capitalize pe-3">${ttt('safety stock')}</td><td class="text-end">${formatNumber(d.safetystock)}</td></tr>
+              <tr><td class="text-capitalize pe-3">${ttt('start inventory')}</td><td class="text-end">${numberFormat(d.startinv)}</td></tr>
+              <tr><td class="text-capitalize pe-3">${ttt('produced total')}</td><td class="text-end">+&nbsp;${numberFormat(d.produced_total)}</td></tr>
+              <tr><td class="text-capitalize pe-3 px-3">${ttt('produced proposed')}</td><td class="text-end">${numberFormat(d.produced_proposed)}</td></tr>
+              <tr><td class="text-capitalize pe-3 px-3">${ttt('produced confirmed')}</td><td class="text-end">${numberFormat(d.produced_confirmed)}</td></tr>
+              <tr><td class="text-capitalize pe-3">${ttt('consumed total')}</td><td class="text-end">-&nbsp;${numberFormat(d.consumed_total)}</td></tr>
+              <tr><td class="text-capitalize pe-3 px-3">${ttt('consumed proposed')}</td><td class="text-end">${numberFormat(d.consumed_proposed)}</td></tr>
+              <tr><td class="text-capitalize pe-3 px-3">${ttt('consumed confirmed')}</td><td class="text-end">${numberFormat(d.consumed_confirmed)}</td></tr>
+              <tr><td class="text-capitalize pe-3">${ttt('end inventory')}</td><td class="text-end">=&nbsp;${numberFormat(d.endinv)}</td></tr>
+              <tr><td class="text-capitalize pe-3">${ttt('safety stock')}</td><td class="text-end">${numberFormat(d.safetystock)}</td></tr>
             </table>
           `;
               if (window.graph?.showTooltip) {

@@ -24,8 +24,8 @@ const store = useOperationplansStore();
 const currentOperationplan = store.operationplan;
 
 const filteredDownstream = computed(() => {
-  if (!store.operationplan?.value?.downstreamoperationplans) return [];
-  return store.operationplan.value.downstreamoperationplans.filter(peg => peg[11] != 2);
+  if (!store.operationplan["downstreamoperationplans"]) return [];
+  return store.operationplan.downstreamoperationplans.filter(peg => peg[11] != 2);
 });
 
 </script>
@@ -53,8 +53,8 @@ const filteredDownstream = computed(() => {
       <tr v-if="!currentOperationplan.downstreamoperationplans"><td colspan="8">{{ ttt('no downstream information') }}</td></tr>
       <tr v-else v-for="(peg, key) in filteredDownstream" :key="key">
         <td>
-          <span v-if="peg[11] == 0" class="fa fa-fw fa-caret-right" data-ng-click='expandOrCollapse($index)'></span>
-          <span v-if="peg[11] == 1" class="fa fa-fw fa-caret-down" data-ng-click='expandOrCollapse($index)'></span>
+          <span v-if="peg[11] == 0" class="fa fa-fw fa-caret-right" @click="store.expandOrCollapse(key, 'downstream')"></span>
+          <span v-if="peg[11] == 1" class="fa fa-fw fa-caret-down" @click="store.expandOrCollapse(key, 'downstream')"></span>
           <span v-if="peg[11] == 3" class="fa fa-fw fa-circle-thin"></span>
           &nbsp;{{peg[0]}}
         </td>

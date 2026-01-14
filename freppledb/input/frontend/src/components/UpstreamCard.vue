@@ -24,8 +24,8 @@ const store = useOperationplansStore();
 const currentOperationplan = store.operationplan;
 
 const filteredUpstream = computed(() => {
-  if (!store.operationplan.value?.upstreamoperationplans) return [];
-  return store.operationplan.value?.upstreamoperationplans.filter(peg => peg[11] != 2);
+  if (!store.operationplan["upstreamoperationplans"]) return [];
+  return store.operationplan.upstreamoperationplans.filter(peg => peg[11] !== 2);
 });
 
 </script>
@@ -50,10 +50,10 @@ const filteredUpstream = computed(() => {
     </tr></thead>
       <tbody>
       <tr v-if="!currentOperationplan.upstreamoperationplans"><td colspan="8">{{ ttt('no upstream information') }}</td></tr>
-      <tr v-else v-for="(peg, key) in filteredUpstream" :key="key">
+      <tr v-for="(peg, key) in filteredUpstream" :key="key">
         <td>
-          <span v-if="peg[11] == 0" class="fa fa-fw fa-caret-right" @click='expandOrCollapse($index)'></span>
-          <span v-if="peg[11] == 1" class="fa fa-fw fa-caret-down" @click='expandOrCollapse($index)'></span>
+          <span v-if="peg[11] == 0" class="fa fa-fw fa-caret-right" @click="store.expandOrCollapse(key, 'upstream')"></span>
+          <span v-if="peg[11] == 1" class="fa fa-fw fa-caret-down" @click="store.expandOrCollapse(key, 'upstream')"></span>
           <span v-if="peg[11] == 3" class="fa fa-fw fa-circle-thin"></span>
           &nbsp;{{peg[0]}}</td>
 

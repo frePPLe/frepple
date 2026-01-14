@@ -126,7 +126,6 @@ export const useOperationplansStore = defineStore('operationplans', {
                 ]
               }
             ],
-            "$$hashKey": "object:22"
           },
           {
             "name": "column2",
@@ -173,7 +172,6 @@ export const useOperationplansStore = defineStore('operationplans', {
                 ]
               }
             ],
-            "$$hashKey": "object:23"
           },
           {
             "name": "column3",
@@ -202,7 +200,6 @@ export const useOperationplansStore = defineStore('operationplans', {
                 ]
               }
             ],
-            "$$hashKey": "object:24"
           }
         ]
       };
@@ -544,6 +541,36 @@ export const useOperationplansStore = defineStore('operationplans', {
       // aggregatedopplan.start = aggregatedopplan.startdate.format('YYYY-MM-DD[T]HH:mm:ss');
       // aggregatedopplan.end = aggregatedopplan.enddate.format('YYYY-MM-DD[T]HH:mm:ss');
       this.operationplan = new Operationplan(aggregatedopplan);
+    },
+
+    expandOrCollapse(i, type) {
+      // 0: collapsed, 1: expanded, 2: hidden, 3: leaf node
+      const data = (type === 'downstream') ? this.operationplan.downstreamoperationplans : (type === 'upstream') ? this.operationplan.upstreamoperationplans : [];
+      let j = i + 1;
+      const myLevel = data[i][0];
+      if (data[i][11] == 0)
+        data[i][11] = 1;
+      else
+        data[i][11] = 0;
+      while (j < data.length) {
+        if (data[j][0] <= myLevel)
+          break;
+        else if (data[j][0] > myLevel + 1
+          || data[i][11] == 0)
+          data[j][11] = 2;
+        else if (j == data.length - 1 ||
+          data[j][0] >= data[j + 1][0]) {
+          if (data[j][12] != null
+            && data[j][12] == data[j + 1][12])
+            data[j][11] = 1;
+          else
+            data[j][11] = 3;
+        }
+        else if (data[j][0] == myLevel + 1
+          && data[i][11] == 1)
+          data[j][11] = 0;
+        ++j;
+      }
     },
 
     setEditFormValues(field, value) {

@@ -106,31 +106,31 @@ const numberFormat = (nData, maxdecimals = 6) => {
     nData *= 1;
     const bNegative = (nData < 0);
     const absData = Math.abs(nData);
-    let nOutput = 0.0;
+    let sOutput = 0.0;
 
     if (absData > 100000 || maxdecimals <= 0)
-      nOutput = String(parseFloat(nData.toFixed()));
+      sOutput = String(parseFloat(nData.toFixed()));
     else if (absData > 10000 || maxdecimals <= 1)
-      nOutput = String(parseFloat(nData.toFixed(1)));
+      sOutput = String(parseFloat(nData.toFixed(1)));
     else if (absData > 1000 || maxdecimals <= 2)
-      nOutput = String(parseFloat(nData.toFixed(2)));
+      sOutput = String(parseFloat(nData.toFixed(2)));
     else if (absData > 100 || maxdecimals <= 3)
-      nOutput = String(parseFloat(nData.toFixed(3)));
+      sOutput = String(parseFloat(nData.toFixed(3)));
     else if (absData > 10 || maxdecimals <= 4)
-      nOutput = String(parseFloat(nData.toFixed(4)));
+      sOutput = String(parseFloat(nData.toFixed(4)));
     else if (absData > 1 || maxdecimals <= 5)
-      nOutput = String(parseFloat(nData.toFixed(5)));
+      sOutput = String(parseFloat(nData.toFixed(5)));
     else
-      nOutput = String(parseFloat(nData.toFixed(maxdecimals)));
+      sOutput = String(parseFloat(nData.toFixed(maxdecimals)));
 
-    let sOutput = (bNegative ? "-" : "") + nOutput;
+    sOutput = (bNegative ? "-" : "") + sOutput;
 
     const sDecimalSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator") || ".";
     if (sDecimalSeparator !== ".")
       // Replace the "."
       sOutput = sOutput.replace(".", sDecimalSeparator);
     const sThousandsSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.thousandsSeparator") || ",";
-    if (sThousandsSeparator) {
+    if (sThousandsSeparator && absData >= 1000) {
       let nDotIndex = sOutput.lastIndexOf(sDecimalSeparator);
       nDotIndex = (nDotIndex > -1) ? nDotIndex : sOutput.length;
       // we cut the part after the point for integer numbers
@@ -146,7 +146,7 @@ const numberFormat = (nData, maxdecimals = 6) => {
       }
       sOutput = sNewOutput;
     }
-    return sOutput;
+    return sOutput.replace('--', '-');
   }
   return nData?.toLocaleString() || '0';
 }

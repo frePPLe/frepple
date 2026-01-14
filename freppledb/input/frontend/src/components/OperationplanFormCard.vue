@@ -256,8 +256,8 @@ function changeEdit() {
             <b class="text-capitalize" v-if="store.operationplan.type == 'DO'">{{ttt('shipping date')}}</b>
 <!--            <b class="text-capitalize" v-if="store.operationplan.colmodel?.operationplan__startdate">{{ttt(store.operationplan.colmodel.operationplan__startdate.label)}}</b>&nbsp;-->
 <!--            <b class="text-capitalize" v-if="store.operationplan.colmodel?.startdate">{{ttt(store.operationplan.colmodel.startdate.label)}}</b>-->
-            <small v-if="store.operationplan.colmodel?.startdate || isMultipleOrNone">({{ ttt(store.operationplan.colmodel?.startdate.type || 'min') }})</small>
-            <small v-if="store.operationplan.colmodel?.operationplan__startdate">({{ ttt(store.operationplan.colmodel?.operationplan__startdate.type) }})</small>
+            <small v-if="store.operationplan.colmodel?.startdate || isMultipleOrNone">&nbsp;({{ ttt(store.operationplan.colmodel?.startdate.type || 'min') }})</small>
+            <small v-if="store.operationplan.colmodel?.operationplan__startdate">&nbsp;({{ ttt(store.operationplan.colmodel?.operationplan__startdate.type) }})</small>
           </td>
           <td>
             <input v-if="isMultipleOrNone && store.operationplan.startdate"
@@ -284,8 +284,8 @@ function changeEdit() {
             <b class="text-capitalize" v-if="store.operationplan.type == 'DO'">{{ttt('receipt date')}}</b>
 <!--            <b class="text-capitalize" v-if="store.operationplan.colmodel?.enddate">{{ttt(store.operationplan.colmodel.enddate.label)}}</b>-->
 <!--            <b class="text-capitalize" v-if="store.operationplan.colmodel?.operationplan__enddate">{{ttt(store.operationplan.colmodel.operationplan__enddate.label)}}</b>&nbsp;-->
-            <small v-if="store.operationplan.colmodel?.enddate || isMultipleOrNone">({{ ttt(store.operationplan.colmodel?.enddate.type || 'max') }})</small>
-            <small v-if="store.operationplan.colmodel?.operationplan__enddate">({{ ttt(store.operationplan.colmodel?.operationplan__enddate.type) }})</small>
+            <small v-if="store.operationplan.colmodel?.enddate || isMultipleOrNone">&nbsp;({{ ttt(store.operationplan.colmodel?.enddate.type || 'max') }})</small>
+            <small v-if="store.operationplan.colmodel?.operationplan__enddate">&nbsp;({{ ttt(store.operationplan.colmodel?.operationplan__enddate.type) }})</small>
           </td>
           <td>
             <input v-if="isMultipleOrNone && store.operationplan.enddate"

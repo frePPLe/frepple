@@ -33,11 +33,12 @@ rect.opplan {
 
 {% block extrahead %}{{block.super}}
 <script src="{{STATIC_URL}}js/d3.min.js"></script>
-<script src="{{STATIC_URL}}js/angular.min.js"></script>
 
 {% if debug_js %}
 <script type="module" src="http://localhost:5173/static/src/main.js"></script>
 <script type="module" src="http://localhost:5173/static/@vite/client"></script>
+{% else %}
+<script src="{{STATIC_URL}}input/main.js"></script>
 {% endif %}
 <script>
 
@@ -188,7 +189,6 @@ rect.opplan {
 
   // // Controller will call this function to pass values to the grid
   function displayongrid(id, columnid, value) {
-    console.log( "displayongrid called with id: " + id + ", columnid: " + columnid + ", value: " + value);
     $("#"+id).removeClass("edited").addClass("edited");
     if (
       columnid === "startdate" ||
@@ -324,10 +324,10 @@ displayGrid({% if preferences.mode != "kanban" and preferences.mode != "gantt" a
 
 onSelectRow: function(rowid, status) {
   const rowData = $("#grid").getRowData(rowid);
-<!--  console.log('++++operationReport.html onSelectRow ', rowid, status, $("#grid").getRowData(rowid));-->
-  const reference = rowData.operationplan__reference || rowid;
+  const reference = rowData.operationplan__reference ? rowData.operationplan__reference : rowid;
 
-  const references = $("#grid").jqGrid('getGridParam', 'selarrrow').filter(x => x.id !== 'cb').map(x => x.operationplan__reference || x.id);
+  const references = $("#grid").jqGrid('getGridParam', 'selarrrow').filter(x => x.id !== 'cb').map(x => x.operationplan__reference ? x.operationplan__reference : x);
+  console.log(330, references, rowid, rowData);
   const event = new CustomEvent("singleSelect", {
     detail: {
       execute: 'displayInfo',
@@ -338,7 +338,6 @@ onSelectRow: function(rowid, status) {
 
   });
   document.getElementById('app').dispatchEvent(event);
-  console.log('operationReport.html singleSelect ', $(this).jqGrid('getGridParam', 'selarrrow'), jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
 },
 onSelectAll: function(aRowids, status){
   const event = new CustomEvent('allSelect', {
@@ -349,7 +348,6 @@ onSelectAll: function(aRowids, status){
     }
   });
   document.getElementById('app').dispatchEvent(event);
-  console.log('allSelect', aRowids, status);
 },
 beforeSaveCell: function(rowid, cellname, value, iRow, iCol) {
   var selection = $(this).jqGrid('getGridParam','selarrrow');
@@ -409,9 +407,6 @@ loadComplete: function(data) {
       if (upload.selectedRows.length === 1) {
         const event = new CustomEvent('displayonpanel', jQuery("#grid").getRowData(upload.selectedRows[0]));
         document.getElementById('app').dispatchEvent(event);
-<!--        angular.element('#controller').scope().displayInfo(-->
-<!--          jQuery("#grid").getRowData(upload.selectedRows[0])-->
-<!--        );-->
       }
       else if (upload.selectedRows.length > 1) {
         var selectiondata = [];
@@ -425,13 +420,7 @@ loadComplete: function(data) {
           }
         });
         document.getElementById('app').dispatchEvent(event);
-        // angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
       }
-<!--      else {-->
-<!--        var s = angular.element('#controller').scope();-->
-<!--        if (s) s.processAggregatedInfo([], jQuery("#grid").jqGrid ('getGridParam', 'colModel'));-->
-<!--      }-->
-<!--      upload.displayonpanel();-->
     },
 {% endblock %}
 
@@ -474,10 +463,4 @@ loadComplete: function(data) {
 {% block after_table %}
 <div id="app"></div>
 <div id="popup" class="modal fade in" role="dialog" style="z-index: 10000"></div>
-{% if not DEBUG_JS %}
-<script src="{{STATIC_URL}}input/main.js"></script>
-<script src="{{STATIC_URL}}js/frepple-common.min.js"></script>
-<script src="{{STATIC_URL}}js/frepple-input.min.js"></script>
-<script src="{{STATIC_URL}}js/frepple-operationplandetail.min.js"></script>
-{% endif %}
 {% endblock %}

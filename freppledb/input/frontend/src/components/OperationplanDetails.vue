@@ -120,7 +120,7 @@ onMounted(() => {
         store.undo()
       }
       else if (detail.selectedRows.length > 1) {
-        handleAllSelectEvent(e);
+        handleAllSelectEvent(e, true);
       } else if (detail.selectedRows.length < 2){
         store.loadOperationplans([detail.reference], detail.status, detail.selectedRows);
       }
@@ -130,9 +130,9 @@ onMounted(() => {
     }
   };
 
-  const handleAllSelectEvent = (e) => {
+  const handleAllSelectEvent = (e, isSingleSelect) => {
     const detail = e?.detail || {};
-    if (detail.status === false) {
+    if (detail.status === false && !isSingleSelect) {
       store.undo();
       return;
     }

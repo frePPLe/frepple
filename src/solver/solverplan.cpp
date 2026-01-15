@@ -551,6 +551,10 @@ void SolverCreate::SolverData::commit() {
         solver->createsBatches(&o, this);
     }
 
+    // Clean the constraint list
+    if (solver->getConstraints())
+      for (auto* dmd : *demands) dmd->getConstraints().clean(dmd);
+
     // Clean the list of demands of this cluster
     demands->clear();
 
@@ -890,9 +894,11 @@ PyObject* SolverCreate::solve(PyObject* self, PyObject* args,
       sol->setCluster(-1);
       sol->setAutocommit(false);
       sol->update_user_exits();
-      if (PyObject_TypeCheck(dem, Demand::metadata->pythonClass))
-        static_cast<Demand*>(dem)->solve(*sol, &(sol->getCommands()));
-      else if (PyObject_TypeCheck(dem, Buffer::metadata->pythonClass)) {
+      if (PyObject_TypeCheck(dem, Demand::metadata->pythonClass)) {
+        auto* d = static_cast<Demand*>(dem);
+        d->solve(*sol, &(sol->getCommands()));
+        d->getConstraints().clean(d);
+      } else if (PyObject_TypeCheck(dem, Buffer::metadata->pythonClass)) {
         auto state = sol->getCommands().state;
         state->q_qty = -1.0;
         state->curBuffer = static_cast<Buffer*>(dem);

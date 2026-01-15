@@ -647,8 +647,6 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
         break;  // TODO
       } else if (policy != Demand::POLICY_INDEPENDENT)
         throw LogicException("Unknown demand policy!");
-
-      salesorder->getConstraints().clean(const_cast<Demand*>(salesorder));
     } while (isGroup);
   } catch (...) {
     // Clean up if any exception happened during the planning of the demand

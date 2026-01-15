@@ -543,10 +543,13 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
   }
 
   // Log the constraint
-  if (data.logConstraints && data.constraints)
-    data.constraints->push(ProblemBeforeCurrent::metadata,
-                           opplan->getOperation(), original.start,
+  if (data.logConstraints && data.constraints) {
+    auto* o = opplan->getOperation();
+    if (o->getOwner() && o->getOwner()->hasType<OperationRouting>())
+      o = o->getOwner();
+    data.constraints->push(ProblemBeforeCurrent::metadata, o, original.start,
                            opplan->getStart());
+  }
 
   // Set the quantity to 0 to make sure the buffer doesn't see any supply
   opplan->setQuantity(0.0);
@@ -1458,16 +1461,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       }
 
       // Constraint tracking
-      if (*altIter != firstAlternate)
-        // Only enabled on first alternate
-        data->logConstraints = false;
-      else {
-        // Forget previous constraints if we are replanning the first alternate
-        // multiple times
-        if (data->constraints) data->constraints->pop(topConstraint);
-        // Potentially keep track of constraints
-        data->logConstraints = originalLogConstraints;
-      }
+      // Later we filter on the constraints that are on the critical path.
+      data->logConstraints = originalLogConstraints;
 
       // Create the top operationplan.
       // Note that both the top- and the sub-operation can have a flow in the
@@ -1528,10 +1523,13 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
                  << "' answers: 0 " << (*altIter)->getEffectiveStart() << '\n';
         data->state->a_qty = 0.0;
         data->state->a_date = (*altIter)->getEffectiveStart();
-        if (data->logConstraints && data->constraints)
-          data->constraints->push(ProblemBeforeCurrent::metadata,
-                                  (*altIter)->getOperation(), origQDate,
+        if (data->logConstraints && data->constraints) {
+          auto* o = (*altIter)->getOperation();
+          if (o->getOwner() && o->getOwner()->hasType<OperationRouting>())
+            o = o->getOwner();
+          data->constraints->push(ProblemBeforeCurrent::metadata, o, origQDate,
                                   (*altIter)->getEffectiveStart());
+        }
       } else if (search == SearchMode::PRIORITY) {
         if (loglevel > 1)
           logger << indentlevel << "Alternate operation '" << oper
@@ -2096,7 +2094,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
   }
 }
 
-PyObject* Solver::createsBatches(PyObject* self, PyObject* ) {
+PyObject* Solver::createsBatches(PyObject* self, PyObject*) {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {

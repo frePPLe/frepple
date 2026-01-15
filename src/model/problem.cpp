@@ -647,7 +647,7 @@ void Problem::List::clean(Demand* d) const {
   auto& constraints = d->getConstraints();
   if (constraints.empty()) return;
 
-  set<Operation*> critical_path;
+  map<Operation*, bool> critical_path;
   Date start_critical_path = Date::infiniteFuture;
   vector<OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
   short lvl_prev = -1;
@@ -670,24 +670,41 @@ void Problem::List::clean(Demand* d) const {
     if (lvl <= lvl_prev && lvl_prev >= 0) {
       bool in_critical_path = false;
       for (auto lvl_cnt = lvl_prev; lvl_cnt >= 0; --lvl_cnt) {
-        if (!in_critical_path)
-          for (auto p = constraints.begin(); p != constraints.end(); ++p) {
+        if (!in_critical_path) {
+          for (auto p = constraints.begin();
+               p != constraints.end() && !in_critical_path; ++p) {
+            Operation* oper = nullptr;
             if (p->hasType<ConstraintDistributionLeadTime,
                            ConstraintManufacturingLeadTime,
-                           ConstraintPurchasingLeadTime>()) {
-              auto* oper = static_cast<Operation*>(p->getOwner());
-              if (oper == opplans[lvl_cnt]->getOperation() &&
-                  p->getStart() < start_critical_path) {
-                // New critical path identified
-                start_critical_path = opplans[lvl_cnt]->getStart();
-                if (!critical_path.empty()) critical_path.clear();
-                in_critical_path = true;
+                           ConstraintPurchasingLeadTime>())
+              oper = static_cast<Operation*>(p->getOwner());
+            else if (p->hasType<ProblemCapacityOverload>())
+              oper = static_cast<ProblemCapacityOverload*>(&*p)->getOperation();
+            else if (p->hasType<ProblemAwaitSupply>()) {
+              if (p->getOwner()->hasType<Operation>())
+                oper = static_cast<Operation*>(p->getOwner());
+              else if (p->getOwner()->hasType<Buffer>()) {
+                auto* b = static_cast<Buffer*>(p->getOwner());
+                if (b->getItem() ==
+                        opplans[lvl_cnt]->getOperation()->getItem() &&
+                    b->getLocation() ==
+                        opplans[lvl_cnt]->getOperation()->getLocation())
+                  oper = opplans[lvl_cnt]->getOperation();
               }
             }
+            if (oper && oper == opplans[lvl_cnt]->getOperation() &&
+                p->getStart() < start_critical_path) {
+              // New critical path identified
+              start_critical_path = opplans[lvl_cnt]->getStart();
+              if (!critical_path.empty()) critical_path.clear();
+              in_critical_path = true;
+            }
           }
+        }
 
         if (in_critical_path)
-          critical_path.insert(opplans[lvl_cnt]->getOperation());
+          critical_path[opplans[lvl_cnt]->getOperation()] =
+              opplans[lvl_cnt]->getProposed();
       }
     }
 
@@ -701,24 +718,40 @@ void Problem::List::clean(Demand* d) const {
   if (lvl_prev > 0) {
     bool in_critical_path = false;
     for (auto lvl_cnt = lvl_prev; lvl_cnt >= 0; --lvl_cnt) {
-      if (!in_critical_path)
-        for (auto p = constraints.begin(); p != constraints.end(); ++p) {
+      if (!in_critical_path) {
+        for (auto p = constraints.begin();
+             p != constraints.end() && !in_critical_path; ++p) {
+          Operation* oper = nullptr;
           if (p->hasType<ConstraintDistributionLeadTime,
                          ConstraintManufacturingLeadTime,
-                         ConstraintPurchasingLeadTime>()) {
-            auto* oper = static_cast<Operation*>(p->getOwner());
-            if (oper == opplans[lvl_cnt]->getOperation() &&
-                p->getStart() < start_critical_path) {
-              // New critical path identified
-              start_critical_path = opplans[lvl_cnt]->getStart();
-              if (!critical_path.empty()) critical_path.clear();
-              in_critical_path = true;
+                         ConstraintPurchasingLeadTime>())
+            oper = static_cast<Operation*>(p->getOwner());
+          else if (p->hasType<ProblemCapacityOverload>())
+            oper = static_cast<ProblemCapacityOverload*>(&*p)->getOperation();
+          else if (p->hasType<ProblemAwaitSupply>()) {
+            if (p->getOwner()->hasType<Operation>())
+              oper = static_cast<Operation*>(p->getOwner());
+            else if (p->getOwner()->hasType<Buffer>()) {
+              auto* b = static_cast<Buffer*>(p->getOwner());
+              if (b->getItem() == opplans[lvl_cnt]->getOperation()->getItem() &&
+                  b->getLocation() ==
+                      opplans[lvl_cnt]->getOperation()->getLocation())
+                oper = opplans[lvl_cnt]->getOperation();
             }
           }
+          if (oper && oper == opplans[lvl_cnt]->getOperation() &&
+              p->getStart() < start_critical_path) {
+            // New critical path identified
+            start_critical_path = opplans[lvl_cnt]->getStart();
+            if (!critical_path.empty()) critical_path.clear();
+            in_critical_path = true;
+          }
         }
+      }
 
       if (in_critical_path)
-        critical_path.insert(opplans[lvl_cnt]->getOperation());
+        critical_path[opplans[lvl_cnt]->getOperation()] =
+            opplans[lvl_cnt]->getProposed();
     }
   }
 
@@ -730,12 +763,13 @@ void Problem::List::clean(Demand* d) const {
                    ConstraintManufacturingLeadTime,
                    ConstraintPurchasingLeadTime>()) {
       auto* oper = static_cast<Operation*>(p->getOwner());
-      if (!critical_path.contains(oper)) keep = false;
+      auto found = critical_path.find(oper);
+      if (found == critical_path.end() || !found->second) keep = false;
     } else if (p->hasType<ProblemCapacityOverload>()) {
       auto res = static_cast<Resource*>(p->getOwner());
       keep = false;
-      for (auto o : critical_path) {
-        for (const auto& ld : o->getLoads()) {
+      for (auto& o : critical_path) {
+        for (const auto& ld : o.first->getLoads()) {
           if (ld.getResource() == res) {
             keep = true;
             break;
@@ -750,7 +784,7 @@ void Problem::List::clean(Demand* d) const {
         if (!critical_path.contains(static_cast<Operation*>(ow))) keep = false;
       }
     }
-    logger << " Constraint " << (keep ? "keep" : "delete") << "  "
+    logger << d << ": Constraint " << (keep ? "keep" : "delete") << "  "
            << p->getDescription() << '\n';
     if (keep)
       ++p;

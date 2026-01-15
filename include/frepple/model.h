@@ -9214,6 +9214,8 @@ class ProblemCapacityOverload : public Problem {
 
   void setOperation(Operation* o) { oper = o; }
 
+  Operation* getOperation() const { return oper; }
+
   ~ProblemCapacityOverload() override { removeProblem(); }
 
   string getEntity() const override { return "capacity"; }

@@ -659,8 +659,8 @@ class OdooSendRecommendations(PlanTask):
             for i in frepple.operations():
                 if (
                     not isinstance(i, frepple.operation_itemsupplier)
-                    or "odoo" not in i.itemsupplier.item.source
-                    or "odoo" not in i.itemsupplier.supplier.source
+                    or "odoo" not in (i.itemsupplier.item.source or "")
+                    or "odoo" not in (i.itemsupplier.supplier.source or "")
                 ):
                     continue
                 for j in i.operationplans:

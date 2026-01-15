@@ -558,9 +558,9 @@ class OdooSendRecommendations(PlanTask):
                 getattr(settings, "ODOO_PASSWORD", {}).get(database, "")
                 or Parameter.getValue("odoo.password", database, "")
             ).strip()
-            encoded = base64.encodebytes(
+            encoded = base64.b64encode(
                 ("%s:%s" % (odoo_user, odoo_password)).encode("utf-8")
-            )[:-1]
+            )
             authentication = "Basic %s" % encoded.decode("ascii")
             if (
                 not metadata["database"]

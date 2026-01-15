@@ -271,9 +271,9 @@ class OdooReadData(PlanTask):
             print(f"Connecting to odoo at {url}")
             try:
                 request = Request(url)
-                encoded = base64.encodebytes(
+                encoded = base64.b64encode(
                     ("%s:%s" % (odoo_user, odoo_password)).encode("utf-8")
-                )[:-1]
+                )
                 request.add_header(
                     "Authorization", "Basic %s" % encoded.decode("ascii")
                 )

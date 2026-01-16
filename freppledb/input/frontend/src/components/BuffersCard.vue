@@ -64,7 +64,7 @@ function updateGrid(currentItem, newItem) {
   const gridElement = document.querySelector("#grid");
   if (!gridElement) return;
 
-  const grid = $(gridElement);
+  const grid = window.jQuery(gridElement);
   const selrow = grid.jqGrid('getGridParam', 'selarrrow');
   const colmodel = grid.jqGrid('getGridParam', 'colModel')?.find(i => i.name === "material");
 

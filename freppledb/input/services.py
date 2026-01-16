@@ -126,6 +126,16 @@ opplanAttributes = [a for a in getAttributes(OperationPlan)]
 
 
 class OperationplanService(AsyncHttpConsumer):
+    msgtemplate = """
+        <!doctype html>
+        <html lang="en">
+            <head>
+            <meta http-equiv="content-type" content="text/html; charset=utf-8">
+            </head>
+            <body>%s</body>
+        </html>
+        """
+
     async def handle(self, body):
         errors = []
         try:

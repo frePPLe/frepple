@@ -152,7 +152,7 @@ function changeEdit() {
       </h5>
       <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
     </div>
-    <div class="card-body collapse show" id="widget_operationplanpanel" @show="store.operationplan.reference || store.operationplan.operationplan__reference">
+    <div v-if="store.selectedOperationplans.length > 0" class="card-body collapse show" id="widget_operationplanpanel" @show="store.operationplan.reference || store.operationplan.operationplan__reference">
       <table style="table-layout:fixed" class="table table-sm table-hover table-borderless" id="opplan-attributes-drvtable">
         <tbody>
         <tr v-if="store.operationplan.operation?.name || store.operationplan.name">

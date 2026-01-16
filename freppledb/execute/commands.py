@@ -117,6 +117,10 @@ class MakePlanFeasible(PlanTask):
         for oper in frepple.operations():
             for opplan in oper.operationplans:
                 opplan.updateFeasible()
+                if opplan.info:
+                    print(f"Info on {opplan}:")
+                    for i in opplan.info:
+                        print(f"     {i}")
 
         # Report the result
         print("Initial problems:")

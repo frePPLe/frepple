@@ -12,7 +12,7 @@
 import { computed } from "vue";
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
-import { numberFormat } from "@common/utils.js";
+import { numberFormat, dateTimeFormat } from "@common/utils.js";
 
 const urlPrefix = computed(() => window.url_prefix || '');
 const adminEscape = (str) => window.admin_escape(str);
@@ -32,6 +32,79 @@ const hasFlowplans = computed(() => {
 const flowplans = computed(() => {
   return store.operationplan.flowplans || [];
 });
+
+// Vue version of selectAlternateItem
+function selectAlternateItem(flowplan, newItem) {
+  const currentItem = flowplan.buffer?.item;
+
+  if (newItem !== currentItem) {
+    // Find and update the flowplan in the store
+    const operationplan = store.operationplan;
+    if (operationplan && operationplan.flowplans) {
+      const flowToUpdate = operationplan.flowplans.find(flow =>
+          flow.buffer?.item === currentItem
+      );
+
+      if (flowToUpdate) {
+        // Update the assigned item
+        flowToUpdate.buffer.item = newItem;
+
+        // Update the grid if it exists
+        updateGrid(currentItem, newItem);
+
+        // Enable save/undo buttons
+        enableSaveUndoButtons();
+      }
+    }
+  }
+}
+
+function updateGrid(currentItem, newItem) {
+  // Check if grid exists (maintaining compatibility with existing jqGrid)
+  const gridElement = document.querySelector("#grid");
+  if (!gridElement) return;
+
+  const grid = $(gridElement);
+  const selrow = grid.jqGrid('getGridParam', 'selarrrow');
+  const colmodel = grid.jqGrid('getGridParam', 'colModel')?.find(i => i.name === "material");
+
+  if (!colmodel || !selrow) return;
+
+  const cell = grid.jqGrid('getCell', selrow, 'material');
+
+  if (colmodel.formatter === 'detail' && cell === currentItem) {
+    grid.jqGrid("setCell", selrow, "material", newItem, "dirty-cell");
+    grid.jqGrid("setRowData", selrow, false, "edited");
+  }
+  else if (colmodel.formatter === 'listdetail') {
+    const items = [];
+    const operationplan = store.operationplan;
+    if (operationplan && operationplan.flowplans) {
+      operationplan.flowplans.forEach(flowplan => {
+        items.push([flowplan.buffer?.item, flowplan.quantity]);
+      });
+    }
+    grid.jqGrid("setCell", selrow, "material", items, "dirty-cell");
+    grid.jqGrid("setRowData", selrow, false, "edited");
+  }
+}
+
+function enableSaveUndoButtons() {
+  const saveBtn = document.querySelector("#save");
+  const undoBtn = document.querySelector("#undo");
+
+  if (saveBtn) {
+    saveBtn.classList.remove("btn-primary");
+    saveBtn.classList.add("btn-danger");
+    saveBtn.disabled = false;
+  }
+
+  if (undoBtn) {
+    undoBtn.classList.remove("btn-primary");
+    undoBtn.classList.add("btn-danger");
+    undoBtn.disabled = false;
+  }
+}
 
 </script>
 
@@ -136,8 +209,7 @@ const flowplans = computed(() => {
           <td>{{ numberFormat(flowplan.onhand) }}</td>
 
           <!-- Date column -->
-<!--          <td style="white-space: nowrap">{{ formatDatetime(flowplan.date) }}</td>-->
-          <td style="white-space: nowrap">{{ flowplan.date }}</td>
+          <td style="white-space: nowrap">{{ dateTimeFormat(flowplan.date) }}</td>
         </tr>
         </tbody>
       </table>

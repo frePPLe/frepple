@@ -81,7 +81,7 @@ const filteredUpstream = computed(() => {
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
-        <td v-if="peg[2] != 'MO'">{{peg[3]}}</td>
+        <td v-if="peg[2] !== 'MO'">{{peg[3]}}</td>
 
         <td>{{peg[4]}}</td>
 

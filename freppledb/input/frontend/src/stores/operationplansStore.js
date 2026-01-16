@@ -446,7 +446,7 @@ export const useOperationplansStore = defineStore('operationplans', {
       const data = (type === 'downstream') ? this.operationplan.downstreamoperationplans : (type === 'upstream') ? this.operationplan.upstreamoperationplans : [];
       let j = i + 1;
       const myLevel = data[i][0];
-      if (data[i][11] == 0)
+      if (data[i][11] === 0)
         data[i][11] = 1;
       else
         data[i][11] = 0;
@@ -454,18 +454,18 @@ export const useOperationplansStore = defineStore('operationplans', {
         if (data[j][0] <= myLevel)
           break;
         else if (data[j][0] > myLevel + 1
-          || data[i][11] == 0)
+          || data[i][11] === 0)
           data[j][11] = 2;
-        else if (j == data.length - 1 ||
+        else if (j === data.length - 1 ||
           data[j][0] >= data[j + 1][0]) {
           if (data[j][12] != null
-            && data[j][12] == data[j + 1][12])
+            && data[j][12] === data[j + 1][12])
             data[j][11] = 1;
           else
             data[j][11] = 3;
         }
-        else if (data[j][0] == myLevel + 1
-          && data[i][11] == 1)
+        else if (data[j][0] === myLevel + 1
+          && data[i][11] === 1)
           data[j][11] = 0;
         ++j;
       }

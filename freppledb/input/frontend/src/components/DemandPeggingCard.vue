@@ -12,7 +12,7 @@
 import { computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from "@/stores/operationplansStore.js";
-import { numberFormat } from "@common/utils.js";
+import { numberFormat, dateTimeFormat } from "@common/utils.js";
 
 const { t: ttt } = useI18n({
   useScope: 'global',
@@ -37,16 +37,6 @@ const peggingDemand = computed(() => {
 const hasPeggingDemand = computed(() => {
   return peggingDemand.value.length > 0;
 });
-
-// Format date
-function formatDate(value) {
-  if (!value) return '';
-  // Use the formatdate filter equivalent
-  if (typeof window.$filter !== 'undefined') {
-    return window.$filter('formatdate')(value);
-  }
-  return new Date(value).toLocaleDateString();
-}
 
 // Get URL prefix
 const urlPrefix = computed(() => window.url_prefix || '');
@@ -143,7 +133,7 @@ onMounted(() => {
             </td>
 
             <!-- Due date column -->
-            <td>{{ formatDate(demand.demand?.due) }}</td>
+            <td>{{ dateTimeFormat(demand.demand?.due) }}</td>
 
             <!-- Quantity column -->
             <td>{{ numberFormat(demand.quantity) }}</td>

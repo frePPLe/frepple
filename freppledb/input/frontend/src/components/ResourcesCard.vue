@@ -42,14 +42,6 @@ const hasLoadplans = computed(() => {
   return loadplans.value.length > 0;
 });
 
-// HTML encode for security
-function htmlEncode(str) {
-  if (!str) return '';
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
 // Get URL prefix
 const urlPrefix = computed(() => window.url_prefix || '');
 
@@ -66,7 +58,7 @@ function selectAlternateResource(loadplan, newResource) {
   const currentResource = loadplan.resource.name;
   if (newResource === currentResource) return;
 
-  // Find the first matching loadplan (in case of duplicates)
+  // Find the first matching loadplan (in the case of duplicates)
   const loadplanIndex = loadplans.value.findIndex(lp => lp.resource.name === currentResource);
   if (loadplanIndex === -1) return;
 
@@ -198,7 +190,7 @@ onMounted(() => {
                 :href="`${urlPrefix}/detail/input/resource/${adminEscape(loadplan.resource?.name)}/`"
                 @click.stop
             >
-              <span class="ps-2 fa fa-caret-right"></span>
+              <span class=" fa fa-caret-right"></span>
             </a>
           </td>
 

@@ -102,107 +102,6 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     getPreferences(state) {
       state.preferences = window.preferences;
-
-      state.preferences.widgets = {   // TO BE REMOVED, ONLY FOR DEV
-        "widgets": [
-          {
-            "name": "column1",
-            "cols": [
-              {
-                "width": 6,
-                "widgets": [
-                  [
-                    "operationplan",
-                    {
-                      "collapsed": false
-                    }
-                  ],
-                  [
-                    "inventorygraph",
-                    {
-                      "collapsed": false
-                    }
-                  ]
-                ]
-              }
-            ],
-          },
-          {
-            "name": "column2",
-            "cols": [
-              {
-                "width": 6,
-                "widgets": [
-                  [
-                    "supplyposition",
-                    {
-                      "collapsed": false
-                    }
-                  ],
-                  [
-                    "inventorydata",
-                    {
-                      "collapsed": false
-                    }
-                  ],
-                  [
-                    "operationproblems",
-                    {
-                      "collapsed": false
-                    }
-                  ],
-                  [
-                    "operationresources",
-                    {
-                      "collapsed": false
-                    }
-                  ],
-                  [
-                    "operationflowplans",
-                    {
-                      "collapsed": false
-                    }
-                  ],
-                  [
-                    "operationdemandpegging",
-                    {
-                      "collapsed": false
-                    }
-                  ]
-                ]
-              }
-            ],
-          },
-          {
-            "name": "column3",
-            "cols": [
-              {
-                "width": 12,
-                "widgets": [
-                  [
-                    "networkstatus",
-                    {
-                      "collapsed": false
-                    }
-                  ],
-                  [
-                    "downstreamoperationplans",
-                    {
-                      "collapsed": false
-                    }
-                  ],
-                  [
-                    "upstreamoperationplans",
-                    {
-                      "collapsed": false
-                    }
-                  ]
-                ]
-              }
-            ],
-          }
-        ]
-      };
     },
   },
 
@@ -380,7 +279,6 @@ export const useOperationplansStore = defineStore('operationplans', {
         if (this.dataRowHeight !== null) {
           this.preferences.height = this.dataRowHeight;
         }
-        this.preferences.widgets = {};
         await operationplanService.savePreferences({ "freppledb.input.views.manufacturing.ManufacturingOrderList": this.preferences });
       } catch (error) {
         this.setError({

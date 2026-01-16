@@ -105,7 +105,3 @@ const filteredUpstream = computed(() => {
     </table>
   </div>
 </template>
-
-<style scoped>
-
-</style>

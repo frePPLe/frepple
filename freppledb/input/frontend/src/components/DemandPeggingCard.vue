@@ -48,14 +48,6 @@ function formatDate(value) {
   return new Date(value).toLocaleDateString();
 }
 
-// HTML encode for security
-function htmlEncode(str) {
-  if (!str) return '';
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
 // Get URL prefix
 const urlPrefix = computed(() => window.url_prefix || '');
 
@@ -128,7 +120,7 @@ onMounted(() => {
                   :href="`${urlPrefix}${demand.demand?.forecast ? '/detail/forecast/forecast/' : '/detail/input/demand/'}${adminEscape(demand.demand?.name)}/`"
                   @click.stop
               >
-                <span class="ps-2 fa fa-caret-right"></span>
+                <span class=" fa fa-caret-right"></span>
               </a>
             </td>
 
@@ -141,12 +133,12 @@ onMounted(() => {
               >
                 {{ demand.demand.item.name }}
               </span>
-              <span v-else>{{ demand.demand?.item?.name }}</span>
+              <span v-else style="padding-right: 3px">{{ demand.demand?.item?.name }}</span>
               <a
                   :href="`${urlPrefix}/detail/input/item/${adminEscape(demand.demand?.item?.name)}/`"
                   @click.stop
               >
-                <span class="ps-2 fa fa-caret-right"></span>
+                <span class=" fa fa-caret-right"></span>
               </a>
             </td>
 

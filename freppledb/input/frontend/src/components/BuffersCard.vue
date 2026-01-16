@@ -77,19 +77,19 @@ const flowplans = computed(() => {
         >
           <!-- Item column - with or without alternates -->
           <td v-if="!flowplan.alternates" style="white-space: nowrap">
-              <span
+              <span style="padding-right: 3px"
                   v-if="flowplan.buffer?.description"
                   :title="flowplan.buffer.description"
                   data-bs-toggle="tooltip"
               >
                 {{ flowplan.buffer?.item }}
               </span>
-            <span v-else>{{ flowplan.buffer?.item }}</span>
+            <span v-else style="padding-right: 3px">{{ flowplan.buffer?.item }}</span>
             <a
                 :href="`${urlPrefix}/detail/input/item/${adminEscape(flowplan.buffer?.item)}/`"
                 @click.stop
             >
-              <span class="ps-2 fa fa-caret-right"></span>
+              <span class="fa fa-caret-right"></span>
             </a>
           </td>
 
@@ -144,17 +144,3 @@ const flowplans = computed(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.widget-handle {
-  cursor: move;
-}
-
-.card-header {
-  cursor: pointer;
-}
-
-.border-top {
-  border-top: 1px solid #dee2e6 !important;
-}
-</style>

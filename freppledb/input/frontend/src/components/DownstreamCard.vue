@@ -59,26 +59,47 @@ const filteredDownstream = computed(() => {
           &nbsp;{{peg[0]}}
         </td>
 
-        <td v-if="peg[2] == 'MO'">{{peg[1]}}<a :href="'/data/input/manufacturingorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
-          <span class="fa fa-caret-right"></span></a></td>
-        <td v-if="peg[2] == 'DO'">{{peg[1]}}<a :href="'/data/input/distributionorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
-          <span class="fa fa-caret-right"></span></a></td>
-        <td v-if="peg[2] == 'PO'">{{peg[1]}}<a :href="'/data/input/purchaseorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
-          <span class="fa fa-caret-right"></span></a></td>
-        <td v-if="peg[2] == 'DLVR'">{{peg[1]}}<a :href="'/data/input/deliveryorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
-          <span class="fa fa-caret-right"></span></a></td>
+        <td v-if="peg[2] == 'MO'">{{peg[1]}}
+          <a :href="'/data/input/manufacturingorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
+            <span class="fa fa-caret-right"></span>
+          </a>
+        </td>
+        <td v-if="peg[2] == 'DO'">{{peg[1]}}
+          <a :href="'/data/input/distributionorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
+            <span class="fa fa-caret-right"></span>
+          </a>
+        </td>
+        <td v-if="peg[2] == 'PO'">{{peg[1]}}
+          <a :href="'/data/input/purchaseorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
+            <span class="fa fa-caret-right"></span>
+          </a>
+        </td>
+        <td v-if="peg[2] == 'DLVR'">{{peg[1]}}
+          <a :href="'/data/input/deliveryorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
+            <span class="fa fa-caret-right"></span>
+          </a>
+        </td>
         <td v-if="peg[2] == 'STCK'">{{peg[1]}}</td>
 
         <td>{{peg[2]}}</td>
 
-        <td v-if="peg[2] == 'MO'">{{peg[3]}}<a href="/detail/input/operation/key/" role="input/operation" @click="opendetail(event)">
-          <span class="fa fa-caret-right"></span></a></td>
+        <td v-if="peg[2] == 'MO'">{{peg[3]}}
+          <a href="/detail/input/operation/key/" role="input/operation" @click="opendetail(event)">
+            <span class="fa fa-caret-right"></span>
+          </a>
+        </td>
         <td v-if="peg[2] != 'MO'">{{peg[3]}}</td>
         <td>{{peg[4]}}</td>
-        <td>{{peg[5]}}<a v-if="peg[5]" href="/detail/input/item/key/" role="input/item" @click="opendetail(event)">
-          <span class="fa fa-caret-right"></span></a></td>
-        <td>{{peg[6]}}<a v-if="peg[6]" href="/detail/input/location/key/" role="input/location" @click="opendetail(event)">
-          <span class="fa fa-caret-right"></span></a></td>
+        <td>{{peg[5]}}
+          <a v-if="peg[5]" href="/detail/input/item/key/" role="input/item" @click="opendetail(event)">
+            <span class="fa fa-caret-right"></span>
+          </a>
+        </td>
+        <td>{{peg[6]}}
+          <a v-if="peg[6]" href="/detail/input/location/key/" role="input/location" @click="opendetail(event)">
+            <span class="fa fa-caret-right"></span>
+          </a>
+        </td>
 
         <td>{{ dateTimeFormat(peg[7]) }}</td>
         <td>{{ dateTimeFormat(peg[8]) }}</td>
@@ -88,7 +109,3 @@ const filteredDownstream = computed(() => {
     </table>
   </div>
 </template>
-
-<style scoped>
-
-</style>

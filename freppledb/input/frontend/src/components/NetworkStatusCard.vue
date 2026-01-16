@@ -38,14 +38,6 @@ const hasNetworkData = computed(() => {
   return networkData.value.length > 0;
 });
 
-// HTML encode for security
-function htmlEncode(str) {
-  if (!str) return '';
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
 // Get URL prefix
 const urlPrefix = computed(() => window.url_prefix || '');
 
@@ -152,7 +144,7 @@ onMounted(() => {
                 :href="`${urlPrefix}/detail/input/item/${adminEscape(network[0])}/`"
                 @click.stop
             >
-              <span class="ps-2 fa fa-caret-right"></span>
+              <span class=" fa fa-caret-right"></span>
             </a>
             <small v-if="network[1] === true">{{ ttt('superseded') }}</small>
           </td>
@@ -164,7 +156,7 @@ onMounted(() => {
                 :href="`${urlPrefix}/detail/input/location/${adminEscape(network[2])}/`"
                 @click.stop
             >
-              <span class="ps-2 fa fa-caret-right"></span>
+              <span class=" fa fa-caret-right"></span>
             </a>
           </td>
 
@@ -179,7 +171,7 @@ onMounted(() => {
                 :href="buildPurchaseOrderUrl(network[0], network[2])"
                 @click.stop
             >
-              <span class="ps-2 fa fa-caret-right"></span>
+              <span class=" fa fa-caret-right"></span>
             </a>
           </td>
 
@@ -191,7 +183,7 @@ onMounted(() => {
                 :href="buildDistributionOrderUrl(network[0], network[2])"
                 @click.stop
             >
-              <span class="ps-2 fa fa-caret-right"></span>
+              <span class=" fa fa-caret-right"></span>
             </a>
           </td>
 
@@ -203,7 +195,7 @@ onMounted(() => {
                 :href="buildManufacturingOrderUrl(network[0], network[2])"
                 @click.stop
             >
-              <span class="ps-2 fa fa-caret-right"></span>
+              <span class=" fa fa-caret-right"></span>
             </a>
           </td>
 
@@ -215,7 +207,7 @@ onMounted(() => {
                 :href="buildOverdueSalesOrderUrl(network[0], network[2], network[9])"
                 @click.stop
             >
-              <span class="ps-2 fa fa-caret-right"></span>
+              <span class=" fa fa-caret-right"></span>
             </a>
           </td>
 
@@ -227,7 +219,7 @@ onMounted(() => {
                 :href="buildSalesOrderUrl(network[0], network[2], network[9])"
                 @click.stop
             >
-              <span class="ps-2 fa fa-caret-right"></span>
+              <span class=" fa fa-caret-right"></span>
             </a>
           </td>
         </tr>

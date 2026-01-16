@@ -27,7 +27,12 @@ from datetime import timedelta, datetime
 from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
 
-from freppledb.common.commands import PlanTaskRegistry, PlanTask
+from freppledb.common.commands import (
+    PlanTaskRegistry,
+    PlanTask,
+    CopyFromGenerator,
+    clean_value,
+)
 from freppledb.common.models import Parameter
 from freppledb.input.models import Item, Resource
 
@@ -75,49 +80,75 @@ class GetPlanMetrics(PlanTask):
 
                     create index on item_hierarchy (child);
 
-                    create temporary table demand_late_unplanned as
-                    with dmd_late_unplanned as (
-                      select
-                        demand.name,
-                        demand.item_id,
-                        demand.quantity,
-                        sum(case when demand.due < operationplan.enddate then operationplan.quantity end) as late_quantity,
-                        sum(operationplan.quantity) as planned_quantity
-                      from demand
-                      left outer join operationplan on operationplan.demand_id = demand.name
-                      where demand.status = 'open'
-                        and demand.due < %s
-                      group by demand.name
-                    )
-                    select
-                      item_id,
-                      sum(case when late_quantity is not null then 1 end) as late_count,
-                      sum(late_quantity) as late_quantity,
-                      sum(late_quantity * coalesce(item.cost, 0)) as late_cost,
-                      sum(case when planned_quantity is null then 1 end) as unplanned_count,
-                      sum(case when planned_quantity is null then quantity end) as unplanned_quantity,
-                      sum(case when planned_quantity is null then quantity * coalesce(item.cost, 0) end) as unplanned_cost
-                    from dmd_late_unplanned
-                    inner join item
-                      on item_id = item.name
-                    group by item_id
+                    create temporary table demand_late_unplanned (
+                       item_id varchar,
+                       late_count numeric(20,8),
+                       late_quantity numeric(20,8),
+                       late_cost numeric(20,8),
+                       unplanned_count numeric(20,8),
+                       unplanned_quantity numeric(20,8),
+                       unplanned_cost numeric(20,8)
+                       );
                     """,
                     (window,),
                 )
 
-                # TODO REFACTOR TO WORK WITHOUT OUT_PROBLEM TABLE
-                # if "freppledb.forecast" in settings.INSTALLED_APPS:
-                #     cursor.execute(
-                #         """
-                #         insert into out_problem_tmp
-                #         select item.name as item_id, out_problem.name, out_problem.weight, out_problem.weight*coalesce(item.cost) from out_problem
-                #         inner join forecast on forecast.name = left(out_problem.owner, -13)
-                #         inner join item on item.name = forecast.item_id
-                #         where out_problem.name in ('unplanned', 'late')
-                #         and out_problem.startdate < %s;
-                #        """,
-                #         (window,),
-                #     )
+                def getItemMetrics(window):
+                    import frepple
+
+                    metrics = {}
+                    for f in frepple.demands():
+                        if f.due > window:
+                            continue
+                        planned = 0
+                        planned_late = 0
+                        for op in f.operationplans:
+                            planned += op.quantity
+                            if op.end > f.due:
+                                planned_late += op.quantity
+                        if planned_late or not planned:
+                            if f.item.name in metrics:
+                                if planned_late:
+                                    metrics[f.item.name]["late_count"] += 1
+                                    metrics[f.item.name][
+                                        "late_quantity"
+                                    ] += planned_late
+                                    metrics[f.item.name]["late_cost"] += (
+                                        planned_late * f.item.cost
+                                    )
+                                if not planned:
+                                    metrics[f.item.name]["unplanned_count"] += 1
+                                    metrics[f.item.name][
+                                        "unplanned_quantity"
+                                    ] += f.quantity
+                                    metrics[f.item.name]["unplanned_cost"] += (
+                                        f.quantity * f.item.cost
+                                    )
+                            else:
+                                metrics[f.item.name] = {
+                                    "late_count": 1 if planned_late else 0,
+                                    "late_quantity": planned_late,
+                                    "late_cost": planned_late * f.item.cost,
+                                    "unplanned_count": 1 if not planned else 0,
+                                    "unplanned_quantity": (
+                                        f.quantity if not planned else 0
+                                    ),
+                                    "unplanned_cost": (
+                                        f.quantity * f.item.cost if not planned else 0
+                                    ),
+                                }
+                    for i, m in metrics.items():
+                        yield (
+                            f"{clean_value(i)}\v{m["late_count"]}\v{m["late_quantity"]}\v{m["late_cost"]}\v"
+                            f"{m["unplanned_count"]}\v{m["unplanned_quantity"]}\v{m["unplanned_cost"]}\n"
+                        )
+
+                cursor.copy_from(
+                    CopyFromGenerator(getItemMetrics(window)),
+                    table="demand_late_unplanned",
+                    size=1024,
+                    sep="\v",
+                )
 
                 cursor.execute(
                     """

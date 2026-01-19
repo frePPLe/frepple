@@ -69,6 +69,7 @@ The following widgets are available:
 * | **Delivery performance**
   | This widget shows the percentage of order lines that are planned to be
     shipped on time.
+  | This widget requires installing the :doc:`/apps/metrics` app.
 
 * | **Demand history**
   | Displays the historical evolution of the open sales orders.

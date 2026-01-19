@@ -26,7 +26,7 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib.admin.utils import quote
-from django.db import DEFAULT_DB_ALIAS, connections
+from django.db import connections
 from django.http import HttpResponse
 from django.utils.encoding import force_str
 from django.utils.formats import date_format
@@ -1794,69 +1794,6 @@ class InventoryByItemWidget(Widget):
 
 
 Dashboard.register(InventoryByItemWidget)
-
-
-class DeliveryPerformanceWidget(Widget):
-    name = "delivery_performance"
-    title = _("delivery performance")
-    tooltip = _(
-        "Shows the percentage of demands that are planned to be shipped completely on time"
-    )
-    permissions = (("view_demand", "Can view sales order"),)
-    asynchronous = True
-    size = "sm"
-    green = 90
-    yellow = 80
-
-    def args(self):
-        return "?%s" % urlencode({"green": self.green, "yellow": self.yellow})
-
-    javascript = """
-    var val = parseFloat($('#otd_value').html());
-    var green = parseInt($('#otd_green').html());
-    var yellow = parseInt($('#otd_yellow').html());
-    new Gauge("otd", {
-      label: $('#otd_label').html(), min: 0, max: 100, minorTicks: 5,
-      greenZones: [{from: green, to: 100}], yellowZones: [{from: yellow, to: green}],
-      value: val
-      }).render();
-    """
-
-    @classmethod
-    def render(cls, request):
-        green = int(request.GET.get("green", cls.green))
-        yellow = int(request.GET.get("yellow", cls.yellow))
-        GridReport.getBuckets(request)
-        query = (
-            """
-            select case when count(*) = 0 then 0 else 100 - sum(late) * 100.0 / count(*) end
-            from (
-              select
-                demand_id, max(case when enddate > operationplan.due then 1 else 0 end) late
-              from operationplan
-              inner join demand
-                on operationplan.demand_id = demand.name
-              where demand.due < '%s'
-              group by demand_id
-            ) demands
-            """
-            % request.report_enddate
-        )
-        with connections[request.database].cursor() as cursor:
-            cursor.execute(query)
-            val = cursor.fetchone()[0]
-            result = [
-                '<div class="d-flex justify-content-center align-items-center h-100"><div id="otd"></div></div>',
-                '<span id="otd_label" style="display:none">%s</span>'
-                % force_str(_("On time delivery")),
-                '<span id="otd_value" style="display:none">%s</span>' % val,
-                '<span id="otd_green" style="display:none">%s</span>' % green,
-                '<span id="otd_yellow" style="display:none">%s</span>' % yellow,
-            ]
-        return HttpResponse("\n".join(result))
-
-
-Dashboard.register(DeliveryPerformanceWidget)
 
 
 class InventoryEvolutionWidget(Widget):

@@ -17,3 +17,5 @@ For every **item** we capture:
 For every **resource** we capture:
 
 - count of capacity overload problems
+
+The app also defines a **delivery performance widget** on the home screen.

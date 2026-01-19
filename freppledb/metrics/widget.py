@@ -24,7 +24,7 @@
 from urllib.parse import urlencode
 
 from django.contrib.admin.utils import quote
-from django.db import DEFAULT_DB_ALIAS
+from django.db import connections
 from django.db.models import F
 from django.http import HttpResponse
 from django.utils.encoding import force_str
@@ -33,6 +33,7 @@ from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.dashboard import Dashboard, Widget
+from freppledb.common.models import UserPreference
 from freppledb.common.report import getCurrency
 from freppledb.input.models import Item
 
@@ -46,7 +47,7 @@ class AnalysisDemandProblems(Widget):
     asynchronous = True
     url = "/demand/?noautofilter&sidx=latedemandvalue%20desc%2C%20latedemandquantity%20desc%2C%20latedemandcount&sord=desc"
     exporturl = True
-    size = 'lg'
+    size = "lg"
     limit = 20
     orderby = "latedemandvalue"
 
@@ -120,3 +121,124 @@ class AnalysisDemandProblems(Widget):
             alt = not alt
         result.append("</table></div>")
         return HttpResponse("\n".join(result))
+
+
+class DeliveryPerformanceWidget(Widget):
+    name = "delivery_performance"
+    title = _("delivery performance")
+    tooltip = _(
+        "Shows the percentage of demands that are planned to be shipped completely on time"
+    )
+    permissions = (("view_demand", "Can view sales order"),)
+    asynchronous = True
+    size = "sm"
+
+    javascript = """
+        // Definitions
+        var chart_type = "count";
+        var include_fcst = true;
+        var delivery_data = [
+            { category: "ontime_so", label: "on-time orders", value: 0, color: "#8bba00" },
+            { category: "ontime_fcst", label: "on-time forecast", value: 0, color: "#c4dc7d" },
+            { category: "late_so", label: "late orders", value: 0, color: "#FFA500" },
+            { category: "late_fcst", label: "late forecast", value: 10, color: "#FFD17D" },
+            { category: "unplanned_so", label: "unplanned orders", value: 0, color: "#FF0000" },
+            { category: "unplanned_fcst", label: "unplanned forecast", value: 0, color: "#FF9797" }
+        ];
+
+        // Collect data
+        $("#deliveryPerformanceData td").each(function(i, e) {
+            var el = $(e);
+            var category = el.closest("tr").attr("data-category");
+            var metric = el.attr("data-metric");
+            for (var e of delivery_data) {
+               if ( metric == chart_type && e.category == category)
+                  e.value = Number(el.text());
+            }
+        });
+
+        // Remove empty cells
+        delivery_data = delivery_data.filter(function(row) {return row.value > 0;});
+        const total = d3.sum(delivery_data, d => d.value);
+
+        // Pie chart
+        const width = 350;
+        const height = 350;
+        const radius = Math.min(width, height) / 2;
+        const svg = d3.select('#deliveryPerformanceChart')
+            .attr('width', width)
+            .attr('height', height)
+            .append('g')
+            .attr('transform', `translate(${width / 2}, ${height / 2})`);
+        var color = d3.scale.category10()
+            .domain(delivery_data.map(function(d) { return d.category; }));
+        const pie = d3.layout.pie()
+            .sort(null)
+            .value(d => d.value);
+        const arc = d3.svg.arc()
+            .innerRadius(0)
+            .outerRadius(radius);
+        const slices = svg.selectAll('path')
+            .data(pie(delivery_data))
+            .enter()
+            .append('path')
+            .attr('d', arc)
+            .attr('fill', d => d.data.color)
+            .attr('stroke', 'white')
+            .style('stroke-width', '2px')
+            .on("mouseover", function(d) {
+            graph.showTooltip(
+                d.data.label
+                + "<br>"
+                + d.data.value);
+            $("#tooltip").css('background-color','black').css('color','white');
+            });
+        svg.selectAll('text')
+            .data(pie(delivery_data))
+            .enter()
+            .append('text')
+            .attr('transform', function(d) {
+                var center = arc.centroid(d);
+                var rotation = ((d.startAngle + d.endAngle) / 2 * 180 / Math.PI) - 90;
+
+                if (rotation > 90 && rotation < 270)
+                  // Flip text 180 degrees if it's on the bottom half so it's not upside down
+                  rotation += 180;
+                return `translate(${center[0] * 1.8},${center[1] * 1.8}) rotate(${rotation})`;
+                })
+            .style('text-anchor', function(d){
+              // Depends whether we are left of right in the chart
+              return (d.startAngle + d.endAngle) / 2 > Math.PI ? 'start' : 'end';
+            })
+            .attr('dy', '.35em')
+            .text(d => {
+              const perc = ((d.data.value / total) * 100).toFixed(1);
+              return `${d.data.label} ${perc}%`;
+            })
+            .attr('class', 'text-capitalize text-body-inverted');
+        """
+
+    @classmethod
+    def render(cls, request):
+        result = [
+            '<div class="d-flex justify-content-center align-items-center h-100">'
+            '<svg id="deliveryPerformanceChart"></svg>'
+            '<div id="deliveryPerformanceData"class="d-none"><table>'
+        ]
+        try:
+            for cat, kv in (
+                UserPreference.objects.using(request.database)
+                .get(property="widget.deliveryperformance")
+                .value.items()
+            ):
+                result.append(f'<tr data-category="{cat}">')
+                for k, v in kv.items():
+                    result.append(f'<td data-metric="{k}">{v}</td>')
+                result.append("</tr>")
+        except UserPreference.DoesNotExist:
+            pass
+        result.append("</table></div></div>")
+        return HttpResponse("\n".join(result))
+
+
+Dashboard.register(DeliveryPerformanceWidget)

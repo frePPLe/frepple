@@ -21,8 +21,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import os
 from datetime import timedelta, datetime
+import json
+import os
 
 from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
@@ -33,7 +34,7 @@ from freppledb.common.commands import (
     CopyFromGenerator,
     clean_value,
 )
-from freppledb.common.models import Parameter
+from freppledb.common.models import Parameter, UserPreference
 from freppledb.input.models import Item, Resource
 
 
@@ -69,6 +70,8 @@ class GetPlanMetrics(PlanTask):
 
                 Item.createRootObject(database=database)
 
+                with_fcst_module = "freppledb.forecast" in settings.INSTALLED_APPS
+
                 cursor.execute(
                     """
                     create temporary table item_hierarchy (parent character varying,
@@ -93,12 +96,21 @@ class GetPlanMetrics(PlanTask):
                     (window,),
                 )
 
-                def getItemMetrics(window):
+                def getItemMetrics(window, performance):
                     import frepple
 
                     metrics = {}
                     for f in frepple.demands():
-                        if f.due > window:
+                        if (
+                            f.due > window
+                            or not f.item
+                            or f.status != "open"
+                            or f.quantity <= 0
+                            or (
+                                with_fcst_module
+                                and isinstance(f, (frepple.demand_forecast))
+                            )
+                        ):
                             continue
                         planned = 0
                         planned_late = 0
@@ -106,48 +118,113 @@ class GetPlanMetrics(PlanTask):
                             planned += op.quantity
                             if op.end > f.due:
                                 planned_late += op.quantity
-                        if planned_late or not planned:
+                        if not planned:
+                            # Unplanned
+                            category = "unplanned"
                             if f.item.name in metrics:
-                                if planned_late:
-                                    metrics[f.item.name]["late_count"] += 1
-                                    metrics[f.item.name][
-                                        "late_quantity"
-                                    ] += planned_late
-                                    metrics[f.item.name]["late_cost"] += (
-                                        planned_late * f.item.cost
-                                    )
-                                if not planned:
-                                    metrics[f.item.name]["unplanned_count"] += 1
-                                    metrics[f.item.name][
-                                        "unplanned_quantity"
-                                    ] += f.quantity
-                                    metrics[f.item.name]["unplanned_cost"] += (
-                                        f.quantity * f.item.cost
-                                    )
+                                metrics[f.item.name]["unplanned_count"] += 1
+                                metrics[f.item.name]["unplanned_quantity"] += f.quantity
+                                metrics[f.item.name]["unplanned_cost"] += (
+                                    f.quantity * f.item.cost
+                                )
                             else:
                                 metrics[f.item.name] = {
-                                    "late_count": 1 if planned_late else 0,
+                                    "late_count": 0,
+                                    "late_quantity": 0,
+                                    "late_cost": 0,
+                                    "unplanned_count": 1,
+                                    "unplanned_quantity": (f.quantity),
+                                    "unplanned_cost": (f.quantity * f.item.cost),
+                                }
+                        elif planned_late:
+                            # Late
+                            category = "late"
+                            if f.item.name in metrics:
+                                metrics[f.item.name]["late_count"] += 1
+                                metrics[f.item.name]["late_quantity"] += planned_late
+                                metrics[f.item.name]["late_cost"] += (
+                                    planned_late * f.item.cost
+                                )
+                            else:
+                                metrics[f.item.name] = {
+                                    "late_count": 1,
                                     "late_quantity": planned_late,
                                     "late_cost": planned_late * f.item.cost,
-                                    "unplanned_count": 1 if not planned else 0,
-                                    "unplanned_quantity": (
-                                        f.quantity if not planned else 0
-                                    ),
-                                    "unplanned_cost": (
-                                        f.quantity * f.item.cost if not planned else 0
-                                    ),
+                                    "unplanned_count": 0,
+                                    "unplanned_quantity": 0,
+                                    "unplanned_cost": 0,
                                 }
+                        else:
+                            # On time
+                            category = "ontime"
+
+                        # Overall delivery performance
+                        key = category + (
+                            "_fcst"
+                            if with_fcst_module
+                            and isinstance(f, frepple.demand_forecastbucket)
+                            else "_so"
+                        )
+                        performance[key]["count"] += 1
+                        performance[key]["quantity"] += f.quantity
+                        performance[key]["cost"] += f.quantity * f.item.cost
+
                     for i, m in metrics.items():
                         yield (
                             f"{clean_value(i)}\v{m["late_count"]}\v{m["late_quantity"]}\v{m["late_cost"]}\v"
                             f"{m["unplanned_count"]}\v{m["unplanned_quantity"]}\v{m["unplanned_cost"]}\n"
                         )
 
+                performance = {
+                    "ontime_so": {
+                        "count": 0,
+                        "quantity": 0,
+                        "cost": 0,
+                    },
+                    "late_so": {
+                        "count": 0,
+                        "quantity": 0,
+                        "cost": 0,
+                    },
+                    "unplanned_so": {
+                        "count": 0,
+                        "quantity": 0,
+                        "cost": 0,
+                    },
+                }
+                if with_fcst_module:
+                    performance.update(
+                        {
+                            "ontime_fcst": {
+                                "count": 0,
+                                "quantity": 0,
+                                "cost": 0,
+                            },
+                            "late_fcst": {
+                                "count": 0,
+                                "quantity": 0,
+                                "cost": 0,
+                            },
+                            "unplanned_fcst": {
+                                "count": 0,
+                                "quantity": 0,
+                                "cost": 0,
+                            },
+                        }
+                    )
+
+                # Export item-level metrics (and compute overal performance)
                 cursor.copy_from(
-                    CopyFromGenerator(getItemMetrics(window)),
+                    CopyFromGenerator(getItemMetrics(window, performance)),
                     table="demand_late_unplanned",
                     size=1024,
                     sep="\v",
+                )
+
+                # Store the delivery performance metrics
+                UserPreference.objects.using(database).update_or_create(
+                    property="widget.deliveryperformance",
+                    defaults={"value": performance},
                 )
 
                 cursor.execute(
@@ -184,21 +261,34 @@ class GetPlanMetrics(PlanTask):
 
                 cursor.execute(
                     """
-                    update item
-                    set latedemandcount = metrics.latedemandcount,
-                    latedemandquantity = metrics.latedemandquantity,
-                    latedemandvalue = metrics.latedemandvalue,
-                    unplanneddemandcount = metrics.unplanneddemandcount,
-                    unplanneddemandquantity = metrics.unplanneddemandquantity,
-                    unplanneddemandvalue = metrics.unplanneddemandvalue
-                    from metrics
-                    where item.name = metrics.item_id
-                    and (item.latedemandcount is distinct from metrics.latedemandcount
-                    or item.latedemandquantity is distinct from metrics.latedemandquantity
-                    or item.latedemandvalue is distinct from metrics.latedemandvalue
-                    or item.unplanneddemandcount is distinct from metrics.unplanneddemandcount
-                    or item.unplanneddemandquantity is distinct from metrics.unplanneddemandquantity
-                    or item.unplanneddemandvalue is distinct from metrics.unplanneddemandvalue);
+                    update item set
+                        latedemandcount = updated.latedemandcount,
+                        latedemandquantity = updated.latedemandquantity,
+                        latedemandvalue = updated.latedemandvalue,
+                        unplanneddemandcount = updated.unplanneddemandcount,
+                        unplanneddemandquantity = updated.unplanneddemandquantity,
+                        unplanneddemandvalue = updated.unplanneddemandvalue
+                    from (
+                        select
+                            i.name,
+                            m.latedemandcount as latedemandcount,
+                            m.latedemandquantity as latedemandquantity,
+                            m.latedemandvalue as latedemandvalue,
+                            m.unplanneddemandcount as unplanneddemandcount,
+                            m.unplanneddemandquantity as unplanneddemandquantity,
+                            m.unplanneddemandvalue as unplanneddemandvalue
+                        from item i
+                        left join metrics m on i.name = m.item_id
+                    ) as updated
+                    where item.name = updated.name
+                    and (
+                      item.latedemandcount is distinct from updated.latedemandcount
+                      or item.latedemandquantity is distinct from updated.latedemandquantity
+                      or item.latedemandvalue is distinct from updated.latedemandvalue
+                      or item.unplanneddemandcount is distinct from updated.unplanneddemandcount
+                      or item.unplanneddemandquantity is distinct from updated.unplanneddemandquantity
+                      or item.unplanneddemandvalue is distinct from updated.unplanneddemandvalue
+                    )
                     """
                 )
 

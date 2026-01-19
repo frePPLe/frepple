@@ -724,56 +724,78 @@ class OdooSendRecommendations(PlanTask):
                 ):
                     continue
                 for j in i.operationplans:
-                    if (
+
+                    new_mo = (
                         j.status == "proposed"
                         and j.start <= frepple.settings.current + timedelta(days=7)
-                    ):
-                        # Newly proposed MOs due to start within the new week
-                        sales_orders = []
-                        forecast = []
-                        # Get the demand linked to that MO
-                        for p in j.pegging_demand:
-                            if isinstance(
-                                p.demand,
-                                (
-                                    frepple.demand_forecastbucket,
-                                    frepple.demand_forecast,
-                                ),
-                            ):
-                                forecast.append(p.demand.name)
-                            else:
-                                sales_orders.append(p.demand.name)
-                        recommendation = ""
-                        if sales_orders:
-                            recommendation = (
-                                f"Required for sales orders {",".join(sales_orders)}"
+                    )
+                    reschedule = (
+                        j.status == "approved"
+                        and j.info
+                        and (
+                            not j.owner
+                            or not isinstance(
+                                j.owner.operation, frepple.operation_alternate
                             )
-                        if forecast:
-                            recommendation = f"{recommendation}{"\n" if sales_orders else ""}Required for forecast {",".join(forecast)}"
-                        mo_count += 1
-                        if not recommendation:
-                            recommendation = "Stock replenishment"
-                        yield {
-                            "tab": "mrp",
-                            "type": "produce",
-                            "data": {"bom_id": int(i.name.rsplit(" ", 1)[1])},
-                            "product_id": int(i.item.subcategory.split(",")[1]),
-                            "startdate": j.start.isoformat(),
-                            "enddate": j.end.isoformat(),
-                            "quantity": j.quantity,
-                            "recommendation": f"Produce {i.item.name}\\n{recommendation}",
-                        }
-                    elif j.status == "approved" and j.info:
-                        yield {
-                            "tab": "mrp",
-                            "type": "reschedule",
-                            "mrp_production_id": j.reference,  # Name will be converted to id in odoo
-                            "product_id": int(i.item.subcategory.split(",")[1]),
-                            "startdate": j.start.isoformat(),
-                            "enddate": j.end.isoformat(),
-                            "quantity": j.quantity,
-                            "recommendation": f"Reschedule {j.reference}\\n{j.info}",
-                        }
+                        )
+                    )
+
+                    if not new_mo and not reschedule:
+                        continue
+
+                    # retrieve pegging
+                    sales_orders = []
+                    forecast = []
+                    # Get the demand linked to that MO
+                    for p in j.pegging_demand:
+                        if isinstance(
+                            p.demand,
+                            (
+                                frepple.demand_forecastbucket,
+                                frepple.demand_forecast,
+                            ),
+                        ):
+                            forecast.append(p.demand.name)
+                        else:
+                            sales_orders.append(p.demand.name)
+                    recommendation = ""
+                    if sales_orders:
+                        recommendation = (
+                            f"Required for sales orders {",".join(sales_orders)}"
+                        )
+                    if forecast:
+                        recommendation = f"{recommendation}{"\n" if sales_orders else ""}Required for forecast {",".join(forecast)}"
+                    mo_count += 1
+                    if not recommendation:
+                        recommendation = "Stock replenishment"
+
+                    yield {
+                        "tab": "mrp",
+                        "type": "produce" if new_mo else "reschedule",
+                        "data": (
+                            {"bom_id": int(i.name.rsplit(" ", 1)[1])}
+                            if new_mo
+                            else {
+                                "workorders": [
+                                    (
+                                        subopplan.operation.name,
+                                        subopplan.start.isoformat(),
+                                        subopplan.end.isoformat(),
+                                    )
+                                    for subopplan in j.operationplans
+                                ]
+                            }
+                        ),
+                        "product_id": int(i.item.subcategory.split(",")[1]),
+                        "mrp_production_id": (
+                            j.reference if reschedule else None
+                        ),  # Name will be converted to id in odoo
+                        "startdate": j.start.isoformat(),
+                        "enddate": j.end.isoformat(),
+                        "quantity": j.quantity,
+                        "recommendation": f"{"Produce" if new_mo else "Reschedule"} {i.item.name}\\n{recommendation}",
+                    }
+
             if not self.loglevel:
                 print(f"Generated {mo_count} manufacturing recommendations")
 

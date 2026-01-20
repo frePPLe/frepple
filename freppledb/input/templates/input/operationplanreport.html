@@ -184,26 +184,56 @@ rect.opplan {
       angular.element('#controller').scope().setMode("table");
     });
     $("#kanbanmode").on('click', function() {
-      angular.element('#controller').scope().setMode("kanban");
+      mode = "kanban";
+      grid.saveColumnConfiguration(function() {
+        location.reload();
+      });
     });
     $("#calendarmonth").on('click', function() {
-      angular.element('#controller').scope().setMode("calendarmonth");
+      mode = "calendarmonth";
+      grid.saveColumnConfiguration(function() {
+        location.reload();
+      });
     });
     $("#calendarweek").on('click', function() {
-      angular.element('#controller').scope().setMode("calendarweek");
+      mode = "calendarweek";
+      grid.saveColumnConfiguration(function() {
+        location.reload();
+      });
     });
     $("#calendarday").on('click', function() {
-      angular.element('#controller').scope().setMode("calendarday");
+      mode = "calendarday";
+      grid.saveColumnConfiguration(function() {
+        location.reload();
+      });
     });
     $('#zoomin').on("click", function() { zoom(0.5); });
     $('#zoomout').on("click", function() { zoom(2); });
     {% if showGantt %}
     $("#ganttmode").on('click', function() {
-      angular.element('#controller').scope().setMode("gantt");
+      mode = "gantt";
+      grid.saveColumnConfiguration(function() {
+        location.reload();
+      });
     });
     $("#zoomin, #zoomout").removeClass("d-none");
     {% endif %}
   });
+  // frepple.js will call this function to alert angular that the grid has changed
+  function checkrows(grid, selection) {
+    var selectiondata = [];
+    jQuery.each(selection , function(index,item){
+      selectiondata.push(grid.getRowData(item));
+    });
+    // TODO angular code to be replaced with vue code
+    if (selectiondata.length > 1) {
+      angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+    } else if (selectiondata.length === 1) {
+      angular.element('#controller').scope().displayInfo(selectiondata[0]);
+    } else {
+      angular.element('#controller').scope().displayInfo(undefined);
+    }
+  }
 
   // // Controller will call this function to pass values to the grid
   function displayongrid(id, columnid, value) {
@@ -253,7 +283,6 @@ rect.opplan {
     if (typeof grid !== 'undefined' && typeof grid.saveColumnConfiguration === 'function') {
       grid.saveColumnConfiguration();
     }
-  });
   });
 
   // Dispatch event when grid refreshes

@@ -286,9 +286,17 @@ class OperationPlanMixin(GridReport):
         prefs = getattr(request, "prefs", None)
         if prefs:
             widgets = prefs.get("widgets", None)
+            mode = prefs.get("mode", None)
         else:
             request.prefs = {}
             widgets = None
+            mode = None
+        reportclass.template = (
+            "input/operationplanreport_angularjs.html"
+            if mode
+            in ["kanban", "gantt", "calendarday", "calendarweek", "calendarmonth"]
+            else "input/operationplanreport.html"
+        )
         if not widgets:
             # Inject the default layout of the widgets
             request.prefs["widgets"] = [

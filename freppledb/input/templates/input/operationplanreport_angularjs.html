@@ -33,12 +33,49 @@ rect.opplan {
 
 {% block extrahead %}{{block.super}}
 <script src="{{STATIC_URL}}js/d3.min.js"></script>
+<script src="{{STATIC_URL}}js/angular.min.js"></script>
+<script src="{{STATIC_URL}}js/angular-cookies.min.js"></script>
+<script src="{{STATIC_URL}}js/angular-gettext.min.js"></script>
+<script src="{{STATIC_URL}}js/angular-websocket.js"></script>
+<script src="{{STATIC_URL}}js/i18n/angular-freppletranslations.js"></script>
 
 {% if debug_js %}
-<script type="module" src="http://localhost:5173/static/src/main.js"></script>
-<script type="module" src="http://localhost:5173/static/@vite/client"></script>
+<script src="{{STATIC_URL}}common/src/module.js"></script>
+<script src="{{STATIC_URL}}common/src/preferences.js"></script>
+<script src="{{STATIC_URL}}common/src/webfactory.js"></script>
+
+<script src="{{STATIC_URL}}input/src/module.js"></script>
+<script src="{{STATIC_URL}}input/src/customer.js"></script>
+<script src="{{STATIC_URL}}input/src/demand.js"></script>
+<script src="{{STATIC_URL}}input/src/location.js"></script>
+<script src="{{STATIC_URL}}input/src/buffer.js"></script>
+<script src="{{STATIC_URL}}input/src/resource.js"></script>
+<script src="{{STATIC_URL}}input/src/item.js"></script>
+<script src="{{STATIC_URL}}input/src/operation.js"></script>
+<script src="{{STATIC_URL}}input/src/operationplan.js"></script>
+<script src="{{STATIC_URL}}input/src/model.js"></script>
+
+<script src="{{STATIC_URL}}operationplandetail/src/calendar.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/d3service.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/module.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/operationplandetailCtrl.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/problemspanelDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/resourcespanelDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/bufferspanelDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/demandpeggingpanelDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/operationplanpanelDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/networkstatusDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/downstreamoperationplansDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/upstreamoperationplansDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/supplyinformationDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/inventorydataDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/inventorygraphDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/kanbanDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/ganttDrv.js"></script>
 {% else %}
-<script src="{{STATIC_URL}}input/main.js"></script>
+<script src="{{STATIC_URL}}js/frepple-common.min.js"></script>
+<script src="{{STATIC_URL}}js/frepple-input.min.js"></script>
+<script src="{{STATIC_URL}}js/frepple-operationplandetail.min.js"></script>
 {% endif %}
 <script>
 
@@ -50,6 +87,8 @@ rect.opplan {
   var editable = {% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %};
   var service_url = {% if proxied %}'/svc/{{request.database}}/'{% else %}document.location.protocol + "//{{port}}/"{% endif %};
   var service_token = '{{token}}';
+  var showChildren = (!urlParams.has("noautofilter") && preferences && "showChildren" in preferences) ? preferences.showChildren : true;
+  var showTop = (!urlParams.has("noautofilter") && preferences && "showTop" in preferences) ? preferences.showTop : true;
 
   function saveData(rows, ok_callback) {
       $.ajax({
@@ -61,7 +100,7 @@ rect.opplan {
         success: function () {
           upload.undo();
           $("#save i").addClass('hidden');
-          $(".pg-dirty").removeClass('pg-dirty');   //TODO change class name
+          $(".ng-dirty").removeClass('ng-dirty');
           if (typeof ok_callback !== 'undefined') ok_callback();
         },
         error: ajaxerror
@@ -74,12 +113,16 @@ rect.opplan {
       "width": Math.floor($("#fields").width()),
       "mode": mode,
       "calendarmode": calendarmode,
-      "columns": window.appInstance?.kanbancolumns || [],
+      "columns": angular.element('#controller').scope().kanbancolumns,
       "grouping": grouping,
       "groupingdir": groupingdir,
       "detailwidth": Math.floor($("#detailspanel").width() || 0),
       "widgets": widget.getConfig()
     };
+    if (!urlParams.has("noautofilter")){
+      tmp["showTop"] = showTop;
+      tmp["showChildren"] = showChildren;
+    }
     return tmp;
   }
 
@@ -153,6 +196,10 @@ rect.opplan {
   var viewstart = new Date(horizonstart.getTime());
   var viewend = new Date(horizonend.getTime());
 
+  function zoom(factor) {
+    gantt.zoom(factor, "#ganttheader");
+    angular.element('#controller').scope().zoom();
+  }
 
   $(function() {
     $("#workarea").css('overflow-x','visible');
@@ -170,15 +217,9 @@ rect.opplan {
       });
     $("#undo").on('click', function() {
       $(window).off('beforeunload', upload.warnUnsavedChanges);
-      const event = new CustomEvent('singleSelect', {
-      detail: {
-          execute: 'undo',
-          reference: null,
-          status: null,
-          selectedRows: null
-        }
       });
-      document.getElementById('app').dispatchEvent(event);
+    $("#actionsul li, button#actions1").on('click', function() {
+      angular.element('#controller').scope().refreshstatus($("#actions").val());
     });
     $("#gridmode").on('click', function() {
       angular.element('#controller').scope().setMode("table");
@@ -195,6 +236,12 @@ rect.opplan {
     $("#calendarday").on('click', function() {
       angular.element('#controller').scope().setMode("calendarday");
     });
+    $("#showTop").on('click', function() {
+      angular.element('#controller').scope().toggleShowTop();
+    });
+    $("#showChildren").on('click', function() {
+      angular.element('#controller').scope().toggleShowChildren();
+    });
     $('#zoomin').on("click", function() { zoom(0.5); });
     $('#zoomout').on("click", function() { zoom(2); });
     {% if showGantt %}
@@ -204,10 +251,24 @@ rect.opplan {
     $("#zoomin, #zoomout").removeClass("d-none");
     {% endif %}
   });
+  // frepple.js will call this function to alert angular that the grid has changed
+  function checkrows(grid, selection) {
+    var selectiondata = [];
+    jQuery.each(selection , function(index,item){
+      selectiondata.push(grid.getRowData(item));
+    });
+    if (selectiondata.length > 1) {
+      angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+    } else if (selectiondata.length === 1) {
+      angular.element('#controller').scope().displayInfo(selectiondata[0]);
+    } else {
+      angular.element('#controller').scope().displayInfo(undefined);
+    }
+  }
 
-  // // Controller will call this function to pass values to the grid
+  // Controller will call this function to pass values to the grid
   function displayongrid(id, columnid, value) {
-    $("#"+id).removeClass("edited").addClass("edited");
+    angular.element(document).find(document.getElementById(id)).removeClass("edited").addClass("edited");
     if (
       columnid === "startdate" ||
       columnid === "enddate" ||
@@ -216,65 +277,38 @@ rect.opplan {
       columnid === "remark" ||
       (columnid === "status" && ['proposed', 'approved', 'confirmed', 'completed', 'closed'].indexOf(value) > -1)
     ) {
-      $("#grid").jqGrid("setCell", id, columnid, value, "dirty-cell");
+      angular.element(document).find("#grid").jqGrid("setCell", id, columnid, value, "dirty-cell");
       $("#save, #undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
       $(window).off('beforeunload', upload.warnUnsavedChanges);
       $(window).on('beforeunload', upload.warnUnsavedChanges);
     }
   }
-
-  window.displayongrid = displayongrid;
-
-  jQuery("#workarea").css('overflow-x', 'visible');
-  jQuery("#resize-handle").css({ 'display': 'inline-block' });
-
-  jQuery("#content-main").resizable({
-    handleSelector: "#resize-handle",
-    resizeWidth: false,
-    resizeHeight: true,
-    onDrag: function (e, $el, opt) {
-      jQuery("#grid").setGridHeight(jQuery("#content-main").height() - 52);
-    },
-    onDragEnd: function (e, $el, opt) {
-      // Save column configuration (assuming grid has a save method)
-      if (typeof grid !== 'undefined' && typeof grid.saveColumnConfiguration === 'function') {
-        grid.saveColumnConfiguration();
-      }
-    }
-  });
-
-  // Set jqGrid single select behavior
-  jQuery("#grid").jqGrid("setGridParam", { singleSelectClickMode: "selectonly" });
-
-  // Hide message button
-  jQuery("#hidemessage").on("click", function () {
-    hidemessage = true;
-    jQuery("#hidemessage").parent().parent().hide();
-    if (typeof grid !== 'undefined' && typeof grid.saveColumnConfiguration === 'function') {
-      grid.saveColumnConfiguration();
-    }
-  });
-  });
-
-  // Dispatch event when grid refreshes
-  document.addEventListener('DOMContentLoaded', function () {
-    window.addEventListener('gridRefresh', function (event) {
-      if (typeof refreshGrid === 'function') {
-        refreshGrid();
-      }
-    });
-  });
-
 </script>
 {% endblock %}
 
-{% block extracontainer %}{% endblock %}
+{% block extracontainer %}data-ng-app="operationplandetailapp"{% endblock %}
 
 {% block tools %}{% if args %}{% include "common/snippet_follow.html" %}{% endif %}{% endblock %}
 
 {% block tabs %}{% if args %}{% tabs model %}{% endif %}{% endblock %}
 
 {% block actions %}
+  {% if reportkey == "freppledb.input.views.manufacturing.ManufacturingOrderList" %}<div class="btn-group" role="group">
+    <button id="showTop" type="button" class="btn btn-sm btn-outline-primary{% if noautofilter or "showTop" not in preferences or preferences.showTop %} active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display top level"|capfirst|force_escape %}">
+      <svg width="100%" height="1.2em" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+         <rect height="42" width="100" rx="10" ry="10" class="fill-primary"/>
+         <rect height="38" x="7" y="55" width="33" rx="10" ry="10" class="stroke-primary" stroke-width="14"/>
+         <rect height="38" x="60" y="55" width="33" rx="10" ry="10" class="stroke-primary" stroke-width="14"/>
+      </svg>
+    </button>
+    <button id="showChildren" type="button" class="btn btn-sm btn-outline-primary{% if noautofilter or "showChildren" not in preferences or preferences.showChildren %} active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display child level"|capfirst|force_escape %}">
+      <svg width="100%" height="1.2em" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+         <rect height="35" x="7" y="7" width="86" rx="10" ry="10" class="stroke-primary" stroke-width="14"/>
+         <rect height="45" x="0" y="55" width="45" rx="10" ry="10" class="fill-primary"/>
+         <rect height="45" x="55" y="55" width="45" rx="10" ry="10" class="fill-primary"/>
+      </svg>
+    </button>
+  </div>{% endif %}
   <div class="btn-group" role="group">
     <button data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display table"|capfirst|force_escape %}"
       class="btn btn-sm btn-primary{% if preferences.mode != 'kanban' and preferences.mode != 'gantt' and preferences.mode != 'calendarday' and preferences.mode != 'calendarweek' and preferences.mode != 'calendarmonth' or not preferences.mode %} active{% endif %}"
@@ -324,31 +358,17 @@ displayGrid({% if preferences.mode != "kanban" and preferences.mode != "gantt" a
 
 {% block extra_grid %}
 
-onSelectRow: function(rowid, status) {
-  const rowData = $("#grid").getRowData(rowid);
-  const reference = rowData.operationplan__reference ? rowData.operationplan__reference : rowid;
-
-  const references = $("#grid").jqGrid('getGridParam', 'selarrrow').filter(x => x.id !== 'cb').map(x => x.operationplan__reference ? x.operationplan__reference : x);
-  const event = new CustomEvent("singleSelect", {
-    detail: {
-      execute: 'displayInfo',
-      reference: reference,
-      status: status,
-      selectedRows: references,
-    }
-
+onSelectAll: function(aRowids,status){
+  var selection = $(this).jqGrid('getGridParam','selarrrow');
+  var selectiondata = [];
+  jQuery.each(selection , function(index,item) {
+    selectiondata.push(jQuery("#grid").getRowData(item));
   });
-  document.getElementById('app').dispatchEvent(event);
-},
-onSelectAll: function(aRowids, status){
-  const event = new CustomEvent('allSelect', {
-    detail: {
-      execute: 'displayInfo',
-      status: status,
-      selectedRows: aRowids,
-    }
-  });
-  document.getElementById('app').dispatchEvent(event);
+  if (status === true)
+    angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+  else
+    angular.element('#controller').scope().displayInfo(undefined);
+  if ($("#actions").length) $("#actions1").prop('disabled', !status);
 },
 beforeSaveCell: function(rowid, cellname, value, iRow, iCol) {
   var selection = $(this).jqGrid('getGridParam','selarrrow');
@@ -381,52 +401,71 @@ beforeSaveCell: function(rowid, cellname, value, iRow, iCol) {
     }
   });
   upload.select();
-  if (selection.length > 1){
-    const event = new CustomEvent('processAggregatedInfo', {
-    detail: {
-      selectiondata: selectiondata,
-      colModel: jQuery("#grid").jqGrid ('getGridParam', 'colModel')
-      }
-    });
-    document.getElementById('app').dispatchEvent(event);
-  // angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+  if (selection.length > 1)
+    angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+  else
+    angular.element('#controller').scope().displayonpanel(rowid, cellname, value);
+},
+onSelectRow: function(rowid, status, e) {
+  var selection = [];
+  if ($(this).jqGrid('getGridParam').multiselect === true) {
+    selection = $(this).jqGrid('getGridParam','selarrrow').slice();
   } else {
-    const event = new CustomEvent('displayonpanel', {
-      detail: {
-        rowid: rowid,
-        cellname: cellname,
-        value: value
+    selection = [$(this).jqGrid('getGridParam','selrow').slice()];
+  }
+  grid.markSelectedRow(selection.length);
+
+  var selectiondata = [];
+  var rowdata={};
+  var colname = "";
+  var editedval = "";
+  jQuery.each(selection , function(index,item) {
+    rowdata = jQuery("#grid").getRowData(item);
+    var elem = $(document.getElementById(item)).find("input");
+    editedval = elem.attr('cm','[Object Object]').not('.cbox').val();
+    if ( typeof elem.attr('cm','[Object Object]').not('.cbox').val() !== 'undefined' ) {
+      if (typeof elem.attr('cm','[Object Object]').not('.cbox').attr("id") !== 'undefined') {
+        colname=elem.attr('cm','[Object Object]').not('.cbox').attr("id").split("_")[1];
+        if (typeof colname !== 'undefined') {
+          rowdata[colname] = elem.attr('cm','[Object Object]').not('.cbox').val();
+        }
       }
-    });
-    document.getElementById('app').dispatchEvent(event);
-    // angular.element('#controller').scope().displayonpanel(rowid, cellname, value);
+    }
+    selectiondata.push(rowdata);
+  });
+
+  if (selectiondata.length > 1) {
+    angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+  } else if (selectiondata.length === 1) {
+    angular.element('#controller').scope().displayInfo(selectiondata[0]);
+  } else {
+    angular.element('#controller').scope().displayInfo(undefined);
   }
 },
 multiboxonly: false,
 loadComplete: function(data) {
       $('#curerror').html("");
       if (upload.selectedRows.length === 1) {
-        const event = new CustomEvent('displayonpanel', jQuery("#grid").getRowData(upload.selectedRows[0]));
-        document.getElementById('app').dispatchEvent(event);
+        angular.element('#controller').scope().displayInfo(
+          jQuery("#grid").getRowData(upload.selectedRows[0])
+        );
       }
       else if (upload.selectedRows.length > 1) {
         var selectiondata = [];
         for (var x of upload.selectedRows)
           selectiondata.push(jQuery("#grid").getRowData(x));
-
-        const event = new CustomEvent('processAggregatedInfo', {
-          detail: {
-            selectiondata: selectiondata,
-            colModel: jQuery("#grid").jqGrid ('getGridParam', 'colModel')
-          }
-        });
-        document.getElementById('app').dispatchEvent(event);
+        angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
       }
+      else {
+        var s = angular.element('#controller').scope();
+        if (s) s.processAggregatedInfo([], jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+      }
+      upload.restoreSelection();
     },
 {% endblock %}
 
 {% block table %}
-<div>
+<div data-ng-controller="operationplandetailCtrl" id="controller">
 
 <div class="row text-center">
 <div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
@@ -458,10 +497,9 @@ loadComplete: function(data) {
 <span id="resize-handle" class="fa fa-bars handle" style="display: inline-block"></span>
 </div>
 
-<svg width="0" height="0"><defs id="gradients"></defs></svg>
-{% endblock %}
+<div data-ng-include="'/static/operationplandetail/operationplandetail.html'"></div>
 
-{% block after_table %}
-<div id="app"></div>
-<div id="popup" class="modal fade in" role="dialog" style="z-index: 10000"></div>
+</div>
+
+<svg width="0" height="0"><defs id="gradients"></defs></svg>
 {% endblock %}

@@ -189,7 +189,7 @@ class Command(BaseCommand):
                 records_per_page=self.recordsperpage
             ):
                 # Connect to the odoo URL to POST data
-                encoded = base64.encodebytes(
+                encoded = base64.b64encode(
                     ("%s:%s" % (self.odoo_user, self.odoo_password)).encode("utf-8")
                 )
                 size = len(page)

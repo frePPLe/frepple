@@ -26,6 +26,8 @@
 
 <td data-ng-if="peg[2] == 'MO'">{{peg[1]}}<a data-ng-href="/data/input/manufacturingorder/?noautofilter&parentreference={{peg[1]}}" onclick="opendetail(event)">
   <span class="fa fa-caret-right"></span></a></td>
+<td data-ng-if="peg[2] == 'WO'">{{peg[1]}}<a data-ng-href="/data/input/workorder/?noautofilter&parentreference={{peg[1]}}" onclick="opendetail(event)">
+  <span class="fa fa-caret-right"></span></a></td>
 <td data-ng-if="peg[2] == 'DO'">{{peg[1]}}<a data-ng-href="/data/input/distributionorder/?noautofilter&parentreference={{peg[1]}}" onclick="opendetail(event)">
   <span class="fa fa-caret-right"></span></a></td>
 <td data-ng-if="peg[2] == 'PO'">{{peg[1]}}<a data-ng-href="/data/input/purchaseorder/?noautofilter&parentreference={{peg[1]}}" onclick="opendetail(event)">
@@ -36,9 +38,9 @@
 
 <td>{{peg[2]}}</td>
 
-<td data-ng-if="peg[2] == 'MO'">{{peg[3]}}<a href="/detail/input/operation/key/" role="input/operation" onclick="opendetail(event)">
+<td data-ng-if="['MO', 'WO'].includes(peg[2])">{{peg[3]}}<a href="/detail/input/operation/key/" role="input/operation" onclick="opendetail(event)">
   <span class="fa fa-caret-right"></span></a></td>
-<td data-ng-if="peg[2] != 'MO'">{{peg[3]}}</td>
+<td data-ng-if="!['MO', 'WO'].includes(peg[2])">{{peg[3]}}</td>
 <td>{{peg[4]}}</td>
 <td>{{peg[5]}}<a data-ng-if="peg[5]" href="/detail/input/item/key/" role="input/item" onclick="opendetail(event)">
   <span class="fa fa-caret-right"></span></a></td>

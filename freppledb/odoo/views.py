@@ -444,7 +444,7 @@ def Upload(request):
             "%sfrepple/xml/" % odoo_url,
             data=body,
             headers={
-                "Authorization": "Basic %s" % encoded.decode("ascii")[:-1],
+                "Authorization": "Basic %s" % encoded.decode("ascii"),
                 "Content-Type": "multipart/form-data; boundary=%s" % boundary,
                 "Content-length": size,
             },

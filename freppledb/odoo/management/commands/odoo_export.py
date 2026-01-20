@@ -197,7 +197,7 @@ class Command(BaseCommand):
                     "%sfrepple/xml/" % self.odoo_url,
                     data=page,
                     headers={
-                        "Authorization": "Basic %s" % encoded.decode("ascii")[:-1],
+                        "Authorization": "Basic %s" % encoded.decode("ascii"),
                         "Content-Type": "multipart/form-data; boundary=%s"
                         % self.boundary,
                         "Content-length": size,

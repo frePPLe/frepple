@@ -10,4 +10,5 @@ This module allows the user to declare the bill of materials for a manufacturing
    operations
    operation-materials
    manufacturing-orders
+   work-orders
 

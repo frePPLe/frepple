@@ -84,7 +84,8 @@ function drawGraphs(jsondata)
         'proposed_end': tmp[2],
         'total_end': tmp[3],
         'proposed_production': tmp[4],
-        'total_production': tmp[5]
+        'total_production': tmp[5],
+        'is_work_order': jsondata['rows'][index]['is_work_order'],
         });
       if (tmp[1] > max_y && 1 in fields)
         max_y = tmp[1];
@@ -142,7 +143,7 @@ function drawGraphs(jsondata)
                 d3.select("#tooltip").style('display', 'none');
 
 			          window.location ="{{ request.prefix }}"
-			            +"/data/input/manufacturingorder/"
+			            +"/data/input/" + (d['is_work_order'] == 'True'? "workorder/" : "manufacturingorder/")
 			            +"?noautofilter&operation__name="+admin_escape(d['operation'])
 			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
 			            +"&startdate__gte="+timebuckets[d['bucket']]['startdate'];
@@ -165,7 +166,7 @@ function drawGraphs(jsondata)
                 d3.select("#tooltip").style('display', 'none');
 
 			          window.location = "{{ request.prefix }}"
-			            +"/data/input/manufacturingorder/"
+			            +"/data/input/" + (d['is_work_order'] == 'True'? "workorder/" : "manufacturingorder/")
 			            +"?noautofilter&operation__name="+admin_escape(d['operation'])
 			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
 			            +"&startdate__gte="+timebuckets[d['bucket']]['startdate'];
@@ -190,7 +191,7 @@ function drawGraphs(jsondata)
                 d3.select("#tooltip").style('display', 'none');
 
 			          window.location = "{{ request.prefix }}"
-			            +"/data/input/manufacturingorder/"
+			            +"/data/input/" + (d['is_work_order'] == 'True'? "workorder/" : "manufacturingorder/")
 			            +"?noautofilter&operation__name="+admin_escape(d['operation'])
 			            +"&startdate__lte="+timebuckets[d['bucket']]['enddate']
 			            +"&enddate__gt="+timebuckets[d['bucket']]['startdate'];
@@ -213,7 +214,7 @@ function drawGraphs(jsondata)
                 d3.select("#tooltip").style('display', 'none');
 
 			          window.location = "{{ request.prefix }}"
-			            +"/data/input/manufacturingorder/"
+			            +"/data/input/" + (d['is_work_order'] == 'True'? "workorder/" : "manufacturingorder/")
 			            +"?noautofilter&operation__name="+admin_escape(d['operation'])
 			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
 			            +"&enddate__gt="+timebuckets[d['bucket']]['startdate'];
@@ -237,7 +238,7 @@ function drawGraphs(jsondata)
                 d3.select("#tooltip").style('display', 'none');
 
 			          window.location = "{{ request.prefix }}"
-			            +"/data/input/manufacturingorder/"
+			            +"/data/input/" + (d['is_work_order'] == 'True'? "workorder/" : "manufacturingorder/")
 			            +"?noautofilter&operation__name="+admin_escape(d['operation'])
 			            +"&enddate__lte="+timebuckets[d['bucket']]['enddate']
 			            +"&enddate__gt="+timebuckets[d['bucket']]['startdate'];
@@ -260,7 +261,7 @@ function drawGraphs(jsondata)
                 d3.select("#tooltip").style('display', 'none');
 
 			          window.location = "{{ request.prefix }}"
-			            +"/data/input/manufacturingorder/"
+			            +"/data/input/" + (d['is_work_order'] == 'True'? "workorder/" : "manufacturingorder/")
 			            +"?noautofilter&operation__name="+admin_escape(d['operation'])
 			            +"&enddate__lte="+timebuckets[d['bucket']]['enddate']
 			            +"&enddate__gt="+timebuckets[d['bucket']]['startdate'];
@@ -279,7 +280,7 @@ function drawGraphs(jsondata)
 	          d3.select("#tooltip").style('display', 'none');
 
 	          window.location = "{{ request.prefix }}"
-	            +"/data/input/manufacturingorder/"
+	            +"/data/input/" + (d['is_work_order'] == 'True'? "workorder/" : "manufacturingorder/")
 	            +"?noautofilter&operation__name="+admin_escape(d['operation'])
 	            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
 	            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
@@ -377,7 +378,7 @@ function crosses (cellvalue, options, rowdata)
       case 0:
         if (cellvalue[0] != 0.0)
           result += grid.formatNumber(cellvalue[0]) +
-            '<a href="{{ request.prefix }}/data/input/manufacturingorder/?noautofilter' +
+            '<a href="{{ request.prefix }}/data/input/' + (rowdata['is_work_order'] == 'True'? 'workorder': 'manufacturingorder') + '/?noautofilter' +
             '&amp;operation__name=' + admin_escape(rowdata['operation']) +
             '&amp;startdate__gte=' + options['colModel']['startdate'] +
             '&amp;startdate__lt=' + options['colModel']['enddate'] +
@@ -388,7 +389,7 @@ function crosses (cellvalue, options, rowdata)
       case 1:
         if (cellvalue[1] != 0.0)
           result += grid.formatNumber(cellvalue[1]) +
-            '<a href="{{ request.prefix }}/data/input/manufacturingorder/?noautofilter' +
+            '<a href="{{ request.prefix }}/data/input/' + (rowdata['is_work_order'] == 'True'? 'workorder': 'manufacturingorder') + '/?noautofilter' +
             '&amp;operation__name='+ admin_escape(rowdata['operation']) +
             '&amp;startdate__gte=' + options['colModel']['startdate'] +
             '&amp;startdate__lt=' + options['colModel']['enddate'] +
@@ -399,7 +400,7 @@ function crosses (cellvalue, options, rowdata)
       case 2:
         if (cellvalue[2] != 0.0)
           result += grid.formatNumber(cellvalue[2]) +
-            '<a href="{{ request.prefix }}/data/input/manufacturingorder/?noautofilter' +
+            '<a href="{{ request.prefix }}/data/input/' + (rowdata['is_work_order'] == 'True'? 'workorder': 'manufacturingorder') + '/?noautofilter' +
             '&amp;operation__name=' + admin_escape(rowdata['operation']) +
             '&amp;enddate__gte=' + options['colModel']['startdate'] +
             '&amp;enddate__lt=' + options['colModel']['enddate'] +
@@ -410,7 +411,7 @@ function crosses (cellvalue, options, rowdata)
       case 3:
         if (cellvalue[3] != 0.0)
           result += grid.formatNumber(cellvalue[3]) +
-            '<a href="{{ request.prefix }}/data/input/manufacturingorder/?noautofilter' +
+            '<a href="{{ request.prefix }}/data/input/' + (rowdata['is_work_order'] == 'True'? 'workorder': 'manufacturingorder') + '/?noautofilter' +
             '&amp;operation__name=' + admin_escape(rowdata['operation']) +
             '&amp;enddate__gte=' + options['colModel']['startdate'] +
             '&amp;enddate__lt=' + options['colModel']['enddate'] +
@@ -421,7 +422,7 @@ function crosses (cellvalue, options, rowdata)
       case 4:
         if (cellvalue[4] != 0.0)
           result += grid.formatNumber(cellvalue[4]) +
-            '<a href="{{ request.prefix }}/data/input/manufacturingorder/?noautofilter' +
+            '<a href="{{ request.prefix }}/data/input/' + (rowdata['is_work_order'] == 'True'? 'workorder': 'manufacturingorder') + '/?noautofilter' +
             '&amp;operation__name=' + admin_escape(rowdata['operation']) +
             '&amp;startdate__lte=' + options['colModel']['enddate'] +
             '&amp;enddate__gt=' + options['colModel']['startdate'] +
@@ -432,7 +433,7 @@ function crosses (cellvalue, options, rowdata)
       case 5:
         if (cellvalue[5] != 0.0)
           result += grid.formatNumber(cellvalue[5]) +
-            '<a href="{{ request.prefix }}/data/input/manufacturingorder/?noautofilter&amp;' +
+            '<a href="{{ request.prefix }}/data/input/' + (rowdata['is_work_order'] == 'True'? 'workorder': 'manufacturingorder') + '/?noautofilter' +
             'operation__name=' + admin_escape(rowdata['operation']) +
             '&amp;startdate__lte=' + options['colModel']['enddate'] +
             '&amp;enddate__gt=' + options['colModel']['startdate'] +

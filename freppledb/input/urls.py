@@ -120,6 +120,41 @@ if mode == "WSGI":
             name="input_operationdepency_changelist",
         ),
         re_path(
+            r"^data/input/workorder/$",
+            views.WorkOrderList.as_view(),
+            name="input_workorder_changelist",
+        ),
+        re_path(
+            r"^data/input/workorder/location/(.+)/$",
+            views.WorkOrderList.as_view(),
+            name="input_workorder_by_location",
+        ),
+        re_path(
+            r"^data/input/workorder/operation/(.+)/$",
+            views.WorkOrderList.as_view(),
+            name="input_workorder_by_operation",
+        ),
+        re_path(
+            r"^data/input/workorder/item/(.+)/$",
+            views.WorkOrderList.as_view(),
+            name="input_workorder_by_item",
+        ),
+        re_path(
+            r"^data/input/workorder/operationplanmaterial/([^/]+)/([^/]+)/(.+)/$",
+            views.WorkOrderList.as_view(),
+            name="input_workorder_by_opm",
+        ),
+        re_path(
+            r"^data/input/workorder/produced/([^/]+)/([^/]+)/([^/]+)/(.+)/$",
+            views.WorkOrderList.as_view(),
+            name="input_workorder_by_produced",
+        ),
+        re_path(
+            r"^data/input/workorder/consumed/([^/]+)/([^/]+)/([^/]+)/(.+)/$",
+            views.WorkOrderList.as_view(),
+            name="input_workorder_by_consumed",
+        ),
+        re_path(
             r"^data/input/manufacturingorder/$",
             views.ManufacturingOrderList.as_view(),
             name="input_manufacturingorder_changelist",
@@ -386,6 +421,10 @@ if mode == "WSGI":
         re_path(
             r"^api/input/manufacturingorder/$",
             serializers.ManufacturingOrderAPI.as_view(),
+        ),
+        re_path(
+            r"^api/input/workorder/$",
+            serializers.WorkOrderAPI.as_view(),
         ),
         re_path(
             r"^api/input/purchaseorder/$",

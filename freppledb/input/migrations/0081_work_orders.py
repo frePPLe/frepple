@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2007-2013 by frePPLe bv
+# Copyright (C) 2025 by frePPLe bv
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -21,31 +20,21 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from .buffer import Buffer
-from .calendar import Calendar, CalendarBucket
-from .customer import Customer
-from .demand import Demand
-from .item import Item
-from .itemdistribution import ItemDistribution
-from .location import Location
-from .operation import (
-    Operation,
-    OperationDependency,
-    OperationMaterial,
-    OperationResource,
-    searchmode,
-    SubOperation,
-)
-from .operationplan import (
-    OperationPlan,
-    OperationPlanMaterial,
-    OperationPlanResource,
-    OperationPlanRelatedMixin,
-    ManufacturingOrder,
-    WorkOrder,
-    DeliveryOrder,
-    PurchaseOrder,
-    DistributionOrder,
-)
-from .resource import Resource, SetupMatrix, SetupRule, ResourceSkill, Skill
-from .supplier import ItemSupplier, Supplier
+from django.db import migrations
+
+
+class Migration(migrations.Migration):
+    dependencies = [("input", "0080_parameter_move_approved_early")]
+
+    operations = [
+        migrations.RunSQL(
+            """
+            update operationplan set type = 'WO'
+            where type = 'MO' and exists
+            (select 1 from operation inner join operationplan opplan on opplan.operation_id = operation.name where operation.type = 'routing' and opplan.reference = operationplan.owner_id)
+            """,
+            """
+            update operationplan set type = 'MO' where type = 'WO'
+            """,
+        )
+    ]

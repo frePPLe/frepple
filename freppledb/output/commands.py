@@ -414,7 +414,7 @@ class ExportProblems(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if "supply" in os.environ  and "noexport" not in os.environ:
+        if "supply" in os.environ and "noexport" not in os.environ:
             return 1
         else:
             return -1
@@ -550,7 +550,9 @@ class ExportOperationPlans(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if ("supply" in os.environ or kwargs.get("exportstatic", False))  and "noexport" not in os.environ:
+        if (
+            "supply" in os.environ or kwargs.get("exportstatic", False)
+        ) and "noexport" not in os.environ:
             return 1
         else:
             return -1
@@ -835,7 +837,12 @@ class ExportOperationPlans(PlanTask):
             # Export MO
             data = [
                 clean_value(i.name),
-                "MO",
+                (
+                    "WO"
+                    if j.owner
+                    and isinstance(j.owner.operation, frepple.operation_routing)
+                    else "MO"
+                ),
                 status,
                 round(j.quantity, 8),
                 str(j.start),
@@ -1088,7 +1095,7 @@ class ExportOperationPlans(PlanTask):
                 """
                 delete from operationplan
                 where status in ('confirmed','approved','completed','closed')
-                and type = 'MO'
+                and type in ('MO','WO')
                 and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
                 """
             )
@@ -1240,7 +1247,9 @@ class ExportOperationPlanMaterials(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if ("supply" in os.environ or kwargs.get("exportstatic", False))  and "noexport" not in os.environ:
+        if (
+            "supply" in os.environ or kwargs.get("exportstatic", False)
+        ) and "noexport" not in os.environ:
             return 1
         else:
             return -1
@@ -1436,7 +1445,9 @@ class ExportOperationPlanResources(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if ("supply" in os.environ or kwargs.get("exportstatic", False))  and "noexport" not in os.environ:
+        if (
+            "supply" in os.environ or kwargs.get("exportstatic", False)
+        ) and "noexport" not in os.environ:
             return 1
         else:
             return -1

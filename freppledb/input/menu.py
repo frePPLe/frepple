@@ -36,6 +36,7 @@ from freppledb.input.models import (
     ItemSupplier,
     Location,
     ManufacturingOrder,
+    WorkOrder,
     Operation,
     OperationDependency,
     OperationMaterial,
@@ -217,6 +218,15 @@ menu.addItem(
     report=freppledb.input.views.ManufacturingOrderList,
     index=100,
     model=ManufacturingOrder,
+    dependencies=[Operation],
+)
+menu.addItem(
+    "manufacturing",
+    "work orders",
+    url="/data/input/workorder/",
+    report=freppledb.input.views.WorkOrderList,
+    index=150,
+    model=WorkOrder,
     dependencies=[Operation],
 )
 menu.addItem(

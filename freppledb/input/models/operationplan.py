@@ -66,6 +66,7 @@ class OperationPlan(AuditModel):
     types = (
         ("STCK", _("inventory")),
         ("MO", _("manufacturing order")),
+        ("WO", _("work order")),
         ("PO", _("purchase order")),
         ("DO", _("distribution order")),
         ("DLVR", _("delivery order")),
@@ -266,8 +267,7 @@ class OperationPlan(AuditModel):
 
         # A parent operationplan can't be proposed when it's children already have a different status
         if (
-            self.type == "MO"
-            and self.owner
+            self.type == "WO"
             and self.status != "proposed"
             and self.owner.status == "proposed"
         ):
@@ -290,7 +290,7 @@ class OperationPlan(AuditModel):
                 if self.startdate > now:
                     self.startdate = now
 
-        if self.type == "MO" and self.owner and self.owner.operation.type == "routing":
+        if self.type == "WO":
             # Assure that previous routing steps are also marked closed or completed
             subopplans = [i for i in self.owner.xchildren.all().using(db)]
             for subop in subopplans:
@@ -1040,7 +1040,7 @@ class ManufacturingOrder(OperationPlan):
                         # A primary key is part of the input fields
                         try:
                             # Try to find an existing record with the same primary key
-                            it = ManufacturingOrder.objects.using(database).get(
+                            it = OperationPlan.objects.using(database).get(
                                 pk=rowWrapper[ManufacturingOrder._meta.pk.name]
                             )
                             form = UploadForm(rowWrapper, instance=it)
@@ -1332,7 +1332,547 @@ class ManufacturingOrder(OperationPlan):
         return "MO"
 
     def save(self, *args, **kwargs):
-        self.type = "MO"
+        if self.owner and self.owner.operation.type == "routing":
+            self.type = "WO"
+        else:
+            self.type = "MO"
+        self.supplier = self.origin = self.destination = None
+        if self.operation:
+            self.item = self.operation.item
+            if not self.item and self.operation.owner:
+                self.item = self.operation.owner.item
+            self.location = self.operation.location
+
+        super().save(*args, **kwargs)
+
+    class Meta:
+        proxy = True
+        verbose_name = _("manufacturing order")
+        verbose_name_plural = _("manufacturing orders")
+
+
+class WorkOrder(OperationPlan):
+    extra_dependencies = [OperationResource]
+
+    class WorkOrderManager(OperationPlan.Manager):
+        def get_queryset(self):
+            return super().get_queryset().filter(type="WO")
+
+    objects = WorkOrderManager()
+
+    @staticmethod
+    def parseData(
+        data,
+        rowmapper,
+        user,
+        database,
+        ping,
+        excel_duration_in_days=False,
+        skip_audit_log=False,
+    ):
+        selfReferencing = []
+
+        def formfieldCallback(f):
+            # global selfReferencing
+            if isinstance(f, RelatedField):
+                tmp = BulkForeignKeyFormField(field=f, using=database)
+                if f.remote_field.model == WorkOrder:
+                    selfReferencing.append(tmp)
+                return tmp
+            else:
+                return f.formfield(localize=True)
+
+        # Initialize
+        headers = []
+        rownumber = 0
+        changed = 0
+        added = 0
+        content_type_id = ContentType.objects.get_for_model(
+            WorkOrder, for_concrete_model=False
+        ).pk
+
+        # Call the beforeUpload method if it is defined
+        if hasattr(WorkOrder, "beforeUpload"):
+            WorkOrder.beforeUpload(database)
+
+        errors = 0
+        warnings = 0
+        has_pk_field = False
+        processed_header = False
+        rowWrapper = rowmapper()
+        newstyle = (
+            Parameter.getValue("NewStyleOrderEditing", database, "false").lower()
+            == "true"
+        )
+
+        # Detect excel autofilter data tables
+        if isinstance(data, Worksheet) and data.auto_filter.ref:
+            try:
+                bounds = CellRange(data.auto_filter.ref).bounds
+            except Exception:
+                bounds = None
+        else:
+            bounds = None
+
+        for row in data:
+            rownumber += 1
+            if bounds:
+                # Only process data in the excel auto-filter range
+                if rownumber < bounds[1]:
+                    continue
+                elif rownumber > bounds[3]:
+                    break
+                else:
+                    rowWrapper.setData(row)
+            else:
+                rowWrapper.setData(row)
+
+            # Case 1: Skip empty rows
+            if rowWrapper.empty():
+                continue
+
+            # Case 2: The first line is read as a header line
+            elif not processed_header:
+                processed_header = True
+
+                # Collect required fields
+                required_fields = set()
+                for i in WorkOrder._meta.fields:
+                    if (
+                        not i.blank
+                        and i.default == NOT_PROVIDED
+                        and not isinstance(i, AutoField)
+                    ):
+                        required_fields.add(i.name)
+
+                # Validate all columns
+                for col in rowWrapper.values():
+                    col = str(col).strip().strip("#").lower() if col else ""
+                    if col == "":
+                        headers.append(None)
+                        continue
+                    ok = False
+
+                    if col == "resources":
+                        headers.append(
+                            models.JSONField(
+                                name="resource", null=True, blank=True, editable=False
+                            )
+                        )
+                        ok = True
+                        continue
+
+                    for i in WorkOrder._meta.fields:
+                        # Try with translated field names
+                        if (
+                            col == i.name.lower()
+                            or (
+                                isinstance(i, ForeignKey)
+                                and col == "%s_id" % i.name.lower()
+                            )
+                            or col == i.verbose_name.lower()
+                            or col
+                            == (
+                                "%s - %s" % (WorkOrder.__name__, i.verbose_name)
+                            ).lower()
+                        ):
+                            if i.editable is True:
+                                headers.append(i)
+                            else:
+                                headers.append(None)
+                            required_fields.discard(i.name)
+                            ok = True
+                            break
+                        if translation.get_language() != "en":
+                            # Try with English field names
+                            with translation.override("en"):
+                                if (
+                                    col == i.name.lower()
+                                    or (
+                                        isinstance(i, ForeignKey)
+                                        and col == "%s_id" % i.name.lower()
+                                    )
+                                    or col == i.verbose_name.lower()
+                                    or col
+                                    == (
+                                        "%s - %s" % (WorkOrder.__name__, i.verbose_name)
+                                    ).lower()
+                                ):
+                                    if i.editable is True:
+                                        headers.append(i)
+                                    else:
+                                        headers.append(None)
+                                    required_fields.discard(i.name)
+                                    ok = True
+                                    break
+                    if not ok:
+                        headers.append(None)
+                        warnings += 1
+                        yield (
+                            WARNING,
+                            None,
+                            None,
+                            None,
+                            force_str(
+                                _("Skipping unknown field %(column)s" % {"column": col})
+                            ),
+                        )
+                    if (
+                        col == WorkOrder._meta.pk.name.lower()
+                        or col == WorkOrder._meta.pk.verbose_name.lower()
+                    ):
+                        has_pk_field = True
+                if required_fields:
+                    # We are missing some required fields
+                    errors += 1
+                    yield (
+                        ERROR,
+                        None,
+                        None,
+                        None,
+                        force_str(
+                            _(
+                                "Some keys were missing: %(keys)s"
+                                % {"keys": ", ".join(required_fields)}
+                            )
+                        ),
+                    )
+                # Abort when there are errors
+                if errors:
+                    if isinstance(data, Worksheet) and len(data.parent.sheetnames) > 1:
+                        # Skip this sheet an continue with the next one
+                        return
+                    else:
+                        raise NameError("Can't proceed")
+
+                # Create a form class that will be used to validate the data
+                fields = [i.name for i in headers if i]
+                if hasattr(WorkOrder, "getModelForm"):
+                    UploadForm = WorkOrder.getModelForm(
+                        tuple(fields), database=database
+                    )
+                else:
+                    UploadForm = modelform_factory(
+                        WorkOrder,
+                        fields=tuple(fields),
+                        formfield_callback=formfieldCallback,
+                    )
+                rowWrapper = rowmapper(headers)
+
+                # Get natural keys for the class
+                natural_key = None
+                if hasattr(WorkOrder.objects, "get_by_natural_key"):
+                    if WorkOrder._meta.unique_together:
+                        natural_key = WorkOrder._meta.unique_together[0]
+                    elif hasattr(WorkOrder, "natural_key") and isinstance(
+                        WorkOrder.natural_key, tuple
+                    ):
+                        natural_key = WorkOrder.natural_key
+
+            # Case 3: Process a data row
+            else:
+                try:
+                    # Step 1: Send a ping-alive message to make the upload interruptable
+                    if ping:
+                        if rownumber % 50 == 0:
+                            yield (DEBUG, rownumber, None, None, None)
+
+                    # Step 2: Fill the form with data, either updating an existing
+                    # instance or creating a new one.
+                    if has_pk_field:
+                        # A primary key is part of the input fields
+                        try:
+                            # Try to find an existing record with the same primary key
+                            it = OperationPlan.objects.using(database).get(
+                                pk=rowWrapper[WorkOrder._meta.pk.name]
+                            )
+                            form = UploadForm(rowWrapper, instance=it)
+                        except WorkOrder.DoesNotExist:
+                            form = UploadForm(rowWrapper)
+                            it = None
+                    elif natural_key:
+                        # A natural key exists for this model
+                        try:
+                            # Build the natural key
+                            key = []
+                            for x in natural_key:
+                                key.append(rowWrapper.get(x, None))
+                            # Try to find an existing record using the natural key
+                            it = WorkOrder.objects.get_by_natural_key(*key)
+                            form = UploadForm(rowWrapper, instance=it)
+                        except WorkOrder.DoesNotExist:
+                            form = UploadForm(rowWrapper)
+                            it = None
+                        except WorkOrder.MultipleObjectsReturned:
+                            yield (
+                                ERROR,
+                                rownumber,
+                                None,
+                                None,
+                                force_str(_("Key fields not unique")),
+                            )
+                            continue
+                    else:
+                        # No primary key required for this model
+                        form = UploadForm(rowWrapper)
+                        it = None
+
+                    # Step 3: Validate the form and model, and save to the database
+                    if form.has_changed():
+                        if form.is_valid():
+                            # Call the update method before saving the model
+                            obj = form.save(commit=False)
+                            if newstyle and hasattr(WorkOrder, "update"):
+                                if it:
+                                    WorkOrder.update(obj, database, **form.cleaned_data)
+                                else:
+                                    WorkOrder.update(
+                                        obj, database, create=True, **form.cleaned_data
+                                    )
+                            # Save the form
+                            obj = form.save(commit=False)
+                            if it:
+                                changed += 1
+                                obj.save(using=database, force_update=True)
+                            else:
+                                added += 1
+                                obj.save(using=database)
+                                # Add the new object in the cache of available keys
+                                for x in selfReferencing:
+                                    if x.cache is not None and obj.pk not in x.cache:
+                                        x.cache[obj.pk] = obj
+                            if not skip_audit_log and user:
+                                if it:
+                                    Comment(
+                                        user_id=user.id,
+                                        content_type_id=content_type_id,
+                                        object_pk=obj.pk,
+                                        object_repr=force_str(obj),
+                                        type="change",
+                                        comment="Changed %s."
+                                        % get_text_list(form.changed_data, "and"),
+                                    ).save(using=database)
+                                else:
+                                    Comment(
+                                        user_id=user.id,
+                                        content_type_id=content_type_id,
+                                        object_pk=obj.pk,
+                                        object_repr=force_str(obj),
+                                        type="add",
+                                        comment="Added",
+                                    ).save(using=database)
+                        else:
+                            # Validation fails
+                            for error in form.non_field_errors():
+                                errors += 1
+                                yield (ERROR, rownumber, None, None, error)
+                            for field in form:
+                                for error in field.errors:
+                                    errors += 1
+                                    yield (
+                                        ERROR,
+                                        rownumber,
+                                        field.name,
+                                        rowWrapper[field.name],
+                                        error,
+                                    )
+
+                except Exception as e:
+                    errors += 1
+                    yield (ERROR, None, None, None, "Exception during upload: %s" % e)
+
+        yield (
+            INFO,
+            None,
+            None,
+            None,
+            _(
+                "%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors, %(warnings)d warnings"
+            )
+            % {
+                "rows": rownumber - 1,
+                "changed": changed,
+                "added": added,
+                "errors": errors,
+                "warnings": warnings,
+            },
+        )
+
+    @classmethod
+    def getModelForm(cls, fields, database=DEFAULT_DB_ALIAS):
+        template = modelform_factory(
+            cls,
+            fields=[i for i in fields if i != "resource" and i != "material"],
+            formfield_callback=lambda f: (
+                isinstance(f, RelatedField) and f.formfield(using=database)
+            )
+            or f.formfield(),
+        )
+
+        if "resource" not in fields and "material" not in fields:
+            return template
+
+        # Return a form class with an extra field
+        class MO_form(template):
+            resource = forms.CharField() if "resource" in fields else None
+            material = forms.CharField() if "material" in fields else None
+
+            def clean_resource(self):
+                try:
+                    cleaned = []
+                    for res in ast.literal_eval(self.cleaned_data["resource"]):
+                        if isinstance(res, str):
+                            rsrc = Resource.objects.all().using(database).get(name=res)
+                            cleaned.append((rsrc, 1))
+                        else:
+                            rsrc = (
+                                Resource.objects.all().using(database).get(name=res[0])
+                            )
+                            cleaned.append((rsrc, res[1]))
+                        rsrc.top_rsrc = (
+                            Resource.objects.all()
+                            .using(database)
+                            .get(lvl=0, lft__lte=rsrc.lft, rght__gte=rsrc.rght)
+                        )
+                    return cleaned
+                except Exception:
+                    raise forms.ValidationError("Invalid resource")
+
+            def clean_material(self):
+                try:
+                    cleaned = []
+                    for item in ast.literal_eval(self.cleaned_data["material"]):
+                        if isinstance(item, str):
+                            clean = Item.objects.all().using(database).get(name=item)
+                        else:
+                            clean = Item.objects.all().using(database).get(name=item[0])
+                        cleaned.append(clean)
+                    return cleaned
+                except Exception:
+                    raise forms.ValidationError("Invalid item")
+
+            def save(self, commit=True):
+                instance = super(MO_form, self).save(commit=False)
+
+                if "resource" in fields:
+                    try:
+                        updated_opr = []
+                        unchanged_opr = []
+                        created_opr = []
+                        opr_to_create = []
+                        # Make resource assignments unique: [(res1, 1), (res1, 1)] becomes [(res1, 2)]
+                        unique_resources = []
+                        for r in self.cleaned_data["resource"]:
+                            f = None
+                            for ur in unique_resources:
+                                if ur[0] == r[0]:
+                                    f = ur
+                                    break
+                            if f:
+                                unique_resources.append(
+                                    (f[0], str(float(f[1]) + float(r[1])))
+                                )
+                                unique_resources.remove(f)
+                            else:
+                                unique_resources.append(r)
+                        for res, quantity in unique_resources:
+                            found = False
+                            # Let's see if an opr record already exists for that resource
+                            for opplanres in instance.resources.all().select_related(
+                                "resource"
+                            ):
+                                if opplanres.resource.name == res.name:
+                                    found = True
+                                    if opplanres.quantity != quantity:
+                                        opplanres.quantity = quantity
+                                        updated_opr.append(opplanres)
+                                    else:
+                                        unchanged_opr.append(opplanres)
+                                    break
+
+                            if not found:
+                                # I need to create an opr record for that resource
+                                # but I will do it later
+                                opr_to_create.append((res, quantity))
+
+                        # I visited all the resources, do I need to delete some unvisited opr records ?
+                        deleted_oprs = False
+                        for i in instance.resources.all():
+                            if i not in updated_opr and i not in unchanged_opr:
+                                deleted_oprs = True
+                                i.delete()
+
+                        # time now to create the new opr records
+                        for i in opr_to_create:
+                            created_opr.append(
+                                OperationPlanResource(
+                                    resource=i[0],
+                                    quantity=i[1],
+                                    status=instance.status,
+                                    operationplan=instance,
+                                )
+                            )
+
+                        # and to save all that stuff
+                        if (
+                            commit
+                            or len(created_opr)
+                            or deleted_oprs
+                            or len(updated_opr) > 0
+                        ):
+                            instance.save(using=database)
+                            for i in created_opr:
+                                i.save(using=database)
+                            for i in updated_opr:
+                                i.save(using=database)
+
+                    except Exception as e:
+                        pass
+
+                if "material" in fields:
+                    try:
+                        opmatlist = [
+                            opmat
+                            for opmat in instance.operation.operationmaterials.all()
+                        ]
+
+                        dict = {}
+                        for rec in opmatlist:
+                            if rec.name:
+                                if rec.name not in dict:
+                                    dict[rec.name] = [rec.item.name]
+                                else:
+                                    dict[rec.name].append(rec.item.name)
+
+                        for mat in self.cleaned_data["material"]:
+                            Found = False
+                            for opplanmat in instance.materials.all().using(database):
+                                # find lists where item is:
+                                for k in dict.keys():
+                                    if (
+                                        mat.name in dict[k]
+                                        and opplanmat.item.name in dict[k]
+                                    ) or mat.name == opplanmat.item.name:
+                                        opplanmat.item = mat
+                                        opplanmat.save(using=database)
+                                        Found = True
+                                        break
+                                if Found:
+                                    break
+                    except Exception:
+                        pass
+                    if commit:
+                        instance.save()
+
+                return instance
+
+        return MO_form
+
+    def save(self, *args, **kwargs):
+        if self.owner and self.owner.operation.type == "routing":
+            self.type = "WO"
+        else:
+            self.type = "MO"
         self.supplier = self.origin = self.destination = None
         if self.operation:
             self.item = self.operation.item
@@ -1341,7 +1881,11 @@ class ManufacturingOrder(OperationPlan):
             self.location = self.operation.location
         super().save(*args, **kwargs)
 
+    @classmethod
+    def getType(cls):
+        return "WO"
+
     class Meta:
         proxy = True
-        verbose_name = _("manufacturing order")
-        verbose_name_plural = _("manufacturing orders")
+        verbose_name = _("work order")
+        verbose_name_plural = _("work orders")

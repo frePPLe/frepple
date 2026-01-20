@@ -2295,7 +2295,7 @@ class loadOperationPlans(LoadTask):
                         "on forecast.name = operationplan.forecast" if with_fcst else ""}
                     WHERE operationplan.owner_id IS NULL
                     and operationplan.quantity >= 0 and operationplan.status <> 'closed'
-                    {filter_and} {confirmed_filter} and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
+                    {filter_and} {confirmed_filter} and operationplan.type in ('PO', 'MO', 'WO', 'DO', 'DLVR')
                     and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
                     and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
                     ORDER BY operationplan.reference ASC
@@ -2312,7 +2312,7 @@ class loadOperationPlans(LoadTask):
                             )
                         else:
                             dmd = None
-                        if i[7] == "MO":
+                        if i[7] in ("MO", "WO"):
                             cnt_mo += 1
                             opplan = frepple.operationplan(
                                 operation=frepple.operation(name=i[0]),

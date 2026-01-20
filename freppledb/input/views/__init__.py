@@ -63,4 +63,5 @@ from .manufacturing import (
     CalendarBucketList,
     SubOperationList,
     ManufacturingOrderList,
+    WorkOrderList,
 )

@@ -1583,6 +1583,233 @@ class ManufacturingOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = ManufacturingOrderSerializer
 
 
+class WorkOrderFilter(FilterSet):
+    class Meta:
+        model = models.WorkOrder
+        fields = dict(
+            {
+                "reference": ["exact", "in", "contains"],
+                "status": ["exact", "in"],
+                "operation": ["exact", "in"],
+                "quantity": ["exact", "in", "gt", "gte", "lt", "lte"],
+                "quantity_completed": ["exact", "in", "gt", "gte", "lt", "lte"],
+                "startdate": ["exact", "in", "gt", "gte", "lt", "lte"],
+                "enddate": ["exact", "in", "gt", "gte", "lt", "lte"],
+                "batch": ["exact", "in", "contains"],
+                "criticality": ["exact", "in", "gt", "gte", "lt", "lte"],
+                "delay": ["exact", "in", "gt", "gte", "lt", "lte"],
+                "plan": [],
+                "owner": ["exact", "in"],
+                "source": ["exact", "in"],
+                "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
+                "demand": ["exact", "in"],
+            },
+            **getAttributeAPIFilterDefinition(models.OperationPlan),
+        )
+        filter_fields = fields.keys()
+
+
+class WorkOrderSerializer(BulkSerializerMixin, ModelSerializer):
+    class OperationPlanResourceNestedSerializer(BulkSerializerMixin, ModelSerializer):
+        class Meta:
+            model = models.OperationPlanResource
+            fields = ("resource", "quantity", "setup")
+            list_serializer_class = BulkListSerializer
+            partial = True
+
+    class OperationPlanMaterialNestedSerializer(BulkSerializerMixin, ModelSerializer):
+        class Meta:
+            model = models.OperationPlanMaterial
+            fields = ("item", "quantity", "flowdate")
+            list_serializer_class = BulkListSerializer
+            partial = True
+
+    resources = OperationPlanResourceNestedSerializer(many=True, required=False)
+    materials = OperationPlanMaterialNestedSerializer(many=True, required=False)
+
+    def create(self, validated_data):
+        # Normal processing
+        opplanreslist = validated_data.pop("resources", [])
+        opplanmatlist = validated_data.pop("materials", [])
+        wo = super().create(validated_data)
+        if opplanreslist:
+            self._processOperationPlanResource(wo, opplanreslist)
+        if opplanmatlist:
+            self._processOperationPlanMaterial(wo, opplanmatlist)
+        return wo
+
+    def update(self, instance, validated_data):
+        # Normal processing
+        opplanreslist = validated_data.pop("resources", [])
+        opplanmatlist = validated_data.pop("materials", [])
+        mo = super().update(instance, validated_data)
+        if opplanreslist:
+            self._processOperationPlanResource(mo, opplanreslist)
+        if opplanmatlist:
+            self._processOperationPlanMaterial(mo, opplanmatlist)
+        return mo
+
+    def _processOperationPlanResource(self, wo, opplanreslist):
+        database = wo._state.db
+        # TODO: check if top loop (line just below) is needed
+        for opplanres in opplanreslist:
+            for rec in opplanreslist:
+                if "resource" in rec:
+                    try:
+                        rec_res = (
+                            models.Resource.objects.all()
+                            .using(database)
+                            .get(name=rec["resource"])
+                        )
+                        rec_topres = (
+                            models.Resource.objects.all()
+                            .using(database)
+                            .get(lvl=0, lft__lte=rec_res.lft, rght__gte=rec_res.rght)
+                        )
+                        found = False
+                        for opplanres in (
+                            wo.resources.all()
+                            .using(database)
+                            .select_related("resource")
+                        ):
+                            topres = (
+                                models.Resource.objects.all()
+                                .using(database)
+                                .get(
+                                    lvl=0,
+                                    lft__lte=opplanres.resource.lft,
+                                    rght__gte=opplanres.resource.rght,
+                                )
+                            )
+                            if topres == rec_topres:
+                                opplanres.resource = rec_res
+                                if "quantity" in rec:
+                                    opplanres.quantity = rec["quantity"]
+                                opplanres.save(
+                                    using=database,
+                                    update_fields=["resource", "quantity"],
+                                )
+                                found = True
+                                break
+                        if not found:
+                            models.OperationPlanResource(
+                                operationplan=wo,
+                                resource=rec_res,
+                                quantity=rec.get("quantity", 1),
+                                startdate=wo.startdate,
+                                enddate=wo.enddate,
+                            ).save(using=database)
+                    except Exception as e:
+                        logger.error("REST API error saving manufacturing order:", e)
+
+    def _processOperationPlanMaterial(self, wo, opplanmatlist):
+        database = wo._state.db
+
+        # prepare a dict from operationmaterial records
+        # where key is name and value is list of items
+
+        qs = (
+            models.OperationMaterial.objects.all()
+            .using(database)
+            .filter(operation=wo.operation)
+            .filter(name__isnull=False)
+            .values("name", "item")
+        )
+        dict = {}
+        for rec in qs:
+            if rec["name"] not in dict:
+                dict[rec["name"]] = [rec["item"]]
+            else:
+                dict[rec["name"]].append(rec["item"])
+
+        # iterate over the opplanmatlist records to see if there are alternates
+        for rec in opplanmatlist:
+            if "item" in rec:
+                try:
+                    Found = False
+                    for opplanmat in wo.materials.all().using(database):
+                        # find lists where item is:
+
+                        for k in dict.keys():
+                            if (
+                                rec["item"].name in dict[k]
+                                and opplanmat.item.name in dict[k]
+                            ) or rec["item"].name == opplanmat.item.name:
+                                opplanmat.item = rec["item"]
+                                if "quantity" in rec:
+                                    opplanmat.quantity = rec["quantity"]
+                                if "flowdate" in rec:
+                                    opplanmat.flowdate = rec["flowdate"]
+                                opplanmat.save(
+                                    using=database,
+                                    update_fields=["item", "quantity", "flowdate"],
+                                )
+                                Found = True
+                                break
+                        if Found:
+                            break
+
+                    if not Found:
+                        models.OperationPlanMaterial(
+                            operationplan=wo,
+                            item=rec["item"],
+                            quantity=rec.get("quantity", 1),
+                            flowdate=rec.get(
+                                "flowdate",
+                                (
+                                    wo.enddate
+                                    if rec.get("quantity", 1) > 0
+                                    else wo.startdate
+                                ),
+                            ),
+                        ).save(using=database)
+                except Exception as e:
+                    logger.error("REST API error saving manufacturing order:", e)
+
+    class Meta:
+        model = models.WorkOrder
+        fields = (
+            "reference",
+            "status",
+            "operation",
+            "quantity",
+            "quantity_completed",
+            "startdate",
+            "enddate",
+            "batch",
+            "criticality",
+            "delay",
+            "plan",
+            "owner",
+            "source",
+            "lastmodified",
+            "resources",
+            "materials",
+            "demand",
+        ) + getAttributeAPIFields(models.OperationPlan)
+        read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
+            models.OperationPlan
+        )
+        list_serializer_class = BulkListSerializer
+        update_lookup_field = "reference"
+        partial = True
+
+
+class WorkOrderAPI(frePPleListCreateAPIView):
+    def get_queryset(self):
+        return models.WorkOrder.objects.using(self.request.database).all()
+
+    serializer_class = WorkOrderSerializer
+    filter_class = WorkOrderFilter
+
+
+class WorkOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
+    def get_queryset(self):
+        return models.WorkOrder.objects.using(self.request.database).all()
+
+    serializer_class = ManufacturingOrderSerializer
+
+
 class DistributionOrderFilter(FilterSet):
     class Meta:
         model = models.DistributionOrder

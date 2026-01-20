@@ -58,6 +58,14 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | The "short orders" and "late orders" widget on the home screen have been removed.
     They were simply not very usable in production-size datasets.
 
+- | Addition of an extra menu "Work Orders" in the "Manufacturing" section. There is a
+    clear separation now between work orders (suboperation orders of a routing operation)
+    and manufacturing orders. The toggle icons in the *Manufacturing Orders* to display
+    either the manufacturing orders or the work orders (or both) are therefore removed.
+
+- | As a consequence of adding the "Work Order" extra menu, the *Manufacturing Order Summary*
+    report was renamed *Operations Summary*.
+
 9.12.0 (2025-11-14)
 ===================
 

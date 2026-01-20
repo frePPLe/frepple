@@ -42,7 +42,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     scenarios to which they don't have access. We now redirect them automatically to
     a scenario to which they have access.
 
-- | 18, 19: Bug fix in the calculation of the reserved quantity on sales orders.
+- | 18, 19: Bug fix in the calculation of the reserved materials of sales orders
+    and manufacturing orders.
 
 .. rubric:: User interface
 

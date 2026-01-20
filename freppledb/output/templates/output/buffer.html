@@ -536,7 +536,7 @@ function crosses (cellvalue, options, rowdata)
            admin_escape(rowdata['buffer']) +
            "/?flowdate__gte=" + options['colModel']['startdate'] +
            "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-           "&amp;quantity__lt=0&amp;operationplan__type=MO&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+           "&amp;quantity__lt=0&amp;operationplan__type__in=MO,WO&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -548,7 +548,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__lt=0&amp;operationplan__status__in=confirmed,approved,completed&amp;operationplan__type=MO&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;quantity__lt=0&amp;operationplan__status__in=confirmed,approved,completed&amp;operationplan__type__in=MO,WO&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -560,7 +560,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__lt=0&amp;operationplan__status=proposed&amp;operationplan__type=MO&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;quantity__lt=0&amp;operationplan__status=proposed&amp;operationplan__type__in=MO,WO&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -674,7 +674,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__gte=0&amp;noautofilter&amp;operationplan__type=MO" +
+              "&amp;quantity__gte=0&amp;noautofilter&amp;operationplan__type__in=MO,WO" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&operationplan__batch=" + admin_escape(rowdata['batch'])) +
               "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -688,7 +688,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__gte=0&amp;operationplan__status__in=confirmed,approved,completed&amp;noautofilter&amp;operationplan__type=MO" +
+              "&amp;quantity__gte=0&amp;operationplan__status__in=confirmed,approved,completed&amp;noautofilter&amp;operationplan__type__in=MO,WO" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&operationplan__batch=" + admin_escape(rowdata['batch'])) +
               "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -702,7 +702,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__gte=0&amp;operationplan__status=proposed&amp;noautofilter&amp;operationplan__type=MO" +
+              "&amp;quantity__gte=0&amp;operationplan__status=proposed&amp;noautofilter&amp;operationplan__type__in=MO,WO" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&operationplan__batch=" + admin_escape(rowdata['batch'])) +
               "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else

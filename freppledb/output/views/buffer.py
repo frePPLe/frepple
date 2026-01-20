@@ -901,8 +901,8 @@ class OverviewReport(GridPivot):
 					operationplan.delay,
 					(opm.flowdate >= bucketstart and opm.flowdate < d.enddate) as flow_in_bucket,
 					(startdate < d.enddate and enddate >= d.enddate) as flow_in_progress,
-					opm.quantity > 0 and operationplan.type = 'MO' as producing_mo,
-					opm.quantity < 0 and operationplan.type = 'MO' as consuming_mo,
+					opm.quantity > 0 and operationplan.type in ('MO','WO') as producing_mo,
+					opm.quantity < 0 and operationplan.type in ('MO','WO') as consuming_mo,
 					opm.quantity > 0 and operationplan.type = 'PO' as producing_po,
 					opm.quantity > 0 and operationplan.type = 'DO' as producing_do,
 					opm.quantity < 0 and operationplan.type = 'DO' as consuming_do

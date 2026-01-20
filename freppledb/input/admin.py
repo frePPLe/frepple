@@ -37,6 +37,7 @@ from freppledb.input.models import (
     ItemSupplier,
     Location,
     ManufacturingOrder,
+    WorkOrder,
     Operation,
     OperationDependency,
     OperationMaterial,
@@ -189,6 +190,11 @@ class Location_admin(MultiDBModelAdmin):
             "name": "manufacturingorders",
             "label": _("manufacturing orders"),
             "view": "input_manufacturingorder_by_location",
+        },
+        {
+            "name": "workorders",
+            "label": _("work orders"),
+            "view": "input_workorder_by_location",
         },
         {
             "name": "purchaseorders",
@@ -483,6 +489,11 @@ class Operation_admin(MultiDBModelAdmin):
             "name": "plandetail",
             "label": _("manufacturing orders"),
             "view": "input_manufacturingorder_by_operation",
+        },
+        {
+            "name": "plandetail",
+            "label": _("work orders"),
+            "view": "input_workorder_by_operation",
         },
         {
             "name": "constraint",
@@ -951,6 +962,62 @@ class ManufacturingOrder_admin(MultiDBModelAdmin):
             "name": "messages",
             "label": _("messages"),
             "view": "admin:input_manufacturingorder_comment",
+        },
+    ]
+
+
+@admin.register(WorkOrder, site=data_site)
+class WorkOrder_admin(MultiDBModelAdmin):
+    model = WorkOrder
+    raw_id_fields = ("operation", "owner", "demand")
+    help_url = "model-reference/work-orders.html"
+    save_on_top = True
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": [
+                    "reference",
+                    "operation",
+                    "quantity",
+                    "quantity_completed",
+                    "startdate",
+                    "enddate",
+                    "owner",
+                    "status",
+                    "batch",
+                    "remark",
+                    "demand",
+                ]
+                + [a[0] for a in getAttributes(WorkOrder) if a[3]]
+            },
+        ),
+    )
+    exclude = (
+        "type",
+        "source",
+        "criticality",
+        "delay",
+        "origin",
+        "destination",
+        "item",
+        "supplier",
+        "location",
+        "name",
+        "due",
+        "color",
+    )
+    tabs = [
+        {
+            "name": "edit",
+            "label": _("edit"),
+            "view": "admin:input_workorder_change",
+            "permissions": "input.change_workorder",
+        },
+        {
+            "name": "messages",
+            "label": _("messages"),
+            "view": "admin:input_workorder_comment",
         },
     ]
 

@@ -74,7 +74,7 @@ rect.opplan {
       "width": Math.floor($("#fields").width()),
       "mode": mode,
       "calendarmode": calendarmode,
-      "columns": window.appInstance?.kanbancolumns || [],
+      "columns": window.appInstance?.kanbancolumns || window.preferences.columns || undefined,
       "grouping": grouping,
       "groupingdir": groupingdir,
       "detailwidth": Math.floor($("#detailspanel").width() || 0),

@@ -24,6 +24,8 @@
 from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
 
+from freppledb.input.models import Operation
+
 
 def countItemLocations(db=DEFAULT_DB_ALIAS):
     """
@@ -55,3 +57,14 @@ def countItemLocations(db=DEFAULT_DB_ALIAS):
             return cursor.fetchone()[0]
     except Exception:
         return 0
+
+
+def hasRoutingOperations(request):
+    """
+    Used to display or hide the "Work Order" menu.
+    """
+    return (
+        Operation.objects.using(getattr(request, "database", DEFAULT_DB_ALIAS))
+        .filter(type="routing")
+        .exists()
+    )

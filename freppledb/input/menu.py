@@ -21,6 +21,7 @@
 #
 
 from freppledb.menu import menu
+from freppledb.input.utils import hasRoutingOperations
 
 import freppledb.input.views
 from freppledb.input.models import (
@@ -227,7 +228,9 @@ menu.addItem(
     report=freppledb.input.views.WorkOrderList,
     index=150,
     model=WorkOrder,
-    dependencies=[Operation],
+    dependencies=[
+        hasRoutingOperations,
+    ],
 )
 menu.addItem(
     "manufacturing",

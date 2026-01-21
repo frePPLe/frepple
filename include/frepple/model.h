@@ -3267,8 +3267,8 @@ class Operation : public HasName<Operation>,
     if (f < size_minimum)
       logger << "Warning: Operation maximum size must be higher than the "
                 "minimum size\n";
-    else if (f <= 0)
-      logger << "Warning: Operation maximum size must be greater than 0\n";
+    else if (f <= 0.0)
+      logger << "Warning: Operation maximum size must be positive\n";
     else {
       size_maximum = f;
       setChanged();
@@ -4395,9 +4395,8 @@ class ItemDistribution
     if (f < size_minimum)
       logger << "Warning: ItemDistribution maximum size must be higher than "
                 "the minimum size\n";
-    else if (f < 0)
-      logger
-          << "Warning: ItemDistribution can't have a negative maximum size\n";
+    else if (f <= 0.0)
+      logger << "Warning: ItemDistribution maximum size must be positive\n";
     else
       size_maximum = f;
   }
@@ -4773,8 +4772,8 @@ class ItemSupplier : public Object,
     if (f < size_minimum)
       logger << "Warning: ItemSupplier maximum size must be higher than the "
                 "minimum size\n";
-    else if (f < 0)
-      logger << "Warning: ItemSupplier can't have a negative maximum size\n";
+    else if (f <= 0.0)
+      logger << "Warning: ItemSupplier maximum size must be positive\n";
     else
       size_maximum = f;
   }

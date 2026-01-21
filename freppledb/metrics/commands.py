@@ -136,7 +136,7 @@ class GetPlanMetrics(PlanTask):
                                     "unplanned_quantity": (f.quantity),
                                     "unplanned_cost": (f.quantity * f.item.cost),
                                 }
-                        elif planned_late:
+                        elif planned_late or planned < f.quantity * 0.99:
                             # Late
                             category = "late"
                             if f.item.name in metrics:

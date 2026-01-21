@@ -134,96 +134,131 @@ class DeliveryPerformanceWidget(Widget):
     size = "sm"
 
     javascript = """
-        // Definitions
         var chart_type = "count";
-        var include_fcst = true;
-        var delivery_data = [
-            { category: "ontime_so", label: "on-time orders", value: 0, color: "#8bba00" },
-            { category: "ontime_fcst", label: "on-time forecast", value: 0, color: "#c4dc7d" },
-            { category: "late_so", label: "late orders", value: 0, color: "#FFA500" },
-            { category: "late_fcst", label: "late forecast", value: 10, color: "#FFD17D" },
-            { category: "unplanned_so", label: "unplanned orders", value: 0, color: "#FF0000" },
-            { category: "unplanned_fcst", label: "unplanned forecast", value: 0, color: "#FF9797" }
-        ];
+        var include_fcst = false;
 
-        // Collect data
-        $("#deliveryPerformanceData td").each(function(i, e) {
-            var el = $(e);
-            var category = el.closest("tr").attr("data-category");
-            var metric = el.attr("data-metric");
-            for (var e of delivery_data) {
-               if ( metric == chart_type && e.category == category)
-                  e.value = Number(el.text());
-            }
+        $("#deliveryPerformanceDropdown a").on("click", function(event) {
+            event.preventDefault();
+            var selection = $(this).text().toLowerCase();
+            $("#deliveryPerformanceChoice span").text(selection);
+            include_fcst = (selection == "orders") ? false: true;
+            draw();
         });
 
-        // Remove empty cells
-        delivery_data = delivery_data.filter(function(row) {return row.value > 0;});
-        const total = d3.sum(delivery_data, d => d.value);
+        function draw() {
+            var delivery_data = include_fcst ? [
+                { category: "ontime_so", label: "on-time orders", value: 0, count: 0, quantity: 0, cost: 0, color: "#8bba00" },
+                { category: "ontime_fcst", label: "on-time forecast", value: 0, count: 0, quantity: 0, cost: 0, color: "#c4dc7d" },
+                { category: "late_so", label: "late orders", value: 0, count: 0, quantity: 0, cost: 0, color: "#FFA500" },
+                { category: "late_fcst", label: "late forecast", value: 0, count: 0, quantity: 0, cost: 0, color: "#FFD17D" },
+                { category: "unplanned_so", label: "unplanned orders", value: 0, count: 0, quantity: 0, cost: 0, color: "#FF0000" },
+                { category: "unplanned_fcst", label: "unplanned forecast", value: 0, count: 0, quantity: 0, cost: 0, color: "#FF9797" }
+            ] : [
+                { category: "ontime_so", label: "on-time orders", value: 0, count: 0, quantity: 0, cost: 0, color: "#8bba00" },
+                { category: "late_so", label: "late orders", value: 0, count: 0, quantity: 0, cost: 0, color: "#FFA500" },
+                { category: "unplanned_so", label: "unplanned orders", value: 0, count: 0, quantity: 0, cost: 0, color: "#FF0000" }
+            ] ;
 
-        // Pie chart
-        const width = 350;
-        const height = 350;
-        const radius = Math.min(width, height) / 2;
-        const svg = d3.select('#deliveryPerformanceChart')
-            .attr('width', width)
-            .attr('height', height)
-            .append('g')
-            .attr('transform', `translate(${width / 2}, ${height / 2})`);
-        var color = d3.scale.category10()
-            .domain(delivery_data.map(function(d) { return d.category; }));
-        const pie = d3.layout.pie()
-            .sort(null)
-            .value(d => d.value);
-        const arc = d3.svg.arc()
-            .innerRadius(0)
-            .outerRadius(radius);
-        const slices = svg.selectAll('path')
-            .data(pie(delivery_data))
-            .enter()
-            .append('path')
-            .attr('d', arc)
-            .attr('fill', d => d.data.color)
-            .attr('stroke', 'white')
-            .style('stroke-width', '2px')
-            .on("mouseover", function(d) {
-            graph.showTooltip(
-                d.data.label
-                + "<br>"
-                + d.data.value);
-            $("#tooltip").css('background-color','black').css('color','white');
+            // Collect data
+            $("#deliveryPerformanceData td").each(function(i, e) {
+                var el = $(e);
+                var category = el.closest("tr").attr("data-category");
+                var metric = el.attr("data-metric");
+                for (var e of delivery_data) {
+                    if (e.category == category) {
+                        if (metric == chart_type) e.value = Number(el.text());
+                        if (metric == "count") e.count = Number(el.text());
+                        if (metric == "quantity") e.quantity = Number(el.text());
+                        if (metric == "cost") e.cost = Number(el.text());
+                    }
+                }
             });
-        svg.selectAll('text')
-            .data(pie(delivery_data))
-            .enter()
-            .append('text')
-            .attr('transform', function(d) {
-                var center = arc.centroid(d);
-                var rotation = ((d.startAngle + d.endAngle) / 2 * 180 / Math.PI) - 90;
 
-                if (rotation > 90 && rotation < 270)
-                  // Flip text 180 degrees if it's on the bottom half so it's not upside down
-                  rotation += 180;
-                return `translate(${center[0] * 1.8},${center[1] * 1.8}) rotate(${rotation})`;
+            // Remove empty cells
+            delivery_data = delivery_data.filter(function(row) {return row.value > 0;});
+            const total = d3.sum(delivery_data, d => d.value);
+
+            // Clear previous chart
+            d3.select('#deliveryPerformanceChart').selectAll("*").remove();
+
+            // Pie chart
+            const width = 350;
+            const height = 350;
+            const radius = Math.min(width, height) / 2;
+            const svg = d3.select('#deliveryPerformanceChart')
+                .attr('width', width)
+                .attr('height', height)
+                .append('g')
+                .attr('transform', `translate(${width / 2}, ${height / 2})`);
+            var color = d3.scale.category10()
+                .domain(delivery_data.map(function(d) { return d.category; }));
+            const pie = d3.layout.pie()
+                .sort(null)
+                .value(d => d.value);
+            const arc = d3.svg.arc()
+                .innerRadius(0)
+                .outerRadius(radius);
+            const slices = svg.selectAll('path')
+                .data(pie(delivery_data))
+                .enter()
+                .append('path')
+                .attr('d', arc)
+                .attr('fill', d => d.data.color)
+                .attr('stroke', 'white')
+                .style('stroke-width', '2px')
+                .on("mouseover", function(d) {
+                    graph.showTooltip(
+                        '<span class="text-strong">' + d.data.label + "</span>"
+                        + "<br>count: " + d.data.count
+                        + "<br>quantity: " + d.data.quantity
+                        + (d.data.cost ? "<br>cost: " + currency[0] +  d.data.cost + currency[1] : "")
+                        );
+                    $("#tooltip").css('background-color','black').css('color','white');
                 })
-            .style('text-anchor', function(d){
-              // Depends whether we are left of right in the chart
-              return (d.startAngle + d.endAngle) / 2 > Math.PI ? 'start' : 'end';
-            })
-            .attr('dy', '.35em')
-            .text(d => {
-              const perc = ((d.data.value / total) * 100).toFixed(1);
-              return `${d.data.label} ${perc}%`;
-            })
-            .attr('class', 'text-capitalize text-body-inverted');
+                .on("mousemove", graph.moveTooltip)
+                .on("mouseout", graph.hideTooltip);
+            svg.selectAll('text')
+                .data(pie(delivery_data))
+                .enter()
+                .append('text')
+                .attr('transform', function(d) {
+                    var center = arc.centroid(d);
+                    var rotation = ((d.startAngle + d.endAngle) / 2 * 180 / Math.PI) - 90;
+
+                    if (rotation > 90 && rotation < 270)
+                    // Flip text 180 degrees if it's on the bottom half so it's not upside down
+                    rotation += 180;
+                    return `translate(${center[0] * 1.8},${center[1] * 1.8}) rotate(${rotation})`;
+                    })
+                .style('text-anchor', function(d){
+                    // Depends whether we are left of right in the chart
+                    return (d.startAngle + d.endAngle) / 2 > Math.PI ? 'start' : 'end';
+                })
+                .attr('dy', '.35em')
+                .text(d => {
+                    const perc = ((d.data.value / total) * 100).toFixed(1);
+                    return `${d.data.label} ${perc}%`;
+                })
+                .attr('class', 'text-capitalize text-body-inverted');
+        }
+        draw();
         """
 
     @classmethod
     def render(cls, request):
         result = [
-            '<div class="d-flex justify-content-center align-items-center h-100">'
+            '<div class="d-flex justify-content-center align-items-center h-100 position-relative">',
             '<svg id="deliveryPerformanceChart"></svg>'
-            '<div id="deliveryPerformanceData"class="d-none"><table>'
+            '<div class="dropdown position-absolute top-0 end-0 m-3">',
+            '<button id="deliveryPerformanceChoice" class="form-select form-select-sm d-inline-block w-auto text-capitalize" type="button" data-bs-toggle="dropdown" aria-expanded="false">',
+            "<span>orders</span>",
+            "</button>",
+            '<ul id="deliveryPerformanceDropdown" class="dropdown-menu w-auto" style="min-width: unset" aria-labelledby="fcst_selectButton">',
+            '<li><a class="dropdown-item text-capitalize">orders</a></li>',
+            '<li><a class="dropdown-item text-capitalize">orders and forecast</a></li>',
+            "</ul>",
+            "</div>",
+            '<div id="deliveryPerformanceData"class="d-none"><table>',
         ]
         try:
             for cat, kv in (

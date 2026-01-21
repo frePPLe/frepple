@@ -195,11 +195,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
               approvedscan->getQuantity() > 0 &&
               approvedscan->getOperationPlan()->getApproved()) {
             approved_supply = static_cast<const FlowPlan*>(&*approvedscan);
-            if (getLogLevel() > 1 && firstmsg1) {
-              logger << indentlevel << "  Moving approved supply early: "
-                     << approved_supply->getOperationPlan() << '\n';
-              firstmsg1 = false;
-            }
+
             auto before_move = data->getCommandManager()->setBookmark();
             auto original_indentlevel = indentlevel++;
             try {
@@ -220,11 +216,56 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 data->getCommandManager()->add(new CommandMoveOperationPlan(
                     opplan_to_move, newDate, Date::infinitePast));
               // Ask solver for feasibility check on existing opplan.
-              data->push(opplan_to_move->getQuantity(), newDate);
-              data->state->keepAssignments =
-                  Plan::instance().getMoveApprovedEarly() == 1 ? opplan_to_move
-                                                               : nullptr;
-              checkOperation(opplan_to_move, *data);
+              if (opplan_to_move->getOperation()->hasType<OperationRouting>()) {
+                // Check each step in a routing.
+                // Only sequential steps are supported now, not
+                // dependency-based.
+                OperationPlan::iterator x(opplan_to_move, false);
+                while (auto* sub = x.next()) {
+                  if (getLogLevel() > 1 && firstmsg1)
+                    logger << indentlevel
+                           << "  Moving approved routing supply early: " << sub
+                           << '\n';
+                  data->push(opplan_to_move->getQuantity(), newDate);
+                  data->state->keepAssignments =
+                      Plan::instance().getMoveApprovedEarly() == 1 ? sub
+                                                                   : nullptr;
+                  OperationPlanState beforeMove(sub);
+                  checkOperation(sub, *data);
+                  if (data->state->a_qty <= ROUNDING_ERROR) {
+                    // convert data->state->a_date; to the complete routing
+                    OperationPlan::iterator x(opplan_to_move, true, sub);
+                    sub->restore(beforeMove);
+                    sub->setEnd(data->state->a_date);
+                    x.next();
+                    logger << " starting with " << sub << '\n';
+                    while (auto* sub2 = x.next()) {
+                      sub2->setStart(data->state->a_date);
+                      logger << "adjusting successor  to start " << data->state->a_date;
+                      data->state->a_date = sub2->getEnd();
+                      logger << " to " << data->state->a_date << " for " << sub2
+                             << '\n';
+                    }
+                    break;
+                  } else
+                    newDate = sub->getStart();
+                }
+                firstmsg1 = false;
+              } else {
+                // Check parent operation only
+                if (getLogLevel() > 1 && firstmsg1) {
+                  logger << indentlevel
+                         << "  Moving approved supply early: " << opplan_to_move
+                         << '\n';
+                  firstmsg1 = false;
+                }
+                data->push(opplan_to_move->getQuantity(), newDate);
+                data->state->keepAssignments =
+                    Plan::instance().getMoveApprovedEarly() == 1
+                        ? opplan_to_move
+                        : nullptr;
+                checkOperation(opplan_to_move, *data);
+              }
               if (data->state->a_qty <= ROUNDING_ERROR) {
                 // Move wasn't feasible. Need to disallow new replenishments.
                 if (getLogLevel() > 1)

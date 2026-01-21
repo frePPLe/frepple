@@ -62,6 +62,11 @@ const filteredUpstream = computed(() => {
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
+        <td data-ng-if="peg[2] == 'WO'">{{peg[1]}}
+          <a :href="'/data/input/workorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
+            <span class="fa fa-caret-right"></span>
+          </a>
+        </td>
         <td v-if="peg[2] === 'DO'">{{peg[1]}}
           <a :href="'/data/input/distributionorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
             <span class="fa fa-caret-right"></span>
@@ -76,12 +81,12 @@ const filteredUpstream = computed(() => {
 
         <td>{{peg[2]}}</td>
 
-        <td v-if="peg[2] === 'MO'">{{peg[3]}}
+        <td v-if="['MO', 'WO'].includes(peg[2])">{{peg[3]}}
           <a href="/detail/input/operation/key/" role="input/operation" @click="opendetail(event)">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
-        <td v-if="peg[2] !== 'MO'">{{peg[3]}}</td>
+        <td v-if="!['MO', 'WO'].includes(peg[2])">{{peg[3]}}</td>
 
         <td>{{peg[4]}}</td>
 

@@ -834,7 +834,7 @@ class OdooSendRecommendations(PlanTask):
                     "tab": "sale",
                     "type": "latedelivery",
                     "data": {"constraints": [c.description for c in i.constraints]},
-                    "sale_order_line_id": so[1],
+                    "sale_order_line_id": int(so[1]),
                     "product_id": int(i.item.subcategory.split(",")[1]),
                     "startdate": i.due.isoformat(),
                     "enddate": late_date.isoformat() if late_date else None,

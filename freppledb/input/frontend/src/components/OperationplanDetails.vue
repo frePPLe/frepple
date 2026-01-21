@@ -159,7 +159,7 @@ onMounted(() => {
 
   const handleTriggerSave = (e) => {
     console.log("save triggered");
-
+    store.undo();
   }
 
   const handleDisplayOnPanel = (e) => {
@@ -246,9 +246,6 @@ onUnmounted(() => {
           >
             <component
                 :is="getWidgetComponent(widget[0])"
-                :operationplan="store.operationplan"
-                :is-loading="store.loading"
-                :error="store.error"
             />
           </div>
         </div>

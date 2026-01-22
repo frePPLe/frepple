@@ -99,7 +99,7 @@ class TaskScheduler:
                 .only("name")
             )
             if database:
-                dbs.filter(name=database)
+                dbs = dbs.filter(name=database)
             for db in dbs:
                 t = (
                     ScheduledTask.objects.all()
@@ -112,17 +112,18 @@ class TaskScheduler:
                 waiting_for = (t.next_run - now).total_seconds() if t else 0
                 if waiting_for > 0:
                     cur_schedule = self.sched.get(db.name, None)
-                    if cur_schedule and cur_schedule["time"] > t.next_run:
-                        cur_schedule["timer"].cancel()
-                    self.sched[db.name] = {
-                        "timer": Timer(
-                            waiting_for,
-                            self._tasklauncher,
-                            kwargs={"database": db.name},
-                        ),
-                        "time": t.next_run,
-                    }
-                    self.sched[db.name]["timer"].start()
+                    if not cur_schedule or cur_schedule["time"] > t.next_run:
+                        if cur_schedule:
+                            cur_schedule["timer"].cancel()
+                        self.sched[db.name] = {
+                            "timer": Timer(
+                                waiting_for,
+                                self._tasklauncher,
+                                kwargs={"database": db.name},
+                            ),
+                            "time": t.next_run,
+                        }
+                        self.sched[db.name]["timer"].start()
 
     @staticmethod
     def _tasklauncher(database=DEFAULT_DB_ALIAS):
@@ -167,6 +168,8 @@ class TaskScheduler:
             # Concurrent access by different webserver processes can happen.
             # In that case, one of the transactions will abort. That's fine.
             pass
+        finally:
+            connections[database].close()
 
     def status(self, msg=""):
         print("Scheduler status:", msg)

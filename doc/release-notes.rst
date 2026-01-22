@@ -66,6 +66,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | As a consequence of adding the "Work Order" extra menu, the *Manufacturing Order Summary*
     report was renamed *Operations Summary*.
 
+.. rubric:: System administration
+
+- | Bug fix: The task scheduler could get in a race condition where it exhausts all database
+    connections, bringing the system down.
+
 9.12.0 (2025-11-14)
 ===================
 

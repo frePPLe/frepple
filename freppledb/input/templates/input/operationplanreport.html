@@ -61,8 +61,17 @@ rect.opplan {
         success: function () {
           upload.undo();
           $("#save i").addClass('hidden');
-          $(".pg-dirty").removeClass('pg-dirty');   //TODO change class name
+          $(".ng-dirty").removeClass('ng-dirty');
           if (typeof ok_callback !== 'undefined') ok_callback();
+          const event = new CustomEvent('allSelect', {
+            detail: {
+              execute: 'undo',
+              reference: null,
+              status: false,
+              selectedRows: null
+            }
+          });
+          document.getElementById('app').dispatchEvent(event)
         },
         error: ajaxerror
     });

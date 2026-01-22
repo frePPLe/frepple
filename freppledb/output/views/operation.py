@@ -42,7 +42,6 @@ from freppledb.common.report import (
     GridFieldCurrency,
     GridFieldDateTime,
     GridFieldLastModified,
-    GridFieldBool,
 )
 
 
@@ -52,10 +51,10 @@ class OverviewReport(GridPivot):
     """
 
     template = "output/operation.html"
-    title = _("Operations summary")
+    title = _("Manufacturing order summary")
     model = Operation
     permissions = (("view_operation_report", "Can view operation report"),)
-    help_url = "user-interface/plan-analysis/operations-summary.html"
+    help_url = "user-interface/plan-analysis/manufacturing-order-summary.html"
 
     rows = (
         GridFieldText(
@@ -255,9 +254,6 @@ class OverviewReport(GridPivot):
             editable=False,
             title=format_lazy("{} - {}", _("item"), _("last modified")),
         ),
-        GridFieldBool(
-            "is_work_order", title="is_work_order", hidden=True, search=False
-        ),
     )
 
     crosses = (
@@ -342,10 +338,8 @@ class OverviewReport(GridPivot):
         location.lastmodified, item.description, item.category, item.subcategory, item.cost,
         item.volume, item.weight, item.uom, item.periodofcover, item.owner_id, item.source, item.lastmodified,
         %s
-        (operation.owner_id is not null and exists (select 1 from operation parent_op where type = 'routing' and name = operation.owner_id)) as is_work_order,
         res.bucket, res.startdate, res.enddate,
         res.proposed_start, res.total_start, res.proposed_end, res.total_end, res.proposed_production, res.total_production
-
       from operation
       left outer join item
       on operation.item_id = item.name
@@ -436,6 +430,7 @@ class OverviewReport(GridPivot):
         group by oper.name, d.bucket, d.startdate, d.enddate
       ) res
       on res.operation_id = operation.name
+      where not exists (select 1 from operation parent_op where type = 'routing' and owner_id = operation.name)
       order by %s, res.startdate
       """ % (
             reportclass.attr_sql,
@@ -493,7 +488,6 @@ class OverviewReport(GridPivot):
                         "item__owner": row[34],
                         "item__source": row[35],
                         "item__lastmodified": row[36],
-                        "is_work_order": row[numfields - 10],
                         "bucket": row[numfields - 9],
                         "startdate": row[numfields - 8].date(),
                         "enddate": row[numfields - 7].date(),

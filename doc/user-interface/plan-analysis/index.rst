@@ -21,7 +21,7 @@ help link on each screen to land on the appropriate page in this section.
    inventory-detail-report
    resource-report
    resource-detail-report
-   operations-summary
+   manufacturing-order-summary
    purchase-order-summary
    distribution-order-summary
    operation-detail-report

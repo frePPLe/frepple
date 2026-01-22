@@ -116,7 +116,7 @@ menu.addItem(
 )
 menu.addItem(
     "manufacturing",
-    "operations summary",
+    "manufacturing order summary",
     url="/operation/",
     report=freppledb.output.views.operation.OverviewReport,
     index=160,

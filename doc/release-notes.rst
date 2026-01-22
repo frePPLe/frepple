@@ -64,7 +64,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     either the manufacturing orders or the work orders (or both) are therefore removed.
 
 - | As a consequence of adding the "Work Order" extra menu, the *Manufacturing Order Summary*
-    report was renamed *Operations Summary*.
+    will only display manufacturing orders (and not work orders anymore).
 
 .. rubric:: System administration
 

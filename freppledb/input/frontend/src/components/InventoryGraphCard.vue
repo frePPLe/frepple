@@ -42,6 +42,7 @@ const props = defineProps({
 });
 
 const graphContainer = ref(null);
+let resizeObserver = null;
 const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
 
 const inventoryReport = computed(() => {
@@ -62,13 +63,13 @@ function drawGraph() {
   const timebuckets = inventoryReport.value;
 
   // Clear existing SVG
-  d3.select(graphContainer.value).selectAll('*').remove();
+  d3.select(graphContainer.value).select('svg').remove();
 
   // Calculate dimensions
-  const operationplanCard = document.querySelector('#attributes-operationplan .card-body');
   const margin = { top: 10, right: 10, bottom: 30, left: 40 };
-  const width = Math.max((operationplanCard?.offsetWidth || 600) - margin.left - margin.right, 0);
-  const height = (operationplanCard?.offsetHeight || 400) - margin.top - margin.bottom;
+  const rect = graphContainer.value.getBoundingClientRect();
+  const width = Math.max((rect.width || 600) - margin.left - margin.right, 0);
+  const height = (rect.height || 400) - margin.top - margin.bottom;
 
   // Build X-axis domain
   const domain_x = [];
@@ -326,6 +327,8 @@ function drawGraph() {
       .call(xAxis);
 }
 
+const debouncedDrawGraph = debounce(drawGraph, 150);
+
 // Save column configuration on collapse/expand
 function onCollapseToggle() {
   if (typeof window.grid !== 'undefined' && window.grid.saveColumnConfiguration) {
@@ -334,8 +337,8 @@ function onCollapseToggle() {
 }
 
 // Watch for changes and redraw
-watch([() => store.operationplan?.id, () => inventoryReport.value.length], async () => {
-  if (hasInventoryReport.value) {
+watch(() => store.operationplan?.id, async (id) => {
+  if (id) {
     await nextTick();
     drawGraph();
   }
@@ -350,10 +353,17 @@ onMounted(async () => {
   }
 
   // Draw initial graph
-  if (hasInventoryReport.value) {
-    await nextTick();
-    drawGraph();
+  if (graphContainer.value) {
+    resizeObserver = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      if (width > 0 && height > 0) debouncedDrawGraph();
+    });
+    resizeObserver.observe(graphContainer.value);
   }
+});
+
+onUnmounted(() => {
+  if (resizeObserver) resizeObserver.disconnect();
 });
 </script>
 
@@ -381,7 +391,7 @@ onMounted(async () => {
         <tbody>
         <tr>
           <td role="gridcell" aria-describedby="grid_graph">
-            <div ref="graphContainer" class="graph"></div>
+            <div ref="graphContainer" class="graph overflow-hidden w-100"></div>
           </td>
         </tr>
         </tbody>

@@ -194,6 +194,8 @@ class DeliveryPerformanceWidget(Widget):
                 .domain(delivery_data.map(function(d) { return d.category; }));
             const pie = d3.layout.pie()
                 .sort(null)
+                .startAngle(Math.PI / 2) // Starts at 90 degrees (3 o'clock)
+                .endAngle(Math.PI * 2.5) // Must also offset the end angle (2.5 * PI)
                 .value(d => d.value);
             const arc = d3.svg.arc()
                 .innerRadius(0)

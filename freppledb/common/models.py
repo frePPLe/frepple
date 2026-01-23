@@ -1865,40 +1865,54 @@ class Attribute(AuditModel):
         # Call the real save() method
         super().save(*args, **kwargs)
 
-        # Add or update the database schema
-        addAttributesFromDatabase()
+        if kwargs.get("using", DEFAULT_DB_ALIAS) == DEFAULT_DB_ALIAS:
+            # Add or update the database schema
+            addAttributesFromDatabase()
 
-        # Trigger reloading of the django app.
-        # The model when then see the new attribute field.
-        forceWsgiReload()
+            # Update the common_attribute table in all scenarios
+            Attribute.synchronize()
+
+            # Trigger reloading of the django app.
+            # The model when then see the new attribute field.
+            forceWsgiReload()
 
     def delete(self, *args, **kwargs):
         # Call the real save() method
         super().delete(*args, **kwargs)
 
-        # Add or update the database schema
-        addAttributesFromDatabase()
+        if self._state.db == DEFAULT_DB_ALIAS:
+            # Add or update the database schema
+            addAttributesFromDatabase()
 
-        # Trigger reloading of the django app.
-        # The model when then see the new attribute field.
-        forceWsgiReload()
+            # Update the common_attribute table in all scenarios
+            Attribute.synchronize()
+
+            # Trigger reloading of the django app.
+            # The model when then see the new attribute field.
+            forceWsgiReload()
 
     @staticmethod
-    def synchronize(database):
+    def synchronize(database=None):
         """
         Attributes are maintained only in the main database.
         This method is called to lazily copy this information to another.
         """
-        for db in (
+        db_list = (
             Scenario.objects.using(DEFAULT_DB_ALIAS)
             .filter(Q(status="In use") & ~Q(name=DEFAULT_DB_ALIAS))
-            .filter(name=database)
             .only("name")
-        ):
-            Attribute.objects.using(database).all().delete()
+        )
+        if database:
+            db_list = db_list.filter(name=database)
+        for db in db_list:
+            Attribute.objects.using(db.name).all().delete()
             for attr in Attribute.objects.using(DEFAULT_DB_ALIAS).all():
                 attr.pk = None
-                attr.save(using=db.name)
+                try:
+                    attr.save(using=db.name)
+                except Exception as e:
+                    print("eee", e)
+                    pass
 
     class Meta:
         verbose_name = _("attribute")

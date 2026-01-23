@@ -31,6 +31,7 @@ const filteredUpstream = computed(() => {
 </script>
 
 <template>
+  <div>
   <div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_upstream" aria-expanded="false" aria-controls="widget_upstream">
     <h5 class="card-title fs-5 me-auto text-capitalize">{{ ttt('upstream operations') }}</h5>
     <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
@@ -108,5 +109,6 @@ const filteredUpstream = computed(() => {
       </tr>
       </tbody>
     </table>
+  </div>
   </div>
 </template>

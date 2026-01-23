@@ -31,6 +31,7 @@ const filteredDownstream = computed(() => {
 </script>
 
 <template>
+  <div>
   <div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_downstream" aria-expanded="false" aria-controls="widget_downstream">
     <h5 class="card-title text-capitalize fs-5 me-auto">{{ ttt('downstream operations') }}</h5>
     <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
@@ -117,5 +118,6 @@ const filteredDownstream = computed(() => {
       </tr>
       </tbody>
     </table>
+  </div>
   </div>
 </template>

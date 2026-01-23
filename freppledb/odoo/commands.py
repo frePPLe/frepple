@@ -476,7 +476,7 @@ class OdooDeltaChangeSource(PlanTask):
     """
 
     description = "Update sales order source"
-    sequence = 307
+    sequence = 72.6
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):

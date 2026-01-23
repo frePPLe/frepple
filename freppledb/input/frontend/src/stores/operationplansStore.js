@@ -126,6 +126,8 @@ export const useOperationplansStore = defineStore('operationplans', {
         if (this.selectedOperationplans.length === 1) {
           await this.loadOperationplans(selectedRows, true, selectedRows);
         }
+      } else if ( this.operationplan.reference !== undefined && (references[0] === this.operationplan.reference.toString())) {
+        // do nothing
       } else {
         this.operationplan = new Operationplan();
         this.loading = true;

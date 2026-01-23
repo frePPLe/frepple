@@ -1,13 +1,25 @@
 /*
  * Copyright (C) 2025 by frePPLe bv
  *
- * All information contained herein is, and remains the property of frePPLe.
- * You are allowed to use and modify the source code, as long as the software is used
- * within your company.
- * You are not allowed to distribute the software, either in the form of source code
- * or in the form of compiled binaries.
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
  */
-
 
 import { api } from './api.js';
 
@@ -45,36 +57,6 @@ export const forecastService = {
   },
 
   async postForecastDetails(postData) {
-    // {
-    //   "POST": {
-    //   "scheme": "https",
-    //     "host": "demo-preview.frepple.com",
-    //     "filename": "/svc/default/forecast/detail/",
-    //     "query": {
-    //     "measure": "forecasttotal"
-    //   },
-    //   "remote": {
-    //     "Address": "34.253.149.144:443"
-    //   }
-    // }
-    // }
-
-    // postData= {
-    //   "recalculate": false,
-
-console.log("ForecastSelection");
-    //   "units": "forecasttotal",
-    //   "item": "All items",
-    //   "location": "All locations",
-    //   "customer": "All customers",
-    //   "horizonbuckets": "month",
-    //   "comment": "item-location test 0",
-    //   "commenttype": "itemlocation",
-    //   "forecastmethod": "aggregate",
-    //   "horizon": "month",
-    //   "buckets": []
-    // }
-
     return api.wspost('forecast/detail/', postData );
   },
 

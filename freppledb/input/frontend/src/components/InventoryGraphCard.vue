@@ -1,18 +1,31 @@
 /*
-* Copyright (C) 2025 by frePPLe bv
-*
-* All information contained herein is, and remains the property of frePPLe.
-* You are allowed to use and modify the source code, as long as the software is used
-* within your company.
-* You are not allowed to distribute the software, either in the form of source code
-* or in the form of compiled binaries.
-*/
+ * Copyright (C) 2025 by frePPLe bv
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
+ */
 
 <script setup lang="js">
-import { computed, onMounted, watch, ref, nextTick } from 'vue';
+import { computed, onMounted, onUnmounted, watch, ref, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from "@/stores/operationplansStore.js";
-import { numberFormat } from "@common/utils.js";
+import { numberFormat, debounce, adminEscape } from "@common/utils.js";
 
 const { t: ttt } = useI18n({
   useScope: 'global',
@@ -29,6 +42,7 @@ const props = defineProps({
 });
 
 const graphContainer = ref(null);
+let resizeObserver = null;
 const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
 
 const inventoryReport = computed(() => {
@@ -42,34 +56,20 @@ const hasInventoryReport = computed(() => {
 // Get URL prefix
 const urlPrefix = computed(() => window.url_prefix || '');
 
-// Admin escape function
-function adminEscape(str) {
-  if (typeof window.admin_escape === 'function') {
-    return window.admin_escape(str);
-  }
-  return encodeURIComponent(str);
-}
-
 // Draw the D3 inventory graph
 function drawGraph() {
-  if (!hasInventoryReport.value || !graphContainer.value) return;
-
+  if (!hasInventoryReport.value || !graphContainer.value || !window.d3) return;
   const d3 = window.d3;
-  if (!d3) {
-    console.error('D3 is not loaded');
-    return;
-  }
-
   const timebuckets = inventoryReport.value;
 
   // Clear existing SVG
-  d3.select(graphContainer.value).selectAll('*').remove();
+  d3.select(graphContainer.value).select('svg').remove();
 
   // Calculate dimensions
-  const operationplanCard = document.querySelector('#attributes-operationplan .card-body');
   const margin = { top: 10, right: 10, bottom: 30, left: 40 };
-  const width = Math.max((operationplanCard?.offsetWidth || 600) - margin.left - margin.right, 0);
-  const height = (operationplanCard?.offsetHeight || 400) - margin.top - margin.bottom;
+  const rect = graphContainer.value.getBoundingClientRect();
+  const width = Math.max((rect.width || 600) - margin.left - margin.right, 0);
+  const height = (rect.height || 400) - margin.top - margin.bottom;
 
   // Build X-axis domain
   const domain_x = [];
@@ -327,6 +327,8 @@ function drawGraph() {
       .call(xAxis);
 }
 
+const debouncedDrawGraph = debounce(drawGraph, 150);
+
 // Save column configuration on collapse/expand
 function onCollapseToggle() {
   if (typeof window.grid !== 'undefined' && window.grid.saveColumnConfiguration) {
@@ -335,8 +337,8 @@ function onCollapseToggle() {
 }
 
 // Watch for changes and redraw
-watch([() => store.operationplan?.id, () => inventoryReport.value.length], async () => {
-  if (hasInventoryReport.value) {
+watch(() => store.operationplan?.id, async (id) => {
+  if (id) {
     await nextTick();
     drawGraph();
   }
@@ -351,10 +353,17 @@ onMounted(async () => {
   }
 
   // Draw initial graph
-  if (hasInventoryReport.value) {
-    await nextTick();
-    drawGraph();
+  if (graphContainer.value) {
+    resizeObserver = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      if (width > 0 && height > 0) debouncedDrawGraph();
+    });
+    resizeObserver.observe(graphContainer.value);
   }
+});
+
+onUnmounted(() => {
+  if (resizeObserver) resizeObserver.disconnect();
 });
 </script>
 
@@ -382,7 +391,7 @@ onMounted(async () => {
         <tbody>
         <tr>
           <td role="gridcell" aria-describedby="grid_graph">
-            <div ref="graphContainer" class="graph"></div>
+            <div ref="graphContainer" class="graph overflow-hidden w-100"></div>
           </td>
         </tr>
         </tbody>

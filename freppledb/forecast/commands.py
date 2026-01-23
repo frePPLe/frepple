@@ -852,7 +852,7 @@ class LoadForecast(LoadTask):
 @PlanTaskRegistry.register
 class ExportStaticForecast(PlanTask):
     description = ("Export static data", "Export forecast")
-    sequence = (305, "exportstatic2", 5)
+    sequence = (72.4, "exportstatic2", 5)
 
     @classmethod
     def getWeight(cls, exportstatic=False, **kwargs):

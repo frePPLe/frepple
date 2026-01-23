@@ -111,7 +111,7 @@ class TaskReport(GridReport):
         Task.objects.all()
         .extra(
             select={
-                "duration": """case when (processid is not null or started is not null) and status <> 'Canceled' then
+                "duration": """case when (processid is not null or started is not null) and status not in ('Canceled','Failed') then
                    date_trunc('second', coalesce(finished::timestamp(0), now()) - started::timestamp(0))
                    end
                    """

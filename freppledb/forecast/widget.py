@@ -45,7 +45,7 @@ class ForecastWidget(Widget):
     tooltip = _("Show the value of all sales order and forecast")
     permissions = (("view_forecast_report", "Can view forecast report"),)
     asynchronous = True
-    size = 'lg'
+    size = "lg"
     history = 12
     future = 12
 
@@ -204,17 +204,26 @@ class ForecastWidget(Widget):
             d[0]
             + "<br>"
             + (d3.select("#fcst_selectButton").textContent == "value" ? currency[0]:"")
-            + d[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            + d[1].toLocaleString('en-US', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2  // Round to 2 places if decimals exist
+                          })
             + " "
             + (d3.select("#fcst_selectButton").textContent == "value" ? currency[1]:"units")
             + " forecast<br>"
             + (d3.select("#fcst_selectButton").textContent == "value" ? currency[0]:"")
-            + (d[2]-d[3]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            + (d[2]-d[3]).toLocaleString('en-US', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2  // Round to 2 places if decimals exist
+                          })
             + " "
             + (d3.select("#fcst_selectButton").textContent == "value" ? currency[1]:"units")
             + " closed sales orders<br>"
             + (d3.select("#fcst_selectButton").textContent == "value" ? currency[0]:"")
-            + d[3].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            + d[3].toString().toLocaleString('en-US', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2  // Round to 2 places if decimals exist
+                          })
             + " "
             + (d3.select("#fcst_selectButton").textContent == "value" ? currency[1]:"units")
             + " open sales orders");
@@ -327,7 +336,7 @@ class ForecastAccuracyWidget(Widget):
     tooltip = _("Show the evolution of the SMAPE forecast error")
     permissions = (("view_forecast_report", "Can view forecast report"),)
     asynchronous = True
-    size = 'sm'
+    size = "sm"
     history = 12
 
     def args(self):
@@ -483,7 +492,7 @@ class OutliersWidget(Widget):
     asynchronous = True
     url = "/problem/?name=outlier"
     exporturl = True
-    size = 'lg'
+    size = "lg"
     limit = 20
 
     query = """

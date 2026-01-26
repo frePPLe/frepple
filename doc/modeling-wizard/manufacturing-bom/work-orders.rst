@@ -2,6 +2,10 @@
 Work orders
 ===========
 
+A work order is a detailed step within a manufacturing order.
+The owner of a work order is a manufacturing order whose operation is of type "routing".
+The routing operation defines a list of step suboperations that need to be executed.
+
 The work orders table contains the confirmed work orders in your supply chain.
 
 When generating a plan frepple will add new proposed work orders to this table.
@@ -14,8 +18,8 @@ For a first simplified model, this table can be left empty, frepple will generat
 Field            Type              Description
 ================ ================= ===========================================================
 reference        string            Unique identifier of the manufacturing order.
-owner            string            The reference (unique identifier) of the manufacturing order
-                                   this work order belongs to.
+owner            string            The reference of the manufacturing order this work order
+                                   belongs to.
 status           string            For frozen and work-in-progress manufacturing orders, the
                                    status should be "confirmed".
 operation        operation         The operation that should be run for the manufacturing orders.

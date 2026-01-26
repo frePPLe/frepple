@@ -209,11 +209,25 @@ class DeliveryPerformanceWidget(Widget):
                 .attr('stroke', 'white')
                 .style('stroke-width', '2px')
                 .on("mouseover", function(d) {
+
                     graph.showTooltip(
                         '<span class="text-strong">' + d.data.label + "</span>"
-                        + "<br>count: " + d.data.count
-                        + "<br>quantity: " + d.data.quantity
-                        + (d.data.cost ? "<br>cost: " + currency[0] +  d.data.cost + currency[1] : "")
+                        + "<br>count: "
+                        + + d.data.count.toLocaleString('en-US', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2  // Round to 2 places if decimals exist
+                          })
+                        + "<br>quantity: "
+                        + d.data.cost.toLocaleString('en-US', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2  // Round to 2 places if decimals exist
+                          })
+                        + (d.data.cost ? "<br>cost: "
+                        + d.data.cost.toLocaleString('en-US', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2  // Round to 2 places if decimals exist
+                          })
+                        + currency[1] : "")
                         );
                     $("#tooltip").css('background-color','black').css('color','white');
                 })

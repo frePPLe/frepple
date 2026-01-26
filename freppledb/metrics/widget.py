@@ -240,7 +240,7 @@ class DeliveryPerformanceWidget(Widget):
                 .attr('transform', function(d) {
                     var center = arc.centroid(d);
                     var rotation = ((d.startAngle + d.endAngle) / 2 * 180 / Math.PI) - 90;
-                    if (rotation > 90 && rotation < 270)
+                    if (rotation > 90 && rotation <= 270)
                     // Flip text 180 degrees if it's on the bottom half so it's not upside down
                     rotation += 180;
                     return `translate(${center[0] * 1.8},${center[1] * 1.8}) rotate(${rotation})`;
@@ -248,7 +248,7 @@ class DeliveryPerformanceWidget(Widget):
                 .style('text-anchor', function(d){
                     // Depends whether we are left of right in the chart
                     var rotation = ((d.startAngle + d.endAngle) / 2 * 180 / Math.PI) - 90;
-                    return (rotation < 90 || rotation > 270) ? 'end' : 'start';
+                    return (rotation <= 90 || rotation > 270) ? 'end' : 'start';
                 })
                 .attr('dy', '.35em')
                 .text(d => {

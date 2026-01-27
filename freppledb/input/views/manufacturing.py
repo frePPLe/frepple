@@ -2905,6 +2905,13 @@ class WorkOrderList(OperationPlanMixin):
             editable=not settings.ERP_CONNECTOR,
         ),
         GridFieldText(
+            "owner",
+            title=_("owner"),
+            field_name="owner__reference",
+            formatter="detail",
+            extra="role:'input/manufacturingorder'",
+        ),
+        GridFieldText(
             "batch", title=_("batch"), editable="true", initially_hidden=True
         ),
         GridFieldNumber(
@@ -3067,14 +3074,6 @@ class WorkOrderList(OperationPlanMixin):
             initially_hidden=True,
             formatter="listdetail",
             extra='"role":"input/resource"',
-        ),
-        GridFieldText(
-            "owner",
-            title=_("owner"),
-            field_name="owner__reference",
-            formatter="detail",
-            extra="role:'input/manufacturingorder'",
-            initially_hidden=True,
         ),
         GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),

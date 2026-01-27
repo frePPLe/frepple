@@ -90,6 +90,8 @@ const setEditValueDebounced = debouncedInputHandler((field, value) => {
 function setEditValue(field, value) {
   setEditValueDebounced(field, value);
 }
+
+const formatDuration = window.formatDuration;
 </script>
 
 
@@ -266,7 +268,8 @@ function setEditValue(field, value) {
           </td>
           <td v-if="['number', 'color', 'currency', 'currencyWithBlanks'].includes(value['formatter'])">{{numberFormat(store.operationplan[key])}}</td>
           <td v-if="value['formatter'] === 'date'">{{store.operationplan[key]}}</td>
-          <td v-if="!['date', 'number', 'color', 'currency', 'currencyWithBlanks'].includes(value['formatter'])">{{store.operationplan[key]}}</td>
+          <td v-if="value['formatter'] === 'duration'">{{formatDuration(store.operationplan[key])}}</td>
+          <td v-if="!['date', 'number', 'color', 'currency', 'currencyWithBlanks', 'duration'].includes(value['formatter'])">{{store.operationplan[key]}}</td>
         </tr>
         <tr id="statusrow" v-if="store.operationplan.type !== 'STCK'">
           <td><b class="text-capitalize">{{ttt('status')}}</b></td>

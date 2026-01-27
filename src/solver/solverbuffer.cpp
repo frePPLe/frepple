@@ -222,6 +222,21 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 // dependency-based.
                 OperationPlan::iterator x(opplan_to_move, false);
                 while (auto* sub = x.next()) {
+                  if (sub->getClosed() || sub->getCompleted())
+                    // No need to check from here onwards
+                    break;
+                  if (sub->getConfirmed() && sub->getEnd() > newDate) {
+                    // Failure at a step we can't move earlier
+                    data->state->a_qty = 0.0;
+                    data->state->a_date = sub->getEnd();
+                    OperationPlan::iterator x(opplan_to_move, true, sub);
+                    x.next();
+                    while (auto* sub2 = x.next()) {
+                      sub2->setStart(data->state->a_date);
+                      data->state->a_date = sub2->getEnd();
+                    }
+                    break;
+                  }
                   if (getLogLevel() > 1 && firstmsg1)
                     logger << indentlevel
                            << "  Moving approved routing supply early: " << sub

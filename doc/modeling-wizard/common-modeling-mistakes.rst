@@ -42,11 +42,11 @@ Correction:
 
   - Define either an operation, an item supplier or an item distribution for the buffer.
   - Switch the buffer type to be "infinite".
-  - Set the parameter "plan.fixBrokenPath" parameter to "true". In this case we automatically
+  - Set the parameter "plan.fixBrokenSupplyPath" parameter to "true". In this case we automatically
     define a fake replenishment to purchase this item from a dummy "unknown supplier".
     Your demand will now be planned, but you should review these dummy purchase order!
 
-  The parameter "plan.fixBrokenPath" is "true" by default. This will protect first-time
+  The parameter "plan.fixBrokenSupplyPath" is "true" by default. This will protect first-time
   users from making this rookie mistake...
 
 .. _resource_max_calendar:

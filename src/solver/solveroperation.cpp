@@ -2192,7 +2192,7 @@ void Solver::createsBatches(Operation* oper, void* v) {
           if (flpln->getQuantity() < ROUNDING_ERROR) continue;
           auto tmp = flpln->getBuffer()->getOnHand(
               opplan->getEnd(), Date::infiniteFuture, true, true);
-          if (tmp >= 0 && tmp < excess) excess = tmp;
+          if (tmp < excess) excess = max(tmp, 0.0);
         }
 
         // some security

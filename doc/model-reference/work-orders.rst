@@ -2,6 +2,10 @@
 Work orders
 ===========
 
+A work order is a detailed step within a manufacturing order.
+The owner of a work order is a manufacturing order whose operation is of type "routing".
+The routing operation defines a list of step suboperations that need to be executed.
+
 This table contains the work orders of your supply chain, either proposed by frePPLe or confirmed.
 
 This table is populated with new proposed work orders when frePPLe generates a plan.
@@ -15,6 +19,7 @@ reference          string            | Unique identifier for the work order.
                                      | For approved or confirmed work orders that are imported from your ERP system this field should be
                                        populated with the identifier the ERP generated.
                                      | For work orders newly proposed by frePPLe, a unique numeric identifier will automatically be generated.
+owner              number            | The reference of the manufacturing order this work order belongs to.
 operation          operation         The operation to perform.
 start date         DateTime          The date when the operation is starting.
 end date           DateTime          The date when the operation is ending.
@@ -51,8 +56,6 @@ demand             demand            | The field marks this work order as the sh
                                        of a demand.
                                      | This is only needed in very exceptional use case. 99% of frepple configurations
                                        to not require this field to be specified.
-owner              number            | The reference (unique identifier) of the manufacturing order
-                                       this work order belongs to.
 inventory status   number            | The Inventory Status is a calculated field that highlights the urgency of the work order.
                                      | The cells have a background color that can be green, orange or red. Sorting
                                      | the work orders using the Inventory Status column (red ones first) allows the planner to

@@ -34,6 +34,7 @@ import {operationplanService} from "@/services/operationplanService.js";
  * @property {boolean} showChildren - Show child level operations
  * @property {Array} operationplan - single operationplans
  * @property {Array} selectedOperationplans - Multiple selected operationplans   // list of ids
+ * @property {Object} operationplanChanges - Multiple selected operationplans   // {{reference: {fields: values}}]
  * @property {boolean} loading - Loading state
  * @property {Object} error - Error state
  * @property {number} dataRowHeight - Row height for table
@@ -62,6 +63,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     operationplan: new Operationplan(),
     operationplans: {},
     selectedOperationplans: [],
+    operationplanChanges: {},
 
     preferences: {},
     editForm: {quantity: null, startdate: "", enddate: "", remark: ""},
@@ -171,6 +173,11 @@ export const useOperationplansStore = defineStore('operationplans', {
           this.loading = false;
         }
       }
+      if (this.operationplanChanges[this.operationplan.reference] !== undefined) {
+        for (const field in this.operationplanChanges[this.operationplan.reference]) {
+          this.operationplan[field] = this.operationplanChanges[this.operationplan.reference][field];
+        }
+      }
     },
 
     // Filter and search actions
@@ -186,16 +193,6 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.sord = 'asc';
       this.preferences.sidx = 'batch';
       this.preferences.sord = 'asc';
-    },
-
-    // Preferences actions
-    setPreference(key, value) {
-      this.preferences[key] = value;
-    },
-
-    // Column management actions
-    setColumns(columns) {
-      this.columns = columns;
     },
 
     setFrozenColumns(frozen) {
@@ -315,6 +312,7 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.operationplan = new Operationplan();
       this.editForm = {setQuantity: null, setStart: "", setEnd: "", setRemark: ""};
       this.selectedOperationplans.length = 0;
+      this.operationplanChanges = {};
     },
 
     // Error handling
@@ -336,11 +334,6 @@ export const useOperationplansStore = defineStore('operationplans', {
         type: 'error',
         title: ''
       };
-    },
-
-    // Display info for selected operationplans
-    displayInfo(operationplan) {
-      this.selectedOperationplan = operationplan;
     },
 
     // Process aggregated info for multiple selections
@@ -487,13 +480,52 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     setEditFormValues(field, value) {
-      console.log(550, 'setEditFormValues: ', field, value);
       window.displayongrid(this.operationplan.reference, field, value);
       this.editForm[field] = value;
+      if (field === 'status') this.operationplan.status = value;
+      this.trackOperationplanChanges(this.operationplan.reference, field, value);
     },
 
-    applyOperationplanChanges() {
-      console.log(556, 'applyOperationplanChanges');
+    applyGridCellEdit({ reference, field, value }) {
+      const currentRef =
+        this.operationplan?.reference ||
+        this.operationplan?.operationplan__reference;
+
+      if (currentRef && reference && String(currentRef) !== String(reference)) {
+        return;
+      }
+
+      this.trackOperationplanChanges(reference, field, value);
+
+      switch (field) {
+        case 'quantity': this.operationplan.quantity = parseFloat(value); break;
+        case 'remark': this.operationplan.remark = value; break;
+        case 'startdate': this.operationplan.start = value; break;
+        case 'enddate': this.operationplan.end = value; break;
+        case 'status': this.operationplan.status = value; break;
+        default: this.operationplan[field] = value; break;
+      }
+    },
+
+    trackOperationplanChanges(reference, field, value) {
+      this.operationplanChanges[reference] = this.operationplanChanges[reference] || {};
+
+      if (field === 'quantity' || field === 'operationplan__quantity') {
+        const n = parseFloat(value);
+        const v = isNaN(n) ? value : n;
+        this.operationplanChanges[reference]['operationplan__quantity'] = v;
+        this.operationplanChanges[reference]['quantity'] = v;
+      } else if (field === 'startdate' || field === 'operationplan__startdate' || field === 'start') {
+        this.operationplanChanges[reference]['operationplan__startdate'] = value;
+        this.operationplanChanges[reference]['start'] = value;
+        this.operationplanChanges[reference]['startdate'] = value;
+      } else if (field === 'enddate' || field === 'operationplan__enddate' || field === 'end') {
+        this.operationplanChanges[reference]['operationplan__enddate'] = value;
+        this.operationplanChanges[reference]['end'] =  value;
+        this.operationplanChanges[reference]['enddate'] = value;
+      } else {
+        this.operationplanChanges[reference][field] = value;
+      }
     }
   }
 })

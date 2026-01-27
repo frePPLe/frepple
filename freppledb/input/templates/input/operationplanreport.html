@@ -228,21 +228,6 @@ rect.opplan {
     $("#zoomin, #zoomout").removeClass("d-none");
     {% endif %}
   });
-  // frepple.js will call this function to alert angular that the grid has changed
-  function checkrows(grid, selection) {
-    var selectiondata = [];
-    jQuery.each(selection , function(index,item){
-      selectiondata.push(grid.getRowData(item));
-    });
-    // TODO angular code to be replaced with vue code
-    if (selectiondata.length > 1) {
-      angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
-    } else if (selectiondata.length === 1) {
-      angular.element('#controller').scope().displayInfo(selectiondata[0]);
-    } else {
-      angular.element('#controller').scope().displayInfo(undefined);
-    }
-  }
 
   // // Controller will call this function to pass values to the grid
   function displayongrid(id, columnid, value) {
@@ -388,58 +373,22 @@ onSelectAll: function(aRowids, status){
   });
   document.getElementById('app').dispatchEvent(event);
 },
-beforeSaveCell: function(rowid, cellname, value, iRow, iCol) {
-  var selection = $(this).jqGrid('getGridParam','selarrrow');
-  var selectiondata = [];
-  var rowdata = {};
-  var temprow = jQuery("#grid").getRowData(rowid);
 
-  jQuery.each(selection , function(index,item){
-    if (item === rowid) {
-      //update temprow
-      temprow[cellname] = value;
+afterSaveCell: function(rowid, cellname, value, iRow, iCol) {
+  const rowData = $("#grid").getRowData(rowid);
+  const reference = rowData.operationplan__reference ? rowData.operationplan__reference : rowid;
 
-      selectiondata.push(temprow);
-    } else {
-      rowdata = jQuery("#grid").getRowData(item);
-
-      //if is being edited
-      var el = $(document.getElementById(item));
-      if (typeof el.find("input").attr('cm','[Object Object]').not('.cbox').val() !== 'undefined') {
-        if (el.hasClass('success')) {
-          if (typeof el.find("input").attr('cm','[Object Object]').not('.cbox').attr("id") !== 'undefined') {
-            colname=el.find("input").attr('cm','[Object Object]').not('.cbox').attr("id").split("_")[1];
-            if (typeof colname !== 'undefined') {
-              rowdata[colname] = el.find("input").attr('cm','[Object Object]').not('.cbox').val();
-            }
-          }
-        }
-      }
-      selectiondata.push(rowdata);
+  const event = new CustomEvent('displayonpanel', {
+    detail: {
+      rowid: rowid,
+      reference: reference,
+      field: cellname,
+      value: value
     }
   });
-  upload.select();
-  if (selection.length > 1){
-    const event = new CustomEvent('processAggregatedInfo', {
-    detail: {
-      selectiondata: selectiondata,
-      colModel: jQuery("#grid").jqGrid ('getGridParam', 'colModel')
-      }
-    });
-    document.getElementById('app').dispatchEvent(event);
-  // angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
-  } else {
-    const event = new CustomEvent('displayonpanel', {
-      detail: {
-        rowid: rowid,
-        cellname: cellname,
-        value: value
-      }
-    });
-    document.getElementById('app').dispatchEvent(event);
-    // angular.element('#controller').scope().displayonpanel(rowid, cellname, value);
-  }
+  document.getElementById('app').dispatchEvent(event);
 },
+
 multiboxonly: false,
 loadComplete: function(data) {
       $('#curerror').html("");
@@ -468,30 +417,14 @@ loadComplete: function(data) {
 
 <div class="row text-center">
 <div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
-  <div data-ng-hide="mode == 'kanban' || mode == 'gantt' || mode.startsWith('calendar')">
+  <div :hidden="mode == 'kanban' || mode == 'gantt' || mode.startsWith('calendar')">
     <table id="grid" class="table table-striped" style="background-color: white"></table>
     <div id="gridpager"></div>
   </div>
-  <div id="calendar" data-ng-hide="!mode.startsWith('calendar')" class="col-md-12">
-    <calendar
-      data-range-changed="calendarRangeChanged(startdate, enddate)"
-      data-event-selected="displayInfo(event)"
-      data-event-source="calendarevents"
-      data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}"
-      data-mode="mode"></calendar>
+  <div id="calendar" :hidden="!mode.startsWith('calendar')" class="col-md-12">
   </div>
-  <div id="kanban" data-ng-hide="mode != 'kanban'"
-    show-kanban-drv class="row"
-    data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}"
-    data-kanbanoperationplans="kanbanoperationplans"
-    data-operationplan="operationplan"
-    data-kanbancolumns="kanbancolumns">
-  </div>
-  <div id="gantt" data-ng-hide="mode != 'gantt'"
-    show-gantt-drv class="row"
-    data-ganttoperationplans="ganttoperationplans"
-    data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}">
-  </div>
+  <div id="kanban" :hidden="mode != 'kanban'" class="row"></div>
+  <div id="gantt" :hidden="mode != 'gantt'" class="row"></div>
 </div>
 <span id="resize-handle" class="fa fa-bars handle" style="display: inline-block"></span>
 </div>

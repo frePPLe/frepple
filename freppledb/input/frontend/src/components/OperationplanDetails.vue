@@ -36,6 +36,7 @@ import NetworkStatusCard from '@/components/NetworkStatusCard.vue';
 import DownstreamCard from '@/components/DownstreamCard.vue';
 import UpstreamCard from '@/components/UpstreamCard.vue';
 import SupplyInformationCard from "@/components/SupplyInformationCard.vue";
+import { debounce } from '@common/utils.js';
 
 const { t: ttt } = useI18n({
   useScope: 'global',
@@ -44,6 +45,15 @@ const { t: ttt } = useI18n({
 
 const appElement = ref(null);
 const store = useOperationplansStore();
+
+// Use shared debouncer to throttle grid cell edits applied to the store
+const applyGridCellEditDebounced = debounce((payload) => {
+  try {
+    store.applyGridCellEdit(payload);
+  } catch (err) {
+    console.warn('Debounced applyGridCellEdit failed', err);
+  }
+}, 10);
 
 // const database = computed(() => window.database);
 const preferences = computed(() => window.preferences || {});
@@ -176,21 +186,22 @@ onMounted(() => {
   }
 
   const handleDisplayOnPanel = (e) => {
-    // This event may carry either { rowid, cellname, value } or the row object directly (legacy calls)
+    // This event may carry either { rowid, reference, field, value } or the row object directly (legacy calls)
     const detail = e?.detail;
     if (!detail) return;
 
-    // If detail has rowid, fetch row data
-    if (detail.rowid) {
-      const row = getGridRowData(detail.rowid);
-      if (row) store.displayInfo(row);
-      return;
-    }
-
-    // If detail is already a row object (legacy code sometimes calls new CustomEvent with raw data), try to use it
-    if (typeof detail === 'object' && Object.keys(detail).length > 0) {
-      // Some legacy callers pass the row data directly as the event's 'detail' (or as second arg incorrectly). Use it if it looks like a row.
-      store.displayInfo(detail);
+    // If the event contains an inline field/value edit, apply it to the current operationplan immediately
+    if (detail.field && typeof detail.value !== 'undefined') {
+      try {
+        // Use shared debouncer to avoid flooding updates while typing in grid inline editors
+        applyGridCellEditDebounced({
+          reference: detail.reference,
+          field: detail.field,
+          value: detail.value,
+        });
+      } catch (err) {
+        console.warn('Failed to apply grid cell edit from displayonpanel event', err);
+      }
     }
   };
 
@@ -201,6 +212,17 @@ onMounted(() => {
     }
   };
 
+  const handleGridCellEdited = (e) => {
+    const detail = e?.detail || {};
+    if (!detail.field) return;
+
+    store.applyGridCellEdit({
+      reference: detail.reference,
+      field: detail.field,
+      value: detail.value
+    });
+  };
+
   // Attach listeners on the app root element if present, otherwise on document
   const rootEl = document.getElementById('app') || document;
   rootEl.addEventListener('singleSelect', handleSingleSelectEvent);
@@ -208,6 +230,7 @@ onMounted(() => {
   rootEl.addEventListener('processAggregatedInfo', handleProcessAggregatedInfo);
   rootEl.addEventListener('displayonpanel', handleDisplayOnPanel);
   rootEl.addEventListener('triggerSave', handleTriggerSave);
+  rootEl.addEventListener('gridCellEdited', handleGridCellEdited);
 
   // Save references to handlers so they can be removed on unmount
   appElement.value = {
@@ -217,7 +240,8 @@ onMounted(() => {
       all: handleAllSelectEvent,
       proc: handleProcessAggregatedInfo,
       display: handleDisplayOnPanel,
-      undo: handleUndoEvent
+      undo: handleUndoEvent,
+      gridCellEdited: handleGridCellEdited,
     }
   };
 });
@@ -231,6 +255,7 @@ onUnmounted(() => {
       info.rootEl.removeEventListener('processAggregatedInfo', info.handlers.proc);
       info.rootEl.removeEventListener('displayonpanel', info.handlers.display);
       info.rootEl.removeEventListener('undo', info.handlers.display);
+      info.rootEl.removeEventListener('gridCellEdited', info.handlers.gridCellEdited);
     } catch (err) {
       console.log('Failed to remove event listeners from app root element:', err);
     }
@@ -331,13 +356,3 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.widget-list {
-  padding: 0.5rem;
-}
-
-.widget {
-  transition: all 0.3s ease;
-}
-</style>

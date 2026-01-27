@@ -22,12 +22,11 @@
  */
 
 <script setup lang="js">
-import {ref, computed} from "vue";
+import { computed } from "vue";
 import { useI18n } from 'vue-i18n';
-import {useOperationplansStore} from "@/stores/operationplansStore.js";
-import { isNumeric, debouncedInputHandler } from "@common/utils.js";
+import { useOperationplansStore } from "@/stores/operationplansStore.js";
+import { numberFormat, isNumeric, debouncedInputHandler } from "@common/utils.js";
 import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js';
-import {numberFormat} from "@common/utils.js";
 useBootstrapTooltips();
 
 const { t: ttt } = useI18n({
@@ -58,21 +57,13 @@ const filteredColmodel = computed(() => {
       );
 });
 
-let activateApply = ref(false);
-
-// Validation states for each input
-const validationErrors = ref({
-  setTo: '',
-  increaseBy: '',
-  increaseByPercent: ''
-});
-
 const editable = true;
 // eslint-disable-next-line no-undef
 const actions = window.actions;
 
 const opptype = {
   'MO': ttt('manufacturing order'),
+  'WO': ttt('work order'),
   'PO': ttt('purchase order'),
   'DO': ttt('distribution order'),
   'STCK': ttt('stock'),
@@ -91,61 +82,13 @@ function validateNumericField(field, value) {
   }
 }
 
-function setStartDate(event) {
-  store.setEditFormValues("startDate", event.target.value);
-  changeEdit();
-}
-
-function setEndDate(event) {
-  store.setEditFormValues("endDate", event.target.value);
-  changeEdit();
-}
-
-function setEditMode(mode) {
-  store.setEditFormValues("mode", mode);
-  changeEdit();
-}
-
 const setEditValueDebounced = debouncedInputHandler((field, value) => {
   if (value === '') return;
   store.setEditFormValues(field, value);
-  changeEdit();
 }, 300);
 
 function setEditValue(field, value) {
   setEditValueDebounced(field, value);
-}
-
-function applyEdit() {
-  store.applyOperationplanChanges();
-}
-
-function changeEdit() {
-  if (store.editForm.selectedMeasure?.label === undefined) {
-    activateApply.value = false;
-    return;
-  }
-
-  let result = false;
-
-  switch (store.editForm.mode) {
-    case 'set':
-      result = isNumeric(store.editForm.setTo) && parseFloat(store.editForm.setTo) >= 0;
-      break;
-    case 'increase':
-      result = isNumeric(store.editForm.increaseBy);
-      break;
-    case 'increasePercent':
-      result = isNumeric(store.editForm.increaseByPercent);
-      break;
-    default:
-      result = false;
-      break;
-  }
-
-  // check validation errors
-  const hasValidationErrors = Object.values(validationErrors.value).some(error => error !== '');
-  activateApply.value = result && !hasValidationErrors;
 }
 </script>
 
@@ -258,11 +201,11 @@ function changeEdit() {
         </tr>
         <tr v-if="store.operationplan.type !== 'STCK'">
           <td>
-            <b class="text-capitalize" v-if="store.operationplan.type === 'MO' || isMultipleOrNone">{{ttt('start date')}}</b>
+            <b class="text-capitalize" v-if="store.operationplan.type === 'MO' || store.operationplan.type === 'WO' || isMultipleOrNone">{{ttt('start date')}}</b>
             <b class="text-capitalize" v-if="store.operationplan.type === 'PO'">{{ttt('ordering date')}}</b>
             <b class="text-capitalize" v-if="store.operationplan.type === 'DO'">{{ttt('shipping date')}}</b>
-<!--            <b class="text-capitalize" v-if="store.operationplan.colmodel?.operationplan__startdate">{{ttt(store.operationplan.colmodel.operationplan__startdate.label)}}</b>&nbsp;-->
-<!--            <b class="text-capitalize" v-if="store.operationplan.colmodel?.startdate">{{ttt(store.operationplan.colmodel.startdate.label)}}</b>-->
+            <b class="text-capitalize" v-if="store.operationplan.colmodel?.operationplan__startdate">{{ttt(store.operationplan.colmodel.operationplan__startdate.label)}}</b>&nbsp;
+            <b class="text-capitalize" v-if="store.operationplan.colmodel?.startdate">{{ttt(store.operationplan.colmodel.startdate.label)}}</b>
             <small v-if="store.operationplan.colmodel?.startdate || isMultipleOrNone">&nbsp;({{ ttt(store.operationplan.colmodel?.startdate.type || 'min') }})</small>
             <small v-if="store.operationplan.colmodel?.operationplan__startdate">&nbsp;({{ ttt(store.operationplan.colmodel?.operationplan__startdate.type) }})</small>
           </td>
@@ -277,7 +220,7 @@ function changeEdit() {
             <input
                 v-if="!isMultipleOrNone && store.operationplan.hasOwnProperty('operationplan__startdate')"
                 class="form-control" type="datetime-local" v-model="store.operationplan.operationplan__startdate"
-                @input="setEditValue('enddate', $event.target.value)" :readonly="!editable">
+                @input="setEditValue('startdate', $event.target.value)" :readonly="!editable">
           </td>
         </tr>
         <tr v-if="store.operationplan.setupend">
@@ -289,8 +232,8 @@ function changeEdit() {
             <b class="text-capitalize" v-if="store.operationplan.type === 'MO' || isMultipleOrNone">{{ttt('end date')}}</b>
             <b class="text-capitalize" v-if="store.operationplan.type === 'PO'">{{ttt('receipt date')}}</b>
             <b class="text-capitalize" v-if="store.operationplan.type === 'DO'">{{ttt('receipt date')}}</b>
-<!--            <b class="text-capitalize" v-if="store.operationplan.colmodel?.enddate">{{ttt(store.operationplan.colmodel.enddate.label)}}</b>-->
-<!--            <b class="text-capitalize" v-if="store.operationplan.colmodel?.operationplan__enddate">{{ttt(store.operationplan.colmodel.operationplan__enddate.label)}}</b>&nbsp;-->
+            <b class="text-capitalize" v-if="store.operationplan.colmodel?.enddate">{{ttt(store.operationplan.colmodel.enddate.label)}}</b>
+            <b class="text-capitalize" v-if="store.operationplan.colmodel?.operationplan__enddate">{{ttt(store.operationplan.colmodel.operationplan__enddate.label)}}</b>&nbsp;
             <small v-if="store.operationplan.colmodel?.enddate || isMultipleOrNone">&nbsp;({{ ttt(store.operationplan.colmodel?.enddate.type || 'max') }})</small>
             <small v-if="store.operationplan.colmodel?.operationplan__enddate">&nbsp;({{ ttt(store.operationplan.colmodel?.operationplan__enddate.type) }})</small>
           </td>
@@ -298,10 +241,10 @@ function changeEdit() {
             <input v-if="isMultipleOrNone && store.operationplan.enddate"
                    class="form-control border-0 bg-white"
                    type="datetime-local" v-model="store.operationplan.enddate" readonly>
-            <input v-if="!isMultipleOrNone && !store.operationplan.hasOwnProperty('store.operationplan__enddate')"
+            <input v-if="!isMultipleOrNone && !store.operationplan.hasOwnProperty('operationplan__enddate')"
                    class="form-control" type="datetime-local" v-model="store.operationplan.end"
                    @input="setEditValue('enddate', $event.target.value)" :readonly="!editable">
-            <input v-if="!isMultipleOrNone && store.operationplan.hasOwnProperty('store.operationplan__enddate')"
+            <input v-if="!isMultipleOrNone && store.operationplan.hasOwnProperty('operationplan__enddate')"
                    class="form-control" type="datetime-local" v-model="store.operationplan.operationplan__enddate"
                    @input="setEditValue('enddate', $event.target.value)" :readonly="!editable">
           </td>
@@ -313,8 +256,8 @@ function changeEdit() {
           </td>
           <td>
             <span v-if="isMultipleOrNone">{{ numberFormat(store.operationplan.operationplan__quantity || store.operationplan.quantity || 0) }}</span>
-            <input v-if="!isMultipleOrNone && !store.operationplan.hasOwnProperty('store.operationplan__quantity')" class="form-control" type="number" v-model="store.operationplan.quantity" @input="setEditValue('quantity', $event.target.value)" :readonly="!editable">
-            <input v-if="!isMultipleOrNone && store.operationplan.hasOwnProperty('store.operationplan__quantity')" class="form-control" type="number" v-model="store.operationplan.operationplan__quantity" @input="setEditValue('quantity', $event.target.value)" :readonly="!editable">
+            <input v-if="!isMultipleOrNone && !store.operationplan.hasOwnProperty('operationplan__quantity')" class="form-control" type="number" v-model="store.operationplan.quantity" @input="setEditValue('quantity', $event.target.value)" :readonly="!editable">
+            <input v-if="!isMultipleOrNone && store.operationplan.hasOwnProperty('operationplan__quantity')" class="form-control" type="number" v-model="store.operationplan.operationplan__quantity" @input="setEditValue('quantity', $event.target.value)" :readonly="!editable">
           </td>
         </tr>
         <tr v-for="([key, value]) in filteredColmodel" :key="key">
@@ -329,12 +272,12 @@ function changeEdit() {
           <td><b class="text-capitalize">{{ttt('status')}}</b></td>
           <td>
             <div class="btn-group" role="group">
-              <button id="proposedBtn" v-if="(!editable && store.operationplan.status === ttt('proposed')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status === 'proposed'}]" @click="store.operationplan.status = 'proposed'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('proposed')"> <i class="fa fa-unlock"></i></button>
-              <button id="approvedBtn" v-if="(!editable && store.operationplan.status === ttt('approved')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status === 'approved'}]" @click="store.operationplan.status = 'approved'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('approved')"><i class="fa fa-unlock-alt"></i></button>
-              <button id="confirmedBtn" v-if="(!editable && store.operationplan.status === ttt('confirmed')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status === 'confirmed'}]" @click="store.operationplan.status = 'confirmed'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('confirmed')"><i class="fa fa-lock"></i></button>
-              <button id="completedBtn" v-if="(!editable && store.operationplan.status === ttt('completed')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status === 'completed'}]" @click="store.operationplan.status = 'completed'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('completed')"><i class="fa fa-check"></i></button>
-              <button id="closedBtn" v-if="(!editable && store.operationplan.status === ttt('closed')) || editable" type="button" class="btn btn-primary" :class="['text-capitalize', {'active': store.operationplan.status === 'closed'}]" @click="store.operationplan.status = 'closed'" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('closed')"><i class="fa fa-times"></i></button>
-              <button id="erp_incr_exportBtn" v-if="editable && actions.hasOwnProperty('erp_incr_export')&& store.operationplan.status === 'proposed'" type="button" class="btn btn-primary text-capitalize" @click="actions['erp_incr_export']()">{{ttt('export')}}</button>
+              <button id="proposedBtn" v-if="(!editable && store.operationplan.status === ttt('proposed')) || editable" type="button" class="btn btn-primary text-capitalize" :class="store.operationplan.status === 'proposed' ? 'active': ''" @click="setEditValue('status', 'proposed')" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('proposed')"> <i class="fa fa-unlock"></i></button>
+              <button id="approvedBtn" v-if="(!editable && store.operationplan.status === ttt('approved')) || editable" type="button" class="btn btn-primary text-capitalize" :class="store.operationplan.status === 'approved' ? 'active': ''" @click="setEditValue('status', 'approved')" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('approved')"><i class="fa fa-unlock-alt"></i></button>
+              <button id="confirmedBtn" v-if="(!editable && store.operationplan.status === ttt('confirmed')) || editable" type="button" class="btn btn-primary text-capitalize" :class="store.operationplan.status === 'confirmed' ? 'active': ''" @click="setEditValue('status', 'confirmed')" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('confirmed')"><i class="fa fa-lock"></i></button>
+              <button id="completedBtn" v-if="(!editable && store.operationplan.status === ttt('completed')) || editable" type="button" class="btn btn-primary text-capitalize" :class="store.operationplan.status === 'completed' ? 'active': ''" @click="setEditValue('status', 'completed')" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('completed')"><i class="fa fa-check"></i></button>
+              <button id="closedBtn" v-if="(!editable && store.operationplan.status === ttt('closed')) || editable" type="button" class="btn btn-primary text-capitalize" :class="store.operationplan.status === 'closed' ? 'active': ''" @click="setEditValue('status', 'closed')" :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" data-bs-toggle="tooltip" :title="ttt('closed')"><i class="fa fa-times"></i></button>
+              <button id="erp_incr_exportBtn" v-if="editable && actions.hasOwnProperty('erp_incr_export') && store.operationplan.status === 'proposed'" type="button" class="btn btn-primary text-capitalize" @click="actions['erp_incr_export']()">{{ttt('export')}}</button>
             </div>
           </td>
         </tr>

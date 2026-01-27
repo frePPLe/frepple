@@ -233,25 +233,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.widget-handle {
-  cursor: move;
-}
-
-.card-header {
-  cursor: pointer;
-}
-
-thead tr td {
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  border-bottom-color: #bbb;
-}
-
-small {
-  display: block;
-  font-size: 0.85em;
-  color: #6c757d;
-}
-</style>

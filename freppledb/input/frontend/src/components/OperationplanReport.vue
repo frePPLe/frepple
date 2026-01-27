@@ -98,14 +98,6 @@ const handleResize = (e) => {
   }
 };
 
-const handleCalendarRangeChanged = (startDate, endDate) => {
-  store.setViewDates(startDate, endDate);
-};
-
-const handleEventSelected = (event) => {
-  store.displayInfo(event);
-};
-
 // Watch for mode changes and trigger appropriate data loading
 watch(mode, async (newMode) => {
   await nextTick();
@@ -202,7 +194,6 @@ watch(mode, async (newMode) => {
             data-bs-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
-            data-bs-toggle="tooltip"
             data-bs-placement="top"
             :title="t('display calendar')"
           >
@@ -254,30 +245,6 @@ watch(mode, async (newMode) => {
             <div id="gridpager"></div>
           </slot>
         </div>
-
-
-<!--        <div v-if="isCalendarMode" id="calendar" class="calendar-view col-md-12">-->
-<!--          <slot-->
-<!--            name="calendar-view"-->
-<!--            :mode="calendarmode"-->
-<!--            @range-changed="handleCalendarRangeChanged"-->
-<!--            @event-selected="handleEventSelected"-->
-<!--          >-->
-<!--            <calendar-->
-<!--              :mode="calendarmode"-->
-<!--              @range-changed="handleCalendarRangeChanged"-->
-<!--              @event-selected="handleEventSelected"-->
-<!--            ></calendar>-->
-<!--          </slot>-->
-<!--        </div>-->
-
-<!--        <div v-if="isKanbanMode" id="kanban" class="kanban-view row">-->
-<!--          <slot name="kanban-view"></slot>-->
-<!--        </div>-->
-
-<!--        <div v-if="isGanttMode" id="gantt" class="gantt-view row">-->
-<!--          <slot name="gantt-view"></slot>-->
-<!--        </div>-->
       </div>
     </div>
 
@@ -288,51 +255,3 @@ watch(mode, async (newMode) => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.operationplan-report {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: auto;
-}
-
-.toolbar {
-  display: flex;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.operationplan-content {
-  flex: 1;
-  overflow: auto;
-  background-color: white;
-  min-height: 150px;
-  margin-top: 0.7em;
-}
-
-.table-view,
-.calendar-view,
-.kanban-view,
-.gantt-view {
-  width: 100%;
-  height: 100%;
-}
-
-.details-panel {
-  flex: 0 0 auto;
-  border-top: 1px solid #dee2e6;
-  overflow: auto;
-}
-
-.handle {
-  cursor: ns-resize;
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  background-color: #f8f9fa;
-  border-top: 1px solid #dee2e6;
-  border-bottom: 1px solid #dee2e6;
-}
-</style>

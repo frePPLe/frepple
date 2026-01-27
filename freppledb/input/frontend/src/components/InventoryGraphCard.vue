@@ -399,34 +399,3 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.widget-handle {
-  cursor: move;
-}
-
-.card-header {
-  cursor: pointer;
-}
-
-.graph {
-  min-height: 300px;
-}
-
-:deep(.graphline) {
-  fill: none;
-  stroke-width: 2px;
-}
-
-:deep(.axis path),
-:deep(.axis line) {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-:deep(.axis text) {
-  font-family: sans-serif;
-  font-size: 11px;
-}
-</style>

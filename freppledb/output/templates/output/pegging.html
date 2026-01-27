@@ -81,7 +81,7 @@ function escapeAttribute(val) {
 }
 
 function ganttcell(cellvalue, options, rowdata) {
-  const map = { MO: "manufacturingorder", PO: "purchaseorder", DO: "distributionorder", DLVR: "deliveryorder" };
+  const map = { MO: "manufacturingorder", WO: "workorder", PO: "purchaseorder", DO: "distributionorder", DLVR: "deliveryorder" };
 
   // Horizontal scale to compute a domain-space epsilon ~0.5px
   const headerW = $("#jqgh_grid_operationplans").width() || 1;
@@ -188,6 +188,19 @@ function buildtooltip(){
     extra += gettext('batch')+": " + $(this).attr("data-batch") + '<br>';
   if ($(this).attr("data-type") === 'MO') {
     return gettext('manufacturing order') + '<br>' +
+      $(this).attr("data-operation") + '<br>' +
+      gettext('reference')+": " + $(this).attr("data-reference") + '<br>' +
+      extra +
+      gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
+      gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
+      gettext('quantity')+": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>" +
+      gettext('required quantity')+": " + grid.formatNumber($(this).attr("data-required_quantity")) + "<br>" +
+      gettext('criticality')+": " + $(this).attr("data-criticality") + "<br>" +
+      gettext('delay')+": " +  thedelay + "<br>" +
+      gettext('status')+": " + gettext($(this).attr("data-status")) + "<br>";
+  }
+  else if ($(this).attr("data-type") === 'WO') {
+    return gettext('work order') + '<br>' +
       $(this).attr("data-operation") + '<br>' +
       gettext('reference')+": " + $(this).attr("data-reference") + '<br>' +
       extra +

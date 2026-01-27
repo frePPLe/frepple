@@ -222,10 +222,26 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 // dependency-based.
                 OperationPlan::iterator x(opplan_to_move, false);
                 while (auto* sub = x.next()) {
+                  if (sub->getClosed() || sub->getCompleted())
+                    // No need to check from here onwards
+                    break;
+                  if (sub->getConfirmed() && sub->getEnd() > newDate) {
+                    // Failure at a step we can't move earlier
+                    data->state->a_qty = 0.0;
+                    data->state->a_date = sub->getEnd();
+                    OperationPlan::iterator x(opplan_to_move, true, sub);
+                    x.next();
+                    while (auto* sub2 = x.next()) {
+                      sub2->setStart(data->state->a_date);
+                      data->state->a_date = sub2->getEnd();
+                    }
+                    break;
+                  }
                   if (getLogLevel() > 1 && firstmsg1)
                     logger << indentlevel
                            << "  Moving approved routing supply early: " << sub
                            << '\n';
+                  auto orig_quantity = opplan_to_move->getQuantity();
                   data->push(opplan_to_move->getQuantity(), newDate);
                   data->state->keepAssignments =
                       Plan::instance().getMoveApprovedEarly() == 1 ? sub
@@ -233,18 +249,15 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                   OperationPlanState beforeMove(sub);
                   checkOperation(sub, *data);
                   if (data->state->a_qty <= ROUNDING_ERROR) {
-                    // convert data->state->a_date; to the complete routing
+                    // convert data->state->a_date to the complete routing
                     OperationPlan::iterator x(opplan_to_move, true, sub);
+                    opplan_to_move->setQuantity(orig_quantity);
                     sub->restore(beforeMove);
                     sub->setEnd(data->state->a_date);
                     x.next();
-                    logger << " starting with " << sub << '\n';
                     while (auto* sub2 = x.next()) {
                       sub2->setStart(data->state->a_date);
-                      logger << "adjusting successor  to start " << data->state->a_date;
                       data->state->a_date = sub2->getEnd();
-                      logger << " to " << data->state->a_date << " for " << sub2
-                             << '\n';
                     }
                     break;
                   } else

@@ -149,6 +149,7 @@ class Command(BaseCommand):
                 hasPO = True if "input.purchaseorder" in models else False
                 hasDO = True if "input.distributionorder" in models else False
                 hasMO = True if "input.manufacturingorder" in models else False
+                hasWO = True if "input.workorder" in models else False
                 hasDeO = True if "input.deliveryorder" in models else False
 
                 if not hasOperation:
@@ -178,7 +179,7 @@ class Command(BaseCommand):
                             (key,),
                         )
 
-                    if hasPO and not (hasDO and hasMO and hasDeO):
+                    if hasPO and not (hasDO and hasMO and hasDeO and hasWO):
                         models.remove("input.purchaseorder")
                         cursor.execute("delete from operationplan where type = 'PO'")
                         key = ContentType.objects.get_for_model(
@@ -189,7 +190,7 @@ class Command(BaseCommand):
                             (key,),
                         )
 
-                    if hasDO and not (hasPO and hasMO and hasDeO):
+                    if hasDO and not (hasPO and hasMO and hasDeO and hasWO):
                         models.remove("input.distributionorder")
                         cursor.execute("delete from operationplan where type = 'DO'")
                         key = ContentType.objects.get_for_model(
@@ -200,7 +201,7 @@ class Command(BaseCommand):
                             (key,),
                         )
 
-                    if hasMO and not (hasPO and hasDO and hasDeO):
+                    if hasMO and not (hasPO and hasDO and hasDeO and hasWO):
                         models.remove("input.manufacturingorder")
                         cursor.execute("delete from operationplan where type = 'MO'")
                         key = ContentType.objects.get_for_model(
@@ -211,7 +212,7 @@ class Command(BaseCommand):
                             (key,),
                         )
 
-                    if hasDeO and not (hasPO and hasDO and hasMO):
+                    if hasDeO and not (hasPO and hasDO and hasMO and hasWO):
                         models.remove("input.deliveryorder")
                         cursor.execute("delete from operationplan where type = 'DLVR'")
                         key = ContentType.objects.get_for_model(
@@ -222,8 +223,19 @@ class Command(BaseCommand):
                             (key,),
                         )
 
-                    if (hasPO or hasDO or hasMO or hasDeO) and not (
-                        hasPO and hasDO and hasMO and hasDeO
+                    if hasWO and not (hasPO and hasDO and hasMO and hasDeO):
+                        models.remove("input.workorder")
+                        cursor.execute("delete from operationplan where type = 'WO'")
+                        key = ContentType.objects.get_for_model(
+                            inputmodels.WorkOrder, for_concrete_model=False
+                        ).pk
+                        cursor.execute(
+                            "delete from common_comment where content_type_id = %s and type in ('add', 'change', 'delete')",
+                            (key,),
+                        )
+
+                    if (hasPO or hasDO or hasMO or hasDeO or hasWO) and not (
+                        hasPO and hasDO and hasMO and hasDeO and hasWO
                     ):
                         # Keep the database in shape
                         cursor.execute("vacuum analyze")

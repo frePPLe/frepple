@@ -13,6 +13,21 @@ BUFFER	11. component @ factory	2026-01-25T00:00:00	100	100
 BUFFER	11. item @ factory	2026-01-01T00:00:00	10	10
 BUFFER	11. item @ factory	2026-01-01T00:00:00	5	15
 BUFFER	11. item @ factory	2026-01-01T00:00:00	-15	0
+BUFFER	12. component @ factory	2025-12-15T00:00:00	15	15
+BUFFER	12. component @ factory	2025-12-15T00:00:00	-15	0
+BUFFER	12. component @ factory	2026-01-25T00:00:00	100	100
+BUFFER	12. component @ factory	2026-01-28T00:00:00	-10	90
+BUFFER	12. item @ factory	2026-01-01T00:00:00	15	15
+BUFFER	12. item @ factory	2026-01-01T00:00:00	-15	0
+BUFFER	12. item @ factory	2026-02-09T00:00:00	10	10
+BUFFER	13. component @ factory	2025-12-20T00:00:00	10	10
+BUFFER	13. component @ factory	2025-12-20T00:00:00	-10	0
+BUFFER	13. component @ factory	2025-12-25T00:00:00	5	5
+BUFFER	13. component @ factory	2025-12-25T00:00:00	-5	0
+BUFFER	13. component @ factory	2026-01-25T00:00:00	100	100
+BUFFER	13. item @ factory	2026-01-01T00:00:00	10	10
+BUFFER	13. item @ factory	2026-01-01T00:00:00	5	15
+BUFFER	13. item @ factory	2026-01-01T00:00:00	-15	0
 BUFFER	2. item @ factory	2026-01-01T00:00:00	100	100
 BUFFER	2. item @ factory	2026-01-01T00:00:00	-20	80
 BUFFER	3. component @ factory	2026-01-26T00:00:00	100	100
@@ -48,6 +63,8 @@ BUFFER	6. item subassembly @ factory	2025-12-29T00:00:00	-100	0
 DEMAND	1. sales order	2026-02-01T00:00:00	20
 DEMAND	10. sales order	2026-01-01T00:00:00	20
 DEMAND	11. sales order	2026-01-01T00:00:00	15
+DEMAND	12. sales order	2026-01-01T00:00:00	15
+DEMAND	13. sales order	2026-01-01T00:00:00	15
 DEMAND	2. sales order	2026-01-01T00:00:00	20
 DEMAND	3. sales order	2026-02-01T00:00:00	20
 DEMAND	4. sales order	2026-01-01T00:00:00	20
@@ -56,6 +73,10 @@ DEMAND	6. sales order	2026-01-01T00:00:00	120
 DEMAND	7. project X	2026-02-01T00:00:00	100
 DEMAND	8. project X	2026-01-01T00:00:00	100
 DEMAND	9. project X	2026-01-01T00:00:00	100
+RESOURCE	13. resource	2025-12-19T00:00:00	1	1
+RESOURCE	13. resource	2025-12-20T00:00:00	-1	0
+RESOURCE	13. resource	2025-12-24T00:00:00	1	1
+RESOURCE	13. resource	2025-12-25T00:00:00	-1	0
 RESOURCE	4. Resource A	2025-12-26T00:00:00	1	1
 RESOURCE	4. Resource A	2025-12-29T00:00:00	-1	0
 RESOURCE	6. Resource	2025-12-26T00:00:00	1	1
@@ -70,6 +91,22 @@ OPERATION	11. assemble product step B	2025-12-20T00:00:00	2025-12-31T00:00:00	10
 OPERATION	11. assemble product step B	2025-12-25T00:00:00	2025-12-31T00:00:00	5
 OPERATION	11. assemble product step C	2025-12-31T00:00:00	2026-01-01T00:00:00	10	approved
 OPERATION	11. assemble product step C	2025-12-31T00:00:00	2026-01-01T00:00:00	5
+OPERATION	12. assemble product	2025-12-14T00:00:00	2026-01-01T00:00:00	15
+OPERATION	12. assemble product	2026-01-27T00:00:00	2026-02-09T00:00:00	10	approved
+OPERATION	12. assemble product step A	2025-12-14T00:00:00	2025-12-15T00:00:00	15
+OPERATION	12. assemble product step A	2026-01-27T00:00:00	2026-01-28T00:00:00	10	confirmed
+OPERATION	12. assemble product step B	2025-12-15T00:00:00	2025-12-31T00:00:00	15
+OPERATION	12. assemble product step B	2026-01-28T00:00:00	2026-02-08T00:00:00	10	approved
+OPERATION	12. assemble product step C	2025-12-31T00:00:00	2026-01-01T00:00:00	15
+OPERATION	12. assemble product step C	2026-02-08T00:00:00	2026-02-09T00:00:00	10	approved
+OPERATION	13. assemble product	2025-12-19T00:00:00	2026-01-01T00:00:00	10	approved
+OPERATION	13. assemble product	2025-12-24T00:00:00	2026-01-01T00:00:00	5
+OPERATION	13. assemble product step A	2025-12-19T00:00:00	2025-12-20T00:00:00	10	approved
+OPERATION	13. assemble product step A	2025-12-24T00:00:00	2025-12-25T00:00:00	5
+OPERATION	13. assemble product step B	2025-12-20T00:00:00	2025-12-31T00:00:00	10	approved
+OPERATION	13. assemble product step B	2025-12-25T00:00:00	2025-12-31T00:00:00	5
+OPERATION	13. assemble product step C	2025-12-31T00:00:00	2026-01-01T00:00:00	10	approved
+OPERATION	13. assemble product step C	2025-12-31T00:00:00	2026-01-01T00:00:00	5
 OPERATION	3. Make item	2026-01-29T00:00:00	2026-02-01T00:00:00	100	approved
 OPERATION	3. Make item subassembly	2026-01-26T00:00:00	2026-01-29T00:00:00	100	approved
 OPERATION	4. Make item	2025-12-29T00:00:00	2026-01-01T00:00:00	100	approved
@@ -104,6 +141,11 @@ OPERATION	Purchase 10. item @ factory from 10. Supplier	2025-12-25T00:00:00	2026
 OPERATION	Purchase 11. component @ factory from 11. Supplier	2025-10-11T00:00:00	2025-12-20T00:00:00	10
 OPERATION	Purchase 11. component @ factory from 11. Supplier	2025-10-16T00:00:00	2025-12-25T00:00:00	5
 OPERATION	Purchase 11. component @ factory from 11. Supplier	2025-11-16T00:00:00	2026-01-25T00:00:00	100	confirmed
+OPERATION	Purchase 12. component @ factory from 12. Supplier	2025-10-06T00:00:00	2025-12-15T00:00:00	15
+OPERATION	Purchase 12. component @ factory from 12. Supplier	2025-11-16T00:00:00	2026-01-25T00:00:00	100	confirmed
+OPERATION	Purchase 13. component @ factory from 13. Supplier	2025-10-11T00:00:00	2025-12-20T00:00:00	10
+OPERATION	Purchase 13. component @ factory from 13. Supplier	2025-10-16T00:00:00	2025-12-25T00:00:00	5
+OPERATION	Purchase 13. component @ factory from 13. Supplier	2025-11-16T00:00:00	2026-01-25T00:00:00	100	confirmed
 OPERATION	Purchase 2. item @ factory from 2. Supplier	2025-12-25T00:00:00	2026-01-01T00:00:00	100	approved
 OPERATION	Purchase 3. component @ factory from 3. Supplier	2026-01-19T00:00:00	2026-01-26T00:00:00	100	approved
 OPERATION	Purchase 4. component @ factory from 4. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	100	approved
@@ -111,6 +153,8 @@ OPERATION	Purchase 5. component @ factory from 5. Supplier	2025-12-19T00:00:00	2
 OPERATION	Purchase 6. component @ factory from 6. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	70
 OPERATION	Purchase 6. component @ factory from 6. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	30	approved
 OPERATION	Purchase 6. component @ factory from 6. Supplier	2025-12-19T00:00:00	2025-12-26T00:00:00	20
+PROBLEM	overload	Resource '13. resource' has capacity shortage of 1	2025-12-19T00:00:00 / 2025-12-20T00:00:00
+PROBLEM	overload	Resource '13. resource' has capacity shortage of 1	2025-12-24T00:00:00 / 2025-12-25T00:00:00
 PROBLEM	overload	Resource '4. Resource A' has capacity shortage of 1	2025-12-26T00:00:00 / 2025-12-29T00:00:00
 PROBLEM	overload	Resource '6. Resource' has capacity shortage of 2	2025-12-26T00:00:00 / 2025-12-29T00:00:00
 PROBLEM	precedence	Operation '8. task X2 step 3' starts before preceding operation ends	2025-12-22T00:00:00 / 2025-12-22T00:00:00

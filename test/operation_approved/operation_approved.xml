@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <current>2026-01-01T00:00:00</current>
     <moveApprovedEarly>0</moveApprovedEarly>
@@ -645,7 +645,6 @@
             </suboperations>
         </operation>
     </operations>
-
     <operationplans>
         <operationplan ordertype="PO" end="2026-01-25T00:00:00" reference="PO #11" quantity="100" status="confirmed">
             <item name="11. component"/>
@@ -666,6 +665,188 @@
         <operationplan end="2026-03-02T00:00:00" reference="MO #11 C" quantity="10" status="approved">
             <operation name="11. assemble product step C"/>
             <owner reference="MO #11"/>
+        </operationplan>
+    </operationplans>
+
+    <!-- case 12: Trying to move an approved routing MO early, but one of its steps is confirmed -->
+    <suppliers>
+        <supplier name="12. Supplier">
+            <itemsuppliers>
+                <itemsupplier>
+                    <item name="12. component"/>
+                    <leadtime>P70D</leadtime>
+                </itemsupplier>
+            </itemsuppliers>
+        </supplier>
+    </suppliers>
+    <demands>
+        <demand name="12. sales order">
+            <quantity>15</quantity>
+            <minshipment>15</minshipment>
+            <due>2026-01-01T00:00:00</due>
+            <priority>1</priority>
+            <item name="12. item"/>
+            <location name="factory"/>
+            <status>open</status>
+        </demand>
+    </demands>
+    <operations>
+        <operation name="12. assemble product" xsi:type="operation_routing">
+            <item name="12. item"/>
+            <location name="factory"/>
+            <suboperations>
+                <suboperation>
+                    <operation name="12. assemble product step A" xsi:type="operation_fixed_time" duration="P1D">
+                        <location name="factory"/>
+                    </operation>
+                    <priority>1</priority>
+                </suboperation>
+                <suboperation>
+                    <operation name="12. assemble product step B" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
+                        <location name="factory"/>
+                        <flows>
+                            <flow xsi:type="flow_start">
+                                <item name="12. component" />
+                                <quantity>-1</quantity>
+                            </flow>
+                        </flows>
+                    </operation>
+                    <priority>2</priority>
+                </suboperation>
+                <suboperation>
+                    <operation name="12. assemble product step C" xsi:type="operation_fixed_time" duration="P1D">
+                        <location name="factory"/>
+                        <flows>
+                            <flow xsi:type="flow_end">
+                                <item name="12. item" />
+                                <quantity>1</quantity>
+                            </flow>
+                        </flows>
+                    </operation>
+                    <priority>3</priority>
+                </suboperation>
+            </suboperations>
+        </operation>
+    </operations>
+    <operationplans>
+        <operationplan ordertype="PO" end="2026-01-25T00:00:00" reference="PO #12" quantity="100" status="confirmed">
+            <item name="12. component"/>
+            <location name="factory"/>
+            <supplier name="12. Supplier"/>
+        </operationplan>
+        <operationplan end="2026-03-02T00:00:00" reference="MO #12" quantity="10" status="approved">
+            <operation name="12. assemble product"/>
+        </operationplan>
+        <operationplan end="2026-01-28T00:00:00" reference="MO #12 A" quantity="10" status="confirmed">
+            <operation name="12. assemble product step A"/>
+            <owner reference="MO #12"/>
+        </operationplan>
+        <operationplan end="2026-03-01T00:00:00" reference="MO #12 B" quantity="10" status="approved">
+            <operation name="12. assemble product step B"/>
+            <owner reference="MO #12"/>
+        </operationplan>
+        <operationplan end="2026-03-02T00:00:00" reference="MO #12 C" quantity="10" status="approved">
+            <operation name="12. assemble product step C"/>
+            <owner reference="MO #12"/>
+        </operationplan>
+    </operationplans>
+
+    <!-- case 13: Trying to move an approved routing MO early, with an extra capacity constraint -->
+    <suppliers>
+        <supplier name="13. Supplier">
+            <itemsuppliers>
+                <itemsupplier>
+                    <item name="13. component"/>
+                    <leadtime>P70D</leadtime>
+                </itemsupplier>
+            </itemsuppliers>
+        </supplier>
+    </suppliers>
+    <demands>
+        <demand name="13. sales order">
+            <quantity>15</quantity>
+            <minshipment>15</minshipment>
+            <due>2026-01-01T00:00:00</due>
+            <priority>1</priority>
+            <item name="13. item"/>
+            <location name="factory"/>
+            <status>open</status>
+        </demand>
+    </demands>
+    <operations>
+        <operation name="13. assemble product" xsi:type="operation_routing">
+            <item name="13. item"/>
+            <location name="factory"/>
+            <suboperations>
+                <suboperation>
+                    <operation name="13. assemble product step A" xsi:type="operation_fixed_time" duration="P1D">
+                        <location name="factory"/>
+                        <loads>
+                            <load xsi:type="load">
+                                <resource name="13. resource">
+                                    <maximum_calendar name="13. resource capacity">
+                                        <default>0</default>
+                                        <buckets>
+                                            <bucket start="2026-01-30T00:00:00">
+                                                <value>1</value>
+                                            </bucket>
+                                        </buckets>
+                                    </maximum_calendar>
+                                    <constrained>true</constrained>
+                                </resource>
+                                <quantity>1</quantity>
+                            </load>
+                        </loads>
+                    </operation>
+                    <priority>1</priority>
+                </suboperation>
+                <suboperation>
+                    <operation name="13. assemble product step B" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
+                        <location name="factory"/>
+                        <flows>
+                            <flow xsi:type="flow_start">
+                                <item name="13. component" />
+                                <quantity>-1</quantity>
+                            </flow>
+                        </flows>
+                    </operation>
+                    <priority>2</priority>
+                </suboperation>
+                <suboperation>
+                    <operation name="13. assemble product step C" xsi:type="operation_fixed_time" duration="P1D">
+                        <location name="factory"/>
+                        <flows>
+                            <flow xsi:type="flow_end">
+                                <item name="13. item" />
+                                <quantity>1</quantity>
+                            </flow>
+                        </flows>
+                    </operation>
+                    <priority>3</priority>
+                </suboperation>
+            </suboperations>
+        </operation>
+    </operations>
+    <operationplans>
+        <operationplan ordertype="PO" end="2026-01-25T00:00:00" reference="PO #13" quantity="100" status="confirmed">
+            <item name="13. component"/>
+            <location name="factory"/>
+            <supplier name="13. Supplier"/>
+        </operationplan>
+        <operationplan end="2026-04-02T00:00:00" reference="MO #13" quantity="10" status="approved">
+            <operation name="13. assemble product"/>
+        </operationplan>
+        <operationplan end="2026-04-20T00:00:00" reference="MO #13 A" quantity="10" status="approved">
+            <operation name="13. assemble product step A"/>
+            <owner reference="MO #13"/>
+        </operationplan>
+        <operationplan end="2026-04-01T00:00:00" reference="MO #13 B" quantity="10" status="approved">
+            <operation name="13. assemble product step B"/>
+            <owner reference="MO #13"/>
+        </operationplan>
+        <operationplan end="2026-04-02T00:00:00" reference="MO #13 C" quantity="10" status="approved">
+            <operation name="13. assemble product step C"/>
+            <owner reference="MO #13"/>
         </operationplan>
     </operationplans>
 

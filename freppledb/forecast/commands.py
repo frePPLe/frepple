@@ -156,7 +156,7 @@ default_forecast_parameters = {
 @PlanTaskRegistry.register
 class PopulateForecastTable(PlanTask):
     description = "Populate forecast table and create root nodes"
-    sequence = 80
+    sequence = 107.45
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -281,7 +281,7 @@ class PopulateForecastTable(PlanTask):
 @PlanTaskRegistry.register
 class CalculateDemandPattern(PlanTask):
     description = "Calculate demand pattern"
-    sequence = 83
+    sequence = 107.43
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -381,7 +381,7 @@ class CalculateDemandPattern(PlanTask):
 @PlanTaskRegistry.register
 class AggregateDemand(PlanTask):
     description = "Aggregate demand"
-    sequence = 82
+    sequence = 107.46
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -852,7 +852,7 @@ class LoadForecast(LoadTask):
 @PlanTaskRegistry.register
 class ExportStaticForecast(PlanTask):
     description = ("Export static data", "Export forecast")
-    sequence = (72.4, "exportstatic2", 5)
+    sequence = (107.15, "exportstatic2", 5)
 
     @classmethod
     def getWeight(cls, exportstatic=False, **kwargs):
@@ -1159,17 +1159,10 @@ def createForecastSolver(db, task=None):
 class ValidateAggregatedData(PlanTask):
     description = "Validate aggregated forecast data"
     sequence = 169
-    label = (
-        "fcst",
-        _("Generate forecast"),
-        _(
-            "Analyze the sales history and compute a statistical forecast for the future"
-        ),
-    )
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        return -1 if kwargs.get("skipLoad", False) else 1
+        return -1 if kwargs.get("skipLoad", False) and not "fcst" in os.environ else 1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):

@@ -79,7 +79,7 @@ def SQL4attributes(attrs, with_on_conflict=True):
 @PlanTaskRegistry.register
 class cleanStatic(PlanTask):
     description = "Clean static data"
-    sequence = 73
+    sequence = 107.18
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -789,7 +789,7 @@ class cleanStatic(PlanTask):
 @PlanTaskRegistry.register
 class exportParameters(PlanTask):
     description = ("Export static data", "Export parameters")
-    sequence = (72, "exportstatic1", 1)
+    sequence = (107.11, "exportstatic1", 1)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -815,7 +815,7 @@ class exportParameters(PlanTask):
 @PlanTaskRegistry.register
 class exportCalendars(PlanTask):
     description = ("Export static data", "Export calendars")
-    sequence = (72, "exportstatic2", 1)
+    sequence = (107.11, "exportstatic2", 1)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -862,7 +862,7 @@ class exportCalendars(PlanTask):
 @PlanTaskRegistry.register
 class exportLocations(PlanTask):
     description = ("Export static data", "Export locations")
-    sequence = (72.1, "exportstatic1", 1)
+    sequence = (107.12, "exportstatic1", 1)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -928,7 +928,7 @@ class exportLocations(PlanTask):
 @PlanTaskRegistry.register
 class exportItems(PlanTask):
     description = ("Export static data", "Export items")
-    sequence = (72.1, "exportstatic2", 1)
+    sequence = (107.12, "exportstatic2", 1)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1006,7 +1006,7 @@ class exportItems(PlanTask):
 @PlanTaskRegistry.register
 class exportOperations(PlanTask):
     description = ("Export static data", "Export operations")
-    sequence = (72.2, "exportstatic1", 1)
+    sequence = (107.13, "exportstatic1", 1)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1136,7 +1136,7 @@ class exportOperations(PlanTask):
 @PlanTaskRegistry.register
 class exportSetupMatrices(PlanTask):
     description = ("Export static data", "Export setup matrices")
-    sequence = (72.2, "exportstatic2", 1)
+    sequence = (107.13, "exportstatic2", 1)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1178,7 +1178,7 @@ class exportSetupMatrices(PlanTask):
 @PlanTaskRegistry.register
 class exportResources(PlanTask):
     description = ("Export static data", "Export resources")
-    sequence = 72.3
+    sequence = 107.14
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1270,7 +1270,7 @@ class exportResources(PlanTask):
 @PlanTaskRegistry.register
 class exportSetupRules(PlanTask):
     description = ("Export static data", "Export setup matrix rules")
-    sequence = (72.4, "exportstatic1", 1)
+    sequence = (107.15, "exportstatic1", 1)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1328,7 +1328,7 @@ class exportSetupRules(PlanTask):
 @PlanTaskRegistry.register
 class exportSkills(PlanTask):
     description = ("Export static data", "Export skills")
-    sequence = (72.4, "exportstatic1", 2)
+    sequence = (107.15, "exportstatic1", 2)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1370,7 +1370,7 @@ class exportSkills(PlanTask):
 @PlanTaskRegistry.register
 class exportResourceSkills(PlanTask):
     description = ("Export static data", "Export resource skills")
-    sequence = (72.4, "exportstatic1", 3)
+    sequence = (107.15, "exportstatic1", 3)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1429,7 +1429,7 @@ class exportResourceSkills(PlanTask):
 @PlanTaskRegistry.register
 class exportOperationResources(PlanTask):
     description = ("Export static data", "Export operation resources")
-    sequence = (72.4, "exportstatic1", 4)
+    sequence = (107.15, "exportstatic1", 4)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1502,7 +1502,7 @@ class exportOperationResources(PlanTask):
 @PlanTaskRegistry.register
 class exportCustomers(PlanTask):
     description = ("Export static data", "Export customers")
-    sequence = (72.4, "exportstatic2", 1)
+    sequence = (107.15, "exportstatic2", 1)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1567,7 +1567,7 @@ class exportCustomers(PlanTask):
 @PlanTaskRegistry.register
 class exportDemands(PlanTask):
     description = ("Export static data", "Export sales orders")
-    sequence = (72.4, "exportstatic2", 2)
+    sequence = (107.15, "exportstatic2", 2)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1661,7 +1661,7 @@ class exportDemands(PlanTask):
 @PlanTaskRegistry.register
 class exportCalendarBuckets(PlanTask):
     description = ("Export static data", "Export calendar buckets")
-    sequence = (72.4, "exportstatic3", 1)
+    sequence = (107.15, "exportstatic3", 1)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1748,7 +1748,7 @@ class exportCalendarBuckets(PlanTask):
 @PlanTaskRegistry.register
 class exportBuffers(PlanTask):
     description = ("Export static data", "Export buffers")
-    sequence = (72.4, "exportstatic4", 1)
+    sequence = (107.15, "exportstatic4", 1)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1818,7 +1818,7 @@ class exportBuffers(PlanTask):
 @PlanTaskRegistry.register
 class exportOperationMaterials(PlanTask):
     description = ("Export static data", "Export operation material")
-    sequence = (72.4, "exportstatic4", 2)
+    sequence = (107.15, "exportstatic4", 2)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1903,7 +1903,7 @@ class exportOperationMaterials(PlanTask):
 @PlanTaskRegistry.register
 class exportOperationDependencies(PlanTask):
     description = ("Export static data", "Export operation dependency")
-    sequence = (72.4, "exportstatic4", 2.5)
+    sequence = (107.15, "exportstatic4", 2.5)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1962,7 +1962,7 @@ class exportOperationDependencies(PlanTask):
 @PlanTaskRegistry.register
 class exportSuppliers(PlanTask):
     description = ("Export static data", "Export suppliers")
-    sequence = (72.4, "exportstatic4", 3)
+    sequence = (107.15, "exportstatic4", 3)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -2030,7 +2030,7 @@ class exportSuppliers(PlanTask):
 @PlanTaskRegistry.register
 class exportItemSuppliers(PlanTask):
     description = ("Export static data", "Export item suppliers")
-    sequence = (72.4, "exportstatic4", 4)
+    sequence = (107.15, "exportstatic4", 4)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -2148,7 +2148,7 @@ class exportItemSuppliers(PlanTask):
 @PlanTaskRegistry.register
 class exportItemDistributions(PlanTask):
     description = ("Export static data", "Export item distributions")
-    sequence = (72.4, "exportstatic4", 5)
+    sequence = (107.15, "exportstatic4", 5)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):

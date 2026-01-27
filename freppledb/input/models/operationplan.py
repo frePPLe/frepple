@@ -1352,7 +1352,7 @@ class ManufacturingOrder(OperationPlan):
 
 
 class WorkOrder(OperationPlan):
-    extra_dependencies = [OperationResource]
+    extra_dependencies = [ManufacturingOrder, OperationResource]
 
     class WorkOrderManager(OperationPlan.Manager):
         def get_queryset(self):

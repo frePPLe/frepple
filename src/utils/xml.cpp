@@ -264,24 +264,23 @@ void XMLInput::startElement(const XMLCh* const, const XMLCh* const ename,
         string attr_name = transcodeUTF8(atts.getLocalName(i - 1));
         if (Keyword::hash(attr_name) == Tags::type.getHash()) {
           string tp = transcodeUTF8(atts.getValue(i - 1));
-          objects[objectindex].cls =
-              static_cast<const MetaCategory&>(*objects[objectindex].cls)
-                  .findClass(Keyword::hash(tp));
+          auto& cat =
+              static_cast<const MetaCategory&>(*objects[objectindex].cls);
+          objects[objectindex].cls = cat.findClass(Keyword::hash(tp));
           if (!objects[objectindex].cls)
             throw DataException("No type " + tp + " registered for category " +
-                                objects[objectindex].cls->type);
+                                cat.type);
           break;
         }
       }
       if (!objects[objectindex].cls->category) {
         // No type attribute was registered, and we use the default of the
         // category
-        objects[objectindex].cls =
-            static_cast<const MetaCategory&>(*objects[objectindex].cls)
-                .findClass(Tags::deflt.getHash());
+        auto& cat = static_cast<const MetaCategory&>(*objects[objectindex].cls);
+        objects[objectindex].cls = cat.findClass(Tags::deflt.getHash());
         if (!objects[objectindex].cls)
           throw DataException("No default type registered for category " +
-                              objects[objectindex].cls->type);
+                              cat.type);
       }
     }
 

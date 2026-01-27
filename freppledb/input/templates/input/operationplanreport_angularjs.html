@@ -293,22 +293,6 @@ rect.opplan {
 {% block tabs %}{% if args %}{% tabs model %}{% endif %}{% endblock %}
 
 {% block actions %}
-  {% if reportkey == "freppledb.input.views.manufacturing.ManufacturingOrderList" %}<div class="btn-group" role="group">
-    <button id="showTop" type="button" class="btn btn-sm btn-outline-primary{% if noautofilter or "showTop" not in preferences or preferences.showTop %} active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display top level"|capfirst|force_escape %}">
-      <svg width="100%" height="1.2em" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-         <rect height="42" width="100" rx="10" ry="10" class="fill-primary"/>
-         <rect height="38" x="7" y="55" width="33" rx="10" ry="10" class="stroke-primary" stroke-width="14"/>
-         <rect height="38" x="60" y="55" width="33" rx="10" ry="10" class="stroke-primary" stroke-width="14"/>
-      </svg>
-    </button>
-    <button id="showChildren" type="button" class="btn btn-sm btn-outline-primary{% if noautofilter or "showChildren" not in preferences or preferences.showChildren %} active{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display child level"|capfirst|force_escape %}">
-      <svg width="100%" height="1.2em" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-         <rect height="35" x="7" y="7" width="86" rx="10" ry="10" class="stroke-primary" stroke-width="14"/>
-         <rect height="45" x="0" y="55" width="45" rx="10" ry="10" class="fill-primary"/>
-         <rect height="45" x="55" y="55" width="45" rx="10" ry="10" class="fill-primary"/>
-      </svg>
-    </button>
-  </div>{% endif %}
   <div class="btn-group" role="group">
     <button data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display table"|capfirst|force_escape %}"
       class="btn btn-sm btn-primary{% if preferences.mode != 'kanban' and preferences.mode != 'gantt' and preferences.mode != 'calendarday' and preferences.mode != 'calendarweek' and preferences.mode != 'calendarmonth' or not preferences.mode %} active{% endif %}"

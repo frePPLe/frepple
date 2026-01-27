@@ -773,9 +773,8 @@ class OdooSendRecommendations(PlanTask):
                         "tab": "mrp",
                         "type": "produce" if new_mo else "reschedule",
                         "data": (
-                            {"bom_id": int(i.name.rsplit(" ", 1)[1])}
-                            if new_mo
-                            else {
+                            {
+                                "bom_id": int(i.name.rsplit(" ", 1)[1]),
                                 "workorders": [
                                     (
                                         subopplan.operation.name,
@@ -783,7 +782,7 @@ class OdooSendRecommendations(PlanTask):
                                         subopplan.end.isoformat(),
                                     )
                                     for subopplan in j.operationplans
-                                ]
+                                ],
                             }
                         ),
                         "product_id": int(i.item.subcategory.split(",")[1]),

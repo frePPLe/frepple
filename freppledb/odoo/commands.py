@@ -655,7 +655,10 @@ class OdooSendRecommendations(PlanTask):
 
             import frepple
 
-            po_count = 0
+            # list of products for which we have a recommendation
+            # we don't want to send 2 recommendations with the same product
+            po_products = []
+
             for i in frepple.operations():
                 if (
                     not isinstance(i, frepple.operation_itemsupplier)
@@ -670,6 +673,7 @@ class OdooSendRecommendations(PlanTask):
                         or j.start
                         > frepple.settings.current
                         + timedelta(seconds=max(i.duration, 15 * 24 * 3600))
+                        or i.itemsupplier.item.name in po_products
                     ):
                         continue
 
@@ -691,7 +695,7 @@ class OdooSendRecommendations(PlanTask):
                         )
                     if forecast:
                         recommendation = f"{recommendation}{"\n" if sales_orders else ""}Required for forecast {",".join(forecast)}"
-                    po_count += 1
+                    po_products.append(i.itemsupplier.item.name)
                     if not recommendation:
                         recommendation = "Stock replenishment"
                     yield {
@@ -707,7 +711,7 @@ class OdooSendRecommendations(PlanTask):
                         "recommendation": f"Purchase {j.item.name}\\n{recommendation}",
                     }
             if not self.loglevel:
-                print(f"Generated {po_count} purchase recommendations")
+                print(f"Generated {len(po_products)} purchase recommendations")
 
         def generateManufacturingRecommendations(self):
             import frepple

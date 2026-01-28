@@ -701,7 +701,7 @@ void Problem::List::clean(Demand* d) const {
               }
             }
             if (oper && oper == opplans[lvl_cnt]->getOperation() &&
-                p->getStart() < start_critical_path) {
+                opplans[lvl_cnt]->getStart() < start_critical_path) {
               // New critical path identified
               start_critical_path = opplans[lvl_cnt]->getStart();
               if (!critical_path.empty()) critical_path.clear();
@@ -748,7 +748,7 @@ void Problem::List::clean(Demand* d) const {
             }
           }
           if (oper && oper == opplans[lvl_cnt]->getOperation() &&
-              p->getStart() < start_critical_path) {
+              opplans[lvl_cnt]->getStart() < start_critical_path) {
             // New critical path identified
             start_critical_path = opplans[lvl_cnt]->getStart();
             if (!critical_path.empty()) critical_path.clear();

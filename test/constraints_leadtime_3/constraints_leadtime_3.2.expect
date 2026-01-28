@@ -18,4 +18,3 @@ DEMAND CONSTRAINT	order 1	Manufacturing lead time on 'make end item'	2019-11-24T
 DEMAND CONSTRAINT	order 2	Demand is overdue	2019-12-01T00:00:00 / 2020-01-01T00:00:00
 DEMAND CONSTRAINT	order 2	Manufacturing lead time on 'make end item'	2019-11-24T00:00:00 / 2019-12-28T00:00:00
 DEMAND CONSTRAINT	order 2	Manufacturing lead time on 'make subassembly'	2019-12-23T00:00:00 / 2020-01-05T00:00:00
-DEMAND CONSTRAINT	order 2	Purchasing lead time on 'Purchase component @ factory from component supplier'	2020-01-05T00:00:00 / 2020-01-11T00:00:00

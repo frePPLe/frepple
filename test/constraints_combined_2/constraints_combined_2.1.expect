@@ -5012,60 +5012,60 @@ DEMAND CONSTRAINT	Order 001 02	Manufacturing lead time on '02 step 05'	2011-12-3
 DEMAND CONSTRAINT	Order 001 02	Manufacturing lead time on '02 step 04'	2011-12-30T22:20:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 02	Manufacturing lead time on '02 step 03'	2011-12-30T20:15:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 02	Manufacturing lead time on '02 step 02'	2011-12-30T21:46:40 / 2012-01-02T00:00:00
-DEMAND CONSTRAINT	Order 001 02	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T08:36:40 / 2012-01-02T10:00:00
+DEMAND CONSTRAINT	Order 001 02	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T09:51:40 / 2012-01-02T10:00:00
 DEMAND CONSTRAINT	Order 001 03	Manufacturing lead time on '03 step 07'	2011-12-30T22:36:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 03	Manufacturing lead time on '03 step 06'	2011-12-30T23:51:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 03	Manufacturing lead time on '03 step 05'	2011-12-30T23:10:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 03	Manufacturing lead time on '03 step 04'	2011-12-30T22:20:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 03	Manufacturing lead time on '03 step 03'	2011-12-30T20:15:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 03	Manufacturing lead time on '03 step 02'	2011-12-30T21:46:40 / 2012-01-02T00:00:00
-DEMAND CONSTRAINT	Order 001 03	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T08:36:40 / 2012-01-02T10:00:00
+DEMAND CONSTRAINT	Order 001 03	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T09:51:40 / 2012-01-02T10:00:00
 DEMAND CONSTRAINT	Order 001 04	Manufacturing lead time on '04 step 07'	2011-12-30T22:36:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 04	Manufacturing lead time on '04 step 06'	2011-12-30T23:51:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 04	Manufacturing lead time on '04 step 05'	2011-12-30T23:10:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 04	Manufacturing lead time on '04 step 04'	2011-12-30T22:20:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 04	Manufacturing lead time on '04 step 03'	2011-12-30T20:15:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 04	Manufacturing lead time on '04 step 02'	2011-12-30T21:46:40 / 2012-01-02T00:00:00
-DEMAND CONSTRAINT	Order 001 04	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T08:36:40 / 2012-01-02T10:00:00
+DEMAND CONSTRAINT	Order 001 04	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T09:51:40 / 2012-01-02T10:00:00
 DEMAND CONSTRAINT	Order 001 05	Manufacturing lead time on '05 step 07'	2011-12-30T22:36:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 05	Manufacturing lead time on '05 step 06'	2011-12-30T23:51:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 05	Manufacturing lead time on '05 step 05'	2011-12-30T23:10:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 05	Manufacturing lead time on '05 step 04'	2011-12-30T22:20:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 05	Manufacturing lead time on '05 step 03'	2011-12-30T20:15:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 05	Manufacturing lead time on '05 step 02'	2011-12-30T21:46:40 / 2012-01-02T00:00:00
-DEMAND CONSTRAINT	Order 001 05	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T08:36:40 / 2012-01-02T10:00:00
+DEMAND CONSTRAINT	Order 001 05	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T09:51:40 / 2012-01-02T10:00:00
 DEMAND CONSTRAINT	Order 001 06	Manufacturing lead time on '06 step 07'	2011-12-30T22:36:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 06	Manufacturing lead time on '06 step 06'	2011-12-30T23:51:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 06	Manufacturing lead time on '06 step 05'	2011-12-30T23:10:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 06	Manufacturing lead time on '06 step 04'	2011-12-30T22:20:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 06	Manufacturing lead time on '06 step 03'	2011-12-30T20:15:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 06	Manufacturing lead time on '06 step 02'	2011-12-30T21:46:40 / 2012-01-02T00:00:00
-DEMAND CONSTRAINT	Order 001 06	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T08:36:40 / 2012-01-02T10:00:00
+DEMAND CONSTRAINT	Order 001 06	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T09:51:40 / 2012-01-02T10:00:00
 DEMAND CONSTRAINT	Order 001 07	Manufacturing lead time on '07 step 07'	2011-12-30T22:36:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 07	Manufacturing lead time on '07 step 06'	2011-12-30T23:51:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 07	Manufacturing lead time on '07 step 05'	2011-12-30T23:10:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 07	Manufacturing lead time on '07 step 04'	2011-12-30T22:20:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 07	Manufacturing lead time on '07 step 03'	2011-12-30T20:15:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 07	Manufacturing lead time on '07 step 02'	2011-12-30T21:46:40 / 2012-01-02T00:00:00
-DEMAND CONSTRAINT	Order 001 07	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T08:36:40 / 2012-01-02T10:00:00
+DEMAND CONSTRAINT	Order 001 07	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T09:51:40 / 2012-01-02T10:00:00
 DEMAND CONSTRAINT	Order 001 08	Manufacturing lead time on '08 step 07'	2011-12-30T22:36:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 08	Manufacturing lead time on '08 step 06'	2011-12-30T23:51:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 08	Manufacturing lead time on '08 step 05'	2011-12-30T23:10:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 08	Manufacturing lead time on '08 step 04'	2011-12-30T22:20:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 08	Manufacturing lead time on '08 step 03'	2011-12-30T20:15:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 08	Manufacturing lead time on '08 step 02'	2011-12-30T21:46:40 / 2012-01-02T00:00:00
-DEMAND CONSTRAINT	Order 001 08	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T08:36:40 / 2012-01-02T10:00:00
+DEMAND CONSTRAINT	Order 001 08	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T09:51:40 / 2012-01-02T10:00:00
 DEMAND CONSTRAINT	Order 001 09	Manufacturing lead time on '09 step 07'	2011-12-30T22:36:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 09	Manufacturing lead time on '09 step 06'	2011-12-30T23:51:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 09	Manufacturing lead time on '09 step 05'	2011-12-30T23:10:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 09	Manufacturing lead time on '09 step 04'	2011-12-30T22:20:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 09	Manufacturing lead time on '09 step 03'	2011-12-30T20:15:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 09	Manufacturing lead time on '09 step 02'	2011-12-30T21:46:40 / 2012-01-02T00:00:00
-DEMAND CONSTRAINT	Order 001 09	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T08:36:40 / 2012-01-02T10:00:00
+DEMAND CONSTRAINT	Order 001 09	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T09:51:40 / 2012-01-02T10:00:00
 DEMAND CONSTRAINT	Order 001 10	Manufacturing lead time on '10 step 07'	2011-12-30T22:36:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 10	Manufacturing lead time on '10 step 06'	2011-12-30T23:51:40 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 10	Manufacturing lead time on '10 step 05'	2011-12-30T23:10:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 10	Manufacturing lead time on '10 step 04'	2011-12-30T22:20:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 10	Manufacturing lead time on '10 step 03'	2011-12-30T20:15:00 / 2012-01-02T00:00:00
 DEMAND CONSTRAINT	Order 001 10	Manufacturing lead time on '10 step 02'	2011-12-30T21:46:40 / 2012-01-02T00:00:00
-DEMAND CONSTRAINT	Order 001 10	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T08:36:40 / 2012-01-02T10:00:00
+DEMAND CONSTRAINT	Order 001 10	Resource 'Line 1 station 7' has capacity shortage	2012-01-02T09:51:40 / 2012-01-02T10:00:00

@@ -692,6 +692,9 @@ class Problem : public NonCopyable, public Object {
    * two problems of will ever evaluate to be identical.
    */
   bool operator<(const Problem& a) const;
+
+  /* Force keeping the problem when we pop the tail of a list. */
+  virtual bool getKeep() const { return false; }
 };
 
 /* Classes that keep track of problem conditions need to implement
@@ -770,7 +773,7 @@ class Problem::List {
 
   /* Add a problem to the list. */
   Problem* push(const MetaClass*, const Object*, Date, Date, double = 0.0,
-                Operation* = nullptr);
+                Operation* = nullptr, bool = false);
 
   /* Add a problem to the list. */
   void push(Problem* p);
@@ -9225,6 +9228,10 @@ class ProblemCapacityOverload : public Problem {
 
   Resource* getResource() const { return static_cast<Resource*>(getOwner()); }
 
+  bool getKeep() const override { return flag_keep; }
+
+  void setKeep(bool k) { flag_keep = k; }
+
   /* Return a reference to the metadata structure. */
   const MetaClass& getType() const override { return *metadata; }
 
@@ -9239,6 +9246,8 @@ class ProblemCapacityOverload : public Problem {
   DateRange dr;
 
   Operation* oper = nullptr;
+
+  bool flag_keep = false;
 };
 
 /* A problem of this class is created when a buffer is having a

@@ -327,6 +327,17 @@ void SolverCreate::solve(const Resource* res, void* v) {
                             currentOpplan.start, currentOpplan.end, 0.0,
                             data->state->q_operationplan->getOperation());
 
+  if (currentOpplan.end > data->state->q_operationplan->getEnd() &&
+      data->logConstraints && data->constraints) {
+    // Using earlier capacity is logged as a constraint.
+    // If the resource isn't on the critical path that constraint will later be
+    // filtered out again.
+    data->constraints->push(ProblemCapacityOverload::metadata, res,
+                            currentOpplan.end,
+                            data->state->q_operationplan->getEnd(), 0.0,
+                            data->state->q_operationplan->getOperation(), true);
+  }
+
   // Message
   if (getLogLevel() > 1) {
     logger << indentlevel-- << "Resource '" << res
@@ -904,6 +915,17 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
 
   if (data->state->a_qty < orig_q_qty - ROUNDING_ERROR)
     data->accept_partial_reply = true;
+
+  if (originalOpplan.start > data->state->q_operationplan->getStart() &&
+      data->logConstraints && data->constraints) {
+    // Using earlier capacity is logged as a constraint.
+    // If the resource isn't on the critical path that constraint will later be
+    // filtered out again.
+    data->constraints->push(ProblemCapacityOverload::metadata, res,
+                            originalOpplan.start,
+                            data->state->q_operationplan->getStart(), 0.0,
+                            data->state->q_operationplan->getOperation(), true);
+  }
 
   // Message
   if (getLogLevel() > 1 && data->state->q_qty < 0) {

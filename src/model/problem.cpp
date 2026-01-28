@@ -537,7 +537,7 @@ void Problem::List::erase(Object& p) {
 }
 
 Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
-                             Date nd, double w, Operation* oper) {
+                             Date nd, double w, Operation* oper, bool keep) {
   // Find the end of the list
   Problem* cur = first;
   while (cur && cur->nextProblem && cur->getOwner() != o)
@@ -552,6 +552,7 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
     p = new ProblemCapacityOverload(
         const_cast<Resource*>(dynamic_cast<const Resource*>(o)), st, nd, w,
         false);
+    static_cast<ProblemCapacityOverload*>(p)->setKeep(keep);
     if (oper)
       static_cast<ProblemCapacityOverload*>(p)->setOperation(oper);
     else
@@ -597,24 +598,31 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
 }
 
 void Problem::List::pop(Problem* p) {
-  Problem* q = nullptr;
-  if (p) {
+  Problem* q = p ? q = p->nextProblem : first;
+  auto tail = p;
+  if (p)
     // Skip the problem that was passed as argument
-    q = p->nextProblem;
     p->nextProblem = nullptr;
-  } else {
+  else
     // nullptr argument: delete all
-    q = first;
     first = nullptr;
-  }
 
   // Delete each constraint after the marked one
   while (q) {
     Problem* del = q;
     q = q->nextProblem;
-    del->owner = nullptr;
-    del->resetReferenceCount();
-    delete del;
+    if (del->getKeep()) {
+      if (tail)
+        tail->nextProblem = del;
+      else
+        first = del;
+      del->nextProblem = nullptr;
+      tail = del;
+    } else {
+      del->owner = nullptr;
+      del->resetReferenceCount();
+      delete del;
+    }
   }
 }
 

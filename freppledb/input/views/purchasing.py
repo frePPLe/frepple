@@ -1000,14 +1000,16 @@ class PurchaseOrderList(OperationPlanMixin):
             title=format_lazy("{} - {}", _("item supplier"), _("effective end")),
             editable=False,
             initially_hidden=True,
-            extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
+            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s", "defaultValue":""}, "summaryType":"max"'
+            % settings.DATETIME_FORMAT,
         ),
         GridFieldDateTime(
             "itemsupplier_effective_start",
             title=format_lazy("{} - {}", _("item supplier"), _("effective start")),
             editable=False,
             initially_hidden=True,
-            extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
+            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s", "defaultValue":""}, "summaryType":"min"'
+            % settings.DATETIME_FORMAT,
         ),
         GridFieldNumber(
             "itemsupplier_priority",

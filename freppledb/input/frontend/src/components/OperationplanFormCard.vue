@@ -27,6 +27,7 @@ import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from "@/stores/operationplansStore.js";
 import { numberFormat, isNumeric, debouncedInputHandler } from "@common/utils.js";
 import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js';
+import { dateTimeFormat } from '@common/utils.js';
 useBootstrapTooltips();
 
 const { t: ttt } = useI18n({
@@ -54,7 +55,7 @@ const filteredColmodel = computed(() => {
           !excludedKeys.includes(key) &&
           Object.prototype.hasOwnProperty.call(store.operationplan, key) &&
           store.operationplan[key] != null
-      );
+      ).sort().reverse();
 });
 
 const editable = true;
@@ -203,17 +204,20 @@ const formatDuration = window.formatDuration;
         </tr>
         <tr v-if="store.operationplan.type !== 'STCK'">
           <td>
-            <b class="text-capitalize" v-if="store.operationplan.type === 'MO' || store.operationplan.type === 'WO' || isMultipleOrNone">{{ttt('start date')}}</b>
+            <b class="text-capitalize" v-if="store.operationplan.type === 'MO' || store.operationplan.type === 'WO'">{{ttt('start date')}}</b>
             <b class="text-capitalize" v-if="store.operationplan.type === 'PO'">{{ttt('ordering date')}}</b>
             <b class="text-capitalize" v-if="store.operationplan.type === 'DO'">{{ttt('shipping date')}}</b>
-            <b class="text-capitalize" v-if="store.operationplan.colmodel?.operationplan__startdate">{{ttt(store.operationplan.colmodel.operationplan__startdate.label)}}</b>&nbsp;
+            <b class="text-capitalize" v-if="store.operationplan.colmodel?.operationplan__startdate">{{ttt(store.operationplan.colmodel.operationplan__startdate.label)}}</b>
             <b class="text-capitalize" v-if="store.operationplan.colmodel?.startdate">{{ttt(store.operationplan.colmodel.startdate.label)}}</b>
-            <small v-if="store.operationplan.colmodel?.startdate || isMultipleOrNone">&nbsp;({{ ttt(store.operationplan.colmodel?.startdate.type || 'min') }})</small>
+            <small v-if="store.operationplan.colmodel?.startdate && (store.operationplan.colmodel?.startdate || isMultipleOrNone)">&nbsp;({{ ttt(store.operationplan.colmodel?.startdate.type || 'min') }})</small>
             <small v-if="store.operationplan.colmodel?.operationplan__startdate">&nbsp;({{ ttt(store.operationplan.colmodel?.operationplan__startdate.type) }})</small>
           </td>
           <td>
             <input v-if="isMultipleOrNone && store.operationplan.startdate"
                  class="form-control border-0 bg-white" type="datetime-local" v-model="store.operationplan.startdate"
+                 readonly>
+            <input v-if="isMultipleOrNone && !store.operationplan.startdate"
+                 class="form-control border-0 bg-white" type="datetime-local" v-model="store.operationplan.start"
                  readonly>
             <input
                 v-if="!isMultipleOrNone && !store.operationplan.hasOwnProperty('operationplan__startdate')"
@@ -231,18 +235,21 @@ const formatDuration = window.formatDuration;
         </tr>
         <tr v-if="store.operationplan.type !== 'STCK'">
           <td>
-            <b class="text-capitalize" v-if="store.operationplan.type === 'MO' || isMultipleOrNone">{{ttt('end date')}}</b>
+            <b class="text-capitalize" v-if="store.operationplan.type === 'MO'">{{ttt('end date')}}</b>
             <b class="text-capitalize" v-if="store.operationplan.type === 'PO'">{{ttt('receipt date')}}</b>
             <b class="text-capitalize" v-if="store.operationplan.type === 'DO'">{{ttt('receipt date')}}</b>
             <b class="text-capitalize" v-if="store.operationplan.colmodel?.enddate">{{ttt(store.operationplan.colmodel.enddate.label)}}</b>
             <b class="text-capitalize" v-if="store.operationplan.colmodel?.operationplan__enddate">{{ttt(store.operationplan.colmodel.operationplan__enddate.label)}}</b>&nbsp;
-            <small v-if="store.operationplan.colmodel?.enddate || isMultipleOrNone">&nbsp;({{ ttt(store.operationplan.colmodel?.enddate.type || 'max') }})</small>
+            <small v-if="store.operationplan.colmodel?.enddate && (store.operationplan.colmodel?.enddate || isMultipleOrNone)">&nbsp;({{ ttt(store.operationplan.colmodel?.enddate.type || 'max') }})</small>
             <small v-if="store.operationplan.colmodel?.operationplan__enddate">&nbsp;({{ ttt(store.operationplan.colmodel?.operationplan__enddate.type) }})</small>
           </td>
           <td>
             <input v-if="isMultipleOrNone && store.operationplan.enddate"
                    class="form-control border-0 bg-white"
                    type="datetime-local" v-model="store.operationplan.enddate" readonly>
+            <input v-if="isMultipleOrNone && !store.operationplan.enddate"
+                   class="form-control border-0 bg-white"
+                   type="datetime-local" v-model="store.operationplan.end" readonly>
             <input v-if="!isMultipleOrNone && !store.operationplan.hasOwnProperty('operationplan__enddate')"
                    class="form-control" type="datetime-local" v-model="store.operationplan.end"
                    @input="setEditValue('enddate', $event.target.value)" :readonly="!editable">
@@ -267,7 +274,7 @@ const formatDuration = window.formatDuration;
             <small>({{ ttt(value.type) }} - {{key}})</small>
           </td>
           <td v-if="['number', 'color', 'currency', 'currencyWithBlanks'].includes(value['formatter'])">{{numberFormat(store.operationplan[key])}}</td>
-          <td v-if="value['formatter'] === 'date'">{{store.operationplan[key]}}</td>
+          <td v-if="value['formatter'] === 'date'">{{dateTimeFormat(store.operationplan[key])}}</td>
           <td v-if="value['formatter'] === 'duration'">{{formatDuration(store.operationplan[key])}}</td>
           <td v-if="!['date', 'number', 'color', 'currency', 'currencyWithBlanks', 'duration'].includes(value['formatter'])">{{store.operationplan[key]}}</td>
         </tr>

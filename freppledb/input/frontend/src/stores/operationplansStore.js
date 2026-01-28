@@ -22,7 +22,9 @@
  */
 
 import {toRaw} from "vue";
+import { defineStore } from 'pinia';
 import {operationplanService} from "@/services/operationplanService.js";
+import { Operationplan } from '@/models/operationplan.js';
 
 /**
  * @typedef {Object} OperationplansState
@@ -50,9 +52,6 @@ import {operationplanService} from "@/services/operationplanService.js";
  * @property {string} width
  * @property {string} detailWidth
  */
-
-import { defineStore } from 'pinia';
-import {Operationplan} from "@/models/operationplan.js";
 
 const moment = window.moment;
 const datetimeformat = window.datetimeformat;
@@ -356,7 +355,7 @@ export const useOperationplansStore = defineStore('operationplans', {
         }
       });
 
-      const dateKeys  = new Set(["enddate", "startdate"]);
+      const dateKeys  = new Set(["end", "start"]);
       operationplans.forEach((opplan) => {
         aggColModel.forEach((field) => {
           if (field[2] === 'sum') {
@@ -396,6 +395,7 @@ export const useOperationplansStore = defineStore('operationplans', {
                 }
               }
             } else if (field[3] === 'date') {
+              dateKeys.add(field[1]);
               temp = new moment(opplan[field[1]], datetimeformat);
               if (temp._d !== 'Invalid Date') {
                 if (aggregatedopplan[field[1]] === null || temp.isAfter(aggregatedopplan[field[1]]))
@@ -440,12 +440,12 @@ export const useOperationplansStore = defineStore('operationplans', {
         });
       });
 
+      aggregatedopplan.start = aggregatedopplan.startdate || aggregatedopplan.operationplan__startdate;
+      aggregatedopplan.end = aggregatedopplan.enddate || aggregatedopplan.operationplan__enddate;
       dateKeys.forEach((key) => {
         aggregatedopplan[key] = aggregatedopplan[key].format('YYYY-MM-DD[T]HH:mm:ss');
       })
 
-      // aggregatedopplan.start = aggregatedopplan.startdate.format('YYYY-MM-DD[T]HH:mm:ss');
-      // aggregatedopplan.end = aggregatedopplan.enddate.format('YYYY-MM-DD[T]HH:mm:ss');
       this.operationplan = new Operationplan(aggregatedopplan);
     },
 

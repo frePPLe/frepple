@@ -45,6 +45,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 18, 19: Bug fix in the calculation of the reserved materials of sales orders
     and manufacturing orders.
 
+- | 18, 19: Support for make-to-order products with multi-level make-to-order
+    bill of materials.
+
 .. rubric:: User interface
 
 - | We've removed the "performance indicator report".
@@ -116,6 +119,32 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 17, 18: Bug fix for the due date quoting module in multi-company setups.
   | The quote message was sent to the frepple instance of the user's default company.
     It should be sent to the frepple instance of the sales order's company instead.
+
+9.11.3 (2026-01-26)
+===================
+
+.. rubric:: Production planning
+
+- | Bug fix: A solver bug fix could result in purchase orders with 0 quantity.
+
+9.11.2 (2026-01-22)
+===================
+
+.. rubric:: Production planning
+
+- | Bug fix: When the item supplier max quantity is 0, you get 0 quantity purchase orders.
+
+.. rubric:: System administration
+
+- | Bug fix: The task scheduler could get in a race condition where it exhausts all database
+    connections, bringing the system down.
+
+9.11.1 (2025-12-08)
+===================
+
+.. rubric:: Due date quoting
+
+- | Bug fix: Fix for quoting make-to-order sales orders that consume the same material multiple times.
 
 9.11.0 (2025-10-03)
 ===================

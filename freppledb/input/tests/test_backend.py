@@ -75,6 +75,7 @@ from freppledb.input.models import (
     Skill,
     SubOperation,
     Supplier,
+    WorkOrder,
 )
 
 
@@ -113,6 +114,8 @@ class DataLoadTest(TestCase):
         response = self.client.get("/data/input/operation/?format=json")
         self.assertContains(response, '"records":9,')
         response = self.client.get("/data/input/manufacturingorder/?format=json")
+        self.assertContains(response, '"records":0,')
+        response = self.client.get("/data/input/workorder/?format=json")
         self.assertContains(response, '"records":0,')
         response = self.client.get("/data/input/purchaseorder/?format=json")
         self.assertContains(response, '"records":4,')
@@ -274,6 +277,7 @@ class ExcelTest(TransactionTestCase):
         countPurchaseOrder = PurchaseOrder.objects.count()
         countDistributionOrder = DistributionOrder.objects.count()
         countManufacturingOrder = ManufacturingOrder.objects.count()
+        countWorkOrder = WorkOrder.objects.count()
         countOperation = Operation.objects.count()
         countResourceSkill = ResourceSkill.objects.count()
         countResource = Resource.objects.count()
@@ -307,6 +311,7 @@ class ExcelTest(TransactionTestCase):
                     "input.itemdistribution",
                     "input.operationmaterial",
                     "input.manufacturingorder",
+                    "input.workorder",
                     "input.calendar",
                     "input.calendarbucket",
                     "input.operation",
@@ -338,6 +343,7 @@ class ExcelTest(TransactionTestCase):
         self.assertEqual(PurchaseOrder.objects.count(), 0)
         self.assertEqual(DistributionOrder.objects.count(), 0)
         self.assertEqual(ManufacturingOrder.objects.count(), 0)
+        self.assertEqual(WorkOrder.objects.count(), 0)
         self.assertEqual(OperationPlanResource.objects.count(), 0)
         self.assertEqual(OperationPlanMaterial.objects.count(), 0)
         self.assertEqual(Operation.objects.count(), 0)
@@ -375,6 +381,7 @@ class ExcelTest(TransactionTestCase):
         self.assertEqual(PurchaseOrder.objects.count(), countPurchaseOrder)
         self.assertEqual(DistributionOrder.objects.count(), countDistributionOrder)
         self.assertEqual(ManufacturingOrder.objects.count(), countManufacturingOrder)
+        self.assertEqual(WorkOrder.objects.count(), countWorkOrder)
         self.assertEqual(Operation.objects.count(), countOperation)
         self.assertEqual(ResourceSkill.objects.count(), countResourceSkill)
         self.assertEqual(Resource.objects.count(), countResource)
@@ -494,6 +501,9 @@ class freppleREST(APITestCase):
         checkResponse(self, response)
 
         response = self.client.get("/api/input/manufacturingorder/")
+        checkResponse(self, response)
+
+        response = self.client.get("/api/input/workorder/")
         checkResponse(self, response)
 
         response = self.client.get("/api/input/calendar/")

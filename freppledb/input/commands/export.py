@@ -91,7 +91,7 @@ class cleanStatic(PlanTask):
     @classmethod
     def updateNames(cls, model, database, source):
         cursor = connections[database].cursor()
-        model_name = model._meta.verbose_name
+        db_table = model._meta.db_table
         # detect if we have a name change
         cursor.execute(
             """
@@ -101,7 +101,7 @@ class cleanStatic(PlanTask):
             and new%s.lastmodified > old%s.lastmodified
             and old%s.source = %%s and new%s.source = %%s
             """
-            % ((model_name,) * 14),
+            % ((db_table,) * 14),
             (source, source),
         )
 

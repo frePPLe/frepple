@@ -87,7 +87,7 @@ rect.opplan {
       "grouping": grouping,
       "groupingdir": groupingdir,
       "detailwidth": Math.floor($("#detailspanel").width() || 0),
-      "widgets": widget.getConfig()
+      "widgets": $(".widget").length > 1 ? widget.getConfig() : preferences.widgets
     };
     return tmp;
   }

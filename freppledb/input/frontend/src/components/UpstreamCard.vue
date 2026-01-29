@@ -82,12 +82,12 @@ const filteredUpstream = computed(() => {
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
-        <td v-if="peg[2] === 'DO'">{{peg[1]}}z
+        <td v-if="peg[2] === 'DO'">{{peg[1]}}
           <a :href="'/data/input/distributionorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
-        <td v-if="peg[2] === 'PO'">{{peg[1]}}w
+        <td v-if="peg[2] === 'PO'">{{peg[1]}}
           <a :href="'/data/input/purchaseorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
             <span class="fa fa-caret-right"></span>
           </a>

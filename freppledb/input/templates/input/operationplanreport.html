@@ -189,8 +189,16 @@ rect.opplan {
       });
       document.getElementById('app').dispatchEvent(event);
     });
-    $("#gridmode").on('click', function() {
-      angular.element('#controller').scope().setMode("table");
+    $("#actionsul li, button#actions1").on('click', function() {
+      const event = new CustomEvent("refreshStatus", {
+        detail: {
+          execute: 'refreshStatus',
+          reference: null,
+          status: $("#actions").val(),
+          selectedRows: null,
+        }
+      });
+      document.getElementById('app').dispatchEvent(event);
     });
     $("#kanbanmode").on('click', function() {
       mode = "kanban";
@@ -372,6 +380,7 @@ onSelectAll: function(aRowids, status){
     }
   });
   document.getElementById('app').dispatchEvent(event);
+  if ($("#actions").length) $("#actions1").prop('disabled', !status);
 },
 
 afterSaveCell: function(rowid, cellname, value, iRow, iCol) {

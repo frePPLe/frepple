@@ -194,6 +194,17 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.preferences.sord = 'asc';
     },
 
+    setStatus(value) {
+      if (value !== 'no_action' && value !== 'erp_incr_export') {
+        this.selectedOperationplans.forEach(
+          (op) => {
+            this.setEditFormValues('status', value);
+            this.trackOperationplanChanges(op.reference, 'status', value);
+          }
+        );
+      }
+    },
+
     setFrozenColumns(frozen) {
       this.frozen = frozen;
     },

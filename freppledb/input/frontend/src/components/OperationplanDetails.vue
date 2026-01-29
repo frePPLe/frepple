@@ -1,28 +1,18 @@
-/*
- * Copyright (C) 2025 by frePPLe bv
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
- */
+/* * Copyright (C) 2025 by frePPLe bv * * Permission is hereby granted, free of charge, to any
+person obtaining * a copy of this software and associated documentation files (the * "Software"), to
+deal in the Software without restriction, including * without limitation the rights to use, copy,
+modify, merge, publish, * distribute, sublicense, and/or sell copies of the Software, and to *
+permit persons to whom the Software is furnished to do so, subject to * the following conditions: *
+* The above copyright notice and this permission notice shall be * included in all copies or
+substantial portions of the Software. * * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+KIND, * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF * MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION * OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION * WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE */
 
 <script setup lang="js">
-import {computed, ref, onMounted, onUnmounted} from 'vue';
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
 import OperationplanFormCard from '@/components/OperationplanFormCard.vue';
@@ -35,12 +25,12 @@ import DemandPeggingCard from '@/components/DemandPeggingCard.vue';
 import NetworkStatusCard from '@/components/NetworkStatusCard.vue';
 import DownstreamCard from '@/components/DownstreamCard.vue';
 import UpstreamCard from '@/components/UpstreamCard.vue';
-import SupplyInformationCard from "@/components/SupplyInformationCard.vue";
+import SupplyInformationCard from '@/components/SupplyInformationCard.vue';
 import { debounce } from '@common/utils.js';
 
 const { t: ttt } = useI18n({
   useScope: 'global',
-  inheritLocale: true
+  inheritLocale: true,
 });
 
 const appElement = ref(null);
@@ -62,22 +52,29 @@ const databaseerrormodal = ref(false);
 const rowlimiterrormodal = ref(false);
 const modalcallback = ref({ resolve: () => {} });
 
-const isMultipleOrNone = computed(() => store.selectedOperationplans.length !== 1);
+const noSelection = computed(() => store.selectedOperationplans.length === 0);
+let stopNoSelectionWatch;
+
+const updateActionsButton = (disabled) => {
+  let actionsButton = document.getElementById('actions1');
+  if (actionsButton) actionsButton.disabled = disabled;
+  actionsButton = document.getElementById('actions2');
+  if (actionsButton) actionsButton.disabled = disabled;
+};
 
 function save() {
   if (store.hasChanges) {
-    store.saveOperationplanChanges()
-      .catch(error => {
-        console.error('Failed to save operation plan:', error);
-        // Show error notification to user
-        store.error = {
-          title: 'Save Failed',
-          showError: true,
-          message: 'There was an error saving your changes.',
-          details: error.message || 'Unknown error',
-          type: 'error'
-        };
-      });
+    store.saveOperationplanChanges().catch((error) => {
+      console.error('Failed to save operation plan:', error);
+      // Show error notification to user
+      store.error = {
+        title: 'Save Failed',
+        showError: true,
+        message: 'There was an error saving your changes.',
+        details: error.message || 'Unknown error',
+        type: 'error',
+      };
+    });
   }
 }
 
@@ -90,48 +87,59 @@ function undo() {
 
 function getWidgetComponent(widgetName) {
   const componentMap = {
-    'operationplan': OperationplanFormCard,
-    'inventorygraph': InventoryGraphCard,
-    'inventorydata': InventoryDataCard,
-    'operationproblems': ProblemsCard,
-    'operationresources': ResourcesCard,
-    'operationflowplans': BuffersCard,
-    'operationdemandpegging': DemandPeggingCard,
-    'networkstatus': NetworkStatusCard,
-    'downstreamoperationplans': DownstreamCard,
-    'upstreamoperationplans': UpstreamCard,
-    'supplyinformation': SupplyInformationCard,
+    operationplan: OperationplanFormCard,
+    inventorygraph: InventoryGraphCard,
+    inventorydata: InventoryDataCard,
+    operationproblems: ProblemsCard,
+    operationresources: ResourcesCard,
+    operationflowplans: BuffersCard,
+    operationdemandpegging: DemandPeggingCard,
+    networkstatus: NetworkStatusCard,
+    downstreamoperationplans: DownstreamCard,
+    upstreamoperationplans: UpstreamCard,
+    supplyinformation: SupplyInformationCard,
   };
   return componentMap[widgetName] || null;
 }
 
 function shouldShowWidget(widgetName) {
-  if (!store.operationplan || store.operationplan.id === "-1" ) return false;
+  if (!store.operationplan || store.operationplan.id === '-1') return false;
 
   const widgetConditions = {
-    'operationplan': () => true,
-    'inventorygraph': () => store.operationplan.inventoryreport !== undefined,
-    'inventorydata': () => store.operationplan.inventoryreport !== undefined,
-    'operationproblems': () => store.operationplan.problems !== undefined || store.operationplan.info !== undefined,
-    'operationresources': () => store.operationplan.loadplans !== undefined,
-    'operationflowplans': () => store.operationplan.flowplans !== undefined,
-    'operationdemandpegging': () => store.operationplan.pegging_demand !== undefined,
-    'networkstatus': () => store.operationplan.network !== undefined,
-    'downstreamoperationplans': () => store.operationplan.downstreamoperationplans !== undefined,
-    'upstreamoperationplans': () => store.operationplan.upstreamoperationplans !== undefined,
-    'supplyinformation': () => store.operationplan !== undefined,
+    operationplan: () => true,
+    inventorygraph: () => store.operationplan.inventoryreport !== undefined,
+    inventorydata: () => store.operationplan.inventoryreport !== undefined,
+    operationproblems: () =>
+      store.operationplan.problems !== undefined || store.operationplan.info !== undefined,
+    operationresources: () => store.operationplan.loadplans !== undefined,
+    operationflowplans: () => store.operationplan.flowplans !== undefined,
+    operationdemandpegging: () => store.operationplan.pegging_demand !== undefined,
+    networkstatus: () => store.operationplan.network !== undefined,
+    downstreamoperationplans: () => store.operationplan.downstreamoperationplans !== undefined,
+    upstreamoperationplans: () => store.operationplan.upstreamoperationplans !== undefined,
+    supplyinformation: () => store.operationplan !== undefined,
   };
 
-  return widgetName === 'operationplan' ||
-      (widgetConditions[widgetName] && widgetConditions[widgetName]());
+  return (
+    widgetName === 'operationplan' ||
+    (widgetConditions[widgetName] && widgetConditions[widgetName]())
+  );
 }
 
 onMounted(() => {
+  stopNoSelectionWatch = watch(
+    noSelection,
+    (value) => {
+      updateActionsButton(value);
+    },
+    { immediate: true }
+  );
+
   const getGridRowData = (id) => {
     try {
       return window.jQuery('#grid').getRowData(id);
     } catch (err) {
-      console.log("Cannot get row data for id ", id, ": ", err);
+      console.log('Cannot get row data for id ', id, ': ', err);
     }
     return null;
   };
@@ -140,15 +148,13 @@ onMounted(() => {
     const detail = e?.detail || {};
     if (detail.execute === 'displayInfo') {
       if (detail.selectedRows.length === 0) {
-        store.undo()
-      }
-      else if (detail.selectedRows.length > 1) {
+        store.undo();
+      } else if (detail.selectedRows.length > 1) {
         handleAllSelectEvent(e, true);
-      } else if (detail.selectedRows.length < 2){
+      } else if (detail.selectedRows.length < 2) {
         store.loadOperationplans([detail.reference], detail.status, detail.selectedRows);
       }
-    }
-    else {
+    } else {
       store.undo();
     }
   };
@@ -166,10 +172,12 @@ onMounted(() => {
         const row = getGridRowData(id);
         if (row) selectiondata.push(row);
       }
-      const colModel = window.jQuery('#grid').jqGrid ? window.jQuery('#grid').jqGrid('getGridParam', 'colModel') : undefined;
+      const colModel = window.jQuery('#grid').jqGrid
+        ? window.jQuery('#grid').jqGrid('getGridParam', 'colModel')
+        : undefined;
       store.processAggregatedInfo(selectiondata, colModel);
     } catch (err) {
-      console.error("Error in All Select Event Handler", err);
+      console.error('Error in All Select Event Handler', err);
     }
   };
 
@@ -181,9 +189,9 @@ onMounted(() => {
   };
 
   const handleTriggerSave = (e) => {
-    console.log("save triggered");
+    console.log('save triggered');
     store.undo();
-  }
+  };
 
   const handleDisplayOnPanel = (e) => {
     // This event may carry either { rowid, reference, field, value } or the row object directly (legacy calls)
@@ -219,8 +227,15 @@ onMounted(() => {
     store.applyGridCellEdit({
       reference: detail.reference,
       field: detail.field,
-      value: detail.value
+      value: detail.value,
     });
+  };
+
+  const handleRefreshStatus = (e) => {
+    const detail = e?.detail || {};
+    if (!detail.status) return;
+
+    store.setStatus(detail.status);
   };
 
   // Attach listeners on the app root element if present, otherwise on document
@@ -231,6 +246,7 @@ onMounted(() => {
   rootEl.addEventListener('displayonpanel', handleDisplayOnPanel);
   rootEl.addEventListener('triggerSave', handleTriggerSave);
   rootEl.addEventListener('gridCellEdited', handleGridCellEdited);
+  rootEl.addEventListener('refreshStatus', handleRefreshStatus);
 
   // Save references to handlers so they can be removed on unmount
   appElement.value = {
@@ -242,12 +258,14 @@ onMounted(() => {
       display: handleDisplayOnPanel,
       undo: handleUndoEvent,
       gridCellEdited: handleGridCellEdited,
-    }
+      refreshStatus: handleRefreshStatus,
+    },
   };
 });
 
 onUnmounted(() => {
   const info = appElement.value;
+  if (stopNoSelectionWatch) stopNoSelectionWatch();
   if (info && info.rootEl && info.handlers) {
     try {
       info.rootEl.removeEventListener('singleSelect', info.handlers.single);
@@ -261,30 +279,22 @@ onUnmounted(() => {
     }
   }
 });
-
 </script>
 
 <template>
-  <div class="row" >
-
+  <div class="row">
     <div
-        v-for="col in preferences.widgets"
-        :key="col.name"
-        class="widget-list col-12"
-        :class="'col-lg-' + (col.cols?.[0].width || '6')"
-        :data-widget="col.name"
-        :data-widget-width="(col.cols?.[0].width || '6')"
+      v-for="col in preferences.widgets"
+      :key="col.name"
+      class="widget-list col-12"
+      :class="'col-lg-' + (col.cols?.[0].width || '6')"
+      :data-widget="col.name"
+      :data-widget-width="col.cols?.[0].width || '6'"
     >
       <div v-if="col.cols?.[0]">
         <div v-for="(widget, index) in col.cols[0].widgets || []" :key="index">
-          <div
-              v-if="shouldShowWidget(widget[0])"
-              class="card widget mb-3"
-              :data-widget="widget[0]"
-          >
-            <component
-                :is="getWidgetComponent(widget[0])"
-            />
+          <div v-if="shouldShowWidget(widget[0])" class="card widget mb-3" :data-widget="widget[0]">
+            <component :is="getWidgetComponent(widget[0])" />
           </div>
         </div>
       </div>
@@ -293,11 +303,11 @@ onUnmounted(() => {
 
   <!-- Modal -->
   <div
-      id="popup2"
-      class="modal"
-      role="dialog"
-      style="z-index: 10000; overflow-y: visible"
-      tabindex="-1"
+    id="popup2"
+    class="modal"
+    role="dialog"
+    style="z-index: 10000; overflow-y: visible"
+    tabindex="-1"
   >
     <div class="modal-dialog" :style="{ width: databaseerrormodal ? '500px' : '300px' }">
       <div class="modal-content">
@@ -313,7 +323,12 @@ onUnmounted(() => {
               {{ ttt('database transaction failed') }}
             </span>
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
 
         <div v-if="!databaseerrormodal && !rowlimiterrormodal" class="modal-body">
@@ -326,30 +341,33 @@ onUnmounted(() => {
         </div>
 
         <div
-            v-if="databaseerrormodal"
-            class="modal-body"
-            style="height: 350px; overflow: auto;"
+          v-if="databaseerrormodal"
+          class="modal-body"
+          style="height: 350px; overflow: auto"
         ></div>
 
         <div class="modal-footer justify-content-between">
           <input
-              type="submit"
-              id="cancelAbutton"
-              role="button"
-              @click="modalcallback.resolve('continue'); rowlimiterrormodal = false;"
-              class="btn btn-primary"
-              data-bs-dismiss="modal"
-              :value="ttt('Continue')"
+            type="submit"
+            id="cancelAbutton"
+            role="button"
+            @click="
+              modalcallback.resolve('continue');
+              rowlimiterrormodal = false;
+            "
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+            :value="ttt('Continue')"
           />
           <input
-              v-if="!databaseerrormodal && !rowlimiterrormodal"
-              type="submit"
-              id="saveAbutton"
-              role="button"
-              @click="modalcallback.resolve('save')"
-              class="btn btn-primary"
-              data-bs-dismiss="modal"
-              :value="ttt('Save')"
+            v-if="!databaseerrormodal && !rowlimiterrormodal"
+            type="submit"
+            id="saveAbutton"
+            role="button"
+            @click="modalcallback.resolve('save')"
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+            :value="ttt('Save')"
           />
         </div>
       </div>

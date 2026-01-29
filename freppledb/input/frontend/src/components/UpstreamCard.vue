@@ -38,7 +38,6 @@ const currentOperationplan = store.operationplan;
 
 const filteredUpstream = computed(() => {
   if (!store.operationplan["upstreamoperationplans"]) return [];
-  console.log(41, store.operationplan.upstreamoperationplans.filter(peg => peg[11] !== 2));
   return store.operationplan.upstreamoperationplans.filter(peg => peg[11] !== 2);
 });
 

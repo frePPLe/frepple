@@ -278,7 +278,7 @@ const formatDuration = window.formatDuration;
           <td v-if="value['formatter'] === 'duration'">{{formatDuration(store.operationplan[key])}}</td>
           <td v-if="!['date', 'number', 'color', 'currency', 'currencyWithBlanks', 'duration'].includes(value['formatter'])">{{store.operationplan[key]}}</td>
         </tr>
-        <tr id="statusrow" v-if="store.operationplan.type !== 'STCK'">
+        <tr id="statusrow" v-if="store.operationplan.type !== 'STCK' && !isMultipleOrNone">
           <td><b class="text-capitalize">{{ttt('status')}}</b></td>
           <td>
             <div class="btn-group" role="group">

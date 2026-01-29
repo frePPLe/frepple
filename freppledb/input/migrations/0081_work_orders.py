@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django.db import migrations
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -36,5 +36,35 @@ class Migration(migrations.Migration):
             """
             update operationplan set type = 'MO' where type = 'WO'
             """,
-        )
+        ),
+        migrations.CreateModel(
+            name="WorkOrder",
+            fields=[],
+            options={
+                "verbose_name": "work order",
+                "verbose_name_plural": "work orders",
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
+            },
+            bases=("input.operationplan",),
+        ),
+        migrations.AlterField(
+            model_name="operationplan",
+            name="type",
+            field=models.CharField(
+                choices=[
+                    ("STCK", "inventory"),
+                    ("MO", "manufacturing order"),
+                    ("WO", "work order"),
+                    ("PO", "purchase order"),
+                    ("DO", "distribution order"),
+                    ("DLVR", "delivery order"),
+                ],
+                db_index=True,
+                default="MO",
+                help_text="Order type",
+                verbose_name="type",
+            ),
+        ),
     ]

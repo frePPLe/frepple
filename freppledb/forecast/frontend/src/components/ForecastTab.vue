@@ -25,7 +25,7 @@
 import ForecastEditFormCard from "@/components/ForecastEditFormCard.vue";
 import ForecastParametersCard from "@/components/ForecastParametersCard.vue";
 import ForecastGraph from "@/components/ForecastGraph.vue";
-// import ForecastTable from "@/components/ForecastTable.vue";
+import ForecastTable from "@/components/ForecastTable.vue";
 
 </script>
 

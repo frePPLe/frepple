@@ -358,7 +358,9 @@ onMounted(async () => {
       const { width, height } = entries[0].contentRect;
       if (width > 0 && height > 0) debouncedDrawGraph();
     });
-    resizeObserver.observe(graphContainer.value);
+    resizeObserver.observe(document.getElementById('widget_inventorygraph'));
+    await nextTick();
+    drawGraph();
   }
 });
 
@@ -368,7 +370,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div>
+  <div id="card_inventorygraph">
     <div
         class="card-header d-flex align-items-center"
         data-bs-toggle="collapse"

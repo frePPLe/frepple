@@ -25,9 +25,9 @@
 import { computed } from "vue";
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from "@/stores/operationplansStore.js";
-import { numberFormat, isNumeric, debouncedInputHandler } from "@common/utils.js";
+import { numberFormat, isNumeric, debouncedInputHandler, dateTimeFormat } from "@common/utils.js";
 import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js';
-import { dateTimeFormat } from '@common/utils.js';
+
 useBootstrapTooltips();
 
 const { t: ttt } = useI18n({
@@ -271,7 +271,7 @@ const formatDuration = window.formatDuration;
         </tr>
         <tr v-for="([key, value]) in filteredColmodel" :key="key">
           <td><b class="text-capitalize">{{ttt(value.label)}}</b>&nbsp;
-            <small>({{ ttt(value.type) }} - {{key}})</small>
+            <small>({{ ttt(value.type) }})</small>
           </td>
           <td v-if="['number', 'color', 'currency', 'currencyWithBlanks'].includes(value['formatter'])">{{numberFormat(store.operationplan[key])}}</td>
           <td v-if="value['formatter'] === 'date'">{{dateTimeFormat(store.operationplan[key])}}</td>

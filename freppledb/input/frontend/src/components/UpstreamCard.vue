@@ -38,6 +38,7 @@ const currentOperationplan = store.operationplan;
 
 const filteredUpstream = computed(() => {
   if (!store.operationplan["upstreamoperationplans"]) return [];
+  console.log(41, store.operationplan.upstreamoperationplans.filter(peg => peg[11] !== 2));
   return store.operationplan.upstreamoperationplans.filter(peg => peg[11] !== 2);
 });
 
@@ -76,22 +77,22 @@ const filteredUpstream = computed(() => {
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
-        <td data-ng-if="peg[2] == 'WO'">{{peg[1]}}
+        <td v-if="peg[2] === 'WO'">{{peg[1]}}
           <a :href="'/data/input/workorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
-        <td v-if="peg[2] === 'DO'">{{peg[1]}}
+        <td v-if="peg[2] === 'DO'">{{peg[1]}}z
           <a :href="'/data/input/distributionorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
-        <td v-if="peg[2] === 'PO'">{{peg[1]}}
+        <td v-if="peg[2] === 'PO'">{{peg[1]}}w
           <a :href="'/data/input/purchaseorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
-        <td v-if="peg[2] === 'STCK'">{{peg[1]}}</td>
+        <td v-if="peg[2] === 'STCK'">{{peg[1]}}k</td>
 
         <td>{{peg[2]}}</td>
 

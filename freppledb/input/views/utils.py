@@ -2100,6 +2100,11 @@ class OperationPlanDetail(View):
                     "color": float(opplan.color) if opplan.color else "",
                     "owner": opplan.owner.reference if opplan.owner else None,
                     "batch": opplan.batch,
+                    "buffer": (
+                        f"{opplan.item_id} @ {opplan.batch} @ {opplan.location_id}"
+                        if opplan.batch
+                        else f"{opplan.item_id} @ {opplan.location_id}"
+                    ),
                 }
                 if opplan.plan and "pegging" in opplan.plan:
                     res["pegging_demand"] = []

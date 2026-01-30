@@ -55,11 +55,17 @@ const modalcallback = ref({ resolve: () => {} });
 const noSelection = computed(() => store.selectedOperationplans.length === 0);
 let stopNoSelectionWatch;
 
-const updateActionsButton = (disabled) => {
+const updateActionsToolsButtons = (isDisabled) => {
   let actionsButton = document.getElementById('actions1');
-  if (actionsButton) actionsButton.disabled = disabled;
+  if (actionsButton) actionsButton.disabled = isDisabled;
   actionsButton = document.getElementById('actions2');
-  if (actionsButton) actionsButton.disabled = disabled;
+  if (actionsButton) actionsButton.disabled = isDisabled;
+  actionsButton = document.getElementById('segments1');
+  if (actionsButton) actionsButton.disabled = isDisabled;
+  actionsButton = document.getElementById('copy_selected');
+  if (actionsButton) actionsButton.disabled = isDisabled;
+  actionsButton = document.getElementById('delete_selected');
+  if (actionsButton) actionsButton.disabled = isDisabled;
 };
 
 function save() {
@@ -130,7 +136,7 @@ onMounted(() => {
   stopNoSelectionWatch = watch(
     noSelection,
     (value) => {
-      updateActionsButton(value);
+      updateActionsToolsButtons(value);
     },
     { immediate: true }
   );

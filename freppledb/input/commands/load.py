@@ -2474,7 +2474,7 @@ class loadOperationPlans(LoadTask):
                         and parent_opplan.status <> 'closed'
                         )
                     )
-                    {filter_and} and operationplan.type = 'MO'
+                    {filter_and} and operationplan.type in ('MO', 'WO')
                     and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
                     and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
                     ORDER BY operationplan.reference ASC

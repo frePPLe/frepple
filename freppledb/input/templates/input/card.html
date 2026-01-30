@@ -154,7 +154,7 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           data-ng-model="opplan.operationplan__remark" data-ng-change="changeCard(opplan, 'operationplan__remark', oldValue, opplan.operationplan__remark)">
       </p>
     </div>
-    <div data-ng-if="opplan.type === 'MO'">
+    <div data-ng-if="opplan.type === 'MO' || opplan.type === 'WO'">
       <p>
         <span data-ng-if="opplan.dirty && !opplan.selected" class="badge bg-danger float-end">{{ "unsaved"|translate }}</span>
         <i data-ng-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;

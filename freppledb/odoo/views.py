@@ -185,17 +185,19 @@ def Upload(request):
                     op.enddate = enddate
                     op.dirty = True
 
-                supplier = rec.get("supplier", rec.get("operationplan__supplier__name"))
-                if op.supplier and supplier and op.supplier.name != supplier:
-                    s = Supplier.objects.using(request.database).get(name=supplier)
-                    op.supplier = s
-                    op.dirty = True
-
                 if op.quantity != float(rec["quantity"]):
                     op.quantity = float(rec["quantity"])
                     op.dirty = True
 
                 if type == "PO":
+                    supplier = rec.get(
+                        "supplier", rec.get("operationplan__supplier__name")
+                    )
+                    if op.supplier and supplier and op.supplier.name != supplier:
+                        s = Supplier.objects.using(request.database).get(name=supplier)
+                        op.supplier = s
+                        op.dirty = True
+
                     if (
                         not op.supplier.source
                         or not (

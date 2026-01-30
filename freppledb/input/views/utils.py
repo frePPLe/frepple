@@ -2489,12 +2489,20 @@ class OperationPlanDetail(View):
                                 a[5],  # item
                                 a[6],  # location
                                 (
-                                    a[7].strftime(settings.DATETIME_INPUT_FORMATS[0])
+                                    a[7].strftime(
+                                        settings.DATETIME_INPUT_FORMATS[0]
+                                        if settings.DATE_STYLE_WITH_HOURS
+                                        else settings.DATE_INPUT_FORMATS[0]
+                                    )
                                     if a[7]
                                     else ""
                                 ),  # startdate
                                 (
-                                    a[8].strftime(settings.DATETIME_INPUT_FORMATS[0])
+                                    a[8].strftime(
+                                        settings.DATETIME_INPUT_FORMATS[0]
+                                        if settings.DATE_STYLE_WITH_HOURS
+                                        else settings.DATE_INPUT_FORMATS[0]
+                                    )
                                     if a[8]
                                     else ""
                                 ),  # enddate
@@ -2574,12 +2582,20 @@ class OperationPlanDetail(View):
                                 a[5],  # item
                                 a[6],  # location
                                 (
-                                    a[7].strftime(settings.DATETIME_INPUT_FORMATS[0])
+                                    a[7].strftime(
+                                        settings.DATETIME_INPUT_FORMATS[0]
+                                        if settings.DATE_STYLE_WITH_HOURS
+                                        else settings.DATE_INPUT_FORMATS[0]
+                                    )
                                     if a[7]
                                     else ""
                                 ),  # startdate
                                 (
-                                    a[8].strftime(settings.DATETIME_INPUT_FORMATS[0])
+                                    a[8].strftime(
+                                        settings.DATETIME_INPUT_FORMATS[0]
+                                        if settings.DATE_STYLE_WITH_HOURS
+                                        else settings.DATE_INPUT_FORMATS[0]
+                                    )
                                     if a[8]
                                     else ""
                                 ),  # enddate

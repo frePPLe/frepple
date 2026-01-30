@@ -24,7 +24,7 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
 import {useOperationplansStore} from "@/stores/operationplansStore.js";
-import {dateTimeFormat,numberFormat} from "@common/utils.js";
+import {numberFormat} from "@common/utils.js";
 import {computed} from "vue";
 
 const { t: ttt } = useI18n({
@@ -116,8 +116,8 @@ const filteredUpstream = computed(() => {
           </a>
         </td>
 
-        <td>{{ dateTimeFormat(peg[7]) }}</td>
-        <td>{{ dateTimeFormat(peg[8]) }}</td>
+        <td>{{ peg[7] }}</td>
+        <td>{{ peg[8] }}</td>
         <td>{{ numberFormat(peg[9]) }} / {{ numberFormat(peg[10]) }}</td>
       </tr>
       </tbody>

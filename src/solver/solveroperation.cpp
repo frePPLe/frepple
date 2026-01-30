@@ -1085,6 +1085,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   // Make sure the subopplans know their owner & store the previous value
   OperationPlan* prev_owner_opplan = data->state->curOwnerOpplan;
   data->state->curOwnerOpplan = a->getOperationPlan();
+  auto* routing_opplan = data->state->curOwnerOpplan;
 
   // Reset the max date on the state.
   data->state->q_date_max = data->state->q_date;
@@ -1163,7 +1164,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
         bool tmp1 = false;
         double tmp2;
         DateRange tmp3;
-        checkDependencies(data->state->curOwnerOpplan, *data, tmp1, tmp2, tmp3);
+        checkDependencies(routing_opplan, *data, tmp1, tmp2, tmp3);
       }
     } else {
       // Loop through the steps in sequence
@@ -1171,7 +1172,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
            e != oper->getSubOperations().rend() && a_qty > 0.0; ++e) {
         // Plan the next step
         data->state->q_qty = a_qty;
-        data->state->q_date = data->state->curOwnerOpplan->getStart();
+        data->state->q_date = routing_opplan->getStart();
         Buffer* tmpBuf = data->state->curBuffer;
         q_date = data->state->q_date;
         (*e)->getOperation()->solve(*this, v);
@@ -1179,15 +1180,14 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
         data->state->curBuffer = tmpBuf;
 
         // Update the top operationplan
-        data->state->curOwnerOpplan->setQuantity(a_qty, true);
+        routing_opplan->setQuantity(a_qty, true);
 
         // Maximum for the next date
         if (data->state->a_date != Date::infiniteFuture) {
           if (delay < data->state->a_date - q_date)
             delay = data->state->a_date - q_date;
-          OperationPlanState at =
-              data->state->curOwnerOpplan->setOperationPlanParameters(
-                  0.01, data->state->a_date, Date::infinitePast, false, false);
+          OperationPlanState at = routing_opplan->setOperationPlanParameters(
+              0.01, data->state->a_date, Date::infinitePast, false, false);
           if (at.end < top_q_date + (data->state->a_date - q_date))
             // Minimum routing delay is assumed to be equal to the delay of
             // the step.
@@ -1205,12 +1205,12 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
       /* @todo moving routing opplan doesn't recheck for feasibility of
        * steps...
        */
-      data->state->curOwnerOpplan->createFlowLoads();
-      if (data->state->curOwnerOpplan->getQuantity() > 0.0) {
+      routing_opplan->createFlowLoads();
+      if (routing_opplan->getQuantity() > 0.0) {
         data->state->q_qty = a_qty;
-        data->state->q_date = data->state->curOwnerOpplan->getEnd();
+        data->state->q_date = routing_opplan->getEnd();
         q_date = data->state->q_date;
-        checkOperation(data->state->curOwnerOpplan, *data);
+        checkOperation(routing_opplan, *data);
         a_qty = data->state->a_qty;
         if (a_qty == 0.0 && data->state->a_date != Date::infiniteFuture) {
           // The reply date is the combination of the reply date of all steps
@@ -1240,7 +1240,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
 
   // Increment the cost
   if (data->state->a_qty > 0.0) {
-    auto tmp = data->state->curOwnerOpplan->getQuantity() * oper->getCost();
+    auto tmp = routing_opplan->getQuantity() * oper->getCost();
     data->state->a_cost += tmp;
     if (data->logcosts && data->incostevaluation)
       logger << indentlevel << "     + cost on operation '" << oper

@@ -792,8 +792,6 @@ void Problem::List::clean(Demand* d) const {
         if (!critical_path.contains(static_cast<Operation*>(ow))) keep = false;
       }
     }
-    logger << d << ": Constraint " << (keep ? "keep" : "delete") << "  "
-           << p->getDescription() << '\n';
     if (keep)
       ++p;
     else {

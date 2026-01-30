@@ -88,7 +88,7 @@ onMounted(() => {
 
     <div
         id="widget_demandpegging"
-        class="card-body collapse"
+        class="card-body collapse mb-1"
         :class="{ 'show': !isCollapsed }"
         style="max-height: 15em; overflow: auto"
     >

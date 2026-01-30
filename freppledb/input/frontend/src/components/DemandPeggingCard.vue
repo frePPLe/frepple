@@ -25,7 +25,7 @@
 import { computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from "@/stores/operationplansStore.js";
-import { numberFormat, dateTimeFormat, adminEscape } from "@common/utils.js";
+import { numberFormat, adminEscape } from "@common/utils.js";
 
 const { t: ttt } = useI18n({
   useScope: 'global',
@@ -138,7 +138,7 @@ onMounted(() => {
             </td>
 
             <!-- Due date column -->
-            <td>{{ dateTimeFormat(demand.demand?.due) }}</td>
+            <td>{{ demand.demand?.due }}</td>
 
             <!-- Quantity column -->
             <td>{{ numberFormat(demand.quantity) }}</td>

@@ -51,6 +51,15 @@ const rowLabels = [
   ttt('end inventory')
 ];
 
+const props = defineProps({
+  widget: {
+    type: Array,
+    default: () => []
+  }
+});
+
+const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
+
 const inventoryreport = computed(() => {
   return (rawInventory.value || []).map((inv, colIndex) => {
     // inv is an array where:

@@ -36,6 +36,15 @@ const { t: ttt } = useI18n({
 
 const store = useOperationplansStore();
 
+const props = defineProps({
+  widget: {
+    type: Array,
+    default: () => []
+  }
+});
+
+const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
+
 const hasFlowplans = computed(() => {
   const op = store.operationplan;
   return op && op.flowplans && Array.isArray(op.flowplans) && op.flowplans.length > 0;

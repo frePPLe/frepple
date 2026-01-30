@@ -36,6 +36,15 @@ const store = useOperationplansStore();
 
 const currentOperationplan = store.operationplan;
 
+const props = defineProps({
+  widget: {
+    type: Array,
+    default: () => []
+  }
+});
+
+const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
+
 const filteredDownstream = computed(() => {
   if (!store.operationplan["downstreamoperationplans"]) return [];
   return store.operationplan.downstreamoperationplans.filter(peg => peg[11] != 2);
@@ -49,8 +58,7 @@ const filteredDownstream = computed(() => {
     <h5 class="card-title text-capitalize fs-5 me-auto">{{ ttt('downstream operations') }}</h5>
     <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
   </div>
-<!--  <div id="widget_downstream" class="card-body collapse" :class="(!$parent.widget[1]['collapsed']) ? 'show' : ''">   TODO-->
-  <div id="widget_downstream" class="card-body collapse show">
+  <div id="widget_downstream" class="card-body collapse" :class="{ 'show': !isCollapsed }">
     <table class="table table-sm table-hover table-borderless"><thead><tr>
       <td><b class="text-capitalize">{{ ttt('level') }}</b></td>
       <td><b class="text-capitalize">{{ ttt('reference') }}</b></td>

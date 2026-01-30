@@ -195,7 +195,6 @@ onMounted(() => {
   };
 
   const handleTriggerSave = (e) => {
-    console.log('save triggered');
     store.undo();
   };
 
@@ -253,6 +252,8 @@ onMounted(() => {
   rootEl.addEventListener('triggerSave', handleTriggerSave);
   rootEl.addEventListener('gridCellEdited', handleGridCellEdited);
   rootEl.addEventListener('refreshStatus', handleRefreshStatus);
+  rootEl.addEventListener('hidden.bs.collapse', grid.saveColumnConfiguration);
+  rootEl.addEventListener('shown.bs.collapse', grid.saveColumnConfiguration);
 
   // Save references to handlers so they can be removed on unmount
   appElement.value = {
@@ -267,6 +268,8 @@ onMounted(() => {
       refreshStatus: handleRefreshStatus,
     },
   };
+
+  widget.init(grid.saveColumnConfiguration);
 });
 
 onUnmounted(() => {
@@ -297,13 +300,13 @@ onUnmounted(() => {
       :data-widget="col.name"
       :data-widget-width="col.cols?.[0].width || '6'"
     >
-      <div v-if="col.cols?.[0]">
-        <div v-for="(widget, index) in col.cols[0].widgets || []" :key="index">
+      <template v-if="col.cols?.[0]">
+        <template v-for="(widget, index) in col.cols[0].widgets || []" :key="index">
           <div v-if="shouldShowWidget(widget[0])" class="card widget mb-3" :data-widget="widget[0]">
-            <component :is="getWidgetComponent(widget[0])" />
+            <component :is="getWidgetComponent(widget[0])" :widget="widget"/>
           </div>
-        </div>
-      </div>
+        </template>
+      </template>
     </div>
   </div>
 

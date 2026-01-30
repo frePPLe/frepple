@@ -36,6 +36,15 @@ const store = useOperationplansStore();
 
 const currentOperationplan = store.operationplan;
 
+const props = defineProps({
+  widget: {
+    type: Array,
+    default: () => []
+  }
+});
+
+const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
+
 const filteredUpstream = computed(() => {
   if (!store.operationplan["upstreamoperationplans"]) return [];
   return store.operationplan.upstreamoperationplans.filter(peg => peg[11] !== 2);
@@ -45,11 +54,12 @@ const filteredUpstream = computed(() => {
 
 <template>
   <div>
-  <div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_upstream" aria-expanded="false" aria-controls="widget_upstream">
+  <div class="card-header d-flex align-items-center" data-bs-toggle="collapse"
+    data-bs-target="#widget_upstream" aria-expanded="false" aria-controls="widget_upstream">
     <h5 class="card-title fs-5 me-auto text-capitalize">{{ ttt('upstream operations') }}</h5>
     <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
   </div>
-  <div id="widget_upstream" class="card-body collapse'" >
+  <div id="widget_upstream" class="card-body collapse" :class="{ 'show': !isCollapsed }">
     <table class="table table-sm table-hover table-borderless"><thead><tr>
       <td><b class="text-capitalize">{{ ttt('level') }}</b></td>
       <td><b class="text-capitalize">{{ ttt('reference') }}</b></td>

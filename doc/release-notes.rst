@@ -4,7 +4,7 @@ Release notes
 9.14.0 (Upcoming release)
 ========================
 
-This release is scheduled for mid January 2026.
+This release is scheduled for early March 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 9.13.0 (2026-01-31)

@@ -1084,8 +1084,8 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
 
   // Make sure the subopplans know their owner & store the previous value
   OperationPlan* prev_owner_opplan = data->state->curOwnerOpplan;
-  data->state->curOwnerOpplan = a->getOperationPlan();
-  auto* routing_opplan = data->state->curOwnerOpplan;
+  auto* routing_opplan = a->getOperationPlan();
+  data->state->curOwnerOpplan = routing_opplan;
 
   // Reset the max date on the state.
   data->state->q_date_max = data->state->q_date;
@@ -1148,7 +1148,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
         }
 
         data->state->q_qty = a_qty;
-        data->state->curOwnerOpplan = a->getOperationPlan();
+        routing_opplan = data->state->curOwnerOpplan = a->getOperationPlan();
         Buffer* tmpBuf = data->state->curBuffer;
         q_date = data->state->q_date;
         e->getOperation()->solve(*this, v);
@@ -1175,6 +1175,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
         data->state->q_date = routing_opplan->getStart();
         Buffer* tmpBuf = data->state->curBuffer;
         q_date = data->state->q_date;
+        data->state->curOwnerOpplan = routing_opplan;
         (*e)->getOperation()->solve(*this, v);
         a_qty = data->state->a_qty;
         data->state->curBuffer = tmpBuf;
@@ -1329,6 +1330,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
 
   // Make sure sub-operationplans know their owner & store the previous value
   OperationPlan* prev_owner_opplan = data->state->curOwnerOpplan;
+  OperationPlan* owner_opplan = nullptr;
 
   // Control the planning mode
   bool originalPlanningMode = data->constrainedPlanning;
@@ -1477,6 +1479,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       data->state->q_date_max = ask_date;
       data->state->curDemand = nullptr;
       data->state->curOwnerOpplan = a->getOperationPlan();
+      owner_opplan = data->state->curOwnerOpplan;
       data->state->curBuffer =
           nullptr;  // Because we already took care of it... @todo not correct
                     // if the suboperation is again a owning operation
@@ -1598,8 +1601,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
         data->state->q_qty = data->state->a_qty;
         data->state->q_date = origQDate;
         data->state->q_date_max = origQDate;
-        data->state->curOwnerOpplan->createFlowLoads();
-        checkOperation(data->state->curOwnerOpplan, *data);
+        owner_opplan->createFlowLoads();
+        checkOperation(owner_opplan, *data);
         if (sub_flow)
           data->state->a_qty = sub_flow->getQuantityFixed() +
                                data->state->a_qty * sub_flow->getQuantity();
@@ -1720,6 +1723,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       data->state->q_date_max = bestQDate;
       data->state->curDemand = nullptr;
       data->state->curOwnerOpplan = a->getOperationPlan();
+      owner_opplan = data->state->curOwnerOpplan;
       data->state->curBuffer =
           nullptr;  // Because we already took care of it... @todo not correct
                     // if the suboperation is again a owning operation
@@ -1734,8 +1738,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       data->state->q_qty = data->state->a_qty;
       data->state->q_date = origQDate;
       data->state->q_date_max = origQDate;
-      data->state->curOwnerOpplan->createFlowLoads();
-      checkOperation(data->state->curOwnerOpplan, *data);
+      owner_opplan->createFlowLoads();
+      checkOperation(owner_opplan, *data);
 
       // Multiply the operation reply with the flow quantity to obtain the
       // reply to return
@@ -1816,7 +1820,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       data->state->q_date = origQDate;
       data->state->q_date_max = origQDate;
       data->state->curDemand = nullptr;
-      data->state->curOwnerOpplan = a->getOperationPlan();
+      owner_opplan = data->state->curOwnerOpplan = a->getOperationPlan();
       data->state->curBuffer =
           nullptr;  // Because we already took care of it... @todo not correct
                     // if the suboperation is again a owning operation
@@ -1828,8 +1832,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       data->state->q_qty = data->state->a_qty;
       data->state->q_date = origQDate;
       data->state->q_date_max = origQDate;
-      data->state->curOwnerOpplan->createFlowLoads();
-      checkOperation(data->state->curOwnerOpplan, *data);
+      owner_opplan->createFlowLoads();
+      checkOperation(owner_opplan, *data);
 
       // Repeat until we have all material we need (or not making any progress)
       if (firstFlow) {
@@ -1864,7 +1868,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
 
   // Increment the cost
   if (data->state->a_qty > 0.0) {
-    auto tmp = data->state->curOwnerOpplan->getQuantity() * oper->getCost();
+    auto tmp = owner_opplan->getQuantity() * oper->getCost();
     data->state->a_cost += tmp;
     if (data->logcosts && data->incostevaluation)
       logger << indentlevel << "     + cost on operation '" << oper

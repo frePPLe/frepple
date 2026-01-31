@@ -248,6 +248,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                                                                    : nullptr;
                   OperationPlanState beforeMove(sub);
                   checkOperation(sub, *data);
+                  data->pop(true);
                   if (data->state->a_qty <= ROUNDING_ERROR) {
                     // convert data->state->a_date to the complete routing
                     OperationPlan::iterator x(opplan_to_move, true, sub);
@@ -278,6 +279,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                         ? opplan_to_move
                         : nullptr;
                 checkOperation(opplan_to_move, *data);
+                data->pop(true);
               }
               if (data->state->a_qty <= ROUNDING_ERROR) {
                 // Move wasn't feasible. Need to disallow new replenishments.
@@ -305,7 +307,6 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                     "Moved early to meet earlier requirement");
                 cur = prev;
               }
-              data->pop();
               indentlevel = original_indentlevel;
               break;
             } catch (...) {

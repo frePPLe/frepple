@@ -678,6 +678,7 @@ void Problem::List::clean(Demand* d) const {
     if (lvl <= lvl_prev && lvl_prev >= 0) {
       bool in_critical_path = false;
       for (auto lvl_cnt = lvl_prev; lvl_cnt >= 0; --lvl_cnt) {
+        if (!opplans[lvl_cnt]) continue;
         if (!in_critical_path) {
           for (auto p = constraints.begin();
                p != constraints.end() && !in_critical_path; ++p) {

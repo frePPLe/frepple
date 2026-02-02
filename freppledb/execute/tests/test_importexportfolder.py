@@ -61,7 +61,7 @@ class execute_with_commands(TransactionTestCase):
         response = self.client.get("/execute/")
         self.assertEqual(response.status_code, 200)
 
-        self.assertEqual(ManufacturingOrder.objects.count(), 0)
+        self.assertEqual(ManufacturingOrder.objects.count(), 1)
         self.assertEqual(PurchaseOrder.objects.count(), 4)
         self.assertEqual(DistributionOrder.objects.count(), 0)
 

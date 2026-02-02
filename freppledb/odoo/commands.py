@@ -156,7 +156,7 @@ class OdooReadData(PlanTask):
             or Parameter.getValue("odoo.singlecompany", database, "false")
         ).strip()
         odoo_language = (
-            getattr(settings, "ODOO_SINGLECOMPANY", {}).get(database, None)
+            getattr(settings, "ODOO_LANGUAGE", {}).get(database, None)
             or Parameter.getValue("odoo.language", database, "en_US")
         ).strip()
         odoo_delta = Parameter.getValue("odoo.delta", database, "999")

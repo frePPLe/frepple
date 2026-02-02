@@ -1044,7 +1044,7 @@ class ManufacturingOrder(OperationPlan):
                                 pk=rowWrapper[ManufacturingOrder._meta.pk.name]
                             )
                             form = UploadForm(rowWrapper, instance=it)
-                        except ManufacturingOrder.DoesNotExist:
+                        except OperationPlan.DoesNotExist:
                             form = UploadForm(rowWrapper)
                             it = None
                     elif natural_key:

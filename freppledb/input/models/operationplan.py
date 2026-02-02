@@ -1587,7 +1587,7 @@ class WorkOrder(OperationPlan):
                                 pk=rowWrapper[WorkOrder._meta.pk.name]
                             )
                             form = UploadForm(rowWrapper, instance=it)
-                        except WorkOrder.DoesNotExist:
+                        except OperationPlan.DoesNotExist:
                             form = UploadForm(rowWrapper)
                             it = None
                     elif natural_key:

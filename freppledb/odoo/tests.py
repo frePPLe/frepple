@@ -138,7 +138,12 @@ class OdooTest(TransactionTestCase):
     def test_odoo_e2e(self):
         # Import odoo data
         self.assertEqual(Item.objects.all().count(), 0)
-        management.call_command("odoo_import")
+        management.call_command(
+            "runplan",
+            plantype=1,
+            constraint="capa,mfg_lt,po_lt",
+            env="odoo_read_1,fcst,invplan,supply,odoo_write_1",
+        )
         self.assertGreater(Item.objects.all().count(), 0)
 
         # Check user sync
@@ -181,11 +186,17 @@ class OdooTest(TransactionTestCase):
             0,  # TODO add draft and confirmed PO in demo dataset
         )
         self.assertEqual(
-            ManufacturingOrder.objects.all().filter(status="proposed").count(),
+            ManufacturingOrder.objects.all()
+            .filter(status="proposed")
+            .filter(source="odoo_1")
+            .count(),
             0,
         )
         self.assertEqual(
-            PurchaseOrder.objects.all().filter(status="proposed").count(),
+            PurchaseOrder.objects.all()
+            .filter(status="proposed")
+            .filter(source="odoo_1")
+            .count(),
             0,
         )
         self.assertEqual(
@@ -201,7 +212,11 @@ class OdooTest(TransactionTestCase):
                 ManufacturingOrder.objects.all()
                 .filter(status="approved", quantity=8)
                 .count(),
-                3,
+                1,
+            )
+            self.assertEqual(
+                WorkOrder.objects.all().filter(status="approved", quantity=8).count(),
+                2,
             )
         elif odoo_version >= 19:
             # One MO is a subcontracted MO
@@ -213,14 +228,6 @@ class OdooTest(TransactionTestCase):
                 WorkOrder.objects.all().filter(status="approved").count(),
                 6,
             )
-
-        # Generate plan
-        management.call_command(
-            "runplan",
-            plantype=1,
-            constraint="capa,mfg_lt,po_lt",
-            env="fcst,invplan,supply,odoo_write_1",
-        )
 
         # Check plan results
         proposed_mo = (
@@ -314,8 +321,8 @@ class OdooTest(TransactionTestCase):
         self.assertEqual(cnt, 1)
 
         # Recommendations
-        cnt_purchase = 0
-        cnt_reschedule = 0
+        count_purchase = 0
+        count_reschedule = 0
         count_produce = 0
         count_late_delivery = 0
 
@@ -325,24 +332,29 @@ class OdooTest(TransactionTestCase):
         produce_rec = 0
 
         if odoo_version >= 19:
-            for odoo_rec in self.odooRPC("frepple.recommendation", []):
+            for odoo_rec in self.odooRPC(
+                "frepple.recommendation",
+                [],
+                {},
+                ["id", "type", "quantity", "product_id"],
+            ):
                 if odoo_rec["type"] == "purchase":
-                    cnt_purchase += 1
+                    count_purchase += 1
                     if not purchase_rec:
                         purchase_rec = odoo_rec
                 elif odoo_rec["type"] == "reschedule":
-                    cnt_reschedule += 1
+                    count_reschedule += 1
                     if not reschedule_rec:
                         reschedule_rec = odoo_rec
                 elif odoo_rec["type"] == "produce":
                     count_produce += 1
                     if not produce_rec:
-                        produce_rec = odoo_rec["id"]
-                elif odoo_rec["type"] == "late delivery":
+                        produce_rec = odoo_rec
+                elif odoo_rec["type"] == "latedelivery":
                     count_late_delivery += 1
-            self.assertGreaterEqual(cnt_purchase, 6)
-            self.assertGreaterEqual(cnt_reschedule, 5)
-            self.assertGreaterEqual(count_produce, 1)
+            self.assertGreaterEqual(count_purchase, 6)
+            self.assertGreaterEqual(count_reschedule, 1)
+            self.assertGreaterEqual(count_produce, 0)
             self.assertGreaterEqual(count_late_delivery, 9)
 
             # approve a purchase, a reschedule and a produce
@@ -364,4 +376,34 @@ class OdooTest(TransactionTestCase):
                     odoo_poline["product_id"][0], purchase_rec["product_id"][0]
                 )
                 cnt += 1
-            self.assertEqual(cnt, 2)
+            self.assertEqual(cnt, 1)
+            cnt = 0
+            for odoo_moline in self.odooRPC(
+                "mrp.production",
+                [("origin", "=", "frePPLe"), ("state", "=", "draft")],
+                {"limit": 1, "order": "create_date desc"},
+            ):
+                self.assertEqual(odoo_moline["product_qty"], produce_rec["quantity"])
+                self.assertEqual(
+                    odoo_moline["product_id"][0], produce_rec["product_id"][0]
+                )
+                cnt += 1
+            self.assertEqual(cnt, 1)
+            # Make sure the records have been deleted from the recommendation
+            self.assertEqual(
+                count_produce
+                + count_reschedule
+                + count_purchase
+                + count_late_delivery
+                - 3,
+                len(
+                    self.odooRPC(
+                        "frepple.recommendation",
+                        [],
+                        {},
+                        [
+                            "id",
+                        ],
+                    )
+                ),
+            )

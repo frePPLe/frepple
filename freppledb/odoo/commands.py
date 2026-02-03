@@ -288,7 +288,7 @@ class OdooReadData(PlanTask):
                     else:
                         data = response.read().decode(encoding="utf-8", errors="ignore")
                     if loglevel:
-                        print("Data receive from odoo:")
+                        print("Data received from odoo:")
                         print(data)
 
                     if response.info().get("Content-Type") == "application/json":

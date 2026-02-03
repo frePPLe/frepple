@@ -52,22 +52,33 @@ const databaseerrormodal = ref(false);
 const rowlimiterrormodal = ref(false);
 const modalcallback = ref({ resolve: () => {} });
 
-const noSelection = computed(() => store.selectedOperationplans.length === 0);
-let stopNoSelectionWatch;
+// const noVisibleSelection = computed(() => {
+//   // eslint-disable-next-line no-undef
+//   const sel = jQuery("#grid").jqGrid('getGridParam', 'selarrrow') || [];
+//   // eslint-disable-next-line no-undef
+//   const visibleIds = (jQuery("#grid").jqGrid && jQuery("#grid").jqGrid('getDataIDs')) || [];
+//   // Normalize and only count selections that are visible on the current page
+//   const visibleSelection = sel.filter((x) => {
+//     const id = (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x);
+//     return id !== 'cb' && visibleIds.includes(id);
+//   });
+//   return visibleSelection.length === 0;
+// });
+// let stopNoVisibleSelectionWatch;
 
-const updateActionsToolsButtons = (isDisabled) => {
-  let actionsButton = document.getElementById('actions1');
-  if (actionsButton) actionsButton.disabled = isDisabled;
-  actionsButton = document.getElementById('actions2');
-  if (actionsButton) actionsButton.disabled = isDisabled;
-  actionsButton = document.getElementById('segments1');
-  if (actionsButton) actionsButton.disabled = isDisabled;
-  actionsButton = document.getElementById('copy_selected');
-  if (actionsButton) actionsButton.disabled = isDisabled;
-  actionsButton = document.getElementById('delete_selected');
-  if (actionsButton) actionsButton.disabled = isDisabled;
-};
-
+// const updateActionsToolsButtons = (isDisabled) => {
+//   let actionsButton = document.getElementById('actions1');
+//   if (actionsButton) actionsButton.disabled = isDisabled;
+//   actionsButton = document.getElementById('actions2');
+//   if (actionsButton) actionsButton.disabled = isDisabled;
+//   actionsButton = document.getElementById('segments1');
+//   if (actionsButton) actionsButton.disabled = isDisabled;
+//   actionsButton = document.getElementById('copy_selected');
+//   if (actionsButton) actionsButton.disabled = isDisabled;
+//   actionsButton = document.getElementById('delete_selected');
+//   if (actionsButton) actionsButton.disabled = isDisabled;
+// };
+//
 function save() {
   if (store.hasChanges) {
     store.saveOperationplanChanges().catch((error) => {
@@ -133,13 +144,14 @@ function shouldShowWidget(widgetName) {
 }
 
 onMounted(() => {
-  stopNoSelectionWatch = watch(
-    noSelection,
-    (value) => {
-      updateActionsToolsButtons(value);
-    },
-    { immediate: true }
-  );
+  // stopNoVisibleSelectionWatch = watch(
+  //   noVisibleSelection,
+  //   (value) => {
+  //     console.log('139 No selection changed to ', value, ', updating actions tools buttons');
+  //     updateActionsToolsButtons(value);
+  //   },
+  //   { immediate: true }
+  // );
 
   const getGridRowData = (id) => {
     try {
@@ -163,6 +175,14 @@ onMounted(() => {
     } else {
       store.undo();
     }
+    // Update toolbar buttons depending on selection visible on the current page
+    // try {
+    //   const sel = window.jQuery('#grid').jqGrid('getGridParam', 'selarrrow') || [];
+    //   const selectedIds = sel.map((x) => (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x));
+    //   const visibleIds = (window.jQuery('#grid').jqGrid && window.jQuery('#grid').jqGrid('getDataIDs')) || [];
+    //   const hasVisibleSelection = selectedIds.filter((id) => id !== 'cb' && visibleIds.includes(id)).length > 0;
+    //   updateActionsToolsButtons(!hasVisibleSelection);
+    // } catch (err) { /* no-op */ }
   };
 
   const handleAllSelectEvent = (e, isSingleSelect) => {
@@ -274,7 +294,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   const info = appElement.value;
-  if (stopNoSelectionWatch) stopNoSelectionWatch();
+  // if (stopNoVisibleSelectionWatch) stopNoSelectionWatch();
   if (info && info.rootEl && info.handlers) {
     try {
       info.rootEl.removeEventListener('singleSelect', info.handlers.single);

@@ -63,15 +63,6 @@ rect.opplan {
           $("#save i").addClass('hidden');
           $(".ng-dirty").removeClass('ng-dirty');
           if (typeof ok_callback !== 'undefined') ok_callback();
-          const event = new CustomEvent('allSelect', {
-            detail: {
-              execute: 'undo',
-              reference: null,
-              status: false,
-              selectedRows: null
-            }
-          });
-          document.getElementById('app').dispatchEvent(event)
         },
         error: ajaxerror
     });
@@ -367,9 +358,17 @@ onSelectRow: function(rowid, status) {
       status: status,
       selectedRows: references,
     }
-
   });
   document.getElementById('app').dispatchEvent(event);
+
+  var sel = $("#grid").jqGrid('getGridParam', 'selarrrow') || [];
+  upload.selectedRows = sel.filter(x => x.id !== 'cb');
+  if (sel.length !== 0)  {
+    var visibleIds = ($("#grid").jqGrid && $("#grid").jqGrid('getDataIDs')) || [];
+    var selectedIds = sel.map(function(x){ return (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x); });
+    var hasVisible = selectedIds.filter(function(id){ return id !== 'cb' && visibleIds.indexOf(id) !== -1; }).length > 0;
+    ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=$(s); if (el.length) el.prop('disabled', !hasVisible); });
+  }
 },
 onSelectAll: function(aRowids, status){
   const event = new CustomEvent('allSelect', {
@@ -381,6 +380,14 @@ onSelectAll: function(aRowids, status){
   });
   document.getElementById('app').dispatchEvent(event);
   if ($("#actions").length) $("#actions1").prop('disabled', !status);
+  var sel = $("#grid").jqGrid('getGridParam', 'selarrrow') || [];
+  upload.selectedRows = sel.filter(x => x.id !== 'cb');
+  if (sel.length !== 0 && status)  {
+    var visibleIds = ($("#grid").jqGrid && $("#grid").jqGrid('getDataIDs')) || [];
+    var selectedIds = sel.map(function(x){ return (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x); });
+    var hasVisible = selectedIds.filter(function(id){ return id !== 'cb' && visibleIds.indexOf(id) !== -1; }).length > 0;
+    ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=$(s); if (el.length) el.prop('disabled', !hasVisible); });
+  }
 },
 
 afterSaveCell: function(rowid, cellname, value, iRow, iCol) {
@@ -401,6 +408,11 @@ afterSaveCell: function(rowid, cellname, value, iRow, iCol) {
 multiboxonly: false,
 loadComplete: function(data) {
       $('#curerror').html("");
+
+      upload.selectedRows.forEach(function(op) {
+        $("#grid").jqGrid('setSelection', op, false);
+      })
+
       if (upload.selectedRows.length === 1) {
         const event = new CustomEvent('displayonpanel', jQuery("#grid").getRowData(upload.selectedRows[0]));
         document.getElementById('app').dispatchEvent(event);
@@ -418,6 +430,14 @@ loadComplete: function(data) {
         });
         document.getElementById('app').dispatchEvent(event);
       }
+      // Initialize actions buttons state based on visible-page selection after load
+      try {
+        var sel = $("#grid").jqGrid('getGridParam', 'selarrrow') || [];
+        var visibleIds = ($("#grid").jqGrid && $("#grid").jqGrid('getDataIDs')) || [];
+        var selectedIds = sel.map(function(x){ return (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x); });
+        var hasVisible = selectedIds.filter(function(id){ return id !== 'cb' && visibleIds.indexOf(id) !== -1; }).length > 0;
+        ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=$(s); if (el.length) el.prop('disabled', !hasVisible); });
+      } catch (e) { /* no-op */ }
     },
 {% endblock %}
 

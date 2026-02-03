@@ -34,7 +34,13 @@ from django.test import TransactionTestCase
 from django.contrib.auth.models import Group
 
 from freppledb.common.models import User
-from freppledb.input.models import Item, PurchaseOrder, ManufacturingOrder, Demand
+from freppledb.input.models import (
+    Item,
+    PurchaseOrder,
+    ManufacturingOrder,
+    Demand,
+    WorkOrder,
+)
 from .utils import getOdooVersion
 
 
@@ -89,6 +95,21 @@ class OdooTest(TransactionTestCase):
             "read",
             [ids],
             {"fields": odoo_fields} if odoo_fields else {},
+        )
+
+    def odooRPCAction(
+        self,
+        odoo_model,
+        action,
+        record_ids,  # a list of record ids on which the action should be execued
+    ):
+        return self.models.execute_kw(
+            self.db,
+            self.uid,
+            self.password,
+            odoo_model,
+            action,
+            [record_ids],
         )
 
     def updateUserTimeZone(self):
@@ -174,7 +195,7 @@ class OdooTest(TransactionTestCase):
             {16: 1, 17: 10, 18: 9, 19: 10}[odoo_version],
         )
 
-        if odoo_version >= 15:
+        if odoo_version >= 15 and odoo_version < 19:
             # Work order level integration is only available from odoo 15 onwards
             self.assertEqual(
                 ManufacturingOrder.objects.all()
@@ -182,13 +203,23 @@ class OdooTest(TransactionTestCase):
                 .count(),
                 3,
             )
+        elif odoo_version >= 19:
+            # One MO is a subcontracted MO
+            self.assertEqual(
+                ManufacturingOrder.objects.all().filter(status="approved").count(),
+                5,
+            )
+            self.assertEqual(
+                WorkOrder.objects.all().filter(status="approved").count(),
+                6,
+            )
 
         # Generate plan
         management.call_command(
             "runplan",
             plantype=1,
             constraint="capa,mfg_lt,po_lt",
-            env="supply,fcst,invplan",
+            env="fcst,invplan,supply,odoo_write_1",
         )
 
         # Check plan results
@@ -281,3 +312,56 @@ class OdooTest(TransactionTestCase):
             )
             cnt += 1
         self.assertEqual(cnt, 1)
+
+        # Recommendations
+        cnt_purchase = 0
+        cnt_reschedule = 0
+        count_produce = 0
+        count_late_delivery = 0
+
+        # store the recommendaion to approve them
+        purchase_rec = 0
+        reschedule_rec = 0
+        produce_rec = 0
+
+        if odoo_version >= 19:
+            for odoo_rec in self.odooRPC("frepple.recommendation", []):
+                if odoo_rec["type"] == "purchase":
+                    cnt_purchase += 1
+                    if not purchase_rec:
+                        purchase_rec = odoo_rec
+                elif odoo_rec["type"] == "reschedule":
+                    cnt_reschedule += 1
+                    if not reschedule_rec:
+                        reschedule_rec = odoo_rec
+                elif odoo_rec["type"] == "produce":
+                    count_produce += 1
+                    if not produce_rec:
+                        produce_rec = odoo_rec["id"]
+                elif odoo_rec["type"] == "late delivery":
+                    count_late_delivery += 1
+            self.assertGreaterEqual(cnt_purchase, 6)
+            self.assertGreaterEqual(cnt_reschedule, 5)
+            self.assertGreaterEqual(count_produce, 1)
+            self.assertGreaterEqual(count_late_delivery, 9)
+
+            # approve a purchase, a reschedule and a produce
+            self.odooRPCAction(
+                "frepple.recommendation",
+                "action_approve",
+                [purchase_rec["id"], reschedule_rec["id"], produce_rec["id"]],
+            )
+
+            # Make sure they have been correctly created/update
+            cnt = 0
+            for odoo_poline in self.odooRPC(
+                "purchase.order.line",
+                [("order_id.origin", "=", "frePPLe"), ("order_id.state", "=", "draft")],
+                {"limit": 1, "order": "create_date desc"},
+            ):
+                self.assertEqual(odoo_poline["product_qty"], purchase_rec["quantity"])
+                self.assertEqual(
+                    odoo_poline["product_id"][0], purchase_rec["product_id"][0]
+                )
+                cnt += 1
+            self.assertEqual(cnt, 2)

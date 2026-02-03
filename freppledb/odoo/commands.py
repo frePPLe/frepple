@@ -155,10 +155,6 @@ class OdooReadData(PlanTask):
             getattr(settings, "ODOO_SINGLECOMPANY", {}).get(database, None)
             or Parameter.getValue("odoo.singlecompany", database, "false")
         ).strip()
-        odoo_language = (
-            getattr(settings, "ODOO_SINGLECOMPANY", {}).get(database, None)
-            or Parameter.getValue("odoo.language", database, "en_US")
-        ).strip()
         odoo_delta = Parameter.getValue("odoo.delta", database, "999")
 
         # Disable the automatic creation of inventory consumption & production until we have
@@ -252,7 +248,6 @@ class OdooReadData(PlanTask):
                 frepple.settings.id = d[0] + 1
 
             args = {
-                "language": odoo_language,
                 "company": odoo_company,
                 "mode": cls.mode,
                 "singlecompany": singlecompany,
@@ -288,7 +283,7 @@ class OdooReadData(PlanTask):
                     else:
                         data = response.read().decode(encoding="utf-8", errors="ignore")
                     if loglevel:
-                        print("Data receive from odoo:")
+                        print("Data received from odoo:")
                         print(data)
 
                     if response.info().get("Content-Type") == "application/json":

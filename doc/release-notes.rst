@@ -7,6 +7,19 @@ Release notes
 This release is scheduled for early March 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Odoo integration
+
+- | 18, 19: Changed the behavior when a bill of material doesn't specify
+    an operation on which a component needs to be consumed.
+  | Odoo then consumes the component on the LAST operation.
+  | Earlier version of the connector put the consumption of the component
+    on the FIRST operation.
+  | This difference created more confusion and issues than resolving
+    issues. The connector now follows the odoo logic.
+
+- | 18, 19: The calculation of the reserved stocks has been adjusted to
+    account for more complex odoo configurations with stock pickings.
+
 9.13.0 (2026-01-31)
 ===================
 

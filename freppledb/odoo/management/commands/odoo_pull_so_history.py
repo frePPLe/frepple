@@ -200,9 +200,6 @@ class Command(BaseCommand):
             self.singlecompany = getattr(settings, "ODOO_SINGLECOMPANY", {}).get(
                 self.database, None
             ) or Parameter.getValue("odoo.singlecompany", self.database, "false")
-            self.odoo_language = getattr(settings, "ODOO_SINGLECOMPANY", {}).get(
-                self.database, None
-            ) or Parameter.getValue("odoo.language", self.database, "en_US")
             self.odoo_delta = Parameter.getValue("odoo.delta", self.database, "999")
 
             # Check parameters
@@ -217,8 +214,6 @@ class Command(BaseCommand):
                 missing.append("odoo_url")
             if not self.odoo_company:
                 missing.append("odoo_company")
-            if not self.odoo_language:
-                missing.append("odoo_language")
             if missing:
                 raise CommandError("Missing parameter %s" % ", ".join(missing))
 

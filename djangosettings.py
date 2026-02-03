@@ -175,7 +175,6 @@ ODOO_SINGLECOMPANY = {
     i: os.environ.get("ODOO_SINGLECOMPANY", None) for i in DATABASES.keys()
 }
 ODOO_PASSWORDS = {i: os.environ.get("ODOO_PASSWORD", None) for i in DATABASES.keys()}
-ODOO_LANGUAGE = {i: os.environ.get("ODOO_LANGUAGE", None) for i in DATABASES.keys()}
 
 # If passwords are set in this file they will be used instead of the ones set in the database parameters table
 OPENBRAVO_PASSWORDS = {

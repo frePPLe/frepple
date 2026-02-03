@@ -149,11 +149,6 @@ The section below describes the installation and configuration of these.
       | Company name for which to create purchase quotation and
         manufacturing orders.
 
-    * | odoo.language:
-      | Language for the connection.
-      | If translated names of products, items, locations, etc they will be used.
-      | The default value is en_US.
-
     * | odoo.singlecompany:
       | When false (the default) the connector downloads all allowed companies for the Odoo integration
         user.

@@ -363,12 +363,11 @@ onSelectRow: function(rowid, status) {
 
   var sel = $("#grid").jqGrid('getGridParam', 'selarrrow') || [];
   upload.selectedRows = sel.filter(x => x.id !== 'cb');
-  if (sel.length !== 0)  {
-    var visibleIds = ($("#grid").jqGrid && $("#grid").jqGrid('getDataIDs')) || [];
-    var selectedIds = sel.map(function(x){ return (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x); });
-    var hasVisible = selectedIds.filter(function(id){ return id !== 'cb' && visibleIds.indexOf(id) !== -1; }).length > 0;
-    ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=$(s); if (el.length) el.prop('disabled', !hasVisible); });
-  }
+
+  var visibleIds = ($("#grid").jqGrid && $("#grid").jqGrid('getDataIDs')) || [];
+  var selectedIds = sel.map(function(x){ return (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x); });
+  var hasVisible = selectedIds.filter(function(id){ return id !== 'cb' && visibleIds.indexOf(id) !== -1; }).length > 0;
+  ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=$(s); if (el.length) el.prop('disabled', !hasVisible); });
 },
 onSelectAll: function(aRowids, status){
   const event = new CustomEvent('allSelect', {

@@ -7,6 +7,12 @@ Release notes
 This release is scheduled for early March 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: User interface
+
+- | Emails sent upon success or failure of a scheduled workflow will now contain
+    a table summarizing all the tasks executed during the workflow plus some useful
+    links. This allows a better overview of the workflow status from that email.
+
 .. rubric:: Odoo integration
 
 - | 18, 19: Changed the behavior when a bill of material doesn't specify

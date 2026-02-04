@@ -201,6 +201,53 @@ class Command(BaseCommand):
             help="Task identifier (generated automatically if not provided)",
         )
 
+    def prepareEmailTable(self, task, steptasks):
+        # Prepare a table to insert into the email
+            # Table Header
+            steptasks.insert(0, task)
+            html_table = None
+            if getattr(settings, "EMAIL_URL_PREFIX", None):
+                html_table = """
+                <table border="1" style="border-collapse: collapse; width: 100%; text-align: left;">
+                    <thead>
+                        <tr style="background-color: #f2f2f2;">
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Submitted</th>
+                            <th>Started</th>
+                            <th>Finished</th>
+                            <th>Status</th>
+                            <th>Message</th>
+                            <th>Log File</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                """
+
+                # Table Rows
+                for steptask in steptasks:
+
+                    if steptask.logfile:
+                        log_cell = f'<a href="{settings.EMAIL_URL_PREFIX}/execute/logfrepple/{steptask.id}/">View Log</a>'
+                    else:
+                        log_cell = ""
+
+                    html_table += f"""
+                        <tr>
+                            <td>{steptask.id}</td>
+                            <td>{steptask.name}</td>
+                            <td>{steptask.submitted.strftime("%Y-%m-%d %H:%M:%S")}</td>
+                            <td>{steptask.started.strftime("%Y-%m-%d %H:%M:%S")}</td>
+                            <td>{steptask.finished.strftime("%Y-%m-%d %H:%M:%S")}</td>
+                            <td>{steptask.status}</td>
+                            <td>{steptask.message or ""}</td>
+                            <td>{log_cell}</td>
+                        </tr>
+                    """
+
+                html_table += "</tbody></table>"
+                return html_table
+
     def handle(self, *args, **options):
         if not options["schedule"]:
             # Executing Without schedule argument is a legacy from the
@@ -263,6 +310,7 @@ class Command(BaseCommand):
             stepcount = len(tasklist)
             idx = 1
             failed = []
+            steptasks = []
             for step in tasklist:
                 steptask = Task(
                     name=step.get("name"),
@@ -281,6 +329,7 @@ class Command(BaseCommand):
 
                 # Check the status
                 steptask = Task.objects.all().using(database).get(pk=steptask.id)
+                steptasks.append(steptask)
                 if self.getStepTaskStatus(steptask) == "Failed":
                     failed.append(str(steptask.id))
                     if step.get("abort_on_failure", False):
@@ -339,6 +388,9 @@ class Command(BaseCommand):
                     try:
                         body = [f"Task {task.id} completed succesfully."]
                         body_html = [f"Task {task.id} completed succesfully."]
+                        html_table = self.prepareEmailTable(task,steptasks)
+                        if html_table:
+                            body_html.append(html_table)
                         if getattr(settings, "EMAIL_URL_PREFIX", None):
                             url = f"{settings.EMAIL_URL_PREFIX}{"" if database==DEFAULT_DB_ALIAS else "/%s" % database}/execute/"
                             body.append(f"Check the logs at {url}\n")
@@ -416,6 +468,9 @@ class Command(BaseCommand):
                         try:
                             body = [f"Task {task.id} failed."]
                             body_html = [f"Task {task.id} failed."]
+                            html_table = self.prepareEmailTable(task,steptasks)
+                            if html_table:
+                                body_html.append(html_table)
                             if getattr(settings, "EMAIL_URL_PREFIX", None):
                                 url = f"{settings.EMAIL_URL_PREFIX}{"" if database==DEFAULT_DB_ALIAS else "/%s" % database}/execute/"
                                 body.append(f"Check the logs at {url}\n")
@@ -434,8 +489,8 @@ class Command(BaseCommand):
                                 body="\n".join(body),
                                 body_html="<br>".join(body_html),
                             )
-                        except Exception as e:
-                            task.message = "Can't send failure e-mail: %s" % e
+                        except Exception as exc:
+                            task.message = "Can't send failure e-mail: %s" % exc
                             task.save(
                                 using=database,
                                 update_fields=[

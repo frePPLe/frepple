@@ -201,13 +201,13 @@ class Command(BaseCommand):
             help="Task identifier (generated automatically if not provided)",
         )
 
-    def prepareEmailTable(self, task, steptasks):
+    def prepareEmailTable(self, database, task, steptasks):
         # Prepare a table to insert into the email
-            # Table Header
-            steptasks.insert(0, task)
-            html_table = None
-            if getattr(settings, "EMAIL_URL_PREFIX", None):
-                html_table = """
+        # Table Header
+        steptasks.insert(0, task)
+        html_table = None
+        if getattr(settings, "EMAIL_URL_PREFIX", None):
+            html_table = """
                 <table border="1" style="border-collapse: collapse; width: 100%; text-align: left;">
                     <thead>
                         <tr style="background-color: #f2f2f2;">
@@ -219,20 +219,28 @@ class Command(BaseCommand):
                             <th>Status</th>
                             <th>Message</th>
                             <th>Log File</th>
+                            <th>Info</th>
                         </tr>
                     </thead>
                     <tbody>
                 """
 
-                # Table Rows
-                for steptask in steptasks:
+            # Table Rows
+            for steptask in steptasks:
+                scenario = "" if database == DEFAULT_DB_ALIAS else f"/{database}"
+                if steptask.logfile:
+                    log_cell = f'<a href="{settings.EMAIL_URL_PREFIX}{scenario}/execute/logfrepple/{steptask.id}/">View Log</a>'
+                else:
+                    log_cell = ""
 
-                    if steptask.logfile:
-                        log_cell = f'<a href="{settings.EMAIL_URL_PREFIX}/execute/logfrepple/{steptask.id}/">View Log</a>'
-                    else:
-                        log_cell = ""
+                if steptask.name == "importfromfolder":
+                    info_cell = f'<a href="{settings.EMAIL_URL_PREFIX}{scenario}/execute/downloadfromfolder/0/">Download import Files</a>'
+                elif steptask.name == "exporttofolder":
+                    info_cell = f'<a href="{settings.EMAIL_URL_PREFIX}{scenario}/execute/downloadfromfolder/1/">Download exported Files</a>'
+                else:
+                    info_cell = ""
 
-                    html_table += f"""
+                html_table += f"""
                         <tr>
                             <td>{steptask.id}</td>
                             <td>{steptask.name}</td>
@@ -242,11 +250,12 @@ class Command(BaseCommand):
                             <td>{steptask.status}</td>
                             <td>{steptask.message or ""}</td>
                             <td>{log_cell}</td>
+                            <td>{info_cell}</td>
                         </tr>
                     """
 
-                html_table += "</tbody></table>"
-                return html_table
+            html_table += "</tbody></table>"
+            return html_table
 
     def handle(self, *args, **options):
         if not options["schedule"]:
@@ -388,11 +397,14 @@ class Command(BaseCommand):
                     try:
                         body = [f"Task {task.id} completed succesfully."]
                         body_html = [f"Task {task.id} completed succesfully."]
-                        html_table = self.prepareEmailTable(task,steptasks)
+                        html_table = self.prepareEmailTable(database, task, steptasks)
                         if html_table:
                             body_html.append(html_table)
                         if getattr(settings, "EMAIL_URL_PREFIX", None):
-                            url = f"{settings.EMAIL_URL_PREFIX}{"" if database==DEFAULT_DB_ALIAS else "/%s" % database}/execute/"
+                            scenario = (
+                                "" if database == DEFAULT_DB_ALIAS else f"/{database}"
+                            )
+                            url = f"{settings.EMAIL_URL_PREFIX}{scenario}/execute/"
                             body.append(f"Check the logs at {url}\n")
                             body_html.append(
                                 f'Check the logs <a style="font-weight:bold" href="{url}">here</a><br>'
@@ -468,11 +480,18 @@ class Command(BaseCommand):
                         try:
                             body = [f"Task {task.id} failed."]
                             body_html = [f"Task {task.id} failed."]
-                            html_table = self.prepareEmailTable(task,steptasks)
+                            html_table = self.prepareEmailTable(
+                                database, task, steptasks
+                            )
                             if html_table:
                                 body_html.append(html_table)
                             if getattr(settings, "EMAIL_URL_PREFIX", None):
-                                url = f"{settings.EMAIL_URL_PREFIX}{"" if database==DEFAULT_DB_ALIAS else "/%s" % database}/execute/"
+                                scenario = (
+                                    ""
+                                    if database == DEFAULT_DB_ALIAS
+                                    else f"/{database}"
+                                )
+                                url = f"{settings.EMAIL_URL_PREFIX}{scenario}/execute/"
                                 body.append(f"Check the logs at {url}\n")
                                 body_html.append(
                                     f'Check the logs <a style="font-weight:bold" href="{url}">here</a><br>'

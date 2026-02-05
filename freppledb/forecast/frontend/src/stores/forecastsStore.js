@@ -188,6 +188,160 @@ export const useForecastsStore = defineStore('forecasts', {
 
       return newRoot
     },
+
+    // fetch trees and forecast details in parallel
+    async loadForecasts(itemName = null, locationName = null, customerName = null) {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        // Execute all 4 API calls in parallel using Promise.all()
+        const [itemResult, locationResult, customerResult, detailsResult] = await Promise.all([
+          forecastService.getItemtree(this.currentMeasure, itemName, locationName, customerName),
+          forecastService.getLocationtree(this.currentMeasure, itemName, locationName, customerName),
+          forecastService.getCustomertree(this.currentMeasure, itemName, locationName, customerName),
+          forecastService.getForecastDetails(this.currentMeasure, itemName, locationName, customerName)
+        ]);
+
+        // Process all results
+        this.processItemTree(itemResult);
+        this.processLocationTree(locationResult);
+        this.processCustomerTree(customerResult);
+        this.processForecastDetails(detailsResult);
+
+        return { itemResult, locationResult, customerResult, detailsResult };
+
+      } catch (error) {
+        console.error('Batch API Error:', error);
+        this.setError({
+          title: 'Error',
+          message: 'Unable to fetch forecast data',
+          details: error.message,
+          type: 'error'
+        });
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // Extract processing logic for item tree
+    processItemTree(result) {
+      const { loading, backendError, responseData } = result;
+      this.loading = loading;
+
+      if (backendError) {
+        throw new Error(backendError.value.message || 'API Error');
+      }
+
+      if (responseData.value) {
+        const data = toRaw(responseData.value);
+
+        if (data.length === 0) {
+          this.itemTree = data;
+          return;
+        }
+
+        this.treeBuckets = data[0].values.map(x => x['bucketname']);
+
+        if (data[0]['lvl'] === 0) {
+          this.item.Name = data[0].item;
+          if (data[0]['children']) {
+            this.treeExpansion.item[0].add(data[0].item);
+            data[0]['expanded'] = 1;
+          }
+        }
+
+        this.itemTree = data;
+      }
+    },
+
+    // Extract processing logic for location tree
+    processLocationTree(result) {
+      const { loading, backendError, responseData } = result;
+      this.loading = loading;
+
+      if (backendError) {
+        throw new Error(backendError.value.message || 'API Error');
+      }
+
+      if (responseData.value) {
+        const data = toRaw(responseData.value);
+
+        if (data.length > 0) {
+          this.treeBuckets = data[0].values.map(x => x['bucketname']);
+        }
+
+        if (data[0] && data[0]['lvl'] === 0) {
+          this.location.Name = data[0].location;
+          if (data[0]['children']) {
+            this.treeExpansion.location[0].add(data[0].location);
+            data[0]['expanded'] = 1;
+          }
+        }
+
+        this.locationTree = data;
+      }
+    },
+
+    // Extract processing logic for customer tree
+    processCustomerTree(result) {
+      const { loading, backendError, responseData } = result;
+      this.loading = loading;
+
+      if (backendError) {
+        throw new Error(backendError.value.message || 'API Error');
+      }
+
+      if (responseData.value) {
+        const data = toRaw(responseData.value);
+
+        if (data.length > 0) {
+          this.treeBuckets = data[0].values.map(x => x['bucketname']);
+        }
+
+        if (data[0] && data[0]['lvl'] === 0) {
+          this.customer.Name = data[0].customer;
+          if (data[0]['children']) {
+            this.treeExpansion.customer[0].add(data[0].customer);
+            data[0]['expanded'] = 1;
+          }
+        }
+
+        this.customerTree = data;
+      }
+    },
+
+    // Extract processing logic for forecast details
+    processForecastDetails(result) {
+      const { loading, backendError, responseData } = result;
+      this.loading = loading;
+
+      if (backendError) {
+        throw new Error(backendError.value.message || 'API Error');
+      }
+
+      if (responseData.value) {
+        const data = toRaw(responseData.value);
+
+        this.item.update(data['attributes']['item']);
+        if (this.itemTree[0] && this.itemTree[0].item === this.item.Name) {
+          this.itemTree[0].description = data['attributes']['item'].filter(x => x[0] === 'Description')[0][1];
+        }
+
+        this.location.update(data['attributes']['location']);
+        this.customer.update(data['attributes']['customer']);
+        this.comments = data['comments'];
+        this.buckets = data['forecast'];
+        this.forecastAttributes.forecastmethod = data['attributes']['forecast']['forecastmethod'];
+        this.forecastAttributes.oldForecastmethod = data['attributes']['forecast']['forecastmethod'];
+        this.forecastAttributes.forecast_out_method = data['attributes']['forecast']['forecast_out_method'];
+        this.forecastAttributes.forecast_out_smape = data['attributes']['forecast']['forecast_out_smape'];
+        this.currency.length = 0;
+        this.currency.push(...data['attributes']['currency']);
+      }
+    },
+
     async setCurrentMeasure(measure, save = true) {
       if (this.currentMeasure === measure) return;
       this.currentMeasure = measure;
@@ -196,24 +350,14 @@ export const useForecastsStore = defineStore('forecasts', {
       const rawItemName = window.location.pathname.split('/editor/')[1];
       if (rawItemName !== "") {
         const itemName = decodeURIComponent(window.admin_unescape(rawItemName.replace(/\/$/, "")));
-        // Implement first a check to see if the next in the tree is a child or if there is even a next
-        // this.itemTree[0].lvl = this.itemTree[1].lvl - 1;
-        this.locationTree = await this.getLocationtree(itemName, null, null);
-        this.locationTree[0].expanded = 1;
-        this.customerTree = await this.getCustomertree(itemName, null, null);
-        this.customerTree[0].expanded = 1;
-        this.itemTree = await this.getItemtree(itemName, null, null);
+        await this.loadForecasts(itemName, null, null);
         this.itemTree.unshift(this.createFilteredRoot(itemName));
         this.itemTree[0].expanded = 1;
-        await this.getForecastDetails(itemName, null, null);
       } else {
-        this.itemTree = await this.getItemtree();
+        await this.loadForecasts();
         this.itemTree[0].expanded = 1;
-        this.locationTree = await this.getLocationtree();
         this.locationTree[0].expanded = 1;
-        this.customerTree = await this.getCustomertree();
         this.customerTree[0].expanded = 1;
-        await this.getForecastDetails();
       }
       if (save) await this.savePreferences();
     },
@@ -226,22 +370,14 @@ export const useForecastsStore = defineStore('forecasts', {
       const rawItemName = window.location.pathname.split('/editor/')[1];
       if (rawItemName !== "") {
         const itemName = decodeURIComponent(window.admin_unescape(rawItemName.replace(/\/$/, "")));
-        this.itemTree = await this.getItemtree(itemName, null, null);
+        await this.loadForecasts(itemName, null, null);
         this.itemTree.unshift(this.createFilteredRoot(itemName));
         this.itemTree[0].expanded = 1;
-        this.locationTree = await this.getLocationtree(itemName, null, null);
-        this.locationTree[0].expanded = 1;
-        this.customerTree = await this.getCustomertree(itemName, null, null);
-        this.customerTree[0].expanded = 1;
-        await this.getForecastDetails(itemName, null, null);
       } else {
-        this.itemTree = await this.getItemtree();
+        await this.loadForecasts();
         this.itemTree[0].expanded = 1;
-        this.locationTree = await this.getLocationtree();
         this.locationTree[0].expanded = 1;
-        this.customerTree = await this.getCustomertree();
         this.customerTree[0].expanded = 1;
-        await this.getForecastDetails();
       }
       if (save) await this.savePreferences();
     },
@@ -266,18 +402,34 @@ export const useForecastsStore = defineStore('forecasts', {
       const childrenParameters = { item: null, location: null, customer: null };
       for (let m of modelSequence) {
         if (getTree) {
-          switch (m) {
-            case 'item':
-              this.itemTree = await this.getItemtree(rootParameters['item'], rootParameters['location'], rootParameters['customer']);
-              break;
-            case 'location':
-              this.locationTree = await this.getLocationtree(rootParameters['item'], rootParameters['location'], rootParameters['customer']);
-              break;
-            case 'customer':
-              this.customerTree = await this.getCustomertree(rootParameters['item'], rootParameters['location'], rootParameters['customer']);
-              break;
-            default:
-              break;
+          // Batch load remaining trees instead of sequential calls
+          const remainingModels = modelSequence.slice(modelSequence.indexOf(m));
+          if (remainingModels.length > 0) {
+            const batchRequests = remainingModels.map(mod => {
+              switch (mod) {
+                case 'item':
+                  return forecastService.getItemtree(this.currentMeasure, rootParameters['item'], rootParameters['location'], rootParameters['customer']);
+                case 'location':
+                  return forecastService.getLocationtree(this.currentMeasure, rootParameters['item'], rootParameters['location'], rootParameters['customer']);
+                case 'customer':
+                  return forecastService.getCustomertree(this.currentMeasure, rootParameters['item'], rootParameters['location'], rootParameters['customer']);
+              }
+            });
+
+            const results = await Promise.all(batchRequests);
+
+            // Process results in order
+            for (let i = 0; i < remainingModels.length; i++) {
+              const mod = remainingModels[i];
+              if (mod === 'item') {
+                this.processItemTree(results[i]);
+              } else if (mod === 'location') {
+                this.processLocationTree(results[i]);
+              } else if (mod === 'customer') {
+                this.processCustomerTree(results[i]);
+              }
+            }
+            getTree = false;
           }
         }
         rootParameters[m] = this[m].Name;

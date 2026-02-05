@@ -555,6 +555,10 @@ class Command(BaseCommand):
                 task.save(using=self.database)
             setattr(_thread_locals, "database", old_thread_locals)
 
+    def email_info(self, database):
+        scenario = "" if database == DEFAULT_DB_ALIAS else f"/{database}"
+        return f'<a href="{settings.EMAIL_URL_PREFIX}{scenario}/execute/downloadfromfolder/1/">Download exported Files</a>'
+
     # accordion template
     title = _("Export plan result")
     index = 1200

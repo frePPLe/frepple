@@ -32,7 +32,7 @@ import time
 import zoneinfo
 
 from django.conf import settings
-from django.core.management import get_commands
+from django.core.management import get_commands, load_command_class
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction, DEFAULT_DB_ALIAS, connections
 from django.db.utils import OperationalError
@@ -213,13 +213,11 @@ class Command(BaseCommand):
                         <tr style="background-color: #f2f2f2;">
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Submitted</th>
                             <th>Started</th>
                             <th>Finished</th>
                             <th>Status</th>
                             <th>Message</th>
                             <th>Log File</th>
-                            <th>Info</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -233,29 +231,34 @@ class Command(BaseCommand):
                 else:
                     log_cell = ""
 
-                if steptask.name == "importfromfolder":
-                    info_cell = f'<a href="{settings.EMAIL_URL_PREFIX}{scenario}/execute/downloadfromfolder/0/">Download import Files</a>'
-                elif steptask.name == "exporttofolder":
-                    info_cell = f'<a href="{settings.EMAIL_URL_PREFIX}{scenario}/execute/downloadfromfolder/1/">Download exported Files</a>'
-                else:
-                    info_cell = ""
+                commands = get_commands()
+                app_name = commands.get(steptask.name)
+
+                info_cell = None
+                if app_name:
+                    klass = load_command_class(app_name, steptask.name)
+                    if hasattr(klass, "email_info"):
+                        method = getattr(klass, "email_info")
+                        info_cell = method(database)
+                message = steptask.message or ""
+                if info_cell:
+                    separator = "<br>" if message else ""
+                    message = f"{message}{separator}{info_cell}"
 
                 html_table += f"""
                         <tr>
                             <td>{steptask.id}</td>
                             <td>{steptask.name}</td>
-                            <td>{steptask.submitted.strftime("%Y-%m-%d %H:%M:%S")}</td>
                             <td>{steptask.started.strftime("%Y-%m-%d %H:%M:%S")}</td>
                             <td>{steptask.finished.strftime("%Y-%m-%d %H:%M:%S")}</td>
                             <td>{steptask.status}</td>
-                            <td>{steptask.message or ""}</td>
+                            <td>{message}</td>
                             <td>{log_cell}</td>
-                            <td>{info_cell}</td>
                         </tr>
                     """
 
             html_table += "</tbody></table>"
-            return html_table
+        return html_table
 
     def handle(self, *args, **options):
         if not options["schedule"]:

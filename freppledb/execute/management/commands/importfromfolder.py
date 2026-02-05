@@ -544,6 +544,10 @@ class Command(BaseCommand):
             logger.error("Error: Invalid data format - skipping the file \n")
         return [errorcount, warningcount]
 
+    def email_info(self, database):
+        scenario = "" if database == DEFAULT_DB_ALIAS else f"/{database}"
+        return f'<a href="{settings.EMAIL_URL_PREFIX}{scenario}/execute/downloadfromfolder/0/">Download import Files</a>'
+
     # accordion template
     title = _("Import data files")
     index = 1100

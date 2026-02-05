@@ -52,33 +52,6 @@ const databaseerrormodal = ref(false);
 const rowlimiterrormodal = ref(false);
 const modalcallback = ref({ resolve: () => {} });
 
-// const noVisibleSelection = computed(() => {
-//   // eslint-disable-next-line no-undef
-//   const sel = jQuery("#grid").jqGrid('getGridParam', 'selarrrow') || [];
-//   // eslint-disable-next-line no-undef
-//   const visibleIds = (jQuery("#grid").jqGrid && jQuery("#grid").jqGrid('getDataIDs')) || [];
-//   // Normalize and only count selections that are visible on the current page
-//   const visibleSelection = sel.filter((x) => {
-//     const id = (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x);
-//     return id !== 'cb' && visibleIds.includes(id);
-//   });
-//   return visibleSelection.length === 0;
-// });
-// let stopNoVisibleSelectionWatch;
-
-// const updateActionsToolsButtons = (isDisabled) => {
-//   let actionsButton = document.getElementById('actions1');
-//   if (actionsButton) actionsButton.disabled = isDisabled;
-//   actionsButton = document.getElementById('actions2');
-//   if (actionsButton) actionsButton.disabled = isDisabled;
-//   actionsButton = document.getElementById('segments1');
-//   if (actionsButton) actionsButton.disabled = isDisabled;
-//   actionsButton = document.getElementById('copy_selected');
-//   if (actionsButton) actionsButton.disabled = isDisabled;
-//   actionsButton = document.getElementById('delete_selected');
-//   if (actionsButton) actionsButton.disabled = isDisabled;
-// };
-//
 function save() {
   if (store.hasChanges) {
     store.saveOperationplanChanges().catch((error) => {
@@ -144,15 +117,6 @@ function shouldShowWidget(widgetName) {
 }
 
 onMounted(() => {
-  // stopNoVisibleSelectionWatch = watch(
-  //   noVisibleSelection,
-  //   (value) => {
-  //     console.log('139 No selection changed to ', value, ', updating actions tools buttons');
-  //     updateActionsToolsButtons(value);
-  //   },
-  //   { immediate: true }
-  // );
-
   const getGridRowData = (id) => {
     try {
       return window.jQuery('#grid').getRowData(id);
@@ -175,14 +139,6 @@ onMounted(() => {
     } else {
       store.undo();
     }
-    // Update toolbar buttons depending on selection visible on the current page
-    // try {
-    //   const sel = window.jQuery('#grid').jqGrid('getGridParam', 'selarrrow') || [];
-    //   const selectedIds = sel.map((x) => (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x));
-    //   const visibleIds = (window.jQuery('#grid').jqGrid && window.jQuery('#grid').jqGrid('getDataIDs')) || [];
-    //   const hasVisibleSelection = selectedIds.filter((id) => id !== 'cb' && visibleIds.includes(id)).length > 0;
-    //   updateActionsToolsButtons(!hasVisibleSelection);
-    // } catch (err) { /* no-op */ }
   };
 
   const handleAllSelectEvent = (e, isSingleSelect) => {
@@ -263,6 +219,15 @@ onMounted(() => {
     store.setStatus(detail.status);
   };
 
+  const handleReloadOperationplanDetails = (e) => {
+    const detail = e?.detail || {};
+    if (!detail.reference) return;
+
+    // Fetch fresh data from backend to get recalculated values
+    // Pass clearChanges=true to clear saved changes since they've been persisted
+    store.loadOperationplans([detail.reference], true, [{ reference: detail.reference }], true);
+  };
+
   // Attach listeners on the app root element if present, otherwise on document
   const rootEl = document.getElementById('app') || document;
   rootEl.addEventListener('singleSelect', handleSingleSelectEvent);
@@ -272,6 +237,7 @@ onMounted(() => {
   rootEl.addEventListener('triggerSave', handleTriggerSave);
   rootEl.addEventListener('gridCellEdited', handleGridCellEdited);
   rootEl.addEventListener('refreshStatus', handleRefreshStatus);
+  rootEl.addEventListener('reloadOperationplanDetails', handleReloadOperationplanDetails);
   rootEl.addEventListener('hidden.bs.collapse', grid.saveColumnConfiguration);
   rootEl.addEventListener('shown.bs.collapse', grid.saveColumnConfiguration);
 
@@ -286,6 +252,7 @@ onMounted(() => {
       undo: handleUndoEvent,
       gridCellEdited: handleGridCellEdited,
       refreshStatus: handleRefreshStatus,
+      reloadOperationplanDetails: handleReloadOperationplanDetails,
     },
   };
 
@@ -294,7 +261,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   const info = appElement.value;
-  // if (stopNoVisibleSelectionWatch) stopNoSelectionWatch();
+
   if (info && info.rootEl && info.handlers) {
     try {
       info.rootEl.removeEventListener('singleSelect', info.handlers.single);
@@ -303,6 +270,7 @@ onUnmounted(() => {
       info.rootEl.removeEventListener('displayonpanel', info.handlers.display);
       info.rootEl.removeEventListener('undo', info.handlers.display);
       info.rootEl.removeEventListener('gridCellEdited', info.handlers.gridCellEdited);
+      info.rootEl.removeEventListener('reloadOperationplanDetails', info.handlers.reloadOperationplanDetails);
     } catch (err) {
       console.log('Failed to remove event listeners from app root element:', err);
     }

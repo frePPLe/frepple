@@ -131,15 +131,17 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.preferences.calendarmode = newCalendarMode;
     },
 
-    async loadOperationplans(references = [], selectedFlag, selectedRows, clearChanges = false) {
+    async loadOperationplans(references = [], selectedFlag, selectedRows) {
       this.selectedOperationplans.length = 0
       this.selectedOperationplans.push(...toRaw(selectedRows));
       if (references.length === 0) {
         this.operationplan = new Operationplan();
       } else if (selectedFlag === false) {
         if (this.selectedOperationplans.length === 1) {
-          await this.loadOperationplans(selectedRows, true, selectedRows, clearChanges);
+          await this.loadOperationplans(selectedRows, true, selectedRows);
         }
+      } else if ( this.operationplan.reference !== undefined && (references[0] === this.operationplan.reference.toString())) {
+        // do nothing
       } else {
         this.operationplan = new Operationplan();
         this.loading = true;
@@ -147,10 +149,10 @@ export const useOperationplansStore = defineStore('operationplans', {
         const operationplanReference = references[0];
 
         try {
-          this.operationplan = new Operationplan();
           const response = await operationplanService.getOperationplanDetails({
             reference: operationplanReference
           });
+
           // Update the store with the fetched data
           const operationplan = toRaw(response.responseData.value)[0];
           if (this.selectedOperationplans.length === 1) {
@@ -170,17 +172,9 @@ export const useOperationplansStore = defineStore('operationplans', {
           this.loading = false;
         }
       }
-
-      // After loading, either clear the saved changes (after save) or reapply them (normal navigation)
       if (this.operationplanChanges[this.operationplan.reference] !== undefined) {
-        if (clearChanges) {
-          // Clear saved changes after a successful save - the backend data is now authoritative
-          delete this.operationplanChanges[this.operationplan.reference];
-        } else {
-          // Reapply unsaved changes when navigating between operationplans
-          for (const field in this.operationplanChanges[this.operationplan.reference]) {
-            this.operationplan[field] = this.operationplanChanges[this.operationplan.reference][field];
-          }
+        for (const field in this.operationplanChanges[this.operationplan.reference]) {
+          this.operationplan[field] = this.operationplanChanges[this.operationplan.reference][field];
         }
       }
     },

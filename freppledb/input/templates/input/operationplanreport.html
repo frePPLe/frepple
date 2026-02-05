@@ -408,26 +408,13 @@ multiboxonly: false,
 loadComplete: function(data) {
       $('#curerror').html("");
 
-      const visibleIDs = ($("#grid").jqGrid && $("#grid").jqGrid('getDataIDs')) || [];
-      // selectedRows must be in the current grid
-      upload.selectedRows = upload.selectedRows.filter(function(x){ return visibleIDs.includes(x) });
-
       upload.selectedRows.forEach(function(op) {
         $("#grid").jqGrid('setSelection', op, false);
       })
 
       if (upload.selectedRows.length === 1) {
-        const rowData = jQuery("#grid").getRowData(upload.selectedRows[0]);
-        const event = new CustomEvent('displayonpanel', rowData);
+        const event = new CustomEvent('displayonpanel', jQuery("#grid").getRowData(upload.selectedRows[0]));
         document.getElementById('app').dispatchEvent(event);
-
-        // Trigger a backend fetch to get recalculated values after save
-        const reloadEvent = new CustomEvent('reloadOperationplanDetails', {
-          detail: {
-            reference: rowData.operationplan__reference || rowData.reference || upload.selectedRows[0]
-          }
-        });
-        document.getElementById('app').dispatchEvent(reloadEvent);
       }
       else if (upload.selectedRows.length > 1) {
         var selectiondata = [];
@@ -441,19 +428,7 @@ loadComplete: function(data) {
           }
         });
         document.getElementById('app').dispatchEvent(event);
-      } else { //No pre-selected rows => reset selection in Vue by sending 'unselect all'
-
-        const event = new CustomEvent('allSelect', {
-          detail: {
-            execute: 'displayInfo',
-            status: false,
-            selectedRows: [],
-          }
-        });
-        document.getElementById('app').dispatchEvent(event);
-
       }
-
       // Initialize actions buttons state based on visible-page selection after load
       try {
         var sel = $("#grid").jqGrid('getGridParam', 'selarrrow') || [];

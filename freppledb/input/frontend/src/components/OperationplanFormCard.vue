@@ -102,9 +102,6 @@ function setEditValue(field, value) {
 }
 
 const formatDuration = window.formatDuration;
-
-const operationplan = computed(() => store.operationplan);
-
 </script>
 
 
@@ -278,9 +275,9 @@ const operationplan = computed(() => store.operationplan);
             <small v-if="isMultipleOrNone && store.operationplan.colmodel && store.operationplan.colmodel['operationplan__quantity']">({{ ttt(store.operationplan.colmodel.operationplan__quantity.type) }})</small>
           </td>
           <td>
-            <span v-if="isMultipleOrNone">{{ numberFormat(operationplan.operationplan__quantity || operationplan.quantity || 0) }}</span>
-            <input v-if="!isMultipleOrNone && !operationplan.hasOwnProperty('operationplan__quantity')" class="form-control" type="number" v-model="operationplan.quantity" @input="setEditValue('quantity', $event.target.value)" :readonly="!editable">
-            <input v-if="!isMultipleOrNone && operationplan.hasOwnProperty('operationplan__quantity')" class="form-control" type="number" v-model="operationplan.operationplan__quantity" @input="setEditValue('quantity', $event.target.value)" :readonly="!editable">
+            <span v-if="isMultipleOrNone">{{ numberFormat(store.operationplan.operationplan__quantity || store.operationplan.quantity || 0) }}</span>
+            <input v-if="!isMultipleOrNone && !store.operationplan.hasOwnProperty('operationplan__quantity')" class="form-control" type="number" v-model="store.operationplan.quantity" @input="setEditValue('quantity', $event.target.value)" :readonly="!editable">
+            <input v-if="!isMultipleOrNone && store.operationplan.hasOwnProperty('operationplan__quantity')" class="form-control" type="number" v-model="store.operationplan.operationplan__quantity" @input="setEditValue('quantity', $event.target.value)" :readonly="!editable">
           </td>
         </tr>
         <tr v-for="([key, value]) in filteredColmodel" :key="key">

@@ -50,6 +50,8 @@ rect.opplan {
   var editable = {% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %};
   var service_url = {% if proxied %}'/svc/{{request.database}}/'{% else %}document.location.protocol + "//{{port}}/"{% endif %};
   var service_token = '{{token}}';
+  var isDataSaved = false;
+  var operationplanChanges = {};
 
   function saveData(rows, ok_callback) {
       $.ajax({
@@ -60,25 +62,28 @@ rect.opplan {
         contentType: "application/json",
         success: function () {
           upload.undo();
-          $("#save i").addClass('hidden');
-          $(".ng-dirty").removeClass('ng-dirty');
+          jQuery("#save i").addClass('hidden');
+          jQuery(".ng-dirty").removeClass('ng-dirty');
           if (typeof ok_callback !== 'undefined') ok_callback();
+          isDataSaved = true;
         },
         error: ajaxerror
     });
+    operationplanChanges = {};
+    isDataSaved = true; // for test
   }
 
   function extraPreference() {
     var tmp = {
-      "height": Math.floor($("#content-main").height()),
-      "width": Math.floor($("#fields").width()),
+      "height": Math.floor(jQuery("#content-main").height()),
+      "width": Math.floor(jQuery("#fields").width()),
       "mode": mode,
       "calendarmode": calendarmode,
       "columns": window.appInstance?.kanbancolumns || window.preferences.columns || undefined,
       "grouping": grouping,
       "groupingdir": groupingdir,
-      "detailwidth": Math.floor($("#detailspanel").width() || 0),
-      "widgets": $(".widget").length > 1 ? widget.getConfig() : preferences.widgets
+      "detailwidth": Math.floor(jQuery("#detailspanel").width() || 0),
+      "widgets": jQuery(".widget").length > 1 ? widget.getConfig() : preferences.widgets
     };
     return tmp;
   }
@@ -104,23 +109,23 @@ rect.opplan {
   }
 
   function setHeights() {
-    var h = $('#content-main').height();
-    $('#grid').setGridWidth($('#content-main').width());
-    $("#grid").setGridHeight(h - 52);
-    $(".column-body").css("height", h - 25);
-    $("#scrolldayview").css("height", h - 25);
-    $("#scrollweekview").css("height", h - 60);
-    $("#scrollmonthview").css("height", h - 45);
+    var h = jQuery('#content-main').height();
+    jQuery('#grid').setGridWidth(jQuery('#content-main').width());
+    jQuery("#grid").setGridHeight(h - 52);
+    jQuery(".column-body").css("height", h - 25);
+    jQuery("#scrolldayview").css("height", h - 25);
+    jQuery("#scrollweekview").css("height", h - 60);
+    jQuery("#scrollmonthview").css("height", h - 45);
   }
 
   function setWidths() {
-    var w = $("#workarea").width() - $('#detailspanel').width() - $("#resize-handle").parent().width();
-    $('#grid').setGridWidth(w);
-    $("#grid").setGridHeight($('#content-main').height() - 52);
-    $("#kanban").css("width", w - 25);
-    $("#scrolldayview").css("width", w - 25);
-    $("#scrollweekview").css("width", w - 60);
-    $("#scrollmonthview").css("width", w - 45);
+    var w = jQuery("#workarea").width() - jQuery('#detailspanel').width() - jQuery("#resize-handle").parent().width();
+    jQuery('#grid').setGridWidth(w);
+    jQuery("#grid").setGridHeight(jQuery('#content-main').height() - 52);
+    jQuery("#kanban").css("width", w - 25);
+    jQuery("#scrolldayview").css("width", w - 25);
+    jQuery("#scrollweekview").css("width", w - 60);
+    jQuery("#scrollmonthview").css("width", w - 45);
   }
 
   function getDirtyData() {
@@ -129,11 +134,12 @@ rect.opplan {
       return angular.element('#controller').scope().getDirtyCards();
     }
   	else {
-      var dirty = $("#grid").getChangedCells('dirty');
+      var dirty = jQuery("#grid").getChangedCells('dirty');
       for (var c of dirty) {
-        var ref = $("#grid").jqGrid('getCell', c.id, "operationplan__reference");
+        var ref = jQuery("#grid").jqGrid('getCell', c.id, "operationplan__reference");
         if (ref) c.operationplan__reference = ref;
       }
+      savedData = false;
       return dirty;
     }
   }
@@ -154,9 +160,9 @@ rect.opplan {
   var viewend = new Date(horizonend.getTime());
 
 
-  $(function() {
-    $("#workarea").css('overflow-x','visible');
-    $("#content-main").resizable({
+  jQuery(function() {
+    jQuery("#workarea").css('overflow-x','visible');
+    jQuery("#content-main").resizable({
       handleSelector: "#resize-handle",
       resizeWidth: false,
       resizeHeight: true,
@@ -165,11 +171,12 @@ rect.opplan {
         grid.saveColumnConfiguration();
       }
     });
-    $("#save").on('click', function() {
-      $(window).off('beforeunload', upload.warnUnsavedChanges);
+    jQuery("#save").on('click', function() {
+      jQuery(window).off('beforeunload', upload.warnUnsavedChanges);
       });
-    $("#undo").on('click', function() {
-      $(window).off('beforeunload', upload.warnUnsavedChanges);
+    jQuery("#undo").on('click', function() {
+      jQuery(window).off('beforeunload', upload.warnUnsavedChanges);
+      operationplanChanges = {};
       const event = new CustomEvent('singleSelect', {
       detail: {
           execute: 'undo',
@@ -180,57 +187,57 @@ rect.opplan {
       });
       document.getElementById('app').dispatchEvent(event);
     });
-    $("#actionsul li, button#actions1").on('click', function() {
+    jQuery("#actionsul li, button#actions1").on('click', function() {
       const event = new CustomEvent("refreshStatus", {
         detail: {
           execute: 'refreshStatus',
           reference: null,
-          status: $("#actions").val(),
+          status: jQuery("#actions").val(),
           selectedRows: null,
         }
       });
       document.getElementById('app').dispatchEvent(event);
     });
-    $("#kanbanmode").on('click', function() {
+    jQuery("#kanbanmode").on('click', function() {
       mode = "kanban";
       grid.saveColumnConfiguration(function() {
         location.reload();
       });
     });
-    $("#calendarmonth").on('click', function() {
+    jQuery("#calendarmonth").on('click', function() {
       mode = "calendarmonth";
       grid.saveColumnConfiguration(function() {
         location.reload();
       });
     });
-    $("#calendarweek").on('click', function() {
+    jQuery("#calendarweek").on('click', function() {
       mode = "calendarweek";
       grid.saveColumnConfiguration(function() {
         location.reload();
       });
     });
-    $("#calendarday").on('click', function() {
+    jQuery("#calendarday").on('click', function() {
       mode = "calendarday";
       grid.saveColumnConfiguration(function() {
         location.reload();
       });
     });
-    $('#zoomin').on("click", function() { zoom(0.5); });
-    $('#zoomout').on("click", function() { zoom(2); });
+    jQuery('#zoomin').on("click", function() { zoom(0.5); });
+    jQuery('#zoomout').on("click", function() { zoom(2); });
     {% if showGantt %}
-    $("#ganttmode").on('click', function() {
+    jQuery("#ganttmode").on('click', function() {
       mode = "gantt";
       grid.saveColumnConfiguration(function() {
         location.reload();
       });
     });
-    $("#zoomin, #zoomout").removeClass("d-none");
+    jQuery("#zoomin, #zoomout").removeClass("d-none");
     {% endif %}
   });
 
   // // Controller will call this function to pass values to the grid
   function displayongrid(id, columnid, value) {
-    $("#"+id).removeClass("edited").addClass("edited");
+    jQuery("#"+id).removeClass("edited").addClass("edited");
     if (
       columnid === "startdate" ||
       columnid === "enddate" ||
@@ -239,10 +246,10 @@ rect.opplan {
       columnid === "remark" ||
       (columnid === "status" && ['proposed', 'approved', 'confirmed', 'completed', 'closed'].indexOf(value) > -1)
     ) {
-      $("#grid").jqGrid("setCell", id, columnid, value, "dirty-cell");
-      $("#save, #undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-      $(window).off('beforeunload', upload.warnUnsavedChanges);
-      $(window).on('beforeunload', upload.warnUnsavedChanges);
+      jQuery("#grid").jqGrid("setCell", id, columnid, value, "dirty-cell");
+      jQuery("#save, #undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+      jQuery(window).off('beforeunload', upload.warnUnsavedChanges);
+      jQuery(window).on('beforeunload', upload.warnUnsavedChanges);
     }
   }
 
@@ -347,10 +354,10 @@ displayGrid({% if preferences.mode != "kanban" and preferences.mode != "gantt" a
 {% block extra_grid %}
 
 onSelectRow: function(rowid, status) {
-  const rowData = $("#grid").getRowData(rowid);
+  const rowData = jQuery("#grid").getRowData(rowid);
   const reference = rowData.operationplan__reference ? rowData.operationplan__reference : rowid;
 
-  const references = $("#grid").jqGrid('getGridParam', 'selarrrow').filter(x => x.id !== 'cb').map(x => x.operationplan__reference ? x.operationplan__reference : x);
+  const references = jQuery("#grid").jqGrid('getGridParam', 'selarrrow').filter(x => x.id !== 'cb').map(x => x.operationplan__reference ? x.operationplan__reference : x);
   const event = new CustomEvent("singleSelect", {
     detail: {
       execute: 'displayInfo',
@@ -361,13 +368,13 @@ onSelectRow: function(rowid, status) {
   });
   document.getElementById('app').dispatchEvent(event);
 
-  var sel = $("#grid").jqGrid('getGridParam', 'selarrrow') || [];
+  var sel = jQuery("#grid").jqGrid('getGridParam', 'selarrrow') || [];
   upload.selectedRows = sel.filter(x => x.id !== 'cb');
 
-  var visibleIds = ($("#grid").jqGrid && $("#grid").jqGrid('getDataIDs')) || [];
+  var visibleIds = (jQuery("#grid").jqGrid && jQuery("#grid").jqGrid('getDataIDs')) || [];
   var selectedIds = sel.map(function(x){ return (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x); });
   var hasVisible = selectedIds.filter(function(id){ return id !== 'cb' && visibleIds.indexOf(id) !== -1; }).length > 0;
-  ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=$(s); if (el.length) el.prop('disabled', !hasVisible); });
+  ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=jQuery(s); if (el.length) el.prop('disabled', !hasVisible); });
 },
 onSelectAll: function(aRowids, status){
   const event = new CustomEvent('allSelect', {
@@ -378,19 +385,19 @@ onSelectAll: function(aRowids, status){
     }
   });
   document.getElementById('app').dispatchEvent(event);
-  if ($("#actions").length) $("#actions1").prop('disabled', !status);
-  var sel = $("#grid").jqGrid('getGridParam', 'selarrrow') || [];
+  if (jQuery("#actions").length) jQuery("#actions1").prop('disabled', !status);
+  var sel = jQuery("#grid").jqGrid('getGridParam', 'selarrrow') || [];
   upload.selectedRows = sel.filter(x => x.id !== 'cb');
   if (sel.length !== 0 && status)  {
-    var visibleIds = ($("#grid").jqGrid && $("#grid").jqGrid('getDataIDs')) || [];
+    var visibleIds = (jQuery("#grid").jqGrid && jQuery("#grid").jqGrid('getDataIDs')) || [];
     var selectedIds = sel.map(function(x){ return (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x); });
     var hasVisible = selectedIds.filter(function(id){ return id !== 'cb' && visibleIds.indexOf(id) !== -1; }).length > 0;
-    ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=$(s); if (el.length) el.prop('disabled', !hasVisible); });
+    ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=jQuery(s); if (el.length) el.prop('disabled', !hasVisible); });
   }
 },
 
 afterSaveCell: function(rowid, cellname, value, iRow, iCol) {
-  const rowData = $("#grid").getRowData(rowid);
+  const rowData = jQuery("#grid").getRowData(rowid);
   const reference = rowData.operationplan__reference ? rowData.operationplan__reference : rowid;
 
   const event = new CustomEvent('displayonpanel', {
@@ -402,42 +409,55 @@ afterSaveCell: function(rowid, cellname, value, iRow, iCol) {
     }
   });
   document.getElementById('app').dispatchEvent(event);
+  isDataSaved = false;
 },
 
 multiboxonly: false,
 loadComplete: function(data) {
-      $('#curerror').html("");
+  if (!isDataSaved) {
+    const IDs = Object.keys(operationplanChanges);
+    IDs.forEach((id) => {
+      const changedCellsKeys = Object.keys(operationplanChanges[id]);
+      changedCellsKeys.forEach((field) => {
+        try {
+          displayongrid(id, field, operationplanChanges[id][field]);
+        } catch (e) {
+          // ignore
+        }
+      });
+    });
+  }
 
-      upload.selectedRows.forEach(function(op) {
-        $("#grid").jqGrid('setSelection', op, false);
-      })
+  jQuery('#curerror').html("");
 
-      if (upload.selectedRows.length === 1) {
-        const event = new CustomEvent('displayonpanel', jQuery("#grid").getRowData(upload.selectedRows[0]));
-        document.getElementById('app').dispatchEvent(event);
+  upload.selectedRows.forEach(function(op) {
+    jQuery("#grid").jqGrid('setSelection', op, false);
+  })
+
+  if (upload.selectedRows.length === 1) {
+    const event = new CustomEvent('displayonpanel', jQuery("#grid").getRowData(upload.selectedRows[0]));
+    document.getElementById('app').dispatchEvent(event);
+  }
+  else if (upload.selectedRows.length > 1) {
+    var selectiondata = [];
+    for (var x of upload.selectedRows)
+      selectiondata.push(jQuery("#grid").getRowData(x));
+
+    event = new CustomEvent('processAggregatedInfo', {
+      detail: {
+        selectiondata: selectiondata,
+        colModel: jQuery("#grid").jqGrid ('getGridParam', 'colModel')
       }
-      else if (upload.selectedRows.length > 1) {
-        var selectiondata = [];
-        for (var x of upload.selectedRows)
-          selectiondata.push(jQuery("#grid").getRowData(x));
-
-        const event = new CustomEvent('processAggregatedInfo', {
-          detail: {
-            selectiondata: selectiondata,
-            colModel: jQuery("#grid").jqGrid ('getGridParam', 'colModel')
-          }
-        });
-        document.getElementById('app').dispatchEvent(event);
-      }
-      // Initialize actions buttons state based on visible-page selection after load
-      try {
-        var sel = $("#grid").jqGrid('getGridParam', 'selarrrow') || [];
-        var visibleIds = ($("#grid").jqGrid && $("#grid").jqGrid('getDataIDs')) || [];
-        var selectedIds = sel.map(function(x){ return (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x); });
-        var hasVisible = selectedIds.filter(function(id){ return id !== 'cb' && visibleIds.indexOf(id) !== -1; }).length > 0;
-        ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=$(s); if (el.length) el.prop('disabled', !hasVisible); });
-      } catch (e) { /* no-op */ }
-    },
+    });
+    document.getElementById('app').dispatchEvent(event);
+  }
+  // Initialize actions buttons state based on visible-page selection after load
+  var sel = jQuery("#grid").jqGrid('getGridParam', 'selarrrow') || [];
+  var visibleIds = (jQuery("#grid").jqGrid && jQuery("#grid").jqGrid('getDataIDs')) || [];
+  var selectedIds = sel.map(function(x){ return (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x); });
+  var hasVisible = selectedIds.filter(function(id){ return id !== 'cb' && visibleIds.indexOf(id) !== -1; }).length > 0;
+  ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=jQuery(s); if (el.length) el.prop('disabled', !hasVisible); });
+},
 {% endblock %}
 
 {% block table %}

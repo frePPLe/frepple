@@ -131,9 +131,11 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.preferences.calendarmode = newCalendarMode;
     },
 
-    async loadOperationplans(references = [], selectedFlag, selectedRows) {
+    async loadOperationplans(references = [], selectedFlag, selectedRows, isDataSaved = false) {
+      if (isDataSaved) this.operationplanChanges = {};
       this.selectedOperationplans.length = 0
       this.selectedOperationplans.push(...toRaw(selectedRows));
+      console.log(138, isDataSaved, this.operationplanChanges);
       if (references.length === 0) {
         this.operationplan = new Operationplan();
       } else if (selectedFlag === false) {
@@ -537,6 +539,7 @@ export const useOperationplansStore = defineStore('operationplans', {
       } else {
         this.operationplanChanges[reference][field] = value;
       }
+      window.operationplanChanges = toRaw(this.operationplanChanges);
     }
   }
 })

@@ -12,7 +12,7 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION * WITH THE SOFTWARE OR 
 DEALINGS IN THE SOFTWARE */
 
 <script setup lang="js">
-import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
 import OperationplanFormCard from '@/components/OperationplanFormCard.vue';
@@ -52,33 +52,6 @@ const databaseerrormodal = ref(false);
 const rowlimiterrormodal = ref(false);
 const modalcallback = ref({ resolve: () => {} });
 
-// const noVisibleSelection = computed(() => {
-//   // eslint-disable-next-line no-undef
-//   const sel = jQuery("#grid").jqGrid('getGridParam', 'selarrrow') || [];
-//   // eslint-disable-next-line no-undef
-//   const visibleIds = (jQuery("#grid").jqGrid && jQuery("#grid").jqGrid('getDataIDs')) || [];
-//   // Normalize and only count selections that are visible on the current page
-//   const visibleSelection = sel.filter((x) => {
-//     const id = (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x);
-//     return id !== 'cb' && visibleIds.includes(id);
-//   });
-//   return visibleSelection.length === 0;
-// });
-// let stopNoVisibleSelectionWatch;
-
-// const updateActionsToolsButtons = (isDisabled) => {
-//   let actionsButton = document.getElementById('actions1');
-//   if (actionsButton) actionsButton.disabled = isDisabled;
-//   actionsButton = document.getElementById('actions2');
-//   if (actionsButton) actionsButton.disabled = isDisabled;
-//   actionsButton = document.getElementById('segments1');
-//   if (actionsButton) actionsButton.disabled = isDisabled;
-//   actionsButton = document.getElementById('copy_selected');
-//   if (actionsButton) actionsButton.disabled = isDisabled;
-//   actionsButton = document.getElementById('delete_selected');
-//   if (actionsButton) actionsButton.disabled = isDisabled;
-// };
-//
 function save() {
   if (store.hasChanges) {
     store.saveOperationplanChanges().catch((error) => {
@@ -144,14 +117,6 @@ function shouldShowWidget(widgetName) {
 }
 
 onMounted(() => {
-  // stopNoVisibleSelectionWatch = watch(
-  //   noVisibleSelection,
-  //   (value) => {
-  //     console.log('139 No selection changed to ', value, ', updating actions tools buttons');
-  //     updateActionsToolsButtons(value);
-  //   },
-  //   { immediate: true }
-  // );
 
   const getGridRowData = (id) => {
     try {
@@ -170,7 +135,7 @@ onMounted(() => {
       } else if (detail.selectedRows.length > 1) {
         handleAllSelectEvent(e, true);
       } else if (detail.selectedRows.length < 2) {
-        store.loadOperationplans([detail.reference], detail.status, detail.selectedRows);
+        store.loadOperationplans([detail.reference], detail.status, detail.selectedRows, window.savedData);
       }
     } else {
       store.undo();
@@ -219,7 +184,7 @@ onMounted(() => {
   };
 
   const handleDisplayOnPanel = (e) => {
-    // This event may carry either { rowid, reference, field, value } or the row object directly (legacy calls)
+    // This event may carry either { rowid, reference, field, value }
     const detail = e?.detail;
     if (!detail) return;
 
@@ -232,6 +197,7 @@ onMounted(() => {
           field: detail.field,
           value: detail.value,
         });
+        window.isDataSaved = false;
       } catch (err) {
         console.warn('Failed to apply grid cell edit from displayonpanel event', err);
       }

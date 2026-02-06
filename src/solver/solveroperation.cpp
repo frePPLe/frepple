@@ -1868,7 +1868,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
 
   // Increment the cost
   if (data->state->a_qty > 0.0) {
-    auto tmp = owner_opplan->getQuantity() * oper->getCost();
+    auto tmp = data->state->a_qty * oper->getCost();
     data->state->a_cost += tmp;
     if (data->logcosts && data->incostevaluation)
       logger << indentlevel << "     + cost on operation '" << oper

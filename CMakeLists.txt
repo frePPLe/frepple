@@ -85,7 +85,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=date-time")
 set(CMAKE_CXX_FLAGS_PROFILING "${CMAKE_CXX_FLAGS_DEBUG} -DNDEBUG")
 set(CMAKE_C_FLAGS_PROFILING "${CMAKE_C_FLAGS_DEBUG} -DNDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wuninitialized -Wunused -Wswitch -Wunused-parameter -Wall") # -Wextra
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -Wuninitialized -Wunused -Wswitch -Wunused-parameter -Wall") # -Wextra
 set(CMAKE_EXE_LINKER_FLAGS_PROFILING "")
 set(CMAKE_SHARED_LINKER_FLAGS_PROFILING "")
 
@@ -264,11 +264,11 @@ if(valgrind)
     PYTHONPATH=${CMAKE_SOURCE_DIR}
     DJANGO_SETTINGS_MODULE=freppledb.settings
     FREPPLE_LOGFILE=frepple.log
+    VIRTUAL_ENV=${CMAKE_SOURCE_DIR}/venv
     LD_BIND_NOW=1
-    invplan=1
     supply=1
     nowebservice=1
-    constraint=13
+    constraint=15
     plantype=1
     PYTHONMALLOC=malloc
     valgrind --tool=memcheck -v

@@ -34,6 +34,10 @@
 #include "freppleinterface.h"
 using namespace std;
 
+#ifndef NDEBUG
+extern "C" const char* __asan_default_options() { return "detect_leaks=0"; }
+#endif
+
 void usage() {
   cout
       << "\nfrePPLe v" << FreppleVersion()

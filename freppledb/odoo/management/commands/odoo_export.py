@@ -47,6 +47,7 @@ from freppledb.input.models import (
     DistributionOrder,
     ManufacturingOrder,
     Demand,
+    WorkOrder,
 )
 
 
@@ -541,9 +542,8 @@ class Command(BaseCommand):
         # We don't create work orders, but only updates existing work orders.
         # We leave it to odoo to create the workorders for a new manufacturing order.
         for i in (
-            ManufacturingOrder.objects.using(self.database)
+            WorkOrder.objects.using(self.database)
             .filter(
-                owner__operation__type="routing",
                 operation__source__startswith="odoo",
                 owner__item__source__startswith="odoo",
                 status__in=["approved", "confirmed"],

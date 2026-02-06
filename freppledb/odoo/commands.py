@@ -129,33 +129,54 @@ class OdooReadData(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
-        odoo_user = (
-            getattr(settings, "ODOO_USER", {}).get(database, None)
-            or Parameter.getValue("odoo.user", database)
-        ).strip()
-        odoo_password = (
-            getattr(settings, "ODOO_PASSWORDS", {}).get(database, None)
-            or Parameter.getValue("odoo.password", database)
-        ).strip()
-        odoo_db = (
-            getattr(settings, "ODOO_DB", {}).get(database, None)
-            or Parameter.getValue("odoo.db", database, None)
-        ).strip()
-        odoo_url = (
-            getattr(settings, "ODOO_URL", {}).get(database, None)
-            or Parameter.getValue("odoo.url", database, "")
-        ).strip()
-        if not odoo_url.endswith("/"):
-            odoo_url = odoo_url + "/"
-        odoo_company = (
-            getattr(settings, "ODOO_COMPANY", {}).get(database, None)
-            or Parameter.getValue("odoo.company", database, None)
-        ).strip()
-        singlecompany = (
-            getattr(settings, "ODOO_SINGLECOMPANY", {}).get(database, None)
-            or Parameter.getValue("odoo.singlecompany", database, "false")
-        ).strip()
-        odoo_delta = Parameter.getValue("odoo.delta", database, "999")
+        try:
+            odoo_user = (
+                getattr(settings, "ODOO_USER", {}).get(database, None)
+                or Parameter.getValue("odoo.user", database)
+            ).strip()
+        except Exception:
+            odoo_user = None
+        try:
+            odoo_password = (
+                getattr(settings, "ODOO_PASSWORDS", {}).get(database, None)
+                or Parameter.getValue("odoo.password", database)
+            ).strip()
+        except Exception:
+            odoo_password = None
+        try:
+            odoo_db = (
+                getattr(settings, "ODOO_DB", {}).get(database, None)
+                or Parameter.getValue("odoo.db", database, None)
+            ).strip()
+        except Exception:
+            odoo_db = None
+        try:
+            odoo_url = (
+                getattr(settings, "ODOO_URL", {}).get(database, None)
+                or Parameter.getValue("odoo.url", database, "")
+            ).strip()
+            if not odoo_url.endswith("/"):
+                odoo_url = odoo_url + "/"
+        except Exception:
+            odoo_url = None
+        try:
+            odoo_company = (
+                getattr(settings, "ODOO_COMPANY", {}).get(database, None)
+                or Parameter.getValue("odoo.company", database, None)
+            ).strip()
+        except Exception:
+            odoo_company = None
+        try:
+            singlecompany = (
+                getattr(settings, "ODOO_SINGLECOMPANY", {}).get(database, None)
+                or Parameter.getValue("odoo.singlecompany", database, "false")
+            ).strip()
+        except Exception:
+            singlecompany = "false"
+        try:
+            odoo_delta = Parameter.getValue("odoo.delta", database, "999")
+        except Exception:
+            odoo_delta = 999
 
         # Disable the automatic creation of inventory consumption & production until we have
         # read all odoo data. When odoo data is available we don't create extra ones

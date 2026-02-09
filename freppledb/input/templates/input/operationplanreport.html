@@ -51,7 +51,19 @@ rect.opplan {
   var service_url = {% if proxied %}'/svc/{{request.database}}/'{% else %}document.location.protocol + "//{{port}}/"{% endif %};
   var service_token = '{{token}}';
   var isDataSaved = false;
+  // the following variables are set in Vue components
   var operationplanChanges = {};
+  var pageIDs = [];
+
+  function getVisibleSelectedIds() {
+    pageIDs = window.jQuery("#grid").jqGrid && window.jQuery("#grid").jqGrid('getDataIDs') || [];
+    const vueSelectedOperationPlans = upload.selectedRows.map((op) => op.reference || op);
+
+    // filter out selected IDs that do not belong to this page
+    upload.selectedRows = pageIDs.filter((id) => vueSelectedOperationPlans.includes(id));
+
+    return upload.selectedRows
+  }
 
   function saveData(rows, ok_callback) {
       $.ajax({
@@ -415,38 +427,73 @@ afterSaveCell: function(rowid, cellname, value, iRow, iCol) {
 multiboxonly: false,
 loadComplete: function(data) {
   if (!isDataSaved) {
-    const IDs = Object.keys(operationplanChanges);
-    IDs.forEach((id) => {
-      const changedCellsKeys = Object.keys(operationplanChanges[id]);
-      changedCellsKeys.forEach((field) => {
-        try {
-          displayongrid(id, field, operationplanChanges[id][field]);
-        } catch (e) {
-          // ignore
+    console.log("430 loadComplete, ", operationplanChanges);
+    const pageSelectedIDs = getVisibleSelectedIds();
+<!--    upload.selectedRows.forEach(function(op) {-->
+<!--      jQuery("#grid").jqGrid('setSelection', op, false);-->
+<!--    })-->
+    const changedOperationplanReferences = Object.keys(operationplanChanges);
+    if (Object.keys(changedOperationplanReferences) > 0) {
+      changedOperationplanReferences.forEach((reference) => {
+        console.log("435 loadComplete", changedOperationplanReferences.reference);
+        if (pageSelectedIDs.includes(reference)) {
+          const changedCellsKeys = Object.keys(operationplanChanges[id]);
+          changedCellsKeys.forEach((field) => {
+            try {
+              displayongrid(id, field, operationplanChanges[id][field]);
+            } catch (e) {
+              // ignore
+            }
+          });
         }
       });
+    }
+    const IDs = Object.keys(operationplanChanges);
+    IDs.forEach((id) => {
+
     });
   }
 
   jQuery('#curerror').html("");
-
-  upload.selectedRows.forEach(function(op) {
+  console.log("loadComplete", upload.selectedRows);
+  console.log("loadComplete, ", getVisibleSelectedIds());
+  getVisibleSelectedIds().forEach(function(op) {
     jQuery("#grid").jqGrid('setSelection', op, false);
   })
 
-  if (upload.selectedRows.length === 1) {
-    const event = new CustomEvent('displayonpanel', jQuery("#grid").getRowData(upload.selectedRows[0]));
+  const references = jQuery("#grid").jqGrid('getGridParam', 'selarrrow').filter(x => x.id !== 'cb').map(x => x.operationplan__reference ? x.operationplan__reference : x);
+
+  if (getVisibleSelectedIds().length === 1) {
+    let event = new CustomEvent('displayonpanel', jQuery("#grid").getRowData(getVisibleSelectedIds()[0]));
     document.getElementById('app').dispatchEvent(event);
-  }
-  else if (upload.selectedRows.length > 1) {
+
+    event = new CustomEvent("singleSelect", {
+      detail: {
+        execute: 'displayInfo',
+        reference: getVisibleSelectedIds()[0],
+        status: status,
+        selectedRows: references,
+      }
+    });
+    document.getElementById('app').dispatchEvent(event);
+  } else if (getVisibleSelectedIds().length > 1) {
     var selectiondata = [];
-    for (var x of upload.selectedRows)
+    for (var x of getVisibleSelectedIds())
       selectiondata.push(jQuery("#grid").getRowData(x));
 
     event = new CustomEvent('processAggregatedInfo', {
       detail: {
         selectiondata: selectiondata,
         colModel: jQuery("#grid").jqGrid ('getGridParam', 'colModel')
+      }
+    });
+    document.getElementById('app').dispatchEvent(event);
+  } else {
+    const event = new CustomEvent('allSelect', {
+      detail: {
+        execute: 'displayInfo',
+        status: false,
+        selectedRows: [],
       }
     });
     document.getElementById('app').dispatchEvent(event);

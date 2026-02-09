@@ -323,7 +323,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     undo() {
       this.operationplan = new Operationplan();
       this.editForm = {setQuantity: null, setStart: "", setEnd: "", setRemark: ""};
-      this.selectedOperationplans.length = 0;
+      this.selectedOperationplans = [];
       this.operationplanChanges = {};
     },
 

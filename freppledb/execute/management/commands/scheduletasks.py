@@ -211,13 +211,13 @@ class Command(BaseCommand):
                 <table border="1" style="border-collapse: collapse; width: 100%; text-align: left;">
                     <thead>
                         <tr style="background-color: #f2f2f2;">
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Started</th>
-                            <th>Finished</th>
-                            <th>Status</th>
+                            <th align="center" style="text-align: center; vertical-align: middle;">ID</th>
+                            <th align="center" style="text-align: center; vertical-align: middle;">Name</th>
+                            <th align="center" style="text-align: center; vertical-align: middle;">Started</th>
+                            <th align="center" style="text-align: center; vertical-align: middle;">Finished</th>
+                            <th align="center" style="text-align: center; vertical-align: middle;">Status</th>
                             <th>Message</th>
-                            <th>Log File</th>
+                            <th align="center" style="text-align: center; vertical-align: middle;">Log file</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -227,7 +227,7 @@ class Command(BaseCommand):
             for steptask in steptasks:
                 scenario = "" if database == DEFAULT_DB_ALIAS else f"/{database}"
                 if steptask.logfile:
-                    log_cell = f'<a href="{settings.EMAIL_URL_PREFIX}{scenario}/execute/logfrepple/{steptask.id}/">View Log</a>'
+                    log_cell = f'<a href="{settings.EMAIL_URL_PREFIX}{scenario}/execute/logfrepple/{steptask.id}/">View log</a>'
                 else:
                     log_cell = ""
 
@@ -245,15 +245,22 @@ class Command(BaseCommand):
                     separator = "<br>" if message else ""
                     message = f"{message}{separator}{info_cell}"
 
+                if steptask.status != "Done":
+                    extra1 = 'bgcolor="#FF5252"'
+                    extra2 = "background-color: #FF5252;"
+                else:
+                    extra1 = ""
+                    extra2 = ""
+
                 html_table += f"""
                         <tr>
-                            <td>{steptask.id}</td>
-                            <td>{steptask.name}</td>
-                            <td>{steptask.started.strftime("%Y-%m-%d %H:%M:%S")}</td>
-                            <td>{steptask.finished.strftime("%Y-%m-%d %H:%M:%S")}</td>
-                            <td>{steptask.status}</td>
-                            <td>{message}</td>
-                            <td>{log_cell}</td>
+                            <td align="center" style="text-align: center; vertical-align: middle;">{steptask.id}</td>
+                            <td align="center" style="text-align: center; vertical-align: middle;">{steptask.name}</td>
+                            <td align="center" style="text-align: center; vertical-align: middle;">{steptask.started.strftime("%Y-%m-%d %H:%M:%S")}</td>
+                            <td align="center" style="text-align: center; vertical-align: middle;">{steptask.finished.strftime("%Y-%m-%d %H:%M:%S")}</td>
+                            <td align="center" {extra1} style="{extra2} text-align: center; vertical-align: middle;">{steptask.status}</td>
+                            <td style="vertical-align: middle;">{message}</td>
+                            <td align="center" style="text-align: center; vertical-align: middle;">{log_cell}</td>
                         </tr>
                     """
 
@@ -289,6 +296,9 @@ class Command(BaseCommand):
         old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             setattr(_thread_locals, "database", database)
+
+            scenario_obj = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=database)
+
             # Initialize the task
             if "task" in options and options["task"]:
                 try:
@@ -419,7 +429,11 @@ class Command(BaseCommand):
                             subject=(
                                 f"FrePPLe successfully executed {schedule.name}"
                                 if database == DEFAULT_DB_ALIAS
-                                else f"FrePPLe successfully executed {schedule.name} on {database}"
+                                else (
+                                    f"FrePPLe successfully executed {schedule.name} on {scenario_obj.description} ({database})"
+                                    if scenario_obj.description
+                                    else f"FrePPLe successfully executed {schedule.name} on {database}"
+                                )
                             ),
                             body="\n".join(body),
                             body_html="<br>".join(body_html),
@@ -506,7 +520,11 @@ class Command(BaseCommand):
                                 subject=(
                                     f"FrePPLe failed executing {schedule.name}"
                                     if database == DEFAULT_DB_ALIAS
-                                    else f"FrePPLe failed executing {schedule.name} on {database}"
+                                    else (
+                                        f"FrePPLe failed executed {schedule.name} on {scenario_obj.description} ({database})"
+                                        if scenario_obj.description
+                                        else f"FrePPLe failed executed {schedule.name} on {database}"
+                                    )
                                 ),
                                 body="\n".join(body),
                                 body_html="<br>".join(body_html),

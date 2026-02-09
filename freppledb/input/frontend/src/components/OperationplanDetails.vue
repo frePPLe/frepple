@@ -214,7 +214,7 @@ onMounted(() => {
   const handleGridCellEdited = (e) => {
     const detail = e?.detail || {};
     if (!detail.field) return;
-
+    window.isDataSaved = false;
     store.applyGridCellEdit({
       reference: detail.reference,
       field: detail.field,

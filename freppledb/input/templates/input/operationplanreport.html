@@ -426,37 +426,26 @@ afterSaveCell: function(rowid, cellname, value, iRow, iCol) {
 
 multiboxonly: false,
 loadComplete: function(data) {
-  if (!isDataSaved) {
-    console.log("430 loadComplete, ", operationplanChanges);
-    const pageSelectedIDs = getVisibleSelectedIds();
-<!--    upload.selectedRows.forEach(function(op) {-->
-<!--      jQuery("#grid").jqGrid('setSelection', op, false);-->
-<!--    })-->
-    const changedOperationplanReferences = Object.keys(operationplanChanges);
-    if (Object.keys(changedOperationplanReferences) > 0) {
-      changedOperationplanReferences.forEach((reference) => {
-        console.log("435 loadComplete", changedOperationplanReferences.reference);
-        if (pageSelectedIDs.includes(reference)) {
-          const changedCellsKeys = Object.keys(operationplanChanges[id]);
-          changedCellsKeys.forEach((field) => {
-            try {
-              displayongrid(id, field, operationplanChanges[id][field]);
-            } catch (e) {
-              // ignore
-            }
-          });
-        }
-      });
-    }
-    const IDs = Object.keys(operationplanChanges);
-    IDs.forEach((id) => {
-
+  const pageSelectedIDs = getVisibleSelectedIds();
+  const changedOperationplanReferences = Object.keys(operationplanChanges);
+  if (Object.keys(changedOperationplanReferences) > 0) {
+    changedOperationplanReferences.forEach((reference) => {
+      console.log("435 loadComplete", changedOperationplanReferences.reference);
+      if (pageSelectedIDs.includes(reference)) {
+        const changedCellsKeys = Object.keys(operationplanChanges[id]);
+        changedCellsKeys.forEach((field) => {
+          try {
+            displayongrid(id, field, operationplanChanges[id][field]);
+          } catch (e) {
+            // ignore
+          }
+        });
+      }
     });
   }
+  const IDs = Object.keys(operationplanChanges);
 
   jQuery('#curerror').html("");
-  console.log("loadComplete", upload.selectedRows);
-  console.log("loadComplete, ", getVisibleSelectedIds());
   getVisibleSelectedIds().forEach(function(op) {
     jQuery("#grid").jqGrid('setSelection', op, false);
   })

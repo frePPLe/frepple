@@ -132,17 +132,15 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     async loadOperationplans(references = [], selectedFlag, selectedRows, isDataSaved = false) {
-      if (isDataSaved) this.operationplanChanges = {};
       this.selectedOperationplans.length = 0
       this.selectedOperationplans.push(...toRaw(selectedRows));
-      console.log(138, isDataSaved, this.operationplanChanges);
       if (references.length === 0) {
         this.operationplan = new Operationplan();
       } else if (selectedFlag === false) {
         if (this.selectedOperationplans.length === 1) {
           await this.loadOperationplans(selectedRows, true, selectedRows);
         }
-      } else if ( this.operationplan.reference !== undefined && (references[0] === this.operationplan.reference.toString())) {
+      // } else if ( this.operationplan.reference !== undefined && (references[0] === this.operationplan.reference.toString())) {
         // do nothing
       } else {
         this.operationplan = new Operationplan();
@@ -174,7 +172,7 @@ export const useOperationplansStore = defineStore('operationplans', {
           this.loading = false;
         }
       }
-      if (this.operationplanChanges[this.operationplan.reference] !== undefined) {
+      if (this.operationplanChanges[this.operationplan.reference] !== undefined && !window.isDataSaved) {
         for (const field in this.operationplanChanges[this.operationplan.reference]) {
           this.operationplan[field] = this.operationplanChanges[this.operationplan.reference][field];
         }
@@ -316,9 +314,9 @@ export const useOperationplansStore = defineStore('operationplans', {
       }
     },
 
-    async save(data) {
-      console.log(314, 'save: ', data);
-    },
+    // async save(data) {
+    //   console.log(314, 'save: ', data);
+    // },
 
     undo() {
       this.operationplan = new Operationplan();

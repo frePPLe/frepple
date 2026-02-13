@@ -380,6 +380,15 @@ class OperationResourceList(GridReport):
             formatter="detail",
             extra='"role":"input/calendar"',
         ),
+        GridFieldText(
+            "resource__owner__name",
+            editable=False,
+            initially_hidden=True,
+            title=format_lazy("{} - {}", _("resource"), _("owner")),
+            field_name="resource__owner__name",
+            formatter="detail",
+            extra='"role":"input/resource"',
+        ),
     )
 
 

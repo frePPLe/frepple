@@ -60,7 +60,7 @@ void SolverCreate::chooseResource(
           ->hasType<OperationRouting>()) {
     // Scan for other steps that use the same tool and same skill
     auto routingopplan = lplan->getOperationPlan()->getOwner();
-    auto subopplans = routingopplan->getSubOperationPlans();
+    auto subopplans = routingopplan->getSubOperationPlans(false);
     while (auto subopplan = subopplans.next()) {
       if (subopplan == lplan->getOperationPlan()) continue;
       auto subldplniter = subopplan->getLoadPlans();

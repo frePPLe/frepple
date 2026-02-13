@@ -32,6 +32,7 @@ the max_connections setting is moved from the default 100 to eg 400).
         - log-apache-community:/var/log/apache2
         - log-frepple-community:/var/log/frepple
         - config-frepple-community:/etc/frepple
+        - config-apache-community:/etc/apache2
       environment:
         POSTGRES_HOST: "frepple-community-postgres"
         POSTGRES_PORT: 5432
@@ -76,6 +77,7 @@ the max_connections setting is moved from the default 100 to eg 400).
     log-apache-community:
     log-frepple-community:
     config-frepple-community:
+    config-apache-community:
 
   networks:
     backend:

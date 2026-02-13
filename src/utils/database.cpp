@@ -412,18 +412,18 @@ PGresult* DatabaseTransaction::execute(PGconn* conn) {
   // Commit or rollback the complete transaction
   if (rollback) {
     PGresult* res2 = PQexec(conn, "ROLLBACK");
-    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+    if (PQresultStatus(res2) != PGRES_COMMAND_OK) {
       logger << "Database thread error: transaction rollback failed: "
              << PQerrorMessage(conn) << '\n';
-      PQclear(res);
+      PQclear(res2);
       return res2;
     }
   } else {
     PGresult* res2 = PQexec(conn, "COMMIT");
-    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+    if (PQresultStatus(res2) != PGRES_COMMAND_OK) {
       logger << "Database thread error: transaction commit failed: "
              << PQerrorMessage(conn) << '\n';
-      PQclear(res);
+      PQclear(res2);
       return res2;
     }
   }

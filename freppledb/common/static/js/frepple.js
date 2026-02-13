@@ -1650,9 +1650,10 @@ var grid = {
     }
     else
       var field = $("#filterfield [data-filterfield]").first().attr("data-filterfield");
-    var n = {
+    const col = $("#grid").jqGrid('getGridParam', 'colModel').filter((col) => (col.name == field))[0];
+    const n = {
       "field": field,
-      "op": "cn",
+      "op": col.searchoptions.sopt[0],
       "data": $("#addsearch").val(),
       "filtercount": ++grid.filtercount
     };

@@ -2513,6 +2513,8 @@ class OperationPlan : public Object,
   // Delete all operationplans
   static void clear();
 
+  inline OperationPlan::iterator getSubOperationPlans(bool forward) const;
+
   inline OperationPlan::iterator getSubOperationPlans() const;
 
   PeggingIterator getPeggingDownstream() const;
@@ -3740,6 +3742,11 @@ inline OperationPlan::iterator OperationPlan::begin() { return iterator(); }
 
 inline OperationPlan::iterator OperationPlan::getSubOperationPlans() const {
   return OperationPlan::iterator(this);
+}
+
+inline OperationPlan::iterator OperationPlan::getSubOperationPlans(
+    bool forward) const {
+  return OperationPlan::iterator(this, forward);
 }
 
 /* A simple class to easily remember the date, quantity, setup and owner

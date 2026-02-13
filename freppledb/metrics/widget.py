@@ -252,10 +252,10 @@ class DeliveryPerformanceWidget(Widget):
                 })
                 .attr('dy', '.35em')
                 .text(d => {
-                    const perc = ((d.data.value / total) * 100).toFixed(1);
+                    const perc = ((d.data.value / total) * 100).toFixed(0);
                     return `${d.data.label} ${perc}%`;
                 })
-                .attr('class', 'text-capitalize text-body-inverted');
+                .attr('class', 'text-capitalize text-body-inverted pe-none');
         }
         draw();
         """

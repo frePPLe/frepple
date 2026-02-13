@@ -111,6 +111,9 @@ The image can be extended and customized using the following:
       | Contains the main configuration file djangosettings.py and the
         license file license.xml (for the Enterprise Edition).
 
+    * | /etc/apache2:
+      | Configuration files of the apache web server.
+
     * | /var/log/frepple:
       | Contains log files of the application.
 

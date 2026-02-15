@@ -1974,11 +1974,19 @@ class QuickStartForecast(View):
     @method_decorator(staff_member_required())
     def post(self, request, *args, **kwargs):
         post = {
-            "item": request.POST["item"],
-            "location": request.POST["location"],
-            "customer": request.POST["customer"],
+            "item": request.POST.get("item", None),
+            "location": request.POST.get("location", None),
+            "customer": request.POST.get("customer", None),
             "messages": [],
         }
+        history = request.POST.get("history", "").split()
+        if (
+            not post["item"]
+            or not post["location"]
+            or not post["customer"]
+            or not history
+        ):
+            return HttpResponseNotAllowed("Missing information")
 
         # Create item
         item, created = Item.objects.using(request.database).get_or_create(
@@ -2015,7 +2023,6 @@ class QuickStartForecast(View):
         Demand.objects.using(request.database).filter(
             item=item, customer=customer, location=location, source="wizard"
         ).delete()
-        history = request.POST["history"].split()
         cal = Parameter.getValue("forecast.calendar", request.database, "month")
         currentdate = getCurrentDate(request.database, lastplan=True).date()
         if not Bucket.objects.all().using(request.database).exists():

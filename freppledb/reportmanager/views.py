@@ -211,7 +211,9 @@ class ReportList(GridReport):
                             and not request.user.is_superuser
                         ):
                             raise PermissionDenied(
-                                _("Only superusers can modify public report they don't own")
+                                _(
+                                    "Only superusers can modify public report they don't own"
+                                )
                             )
         return super().dispatch(request, *args, **kwargs)
 
@@ -712,7 +714,6 @@ class ReportManager(GridReport):
 
         elif "save" in request.POST:
             if "id" in request.POST:
-
                 m = SQLReport.objects.using(request.database).get(pk=request.POST["id"])
                 if m.user and not m.public and m.user.id != request.user.id:
                     return JsonResponse(
@@ -759,7 +760,7 @@ class ReportManager(GridReport):
             else:
                 return JsonResponse({"status": force_str(_("Error saving report"))})
 
-        elif "delete" in request.POST:
+        elif "delete" in request.POST and "id" in request.POST:
             pk = request.POST["id"]
             m = SQLReport.objects.using(request.database).get(pk=request.POST["id"])
             if m.user and not m.public and m.user.id != request.user.id:
@@ -796,7 +797,7 @@ class ReportManager(GridReport):
             )
             return HttpResponse("ok")
 
-        elif "test" in request.POST:
+        elif "test" in request.POST and "sql" in request.POST:
             return StreamingHttpResponse(
                 content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,
                 streaming_content=cls._generate_json_data(

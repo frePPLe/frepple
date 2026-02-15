@@ -618,7 +618,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             raise Http404("Object not found")
         if request.method == "POST":
             if request.user.has_perm("common.add_comment"):
-                comment = request.POST["comment"]
+                comment = request.POST.get("comment", None)
                 att = request.FILES.get("attachment", None)
                 if comment or att:
                     c = Comment(

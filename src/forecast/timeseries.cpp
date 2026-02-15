@@ -1338,8 +1338,9 @@ ForecastSolver::Metrics ForecastSolver::Croston::generateForecast(
   double best_standarddeviation = 0.0;
   unsigned int between_demands = 1;
   alfa = min_alfa;
-  double delta = (max_alfa - min_alfa) / (solver->getForecastIterations() - 1);
-  for (; iteration < solver->getForecastIterations(); ++iteration) {
+  auto niter = solver->getForecastIterations();
+  double delta = (niter > 1) ? (max_alfa - min_alfa) / (niter - 1) : 0.0;
+  for (; iteration < niter; ++iteration) {
     // Loop over the outliers 'scan'/0 and 'filter'/1 modes
     double standarddeviation = 0.0;
     double maxdeviation = 0.0;
@@ -1409,7 +1410,9 @@ ForecastSolver::Metrics ForecastSolver::Croston::generateForecast(
 
       // Check outliers
       if (outliers == 0) {
-        standarddeviation = sqrt(standarddeviation / (count - 1));
+        standarddeviation = (count > 1) ? sqrt(standarddeviation / (count - 1))
+                                        : 0.0;
+        if (standarddeviation > ROUNDING_ERROR)
         maxdeviation /= standarddeviation;
         // Don't repeat if there are no outliers
         if (maxdeviation < ForecastSolver::Forecast_maxDeviation) break;

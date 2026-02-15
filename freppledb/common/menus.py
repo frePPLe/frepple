@@ -142,7 +142,7 @@ class Menu:
                 gr = self._groups[i]
                 if label:
                     gr[1] = label
-                if index:
+                if index is not None:
                     gr[2] = index
                 return
         # Create new group, if it wasn't found already

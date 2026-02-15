@@ -156,7 +156,7 @@ def Upload(request):
                         enddate = datetime.strptime(
                             rec.get("enddate"), "%Y-%m-%dT%H:%M:%S"
                         )
-                    except:
+                    except Exception:
                         # PO/MO/DO table
                         enddate = datetime.strptime(
                             rec.get("enddate"),

@@ -455,7 +455,7 @@ class PlanTaskRegistry:
                     break
             if isinstance(existing, PlanTaskParallel):
                 # Already existing as parallel group
-                s.addTask(task)
+                existing.addTask(task)
             elif not existing and task.thread == "main":
                 # Simple sequential step
                 cls.reg.addTask(task)

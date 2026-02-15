@@ -223,8 +223,8 @@ void Problem::clearProblems(HasProblems& p, bool setchanged,
 
   // Delete all problems in the list
   Problem* keepfirst = nullptr;
-  for (Problem* cur = p.firstProblem; cur;) {
-    Problem* del = cur;
+  for (auto* cur = p.firstProblem; cur;) {
+    auto* del = cur;
     cur = cur->nextProblem;
     if (includeInvalidData || typeid(*del) != typeid(ProblemInvalidData)) {
       del->owner = nullptr;

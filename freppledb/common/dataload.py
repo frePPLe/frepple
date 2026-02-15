@@ -111,7 +111,9 @@ def parseExcelWorksheet(
         but it's faster because we don't actually build the dictionary.
         """
 
-        def __init__(self, headers=[]):
+        def __init__(self, headers=None):
+            if headers is None:
+                headers = []
             self.headers = {}
             self.data = []
             colnum = 0
@@ -292,7 +294,9 @@ def parseCSVdata(
         but it's faster because we don't actually build the dictionary.
         """
 
-        def __init__(self, headers=[]):
+        def __init__(self, headers=None):
+            if headers is None:
+                headers = []
             self.headers = {}
             self.data = []
             colnum = 0

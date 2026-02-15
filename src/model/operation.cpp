@@ -159,7 +159,7 @@ Operation::~Operation() {
     else {
       // Remove from middle
       Operation* j = item->firstOperation;
-      while (j->next && j->next != this) j = j->next;
+      while (j && j->next && j->next != this) j = j->next;
       if (j)
         j->next = next;
       else
@@ -2295,7 +2295,7 @@ void Operation::setItem(Item* i) {
     else {
       // Remove from middle
       Operation* j = item->firstOperation;
-      while (j->next && j->next != this) j = j->next;
+      while (j && j->next && j->next != this) j = j->next;
       if (j)
         j->next = next;
       else

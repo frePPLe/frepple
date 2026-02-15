@@ -127,8 +127,10 @@ LoadPlan::LoadPlan(OperationPlan* o, const Load* r, LoadPlan* lp)
   if (ld)
     getResource()->loadplans.insert(this, ld->getLoadplanQuantity(this),
                                     ld->getLoadplanDate(this));
-  else
+  else if (lp)
     getResource()->loadplans.insert(this, -lp->getQuantity(), o->getEnd());
+  else
+    throw LogicException("LoadPlan creation requires either a load or a sibling LoadPlan");
 
   // Initialize the Python type
   initType(metadata);
@@ -485,7 +487,7 @@ Object* LoadPlan::reader(const MetaClass*, const DataValueDict& in,
       return ldpln;
   }
 
-  // This part of the code isn't expected not be reached
+  // This part of the code is not expected to be reached
   throw LogicException("Unreachable code reached");
 }
 

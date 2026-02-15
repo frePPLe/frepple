@@ -77,7 +77,11 @@ class OdooTest(TransactionTestCase):
         self.uid = common.authenticate(self.db, self.username, self.password, {})
         self.models = xmlrpc.client.ServerProxy("{}/xmlrpc/2/object".format(self.url))
 
-    def odooRPC(self, odoo_model, odoo_filter=[], odoo_options={}, odoo_fields=None):
+    def odooRPC(self, odoo_model, odoo_filter=None, odoo_options=None, odoo_fields=None):
+        if odoo_filter is None:
+            odoo_filter = []
+        if odoo_options is None:
+            odoo_options = {}
         ids = self.models.execute_kw(
             self.db,
             self.uid,

@@ -4266,7 +4266,7 @@ def sizeof_fmt(num):
     """
     Function to convert from bytes to human readable format.
     """
-    if num == None:
+    if num is None:
         return ""
     for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
         if abs(num) < 1024.0:

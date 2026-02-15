@@ -176,7 +176,7 @@ void Resource::setToolPerPiece(bool b) {
 void Resource::setMaximum(double m) {
   if (m < 0) {
     logger << "Warning: Maximum capacity for resource '" << getName()
-           << "' must be postive\n";
+           << "' must be positive\n";
     return;
   }
 
@@ -340,6 +340,7 @@ void Resource::setOwner(Resource* o) {
     }
   }
   HasHierarchy<Resource>::setOwner(o);
+  if (o) {
   if (getTool() != o->getTool()) {
     if (getTool())
       o->setTool(true);
@@ -351,6 +352,7 @@ void Resource::setOwner(Resource* o) {
       o->setToolPerPiece(true);
     else
       setToolPerPiece(true);
+    }
   }
 }
 

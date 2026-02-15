@@ -1488,7 +1488,7 @@ class PeggingReport(pegging.ReportByDemand):
                 reportclass.startdate = parseLocalizedDateTime(
                     reportclass.startdate
                 ).date()
-            except:
+            except Exception:
                 pass
         if not reportclass.startdate:
             reportclass.startdate = getCurrentDate(
@@ -1498,7 +1498,7 @@ class PeggingReport(pegging.ReportByDemand):
         if reportclass.enddate:
             try:
                 reportclass.enddate = parseLocalizedDateTime(reportclass.enddate).date()
-            except:
+            except Exception:
                 pass
         if not reportclass.enddate:
             with connections[request.database].cursor() as cursor:

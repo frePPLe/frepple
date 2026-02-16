@@ -257,14 +257,12 @@ class OdooReadData(PlanTask):
                 loglevel = 0
 
             with connections[database].cursor() as cursor:
-                cursor.execute(
-                    """
+                cursor.execute("""
                     select coalesce(max(reference::bigint), 0) as max_reference
                     from operationplan
                     where reference ~ '^[0-9]*$'
                     and char_length(reference) <= 9
-                    """
-                )
+                    """)
                 d = cursor.fetchone()
                 frepple.settings.id = d[0] + 1
 
@@ -789,31 +787,47 @@ class OdooSendRecommendations(PlanTask):
                     if not recommendation:
                         recommendation = "Stock replenishment"
 
-                    yield {
-                        "tab": "mrp",
-                        "type": "produce" if new_mo else "reschedule",
-                        "data": (
-                            {
-                                "bom_id": int(i.name.rsplit(" ", 1)[1]),
-                                "workorders": [
-                                    (
-                                        subopplan.operation.name,
-                                        subopplan.start.isoformat(),
-                                        subopplan.end.isoformat(),
-                                    )
-                                    for subopplan in j.operationplans
-                                ],
-                            }
-                        ),
-                        "product_id": int(i.item.subcategory.split(",")[1]),
-                        "mrp_production_id": (
-                            j.reference if reschedule else None
-                        ),  # Name will be converted to id in odoo
-                        "startdate": j.start.isoformat(),
-                        "enddate": j.end.isoformat(),
-                        "quantity": j.quantity,
-                        "recommendation": f"{"Produce" if new_mo else "Reschedule"} {i.item.name}\\n{recommendation}",
-                    }
+                    if j.operation.category == "subcontractor":
+                        yield {
+                            "tab": "purchase",
+                            "type": "purchase",
+                            "res_partner_id": int(
+                                j.operation.subcategory.rsplit(" ", 1)[-1]
+                            ),
+                            "product_id": int(
+                                j.operation.item.subcategory.split(",")[1]
+                            ),
+                            "startdate": j.start.isoformat(),
+                            "enddate": j.end.isoformat(),
+                            "quantity": j.quantity,
+                            "recommendation": f"Subcontract {j.operation.item.name}\\n{recommendation}",
+                        }
+                    else:
+                        yield {
+                            "tab": "mrp",
+                            "type": "produce" if new_mo else "reschedule",
+                            "data": (
+                                {
+                                    "bom_id": int(i.name.rsplit(" ", 1)[1]),
+                                    "workorders": [
+                                        (
+                                            subopplan.operation.name,
+                                            subopplan.start.isoformat(),
+                                            subopplan.end.isoformat(),
+                                        )
+                                        for subopplan in j.operationplans
+                                    ],
+                                }
+                            ),
+                            "product_id": int(i.item.subcategory.split(",")[1]),
+                            "mrp_production_id": (
+                                j.reference if reschedule else None
+                            ),  # Name will be converted to id in odoo
+                            "startdate": j.start.isoformat(),
+                            "enddate": j.end.isoformat(),
+                            "quantity": j.quantity,
+                            "recommendation": f"{"Produce" if new_mo else "Reschedule"} {i.item.name}\\n{recommendation}",
+                        }
 
             if not self.loglevel:
                 print(f"Generated {mo_count} manufacturing recommendations")

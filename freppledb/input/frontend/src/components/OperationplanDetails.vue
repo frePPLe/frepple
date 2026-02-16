@@ -26,6 +26,7 @@ import NetworkStatusCard from '@/components/NetworkStatusCard.vue';
 import DownstreamCard from '@/components/DownstreamCard.vue';
 import UpstreamCard from '@/components/UpstreamCard.vue';
 import SupplyInformationCard from '@/components/SupplyInformationCard.vue';
+import KanbanBoard from "@/components/KanbanBoard.vue";
 import { debounce } from '@common/utils.js';
 
 const { t: ttt } = useI18n({
@@ -47,6 +48,8 @@ const applyGridCellEditDebounced = debounce((payload) => {
 
 // const database = computed(() => window.database);
 const preferences = computed(() => window.preferences || {});
+
+const isKanbanMode = computed(() => store.isKanbanMode);
 
 const databaseerrormodal = ref(false);
 const rowlimiterrormodal = ref(false);
@@ -140,14 +143,7 @@ onMounted(() => {
     } else {
       store.undo();
     }
-    // Update toolbar buttons depending on selection visible on the current page
-    // try {
-    //   const sel = window.jQuery('#grid').jqGrid('getGridParam', 'selarrrow') || [];
-    //   const selectedIds = sel.map((x) => (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x));
-    //   const visibleIds = (window.jQuery('#grid').jqGrid && window.jQuery('#grid').jqGrid('getDataIDs')) || [];
-    //   const hasVisibleSelection = selectedIds.filter((id) => id !== 'cb' && visibleIds.includes(id)).length > 0;
-    //   updateActionsToolsButtons(!hasVisibleSelection);
-    // } catch (err) { /* no-op */ }
+
   };
 
   const handleAllSelectEvent = (e, isSingleSelect) => {
@@ -278,6 +274,7 @@ onUnmounted(() => {
 
 <template>
   <div class="row">
+    <KanbanBoard />
     <div
       v-for="col in preferences.widgets"
       :key="col.name"

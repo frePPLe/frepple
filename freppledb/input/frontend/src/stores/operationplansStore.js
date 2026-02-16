@@ -67,7 +67,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     preferences: {},
     editForm: {quantity: null, startdate: "", enddate: "", remark: ""},
 
-    mode: 'table',
+    mode: window.preferences?.mode || window.mode || 'table',
     calendarmode: 'month',
     grouping: null,
     groupingdir: 'asc',
@@ -107,23 +107,41 @@ export const useOperationplansStore = defineStore('operationplans', {
   }),
 
   getters: {
-    isTableMode: () => this.mode === 'table',
-    isKanbanMode: () => this.mode === 'kanban',
-    isGanttMode: () => this.mode === 'gantt',
-    isCalendarMode: () => this.mode.startsWith('calendar'),
+    isTableMode: (window) => window.mode === 'table',
+    isKanbanMode: (window) => window.mode === 'kanban',
+    isGanttMode: (window) => window.mode === 'gantt',
+    isCalendarMode: (window) => window.mode.startsWith('calendar'),
 
     hasSelected: () => this.selectedOperationplans.length > 0,
-
+    getMode(state) {
+      state.mode = window.mode;
+    },
     getPreferences(state) {
       state.preferences = window.preferences;
     },
   },
 
   actions: {
-    // Display mode actions
+    initializeMode() {
+      // Sync with window preferences on init
+      this.mode = window.preferences?.mode || window.mode || 'table';
+      console.log('Mode initialized to:', this.mode);
+    },
+
     setMode(newMode) {
       this.mode = newMode;
-      this.preferences.mode = newMode;
+      window.mode = newMode;
+      if (window.preferences) {
+        window.preferences.mode = newMode;
+      }
+      console.log('Store mode updated to:', newMode);
+    },
+
+    syncModeFromWindow() {
+      if (window.mode && window.mode !== this.mode) {
+        this.mode = window.mode;
+        console.log('Synced mode from window:', this.mode);
+      }
     },
 
     setCalendarMode(newCalendarMode) {
@@ -178,6 +196,83 @@ export const useOperationplansStore = defineStore('operationplans', {
         }
       }
     },
+
+//     function loadKanbanData(thefilter) {
+//   if (!thefilter) {
+//     var tmp = $('#grid').getGridParam("postData");
+//     if (tmp)
+//       thefilter = tmp.filters ? JSON.parse(tmp.filters) : initialfilter;
+//     else
+//       thefilter = initialfilter;
+//   }
+//   var sidx = $('#grid').getGridParam('sortname');
+//   var sortname = "";
+//   if (sidx !== '') {
+//     sortname = "&sidx=" + encodeURIComponent(sidx)
+//       + "&sord=" + encodeURIComponent($('#grid').getGridParam('sortorder'));
+//   }
+//   var baseurl = (location.href.indexOf("#") != -1 ? location.href.substr(0, location.href.indexOf("#")) : location.href)
+//     + (location.search.length > 0 ? "&format=kanban" : "?format=kanban");
+//   // TODO handle this filtering on the backend instead?
+//   angular.forEach($scope.kanbancolumns, function (key) {
+//     var colfilter = angular.copy(thefilter);
+//     var extrafilter = { field: $scope.groupBy, op: $scope.groupOperator, data: key };
+//     if (colfilter === undefined || colfilter === null) {
+//       // First filter
+//       colfilter = {
+//         "groupOp": "AND",
+//         "rules": [extrafilter],
+//         "groups": []
+//       };
+//     }
+//     else {
+//       if (colfilter["groupOp"] == "AND")
+//         // Add condition to existing and-filter
+//         colfilter["rules"].push(extrafilter);
+//       else
+//         // Wrap existing filter in a new and-filter
+//         colfilter = {
+//           "groupOp": "AND",
+//           "rules": [extrafilter],
+//           "groups": [colfilter]
+//         };
+//     }
+//     $http.get(baseurl + "&filters=" + encodeURIComponent(JSON.stringify(colfilter)) + sortname)
+//       .then(function (response) {
+//           var tmp = angular.copy(response.data);
+//           for (var x of tmp.rows) {
+//             x.type = x.operationplan__type || x.type || default_operationplan_type;
+//             if (x.hasOwnProperty("enddate"))
+//               x.enddate = new Date(x.enddate);
+//             if (x.hasOwnProperty("operationplan__enddate"))
+//               x.operationplan__enddate = new Date(x.operationplan__enddate);
+//             if (x.hasOwnProperty("startdate"))
+//               x.startdate = new Date(x.startdate);
+//             if (x.hasOwnProperty("operationplan__startdate"))
+//               x.operationplan__startdate = new Date(x.operationplan__startdate);
+//             if (x.hasOwnProperty("quantity"))
+//               x.quantity = parseFloat(x.quantity);
+//             if (x.hasOwnProperty("operationplan__quantity"))
+//               x.operationplan__quantity = parseFloat(x.operationplan__quantity);
+//             if (x.hasOwnProperty("quantity_completed"))
+//               x.quantity_completed = parseFloat(x.quantity_completed);
+//             if (x.hasOwnProperty("operationplan__quantity_completed"))
+//               x.operationplan__quantity_completed = parseFloat(x.operationplan__quantity_completed);
+//             if (x.hasOwnProperty("operationplan__status"))
+//               x.status = x.operationplan__status;
+//             if (x.hasOwnProperty("operationplan__origin"))
+//               x.origin = x.operationplan__origin;
+//             [x.color, x.inventory_status] = formatInventoryStatus(x);
+//           }
+//           $scope.kanbanoperationplans[key] = tmp;
+//         },
+//         function (err) {
+//           if (err.status == 401)
+//             location.reload();
+//         });
+//   });
+// }
+
 
     // Filter and search actions
     setCurrentFilter(filter) {

@@ -294,7 +294,7 @@ class OperationPlanMixin(GridReport):
         reportclass.template = (
             "input/operationplanreport_angularjs.html"
             if mode
-            in ["kanban", "gantt", "calendarday", "calendarweek", "calendarmonth"]
+            in ["gantt", "calendarday", "calendarweek", "calendarmonth"]
             else "input/operationplanreport.html"
         )
         if not widgets:

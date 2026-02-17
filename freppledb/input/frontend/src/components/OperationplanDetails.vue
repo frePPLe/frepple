@@ -218,6 +218,13 @@ onMounted(() => {
     });
   };
 
+  const handleSetMode = (e) => {
+    const detail = e?.detail || {};
+    if (detail.mode) {
+      store.setMode(detail.mode);
+    }
+  };
+
   const handleRefreshStatus = (e) => {
     const detail = e?.detail || {};
     if (!detail.status) return;
@@ -236,6 +243,7 @@ onMounted(() => {
   rootEl.addEventListener('refreshStatus', handleRefreshStatus);
   rootEl.addEventListener('hidden.bs.collapse', grid.saveColumnConfiguration);
   rootEl.addEventListener('shown.bs.collapse', grid.saveColumnConfiguration);
+  rootEl.addEventListener('setMode', handleSetMode);
 
   // Save references to handlers so they can be removed on unmount
   appElement.value = {
@@ -248,6 +256,7 @@ onMounted(() => {
       undo: handleUndoEvent,
       gridCellEdited: handleGridCellEdited,
       refreshStatus: handleRefreshStatus,
+      setMode: handleSetMode,
     },
   };
 
@@ -265,6 +274,7 @@ onUnmounted(() => {
       info.rootEl.removeEventListener('displayonpanel', info.handlers.display);
       info.rootEl.removeEventListener('undo', info.handlers.display);
       info.rootEl.removeEventListener('gridCellEdited', info.handlers.gridCellEdited);
+      info.rootEl.removeEventListener('setMode', info.handlers.setMode);
     } catch (err) {
       console.log('Failed to remove event listeners from app root element:', err);
     }

@@ -141,7 +141,7 @@ function selectCard(opplan) {
 </script>
 
 <template>
-  <Teleport to="kanban">
+  <Teleport to="#content-main">
     <div
       v-if="store.mode === 'kanban'"
       id="kanban-container"

@@ -24,7 +24,6 @@
 <script setup>
 import { computed, watch, nextTick } from "vue";
 import { useOperationplansStore } from './stores/operationplansStore.js';
-import OperationplanTable from "@/components/OperationplanTable.vue";
 import OperationplanDetails from "@/components/OperationplanDetails.vue";
 import ErrorDialog from '@common/components/ErrorDialog.vue';
 import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js';

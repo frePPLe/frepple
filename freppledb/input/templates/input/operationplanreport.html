@@ -65,6 +65,9 @@ rect.opplan {
     return upload.selectedRows
   }
 
+  // Expose to global scope for use in jqGrid callbacks
+  window.getVisibleSelectedIds = getVisibleSelectedIds;
+
   function saveData(rows, ok_callback) {
       $.ajax({
         url: service_url + 'operationplan/',
@@ -210,26 +213,57 @@ rect.opplan {
       });
       document.getElementById('app').dispatchEvent(event);
     });
+    jQuery("#gridmode").on('click', function() {
+      mode = "table";
+      const event = new CustomEvent("setMode", {
+        detail: { mode: "table" }
+      });
+      document.getElementById('app').dispatchEvent(event);
+
+      grid.saveColumnConfiguration(function() {
+        location.reload();
+      });
+    });
     jQuery("#kanbanmode").on('click', function() {
       mode = "kanban";
+      const event = new CustomEvent("setMode", {
+        detail: { mode: "kanban" }
+      });
+      document.getElementById('app').dispatchEvent(event);
+
       grid.saveColumnConfiguration(function() {
         location.reload();
       });
     });
     jQuery("#calendarmonth").on('click', function() {
       mode = "calendarmonth";
+      const event = new CustomEvent("setMode", {
+        detail: { mode: "calendarmonth" }
+      });
+      document.getElementById('app').dispatchEvent(event);
+
       grid.saveColumnConfiguration(function() {
         location.reload();
       });
     });
     jQuery("#calendarweek").on('click', function() {
       mode = "calendarweek";
+      const event = new CustomEvent("setMode", {
+        detail: { mode: "calendarweek" }
+      });
+      document.getElementById('app').dispatchEvent(event);
+
       grid.saveColumnConfiguration(function() {
         location.reload();
       });
     });
     jQuery("#calendarday").on('click', function() {
       mode = "calendarday";
+      const event = new CustomEvent("setMode", {
+        detail: { mode: "calendarday" }
+      });
+      document.getElementById('app').dispatchEvent(event);
+
       grid.saveColumnConfiguration(function() {
         location.reload();
       });
@@ -239,6 +273,11 @@ rect.opplan {
     {% if showGantt %}
     jQuery("#ganttmode").on('click', function() {
       mode = "gantt";
+      const event = new CustomEvent("setMode", {
+        detail: { mode: "gantt" }
+      });
+      document.getElementById('app').dispatchEvent(event);
+
       grid.saveColumnConfiguration(function() {
         location.reload();
       });
@@ -501,14 +540,14 @@ loadComplete: function(data) {
 
 <div class="row text-center">
 <div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
-  <div :hidden="mode == 'kanban' || mode == 'gantt' || mode.startsWith('calendar')">
+  <div {% if preferences.mode == 'kanban' or preferences.mode == 'gantt' or preferences.mode|slice:":8" == 'calendar' %}hidden{% endif %}>
     <table id="grid" class="table table-striped" style="background-color: white"></table>
     <div id="gridpager"></div>
   </div>
-  <div id="calendar" :hidden="!mode.startsWith('calendar')" class="col-md-12">
+  <div id="calendar" hidden="!preferences.mode.startsWith('calendar')" class="col-md-12">
   </div>
-  <div id="kanban" :hidden="mode != 'kanban'" class="row"></div>
-  <div id="gantt" :hidden="mode != 'gantt'" class="row"></div>
+  <div id="kanban" hidden="preferences.mode != 'kanban'" class="row"></div>
+  <div id="gantt" hidden="preferences.mode != 'gantt'" class="row"></div>
 </div>
 <span id="resize-handle" class="fa fa-bars handle" style="display: inline-block"></span>
 </div>

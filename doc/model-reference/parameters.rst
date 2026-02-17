@@ -223,7 +223,7 @@ inventoryplanning.horizon_end                        | Specifies the number of d
 inventoryplanning.horizon_start                      Specifies the number of days in the past for which we generate safety
                                                      stock and reorder quantity values. Default: 0
 inventoryplanning.loglevel                           | Controls the verbosity of the inventory planning solver.
-                                                     | Accepted values are 0(silent - default), 1 and 2 (verbose)
+                                                     | Accepted values are 0 (silent - default), 1 and 2 (verbose)
 inventoryplanning.service_level_on_average_inventory | Flag whether the service level is computed based on the expected average
                                                        inventory. When set to false the service level estimation is based only
                                                        on the safety stock.

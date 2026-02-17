@@ -1,255 +1,2370 @@
 [
-{"pk": "currentdate", "model": "common.parameter", "fields": {"value": "2014-01-01 00:00:00", "description": "Current date of the plan, formatted as YYYY-MM-DD HH:MM:SS"}},
-{"pk": "loading_time_units", "model": "common.parameter", "fields": {"value": "hours", "description": "Time units to be used for the resource report: hours, days, weeks"}},
-{"pk": "plan.administrativeLeadtime", "model": "common.parameter", "fields": {"value": "0", "description": "Specifies the number of days (value can be decimal) sales orders should be planned ahead of their due date to take into account for an administrative lead time. Default: 0"}},
-{"pk": "plan.minimumdelay", "model": "common.parameter", "fields": {"value": "3600", "description": "Specifies a minimum delivery date increment (in seconds) used by the planning algorithm in its search. Default: 0"}},
-{"pk": "plan.loglevel", "model": "common.parameter", "fields": {"value": "0", "description": "Controls the verbosity of the planning log file. Accepted values are 0(silent - default), 1 and 2 (verbose)"}},
-{"pk": "plan.rotateResources", "model": "common.parameter", "fields": {"value": "true", "description": "When set to true, the algorithm will better distribute the demand across alternate suboperations instead of using the preferred operation"}},
-{"model": "common.parameter", "fields": {"name":"plan.individualPoolResources","value":"false","description":"When set to true, an operation-resource record with quantity N is interpreted as 'find N member resources of size 1' instead of 'find a member resource with size N'"}},
-{"pk": "plan.move_approved_early", "model":"common.parameter","fields": {"value": "0", "description": "Controls rescheduling approved orders early. Values: 0 (inactive, default), 1 (active preserving existing resource assignments, 2 (active replanning resource assignments)"}},
-{"pk": "currency", "model": "common.parameter", "fields": {"value":"$", "description":"Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"}},
-{"pk": "WIP.consume_material", "model": "common.parameter", "fields": {"value":"true", "description":"Determines whether confirmed manufacturing orders consume material or not. Default is true."}},
-{"pk": "WIP.consume_capacity", "model": "common.parameter", "fields": {"value":"true", "description":"Determines whether confirmed manufacturing orders, purchase orders and distribution orders consume capacity or not. Default is true."}},
-{"pk": "The job shop", "model": "input.location", "fields": {}},
-{"pk": "My customer", "model": "input.customer", "fields": {}},
-{"pk": "Machine 00", "model": "input.resource", "fields": {"maximum": "1", "location": "The job shop", "type":"default"}},
-{"pk": "Machine 01", "model": "input.resource", "fields": {"maximum": "1", "location": "The job shop", "type":"default"}},
-{"pk": "Machine 02", "model": "input.resource", "fields": {"maximum": "1", "location": "The job shop", "type":"default"}},
-{"pk": "Machine 03", "model": "input.resource", "fields": {"maximum": "1", "location": "The job shop", "type":"default"}},
-{"pk": "Machine 04", "model": "input.resource", "fields": {"maximum": "1", "location": "The job shop", "type":"default"}},
-{"pk": "Machine 05", "model": "input.resource", "fields": {"maximum": "1", "location": "The job shop", "type":"default"}},
-{"pk": "Machine 06", "model": "input.resource", "fields": {"maximum": "1", "location": "The job shop", "type":"default"}},
-{"pk": "Machine 07", "model": "input.resource", "fields": {"maximum": "1", "location": "The job shop", "type":"default"}},
-{"pk": "Machine 08", "model": "input.resource", "fields": {"maximum": "1", "location": "The job shop", "type":"default"}},
-{"pk": "Machine 09", "model": "input.resource", "fields": {"maximum": "1", "location": "The job shop", "type":"default"}},
-{"pk": "Item 01", "model": "input.item", "fields": {"cost": "1"}},
-{"pk": "Item 02", "model": "input.item", "fields": {"cost": "1"}},
-{"pk": "Item 03", "model": "input.item", "fields": {"cost": "1"}},
-{"pk": "Item 04", "model": "input.item", "fields": {"cost": "1"}},
-{"pk": "Item 05", "model": "input.item", "fields": {"cost": "1"}},
-{"pk": "Item 06", "model": "input.item", "fields": {"cost": "1"}},
-{"pk": "Item 07", "model": "input.item", "fields": {"cost": "1"}},
-{"pk": "Item 08", "model": "input.item", "fields": {"cost": "1"}},
-{"pk": "Item 09", "model": "input.item", "fields": {"cost": "1"}},
-{"pk": "Item 10", "model": "input.item", "fields": {"cost": "1"}},
-{"pk": "routing of job 1", "model": "input.operation", "fields": {"location": "The job shop", "type": "routing"}},
-{"pk": "routing of job 10", "model": "input.operation", "fields": {"location": "The job shop", "type": "routing"}},
-{"pk": "routing of job 2", "model": "input.operation", "fields": {"location": "The job shop", "type": "routing"}},
-{"pk": "routing of job 3", "model": "input.operation", "fields": {"location": "The job shop", "type": "routing"}},
-{"pk": "routing of job 4", "model": "input.operation", "fields": {"location": "The job shop", "type": "routing"}},
-{"pk": "routing of job 5", "model": "input.operation", "fields": {"location": "The job shop", "type": "routing"}},
-{"pk": "routing of job 6", "model": "input.operation", "fields": {"location": "The job shop", "type": "routing"}},
-{"pk": "routing of job 7", "model": "input.operation", "fields": {"location": "The job shop", "type": "routing"}},
-{"pk": "routing of job 8", "model": "input.operation", "fields": {"location": "The job shop", "type": "routing"}},
-{"pk": "routing of job 9", "model": "input.operation", "fields": {"location": "The job shop", "type": "routing"}},
-{"pk": "J01T01", "model": "input.operation", "fields": {"location": "The job shop", "duration": "104400", "type": "fixed_time", "priority": 1, "owner": "routing of job 1"}},
-{"pk": "J01T02", "model": "input.operation", "fields": {"location": "The job shop", "duration": "280800", "type": "fixed_time", "priority": 2, "owner": "routing of job 1"}},
-{"pk": "J01T03", "model": "input.operation", "fields": {"location": "The job shop", "duration": "32400", "type": "fixed_time", "priority": 3, "owner": "routing of job 1"}},
-{"pk": "J01T04", "model": "input.operation", "fields": {"location": "The job shop", "duration": "129600", "type": "fixed_time", "priority": 4, "owner": "routing of job 1"}},
-{"pk": "J01T05", "model": "input.operation", "fields": {"location": "The job shop", "duration": "176400", "type": "fixed_time", "priority": 5, "owner": "routing of job 1"}},
-{"pk": "J01T06", "model": "input.operation", "fields": {"location": "The job shop", "duration": "39600", "type": "fixed_time", "priority": 6, "owner": "routing of job 1"}},
-{"pk": "J01T07", "model": "input.operation", "fields": {"location": "The job shop", "duration": "223200", "type": "fixed_time", "priority": 7, "owner": "routing of job 1"}},
-{"pk": "J01T08", "model": "input.operation", "fields": {"location": "The job shop", "duration": "201600", "type": "fixed_time", "priority": 8, "owner": "routing of job 1"}},
-{"pk": "J01T09", "model": "input.operation", "fields": {"location": "The job shop", "duration": "158400", "type": "fixed_time", "priority": 9, "owner": "routing of job 1"}},
-{"pk": "J01T10", "model": "input.operation", "fields": {"location": "The job shop", "duration": "75600", "type": "fixed_time", "priority": 10, "owner": "routing of job 1"}},
-{"pk": "J02T01", "model": "input.operation", "fields": {"location": "The job shop", "duration": "154800", "type": "fixed_time", "priority": 1, "owner": "routing of job 2"}},
-{"pk": "J02T02", "model": "input.operation", "fields": {"location": "The job shop", "duration": "324000", "type": "fixed_time", "priority": 2, "owner": "routing of job 2"}},
-{"pk": "J02T03", "model": "input.operation", "fields": {"location": "The job shop", "duration": "270000", "type": "fixed_time", "priority": 3, "owner": "routing of job 2"}},
-{"pk": "J02T04", "model": "input.operation", "fields": {"location": "The job shop", "duration": "39600", "type": "fixed_time", "priority": 4, "owner": "routing of job 2"}},
-{"pk": "J02T05", "model": "input.operation", "fields": {"location": "The job shop", "duration": "248400", "type": "fixed_time", "priority": 5, "owner": "routing of job 2"}},
-{"pk": "J02T06", "model": "input.operation", "fields": {"location": "The job shop", "duration": "100800", "type": "fixed_time", "priority": 6, "owner": "routing of job 2"}},
-{"pk": "J02T07", "model": "input.operation", "fields": {"location": "The job shop", "duration": "165600", "type": "fixed_time", "priority": 7, "owner": "routing of job 2"}},
-{"pk": "J02T08", "model": "input.operation", "fields": {"location": "The job shop", "duration": "165600", "type": "fixed_time", "priority": 8, "owner": "routing of job 2"}},
-{"pk": "J02T09", "model": "input.operation", "fields": {"location": "The job shop", "duration": "259200", "type": "fixed_time", "priority": 9, "owner": "routing of job 2"}},
-{"pk": "J02T10", "model": "input.operation", "fields": {"location": "The job shop", "duration": "108000", "type": "fixed_time", "priority": 10, "owner": "routing of job 2"}},
-{"pk": "J03T01", "model": "input.operation", "fields": {"location": "The job shop", "duration": "327600", "type": "fixed_time", "priority": 1, "owner": "routing of job 3"}},
-{"pk": "J03T02", "model": "input.operation", "fields": {"location": "The job shop", "duration": "306000", "type": "fixed_time", "priority": 2, "owner": "routing of job 3"}},
-{"pk": "J03T03", "model": "input.operation", "fields": {"location": "The job shop", "duration": "140400", "type": "fixed_time", "priority": 3, "owner": "routing of job 3"}},
-{"pk": "J03T04", "model": "input.operation", "fields": {"location": "The job shop", "duration": "266400", "type": "fixed_time", "priority": 4, "owner": "routing of job 3"}},
-{"pk": "J03T05", "model": "input.operation", "fields": {"location": "The job shop", "duration": "324000", "type": "fixed_time", "priority": 5, "owner": "routing of job 3"}},
-{"pk": "J03T06", "model": "input.operation", "fields": {"location": "The job shop", "duration": "36000", "type": "fixed_time", "priority": 6, "owner": "routing of job 3"}},
-{"pk": "J03T07", "model": "input.operation", "fields": {"location": "The job shop", "duration": "43200", "type": "fixed_time", "priority": 7, "owner": "routing of job 3"}},
-{"pk": "J03T08", "model": "input.operation", "fields": {"location": "The job shop", "duration": "320400", "type": "fixed_time", "priority": 8, "owner": "routing of job 3"}},
-{"pk": "J03T09", "model": "input.operation", "fields": {"location": "The job shop", "duration": "162000", "type": "fixed_time", "priority": 9, "owner": "routing of job 3"}},
-{"pk": "J03T10", "model": "input.operation", "fields": {"location": "The job shop", "duration": "118800", "type": "fixed_time", "priority": 10, "owner": "routing of job 3"}},
-{"pk": "J04T01", "model": "input.operation", "fields": {"location": "The job shop", "duration": "291600", "type": "fixed_time", "priority": 1, "owner": "routing of job 4"}},
-{"pk": "J04T02", "model": "input.operation", "fields": {"location": "The job shop", "duration": "342000", "type": "fixed_time", "priority": 2, "owner": "routing of job 4"}},
-{"pk": "J04T03", "model": "input.operation", "fields": {"location": "The job shop", "duration": "255600", "type": "fixed_time", "priority": 3, "owner": "routing of job 4"}},
-{"pk": "J04T04", "model": "input.operation", "fields": {"location": "The job shop", "duration": "356400", "type": "fixed_time", "priority": 4, "owner": "routing of job 4"}},
-{"pk": "J04T05", "model": "input.operation", "fields": {"location": "The job shop", "duration": "32400", "type": "fixed_time", "priority": 5, "owner": "routing of job 4"}},
-{"pk": "J04T06", "model": "input.operation", "fields": {"location": "The job shop", "duration": "187200", "type": "fixed_time", "priority": 6, "owner": "routing of job 4"}},
-{"pk": "J04T07", "model": "input.operation", "fields": {"location": "The job shop", "duration": "306000", "type": "fixed_time", "priority": 7, "owner": "routing of job 4"}},
-{"pk": "J04T08", "model": "input.operation", "fields": {"location": "The job shop", "duration": "352800", "type": "fixed_time", "priority": 8, "owner": "routing of job 4"}},
-{"pk": "J04T09", "model": "input.operation", "fields": {"location": "The job shop", "duration": "79200", "type": "fixed_time", "priority": 9, "owner": "routing of job 4"}},
-{"pk": "J04T10", "model": "input.operation", "fields": {"location": "The job shop", "duration": "154800", "type": "fixed_time", "priority": 10, "owner": "routing of job 4"}},
-{"pk": "J05T01", "model": "input.operation", "fields": {"location": "The job shop", "duration": "50400", "type": "fixed_time", "priority": 1, "owner": "routing of job 5"}},
-{"pk": "J05T02", "model": "input.operation", "fields": {"location": "The job shop", "duration": "21600", "type": "fixed_time", "priority": 2, "owner": "routing of job 5"}},
-{"pk": "J05T03", "model": "input.operation", "fields": {"location": "The job shop", "duration": "79200", "type": "fixed_time", "priority": 3, "owner": "routing of job 5"}},
-{"pk": "J05T04", "model": "input.operation", "fields": {"location": "The job shop", "duration": "219600", "type": "fixed_time", "priority": 4, "owner": "routing of job 5"}},
-{"pk": "J05T05", "model": "input.operation", "fields": {"location": "The job shop", "duration": "93600", "type": "fixed_time", "priority": 5, "owner": "routing of job 5"}},
-{"pk": "J05T06", "model": "input.operation", "fields": {"location": "The job shop", "duration": "248400", "type": "fixed_time", "priority": 6, "owner": "routing of job 5"}},
-{"pk": "J05T07", "model": "input.operation", "fields": {"location": "The job shop", "duration": "75600", "type": "fixed_time", "priority": 7, "owner": "routing of job 5"}},
-{"pk": "J05T08", "model": "input.operation", "fields": {"location": "The job shop", "duration": "176400", "type": "fixed_time", "priority": 8, "owner": "routing of job 5"}},
-{"pk": "J05T09", "model": "input.operation", "fields": {"location": "The job shop", "duration": "259200", "type": "fixed_time", "priority": 9, "owner": "routing of job 5"}},
-{"pk": "J05T10", "model": "input.operation", "fields": {"location": "The job shop", "duration": "190800", "type": "fixed_time", "priority": 10, "owner": "routing of job 5"}},
-{"pk": "J06T01", "model": "input.operation", "fields": {"location": "The job shop", "duration": "302400", "type": "fixed_time", "priority": 1, "owner": "routing of job 6"}},
-{"pk": "J06T02", "model": "input.operation", "fields": {"location": "The job shop", "duration": "7200", "type": "fixed_time", "priority": 2, "owner": "routing of job 6"}},
-{"pk": "J06T03", "model": "input.operation", "fields": {"location": "The job shop", "duration": "187200", "type": "fixed_time", "priority": 3, "owner": "routing of job 6"}},
-{"pk": "J06T04", "model": "input.operation", "fields": {"location": "The job shop", "duration": "342000", "type": "fixed_time", "priority": 4, "owner": "routing of job 6"}},
-{"pk": "J06T05", "model": "input.operation", "fields": {"location": "The job shop", "duration": "172800", "type": "fixed_time", "priority": 5, "owner": "routing of job 6"}},
-{"pk": "J06T06", "model": "input.operation", "fields": {"location": "The job shop", "duration": "259200", "type": "fixed_time", "priority": 6, "owner": "routing of job 6"}},
-{"pk": "J06T07", "model": "input.operation", "fields": {"location": "The job shop", "duration": "169200", "type": "fixed_time", "priority": 7, "owner": "routing of job 6"}},
-{"pk": "J06T08", "model": "input.operation", "fields": {"location": "The job shop", "duration": "234000", "type": "fixed_time", "priority": 8, "owner": "routing of job 6"}},
-{"pk": "J06T09", "model": "input.operation", "fields": {"location": "The job shop", "duration": "21600", "type": "fixed_time", "priority": 9, "owner": "routing of job 6"}},
-{"pk": "J06T10", "model": "input.operation", "fields": {"location": "The job shop", "duration": "90000", "type": "fixed_time", "priority": 10, "owner": "routing of job 6"}},
-{"pk": "J07T01", "model": "input.operation", "fields": {"location": "The job shop", "duration": "165600", "type": "fixed_time", "priority": 1, "owner": "routing of job 7"}},
-{"pk": "J07T02", "model": "input.operation", "fields": {"location": "The job shop", "duration": "133200", "type": "fixed_time", "priority": 2, "owner": "routing of job 7"}},
-{"pk": "J07T03", "model": "input.operation", "fields": {"location": "The job shop", "duration": "219600", "type": "fixed_time", "priority": 3, "owner": "routing of job 7"}},
-{"pk": "J07T04", "model": "input.operation", "fields": {"location": "The job shop", "duration": "46800", "type": "fixed_time", "priority": 4, "owner": "routing of job 7"}},
-{"pk": "J07T05", "model": "input.operation", "fields": {"location": "The job shop", "duration": "115200", "type": "fixed_time", "priority": 5, "owner": "routing of job 7"}},
-{"pk": "J07T06", "model": "input.operation", "fields": {"location": "The job shop", "duration": "75600", "type": "fixed_time", "priority": 6, "owner": "routing of job 7"}},
-{"pk": "J07T07", "model": "input.operation", "fields": {"location": "The job shop", "duration": "115200", "type": "fixed_time", "priority": 7, "owner": "routing of job 7"}},
-{"pk": "J07T08", "model": "input.operation", "fields": {"location": "The job shop", "duration": "320400", "type": "fixed_time", "priority": 8, "owner": "routing of job 7"}},
-{"pk": "J07T09", "model": "input.operation", "fields": {"location": "The job shop", "duration": "108000", "type": "fixed_time", "priority": 9, "owner": "routing of job 7"}},
-{"pk": "J07T10", "model": "input.operation", "fields": {"location": "The job shop", "duration": "198000", "type": "fixed_time", "priority": 10, "owner": "routing of job 7"}},
-{"pk": "J08T01", "model": "input.operation", "fields": {"location": "The job shop", "duration": "111600", "type": "fixed_time", "priority": 1, "owner": "routing of job 8"}},
-{"pk": "J08T02", "model": "input.operation", "fields": {"location": "The job shop", "duration": "309600", "type": "fixed_time", "priority": 2, "owner": "routing of job 8"}},
-{"pk": "J08T03", "model": "input.operation", "fields": {"location": "The job shop", "duration": "165600", "type": "fixed_time", "priority": 3, "owner": "routing of job 8"}},
-{"pk": "J08T04", "model": "input.operation", "fields": {"location": "The job shop", "duration": "266400", "type": "fixed_time", "priority": 4, "owner": "routing of job 8"}},
-{"pk": "J08T05", "model": "input.operation", "fields": {"location": "The job shop", "duration": "115200", "type": "fixed_time", "priority": 5, "owner": "routing of job 8"}},
-{"pk": "J08T06", "model": "input.operation", "fields": {"location": "The job shop", "duration": "316800", "type": "fixed_time", "priority": 6, "owner": "routing of job 8"}},
-{"pk": "J08T07", "model": "input.operation", "fields": {"location": "The job shop", "duration": "68400", "type": "fixed_time", "priority": 7, "owner": "routing of job 8"}},
-{"pk": "J08T08", "model": "input.operation", "fields": {"location": "The job shop", "duration": "172800", "type": "fixed_time", "priority": 8, "owner": "routing of job 8"}},
-{"pk": "J08T09", "model": "input.operation", "fields": {"location": "The job shop", "duration": "129600", "type": "fixed_time", "priority": 9, "owner": "routing of job 8"}},
-{"pk": "J08T10", "model": "input.operation", "fields": {"location": "The job shop", "duration": "284400", "type": "fixed_time", "priority": 10, "owner": "routing of job 8"}},
-{"pk": "J09T01", "model": "input.operation", "fields": {"location": "The job shop", "duration": "273600", "type": "fixed_time", "priority": 1, "owner": "routing of job 9"}},
-{"pk": "J09T02", "model": "input.operation", "fields": {"location": "The job shop", "duration": "248400", "type": "fixed_time", "priority": 2, "owner": "routing of job 9"}},
-{"pk": "J09T03", "model": "input.operation", "fields": {"location": "The job shop", "duration": "273600", "type": "fixed_time", "priority": 3, "owner": "routing of job 9"}},
-{"pk": "J09T04", "model": "input.operation", "fields": {"location": "The job shop", "duration": "183600", "type": "fixed_time", "priority": 4, "owner": "routing of job 9"}},
-{"pk": "J09T05", "model": "input.operation", "fields": {"location": "The job shop", "duration": "306000", "type": "fixed_time", "priority": 5, "owner": "routing of job 9"}},
-{"pk": "J09T06", "model": "input.operation", "fields": {"location": "The job shop", "duration": "39600", "type": "fixed_time", "priority": 6, "owner": "routing of job 9"}},
-{"pk": "J09T07", "model": "input.operation", "fields": {"location": "The job shop", "duration": "144000", "type": "fixed_time", "priority": 7, "owner": "routing of job 9"}},
-{"pk": "J09T08", "model": "input.operation", "fields": {"location": "The job shop", "duration": "320400", "type": "fixed_time", "priority": 8, "owner": "routing of job 9"}},
-{"pk": "J09T09", "model": "input.operation", "fields": {"location": "The job shop", "duration": "93600", "type": "fixed_time", "priority": 9, "owner": "routing of job 9"}},
-{"pk": "J09T10", "model": "input.operation", "fields": {"location": "The job shop", "duration": "266400", "type": "fixed_time", "priority": 10, "owner": "routing of job 9"}},
-{"pk": "J10T01", "model": "input.operation", "fields": {"location": "The job shop", "duration": "306000", "type": "fixed_time", "priority": 1, "owner": "routing of job 10"}},
-{"pk": "J10T02", "model": "input.operation", "fields": {"location": "The job shop", "duration": "46800", "type": "fixed_time", "priority": 2, "owner": "routing of job 10"}},
-{"pk": "J10T03", "model": "input.operation", "fields": {"location": "The job shop", "duration": "219600", "type": "fixed_time", "priority": 3, "owner": "routing of job 10"}},
-{"pk": "J10T04", "model": "input.operation", "fields": {"location": "The job shop", "duration": "25200", "type": "fixed_time", "priority": 4, "owner": "routing of job 10"}},
-{"pk": "J10T05", "model": "input.operation", "fields": {"location": "The job shop", "duration": "230400", "type": "fixed_time", "priority": 5, "owner": "routing of job 10"}},
-{"pk": "J10T06", "model": "input.operation", "fields": {"location": "The job shop", "duration": "273600", "type": "fixed_time", "priority": 6, "owner": "routing of job 10"}},
-{"pk": "J10T07", "model": "input.operation", "fields": {"location": "The job shop", "duration": "169200", "type": "fixed_time", "priority": 7, "owner": "routing of job 10"}},
-{"pk": "J10T08", "model": "input.operation", "fields": {"location": "The job shop", "duration": "187200", "type": "fixed_time", "priority": 8, "owner": "routing of job 10"}},
-{"pk": "J10T09", "model": "input.operation", "fields": {"location": "The job shop", "duration": "324000", "type": "fixed_time", "priority": 9, "owner": "routing of job 10"}},
-{"pk": "J10T10", "model": "input.operation", "fields": {"location": "The job shop", "duration": "162000", "type": "fixed_time", "priority": 10, "owner": "routing of job 10"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 00", "operation": "J01T01", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 01", "operation": "J01T02", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 02", "operation": "J01T03", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 03", "operation": "J01T04", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 04", "operation": "J01T05", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 05", "operation": "J01T06", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 06", "operation": "J01T07", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 07", "operation": "J01T08", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 08", "operation": "J01T09", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 09", "operation": "J01T10", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 00", "operation": "J02T01", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 02", "operation": "J02T02", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 04", "operation": "J02T03", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 09", "operation": "J02T04", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 03", "operation": "J02T05", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 01", "operation": "J02T06", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 06", "operation": "J02T07", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 05", "operation": "J02T08", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 07", "operation": "J02T09", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 08", "operation": "J02T10", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 01", "operation": "J03T01", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 00", "operation": "J03T02", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 03", "operation": "J03T03", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 02", "operation": "J03T04", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 08", "operation": "J03T05", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 05", "operation": "J03T06", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 07", "operation": "J03T07", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 06", "operation": "J03T08", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 09", "operation": "J03T09", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 04", "operation": "J03T10", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 01", "operation": "J04T01", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 02", "operation": "J04T02", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 00", "operation": "J04T03", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 04", "operation": "J04T04", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 06", "operation": "J04T05", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 08", "operation": "J04T06", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 07", "operation": "J04T07", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 03", "operation": "J04T08", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 09", "operation": "J04T09", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 05", "operation": "J04T10", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 02", "operation": "J05T01", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 00", "operation": "J05T02", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 01", "operation": "J05T03", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 05", "operation": "J05T04", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 03", "operation": "J05T05", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 04", "operation": "J05T06", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 08", "operation": "J05T07", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 07", "operation": "J05T08", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 09", "operation": "J05T09", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 06", "operation": "J05T10", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 02", "operation": "J06T01", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 01", "operation": "J06T02", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 05", "operation": "J06T03", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 03", "operation": "J06T04", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 08", "operation": "J06T05", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 09", "operation": "J06T06", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 00", "operation": "J06T07", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 06", "operation": "J06T08", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 04", "operation": "J06T09", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 07", "operation": "J06T10", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 01", "operation": "J07T01", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 00", "operation": "J07T02", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 03", "operation": "J07T03", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 02", "operation": "J07T04", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 06", "operation": "J07T05", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 05", "operation": "J07T06", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 09", "operation": "J07T07", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 08", "operation": "J07T08", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 07", "operation": "J07T09", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 04", "operation": "J07T10", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 02", "operation": "J08T01", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 00", "operation": "J08T02", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 01", "operation": "J08T03", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 05", "operation": "J08T04", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 04", "operation": "J08T05", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 06", "operation": "J08T06", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 08", "operation": "J08T07", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 09", "operation": "J08T08", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 07", "operation": "J08T09", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 03", "operation": "J08T10", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 00", "operation": "J09T01", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 01", "operation": "J09T02", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 03", "operation": "J09T03", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 05", "operation": "J09T04", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 02", "operation": "J09T05", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 09", "operation": "J09T06", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 06", "operation": "J09T07", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 07", "operation": "J09T08", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 04", "operation": "J09T09", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 08", "operation": "J09T10", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 01", "operation": "J10T01", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 00", "operation": "J10T02", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 02", "operation": "J10T03", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 06", "operation": "J10T04", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 08", "operation": "J10T05", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 09", "operation": "J10T06", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 05", "operation": "J10T07", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 03", "operation": "J10T08", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 04", "operation": "J10T09", "quantity": "1"}},
-{"model": "input.operationresource", "fields": {"resource": "Machine 07", "operation": "J10T10", "quantity": "1"}},
-{"pk": "Job 01", "model": "input.demand", "fields": {"customer": "My customer", "due": "2014-02-08 18:00:00", "priority": 2, "item": "Item 01", "operation": "routing of job 1", "quantity": "1", "location": "The job shop"}},
-{"pk": "Job 02", "model": "input.demand", "fields": {"customer": "My customer", "due": "2014-02-08 18:00:00", "priority": 2, "item": "Item 02", "operation": "routing of job 2", "quantity": "1", "location": "The job shop"}},
-{"pk": "Job 03", "model": "input.demand", "fields": {"customer": "My customer", "due": "2014-02-08 18:00:00", "priority": 2, "item": "Item 03", "operation": "routing of job 3", "quantity": "1", "location": "The job shop"}},
-{"pk": "Job 04", "model": "input.demand", "fields": {"customer": "My customer", "due": "2014-02-08 18:00:00", "priority": 2, "item": "Item 04", "operation": "routing of job 4", "quantity": "1", "location": "The job shop"}},
-{"pk": "Job 05", "model": "input.demand", "fields": {"customer": "My customer", "due": "2014-02-08 18:00:00", "priority": 2, "item": "Item 05", "operation": "routing of job 5", "quantity": "1", "location": "The job shop"}},
-{"pk": "Job 06", "model": "input.demand", "fields": {"customer": "My customer", "due": "2014-02-08 18:00:00", "priority": 2, "item": "Item 06", "operation": "routing of job 6", "quantity": "1", "location": "The job shop"}},
-{"pk": "Job 07", "model": "input.demand", "fields": {"customer": "My customer", "due": "2014-02-08 18:00:00", "priority": 2, "item": "Item 07", "operation": "routing of job 7", "quantity": "1", "location": "The job shop"}},
-{"pk": "Job 08", "model": "input.demand", "fields": {"customer": "My customer", "due": "2014-02-08 18:00:00", "priority": 2, "item": "Item 08", "operation": "routing of job 8", "quantity": "1", "location": "The job shop"}},
-{"pk": "Job 09", "model": "input.demand", "fields": {"customer": "My customer", "due": "2014-02-08 18:00:00", "priority": 2, "item": "Item 09", "operation": "routing of job 9", "quantity": "1", "location": "The job shop"}},
-{"pk": "Job 10", "model": "input.demand", "fields": {"customer": "My customer", "due": "2014-02-08 18:00:00", "priority": 2, "item": "Item 10", "operation": "routing of job 10", "quantity": "1", "location": "The job shop"}}
+    {
+        "pk": "currentdate",
+        "model": "common.parameter",
+        "fields": {
+            "value": "2014-01-01 00:00:00",
+            "description": "Current date of the plan, formatted as YYYY-MM-DD HH:MM:SS"
+        }
+    },
+    {
+        "pk": "loading_time_units",
+        "model": "common.parameter",
+        "fields": {
+            "value": "hours",
+            "description": "Time units to be used for the resource report: hours, days, weeks"
+        }
+    },
+    {
+        "pk": "plan.administrativeLeadtime",
+        "model": "common.parameter",
+        "fields": {
+            "value": "0",
+            "description": "Specifies the number of days (value can be decimal) sales orders should be planned ahead of their due date to take into account for an administrative lead time. Default: 0"
+        }
+    },
+    {
+        "pk": "plan.minimumdelay",
+        "model": "common.parameter",
+        "fields": {
+            "value": "3600",
+            "description": "Specifies a minimum delivery date increment (in seconds) used by the planning algorithm in its search. Default: 0"
+        }
+    },
+    {
+        "pk": "plan.loglevel",
+        "model": "common.parameter",
+        "fields": {
+            "value": "0",
+            "description": "Controls the verbosity of the planning log file. Accepted values are 0 (silent - default), 1 and 2 (verbose)"
+        }
+    },
+    {
+        "pk": "plan.rotateResources",
+        "model": "common.parameter",
+        "fields": {
+            "value": "true",
+            "description": "When set to true, the algorithm will better distribute the demand across alternate suboperations instead of using the preferred operation"
+        }
+    },
+    {
+        "model": "common.parameter",
+        "fields": {
+            "name": "plan.individualPoolResources",
+            "value": "false",
+            "description": "When set to true, an operation-resource record with quantity N is interpreted as 'find N member resources of size 1' instead of 'find a member resource with size N'"
+        }
+    },
+    {
+        "pk": "plan.move_approved_early",
+        "model": "common.parameter",
+        "fields": {
+            "value": "0",
+            "description": "Controls rescheduling approved orders early. Values: 0 (inactive, default), 1 (active preserving existing resource assignments, 2 (active replanning resource assignments)"
+        }
+    },
+    {
+        "pk": "currency",
+        "model": "common.parameter",
+        "fields": {
+            "value": "$",
+            "description": "Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"
+        }
+    },
+    {
+        "pk": "WIP.consume_material",
+        "model": "common.parameter",
+        "fields": {
+            "value": "true",
+            "description": "Determines whether confirmed manufacturing orders consume material or not. Default is true."
+        }
+    },
+    {
+        "pk": "WIP.consume_capacity",
+        "model": "common.parameter",
+        "fields": {
+            "value": "true",
+            "description": "Determines whether confirmed manufacturing orders, purchase orders and distribution orders consume capacity or not. Default is true."
+        }
+    },
+    {
+        "pk": "The job shop",
+        "model": "input.location",
+        "fields": {}
+    },
+    {
+        "pk": "My customer",
+        "model": "input.customer",
+        "fields": {}
+    },
+    {
+        "pk": "Machine 00",
+        "model": "input.resource",
+        "fields": {
+            "maximum": "1",
+            "location": "The job shop",
+            "type": "default"
+        }
+    },
+    {
+        "pk": "Machine 01",
+        "model": "input.resource",
+        "fields": {
+            "maximum": "1",
+            "location": "The job shop",
+            "type": "default"
+        }
+    },
+    {
+        "pk": "Machine 02",
+        "model": "input.resource",
+        "fields": {
+            "maximum": "1",
+            "location": "The job shop",
+            "type": "default"
+        }
+    },
+    {
+        "pk": "Machine 03",
+        "model": "input.resource",
+        "fields": {
+            "maximum": "1",
+            "location": "The job shop",
+            "type": "default"
+        }
+    },
+    {
+        "pk": "Machine 04",
+        "model": "input.resource",
+        "fields": {
+            "maximum": "1",
+            "location": "The job shop",
+            "type": "default"
+        }
+    },
+    {
+        "pk": "Machine 05",
+        "model": "input.resource",
+        "fields": {
+            "maximum": "1",
+            "location": "The job shop",
+            "type": "default"
+        }
+    },
+    {
+        "pk": "Machine 06",
+        "model": "input.resource",
+        "fields": {
+            "maximum": "1",
+            "location": "The job shop",
+            "type": "default"
+        }
+    },
+    {
+        "pk": "Machine 07",
+        "model": "input.resource",
+        "fields": {
+            "maximum": "1",
+            "location": "The job shop",
+            "type": "default"
+        }
+    },
+    {
+        "pk": "Machine 08",
+        "model": "input.resource",
+        "fields": {
+            "maximum": "1",
+            "location": "The job shop",
+            "type": "default"
+        }
+    },
+    {
+        "pk": "Machine 09",
+        "model": "input.resource",
+        "fields": {
+            "maximum": "1",
+            "location": "The job shop",
+            "type": "default"
+        }
+    },
+    {
+        "pk": "Item 01",
+        "model": "input.item",
+        "fields": {
+            "cost": "1"
+        }
+    },
+    {
+        "pk": "Item 02",
+        "model": "input.item",
+        "fields": {
+            "cost": "1"
+        }
+    },
+    {
+        "pk": "Item 03",
+        "model": "input.item",
+        "fields": {
+            "cost": "1"
+        }
+    },
+    {
+        "pk": "Item 04",
+        "model": "input.item",
+        "fields": {
+            "cost": "1"
+        }
+    },
+    {
+        "pk": "Item 05",
+        "model": "input.item",
+        "fields": {
+            "cost": "1"
+        }
+    },
+    {
+        "pk": "Item 06",
+        "model": "input.item",
+        "fields": {
+            "cost": "1"
+        }
+    },
+    {
+        "pk": "Item 07",
+        "model": "input.item",
+        "fields": {
+            "cost": "1"
+        }
+    },
+    {
+        "pk": "Item 08",
+        "model": "input.item",
+        "fields": {
+            "cost": "1"
+        }
+    },
+    {
+        "pk": "Item 09",
+        "model": "input.item",
+        "fields": {
+            "cost": "1"
+        }
+    },
+    {
+        "pk": "Item 10",
+        "model": "input.item",
+        "fields": {
+            "cost": "1"
+        }
+    },
+    {
+        "pk": "routing of job 1",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "type": "routing"
+        }
+    },
+    {
+        "pk": "routing of job 10",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "type": "routing"
+        }
+    },
+    {
+        "pk": "routing of job 2",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "type": "routing"
+        }
+    },
+    {
+        "pk": "routing of job 3",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "type": "routing"
+        }
+    },
+    {
+        "pk": "routing of job 4",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "type": "routing"
+        }
+    },
+    {
+        "pk": "routing of job 5",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "type": "routing"
+        }
+    },
+    {
+        "pk": "routing of job 6",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "type": "routing"
+        }
+    },
+    {
+        "pk": "routing of job 7",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "type": "routing"
+        }
+    },
+    {
+        "pk": "routing of job 8",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "type": "routing"
+        }
+    },
+    {
+        "pk": "routing of job 9",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "type": "routing"
+        }
+    },
+    {
+        "pk": "J01T01",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "104400",
+            "type": "fixed_time",
+            "priority": 1,
+            "owner": "routing of job 1"
+        }
+    },
+    {
+        "pk": "J01T02",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "280800",
+            "type": "fixed_time",
+            "priority": 2,
+            "owner": "routing of job 1"
+        }
+    },
+    {
+        "pk": "J01T03",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "32400",
+            "type": "fixed_time",
+            "priority": 3,
+            "owner": "routing of job 1"
+        }
+    },
+    {
+        "pk": "J01T04",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "129600",
+            "type": "fixed_time",
+            "priority": 4,
+            "owner": "routing of job 1"
+        }
+    },
+    {
+        "pk": "J01T05",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "176400",
+            "type": "fixed_time",
+            "priority": 5,
+            "owner": "routing of job 1"
+        }
+    },
+    {
+        "pk": "J01T06",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "39600",
+            "type": "fixed_time",
+            "priority": 6,
+            "owner": "routing of job 1"
+        }
+    },
+    {
+        "pk": "J01T07",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "223200",
+            "type": "fixed_time",
+            "priority": 7,
+            "owner": "routing of job 1"
+        }
+    },
+    {
+        "pk": "J01T08",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "201600",
+            "type": "fixed_time",
+            "priority": 8,
+            "owner": "routing of job 1"
+        }
+    },
+    {
+        "pk": "J01T09",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "158400",
+            "type": "fixed_time",
+            "priority": 9,
+            "owner": "routing of job 1"
+        }
+    },
+    {
+        "pk": "J01T10",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "75600",
+            "type": "fixed_time",
+            "priority": 10,
+            "owner": "routing of job 1"
+        }
+    },
+    {
+        "pk": "J02T01",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "154800",
+            "type": "fixed_time",
+            "priority": 1,
+            "owner": "routing of job 2"
+        }
+    },
+    {
+        "pk": "J02T02",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "324000",
+            "type": "fixed_time",
+            "priority": 2,
+            "owner": "routing of job 2"
+        }
+    },
+    {
+        "pk": "J02T03",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "270000",
+            "type": "fixed_time",
+            "priority": 3,
+            "owner": "routing of job 2"
+        }
+    },
+    {
+        "pk": "J02T04",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "39600",
+            "type": "fixed_time",
+            "priority": 4,
+            "owner": "routing of job 2"
+        }
+    },
+    {
+        "pk": "J02T05",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "248400",
+            "type": "fixed_time",
+            "priority": 5,
+            "owner": "routing of job 2"
+        }
+    },
+    {
+        "pk": "J02T06",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "100800",
+            "type": "fixed_time",
+            "priority": 6,
+            "owner": "routing of job 2"
+        }
+    },
+    {
+        "pk": "J02T07",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "165600",
+            "type": "fixed_time",
+            "priority": 7,
+            "owner": "routing of job 2"
+        }
+    },
+    {
+        "pk": "J02T08",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "165600",
+            "type": "fixed_time",
+            "priority": 8,
+            "owner": "routing of job 2"
+        }
+    },
+    {
+        "pk": "J02T09",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "259200",
+            "type": "fixed_time",
+            "priority": 9,
+            "owner": "routing of job 2"
+        }
+    },
+    {
+        "pk": "J02T10",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "108000",
+            "type": "fixed_time",
+            "priority": 10,
+            "owner": "routing of job 2"
+        }
+    },
+    {
+        "pk": "J03T01",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "327600",
+            "type": "fixed_time",
+            "priority": 1,
+            "owner": "routing of job 3"
+        }
+    },
+    {
+        "pk": "J03T02",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "306000",
+            "type": "fixed_time",
+            "priority": 2,
+            "owner": "routing of job 3"
+        }
+    },
+    {
+        "pk": "J03T03",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "140400",
+            "type": "fixed_time",
+            "priority": 3,
+            "owner": "routing of job 3"
+        }
+    },
+    {
+        "pk": "J03T04",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "266400",
+            "type": "fixed_time",
+            "priority": 4,
+            "owner": "routing of job 3"
+        }
+    },
+    {
+        "pk": "J03T05",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "324000",
+            "type": "fixed_time",
+            "priority": 5,
+            "owner": "routing of job 3"
+        }
+    },
+    {
+        "pk": "J03T06",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "36000",
+            "type": "fixed_time",
+            "priority": 6,
+            "owner": "routing of job 3"
+        }
+    },
+    {
+        "pk": "J03T07",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "43200",
+            "type": "fixed_time",
+            "priority": 7,
+            "owner": "routing of job 3"
+        }
+    },
+    {
+        "pk": "J03T08",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "320400",
+            "type": "fixed_time",
+            "priority": 8,
+            "owner": "routing of job 3"
+        }
+    },
+    {
+        "pk": "J03T09",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "162000",
+            "type": "fixed_time",
+            "priority": 9,
+            "owner": "routing of job 3"
+        }
+    },
+    {
+        "pk": "J03T10",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "118800",
+            "type": "fixed_time",
+            "priority": 10,
+            "owner": "routing of job 3"
+        }
+    },
+    {
+        "pk": "J04T01",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "291600",
+            "type": "fixed_time",
+            "priority": 1,
+            "owner": "routing of job 4"
+        }
+    },
+    {
+        "pk": "J04T02",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "342000",
+            "type": "fixed_time",
+            "priority": 2,
+            "owner": "routing of job 4"
+        }
+    },
+    {
+        "pk": "J04T03",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "255600",
+            "type": "fixed_time",
+            "priority": 3,
+            "owner": "routing of job 4"
+        }
+    },
+    {
+        "pk": "J04T04",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "356400",
+            "type": "fixed_time",
+            "priority": 4,
+            "owner": "routing of job 4"
+        }
+    },
+    {
+        "pk": "J04T05",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "32400",
+            "type": "fixed_time",
+            "priority": 5,
+            "owner": "routing of job 4"
+        }
+    },
+    {
+        "pk": "J04T06",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "187200",
+            "type": "fixed_time",
+            "priority": 6,
+            "owner": "routing of job 4"
+        }
+    },
+    {
+        "pk": "J04T07",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "306000",
+            "type": "fixed_time",
+            "priority": 7,
+            "owner": "routing of job 4"
+        }
+    },
+    {
+        "pk": "J04T08",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "352800",
+            "type": "fixed_time",
+            "priority": 8,
+            "owner": "routing of job 4"
+        }
+    },
+    {
+        "pk": "J04T09",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "79200",
+            "type": "fixed_time",
+            "priority": 9,
+            "owner": "routing of job 4"
+        }
+    },
+    {
+        "pk": "J04T10",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "154800",
+            "type": "fixed_time",
+            "priority": 10,
+            "owner": "routing of job 4"
+        }
+    },
+    {
+        "pk": "J05T01",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "50400",
+            "type": "fixed_time",
+            "priority": 1,
+            "owner": "routing of job 5"
+        }
+    },
+    {
+        "pk": "J05T02",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "21600",
+            "type": "fixed_time",
+            "priority": 2,
+            "owner": "routing of job 5"
+        }
+    },
+    {
+        "pk": "J05T03",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "79200",
+            "type": "fixed_time",
+            "priority": 3,
+            "owner": "routing of job 5"
+        }
+    },
+    {
+        "pk": "J05T04",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "219600",
+            "type": "fixed_time",
+            "priority": 4,
+            "owner": "routing of job 5"
+        }
+    },
+    {
+        "pk": "J05T05",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "93600",
+            "type": "fixed_time",
+            "priority": 5,
+            "owner": "routing of job 5"
+        }
+    },
+    {
+        "pk": "J05T06",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "248400",
+            "type": "fixed_time",
+            "priority": 6,
+            "owner": "routing of job 5"
+        }
+    },
+    {
+        "pk": "J05T07",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "75600",
+            "type": "fixed_time",
+            "priority": 7,
+            "owner": "routing of job 5"
+        }
+    },
+    {
+        "pk": "J05T08",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "176400",
+            "type": "fixed_time",
+            "priority": 8,
+            "owner": "routing of job 5"
+        }
+    },
+    {
+        "pk": "J05T09",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "259200",
+            "type": "fixed_time",
+            "priority": 9,
+            "owner": "routing of job 5"
+        }
+    },
+    {
+        "pk": "J05T10",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "190800",
+            "type": "fixed_time",
+            "priority": 10,
+            "owner": "routing of job 5"
+        }
+    },
+    {
+        "pk": "J06T01",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "302400",
+            "type": "fixed_time",
+            "priority": 1,
+            "owner": "routing of job 6"
+        }
+    },
+    {
+        "pk": "J06T02",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "7200",
+            "type": "fixed_time",
+            "priority": 2,
+            "owner": "routing of job 6"
+        }
+    },
+    {
+        "pk": "J06T03",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "187200",
+            "type": "fixed_time",
+            "priority": 3,
+            "owner": "routing of job 6"
+        }
+    },
+    {
+        "pk": "J06T04",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "342000",
+            "type": "fixed_time",
+            "priority": 4,
+            "owner": "routing of job 6"
+        }
+    },
+    {
+        "pk": "J06T05",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "172800",
+            "type": "fixed_time",
+            "priority": 5,
+            "owner": "routing of job 6"
+        }
+    },
+    {
+        "pk": "J06T06",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "259200",
+            "type": "fixed_time",
+            "priority": 6,
+            "owner": "routing of job 6"
+        }
+    },
+    {
+        "pk": "J06T07",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "169200",
+            "type": "fixed_time",
+            "priority": 7,
+            "owner": "routing of job 6"
+        }
+    },
+    {
+        "pk": "J06T08",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "234000",
+            "type": "fixed_time",
+            "priority": 8,
+            "owner": "routing of job 6"
+        }
+    },
+    {
+        "pk": "J06T09",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "21600",
+            "type": "fixed_time",
+            "priority": 9,
+            "owner": "routing of job 6"
+        }
+    },
+    {
+        "pk": "J06T10",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "90000",
+            "type": "fixed_time",
+            "priority": 10,
+            "owner": "routing of job 6"
+        }
+    },
+    {
+        "pk": "J07T01",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "165600",
+            "type": "fixed_time",
+            "priority": 1,
+            "owner": "routing of job 7"
+        }
+    },
+    {
+        "pk": "J07T02",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "133200",
+            "type": "fixed_time",
+            "priority": 2,
+            "owner": "routing of job 7"
+        }
+    },
+    {
+        "pk": "J07T03",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "219600",
+            "type": "fixed_time",
+            "priority": 3,
+            "owner": "routing of job 7"
+        }
+    },
+    {
+        "pk": "J07T04",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "46800",
+            "type": "fixed_time",
+            "priority": 4,
+            "owner": "routing of job 7"
+        }
+    },
+    {
+        "pk": "J07T05",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "115200",
+            "type": "fixed_time",
+            "priority": 5,
+            "owner": "routing of job 7"
+        }
+    },
+    {
+        "pk": "J07T06",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "75600",
+            "type": "fixed_time",
+            "priority": 6,
+            "owner": "routing of job 7"
+        }
+    },
+    {
+        "pk": "J07T07",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "115200",
+            "type": "fixed_time",
+            "priority": 7,
+            "owner": "routing of job 7"
+        }
+    },
+    {
+        "pk": "J07T08",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "320400",
+            "type": "fixed_time",
+            "priority": 8,
+            "owner": "routing of job 7"
+        }
+    },
+    {
+        "pk": "J07T09",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "108000",
+            "type": "fixed_time",
+            "priority": 9,
+            "owner": "routing of job 7"
+        }
+    },
+    {
+        "pk": "J07T10",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "198000",
+            "type": "fixed_time",
+            "priority": 10,
+            "owner": "routing of job 7"
+        }
+    },
+    {
+        "pk": "J08T01",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "111600",
+            "type": "fixed_time",
+            "priority": 1,
+            "owner": "routing of job 8"
+        }
+    },
+    {
+        "pk": "J08T02",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "309600",
+            "type": "fixed_time",
+            "priority": 2,
+            "owner": "routing of job 8"
+        }
+    },
+    {
+        "pk": "J08T03",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "165600",
+            "type": "fixed_time",
+            "priority": 3,
+            "owner": "routing of job 8"
+        }
+    },
+    {
+        "pk": "J08T04",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "266400",
+            "type": "fixed_time",
+            "priority": 4,
+            "owner": "routing of job 8"
+        }
+    },
+    {
+        "pk": "J08T05",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "115200",
+            "type": "fixed_time",
+            "priority": 5,
+            "owner": "routing of job 8"
+        }
+    },
+    {
+        "pk": "J08T06",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "316800",
+            "type": "fixed_time",
+            "priority": 6,
+            "owner": "routing of job 8"
+        }
+    },
+    {
+        "pk": "J08T07",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "68400",
+            "type": "fixed_time",
+            "priority": 7,
+            "owner": "routing of job 8"
+        }
+    },
+    {
+        "pk": "J08T08",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "172800",
+            "type": "fixed_time",
+            "priority": 8,
+            "owner": "routing of job 8"
+        }
+    },
+    {
+        "pk": "J08T09",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "129600",
+            "type": "fixed_time",
+            "priority": 9,
+            "owner": "routing of job 8"
+        }
+    },
+    {
+        "pk": "J08T10",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "284400",
+            "type": "fixed_time",
+            "priority": 10,
+            "owner": "routing of job 8"
+        }
+    },
+    {
+        "pk": "J09T01",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "273600",
+            "type": "fixed_time",
+            "priority": 1,
+            "owner": "routing of job 9"
+        }
+    },
+    {
+        "pk": "J09T02",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "248400",
+            "type": "fixed_time",
+            "priority": 2,
+            "owner": "routing of job 9"
+        }
+    },
+    {
+        "pk": "J09T03",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "273600",
+            "type": "fixed_time",
+            "priority": 3,
+            "owner": "routing of job 9"
+        }
+    },
+    {
+        "pk": "J09T04",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "183600",
+            "type": "fixed_time",
+            "priority": 4,
+            "owner": "routing of job 9"
+        }
+    },
+    {
+        "pk": "J09T05",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "306000",
+            "type": "fixed_time",
+            "priority": 5,
+            "owner": "routing of job 9"
+        }
+    },
+    {
+        "pk": "J09T06",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "39600",
+            "type": "fixed_time",
+            "priority": 6,
+            "owner": "routing of job 9"
+        }
+    },
+    {
+        "pk": "J09T07",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "144000",
+            "type": "fixed_time",
+            "priority": 7,
+            "owner": "routing of job 9"
+        }
+    },
+    {
+        "pk": "J09T08",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "320400",
+            "type": "fixed_time",
+            "priority": 8,
+            "owner": "routing of job 9"
+        }
+    },
+    {
+        "pk": "J09T09",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "93600",
+            "type": "fixed_time",
+            "priority": 9,
+            "owner": "routing of job 9"
+        }
+    },
+    {
+        "pk": "J09T10",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "266400",
+            "type": "fixed_time",
+            "priority": 10,
+            "owner": "routing of job 9"
+        }
+    },
+    {
+        "pk": "J10T01",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "306000",
+            "type": "fixed_time",
+            "priority": 1,
+            "owner": "routing of job 10"
+        }
+    },
+    {
+        "pk": "J10T02",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "46800",
+            "type": "fixed_time",
+            "priority": 2,
+            "owner": "routing of job 10"
+        }
+    },
+    {
+        "pk": "J10T03",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "219600",
+            "type": "fixed_time",
+            "priority": 3,
+            "owner": "routing of job 10"
+        }
+    },
+    {
+        "pk": "J10T04",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "25200",
+            "type": "fixed_time",
+            "priority": 4,
+            "owner": "routing of job 10"
+        }
+    },
+    {
+        "pk": "J10T05",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "230400",
+            "type": "fixed_time",
+            "priority": 5,
+            "owner": "routing of job 10"
+        }
+    },
+    {
+        "pk": "J10T06",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "273600",
+            "type": "fixed_time",
+            "priority": 6,
+            "owner": "routing of job 10"
+        }
+    },
+    {
+        "pk": "J10T07",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "169200",
+            "type": "fixed_time",
+            "priority": 7,
+            "owner": "routing of job 10"
+        }
+    },
+    {
+        "pk": "J10T08",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "187200",
+            "type": "fixed_time",
+            "priority": 8,
+            "owner": "routing of job 10"
+        }
+    },
+    {
+        "pk": "J10T09",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "324000",
+            "type": "fixed_time",
+            "priority": 9,
+            "owner": "routing of job 10"
+        }
+    },
+    {
+        "pk": "J10T10",
+        "model": "input.operation",
+        "fields": {
+            "location": "The job shop",
+            "duration": "162000",
+            "type": "fixed_time",
+            "priority": 10,
+            "owner": "routing of job 10"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 00",
+            "operation": "J01T01",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 01",
+            "operation": "J01T02",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 02",
+            "operation": "J01T03",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 03",
+            "operation": "J01T04",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 04",
+            "operation": "J01T05",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 05",
+            "operation": "J01T06",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 06",
+            "operation": "J01T07",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 07",
+            "operation": "J01T08",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 08",
+            "operation": "J01T09",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 09",
+            "operation": "J01T10",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 00",
+            "operation": "J02T01",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 02",
+            "operation": "J02T02",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 04",
+            "operation": "J02T03",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 09",
+            "operation": "J02T04",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 03",
+            "operation": "J02T05",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 01",
+            "operation": "J02T06",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 06",
+            "operation": "J02T07",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 05",
+            "operation": "J02T08",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 07",
+            "operation": "J02T09",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 08",
+            "operation": "J02T10",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 01",
+            "operation": "J03T01",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 00",
+            "operation": "J03T02",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 03",
+            "operation": "J03T03",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 02",
+            "operation": "J03T04",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 08",
+            "operation": "J03T05",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 05",
+            "operation": "J03T06",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 07",
+            "operation": "J03T07",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 06",
+            "operation": "J03T08",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 09",
+            "operation": "J03T09",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 04",
+            "operation": "J03T10",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 01",
+            "operation": "J04T01",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 02",
+            "operation": "J04T02",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 00",
+            "operation": "J04T03",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 04",
+            "operation": "J04T04",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 06",
+            "operation": "J04T05",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 08",
+            "operation": "J04T06",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 07",
+            "operation": "J04T07",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 03",
+            "operation": "J04T08",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 09",
+            "operation": "J04T09",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 05",
+            "operation": "J04T10",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 02",
+            "operation": "J05T01",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 00",
+            "operation": "J05T02",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 01",
+            "operation": "J05T03",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 05",
+            "operation": "J05T04",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 03",
+            "operation": "J05T05",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 04",
+            "operation": "J05T06",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 08",
+            "operation": "J05T07",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 07",
+            "operation": "J05T08",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 09",
+            "operation": "J05T09",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 06",
+            "operation": "J05T10",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 02",
+            "operation": "J06T01",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 01",
+            "operation": "J06T02",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 05",
+            "operation": "J06T03",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 03",
+            "operation": "J06T04",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 08",
+            "operation": "J06T05",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 09",
+            "operation": "J06T06",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 00",
+            "operation": "J06T07",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 06",
+            "operation": "J06T08",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 04",
+            "operation": "J06T09",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 07",
+            "operation": "J06T10",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 01",
+            "operation": "J07T01",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 00",
+            "operation": "J07T02",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 03",
+            "operation": "J07T03",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 02",
+            "operation": "J07T04",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 06",
+            "operation": "J07T05",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 05",
+            "operation": "J07T06",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 09",
+            "operation": "J07T07",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 08",
+            "operation": "J07T08",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 07",
+            "operation": "J07T09",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 04",
+            "operation": "J07T10",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 02",
+            "operation": "J08T01",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 00",
+            "operation": "J08T02",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 01",
+            "operation": "J08T03",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 05",
+            "operation": "J08T04",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 04",
+            "operation": "J08T05",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 06",
+            "operation": "J08T06",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 08",
+            "operation": "J08T07",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 09",
+            "operation": "J08T08",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 07",
+            "operation": "J08T09",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 03",
+            "operation": "J08T10",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 00",
+            "operation": "J09T01",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 01",
+            "operation": "J09T02",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 03",
+            "operation": "J09T03",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 05",
+            "operation": "J09T04",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 02",
+            "operation": "J09T05",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 09",
+            "operation": "J09T06",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 06",
+            "operation": "J09T07",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 07",
+            "operation": "J09T08",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 04",
+            "operation": "J09T09",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 08",
+            "operation": "J09T10",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 01",
+            "operation": "J10T01",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 00",
+            "operation": "J10T02",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 02",
+            "operation": "J10T03",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 06",
+            "operation": "J10T04",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 08",
+            "operation": "J10T05",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 09",
+            "operation": "J10T06",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 05",
+            "operation": "J10T07",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 03",
+            "operation": "J10T08",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 04",
+            "operation": "J10T09",
+            "quantity": "1"
+        }
+    },
+    {
+        "model": "input.operationresource",
+        "fields": {
+            "resource": "Machine 07",
+            "operation": "J10T10",
+            "quantity": "1"
+        }
+    },
+    {
+        "pk": "Job 01",
+        "model": "input.demand",
+        "fields": {
+            "customer": "My customer",
+            "due": "2014-02-08 18:00:00",
+            "priority": 2,
+            "item": "Item 01",
+            "operation": "routing of job 1",
+            "quantity": "1",
+            "location": "The job shop"
+        }
+    },
+    {
+        "pk": "Job 02",
+        "model": "input.demand",
+        "fields": {
+            "customer": "My customer",
+            "due": "2014-02-08 18:00:00",
+            "priority": 2,
+            "item": "Item 02",
+            "operation": "routing of job 2",
+            "quantity": "1",
+            "location": "The job shop"
+        }
+    },
+    {
+        "pk": "Job 03",
+        "model": "input.demand",
+        "fields": {
+            "customer": "My customer",
+            "due": "2014-02-08 18:00:00",
+            "priority": 2,
+            "item": "Item 03",
+            "operation": "routing of job 3",
+            "quantity": "1",
+            "location": "The job shop"
+        }
+    },
+    {
+        "pk": "Job 04",
+        "model": "input.demand",
+        "fields": {
+            "customer": "My customer",
+            "due": "2014-02-08 18:00:00",
+            "priority": 2,
+            "item": "Item 04",
+            "operation": "routing of job 4",
+            "quantity": "1",
+            "location": "The job shop"
+        }
+    },
+    {
+        "pk": "Job 05",
+        "model": "input.demand",
+        "fields": {
+            "customer": "My customer",
+            "due": "2014-02-08 18:00:00",
+            "priority": 2,
+            "item": "Item 05",
+            "operation": "routing of job 5",
+            "quantity": "1",
+            "location": "The job shop"
+        }
+    },
+    {
+        "pk": "Job 06",
+        "model": "input.demand",
+        "fields": {
+            "customer": "My customer",
+            "due": "2014-02-08 18:00:00",
+            "priority": 2,
+            "item": "Item 06",
+            "operation": "routing of job 6",
+            "quantity": "1",
+            "location": "The job shop"
+        }
+    },
+    {
+        "pk": "Job 07",
+        "model": "input.demand",
+        "fields": {
+            "customer": "My customer",
+            "due": "2014-02-08 18:00:00",
+            "priority": 2,
+            "item": "Item 07",
+            "operation": "routing of job 7",
+            "quantity": "1",
+            "location": "The job shop"
+        }
+    },
+    {
+        "pk": "Job 08",
+        "model": "input.demand",
+        "fields": {
+            "customer": "My customer",
+            "due": "2014-02-08 18:00:00",
+            "priority": 2,
+            "item": "Item 08",
+            "operation": "routing of job 8",
+            "quantity": "1",
+            "location": "The job shop"
+        }
+    },
+    {
+        "pk": "Job 09",
+        "model": "input.demand",
+        "fields": {
+            "customer": "My customer",
+            "due": "2014-02-08 18:00:00",
+            "priority": 2,
+            "item": "Item 09",
+            "operation": "routing of job 9",
+            "quantity": "1",
+            "location": "The job shop"
+        }
+    },
+    {
+        "pk": "Job 10",
+        "model": "input.demand",
+        "fields": {
+            "customer": "My customer",
+            "due": "2014-02-08 18:00:00",
+            "priority": 2,
+            "item": "Item 10",
+            "operation": "routing of job 10",
+            "quantity": "1",
+            "location": "The job shop"
+        }
+    }
 ]

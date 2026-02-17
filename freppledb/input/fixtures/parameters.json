@@ -1,22 +1,162 @@
 [
-{"pk": "currentdate", "model": "common.parameter", "fields": {"value": "now", "description": "Current date of the plan, preferred format is YYYY-MM-DD HH:MM:SS but most known formats to represent a date and/or time are accepted."}},
-{"pk": "currency", "model": "common.parameter", "fields": {"value":"$", "description":"Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"}},
-{"pk": "loading_time_units", "model": "common.parameter", "fields": {"value": "hours", "description": "Time units to be used for the resource report: hours, days, weeks"}},
-{"pk": "plan.administrativeLeadtime", "model": "common.parameter", "fields": {"value": "0", "description": "Specifies the number of days (value can be decimal) sales orders should be planned ahead of their due date to take into account for an administrative lead time. Default: 0"}},
-{"pk": "plan.minimumdelay", "model": "common.parameter", "fields": {"value": "3600", "description": "Specifies a minimum delivery date increment (in seconds) used by the planning algorithm in its search. Default: 3600"}},
-{"pk": "plan.loglevel", "model": "common.parameter", "fields": {"value": "0", "description": "Controls the verbosity of the planning log file. Accepted values are 0(silent - default), 1 and 2 (verbose)"}},
-{"pk": "plan.rotateResources", "model": "common.parameter", "fields": {"value": "true", "description": "When set to true, the algorithm will better distribute the demand across alternate suboperations instead of using the preferred operation"}},
-{"model": "common.parameter", "fields": {"name":"plan.individualPoolResources","value":"false","description":"When set to true, an operation-resource record with quantity N is interpreted as 'find N member resources of size 1' instead of 'find a member resource with size N'"}},
-{"pk": "plan.move_approved_early", "model":"common.parameter","fields": {"value": "0", "description": "Controls rescheduling approved orders early. Values: 0 (inactive, default), 1 (active preserving existing resource assignments, 2 (active replanning resource assignments)"}},
-{"pk": "plan.rotateResources", "model": "common.parameter", "fields": {"value": "true", "description": "When set to true, the algorithm will better distribute the demand across alternate suboperations instead of using the preferred operation"}},
-{"pk": "plan.autoFenceOperations", "model": "common.parameter", "fields": {"value": "999", "description": "The number of days the solver should wait for a confirmed replenishment before generating a proposed order. Default:999 (wait indefinitely)"}},
-{"model": "common.parameter", "fields": {"name": "plan.deliveryDuration", "value": "0", "description": "The duration (in working hours) for the final shipment of a sales order to the customer. Default: 0"}},
-{"pk": "currency", "model": "common.parameter", "fields": {"value":"$", "description":"Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"}},
-{"model":"common.parameter", "fields": {"name": "plan.fixBrokenSupplyPath", "value":"true", "description":"Creates item supplier records with Unknown supplier to fix broken supply path. Default is true."}},
-{"pk": "WIP.consume_material", "model": "common.parameter", "fields": {"value":"true", "description":"Determines whether confirmed manufacturing orders consume material or not. Default is true."}},
-{"pk": "WIP.consume_capacity", "model": "common.parameter", "fields": {"value":"true", "description":"Determines whether confirmed manufacturing orders, purchase orders and distribution orders consume capacity or not. Default is true."}},
-{"pk": "COMPLETED.consume_material", "model":"common.parameter", "fields": {"value":"true", "description":"Determines whether completed manufacturing orders and distribution orders consume material or not. Default is true."}},
-{"pk": "excel_duration_in_days", "model":"common.parameter", "fields": {"value":"true", "description":"Determines whether numbers in duration fields in spreadsheets are considered as days or seconds. Default is true (for days)."}},
-{"model": "common.parameter", "fields": {"name":"display_time", "value":"default", "description":"This parameter applies to ALL scenarios and controls if date time fields should display the time. Accepted values: true or false."}},
-{"model": "common.parameter", "fields": {"name":"date_format", "value":"default", "description":"This parameter applies to ALL scenarios. Accepted values: month-day-year, day-month-year, year-month-day."}}
+    {
+        "pk": "currentdate",
+        "model": "common.parameter",
+        "fields": {
+            "value": "now",
+            "description": "Current date of the plan, preferred format is YYYY-MM-DD HH:MM:SS but most known formats to represent a date and/or time are accepted."
+        }
+    },
+    {
+        "pk": "currency",
+        "model": "common.parameter",
+        "fields": {
+            "value": "$",
+            "description": "Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"
+        }
+    },
+    {
+        "pk": "loading_time_units",
+        "model": "common.parameter",
+        "fields": {
+            "value": "hours",
+            "description": "Time units to be used for the resource report: hours, days, weeks"
+        }
+    },
+    {
+        "pk": "plan.administrativeLeadtime",
+        "model": "common.parameter",
+        "fields": {
+            "value": "0",
+            "description": "Specifies the number of days (value can be decimal) sales orders should be planned ahead of their due date to take into account for an administrative lead time. Default: 0"
+        }
+    },
+    {
+        "pk": "plan.minimumdelay",
+        "model": "common.parameter",
+        "fields": {
+            "value": "3600",
+            "description": "Specifies a minimum delivery date increment (in seconds) used by the planning algorithm in its search. Default: 3600"
+        }
+    },
+    {
+        "pk": "plan.loglevel",
+        "model": "common.parameter",
+        "fields": {
+            "value": "0",
+            "description": "Controls the verbosity of the planning log file. Accepted values are 0 (silent - default), 1 and 2 (verbose)"
+        }
+    },
+    {
+        "pk": "plan.rotateResources",
+        "model": "common.parameter",
+        "fields": {
+            "value": "true",
+            "description": "When set to true, the algorithm will better distribute the demand across alternate suboperations instead of using the preferred operation"
+        }
+    },
+    {
+        "model": "common.parameter",
+        "fields": {
+            "name": "plan.individualPoolResources",
+            "value": "false",
+            "description": "When set to true, an operation-resource record with quantity N is interpreted as 'find N member resources of size 1' instead of 'find a member resource with size N'"
+        }
+    },
+    {
+        "pk": "plan.move_approved_early",
+        "model": "common.parameter",
+        "fields": {
+            "value": "0",
+            "description": "Controls rescheduling approved orders early. Values: 0 (inactive, default), 1 (active preserving existing resource assignments, 2 (active replanning resource assignments)"
+        }
+    },
+    {
+        "pk": "plan.rotateResources",
+        "model": "common.parameter",
+        "fields": {
+            "value": "true",
+            "description": "When set to true, the algorithm will better distribute the demand across alternate suboperations instead of using the preferred operation"
+        }
+    },
+    {
+        "pk": "plan.autoFenceOperations",
+        "model": "common.parameter",
+        "fields": {
+            "value": "999",
+            "description": "The number of days the solver should wait for a confirmed replenishment before generating a proposed order. Default:999 (wait indefinitely)"
+        }
+    },
+    {
+        "model": "common.parameter",
+        "fields": {
+            "name": "plan.deliveryDuration",
+            "value": "0",
+            "description": "The duration (in working hours) for the final shipment of a sales order to the customer. Default: 0"
+        }
+    },
+    {
+        "pk": "currency",
+        "model": "common.parameter",
+        "fields": {
+            "value": "$",
+            "description": "Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"
+        }
+    },
+    {
+        "model": "common.parameter",
+        "fields": {
+            "name": "plan.fixBrokenSupplyPath",
+            "value": "true",
+            "description": "Creates item supplier records with Unknown supplier to fix broken supply path. Default is true."
+        }
+    },
+    {
+        "pk": "WIP.consume_material",
+        "model": "common.parameter",
+        "fields": {
+            "value": "true",
+            "description": "Determines whether confirmed manufacturing orders consume material or not. Default is true."
+        }
+    },
+    {
+        "pk": "WIP.consume_capacity",
+        "model": "common.parameter",
+        "fields": {
+            "value": "true",
+            "description": "Determines whether confirmed manufacturing orders, purchase orders and distribution orders consume capacity or not. Default is true."
+        }
+    },
+    {
+        "pk": "COMPLETED.consume_material",
+        "model": "common.parameter",
+        "fields": {
+            "value": "true",
+            "description": "Determines whether completed manufacturing orders and distribution orders consume material or not. Default is true."
+        }
+    },
+    {
+        "pk": "excel_duration_in_days",
+        "model": "common.parameter",
+        "fields": {
+            "value": "true",
+            "description": "Determines whether numbers in duration fields in spreadsheets are considered as days or seconds. Default is true (for days)."
+        }
+    },
+    {
+        "model": "common.parameter",
+        "fields": {
+            "name": "display_time",
+            "value": "default",
+            "description": "This parameter applies to ALL scenarios and controls if date time fields should display the time. Accepted values: true or false."
+        }
+    },
+    {
+        "model": "common.parameter",
+        "fields": {
+            "name": "date_format",
+            "value": "default",
+            "description": "This parameter applies to ALL scenarios. Accepted values: month-day-year, day-month-year, year-month-day."
+        }
+    }
 ]

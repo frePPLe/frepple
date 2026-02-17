@@ -383,11 +383,11 @@ def APITask(request, action):
                             "user": t.user.username if t.user else None,
                         }
         elif action == "log":
-            taskid = request.GET.get("id")
-            if not taskid:
-                return HttpResponseNotFound("Task or log file not found")
+            taskid = request.GET.get("id", None)
+            if taskid is None:
+                return HttpResponseNotFound("No task argument passed")
             try:
-                msg = "retrieving task log of %s" % taskid
+                msg = f"retrieving task log of {taskid}"
                 task = (
                     Task.objects.all().using(request.database).filter(id=taskid).first()
                 )

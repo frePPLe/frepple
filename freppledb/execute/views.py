@@ -388,8 +388,14 @@ def APITask(request, action):
                 return HttpResponseNotFound("Task or log file not found")
             try:
                 msg = "retrieving task log of %s" % taskid
-                task = Task.objects.all().using(request.database).get(id=taskid)
-                if task and task.logfile:
+                task = (
+                    Task.objects.all().using(request.database).filter(id=taskid).first()
+                )
+                if not task:
+                    response = {"message": f"Task {taskid} not found"}
+                elif not task.logfile:
+                    response = {"message": f"Task {taskid} has no logfile"}
+                else:
                     return sendStaticFile(
                         request,
                         settings.FREPPLE_LOGDIR,

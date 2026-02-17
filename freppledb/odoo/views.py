@@ -517,7 +517,7 @@ def SubmittedFromOdoo(request):
             elif filename == "datafile":
                 # Store the attached data file.
                 with open(
-                    os.path.join(outputfolder, "odoodata.json.gz"), "wb"
+                    os.path.join(outputfolder, f"{uploadedfile.name}.gz"), "wb"
                 ) as outfile:
                     for chunk in uploadedfile.chunks():
                         outfile.write(chunk)

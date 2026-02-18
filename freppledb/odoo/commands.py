@@ -808,7 +808,11 @@ class OdooSendRecommendations(PlanTask):
                             "type": "produce" if new_mo else "reschedule",
                             "data": (
                                 {
-                                    "bom_id": int(i.name.rsplit(" ", 1)[1]),
+                                    "bom_id": (
+                                        int(i.name.rsplit(" ", 1)[1])
+                                        if new_mo
+                                        else None
+                                    ),
                                     "workorders": [
                                         (
                                             subopplan.operation.name,

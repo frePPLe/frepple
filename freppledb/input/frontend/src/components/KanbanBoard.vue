@@ -127,11 +127,13 @@ function formatInventoryStatus(opplan) {
 }
 
 function selectCard(opplan) {
+  console.log(130, 'selectCard:', opplan, opplan.reference, store.operationplan.reference, opplan.selected);
   if (store.operationplan.reference && store.operationplan.reference == opplan.reference && opplan.selected) return;
+  console.log(132, store.operationplan.operationplan__reference, store.operationplan.operationplan__reference == opplan.reference, opplan.selected);
   if (store.operationplan.operationplan__reference && store.operationplan.operationplan__reference == opplan.reference && opplan.selected) return;
-
+  console.log(134, 'selectCard:', toRaw(opplan), toRaw(store.operationplan));
   opplan.selected = true;
-  store.operationplan = new Operationplan(opplan);
+  store.loadOperationplans([opplan.reference], true, [opplan.reference], true);
   // store.displayInfo(opplan);
   // angular.element(document).find("#delete_selected, #gridactions").prop("disabled", false);
 }
@@ -140,16 +142,10 @@ function selectCard(opplan) {
 </script>
 
 <template>
-  <Teleport to="#content-main">
-    <div
-      v-if="store.mode === 'kanban'"
-      id="kanban-container"
-      style="position: relative; width: 100%; height: 100%; top: 0; left: 0"
-    >
-      VUE BOARD
+  <Teleport to="#kanban" v-if="store.mode === 'kanban'">
       <div class="row">
-        <div v-for="col in kanbancolumns" :key="col" :data-column="col" class="col gy-3">
-          <div class="card kanbancolumn">
+        <div v-for="col in kanbancolumns" :key="col" :data-column="col" class="col gy-3" style="height: 100%">
+          <div class="card kanbancolumn" style="height: 100%">
             <div draggable="true" class="card-header">
               <div class="dropdown float-end">
                 <a
@@ -187,7 +183,7 @@ function selectCard(opplan) {
                 <div
                   class="card-kanban"
                   v-for="(opplan,index) in kanbanoperationplans[col].rows"
-                  :key="opplan.reference"
+                  :key=opplan
                   :data-index="index"
                   @click="selectCard(opplan)"
                 >
@@ -198,6 +194,5 @@ function selectCard(opplan) {
           </div>
         </div>
       </div>
-    </div>
   </Teleport>
 </template>

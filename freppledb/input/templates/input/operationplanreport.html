@@ -181,8 +181,24 @@ rect.opplan {
       handleSelector: "#resize-handle",
       resizeWidth: false,
       resizeHeight: true,
-      onDrag: setHeights,
+      onDrag: function (e, $el, opt) {
+        // Live grid height adjustment
+        jQuery("#grid").setGridHeight(jQuery("#content-main").height() - 52);
+
+        // Notify Vue about new height so it can update the store
+        const newHeight = Math.floor(jQuery("#content-main").height() - 52);
+        document.getElementById('app')?.dispatchEvent(
+                new CustomEvent('setRowHeight', { detail: { height: newHeight, source: 'drag' } })
+        );
+      },
       onDragEnd: function (e, $el, opt) {
+        // Persist preference through Vue store
+        const newHeight = Math.floor(jQuery("#content-main").height() -52);
+        document.getElementById('app')?.dispatchEvent(
+                new CustomEvent('setRowHeight', { detail: { height: newHeight, source: 'dragend' } })
+        );
+
+        // Keep existing column configuration save
         grid.saveColumnConfiguration();
       }
     });
@@ -315,12 +331,22 @@ rect.opplan {
     resizeHeight: true,
     onDrag: function (e, $el, opt) {
       jQuery("#grid").setGridHeight(jQuery("#content-main").height() - 52);
+
+      // Notify Vue about new height so it can update the store
+      const newHeight = Math.floor(jQuery("#content-main").height());
+      document.getElementById('app')?.dispatchEvent(
+              new CustomEvent('setRowHeight', { detail: { height: newHeight, source: 'drag' } })
+      );
     },
     onDragEnd: function (e, $el, opt) {
-      // Save column configuration (assuming grid has a save method)
       if (typeof grid !== 'undefined' && typeof grid.saveColumnConfiguration === 'function') {
         grid.saveColumnConfiguration();
       }
+      // Persist preference through Vue store
+      const newHeight = Math.floor(jQuery("#content-main").height());
+      document.getElementById('app')?.dispatchEvent(
+              new CustomEvent('setRowHeight', { detail: { height: newHeight, source: 'dragend' } })
+      );
     }
   });
 
@@ -345,6 +371,13 @@ rect.opplan {
     });
   });
 
+  // Apply saved content height if present
+  if (window.preferences && window.preferences.height) {
+    const h = Math.max(150, Math.floor(window.preferences.height));
+    jQuery('#content-main').css('height', h + 'px');
+    // Adjust inner widgets to the applied height
+    jQuery("#grid").setGridHeight(h - 52);
+  }
 </script>
 {% endblock %}
 
@@ -544,10 +577,10 @@ loadComplete: function(data) {
     <table id="grid" class="table table-striped" style="background-color: white"></table>
     <div id="gridpager"></div>
   </div>
-  <div id="calendar" hidden="!preferences.mode.startsWith('calendar')" class="col-md-12">
+  <div id="calendar" class="col-md-12">
   </div>
-  <div id="kanban" hidden="preferences.mode != 'kanban'" class="row"></div>
-  <div id="gantt" hidden="preferences.mode != 'gantt'" class="row"></div>
+  <div id="kanban" class="row"></div>
+  <div id="gantt" class="row"></div>
 </div>
 <span id="resize-handle" class="fa fa-bars handle" style="display: inline-block"></span>
 </div>

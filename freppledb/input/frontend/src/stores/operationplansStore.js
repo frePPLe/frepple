@@ -152,6 +152,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     async loadOperationplans(references = [], selectedFlag, selectedRows, isDataSaved = false) {
+      console.log("155 loadOperationplans ", references, selectedFlag, selectedRows, isDataSaved);
       this.selectedOperationplans.length = 0
       this.selectedOperationplans.push(...toRaw(selectedRows));
       if (references.length === 0) {

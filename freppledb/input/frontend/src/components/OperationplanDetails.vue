@@ -120,6 +120,13 @@ function shouldShowWidget(widgetName) {
 }
 
 onMounted(() => {
+  const saveHeightPrefDebounced = debounce(() => {
+    try {
+      store.savePreferences();
+    } catch (e) {
+      console.warn('Failed to save row height preference', e);
+    }
+  }, 400);
 
   const getGridRowData = (id) => {
     try {
@@ -232,6 +239,25 @@ onMounted(() => {
     store.setStatus(detail.status);
   };
 
+  const handleSetRowHeight = (e) => {
+    const detail = e?.detail || {};
+    const h = Math.max(150, Math.floor(Number(detail.height) || 0));
+    if (!h) return;
+
+    // Update DOM height defensively (resizable already sets it, but this keeps both paths in sync)
+    // try {
+    //   window.jQuery && window.jQuery('#content-main').css('height', h + 'px');
+    // } catch (_) {}
+
+    // Update store so it’s persisted and reflected in preferences
+    store.setDataRowHeight(h);
+
+    // Persist on drag end, avoid excessive saves while dragging
+    if (detail.source === 'dragend') {
+      saveHeightPrefDebounced();
+    }
+  };
+
   // Attach listeners on the app root element if present, otherwise on document
   const rootEl = document.getElementById('app') || document;
   rootEl.addEventListener('singleSelect', handleSingleSelectEvent);
@@ -244,6 +270,7 @@ onMounted(() => {
   rootEl.addEventListener('hidden.bs.collapse', grid.saveColumnConfiguration);
   rootEl.addEventListener('shown.bs.collapse', grid.saveColumnConfiguration);
   rootEl.addEventListener('setMode', handleSetMode);
+  rootEl.addEventListener('setRowHeight', handleSetRowHeight);
 
   // Save references to handlers so they can be removed on unmount
   appElement.value = {
@@ -275,6 +302,7 @@ onUnmounted(() => {
       info.rootEl.removeEventListener('undo', info.handlers.display);
       info.rootEl.removeEventListener('gridCellEdited', info.handlers.gridCellEdited);
       info.rootEl.removeEventListener('setMode', info.handlers.setMode);
+      info.rootEl.removeEventListener('setRowHeight', handleSetRowHeight);
     } catch (err) {
       console.log('Failed to remove event listeners from app root element:', err);
     }

@@ -408,7 +408,7 @@ def Upload(request):
                                         % (
                                             quoteattr(opplanmat.item.name),
                                             quoteattr(
-                                                womat.item.subcategory.split(",")[1]
+                                                opplanmat.item.subcategory.split(",")[1]
                                                 or ""
                                             ),
                                             opplanmat.quantity,

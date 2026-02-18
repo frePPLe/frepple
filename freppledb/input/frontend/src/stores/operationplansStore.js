@@ -100,8 +100,10 @@ export const useOperationplansStore = defineStore('operationplans', {
     currentdate: new Date(),
 
     // Kanban
-    kanbanoperationplans: [],
-    kanbancolumns: [],
+    kanbanoperationplans: {},
+    kanbancolumns: window.preferences?.columns || ["proposed", "approved", "confirmed", "completed", "closed"],
+    groupBy: window.groupBy || 'status',
+    groupOperator: window.groupOperator || 'eq',
     ganttoperationplans: [],
     calendarevents: [],
   }),
@@ -197,81 +199,87 @@ export const useOperationplansStore = defineStore('operationplans', {
       }
     },
 
-//     function loadKanbanData(thefilter) {
-//   if (!thefilter) {
-//     var tmp = $('#grid').getGridParam("postData");
-//     if (tmp)
-//       thefilter = tmp.filters ? JSON.parse(tmp.filters) : initialfilter;
-//     else
-//       thefilter = initialfilter;
-//   }
-//   var sidx = $('#grid').getGridParam('sortname');
-//   var sortname = "";
-//   if (sidx !== '') {
-//     sortname = "&sidx=" + encodeURIComponent(sidx)
-//       + "&sord=" + encodeURIComponent($('#grid').getGridParam('sortorder'));
-//   }
-//   var baseurl = (location.href.indexOf("#") != -1 ? location.href.substr(0, location.href.indexOf("#")) : location.href)
-//     + (location.search.length > 0 ? "&format=kanban" : "?format=kanban");
-//   // TODO handle this filtering on the backend instead?
-//   angular.forEach($scope.kanbancolumns, function (key) {
-//     var colfilter = angular.copy(thefilter);
-//     var extrafilter = { field: $scope.groupBy, op: $scope.groupOperator, data: key };
-//     if (colfilter === undefined || colfilter === null) {
-//       // First filter
-//       colfilter = {
-//         "groupOp": "AND",
-//         "rules": [extrafilter],
-//         "groups": []
-//       };
-//     }
-//     else {
-//       if (colfilter["groupOp"] == "AND")
-//         // Add condition to existing and-filter
-//         colfilter["rules"].push(extrafilter);
-//       else
-//         // Wrap existing filter in a new and-filter
-//         colfilter = {
-//           "groupOp": "AND",
-//           "rules": [extrafilter],
-//           "groups": [colfilter]
-//         };
-//     }
-//     $http.get(baseurl + "&filters=" + encodeURIComponent(JSON.stringify(colfilter)) + sortname)
-//       .then(function (response) {
-//           var tmp = angular.copy(response.data);
-//           for (var x of tmp.rows) {
-//             x.type = x.operationplan__type || x.type || default_operationplan_type;
-//             if (x.hasOwnProperty("enddate"))
-//               x.enddate = new Date(x.enddate);
-//             if (x.hasOwnProperty("operationplan__enddate"))
-//               x.operationplan__enddate = new Date(x.operationplan__enddate);
-//             if (x.hasOwnProperty("startdate"))
-//               x.startdate = new Date(x.startdate);
-//             if (x.hasOwnProperty("operationplan__startdate"))
-//               x.operationplan__startdate = new Date(x.operationplan__startdate);
-//             if (x.hasOwnProperty("quantity"))
-//               x.quantity = parseFloat(x.quantity);
-//             if (x.hasOwnProperty("operationplan__quantity"))
-//               x.operationplan__quantity = parseFloat(x.operationplan__quantity);
-//             if (x.hasOwnProperty("quantity_completed"))
-//               x.quantity_completed = parseFloat(x.quantity_completed);
-//             if (x.hasOwnProperty("operationplan__quantity_completed"))
-//               x.operationplan__quantity_completed = parseFloat(x.operationplan__quantity_completed);
-//             if (x.hasOwnProperty("operationplan__status"))
-//               x.status = x.operationplan__status;
-//             if (x.hasOwnProperty("operationplan__origin"))
-//               x.origin = x.operationplan__origin;
-//             [x.color, x.inventory_status] = formatInventoryStatus(x);
-//           }
-//           $scope.kanbanoperationplans[key] = tmp;
-//         },
-//         function (err) {
-//           if (err.status == 401)
-//             location.reload();
-//         });
-//   });
-// }
+    async loadKanbanData(thefilter) {
+      if (!thefilter) {
+        thefilter = this.currentFilter || window.initialfilter;
+      }
+
+      const params = {
+        format: 'kanban',
+        sidx: this.sidx,
+        sord: this.sord
+      };
+
+      for (const key of this.kanbancolumns) {
+        let colfilter = thefilter ? JSON.parse(JSON.stringify(thefilter)) : undefined;
+        const extrafilter = {
+          field: this.groupBy,
+          op: this.groupOperator,
+          data: key,
+        };
+        if (colfilter === undefined || colfilter === null) {
+          // First filter
+          colfilter = {
+            groupOp: "AND",
+            rules: [extrafilter],
+            groups: [],
+          };
+        } else {
+          if (colfilter["groupOp"] === "AND")
+            // Add condition to existing and-filter
+            colfilter["rules"].push(extrafilter);
+          else
+            // Wrap existing filter in a new and-filter
+            colfilter = {
+              groupOp: "AND",
+              rules: [extrafilter],
+              groups: [colfilter],
+            };
+        }
+        try {
+          const { responseData } = await operationplanService.getKanbanData({
+            ...params,
+            filters: JSON.stringify(colfilter)
+          });
+          const tmp = responseData.value;
+          for (const x of tmp.rows) {
+            x.type =
+              x.operationplan__type || x.type || window.default_operationplan_type;
+            if (Object.prototype.hasOwnProperty.call(x, "enddate"))
+              x.enddate = new Date(x.enddate);
+            if (Object.prototype.hasOwnProperty.call(x, "operationplan__enddate"))
+              x.operationplan__enddate = new Date(x.operationplan__enddate);
+            if (Object.prototype.hasOwnProperty.call(x, "startdate"))
+              x.startdate = new Date(x.startdate);
+            if (Object.prototype.hasOwnProperty.call(x, "operationplan__startdate"))
+              x.operationplan__startdate = new Date(x.operationplan__startdate);
+            if (Object.prototype.hasOwnProperty.call(x, "quantity"))
+              x.quantity = parseFloat(x.quantity);
+            if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity"))
+              x.operationplan__quantity = parseFloat(x.operationplan__quantity);
+            if (Object.prototype.hasOwnProperty.call(x, "quantity_completed"))
+              x.quantity_completed = parseFloat(x.quantity_completed);
+            if (
+              Object.prototype.hasOwnProperty.call(
+                x,
+                "operationplan__quantity_completed"
+              )
+            )
+              x.operationplan__quantity_completed = parseFloat(
+                x.operationplan__quantity_completed
+              );
+            if (Object.prototype.hasOwnProperty.call(x, "operationplan__status"))
+              x.status = x.operationplan__status;
+            if (Object.prototype.hasOwnProperty.call(x, "operationplan__origin"))
+              x.origin = x.operationplan__origin;
+            // [x.color, x.inventory_status] = formatInventoryStatus(x);
+          }
+          this.kanbanoperationplans[key] = tmp;
+        } catch (err) {
+          if (err.response && err.response.status === 401) location.reload();
+        }
+      }
+    },
 
 
     // Filter and search actions

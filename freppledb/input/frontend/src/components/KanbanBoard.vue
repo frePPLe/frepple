@@ -17,7 +17,6 @@ import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
 import KanbanCard from '@/components/KanbanCard.vue';
 import { Operationplan } from '@/models/operationplan.js';
-import {isBlank} from "@common/utils.js";
 
 onMounted(async () => {
   const target = document.getElementById('kanban');
@@ -29,12 +28,12 @@ onMounted(async () => {
   console.log('Preferences mode:', window.preferences?.mode);
 
 
-  // try {
-  //   await store.loadKanbanData();
-  //   console.log('Kanban data loaded successfully');
-  // } catch (error) {
-  //   console.error('Failed to load kanban data:', error);
-  // }
+  try {
+    await store.loadKanbanData();
+    console.log('Kanban data loaded successfully');
+  } catch (error) {
+    console.error('Failed to load kanban data:', error);
+  }
 });
 
 const urlPrefix = computed(() => window.url_prefix || '');
@@ -45,37 +44,37 @@ const { t: ttt } = useI18n({
 
 const store = useOperationplansStore();
 
-const kanbancolumns = store.kanbancolumns;
-
-console.log(43, 'kanbancolumns:', kanbancolumns);
+const kanbancolumns = computed(() => store.kanbancolumns);
 
 const kanbanoperationplans = computed(() => {
   const result = {};
-  kanbancolumns.forEach((col) => {
+  kanbancolumns.value.forEach((col) => {
     const tmp = store.kanbanoperationplans[col];
-    for (const x of tmp.rows) {
-      x.type = x.operationplan__type || x.type || "PO";
-      if (Object.prototype.hasOwnProperty.call(x, "enddate"))
-        x.enddate = new Date(x.enddate);
-      if (Object.prototype.hasOwnProperty.call(x, "operationplan__enddate"))
-        x.operationplan__enddate = new Date(x.operationplan__enddate);
-      if (Object.prototype.hasOwnProperty.call(x, "startdate"))
-        x.startdate = new Date(x.startdate);
-      if (Object.prototype.hasOwnProperty.call(x, "operationplan__startdate"))
-        x.operationplan__startdate = new Date(x.operationplan__startdate);
-      if (Object.prototype.hasOwnProperty.call(x, "quantity"))
-        x.quantity = parseFloat(x.quantity);
-      if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity"))
-        x.operationplan__quantity = parseFloat(x.operationplan__quantity);
-      if (Object.prototype.hasOwnProperty.call(x, "quantity_completed"))
-        x.quantity_completed = parseFloat(x.quantity_completed);
-      if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity_completed"))
-        x.operationplan__quantity_completed = parseFloat(x.operationplan__quantity_completed);
-      if (Object.prototype.hasOwnProperty.call(x, "operationplan__status"))
-        x.status = x.operationplan__status;
-      if (Object.prototype.hasOwnProperty.call(x, "operationplan__origin"))
-        x.origin = x.operationplan__origin;
-      [x.color, x.inventory_status] = formatInventoryStatus(x);
+    if (tmp && tmp.rows) {
+      for (const x of tmp.rows) {
+        x.type = x.operationplan__type || x.type || "PO";
+        if (Object.prototype.hasOwnProperty.call(x, "enddate"))
+          x.enddate = new Date(x.enddate);
+        if (Object.prototype.hasOwnProperty.call(x, "operationplan__enddate"))
+          x.operationplan__enddate = new Date(x.operationplan__enddate);
+        if (Object.prototype.hasOwnProperty.call(x, "startdate"))
+          x.startdate = new Date(x.startdate);
+        if (Object.prototype.hasOwnProperty.call(x, "operationplan__startdate"))
+          x.operationplan__startdate = new Date(x.operationplan__startdate);
+        if (Object.prototype.hasOwnProperty.call(x, "quantity"))
+          x.quantity = parseFloat(x.quantity);
+        if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity"))
+          x.operationplan__quantity = parseFloat(x.operationplan__quantity);
+        if (Object.prototype.hasOwnProperty.call(x, "quantity_completed"))
+          x.quantity_completed = parseFloat(x.quantity_completed);
+        if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity_completed"))
+          x.operationplan__quantity_completed = parseFloat(x.operationplan__quantity_completed);
+        if (Object.prototype.hasOwnProperty.call(x, "operationplan__status"))
+          x.status = x.operationplan__status;
+        if (Object.prototype.hasOwnProperty.call(x, "operationplan__origin"))
+          x.origin = x.operationplan__origin;
+        [x.color, x.inventory_status] = formatInventoryStatus(x);
+      }
     }
     result[col] = tmp;
   })
@@ -171,12 +170,11 @@ function selectCard(opplan) {
               </div>
               <h3 class="card-title text-capitalize">
                 {{ col }}&nbsp;&nbsp;
-                <span class="badge"
-                  >{{ kanbanoperationplans[col].records }}
+                <span class="badge">{{ kanbanoperationplans[col]?.records }}
                   <span
                     style="font-size: 65%"
-                    v-if="kanbanoperationplans[col].records > kanbanoperationplans[col].rows.length"
-                    >{{ kanbanoperationplans[col].rows.length }} {{ ttt('shown') }}</span
+                    v-if="kanbanoperationplans[col]?.records > kanbanoperationplans[col]?.rows.length"
+                    >{{ kanbanoperationplans[col]?.rows.length }} {{ ttt('shown') }}</span
                   >
                 </span>
               </h3>
@@ -185,16 +183,17 @@ function selectCard(opplan) {
               class="card-body column-body"
               :style="{'overflow-y': 'auto', 'height': getHeight(25)}"
             >
-              <div
-                v-if="kanbanoperationplans[col]"
-                class="card-kanban"
-                v-for="(opplan,index) in kanbanoperationplans[col].rows"
-                :key="opplan.reference"
-                :data-index="index"
-                @click="selectCard(opplan)"
-              >
+              <template v-if="kanbanoperationplans[col]">
+                <div
+                  class="card-kanban"
+                  v-for="(opplan,index) in kanbanoperationplans[col].rows"
+                  :key="opplan.reference"
+                  :data-index="index"
+                  @click="selectCard(opplan)"
+                >
                 <KanbanCard :opplan="opplan" :opplan_index="index"/>
               </div>
+            </template>
             </div>
           </div>
         </div>

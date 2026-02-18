@@ -34,5 +34,13 @@ export const operationplanService = {
 
   async savePreferences(preferencesData) {
     return api.post('settings/', preferencesData );
+  },
+
+  async getKanbanData(params) {
+    const searchParams = new URLSearchParams(params).toString();
+    const endpoint = (location.pathname.startsWith(window.url_prefix)
+      ? location.pathname.substring(window.url_prefix.length)
+      : location.pathname) + '?' + searchParams;
+    return api.get(endpoint.startsWith('/') ? endpoint.substring(1) : endpoint, {});
   }
 };

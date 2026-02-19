@@ -100,25 +100,18 @@ class Task(models.Model):
             if not worker_alive or datetime.now() - datetime.strptime(
                 worker_alive, "%Y-%m-%d %H:%M:%S"
             ) > timedelta(seconds=30):
-                x = (
-                    Task.objects.using(database)
-                    .filter(
-                        status="waiting",
-                        submitted__lte=Now() - timedelta(seconds=30),
-                    )
-                    .update(status="Canceled")
-                )
-                print(" canceled ", x)
+                Task.objects.using(database).filter(
+                    status="waiting",
+                    submitted__lte=Now() - timedelta(seconds=30),
+                ).update(status="Canceled")
             for t in Task.objects.using(database).filter(
                 status__contains="%",
                 finished__isnull=True,
                 started__isnull=False,
                 started__lte=Now() - timedelta(hours=3),
             ):
-                print("killed", t.id, t.processid)
                 t.killProcess()
         except Exception as e:
-            print("eeeeeee", e)
             pass
 
     def killProcess(self):

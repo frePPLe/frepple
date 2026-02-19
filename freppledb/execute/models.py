@@ -113,7 +113,7 @@ class Task(models.Model):
                 status__contains="%",
                 finished__isnull=True,
                 started__isnull=False,
-                started__lte=Now() - timedelta(minutes=3),
+                started__lte=Now() - timedelta(hours=3),
             ):
                 print("killed", t.id, t.processid)
                 t.killProcess()

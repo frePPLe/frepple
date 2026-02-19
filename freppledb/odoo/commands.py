@@ -292,6 +292,7 @@ class OdooReadData(PlanTask):
                     "Authorization", "Basic %s" % encoded.decode("ascii")
                 )
                 request.add_header("Accept-Encoding", "gzip")
+                request.add_header("User-Agent", "frepple_connectors")
 
                 # Download and parse data
                 with urlopen(request) as response:
@@ -632,7 +633,10 @@ class OdooSendRecommendations(PlanTask):
         with open(recommendations, "rb") as f:
             response = requests.post(
                 f"{metadata["odoo_url"]}frepple/recommendations/",
-                headers={"Authorization": authentication},
+                headers={
+                    "Authorization": authentication,
+                    "User-Agent": "frepple_connectors",
+                },
                 files={
                     "recommendations.json": (
                         "recommendations.json",

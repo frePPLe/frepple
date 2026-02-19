@@ -445,6 +445,7 @@ def Upload(request):
                 "Authorization": "Basic %s" % encoded.decode("ascii"),
                 "Content-Type": "multipart/form-data; boundary=%s" % boundary,
                 "Content-length": size,
+                "User-Agent": "frepple_connectors",
             },
         )
 

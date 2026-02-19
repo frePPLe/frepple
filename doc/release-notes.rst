@@ -26,10 +26,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 18, 19: The calculation of the reserved stocks has been adjusted to
     account for more complex odoo configurations with stock pickings.
 
-.. rubric:: User interface
-
-- | The emails sent out by task scheduler now contain the status, timing,
-    message and log files of each task in the schedule.
+- | 17, 18, 19: Bug fix for the bulk export from frepple to odoo in multi-company
+    setups.
 
 9.13.0 (2026-01-31)
 ===================

@@ -77,11 +77,7 @@ class OdooTest(TransactionTestCase):
         self.uid = common.authenticate(self.db, self.username, self.password, {})
         self.models = xmlrpc.client.ServerProxy("{}/xmlrpc/2/object".format(self.url))
 
-    def odooRPC(self, odoo_model, odoo_filter=None, odoo_options=None, odoo_fields=None):
-        if odoo_filter is None:
-            odoo_filter = []
-        if odoo_options is None:
-            odoo_options = {}
+    def odooRPC(self, odoo_model, odoo_filter=[], odoo_options={}, odoo_fields=None):
         ids = self.models.execute_kw(
             self.db,
             self.uid,
@@ -177,7 +173,8 @@ class OdooTest(TransactionTestCase):
             item__name__in=frepple_items,
             status="confirmed",
         )
-        self.assertEqual(po_list.count(), 2)
+        # Only P00015 in 17 & 18
+        self.assertEqual(po_list.count(), {17: 1, 18: 1, 19: 2}[odoo_version])
         po = po_list[0]
         self.assertEqual(po.quantity, 15)
         # TODO receipt date changes between runs, making it difficult to compare here
@@ -226,11 +223,11 @@ class OdooTest(TransactionTestCase):
             # One MO is a subcontracted MO
             self.assertEqual(
                 ManufacturingOrder.objects.all().filter(status="approved").count(),
-                5,
+                4,
             )
             self.assertEqual(
                 WorkOrder.objects.all().filter(status="approved").count(),
-                6,
+                5,
             )
 
         # Check plan results
@@ -251,9 +248,113 @@ class OdooTest(TransactionTestCase):
         self.assertIsNotNone(proposed_mo)
         self.assertIsNotNone(proposed_po)
 
-        # Update user time zone to UTC Approve proposed transactions
+        # Recommendations
+        count_purchase = 0
+        count_reschedule = 0
+        count_produce = 0
+        count_late_delivery = 0
+
+        # store the recommendaion to approve them
+        purchase_rec = 0
+        reschedule_rec = 0
+        produce_rec = 0
+
         self.odooRPCinit()
         self.updateUserTimeZone()
+        if odoo_version >= 17:
+            for odoo_rec in self.odooRPC(
+                "frepple.recommendation",
+                [],
+                {},
+                ["id", "type", "quantity", "product_id"],
+            ):
+                if odoo_rec["type"] == "purchase":
+                    count_purchase += 1
+                    if not purchase_rec:
+                        purchase_rec = odoo_rec
+                elif odoo_rec["type"] == "reschedule":
+                    count_reschedule += 1
+                    if not reschedule_rec:
+                        reschedule_rec = odoo_rec
+                elif odoo_rec["type"] == "produce":
+                    count_produce += 1
+                    if not produce_rec:
+                        produce_rec = odoo_rec
+                elif odoo_rec["type"] == "latedelivery":
+                    count_late_delivery += 1
+            self.assertGreaterEqual(count_purchase, 6)
+            self.assertGreaterEqual(count_reschedule, 0)
+            self.assertGreaterEqual(count_produce, 0)
+            self.assertGreaterEqual(count_late_delivery, 9)
+
+            # approve a purchase, a reschedule and a produce
+            to_approve = []
+            if purchase_rec:
+                to_approve.append(purchase_rec["id"])
+            if reschedule_rec:
+                to_approve.append(reschedule_rec["id"])
+            if produce_rec:
+                to_approve.append(produce_rec["id"])
+            self.odooRPCAction(
+                "frepple.recommendation",
+                "action_approve",
+                to_approve,
+            )
+
+            # Make sure they have been correctly created/update
+            cnt = 0
+            if purchase_rec:
+                for odoo_poline in self.odooRPC(
+                    "purchase.order.line",
+                    [
+                        ("order_id.origin", "=", "frePPLe"),
+                        ("order_id.state", "=", "draft"),
+                    ],
+                    {"limit": 1, "order": "create_date desc"},
+                ):
+                    self.assertEqual(
+                        odoo_poline["product_qty"], purchase_rec["quantity"]
+                    )
+                    self.assertEqual(
+                        odoo_poline["product_id"][0], purchase_rec["product_id"][0]
+                    )
+                    cnt += 1
+                self.assertEqual(cnt, 1)
+            cnt = 0
+            if produce_rec:
+                for odoo_moline in self.odooRPC(
+                    "mrp.production",
+                    [("origin", "=", "frePPLe"), ("state", "=", "draft")],
+                    {"limit": 1, "order": "create_date desc"},
+                ):
+                    self.assertEqual(
+                        odoo_moline["product_qty"], produce_rec["quantity"]
+                    )
+                    self.assertEqual(
+                        odoo_moline["product_id"][0], produce_rec["product_id"][0]
+                    )
+                    cnt += 1
+                self.assertEqual(cnt, 1)
+            # Make sure the records have been deleted from the recommendation
+            self.assertEqual(
+                count_produce
+                + count_reschedule
+                + count_purchase
+                + count_late_delivery
+                - len(to_approve),
+                len(
+                    self.odooRPC(
+                        "frepple.recommendation",
+                        [],
+                        {},
+                        [
+                            "id",
+                        ],
+                    )
+                ),
+            )
+
+        # Update user time zone to UTC Approve proposed transactions
         response = self.client.post(
             "/erp/upload/",
             json.dumps(
@@ -298,7 +399,9 @@ class OdooTest(TransactionTestCase):
         # Check results in odoo
         cnt = 0
         for odoo_mo in self.odooRPC(
-            "mrp.production", [("origin", "=", "frePPLe"), ("state", "=", "draft")]
+            "mrp.production",
+            [("origin", "=", "frePPLe"), ("state", "=", "draft")],
+            {"limit": 1, "order": "write_date desc"},
         ):
             self.assertEqual(approved_mo.quantity, odoo_mo["product_qty"])
             self.assertEqual(
@@ -314,6 +417,7 @@ class OdooTest(TransactionTestCase):
         for odoo_poline in self.odooRPC(
             "purchase.order.line",
             [("order_id.origin", "=", "frePPLe"), ("order_id.state", "=", "draft")],
+            {"limit": 1, "order": "write_date desc"},
         ):
             self.assertEqual(approved_po.quantity, odoo_poline["product_qty"])
             self.assertEqual(approved_po.item.name, odoo_poline["product_id"][1])
@@ -323,91 +427,3 @@ class OdooTest(TransactionTestCase):
             )
             cnt += 1
         self.assertEqual(cnt, 1)
-
-        # Recommendations
-        count_purchase = 0
-        count_reschedule = 0
-        count_produce = 0
-        count_late_delivery = 0
-
-        # store the recommendaion to approve them
-        purchase_rec = 0
-        reschedule_rec = 0
-        produce_rec = 0
-
-        if odoo_version >= 19:
-            for odoo_rec in self.odooRPC(
-                "frepple.recommendation",
-                [],
-                {},
-                ["id", "type", "quantity", "product_id"],
-            ):
-                if odoo_rec["type"] == "purchase":
-                    count_purchase += 1
-                    if not purchase_rec:
-                        purchase_rec = odoo_rec
-                elif odoo_rec["type"] == "reschedule":
-                    count_reschedule += 1
-                    if not reschedule_rec:
-                        reschedule_rec = odoo_rec
-                elif odoo_rec["type"] == "produce":
-                    count_produce += 1
-                    if not produce_rec:
-                        produce_rec = odoo_rec
-                elif odoo_rec["type"] == "latedelivery":
-                    count_late_delivery += 1
-            self.assertGreaterEqual(count_purchase, 6)
-            self.assertGreaterEqual(count_reschedule, 1)
-            self.assertGreaterEqual(count_produce, 0)
-            self.assertGreaterEqual(count_late_delivery, 9)
-
-            # approve a purchase, a reschedule and a produce
-            self.odooRPCAction(
-                "frepple.recommendation",
-                "action_approve",
-                [purchase_rec["id"], reschedule_rec["id"], produce_rec["id"]],
-            )
-
-            # Make sure they have been correctly created/update
-            cnt = 0
-            for odoo_poline in self.odooRPC(
-                "purchase.order.line",
-                [("order_id.origin", "=", "frePPLe"), ("order_id.state", "=", "draft")],
-                {"limit": 1, "order": "create_date desc"},
-            ):
-                self.assertEqual(odoo_poline["product_qty"], purchase_rec["quantity"])
-                self.assertEqual(
-                    odoo_poline["product_id"][0], purchase_rec["product_id"][0]
-                )
-                cnt += 1
-            self.assertEqual(cnt, 1)
-            cnt = 0
-            for odoo_moline in self.odooRPC(
-                "mrp.production",
-                [("origin", "=", "frePPLe"), ("state", "=", "draft")],
-                {"limit": 1, "order": "create_date desc"},
-            ):
-                self.assertEqual(odoo_moline["product_qty"], produce_rec["quantity"])
-                self.assertEqual(
-                    odoo_moline["product_id"][0], produce_rec["product_id"][0]
-                )
-                cnt += 1
-            self.assertEqual(cnt, 1)
-            # Make sure the records have been deleted from the recommendation
-            self.assertEqual(
-                count_produce
-                + count_reschedule
-                + count_purchase
-                + count_late_delivery
-                - 3,
-                len(
-                    self.odooRPC(
-                        "frepple.recommendation",
-                        [],
-                        {},
-                        [
-                            "id",
-                        ],
-                    )
-                ),
-            )

@@ -197,6 +197,7 @@ class Command(BaseCommand):
                         "Content-Type": "multipart/form-data; boundary=%s"
                         % self.boundary,
                         "Content-length": size,
+                        "User-Agent": "frepple_connectors",
                     },
                 )
                 with urlopen(req) as f:

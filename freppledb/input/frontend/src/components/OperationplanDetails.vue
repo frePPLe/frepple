@@ -250,7 +250,7 @@ onMounted(() => {
     // } catch (_) {}
 
     // Update store so it’s persisted and reflected in preferences
-    store.setDataRowHeight(h);
+    // store.setDataRowHeight(h);
 
     // Persist on drag end, avoid excessive saves while dragging
     if (detail.source === 'dragend') {
@@ -284,6 +284,7 @@ onMounted(() => {
       gridCellEdited: handleGridCellEdited,
       refreshStatus: handleRefreshStatus,
       setMode: handleSetMode,
+      handleSetRowHeight: handleSetRowHeight,
     },
   };
 
@@ -302,7 +303,7 @@ onUnmounted(() => {
       info.rootEl.removeEventListener('undo', info.handlers.display);
       info.rootEl.removeEventListener('gridCellEdited', info.handlers.gridCellEdited);
       info.rootEl.removeEventListener('setMode', info.handlers.setMode);
-      info.rootEl.removeEventListener('setRowHeight', handleSetRowHeight);
+      info.rootEl.removeEventListener('setRowHeight', info.handleSetRowHeight);
     } catch (err) {
       console.log('Failed to remove event listeners from app root element:', err);
     }

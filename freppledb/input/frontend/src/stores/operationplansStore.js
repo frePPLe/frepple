@@ -65,7 +65,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     operationplanChanges: {},
 
     preferences: {},
-    editForm: {quantity: null, startdate: "", enddate: "", remark: ""},
+    editForm: { quantity: null, startdate: '', enddate: '', remark: '' },
 
     mode: window.preferences?.mode || window.mode || 'table',
     calendarmode: 'month',
@@ -74,20 +74,20 @@ export const useOperationplansStore = defineStore('operationplans', {
     showTop: true,
     showChildren: true,
     page: 1,
-    rows: [],    // table columns to be (de)selected
+    rows: [], // table columns to be (de)selected
     frozen: 0,
     currentFilter: '', // preferences.favorites
     widgets: {},
     sidx: 'batch',
     sord: 'asc',
-    favorites: [],  // for filters
-    segment: "",
+    favorites: [], // for filters
+    segment: '',
     columns: [], // ['proposed', 'approved', 'confirmed', 'completed', 'closed']
 
     // UI state
     loading: false,
-    error: { title: "", showError: false, message: "", details: "", type: "error" },
-    dataRowHeight: null,
+    error: { title: '', showError: false, message: '', details: '', type: 'error' },
+    dataRowHeight: window.preferences?.height || null,
     width: 300,
     detailwidth: 300,
     height: 300,
@@ -101,7 +101,13 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     // Kanban
     kanbanoperationplans: {},
-    kanbancolumns: window.preferences?.columns || ["proposed", "approved", "confirmed", "completed", "closed"],
+    kanbancolumns: window.preferences?.columns || [
+      'proposed',
+      'approved',
+      'confirmed',
+      'completed',
+      'closed',
+    ],
     groupBy: window.groupBy || 'status',
     groupOperator: window.groupOperator || 'eq',
     ganttoperationplans: [],
@@ -152,8 +158,8 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     async loadOperationplans(references = [], selectedFlag, selectedRows, isDataSaved = false) {
-      console.log("155 loadOperationplans ", references, selectedFlag, selectedRows, isDataSaved);
-      this.selectedOperationplans.length = 0
+      console.log('155 loadOperationplans ', references, selectedFlag, selectedRows, isDataSaved);
+      this.selectedOperationplans.length = 0;
       this.selectedOperationplans.push(...toRaw(selectedRows));
       if (references.length === 0) {
         this.operationplan = new Operationplan();
@@ -161,7 +167,7 @@ export const useOperationplansStore = defineStore('operationplans', {
         if (this.selectedOperationplans.length === 1) {
           await this.loadOperationplans(selectedRows, true, selectedRows);
         }
-      // } else if ( this.operationplan.reference !== undefined && (references[0] === this.operationplan.reference.toString())) {
+        // } else if ( this.operationplan.reference !== undefined && (references[0] === this.operationplan.reference.toString())) {
         // do nothing
       } else {
         this.operationplan = new Operationplan();
@@ -171,7 +177,7 @@ export const useOperationplansStore = defineStore('operationplans', {
 
         try {
           const response = await operationplanService.getOperationplanDetails({
-            reference: operationplanReference
+            reference: operationplanReference,
           });
 
           // Update the store with the fetched data
@@ -185,17 +191,22 @@ export const useOperationplansStore = defineStore('operationplans', {
           this.error = {
             title: 'Failed to load operation plans',
             showError: true,
-            message: error.response?.data?.message || 'An error occurred while loading operation plans',
+            message:
+              error.response?.data?.message || 'An error occurred while loading operation plans',
             details: error.message,
-            type: 'error'
+            type: 'error',
           };
         } finally {
           this.loading = false;
         }
       }
-      if (this.operationplanChanges[this.operationplan.reference] !== undefined && !window.isDataSaved) {
+      if (
+        this.operationplanChanges[this.operationplan.reference] !== undefined &&
+        !window.isDataSaved
+      ) {
         for (const field in this.operationplanChanges[this.operationplan.reference]) {
-          this.operationplan[field] = this.operationplanChanges[this.operationplan.reference][field];
+          this.operationplan[field] =
+            this.operationplanChanges[this.operationplan.reference][field];
         }
       }
     },
@@ -208,7 +219,7 @@ export const useOperationplansStore = defineStore('operationplans', {
       const params = {
         format: 'kanban',
         sidx: this.sidx,
-        sord: this.sord
+        sord: this.sord,
       };
 
       for (const key of this.kanbancolumns) {
@@ -221,18 +232,18 @@ export const useOperationplansStore = defineStore('operationplans', {
         if (colfilter === undefined || colfilter === null) {
           // First filter
           colfilter = {
-            groupOp: "AND",
+            groupOp: 'AND',
             rules: [extrafilter],
             groups: [],
           };
         } else {
-          if (colfilter["groupOp"] === "AND")
+          if (colfilter['groupOp'] === 'AND')
             // Add condition to existing and-filter
-            colfilter["rules"].push(extrafilter);
+            colfilter['rules'].push(extrafilter);
           else
             // Wrap existing filter in a new and-filter
             colfilter = {
-              groupOp: "AND",
+              groupOp: 'AND',
               rules: [extrafilter],
               groups: [colfilter],
             };
@@ -240,38 +251,29 @@ export const useOperationplansStore = defineStore('operationplans', {
         try {
           const { responseData } = await operationplanService.getKanbanData({
             ...params,
-            filters: JSON.stringify(colfilter)
+            filters: JSON.stringify(colfilter),
           });
           const tmp = responseData.value;
           for (const x of tmp.rows) {
-            x.type =
-              x.operationplan__type || x.type || window.default_operationplan_type;
-            if (Object.prototype.hasOwnProperty.call(x, "enddate"))
-              x.enddate = new Date(x.enddate);
-            if (Object.prototype.hasOwnProperty.call(x, "operationplan__enddate"))
+            x.type = x.operationplan__type || x.type || window.default_operationplan_type;
+            if (Object.prototype.hasOwnProperty.call(x, 'enddate')) x.enddate = new Date(x.enddate);
+            if (Object.prototype.hasOwnProperty.call(x, 'operationplan__enddate'))
               x.operationplan__enddate = new Date(x.operationplan__enddate);
-            if (Object.prototype.hasOwnProperty.call(x, "startdate"))
+            if (Object.prototype.hasOwnProperty.call(x, 'startdate'))
               x.startdate = new Date(x.startdate);
-            if (Object.prototype.hasOwnProperty.call(x, "operationplan__startdate"))
+            if (Object.prototype.hasOwnProperty.call(x, 'operationplan__startdate'))
               x.operationplan__startdate = new Date(x.operationplan__startdate);
-            if (Object.prototype.hasOwnProperty.call(x, "quantity"))
+            if (Object.prototype.hasOwnProperty.call(x, 'quantity'))
               x.quantity = parseFloat(x.quantity);
-            if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity"))
+            if (Object.prototype.hasOwnProperty.call(x, 'operationplan__quantity'))
               x.operationplan__quantity = parseFloat(x.operationplan__quantity);
-            if (Object.prototype.hasOwnProperty.call(x, "quantity_completed"))
+            if (Object.prototype.hasOwnProperty.call(x, 'quantity_completed'))
               x.quantity_completed = parseFloat(x.quantity_completed);
-            if (
-              Object.prototype.hasOwnProperty.call(
-                x,
-                "operationplan__quantity_completed"
-              )
-            )
-              x.operationplan__quantity_completed = parseFloat(
-                x.operationplan__quantity_completed
-              );
-            if (Object.prototype.hasOwnProperty.call(x, "operationplan__status"))
+            if (Object.prototype.hasOwnProperty.call(x, 'operationplan__quantity_completed'))
+              x.operationplan__quantity_completed = parseFloat(x.operationplan__quantity_completed);
+            if (Object.prototype.hasOwnProperty.call(x, 'operationplan__status'))
               x.status = x.operationplan__status;
-            if (Object.prototype.hasOwnProperty.call(x, "operationplan__origin"))
+            if (Object.prototype.hasOwnProperty.call(x, 'operationplan__origin'))
               x.origin = x.operationplan__origin;
             // [x.color, x.inventory_status] = formatInventoryStatus(x);
           }
@@ -281,7 +283,6 @@ export const useOperationplansStore = defineStore('operationplans', {
         }
       }
     },
-
 
     // Filter and search actions
     setCurrentFilter(filter) {
@@ -300,12 +301,10 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     setStatus(value) {
       if (value !== 'no_action' && value !== 'erp_incr_export') {
-        this.selectedOperationplans.forEach(
-          (op) => {
-            this.setEditFormValues('status', value);
-            this.trackOperationplanChanges(op.reference, 'status', value);
-          }
-        );
+        this.selectedOperationplans.forEach((op) => {
+          this.setEditFormValues('status', value);
+          this.trackOperationplanChanges(op.reference, 'status', value);
+        });
       }
     },
 
@@ -402,10 +401,12 @@ export const useOperationplansStore = defineStore('operationplans', {
         this.preferences.groupingdir = this.groupingdir;
         this.preferences.showTop = this.showTop;
         this.preferences.showChildren = this.showChildren;
-        if (this.dataRowHeight !== null) {
-          this.preferences.height = this.dataRowHeight;
-        }
-        await operationplanService.savePreferences({ "freppledb.input.views.manufacturing.ManufacturingOrderList": this.preferences });
+        // if (this.dataRowHeight !== null) {
+        //   this.preferences.height = this.dataRowHeight;
+        // }
+        await operationplanService.savePreferences({
+          'freppledb.input.views.manufacturing.ManufacturingOrderList': this.preferences,
+        });
       } catch (error) {
         this.setError({
           title: 'Error',
@@ -424,7 +425,7 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     undo() {
       this.operationplan = new Operationplan();
-      this.editForm = {setQuantity: null, setStart: "", setEnd: "", setRemark: ""};
+      this.editForm = { setQuantity: null, setStart: '', setEnd: '', setRemark: '' };
       this.selectedOperationplans = [];
       this.operationplanChanges = {};
     },
@@ -436,7 +437,7 @@ export const useOperationplansStore = defineStore('operationplans', {
         title: errorData.title || 'Error',
         message: errorData.message || 'An error occurred',
         details: errorData.details || '',
-        type: errorData.type || 'error'
+        type: errorData.type || 'error',
       };
     },
 
@@ -446,7 +447,7 @@ export const useOperationplansStore = defineStore('operationplans', {
         message: '',
         details: '',
         type: 'error',
-        title: ''
+        title: '',
       };
     },
 
@@ -455,7 +456,7 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.selectedOperationplans = operationplans;
 
       const aggColModel = [];
-      const aggregatedopplan = {colmodel: {}};
+      const aggregatedopplan = { colmodel: {} };
       let temp;
 
       colModel.forEach((modelValue, key) => {
@@ -463,27 +464,24 @@ export const useOperationplansStore = defineStore('operationplans', {
           aggColModel.push([key, modelValue.name, modelValue.summaryType, modelValue.formatter]);
           aggregatedopplan[modelValue.name] = null;
           aggregatedopplan.colmodel[modelValue.name] = {
-            'type': modelValue.summaryType,
-            'label': modelValue.label,
-            'formatter': modelValue.formatter
+            type: modelValue.summaryType,
+            label: modelValue.label,
+            formatter: modelValue.formatter,
           };
         }
       });
 
-      const dateKeys  = new Set(["end", "start"]);
+      const dateKeys = new Set(['end', 'start']);
       operationplans.forEach((opplan) => {
         aggColModel.forEach((field) => {
           if (field[2] === 'sum') {
             if (field[3] === 'duration') {
               temp = new moment.duration(opplan[field[1]]).asSeconds();
               if (temp._d !== 'Invalid Date') {
-                if (aggregatedopplan[field[1]] === null)
-                  aggregatedopplan[field[1]] = temp;
-                else
-                  aggregatedopplan[field[1]] += temp;
+                if (aggregatedopplan[field[1]] === null) aggregatedopplan[field[1]] = temp;
+                else aggregatedopplan[field[1]] += temp;
               }
-            }
-            else if (!isNaN(parseFloat(opplan[field[1]]))) {
+            } else if (!isNaN(parseFloat(opplan[field[1]]))) {
               if (aggregatedopplan[field[1]] === null) {
                 aggregatedopplan[field[1]] = parseFloat(opplan[field[1]]);
               } else {
@@ -491,13 +489,18 @@ export const useOperationplansStore = defineStore('operationplans', {
               }
             }
           } else if (field[2] === 'max') {
-
-            if (['color', 'number', 'currency'].indexOf(field[3]) !== -1 && opplan[field[1]] !== "") {
+            if (
+              ['color', 'number', 'currency'].indexOf(field[3]) !== -1 &&
+              opplan[field[1]] !== ''
+            ) {
               if (parseFloat(opplan[field[1]])) {
                 if (aggregatedopplan[field[1]] === null) {
                   aggregatedopplan[field[1]] = parseFloat(opplan[field[1]]);
                 } else {
-                  aggregatedopplan[field[1]] = Math.max(aggregatedopplan[field[1]], parseFloat(opplan[field[1]]));
+                  aggregatedopplan[field[1]] = Math.max(
+                    aggregatedopplan[field[1]],
+                    parseFloat(opplan[field[1]])
+                  );
                 }
               }
             } else if (field[3] === 'duration') {
@@ -517,10 +520,8 @@ export const useOperationplansStore = defineStore('operationplans', {
                   aggregatedopplan[field[1]] = temp;
               }
             }
-
           } else if (field[2] === 'min') {
-
-            if (['color', 'number'].indexOf(field[3]) !== -1 && opplan[field[1]] !== "") {
+            if (['color', 'number'].indexOf(field[3]) !== -1 && opplan[field[1]] !== '') {
               temp = parseFloat(opplan[field[1]]);
               if (!isNaN(temp)) {
                 if (aggregatedopplan[field[1]] === null) {
@@ -549,47 +550,39 @@ export const useOperationplansStore = defineStore('operationplans', {
                 }
               }
             }
-
           }
-
         });
       });
 
-      aggregatedopplan.start = aggregatedopplan.startdate || aggregatedopplan.operationplan__startdate;
+      aggregatedopplan.start =
+        aggregatedopplan.startdate || aggregatedopplan.operationplan__startdate;
       aggregatedopplan.end = aggregatedopplan.enddate || aggregatedopplan.operationplan__enddate;
       dateKeys.forEach((key) => {
         aggregatedopplan[key] = aggregatedopplan[key].format('YYYY-MM-DD[T]HH:mm:ss');
-      })
+      });
 
       this.operationplan = new Operationplan(aggregatedopplan);
     },
 
     expandOrCollapse(i, type) {
       // 0: collapsed, 1: expanded, 2: hidden, 3: leaf node
-      const data = (type === 'downstream') ? this.operationplan.downstreamoperationplans : (type === 'upstream') ? this.operationplan.upstreamoperationplans : [];
+      const data =
+        type === 'downstream'
+          ? this.operationplan.downstreamoperationplans
+          : type === 'upstream'
+            ? this.operationplan.upstreamoperationplans
+            : [];
       let j = i + 1;
       const myLevel = data[i][0];
-      if (data[i][11] === 0)
-        data[i][11] = 1;
-      else
-        data[i][11] = 0;
+      if (data[i][11] === 0) data[i][11] = 1;
+      else data[i][11] = 0;
       while (j < data.length) {
-        if (data[j][0] <= myLevel)
-          break;
-        else if (data[j][0] > myLevel + 1
-          || data[i][11] === 0)
-          data[j][11] = 2;
-        else if (j === data.length - 1 ||
-          data[j][0] >= data[j + 1][0]) {
-          if (data[j][12] != null
-            && data[j][12] === data[j + 1][12])
-            data[j][11] = 1;
-          else
-            data[j][11] = 3;
-        }
-        else if (data[j][0] === myLevel + 1
-          && data[i][11] === 1)
-          data[j][11] = 0;
+        if (data[j][0] <= myLevel) break;
+        else if (data[j][0] > myLevel + 1 || data[i][11] === 0) data[j][11] = 2;
+        else if (j === data.length - 1 || data[j][0] >= data[j + 1][0]) {
+          if (data[j][12] != null && data[j][12] === data[j + 1][12]) data[j][11] = 1;
+          else data[j][11] = 3;
+        } else if (data[j][0] === myLevel + 1 && data[i][11] === 1) data[j][11] = 0;
         ++j;
       }
     },
@@ -603,8 +596,7 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     applyGridCellEdit({ reference, field, value }) {
       const currentRef =
-        this.operationplan?.reference ||
-        this.operationplan?.operationplan__reference;
+        this.operationplan?.reference || this.operationplan?.operationplan__reference;
 
       if (currentRef && reference && String(currentRef) !== String(reference)) {
         return;
@@ -613,12 +605,24 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.trackOperationplanChanges(reference, field, value);
 
       switch (field) {
-        case 'quantity': this.operationplan.quantity = parseFloat(value); break;
-        case 'remark': this.operationplan.remark = value; break;
-        case 'startdate': this.operationplan.start = value; break;
-        case 'enddate': this.operationplan.end = value; break;
-        case 'status': this.operationplan.status = value; break;
-        default: this.operationplan[field] = value; break;
+        case 'quantity':
+          this.operationplan.quantity = parseFloat(value);
+          break;
+        case 'remark':
+          this.operationplan.remark = value;
+          break;
+        case 'startdate':
+          this.operationplan.start = value;
+          break;
+        case 'enddate':
+          this.operationplan.end = value;
+          break;
+        case 'status':
+          this.operationplan.status = value;
+          break;
+        default:
+          this.operationplan[field] = value;
+          break;
       }
     },
 
@@ -630,18 +634,22 @@ export const useOperationplansStore = defineStore('operationplans', {
         const v = isNaN(n) ? value : n;
         this.operationplanChanges[reference]['operationplan__quantity'] = v;
         this.operationplanChanges[reference]['quantity'] = v;
-      } else if (field === 'startdate' || field === 'operationplan__startdate' || field === 'start') {
+      } else if (
+        field === 'startdate' ||
+        field === 'operationplan__startdate' ||
+        field === 'start'
+      ) {
         this.operationplanChanges[reference]['operationplan__startdate'] = value;
         this.operationplanChanges[reference]['start'] = value;
         this.operationplanChanges[reference]['startdate'] = value;
       } else if (field === 'enddate' || field === 'operationplan__enddate' || field === 'end') {
         this.operationplanChanges[reference]['operationplan__enddate'] = value;
-        this.operationplanChanges[reference]['end'] =  value;
+        this.operationplanChanges[reference]['end'] = value;
         this.operationplanChanges[reference]['enddate'] = value;
       } else {
         this.operationplanChanges[reference][field] = value;
       }
       window.operationplanChanges = toRaw(this.operationplanChanges);
-    }
-  }
-})
+    },
+  },
+});

@@ -27,13 +27,14 @@ onMounted(async () => {
   console.log('Window mode:', window.mode);
   console.log('Preferences mode:', window.preferences?.mode);
 
-
   try {
     await store.loadKanbanData();
     console.log('Kanban data loaded successfully');
   } catch (error) {
     console.error('Failed to load kanban data:', error);
   }
+
+  // store.setDataRowHeight(window.preferences?.height || null);
 });
 
 const urlPrefix = computed(() => window.url_prefix || '');
@@ -144,8 +145,8 @@ function selectCard(opplan) {
 <template>
   <Teleport to="#kanban" v-if="store.mode === 'kanban'">
       <div class="row">
-        <div v-for="col in kanbancolumns" :key="col" :data-column="col" class="col gy-3" style="height: 100%">
-          <div class="card kanbancolumn" style="height: 100%">
+        <div v-for="col in kanbancolumns" :key="col" :data-column="col" class="col gy-3">
+          <div class="card kanbancolumn">
             <div draggable="true" class="card-header">
               <div class="dropdown float-end">
                 <a
@@ -177,7 +178,7 @@ function selectCard(opplan) {
             </div>
             <div
               class="card-body column-body"
-              :style="{'overflow-y': 'auto', 'height': getHeight(25)}"
+              style="overflow-y: auto"  :style="'height:' + getHeight(25) + 'px'"
             >
               <template v-if="kanbanoperationplans[col]">
                 <div

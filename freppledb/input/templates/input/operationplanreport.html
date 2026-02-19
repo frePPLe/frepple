@@ -55,8 +55,54 @@ rect.opplan {
   var operationplanChanges = {};
   var pageIDs = [];
 
+  function setActiveButton(buttonId) {
+    [
+      jQuery('#gridmode'),
+      jQuery('#kanbanmode'),
+      jQuery('#calendarmode'),
+      jQuery('#ganttmode')
+    ].forEach(div => div.removeClass('active'));
+    jQuery(`#${buttonId}`).addClass('active');
+  }
+
+  function setVisibleByMode(mode) {
+    [
+      jQuery('#tablemode'),
+      jQuery('#kanban'),
+      jQuery('#calendar'),
+      jQuery('#gantt')
+    ].forEach(div => div.hasClass('d-none') ? div.removeClass('d-none').addClass('d-none') : div.addClass('d-none'));
+
+    switch (mode) {
+      case 'table': {
+        preferences.mode = mode;
+        jQuery('#tablemode').removeClass('d-none');
+        jQuery("#grid").jqGrid('setGridParam', {datatype: 'json'}).trigger('reloadGrid');
+        break;
+      }
+      case 'kanban': {
+        preferences.mode = mode;
+        jQuery('#kanban').removeClass('d-none');
+        break;
+      }
+      case 'calendar': {
+        preferences.mode = mode;
+        jQuery('#calendar').removeClass('d-none');
+        break;
+      }
+      case 'gantt': {
+        preferences.mode = mode;
+        jQuery('#gantt').removeClass('d-none');
+        break;
+      }
+      case 'default': {
+        break
+      }
+    }
+  }
+
   function getVisibleSelectedIds() {
-    pageIDs = window.jQuery("#grid").jqGrid && window.jQuery("#grid").jqGrid('getDataIDs') || [];
+    pageIDs = jQuery("#grid").jqGrid && jQuery("#grid").jqGrid('getDataIDs') || [];
     const vueSelectedOperationPlans = upload.selectedRows.map((op) => op.reference || op);
 
     // filter out selected IDs that do not belong to this page
@@ -181,24 +227,8 @@ rect.opplan {
       handleSelector: "#resize-handle",
       resizeWidth: false,
       resizeHeight: true,
-      onDrag: function (e, $el, opt) {
-        // Live grid height adjustment
-        jQuery("#grid").setGridHeight(jQuery("#content-main").height() - 52);
-
-        // Notify Vue about new height so it can update the store
-        const newHeight = Math.floor(jQuery("#content-main").height() - 52);
-        document.getElementById('app')?.dispatchEvent(
-                new CustomEvent('setRowHeight', { detail: { height: newHeight, source: 'drag' } })
-        );
-      },
+      onDrag: setHeights,
       onDragEnd: function (e, $el, opt) {
-        // Persist preference through Vue store
-        const newHeight = Math.floor(jQuery("#content-main").height() -52);
-        document.getElementById('app')?.dispatchEvent(
-                new CustomEvent('setRowHeight', { detail: { height: newHeight, source: 'dragend' } })
-        );
-
-        // Keep existing column configuration save
         grid.saveColumnConfiguration();
       }
     });
@@ -235,10 +265,9 @@ rect.opplan {
         detail: { mode: "table" }
       });
       document.getElementById('app').dispatchEvent(event);
-
-      grid.saveColumnConfiguration(function() {
-        location.reload();
-      });
+      setVisibleByMode(mode);
+      setActiveButton('gridmode');
+      grid.saveColumnConfiguration();
     });
     jQuery("#kanbanmode").on('click', function() {
       mode = "kanban";
@@ -246,10 +275,9 @@ rect.opplan {
         detail: { mode: "kanban" }
       });
       document.getElementById('app').dispatchEvent(event);
-
-      grid.saveColumnConfiguration(function() {
-        location.reload();
-      });
+      setVisibleByMode(mode);
+      setActiveButton('kanbanmode');
+      grid.saveColumnConfiguration();
     });
     jQuery("#calendarmonth").on('click', function() {
       mode = "calendarmonth";
@@ -257,6 +285,8 @@ rect.opplan {
         detail: { mode: "calendarmonth" }
       });
       document.getElementById('app').dispatchEvent(event);
+      setVisibleByMode('calendar');
+      setActiveButton('calendarmode');
 
       grid.saveColumnConfiguration(function() {
         location.reload();
@@ -268,6 +298,8 @@ rect.opplan {
         detail: { mode: "calendarweek" }
       });
       document.getElementById('app').dispatchEvent(event);
+      setVisibleByMode('calendar');
+      setActiveButton('calendarmode');
 
       grid.saveColumnConfiguration(function() {
         location.reload();
@@ -279,6 +311,8 @@ rect.opplan {
         detail: { mode: "calendarday" }
       });
       document.getElementById('app').dispatchEvent(event);
+      setVisibleByMode('calendar');
+      setActiveButton('calendarmode');
 
       grid.saveColumnConfiguration(function() {
         location.reload();
@@ -293,6 +327,7 @@ rect.opplan {
         detail: { mode: "gantt" }
       });
       document.getElementById('app').dispatchEvent(event);
+      setVisibleByMode(mode);
 
       grid.saveColumnConfiguration(function() {
         location.reload();
@@ -300,6 +335,9 @@ rect.opplan {
     });
     jQuery("#zoomin, #zoomout").removeClass("d-none");
     {% endif %}
+
+    setActiveButton(mode.startsWith('calendar') ? 'calendarmode' : (mode == "table") ? 'gridmode' : (mode + 'mode'));
+    setVisibleByMode(mode.startsWith('calendar') ? 'calendar' : mode);
   });
 
   // // Controller will call this function to pass values to the grid
@@ -573,7 +611,7 @@ loadComplete: function(data) {
 
 <div class="row text-center">
 <div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
-  <div {% if preferences.mode == 'kanban' or preferences.mode == 'gantt' or preferences.mode|slice:":8" == 'calendar' %}hidden{% endif %}>
+  <div id="tablemode">
     <table id="grid" class="table table-striped" style="background-color: white"></table>
     <div id="gridpager"></div>
   </div>

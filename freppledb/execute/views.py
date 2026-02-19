@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from importlib import import_module
 from io import BytesIO
 import json
@@ -31,7 +31,6 @@ from openpyxl.cell import WriteOnlyCell
 from openpyxl.styles import NamedStyle, PatternFill
 from openpyxl.comments import Comment as CellComment
 import os
-import psutil
 import re
 import shlex
 from time import sleep, localtime, strftime
@@ -44,7 +43,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models.fields import AutoField
 from django.db.models.fields.related import ForeignKey
-from django.db.models.functions import Now
 from django.views.decorators.cache import never_cache
 from django.shortcuts import render
 from django.utils.html import escape
@@ -261,18 +259,7 @@ class TaskReport(GridReport):
             ]
         )
 
-        # Cancel waiting tasks if no runworker is active
-        worker_alive = Parameter.getValue("Worker alive", request.database, None)
-        try:
-            if not worker_alive or datetime.now() - datetime.strptime(
-                worker_alive, "%Y-%m-%d %H:%M:%S"
-            ) > timedelta(seconds=30):
-                Task.objects.using(request.database).filter(
-                    status__iexact="waiting",
-                    submitted__lte=Now() - timedelta(seconds=30),
-                ).update(status="Canceled")
-        except Exception:
-            pass
+        Task.removeUnhealthyTasks(request.database)
 
         for rec in basequery:
             yield {
@@ -346,32 +333,11 @@ def APITask(request, action):
                     .filter(id__in=args)
                 ):
                     if request.user.is_superuser or t.user == request.user:
-                        if t.processid:
-                            # Kill the process with signal 9
-                            child_pid = [
-                                c.pid for c in psutil.Process(t.processid).children()
-                            ]
-                            os.kill(t.processid, 9)
-                            for child_task in (
-                                Task.objects.all()
-                                .using(request.database)
-                                .filter(processid__in=child_pid)
-                            ):
-                                try:
-                                    os.kill(child_task.processid, 9)
-                                except Exception:
-                                    pass
-                                child_task.message = "Canceled process"
-                                child_task.processid = None
-                                child_task.status = "Canceled"
-                                child_task.save(using=request.database)
+                        if t.processid or t.status == "Waiting":
+                            t.killProcess()
                             sleep(1)  # Wait for it to die
-                            t.message = "Canceled process"
-                            t.processid = None
-                        elif t.status != "Waiting":
+                        else:
                             continue
-                        t.status = "Canceled"
-                        t.save(using=request.database)
                         response[t.id] = {
                             "name": t.name,
                             "submitted": str(t.submitted),
@@ -759,29 +725,10 @@ def CancelTask(request, taskid):
         raise Http404("Only ajax post requests allowed")
     try:
         task = Task.objects.all().using(request.database).get(pk=taskid)
-        if task.processid:
-            # Kill the process with signal 9
-            child_pid = [c.pid for c in psutil.Process(task.processid).children()]
-            os.kill(task.processid, 9)
-            for child_task in (
-                Task.objects.all()
-                .using(request.database)
-                .filter(processid__in=child_pid)
-            ):
-                try:
-                    os.kill(child_task.processid, 9)
-                except Exception:
-                    pass
-                child_task.message = "Canceled process"
-                child_task.processid = None
-                child_task.status = "Canceled"
-                child_task.save(using=request.database)
-            task.message = "Canceled process"
-            task.processid = None
-        elif task.status != "Waiting":
+        if task.processid or task.status == "waiting":
+            task.killProcess()
+        else:
             return HttpResponseServerError("Task isn't running or waiting to run")
-        task.status = "Canceled"
-        task.save(using=request.database)
         # Just in case, to cover corner cases
         launchWorker(database=request.database)
         return HttpResponse(content="OK")

@@ -23,6 +23,7 @@
 
 from datetime import datetime, timedelta
 import os
+import psutil
 import shlex
 import zoneinfo
 
@@ -30,8 +31,9 @@ from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS, models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+from django.db.models.functions import Now
 
-from freppledb.common.models import User
+from freppledb.common.models import User, Parameter
 
 import logging
 
@@ -46,7 +48,6 @@ class Task(models.Model):
       - 'Failed'
       - 'Canceled'
       - 'DD%', where DD represents the percentage completed
-    Other values are okay, but the above have translations.
     """
 
     # Database fields
@@ -86,6 +87,63 @@ class Task(models.Model):
         # Add record to the database
         # Check if a worker is present. If not launch one.
         return 1
+
+    @classmethod
+    def removeUnhealthyTasks(cls, database):
+        # Unhealthy tasks are:
+        #  - Waiting tasks if no runworker is active.
+        #    Eg server was rebooted while some task were still waiting. We don't want to
+        #    catch up on the waiting tasks, but rather expect new ones to be launched.
+        #  - Task running for longer than 3 hours.
+        try:
+            worker_alive = Parameter.getValue("Worker alive", database, None)
+            if not worker_alive or datetime.now() - datetime.strptime(
+                worker_alive, "%Y-%m-%d %H:%M:%S"
+            ) > timedelta(seconds=30):
+                x = (
+                    Task.objects.using(database)
+                    .filter(
+                        status="waiting",
+                        submitted__lte=Now() - timedelta(seconds=30),
+                    )
+                    .update(status="Canceled")
+                )
+                print(" canceled ", x)
+            for t in Task.objects.using(database).filter(
+                status__contains="%",
+                finished__isnull=True,
+                started__isnull=False,
+                started__lte=Now() - timedelta(minutes=3),
+            ):
+                print("killed", t.id, t.processid)
+                t.killProcess()
+        except Exception as e:
+            print("eeeeeee", e)
+            pass
+
+    def killProcess(self):
+        # Kill the process and its children with signal 9
+        if self.processid:
+            database = self._state.db
+            child_pid = [c.pid for c in psutil.Process(self.processid).children()]
+            os.kill(self.processid, 9)
+            self.message = "Canceled process"
+            for child_task in (
+                Task.objects.all().using(database).filter(processid__in=child_pid)
+            ):
+                try:
+                    os.kill(child_task.processid, 9)
+                except Exception:
+                    pass
+                child_task.message = "Canceled process"
+                child_task.processid = None
+                child_task.status = "Canceled"
+                child_task.save(using=database)
+        elif self.status != "waiting":
+            return
+        self.processid = None
+        self.status = "Canceled"
+        self.save(using=database)
 
 
 class ScheduledTask(models.Model):

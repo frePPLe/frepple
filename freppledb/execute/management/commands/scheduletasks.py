@@ -130,6 +130,9 @@ class TaskScheduler:
         # Random delay to avoid races
         time.sleep(uniform(0.0, 0.200))
 
+        # Keep things tidy
+        Task.removeUnhealthyTasks(database)
+
         # Note: use transaction and select_for_update to handle concurrent access
         now = datetime.now()
         created = False

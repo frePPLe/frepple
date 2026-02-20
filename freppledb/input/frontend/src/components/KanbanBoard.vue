@@ -12,24 +12,23 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION * WITH THE SOFTWARE OR 
 DEALINGS IN THE SOFTWARE */
 
 <script setup lang="js">
-import {computed, onMounted, toRaw} from 'vue';
+import {computed, onMounted, toRaw, ref} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
 import KanbanCard from '@/components/KanbanCard.vue';
 import { Operationplan } from '@/models/operationplan.js';
 
 onMounted(async () => {
-  const target = document.getElementById('kanban');
-  console.log('KanbanBoard mounted');
-  console.log('Target element #kanban:', target);
-  console.log('Store mode:', store.mode);
-  console.log('Is kanban mode:', store.isKanbanMode);
-  console.log('Window mode:', window.mode);
-  console.log('Preferences mode:', window.preferences?.mode);
+  // const target = document.getElementById('kanban');
+  // console.log('KanbanBoard mounted');
+  // console.log('Target element #kanban:', target);
+  // console.log('Store mode:', store.mode);
+  // console.log('Is kanban mode:', store.isKanbanMode);
+  // console.log('Window mode:', window.mode);
+  // console.log('Preferences mode:', window.preferences?.mode);
 
   try {
     await store.loadKanbanData();
-    console.log('Kanban data loaded successfully');
   } catch (error) {
     console.error('Failed to load kanban data:', error);
   }
@@ -37,7 +36,7 @@ onMounted(async () => {
   // store.setDataRowHeight(window.preferences?.height || null);
 });
 
-const urlPrefix = computed(() => window.url_prefix || '');
+// const urlPrefix = computed(() => window.url_prefix || '');
 const { t: ttt } = useI18n({
   useScope: 'global',
   inheritLocale: true,
@@ -46,6 +45,14 @@ const { t: ttt } = useI18n({
 const store = useOperationplansStore();
 
 const kanbancolumns = computed(() => store.kanbancolumns);
+const visibleKanbancolumns = computed(() => {
+  const result = kanbancolumns.value.filter(col => !hiddenColumns.value.includes(col));
+  window.preferences.columns = result;
+  store.setPreferences(window.reportkey, window.preferences);
+  return result;
+});
+
+const hiddenColumns = ref([]);
 
 const kanbanoperationplans = computed(() => {
   const result = {};
@@ -82,7 +89,11 @@ const kanbanoperationplans = computed(() => {
   return result;
 });
 
-console.log(78, 'kanbanoperationplans:', toRaw(kanbanoperationplans));
+// console.log(78, 'kanbanoperationplans:', toRaw(kanbanoperationplans));
+
+function hideColumn(col) {
+  hiddenColumns.value.push(col);
+}
 
 function getHeight(gutter) {
   if (store.preferences && store.preferences['height'])
@@ -128,11 +139,8 @@ function formatInventoryStatus(opplan) {
 }
 
 function selectCard(opplan) {
-  console.log(130, 'selectCard:', opplan, opplan.reference, store.operationplan.reference, opplan.selected);
   if (store.operationplan.reference && store.operationplan.reference == opplan.reference && opplan.selected) return;
-  console.log(132, store.operationplan.operationplan__reference, store.operationplan.operationplan__reference == opplan.reference, opplan.selected);
   if (store.operationplan.operationplan__reference && store.operationplan.operationplan__reference == opplan.reference && opplan.selected) return;
-  console.log(134, 'selectCard:', toRaw(opplan), toRaw(store.operationplan));
   opplan.selected = true;
   store.loadOperationplans([opplan.reference], true, [opplan.reference], true);
   // store.displayInfo(opplan);
@@ -145,8 +153,8 @@ function selectCard(opplan) {
 <template>
   <Teleport to="#kanban" v-if="store.mode === 'kanban'">
       <div class="row">
-        <div v-for="col in kanbancolumns" :key="col" :data-column="col" class="col gy-3">
-          <div class="card kanbancolumn">
+        <div v-for="col in visibleKanbancolumns" :key="col" :data-column="col" class="col gy-3">
+          <div class="card kanbancolumn" :class="{ 'hidden': hiddenColumns.includes(col) }">
             <div draggable="true" class="card-header">
               <div class="dropdown float-end">
                 <a

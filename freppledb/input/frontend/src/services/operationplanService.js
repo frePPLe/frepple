@@ -25,7 +25,7 @@ import { api } from './api.js';
 
 export const operationplanService = {
   async getOperationplanDetails(params) {
-    return api.get('operationplan/?reference=' + params.reference, {});
+    return api.get('operationplan/?reference=' + encodeURIComponent(params.reference), {});
   },
 
   async postOperationplanDetails(postData) {

@@ -95,8 +95,7 @@ function selectAlternateResource(loadplan, newResource) {
 function updateGrid(currentResource, newResource) {
   if (typeof window.jQuery === 'undefined') return;
 
-  const $ = window.jQuery;
-  const grid = $('#grid');
+  const grid = window.jQuery('#grid');
   if (!grid.length) return;
 
   const selrow = grid.jqGrid('getGridParam', 'selarrrow');
@@ -132,10 +131,9 @@ function updateGrid(currentResource, newResource) {
 }
 
 function markDirty() {
-  const $ = window.jQuery;
-  $("#save, #undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-  $(window).off('beforeunload', window.upload?.warnUnsavedChanges);
-  $(window).on('beforeunload', window.upload?.warnUnsavedChanges);
+  window.jQuery("#save, #undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+  window.jQuery(window).off('beforeunload', window.upload?.warnUnsavedChanges);
+  window.jQuery(window).on('beforeunload', window.upload?.warnUnsavedChanges);
 }
 
 // Save column configuration on collapse/expand

@@ -160,7 +160,7 @@ const formatDuration = window.formatDuration;
           <td></td>
           <td>
             <div style="max-width: 100%; white-space: nowrap; overflow:hidden"
-                 :title="store.operationplan.item__description" onmouseenter="$(this).tooltip('show')">
+                 :title="store.operationplan.item__description" onmouseenter="window.jQuery(this).tooltip('show')">
               {{store.operationplan.item__description}}
             </div>
           </td>
@@ -177,7 +177,7 @@ const formatDuration = window.formatDuration;
           <td></td>
           <td style="max-width: calc(100% - 120px); white-space: nowrap; overflow:hidden">
             <div style="max-width: 100%; white-space: nowrap; overflow:hidden"
-                 :title="store.operationplan.supplier__description" onmouseenter="$(this).tooltip('show')">
+                 :title="store.operationplan.supplier__description" onmouseenter="window.jQuery(this).tooltip('show')">
               {{store.operationplan.supplier__description}}
             </div>
           </td>

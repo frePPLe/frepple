@@ -69,6 +69,44 @@ function isEnd(opplan, dt) {
     return window.moment(d).isSame(dt.date, "day");
 }
 
+function isSelected(OPPreference) {
+  return OPPreference === store.operationplan.reference;
+}
+
+function getStatus(op) {
+  return op && op.hasOwnProperty('operationplan__status') ? op.operationplan__status : op?.status;
+}
+
+function setStatus(op, s) {
+  if (!op) return;
+  const field = op.hasOwnProperty('operationplan__status') ? 'operationplan__status' : 'status';
+  const oldVal = op[field];
+  // changeCard is provided by the surrounding page context
+  try { changeCard(op, field, oldVal, s); } catch (e) { /* no-op if not available in this context */ }
+  op[field] = s;
+}
+
+function getStatusIcon(s) {
+  switch (s) {
+    case 'confirmed':
+      return 'fa-lock';
+    case 'approved':
+      return 'fa-unlock-alt';
+    case 'proposed':
+      return 'fa-unlock';
+    case 'completed':
+      return 'fa-check';
+    case 'closed':
+      return 'fa-times';
+    default:
+      return '';
+  }
+}
+
+function displayStatusIcon(op) {
+  return getStatusIcon(getStatus(op));
+}
+
 </script>
 
 // TODO The template still needs to be compiled on the fly... but if I try to do it I get the $ funtion redefinition error.

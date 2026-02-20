@@ -120,7 +120,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     isGanttMode: (window) => window.mode === 'gantt',
     isCalendarMode: (window) => window.mode.startsWith('calendar'),
 
-    hasSelected: () => this.selectedOperationplans.length > 0,
+    hasSelected: () => this.selectedOperationplans?.length > 0,
     getMode(state) {
       state.mode = window.mode;
     },

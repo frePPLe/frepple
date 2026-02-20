@@ -19,7 +19,7 @@
     <div>{{ opplan["type"] }} CARD</div>
     <div v-if="opplan.type === 'PO'">
         <p>
-        <span v-if="opplan.dirty && !opplan.selected" class="badge bg-danger float-end">
+        <span v-if="opplan.dirty && !isSelected(opplan.reference)" class="badge bg-danger float-end">
           ttt('unsaved')
         </span>
             <!--        this is for dragging-->
@@ -36,171 +36,24 @@
             <i
                     v-if="!editable || !opplan.hasOwnProperty('selected')"
                     class="fa"
-                    :class="(opplan.status === 'confirmed' || opplan.operationplan__status === 'confirmed')?'fa-lock':'' + ',' + (opplan.status ==='approved' || opplan.operationplan__status ==='approved')?'fa-unlock-alt': '' + ',' + (opplan.status ==='proposed' || opplan.operationplan__status ==='proposed')?'fa-unlock': '' + ',' + (opplan.status ==='completed' || opplan.operationplan__status ==='completed')?'fa-check': '' + ',' + (opplan.status ==='closed' || opplan.operationplan__status ==='closed')?'fa-times': ''"
+                    :class="displayStatusIcon(opplan)"
                     aria-hidden="true"
             ></i>
             <span class="btn-group" role="group" v-if="editable && opplan.hasOwnProperty('selected')">
-          <button
-                  v-if="!opplan.hasOwnProperty('operationplan__status')"
-                  type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status === 'proposed' ? 'active' : ''"
-                  data-bs-toggle="tooltip"
-                  data-bs-html="true"
-                  :title="ttt('proposed')"
-                  @click="
-              changeCard(opplan, 'status', opplan.status, 'proposed');
-              opplan.status = 'proposed';
-            "
-          >
-            <i class="fa fa-unlock"></i>
-          </button>
-          <button
-                  v-if="!opplan.hasOwnProperty('operationplan__status')"
-                  type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status === 'approved' ? 'active' : ''"
-                  data-bs-toggle="tooltip"
-                  data-bs-html="true"
-                  :title="ttt('approved')"
-                  @click="
-              changeCard(opplan, 'status', opplan.status, 'approved');
-              opplan.status = 'approved';
-            "
-          >
-            <i class="fa fa-unlock-alt"></i>
-          </button>
-          <button
-                  v-if="!opplan.hasOwnProperty('operationplan__status')"
-                  type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status === 'confirmed' ? 'active' : ''"
-                  data-bs-toggle="tooltip"
-                  data-bs-html="true"
-                  :title="ttt('confirmed')"
-                  @click="
-              changeCard(opplan, 'status', opplan.status, 'confirmed');
-              opplan.status = 'confirmed';
-            "
-          >
-            <i class="fa fa-lock"></i>
-          </button>
-          <button
-                  v-if="!opplan.hasOwnProperty('operationplan__status')"
-                  type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status === 'completed' ? 'active' : ''"
-                  data-bs-toggle="tooltip"
-                  data-bs-html="true"
-                  :title="ttt('completed')"
-                  @click="
-              changeCard(opplan, 'status', opplan.status, 'completed');
-              opplan.status = 'completed';
-            "
-          >
-            <i class="fa fa-check"></i>
-          </button>
-          <button
-                  v-if="!opplan.hasOwnProperty('operationplan__status')"
-                  type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status === 'closed' ? 'active' : ''"
-                  data-bs-toggle="tooltip"
-                  data-bs-html="true"
-                  :title="ttt('closed')"
-                  @click="
-              changeCard(opplan, 'status', opplan.status, 'closed');
-              opplan.status = 'closed';
-            "
-          >
-            <i class="fa fa-times"></i>
-          </button>
-          <button
-                  v-if="opplan.hasOwnProperty('operationplan__status')"
-                  type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.operationplan__status ==='proposed' ? 'active' : ''"
-                  data-bs-toggle="tooltip"
-                  data-bs-html="true"
-                  :title="ttt('proposed')"
-                  @click="
-              changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'proposed');
-              opplan.operationplan__status = 'proposed';
-            "
-          >
-            <i class="fa fa-unlock"></i>
-          </button>
-          <button
-                  v-if="opplan.hasOwnProperty('operationplan__status')"
-                  type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.operationplan__status ==='approved' ? 'active' : ''"
-                  data-bs-toggle="tooltip"
-                  data-bs-html="true"
-                  :title="ttt('approved')"
-                  @click="
-              changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'approved');
-              opplan.operationplan__status = 'approved';
-            "
-          >
-            <i class="fa fa-unlock-alt"></i>
-          </button>
-          <button
-                  v-if="opplan.hasOwnProperty('operationplan__status')"
-                  type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.operationplan__status ==='confirmed' ? 'active' : ''"
-                  data-bs-toggle="tooltip"
-                  data-bs-html="true"
-                  :title="ttt('confirmed')"
-                  @click="
-              changeCard(
-                opplan,
-                'operationplan__status',
-                opplan.operationplan__status,
-                'confirmed'
-              );
-              opplan.operationplan__status = 'confirmed';
-            "
-          >
-            <i class="fa fa-lock"></i>
-          </button>
-          <button
-              v-if="opplan.hasOwnProperty('operationplan__status')"
-              type="button"
-              class="btn btn-sm btn-primary"
-              :class="opplan.operationplan__status ==='completed' ? 'active' : ''"
-              data-bs-toggle="tooltip"
-              data-bs-html="true"
-              :title="ttt('completed')"
-              @click="
-                  changeCard(
-                    opplan,
-                    'operationplan__status',
-                    opplan.operationplan__status,
-                    'completed'
-                  );
-                opplan.operationplan__status = 'completed';
-              "
-          >
-            <i class="fa fa-check"></i>
-          </button>
-          <button
-                  v-if="opplan.hasOwnProperty('operationplan__status')"
-                  type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.operationplan__status ==='closed' ? 'active' : ''"
-                  data-bs-toggle="tooltip"
-                  data-bs-html="true"
-                  :title="ttt('closed')"
-                  @click="
-              changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'closed');
-              opplan.operationplan__status = 'closed';
-            "
-          >
-            <i class="fa fa-times"></i>
-          </button>
-        </span>
+              <button
+                v-for="s in ['proposed','approved','confirmed','completed','closed']"
+                :key="s"
+                type="button"
+                class="btn btn-sm btn-primary"
+                :class="getStatus(opplan) === s ? 'active' : ''"
+                data-bs-toggle="tooltip"
+                data-bs-html="true"
+                :title="ttt(s)"
+                @click="setStatus(opplan, s)"
+              >
+                <i class="fa" :class="getStatusIcon(s)"></i>
+              </button>
+            </span>
         </p>
         <p>
             {{ opplan.item__name || opplan.item }}&nbsp;

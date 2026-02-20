@@ -222,7 +222,7 @@ export const useOperationplansStore = defineStore('operationplans', {
         sord: this.sord,
       };
 
-      for (const key of this.kanbancolumns) {
+      const promises = this.kanbancolumns.map(async (key) => {
         let colfilter = thefilter ? JSON.parse(JSON.stringify(thefilter)) : undefined;
         const extrafilter = {
           field: this.groupBy,
@@ -230,7 +230,6 @@ export const useOperationplansStore = defineStore('operationplans', {
           data: key,
         };
         if (colfilter === undefined || colfilter === null) {
-          // First filter
           colfilter = {
             groupOp: 'AND',
             rules: [extrafilter],
@@ -238,10 +237,8 @@ export const useOperationplansStore = defineStore('operationplans', {
           };
         } else {
           if (colfilter['groupOp'] === 'AND')
-            // Add condition to existing and-filter
             colfilter['rules'].push(extrafilter);
           else
-            // Wrap existing filter in a new and-filter
             colfilter = {
               groupOp: 'AND',
               rules: [extrafilter],
@@ -275,13 +272,14 @@ export const useOperationplansStore = defineStore('operationplans', {
               x.status = x.operationplan__status;
             if (Object.prototype.hasOwnProperty.call(x, 'operationplan__origin'))
               x.origin = x.operationplan__origin;
-            // [x.color, x.inventory_status] = formatInventoryStatus(x);
           }
           this.kanbanoperationplans[key] = tmp;
         } catch (err) {
           if (err.response && err.response.status === 401) location.reload();
+          throw err;
         }
-      }
+      });
+      await Promise.all(promises);
     },
 
     // Filter and search actions

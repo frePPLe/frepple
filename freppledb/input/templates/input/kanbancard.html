@@ -7,13 +7,11 @@
         class="card"
         :class="
       (mode === 'calendarweek' || mode === 'calendarday') && calendarmode === 'duration'
-        ? 'calendar-event-inner'
-        : '' + ',' + opplan.hasOwnProperty('selected')
-          ? 'active'
-          : '' + ',' + opplan.dirty
-            ? 'dirty'
-            : ''
-    "
+        ? 'calendar-event-inner '
+        : isSelected(opplan.reference)
+          ? 'active '
+          : opplan.dirty ? 'dirty' : ''
+        "
         :style="{ 'overflow-y': 'hidden', 'background-color': opplan.color }"
         :data-index="props.opplan_index"
         :data-reference="opplan.id || opplan.reference"
@@ -388,7 +386,7 @@
     </div>
     <div v-if="(opplan.type || opplan.operationplan__type || type) === 'DO'">
         <p>
-        <span v-if="opplan.dirty && !opplan.selected" class="badge bg-danger float-end">{{
+        <span v-if="opplan.dirty && !isSelected(opplan.reference)" class="badge bg-danger float-end">{{
                 ttt('unsaved')
             }}</span>
             <!--        this is for dragging-->
@@ -802,7 +800,7 @@
     </div>
     <div v-if="opplan.type === 'MO' || opplan.type === 'WO'">
         <p>
-        <span v-if="opplan.dirty && !opplan.selected" class="badge bg-danger float-end">{{
+        <span v-if="opplan.dirty && !isSelected(opplan.reference)" class="badge bg-danger float-end">{{
                 ttt('unsaved')
             }}</span>
             <!--        this is for dragging-->

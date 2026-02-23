@@ -313,7 +313,7 @@ onUnmounted(() => {
 
 <template>
   <div class="row">
-    <KanbanBoard />
+    <KanbanBoard v-if="isKanbanMode" />
     <div
       v-for="col in preferences.widgets"
       :key="col.name"

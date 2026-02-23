@@ -211,6 +211,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     async loadKanbanData(thefilter) {
+      if (this.mode !== "kanban") return;
       if (!thefilter) {
         thefilter = this.currentFilter || window.initialfilter;
       }

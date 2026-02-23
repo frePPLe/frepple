@@ -50,7 +50,7 @@ menu.addItem(
     label=_("Forecast editor"),
     index=111,
     permission="auth.view_forecast_report",
-    dependencies=[ForecastPlan],
+    dependencies=[Forecast],
 )
 # TODO Not ready
 # menu.addItem(

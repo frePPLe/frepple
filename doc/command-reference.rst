@@ -590,8 +590,8 @@ to a different location.
 
 .. _empty:
 
-Empty the database
-------------------
+Clear all data
+--------------
 
 This will delete all data from the current scenario (except for some internal
 tables for users, permissions, task log, etc...).

@@ -1190,7 +1190,7 @@ void MeasurePagePool::releaseEmptyPages() {
       // Release the memory
       auto tmp = p;
       p = p->next;
-      free(tmp);
+      delete tmp;
       ++count;
     } else
       p = p->next;

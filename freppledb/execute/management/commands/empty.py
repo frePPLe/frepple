@@ -352,7 +352,7 @@ class Command(BaseCommand):
         finally:
             setattr(_thread_locals, "database", old_thread_locals)
 
-    title = _("Empty the database")
+    title = _("Clear all data")
     index = 1700
     help_url = "command-reference.html#empty"
 

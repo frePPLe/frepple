@@ -2920,6 +2920,10 @@ class WorkOrderList(OperationPlanMixin):
             formatter="detail",
             extra="role:'input/manufacturingorder'",
         ),
+        GridFieldInteger(
+            "operation__priority",
+            title=format_lazy("{} - {}", _("operation"), _("priority")),
+        ),
         GridFieldText(
             "batch", title=_("batch"), editable="true", initially_hidden=True
         ),
@@ -3146,11 +3150,6 @@ class WorkOrderList(OperationPlanMixin):
         GridFieldNumber(
             "operation__sizemaximum",
             title=format_lazy("{} - {}", _("operation"), _("size maximum")),
-            initially_hidden=True,
-        ),
-        GridFieldInteger(
-            "operation__priority",
-            title=format_lazy("{} - {}", _("operation"), _("priority")),
             initially_hidden=True,
         ),
         GridFieldDateTime(

@@ -170,13 +170,15 @@ rect.opplan {
   }
 
   function setHeights() {
-    var h = jQuery('#content-main').height();
-    jQuery('#grid').setGridWidth(jQuery('#content-main').width());
-    jQuery("#grid").setGridHeight(h - 52);
-    jQuery(".column-body").css("height", h - 25);
-    jQuery("#scrolldayview").css("height", h - 25);
-    jQuery("#scrollweekview").css("height", h - 60);
-    jQuery("#scrollmonthview").css("height", h - 45);
+      var initializing = jQuery('.column-body.d-none').length > 0;
+      var saved = window.preferences && window.preferences.height;
+      var h = (initializing && saved) ? Math.floor(saved) : jQuery('#content-main').height();
+
+      jQuery('#grid').setGridWidth(jQuery('#content-main').width());
+      jQuery('#grid').setGridHeight(h - 60);
+
+      // Initialize and then maintain Kanban column heights
+      jQuery('.column-body').removeClass('d-none').css('height', h - 60);
   }
 
   function setWidths() {
@@ -270,6 +272,7 @@ rect.opplan {
       grid.saveColumnConfiguration();
     });
     jQuery("#kanbanmode").on('click', function() {
+      preferences.height = Math.floor(jQuery("#content-main").height());
       mode = "kanban";
       const event = new CustomEvent("setMode", {
         detail: { mode: "kanban" }

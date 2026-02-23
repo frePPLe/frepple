@@ -26,14 +26,12 @@ onMounted(async () => {
   // console.log('Is kanban mode:', store.isKanbanMode);
   // console.log('Window mode:', window.mode);
   // console.log('Preferences mode:', window.preferences?.mode);
-
+  window.setHeights();
   try {
-    await store.loadKanbanData();
+    await store.loadKanbanData().then(() => window.setHeights());
   } catch (error) {
     console.error('Failed to load kanban data:', error);
   }
-
-  // store.setDataRowHeight(window.preferences?.height || null);
 });
 
 // const urlPrefix = computed(() => window.url_prefix || '');
@@ -96,10 +94,7 @@ function hideColumn(col) {
 }
 
 function getHeight(gutter) {
-  if (store.preferences && store.preferences['height'])
-    return store.preferences['height'] - (gutter || 25);
-  else
-    return 220;
+  window.setHeights();
 }
 
 function formatInventoryStatus(opplan) {
@@ -185,8 +180,8 @@ function selectCard(opplan) {
               </h3>
             </div>
             <div
-              class="card-body column-body"
-              style="overflow-y: auto"  :style="'height:' + getHeight(25) + 'px'"
+              class="card-body column-body d-none"
+              style="overflow-y: auto;"
             >
               <template v-if="kanbanoperationplans[col]">
                 <div

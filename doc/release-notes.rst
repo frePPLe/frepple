@@ -44,7 +44,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   integrations when you upgrade to this new release.
 
 - | Applicable if you customized the kanban card template "input/kanban_card.html":
-  | You need to create a new template "input/kanbancard.html", this type using vue
+  | You need to create a new template "input/kanbancard.html", this time using vue
     syntax rather than the angularjs syntax.
 
 9.13.0 (2026-01-31)

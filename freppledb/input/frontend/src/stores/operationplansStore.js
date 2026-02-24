@@ -250,30 +250,7 @@ export const useOperationplansStore = defineStore('operationplans', {
             ...params,
             filters: JSON.stringify(colfilter),
           });
-          const tmp = responseData.value;
-          for (const x of tmp.rows) {
-            x.type = x.operationplan__type || x.type || window.default_operationplan_type;
-            if (Object.prototype.hasOwnProperty.call(x, 'enddate')) x.enddate = new Date(x.enddate);
-            if (Object.prototype.hasOwnProperty.call(x, 'operationplan__enddate'))
-              x.operationplan__enddate = new Date(x.operationplan__enddate);
-            if (Object.prototype.hasOwnProperty.call(x, 'startdate'))
-              x.startdate = new Date(x.startdate);
-            if (Object.prototype.hasOwnProperty.call(x, 'operationplan__startdate'))
-              x.operationplan__startdate = new Date(x.operationplan__startdate);
-            if (Object.prototype.hasOwnProperty.call(x, 'quantity'))
-              x.quantity = parseFloat(x.quantity);
-            if (Object.prototype.hasOwnProperty.call(x, 'operationplan__quantity'))
-              x.operationplan__quantity = parseFloat(x.operationplan__quantity);
-            if (Object.prototype.hasOwnProperty.call(x, 'quantity_completed'))
-              x.quantity_completed = parseFloat(x.quantity_completed);
-            if (Object.prototype.hasOwnProperty.call(x, 'operationplan__quantity_completed'))
-              x.operationplan__quantity_completed = parseFloat(x.operationplan__quantity_completed);
-            if (Object.prototype.hasOwnProperty.call(x, 'operationplan__status'))
-              x.status = x.operationplan__status;
-            if (Object.prototype.hasOwnProperty.call(x, 'operationplan__origin'))
-              x.origin = x.operationplan__origin;
-          }
-          this.kanbanoperationplans[key] = tmp;
+          this.kanbanoperationplans[key] = responseData.value;
         } catch (err) {
           if (err.response && err.response.status === 401) location.reload();
           throw err;

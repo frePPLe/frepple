@@ -144,7 +144,7 @@
             opplan.hasOwnProperty('selected') &&
             !opplan.hasOwnProperty('operationplan__startdate')
           "
-                    type="date"
+                    type="datetime-local"
                     @focus="oldValue = opplan.startdate"
                     v-model="opplan.startdate"
                     @change="changeCard(opplan, 'startdate', oldValue, opplan.startdate)"
@@ -156,7 +156,7 @@
             opplan.hasOwnProperty('selected') &&
             opplan.hasOwnProperty('operationplan__startdate')
           "
-                    type="date"
+                    type="datetime-local"
                     @focus="oldValue = opplan.operationplan__startdate"
                     v-model="opplan.operationplan__startdate"
                     @change="
@@ -187,7 +187,7 @@
             opplan.hasOwnProperty('selected') &&
             !opplan.hasOwnProperty('operationplan__enddate')
           "
-                    type="date"
+                    type="datetime-local"
                     @focus="oldValue = opplan.enddate"
                     v-model="opplan.enddate"
                     @change="changeCard(opplan, 'enddate', oldValue, opplan.enddate)"
@@ -199,7 +199,7 @@
             opplan.hasOwnProperty('selected') &&
             opplan.hasOwnProperty('operationplan__enddate')
           "
-                    type="date"
+                    type="datetime-local"
                     @focus="oldValue = opplan.operationplan__enddate"
                     v-model="opplan.operationplan__enddate"
                     @change="
@@ -558,7 +558,7 @@
             opplan.hasOwnProperty('selected') &&
             !opplan.hasOwnProperty('operationplan__startdate')
           "
-                    type="date"
+                    type="datetime-local"
                     @focus="oldValue = opplan.startdate"
                     v-model="opplan.startdate"
                     @change="changeCard(opplan, 'startdate', oldValue, opplan.startdate)"
@@ -570,7 +570,7 @@
             opplan.hasOwnProperty('selected') &&
             opplan.hasOwnProperty('operationplan__startdate')
           "
-                    type="date"
+                    type="datetime-local"
                     @focus="oldValue = opplan.operationplan__startdate"
                     v-model="opplan.operationplan__startdate"
                     @change="
@@ -601,7 +601,7 @@
             opplan.hasOwnProperty('selected') &&
             !opplan.hasOwnProperty('operationplan__enddate')
           "
-                    type="date"
+                    type="datetime-local"
                     @focus="oldValue = opplan.enddate"
                     v-model="opplan.enddate"
                     @change="changeCard(opplan, 'enddate', oldValue, opplan.enddate)"
@@ -613,7 +613,7 @@
             opplan.hasOwnProperty('selected') &&
             opplan.hasOwnProperty('operationplan__enddate')
           "
-                    type="date"
+                    type="datetime-local"
                     @focus="oldValue = opplan.operationplan__enddate"
                     v-model="opplan.operationplan__enddate"
                     @change="

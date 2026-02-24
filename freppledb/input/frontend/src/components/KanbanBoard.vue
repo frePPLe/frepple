@@ -152,14 +152,6 @@ const kanbanoperationplans = computed(() => {
     if (tmp && tmp.rows) {
       for (const x of tmp.rows) {
         x.type = x.operationplan__type || x.type || "PO";
-        if (Object.prototype.hasOwnProperty.call(x, "enddate"))
-          x.enddate = new Date(x.enddate);
-        if (Object.prototype.hasOwnProperty.call(x, "operationplan__enddate"))
-          x.operationplan__enddate = new Date(x.operationplan__enddate);
-        if (Object.prototype.hasOwnProperty.call(x, "startdate"))
-          x.startdate = new Date(x.startdate);
-        if (Object.prototype.hasOwnProperty.call(x, "operationplan__startdate"))
-          x.operationplan__startdate = new Date(x.operationplan__startdate);
         if (Object.prototype.hasOwnProperty.call(x, "quantity"))
           x.quantity = parseFloat(x.quantity);
         if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity"))

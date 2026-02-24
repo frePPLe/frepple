@@ -29,6 +29,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 17, 18, 19: Bug fix for the bulk export from frepple to odoo in multi-company
     setups.
 
+- | 18, 19: Improved mapping for subcontractor suppliers to account for date
+    effectivity and price breaks.
+
 9.13.0 (2026-01-31)
 ===================
 

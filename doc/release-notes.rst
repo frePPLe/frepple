@@ -32,6 +32,21 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 18, 19: Improved mapping for subcontractor suppliers to account for date
     effectivity and price breaks.
 
+.. rubric:: System administration
+
+- | Extra robustness was added to assure the system isn't waiting forever on
+    looping or blocked tasks. We now cancel and clean up unhealty tasks.
+
+.. rubric:: Upgrade compatibility heads-up
+
+| This ia a new section in the release notes!
+| It provides a heads-up to specific changes that can impact your customizations or
+  integrations when you upgrade to this new release.
+
+- | Applicable if you customized the kanban card template "input/kanban_card.html":
+  | You need to create a new template "input/kanbancard.html", this type using vue
+    syntax rather than the angularjs syntax.
+
 9.13.0 (2026-01-31)
 ===================
 

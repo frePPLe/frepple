@@ -34,12 +34,12 @@
             <!--        this is for dragging-->
             <!--        <i v-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i>&nbsp;-->
             <i
-                    v-if="!editable || !opplan.hasOwnProperty('selected')"
+                    v-if="!editable || !isSelected(opplan.reference)"
                     class="fa"
                     :class="displayStatusIcon(opplan)"
                     aria-hidden="true"
             ></i>
-            <span class="btn-group" role="group" v-if="editable && opplan.hasOwnProperty('selected')">
+            <span class="btn-group" role="group" v-if="editable && isSelected(opplan.reference)">
               <button
                 v-for="s in ['proposed','approved','confirmed','completed','closed']"
                 :key="s"
@@ -92,14 +92,14 @@
         </p>
         <p :class="(opplan.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal'))?'dirty': ''"
         >
-        <span v-if="!editable || !opplan.hasOwnProperty('selected')">{{
+        <span v-if="!editable || !isSelected(opplan.reference)">{{
                 numberFormat(opplan.operationplan__quantity || opplan.quantity)
             }}</span>
             <input
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             !opplan.hasOwnProperty('operationplan__quantity')
           "
                     type="number"
@@ -113,7 +113,7 @@
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             opplan.hasOwnProperty('operationplan__quantity')
           "
                     type="number"
@@ -134,14 +134,14 @@
             : ''
         "
         >
-        <span v-if="!editable || !opplan.hasOwnProperty('selected')">{{
+        <span v-if="!editable || !isSelected(opplan.reference)">{{
                 dateFormat(opplan.operationplan__startdate || opplan.startdate)
             }}</span>
             <input
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             !opplan.hasOwnProperty('operationplan__startdate')
           "
                     type="datetime-local"
@@ -153,7 +153,7 @@
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             opplan.hasOwnProperty('operationplan__startdate')
           "
                     type="datetime-local"
@@ -177,14 +177,14 @@
             : ''
         "
         >
-        <span v-if="!editable || !opplan.hasOwnProperty('selected')">{{
+        <span v-if="!editable || !isSelected(opplan.reference)">{{
                 dateFormat(opplan.operationplan__enddate || opplan.enddate)
             }}</span>
             <input
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             !opplan.hasOwnProperty('operationplan__enddate')
           "
                     type="datetime-local"
@@ -196,7 +196,7 @@
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             opplan.hasOwnProperty('operationplan__enddate')
           "
                     type="datetime-local"
@@ -208,14 +208,14 @@
             />
         </p>
         <p v-if="opplan.remark || opplan.operationplan__remark">
-        <span v-if="!editable || !opplan.hasOwnProperty('selected')">{{
+        <span v-if="!editable || !isSelected(opplan.reference)">{{
                 opplan.remark || opplan.operationplan__remark
             }}</span>
             <input
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             !opplan.hasOwnProperty('operationplan__remark')
           "
                     @focus="oldValue = opplan.remark"
@@ -226,7 +226,7 @@
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             opplan.hasOwnProperty('operationplan__remark')
           "
                     @focus="oldValue = opplan.operationplan__remark"
@@ -254,7 +254,7 @@
             <!--        this is for dragging-->
             <!--        <i v-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i>&nbsp;-->
             <i
-                    v-if="!editable || !opplan.hasOwnProperty('selected')"
+                    v-if="!editable || !isSelected(opplan.reference)"
                     class="fa"
                     :class="
             opplan.status ==='confirmed' || opplan.operationplan__status ==='confirmed'
@@ -279,7 +279,7 @@
           "
                     aria-hidden="true"
             ></i>
-            <span class="btn-group" role="group" v-if="editable && opplan.hasOwnProperty('selected')">
+            <span class="btn-group" role="group" v-if="editable && isSelected(opplan.reference)">
           <button
                   v-if="!opplan.hasOwnProperty('operationplan__status')"
                   type="button"
@@ -506,14 +506,14 @@
             : ''
         "
         >
-        <span v-if="!editable || !opplan.hasOwnProperty('selected')">{{
+        <span v-if="!editable || !isSelected(opplan.reference)">{{
                 numberFormat(opplan.operationplan__quantity || opplan.quantity)
             }}</span>
             <input
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             !opplan.hasOwnProperty('operationplan__quantity')
           "
                     type="number"
@@ -527,7 +527,7 @@
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             opplan.hasOwnProperty('operationplan__quantity')
           "
                     type="number"
@@ -548,14 +548,14 @@
             : ''
         "
         >
-        <span v-if="!editable || !opplan.hasOwnProperty('selected')">{{
+        <span v-if="!editable || !isSelected(opplan.reference)">{{
                 dateFormat(opplan.operationplan__startdate || opplan.startdate)
             }}</span>
             <input
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             !opplan.hasOwnProperty('operationplan__startdate')
           "
                     type="datetime-local"
@@ -567,7 +567,7 @@
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             opplan.hasOwnProperty('operationplan__startdate')
           "
                     type="datetime-local"
@@ -591,14 +591,14 @@
             : ''
         "
         >
-        <span v-if="!editable || !opplan.hasOwnProperty('selected')">{{
+        <span v-if="!editable || !isSelected(opplan.reference)">{{
                 dateTimeFormat(opplan.operationplan__enddate || opplan.enddate)
             }}</span>
             <input
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             !opplan.hasOwnProperty('operationplan__enddate')
           "
                     type="datetime-local"
@@ -610,7 +610,7 @@
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             opplan.hasOwnProperty('operationplan__enddate')
           "
                     type="datetime-local"
@@ -622,14 +622,14 @@
             />
         </p>
         <p v-if="opplan.remark || opplan.operationplan__remark">
-        <span v-if="!editable || !opplan.hasOwnProperty('selected')">{{
+        <span v-if="!editable || !isSelected(opplan.reference)">{{
                 opplan.remark || opplan.operationplan__remark
             }}</span>
             <input
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             !opplan.hasOwnProperty('operationplan__remark')
           "
                     @focus="oldValue = opplan.remark"
@@ -640,7 +640,7 @@
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             opplan.hasOwnProperty('operationplan__remark')
           "
                     @focus="oldValue = opplan.operationplan__remark"
@@ -669,7 +669,7 @@
             <!--        this is for dragging-->
             <!--        <i v-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i>&nbsp;-->
             <i
-                    v-if="!editable || !opplan.hasOwnProperty('selected')"
+                    v-if="!editable || !isSelected(opplan.reference)"
                     class="fa"
                     :class="
             opplan.status ==='confirmed' || opplan.operationplan__status ==='confirmed'
@@ -694,7 +694,7 @@
           "
                     aria-hidden="true"
             ></i>
-            <span class="btn-group" role="group" v-if="editable && opplan.hasOwnProperty('selected')">
+            <span class="btn-group" role="group" v-if="editable && isSelected(opplan.reference)">
           <button
                   v-if="!opplan.hasOwnProperty('operationplan__status')"
                   type="button"
@@ -885,14 +885,14 @@
         <p
                 data-ng-class="{'dirty': opplan.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal')}"
         >
-        <span v-if="!editable || !opplan.hasOwnProperty('selected')">{{
+        <span v-if="!editable || !isSelected(opplan.reference)">{{
                 numberFormat(opplan.operationplan__quantity || opplan.quantity)
             }}</span>
             <input
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             opplan.hasOwnProperty('operationplan__quantity')
           "
                     type="number"
@@ -908,7 +908,7 @@
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             !opplan.hasOwnProperty('operationplan__quantity')
           "
                     type="number"
@@ -922,7 +922,7 @@
         <p
                 :class="(opplan.hasOwnProperty('quantity_completedOriginal') || opplan.hasOwnProperty('operationplan__quantity_completedOriginal'))?'dirty':''"
         >
-        <span v-if="!editable || !opplan.hasOwnProperty('selected')">{{
+        <span v-if="!editable || !isSelected(opplan.reference)">{{
                 numberFormat(
                         opplan.operationplan__quantity_completed || opplan.quantity_completed || 0
                 )
@@ -931,7 +931,7 @@
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             opplan.hasOwnProperty('operationplan__quantity')
           "
                     type="number"
@@ -952,7 +952,7 @@
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             !opplan.hasOwnProperty('operationplan__quantity')
           "
                     type="number"
@@ -966,14 +966,14 @@
         <p
                 :class="(opplan.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal'))?'dirty':''"
         >
-        <span v-if="!editable || !opplan.hasOwnProperty('selected')">{{
+        <span v-if="!editable || !isSelected(opplan.reference)">{{
                 dateFormat(opplan.operationplan__startdate || opplan.startdate)
             }}</span>
             <input
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             !opplan.hasOwnProperty('operationplan__startdate')
           "
                     type="datetime-local"
@@ -985,7 +985,7 @@
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             opplan.hasOwnProperty('operationplan__startdate')
           "
                     type="datetime-local"
@@ -1004,14 +1004,14 @@
         <p
                 :class="(opplan.hasOwnProperty('enddateOriginal') || opplan.hasOwnProperty('operationplan__enddateOriginal'))?'dirty':''"
         >
-        <span v-if="!editable || !opplan.hasOwnProperty('selected')">{{
+        <span v-if="!editable || !isSelected(opplan.reference)">{{
                 dateFormat(opplan.operationplan__enddate || opplan.enddate)
             }}</span>
             <input
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             !opplan.hasOwnProperty('operationplan__enddate')
           "
                     type="datetime-local"
@@ -1023,7 +1023,7 @@
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             opplan.hasOwnProperty('operationplan__enddate')
           "
                     type="datetime-local"
@@ -1035,14 +1035,14 @@
             />
         </p>
         <p v-if="opplan.remark || opplan.operationplan__remark">
-        <span v-if="!editable || !opplan.hasOwnProperty('selected')">{{
+        <span v-if="!editable || !isSelected(opplan.reference)">{{
                 opplan.remark || opplan.operationplan__remark
             }}</span>
             <input
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             !opplan.hasOwnProperty('operationplan__remark')
           "
                     @focus="oldValue = opplan.remark"
@@ -1053,7 +1053,7 @@
                     class="form-control"
                     v-if="
             editable &&
-            opplan.hasOwnProperty('selected') &&
+            isSelected(opplan.reference) &&
             opplan.hasOwnProperty('operationplan__remark')
           "
                     @focus="oldValue = opplan.operationplan__remark"

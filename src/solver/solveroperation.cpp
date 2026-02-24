@@ -2131,15 +2131,11 @@ void Solver::createsBatches(Operation* oper, void* v) {
         ld->getResource()->getConstrained())
       return;
 
-  auto* solver = static_cast<Solver*>(v);
-  auto loglevel = solver->getLogLevel();
-
   // Loop over all operationplans of the operation
   //   Scan for others that are within batching window and have same batch.
   //   If found:
   //      - delete them
   //      - increase quantity of the first one
-  if (loglevel > 1) logger << "Batch grouping " << oper << '\n';
   auto opplan = oper->getOperationPlans();
   while (opplan != OperationPlan::end()) {
     if (opplan->getProposed()) {
@@ -2179,8 +2175,6 @@ void Solver::createsBatches(Operation* oper, void* v) {
         }
         if (!ok) continue;
 
-        if (loglevel > 1)
-          logger << "  Grouping " << tmp << " with " << &*opplan << '\n';
         added += tmp->getQuantity();
         delete tmp;
       }

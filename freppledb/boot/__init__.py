@@ -207,7 +207,7 @@ def getAttributeFields(
     for field_name, label, fieldtype, dflt_editable, hidden in getAttributes(model):
         if related_name_prefix:
             field_name = "%s__%s" % (related_name_prefix, field_name)
-            label = "%s - %s" % (related_name_prefix.split("__")[-1], label)
+            label = "%s - %s" % (model._meta.verbose_name, label)
         if fieldtype == "string":
             result.append(
                 GridFieldText(

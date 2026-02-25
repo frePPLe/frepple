@@ -1633,7 +1633,10 @@ class GridReport(View):
         )
         recs = cls.count_query(request, *args, **kwargs)
         if "rows" in request.GET:
-            request.pagesize = int(request.GET["rows"])
+            try:
+                 request.pagesize = max(int(request.GET["rows"]), 25)
+            except (ValueError, TypeError):
+                request.pagesize = 25
         total_pages = math.ceil(float(recs) / request.pagesize)
         page = request.GET.get("page", 1)
         if page is not None:
@@ -3397,7 +3400,10 @@ class GridPivot(GridReport):
         recs = cls.count_query(request, *args, **kwargs)
         page = "page" in request.GET and int(request.GET["page"]) or 1
         if "rows" in request.GET:
-            request.pagesize = int(request.GET["rows"])
+            try:
+                 request.pagesize = max(int(request.GET["rows"]), 25)
+            except (ValueError, TypeError):
+                request.pagesize = 25
         total_pages = math.ceil(float(recs) / request.pagesize)
         if page > total_pages:
             page = total_pages

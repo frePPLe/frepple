@@ -255,6 +255,15 @@ export const useOperationplansStore = defineStore('operationplans', {
           if (err.response && err.response.status === 401) location.reload();
           throw err;
         }
+        if (
+          this.operationplanChanges[this.operationplan.reference] !== undefined &&
+          !window.isDataSaved
+        ) {
+          for (const field in this.operationplanChanges[this.operationplan.reference]) {
+            this.kanbanoperationplans[key][this.operationplan.reference][field] =
+              this.operationplanChanges[this.operationplan.reference][field];
+          }
+        }
       });
       await Promise.all(promises);
     },
@@ -567,8 +576,24 @@ export const useOperationplansStore = defineStore('operationplans', {
       }
     },
 
+    setKanbanCardValue(id, field, statusKey, value) {
+      if (
+        field === "startdate" ||
+        field === "enddate" ||
+        field === "quantity" ||
+        field === "quantity_completed" ||
+        field === "remark" ||
+        (field === "status" && this.kanbancolumns.includes(statusKey))
+      ) {
+        console.log(589, this.kanbanoperationplans.rows, statusKey, this.kanbanoperationplans[statusKey].value);
+        console.log(590, this.kanbanoperationplans[statusKey].rows.filter(x => x.reference === id));
+        this.kanbanoperationplans[statusKey].rows.filter(x => x.reference === id)[0][field] = value;
+      }
+    },
+
     setEditFormValues(field, value) {
       window.displayongrid(this.operationplan.reference, field, value);
+      this.setKanbanCardValue(this.operationplan.reference, field, this.operationplan.status, value);
       this.editForm[field] = value;
       if (field === 'status') this.operationplan.status = value;
       this.trackOperationplanChanges(this.operationplan.reference, field, value);

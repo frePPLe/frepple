@@ -764,6 +764,9 @@ void Problem::List::clean(Demand* d) const {
     }
   }
 
+  // For unplanned orders, we can't clean the constraint list.
+  if (lvl_prev == -1) return;
+
   // Critical path is now identified.
   // Now remove any constraint that is not on that path.
   for (auto p = constraints.begin(); p != constraints.end();) {

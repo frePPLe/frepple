@@ -154,7 +154,9 @@ class Resource(AuditModel, HierarchyModel):
         blank=True,
         max_digits=20,
         decimal_places=8,
-        help_text=_("Efficiency percentage of the resource"),
+        help_text=_(
+            "Efficiency percentage.  Operations will take longer on resources with efficiency less than 100%."
+        ),
     )
     efficiency_calendar = models.ForeignKey(
         Calendar,
@@ -164,9 +166,7 @@ class Resource(AuditModel, HierarchyModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        help_text=_(
-            "Calendar defining the efficiency percentage of the resource varying over time"
-        ),
+        help_text=_("Calendar defining the efficiency percentage varying over time"),
     )
 
     # Methods

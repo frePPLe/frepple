@@ -21,9 +21,9 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
  */
 
-import {toRaw} from "vue";
+import { toRaw } from 'vue';
 import { defineStore } from 'pinia';
-import {operationplanService} from "@/services/operationplanService.js";
+import { operationplanService } from '@/services/operationplanService.js';
 import { Operationplan } from '@/models/operationplan.js';
 
 /**
@@ -211,7 +211,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     async loadKanbanData(thefilter) {
-      if (this.mode !== "kanban") return;
+      if (this.mode !== 'kanban') return;
       if (!thefilter) {
         thefilter = this.currentFilter || window.initialfilter;
       }
@@ -236,8 +236,7 @@ export const useOperationplansStore = defineStore('operationplans', {
             groups: [],
           };
         } else {
-          if (colfilter['groupOp'] === 'AND')
-            colfilter['rules'].push(extrafilter);
+          if (colfilter['groupOp'] === 'AND') colfilter['rules'].push(extrafilter);
           else
             colfilter = {
               groupOp: 'AND',
@@ -259,6 +258,10 @@ export const useOperationplansStore = defineStore('operationplans', {
           this.operationplanChanges[this.operationplan.reference] !== undefined &&
           !window.isDataSaved
         ) {
+          for (const field in this.operationplanChanges[this.operationplan.reference]) {
+            this.kanbanoperationplans[key][this.operationplan.reference][field] =
+              this.operationplanChanges[this.operationplan.reference][field];
+          }
           for (const field in this.operationplanChanges[this.operationplan.reference]) {
             this.kanbanoperationplans[key][this.operationplan.reference][field] =
               this.operationplanChanges[this.operationplan.reference][field];
@@ -290,6 +293,18 @@ export const useOperationplansStore = defineStore('operationplans', {
           this.trackOperationplanChanges(op.reference, 'status', value);
         });
       }
+    },
+
+    setKanbanStatus(oldStatus, oldIndex, newStatus, newIndex, reference) {
+      if (!this.kanbancolumns.includes(newStatus)) return;
+      // this.setEditFormValues('status', newStatus);
+
+      const currentRef = this.operationplan?.reference || this.operationplan?.operationplan__reference;
+      if (currentRef === reference) {
+        this.operationplan.status = newStatus;
+      }
+
+      this.trackOperationplanChanges(reference, 'status', newStatus);
     },
 
     setFrozenColumns(frozen) {
@@ -578,22 +593,26 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     setKanbanCardValue(id, field, statusKey, value) {
       if (
-        field === "startdate" ||
-        field === "enddate" ||
-        field === "quantity" ||
-        field === "quantity_completed" ||
-        field === "remark" ||
-        (field === "status" && this.kanbancolumns.includes(statusKey))
+        field === 'startdate' ||
+        field === 'enddate' ||
+        field === 'quantity' ||
+        field === 'quantity_completed' ||
+        field === 'remark' ||
+        (field === 'status' && this.kanbancolumns.includes(statusKey))
       ) {
-        console.log(589, this.kanbanoperationplans.rows, statusKey, this.kanbanoperationplans[statusKey].value);
-        console.log(590, this.kanbanoperationplans[statusKey].rows.filter(x => x.reference === id));
-        this.kanbanoperationplans[statusKey].rows.filter(x => x.reference === id)[0][field] = value;
+        this.kanbanoperationplans[statusKey].rows.filter((x) => x.reference === id)[0][field] =
+          value;
       }
     },
 
     setEditFormValues(field, value) {
       window.displayongrid(this.operationplan.reference, field, value);
-      this.setKanbanCardValue(this.operationplan.reference, field, this.operationplan.status, value);
+      this.setKanbanCardValue(
+        this.operationplan.reference,
+        field,
+        this.operationplan.status,
+        value
+      );
       this.editForm[field] = value;
       if (field === 'status') this.operationplan.status = value;
       this.trackOperationplanChanges(this.operationplan.reference, field, value);

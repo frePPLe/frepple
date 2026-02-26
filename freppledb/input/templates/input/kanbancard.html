@@ -16,12 +16,13 @@
         :data-index="props.opplan_index"
         :data-reference="opplan.id || opplan.reference"
 >
-    <div>{{ opplan["type"] }} CARD</div>
+    <div>{{ opplan["type"] }} CARD
+        <span v-if="opplan.dirty" class="badge bg-danger float-end">
+          {{ttt('unsaved')}}
+        </span>
+    </div>
     <div v-if="opplan.type === 'PO'">
         <p>
-        <span v-if="opplan.dirty && !isSelected(opplan.reference)" class="badge bg-danger float-end">
-          ttt('unsaved')
-        </span>
             <!--        this is for dragging-->
             <!--        <i v-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;-->
             <i

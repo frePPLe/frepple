@@ -12,7 +12,7 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION * WITH THE SOFTWARE OR 
 DEALINGS IN THE SOFTWARE */
 
 <script setup lang="js">
-import {computed, onMounted, ref, nextTick} from "vue";
+import {computed, onMounted, ref, nextTick, toRaw} from "vue";
 import { useI18n } from "vue-i18n";
 import { useOperationplansStore } from "@/stores/operationplansStore.js";
 import KanbanCard from "@/components/KanbanCard.vue";
@@ -52,9 +52,8 @@ onMounted(async () => {
             const reference = evt.item
               ?.querySelector('[data-reference]')
               ?.getAttribute('data-reference');
-            const newStatus = evt.to.closest('[data-column]')?.getAttribute('data-column');
-            const oldStatus = evt.from.closest('[data-column]')?.getAttribute('data-column');
-
+            const oldStatus = evt.from.getAttribute('data-column');
+            const newStatus = evt.item.parentElement.getAttribute('data-column');
             if (!reference || !newStatus || !oldStatus) return;
 
             // Mark data as unsaved for legacy UI buttons
@@ -65,14 +64,25 @@ onMounted(async () => {
 
             if (newStatus !== oldStatus) {
               const oldIndex = evt.oldIndex;      // use Sortable’s index
-              const newIndex = evt.newIndex;
-
-              const cardData = store.kanbanoperationplans[oldStatus].rows.splice(oldIndex, 1)[0];
+              const newIndex = evt.newIndex;// Find the card by reference instead of using oldIndex
+              const rows = store.kanbanoperationplans[oldStatus].rows;
+              const cardIndex = rows.findIndex(row => row.reference == reference);
+              if (cardIndex === -1) {
+                console.error('Card not found in source column:', reference);
+                return;
+              }
+              const cardData = rows.splice(cardIndex, 1)[0];
               // Keep both fields in sync if present
               cardData.status = newStatus;
               if (Object.prototype.hasOwnProperty.call(cardData, 'operationplan__status')) {
                 cardData.operationplan__status = newStatus;
               }
+              cardData.dirty = true;
+
+              // If the current operationplan is the one being moved, update it
+              // if (store.operationplan.reference === reference || store.operationplan.operationplan__reference === reference) {
+              store.setKanbanStatus(oldStatus, oldIndex, newStatus, newIndex, reference);
+              // }
 
               if (!store.kanbanoperationplans[newStatus]) {
                 store.kanbanoperationplans[newStatus] = { rows: [], records: 0 };
@@ -262,6 +272,7 @@ function selectCard(opplan) {
           <div
             class="card-body column-body d-none"
             style="overflow-y: auto;"
+            :data-column="col"
           >
             <template v-if="kanbanoperationplans[col]">
               <div

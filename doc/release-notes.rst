@@ -32,9 +32,13 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 18, 19: Improved mapping for subcontractor suppliers to account for date
     effectivity and price breaks.
 
-- | 17, 18, 19: For readability reasons, the *Vendor*, *Manufacturing Order* and
+- | 17, 18: For readability reasons, the *Vendor*, *Manufacturing Order* and
     *sales order line* columns of the Recommendation table were merged into a
     single column called "Related data".
+
+- | 17: For security reasons, a new field called "frepple interface user" was added
+    to the frePPLe settings in Odoo. Only that user can run an "import from Odoo" task
+    in frePPLe.
 
 .. rubric:: System administration
 

@@ -12,7 +12,7 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION * WITH THE SOFTWARE OR 
 DEALINGS IN THE SOFTWARE */
 
 <script setup lang="js">
-import {computed, onMounted, ref, nextTick, toRaw} from "vue";
+import {computed, onMounted, ref, nextTick} from "vue";
 import { useI18n } from "vue-i18n";
 import { useOperationplansStore } from "@/stores/operationplansStore.js";
 import KanbanCard from "@/components/KanbanCard.vue";

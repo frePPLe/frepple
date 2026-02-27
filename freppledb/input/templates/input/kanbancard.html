@@ -10,14 +10,14 @@
         ? 'calendar-event-inner '
         : isSelected(opplan.reference)
           ? 'active '
-          : opplan.dirty ? 'dirty' : ''
+          : store.isChanged(opplan.reference, null) ? 'dirty' : ''
         "
         :style="{ 'overflow-y': 'hidden', 'background-color': opplan.color }"
         :data-index="props.opplan_index"
         :data-reference="opplan.id || opplan.reference"
 >
     <div>{{ opplan["type"] }} CARD
-        <span v-if="opplan.dirty" class="badge bg-danger float-end">
+        <span v-if="store.isChanged(opplan.reference, null)" class="badge bg-danger float-end">
           {{ttt('unsaved')}}
         </span>
     </div>
@@ -45,8 +45,8 @@
                 v-for="s in ['proposed','approved','confirmed','completed','closed']"
                 :key="s"
                 type="button"
-                class="btn btn-sm btn-primary"
-                :class="getStatus(opplan) === s ? 'active' : ''"
+                class="btn btn-sm"
+                :class="[getStatus(opplan) === s ? 'active' : '', (store.isChanged(opplan.reference, 'status') && s === opplan.status) ? 'btn-danger' : 'btn-primary']"
                 data-bs-toggle="tooltip"
                 data-bs-html="true"
                 :title="ttt(s)"
@@ -98,6 +98,7 @@
             }}</span>
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'quantity') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -108,10 +109,11 @@
                     min="0"
                     @focus="oldValue = opplan.quantity"
                     v-model="opplan.quantity"
-                    @change="changeCard(opplan, 'quantity', oldValue, opplan.quantity)"
+                    @input="changeCard(opplan, 'quantity', oldValue, opplan.quantity)"
             />
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'operationplan__quantity') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -122,7 +124,7 @@
                     min="0"
                     @focus="oldValue = opplan.operationplan__quantity"
                     v-model="opplan.operationplan__quantity"
-                    @change="
+                    @input="
             changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)
           "
             />
@@ -140,6 +142,7 @@
             }}</span>
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'startdate') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -148,10 +151,11 @@
                     type="datetime-local"
                     @focus="oldValue = opplan.startdate"
                     v-model="opplan.startdate"
-                    @change="changeCard(opplan, 'startdate', oldValue, opplan.startdate)"
+                    @input="changeCard(opplan, 'startdate', oldValue, opplan.startdate)"
             />
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'operationplan__startdate') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -160,7 +164,7 @@
                     type="datetime-local"
                     @focus="oldValue = opplan.operationplan__startdate"
                     v-model="opplan.operationplan__startdate"
-                    @change="
+                    @input="
             changeCard(
               opplan,
               'operationplan__startdate',
@@ -183,6 +187,7 @@
             }}</span>
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'enddate') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -191,10 +196,11 @@
                     type="datetime-local"
                     @focus="oldValue = opplan.enddate"
                     v-model="opplan.enddate"
-                    @change="changeCard(opplan, 'enddate', oldValue, opplan.enddate)"
+                    @input="changeCard(opplan, 'enddate', oldValue, opplan.enddate)"
             />
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'operationplan__enddate') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -203,7 +209,7 @@
                     type="datetime-local"
                     @focus="oldValue = opplan.operationplan__enddate"
                     v-model="opplan.operationplan__enddate"
-                    @change="
+                    @input="
             changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)
           "
             />
@@ -214,6 +220,7 @@
             }}</span>
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'remark') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -221,10 +228,11 @@
           "
                     @focus="oldValue = opplan.remark"
                     v-model="opplan.remark"
-                    @change="changeCard(opplan, 'remark', oldValue, opplan.remark)"
+                    @input="changeCard(opplan, 'remark', oldValue, opplan.remark)"
             />
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'operationplan__remark') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -232,7 +240,7 @@
           "
                     @focus="oldValue = opplan.operationplan__remark"
                     v-model="opplan.operationplan__remark"
-                    @change="
+                    @input="
             changeCard(opplan, 'operationplan__remark', oldValue, opplan.operationplan__remark)
           "
             />
@@ -240,7 +248,7 @@
     </div>
     <div v-if="(opplan.type || opplan.operationplan__type || type) === 'DO'">
         <p>
-        <span v-if="opplan.dirty && !isSelected(opplan.reference)" class="badge bg-danger float-end">{{
+        <span v-if="store.isChanged(opplan.reference, null) && !isSelected(opplan.reference)" class="badge bg-danger float-end">{{
                 ttt('unsaved')
             }}</span>
             <!--        this is for dragging-->
@@ -284,8 +292,8 @@
           <button
                   v-if="!opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status ==='proposed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.status ==='proposed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('proposed')"
@@ -299,8 +307,8 @@
           <button
                   v-if="!opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status ==='approved' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.status ==='approved' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('approved')"
@@ -315,8 +323,8 @@
           <button
                   v-if="!opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status ==='confirmed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.status ==='confirmed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('confirmed')"
@@ -330,8 +338,8 @@
           <button
                   v-if="!opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status ==='completed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.status ==='completed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('completed')"
@@ -345,8 +353,8 @@
           <button
                   v-if="!opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status ==='closed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.status ==='closed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('closed')"
@@ -360,8 +368,8 @@
           <button
                   v-if="opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.operationplan__status ==='proposed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.operationplan__status ==='proposed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('proposed')"
@@ -375,8 +383,8 @@
           <button
                   v-if="opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.operationplan__status ==='approved' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.operationplan__status ==='approved' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('approved')"
@@ -390,8 +398,8 @@
           <button
                   v-if="opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.operationplan__status ==='confirmed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.operationplan__status ==='confirmed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('confirmed')"
@@ -410,8 +418,8 @@
           <button
                   v-if="opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.operationplan__status ==='completed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.operationplan__status ==='completed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('completed')"
@@ -430,8 +438,8 @@
           <button
                   v-if="opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.operationplan__status ==='closed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.operationplan__status ==='closed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('closed')"
@@ -512,6 +520,7 @@
             }}</span>
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'quantity') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -522,10 +531,11 @@
                     min="0"
                     @focus="oldValue = opplan.quantity"
                     v-model="opplan.quantity"
-                    @change="changeCard(opplan, 'quantity', oldValue, opplan.quantity)"
+                    @input="changeCard(opplan, 'quantity', oldValue, opplan.quantity)"
             />
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'operationplan__quantity') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -536,7 +546,7 @@
                     min="0"
                     @focus="oldValue = opplan.operationplan__quantity"
                     v-model="opplan.operationplan__quantity"
-                    @change="
+                    @input="
             changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)
           "
             />
@@ -554,6 +564,7 @@
             }}</span>
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'startdate') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -562,10 +573,11 @@
                     type="datetime-local"
                     @focus="oldValue = opplan.startdate"
                     v-model="opplan.startdate"
-                    @change="changeCard(opplan, 'startdate', oldValue, opplan.startdate)"
+                    @input="changeCard(opplan, 'startdate', oldValue, opplan.startdate)"
             />
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'operationplan__startdate') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -574,7 +586,7 @@
                     type="datetime-local"
                     @focus="oldValue = opplan.operationplan__startdate"
                     v-model="opplan.operationplan__startdate"
-                    @change="
+                    @input="
             changeCard(
               opplan,
               'operationplan__startdate',
@@ -597,6 +609,7 @@
             }}</span>
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'enddate') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -605,10 +618,11 @@
                     type="datetime-local"
                     @focus="oldValue = opplan.enddate"
                     v-model="opplan.enddate"
-                    @change="changeCard(opplan, 'enddate', oldValue, opplan.enddate)"
+                    @input="changeCard(opplan, 'enddate', oldValue, opplan.enddate)"
             />
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'operationplan__enddate') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -617,7 +631,7 @@
                     type="datetime-local"
                     @focus="oldValue = opplan.operationplan__enddate"
                     v-model="opplan.operationplan__enddate"
-                    @change="
+                    @input="
             changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)
           "
             />
@@ -628,6 +642,7 @@
             }}</span>
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'remark') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -635,10 +650,11 @@
           "
                     @focus="oldValue = opplan.remark"
                     v-model="opplan.remark"
-                    @change="changeCard(opplan, 'remark', oldValue, opplan.remark)"
+                    @input="changeCard(opplan, 'remark', oldValue, opplan.remark)"
             />
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'operationplan__remark') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -646,7 +662,7 @@
           "
                     @focus="oldValue = opplan.operationplan__remark"
                     v-model="opplan.operationplan__remark"
-                    @change="
+                    @input="
             changeCard(opplan, 'operationplan__remark', oldValue, opplan.operationplan__remark)
           "
             />
@@ -654,11 +670,9 @@
     </div>
     <div v-if="opplan.type === 'MO' || opplan.type === 'WO'">
         <p>
-        <span v-if="opplan.dirty && !isSelected(opplan.reference)" class="badge bg-danger float-end">{{
+        <span v-if="store.isChanged(opplan.reference, null) && !isSelected(opplan.reference)" class="badge bg-danger float-end">{{
                 ttt('unsaved')
             }}</span>
-            <!--        this is for dragging-->
-            <!--        <i v-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;-->
             <i
                     class="fa fa-wrench"
                     data-bs-toggle="tooltip"
@@ -699,8 +713,8 @@
           <button
                   v-if="!opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status ==='proposed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.status ==='proposed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('proposed')"
@@ -714,8 +728,8 @@
           <button
                   v-if="!opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status ==='approved' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.status ==='approved' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('approved')"
@@ -729,8 +743,8 @@
           <button
                   v-if="!opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status ==='confirmed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.status ==='confirmed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('confirmed')"
@@ -744,8 +758,8 @@
           <button
                   v-if="!opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status ==='completed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.status ==='completed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('completed')"
@@ -759,8 +773,8 @@
           <button
                   v-if="!opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.status ==='closed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.status ==='closed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('closed')"
@@ -774,8 +788,8 @@
           <button
                   v-if="opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.operationplan__status ==='proposed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.operationplan__status ==='proposed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('proposed')"
@@ -789,8 +803,8 @@
           <button
                   v-if="opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.operationplan__status ==='approved' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.operationplan__status ==='approved' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('approved')"
@@ -804,8 +818,8 @@
           <button
                   v-if="opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.operationplan__status ==='confirmed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.operationplan__status ==='confirmed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('confirmed')"
@@ -824,8 +838,8 @@
           <button
                   v-if="opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.operationplan__status ==='completed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.operationplan__status ==='completed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('completed')"
@@ -844,8 +858,8 @@
           <button
                   v-if="opplan.hasOwnProperty('operationplan__status')"
                   type="button"
-                  class="btn btn-sm btn-primary"
-                  :class="opplan.operationplan__status ==='closed' ? 'active' : ''"
+                  class="btn btn-sm"
+                  :class="[opplan.operationplan__status ==='closed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
                   data-bs-toggle="tooltip"
                   data-bs-html="true"
                   :title="ttt('closed')"
@@ -891,6 +905,7 @@
             }}</span>
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'operationplan__quantity') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -901,12 +916,13 @@
                     min="0"
                     @focus="oldValue = opplan.operationplan__quantity"
                     v-model="opplan.operationplan__quantity"
-                    @change="
+                    @input="
             changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)
           "
             />
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'quantity') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -917,7 +933,7 @@
                     min="0"
                     @focus="oldValue = opplan.quantity"
                     v-model="opplan.quantity"
-                    @change="changeCard(opplan, 'quantity', oldValue, opplan.quantity)"
+                    @input="changeCard(opplan, 'quantity', oldValue, opplan.quantity)"
             />
         </p>
         <p
@@ -930,6 +946,7 @@
             }}</span>
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'operationplan__quantity_completed') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -940,7 +957,7 @@
                     min="0"
                     @focus="oldValue = opplan.operationplan__quantity_completed || 0"
                     v-model="opplan.operationplan__quantity_completed"
-                    @change="
+                    @input="
             changeCard(
               opplan,
               'operationplan__quantity_completed',
@@ -951,6 +968,7 @@
             />
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'quantity_completed') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -961,7 +979,7 @@
                     min="0"
                     @focus="oldValue = opplan.quantity_completed || 0"
                     v-model="opplan.quantity_completed"
-                    @change="changeCard(opplan, 'quantity_completed', oldValue, opplan.quantity_completed)"
+                    @input="changeCard(opplan, 'quantity_completed', oldValue, opplan.quantity_completed)"
             />
         </p>
         <p
@@ -972,6 +990,7 @@
             }}</span>
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'startdate') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -980,10 +999,11 @@
                     type="datetime-local"
                     @focus="oldValue = opplan.startdate"
                     v-model="opplan.startdate"
-                    @change="changeCard(opplan, 'startdate', oldValue, opplan.startdate)"
+                    @input="changeCard(opplan, 'startdate', oldValue, opplan.startdate)"
             />
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'operationplan__startdate') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -992,7 +1012,7 @@
                     type="datetime-local"
                     @focus="oldValue = opplan.operationplan__startdate"
                     v-model="opplan.operationplan__startdate"
-                    @change="
+                    @input="
             changeCard(
               opplan,
               'operationplan__startdate',
@@ -1010,6 +1030,7 @@
             }}</span>
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'enddate') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -1018,10 +1039,11 @@
                     type="datetime-local"
                     @focus="oldValue = opplan.enddate"
                     v-model="opplan.enddate"
-                    @change="changeCard(opplan, 'enddate', oldValue, opplan.enddate)"
+                    @input="changeCard(opplan, 'enddate', oldValue, opplan.enddate)"
             />
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'operationplan__enddate') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -1030,7 +1052,7 @@
                     type="datetime-local"
                     @focus="oldValue = opplan.operationplan__enddate"
                     v-model="opplan.operationplan__enddate"
-                    @change="
+                    @input="
             changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)
           "
             />
@@ -1041,6 +1063,7 @@
             }}</span>
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'remark') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -1048,10 +1071,11 @@
           "
                     @focus="oldValue = opplan.remark"
                     v-model="opplan.remark"
-                    @change="changeCard(opplan, 'remark', oldValue, opplan.remark)"
+                    @input="changeCard(opplan, 'remark', oldValue, opplan.remark)"
             />
             <input
                     class="form-control"
+                    :class="store.isChanged(opplan.reference, 'operationplan__remark') ? 'ng-dirty' : ''"
                     v-if="
             editable &&
             isSelected(opplan.reference) &&
@@ -1059,7 +1083,7 @@
           "
                     @focus="oldValue = opplan.operationplan__remark"
                     v-model="opplan.operationplan__remark"
-                    @change="
+                    @input="
             changeCard(opplan, 'operationplan__remark', oldValue, opplan.operationplan__remark)
           "
             />

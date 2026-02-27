@@ -157,6 +157,12 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.preferences.calendarmode = newCalendarMode;
     },
 
+    isChanged(reference, field = null) {
+      if (!reference) return false;
+      if (!field) return Object.keys(this.operationplanChanges).includes(reference);
+      else return Object.prototype.hasOwnProperty.call(this.operationplanChanges, reference) && Object.prototype.hasOwnProperty.call(this.operationplanChanges[reference], field);
+    },
+
     async loadOperationplans(references = [], selectedFlag, selectedRows, isDataSaved = false) {
       this.selectedOperationplans.length = 0;
       this.selectedOperationplans.push(...toRaw(selectedRows));
@@ -653,7 +659,7 @@ export const useOperationplansStore = defineStore('operationplans', {
         value
       );
       this.editForm[field] = value;
-      
+
       // Capture old status before updating
       const oldStatus = this.operationplan.status;
 
@@ -682,7 +688,7 @@ export const useOperationplansStore = defineStore('operationplans', {
         // For any other fields
         this.operationplan[field] = value;
       }
-      
+
       this.trackOperationplanChanges(this.operationplan.reference, field, value);
     },
 

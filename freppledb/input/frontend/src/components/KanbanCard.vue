@@ -12,16 +12,9 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION * WITH THE SOFTWARE OR 
 DEALINGS IN THE SOFTWARE */
 
 <script setup lang="js">
-import { computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
 import { numberFormat, dateTimeFormat, adminEscape, dateFormat } from '@common/utils.js';
-
-onMounted(() => {
-  const target = document.getElementById('kanban');
-});
-
-const urlPrefix = computed(() => window.urlPrefix || '');
 
 const { t: ttt } = useI18n({
   useScope: 'global',
@@ -77,7 +70,7 @@ function isSelected(OPPreference) {
 }
 
 function getStatus(op) {
-  return op && op.hasOwnProperty('operationplan__status') ? op.operationplan__status : op?.status;
+  return op && Object.prototype.hasOwnProperty.call(op, 'operationplan__status') ? op.operationplan__status : op?.status;
 }
 
 function setStatus(op, s) {

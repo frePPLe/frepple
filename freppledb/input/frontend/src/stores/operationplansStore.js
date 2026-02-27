@@ -614,7 +614,30 @@ export const useOperationplansStore = defineStore('operationplans', {
         value
       );
       this.editForm[field] = value;
-      if (field === 'status') this.operationplan.status = value;
+      
+      // Map kanban field names to operationplan fields and update
+      if (field === 'status') {
+        this.operationplan.status = value;
+      } else if (field === 'startdate' || field === 'operationplan__startdate') {
+        this.operationplan.start = value;
+        this.operationplan[field] = value;
+      } else if (field === 'enddate' || field === 'operationplan__enddate') {
+        this.operationplan.end = value;
+        this.operationplan[field] = value;
+      } else if (field === 'quantity' || field === 'operationplan__quantity') {
+        this.operationplan.quantity = parseFloat(value);
+        this.operationplan[field] = parseFloat(value);
+      } else if (field === 'quantity_completed' || field === 'operationplan__quantity_completed') {
+        this.operationplan.quantity_completed = parseFloat(value);
+        this.operationplan[field] = parseFloat(value);
+      } else if (field === 'remark' || field === 'operationplan__remark') {
+        this.operationplan.remark = value;
+        this.operationplan[field] = value;
+      } else {
+        // For any other fields
+        this.operationplan[field] = value;
+      }
+      
       this.trackOperationplanChanges(this.operationplan.reference, field, value);
     },
 

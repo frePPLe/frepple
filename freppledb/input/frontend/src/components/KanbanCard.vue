@@ -15,7 +15,7 @@ DEALINGS IN THE SOFTWARE */
 import { computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
-import {numberFormat, dateTimeFormat, adminEscape, dateFormat} from '@common/utils.js';
+import { numberFormat, dateTimeFormat, adminEscape, dateFormat } from '@common/utils.js';
 
 onMounted(() => {
   const target = document.getElementById('kanban');
@@ -33,40 +33,43 @@ const store = useOperationplansStore();
 const props = defineProps({
   opplan: {
     type: Object,
-    default: () => {}
+    default: () => {},
   },
   opplan_index: {
     type: Number,
-    default: 0
-  }
+    default: 0,
+  },
 });
 
 const mode = window.mode;
 const editable = true;
-const calendarmode = "duration";
+const calendarmode = 'duration';
 
 function isStart(opplan, dt) {
   const d = opplan.startdate || opplan.operationplan__startdate;
-  if (!d)
-    return false;
+  if (!d) return false;
   else if (dt instanceof Date)
-    return d.getFullYear() === dt.getFullYear() && d.getMonth() === dt.getMonth() && d.getDate() === dt.getDate();
-  else
-    return window.moment(d).isSame(dt.date, "day");
+    return (
+      d.getFullYear() === dt.getFullYear() &&
+      d.getMonth() === dt.getMonth() &&
+      d.getDate() === dt.getDate()
+    );
+  else return window.moment(d).isSame(dt.date, 'day');
 }
 
 function isEnd(opplan, dt) {
   let d = opplan.enddate || opplan.operationplan__enddate;
-  if (!d)
-    return false;
+  if (!d) return false;
   // Subtract 1 microsecond to assure that an end date of 00:00:00 is seen
   // as ending on the previous day.
-  if (d > (opplan.startdate || opplan.operationplan__startdate))
-    d = new Date(d - 1);
+  if (d > (opplan.startdate || opplan.operationplan__startdate)) d = new Date(d - 1);
   if (dt instanceof Date)
-    return d.getFullYear() === dt.getFullYear() && d.getMonth() === dt.getMonth() && d.getDate() === dt.getDate();
-  else
-    return window.moment(d).isSame(dt.date, "day");
+    return (
+      d.getFullYear() === dt.getFullYear() &&
+      d.getMonth() === dt.getMonth() &&
+      d.getDate() === dt.getDate()
+    );
+  else return window.moment(d).isSame(dt.date, 'day');
 }
 
 function isSelected(OPPreference) {
@@ -81,9 +84,24 @@ function setStatus(op, s) {
   if (!op) return;
   const field = op.hasOwnProperty('operationplan__status') ? 'operationplan__status' : 'status';
   const oldVal = op[field];
-  // changeCard is provided by the surrounding page context
-  try { changeCard(op, field, oldVal, s); } catch (e) { /* no-op if not available in this context */ }
+  // Use store to sync changes to OperationplanFormCard
+  const ref = op.reference || op.operationplan__reference;
+  store.setEditFormValues(field, s);
+  store.trackOperationplanChanges(ref, field, s);
   op[field] = s;
+}
+
+// Sync Kanban card changes to OperationplanFormCard
+function changeCard(opplan, field, oldValue, newValue) {
+  if (!opplan) return;
+  const ref = opplan.reference || opplan.operationplan__reference;
+
+  // Update the kanban card display
+  store.setKanbanCardValue(ref, field, opplan.status || opplan.operationplan__status, newValue);
+
+  // Sync to OperationplanFormCard and track for saving
+  store.setEditFormValues(field, newValue);
+  store.trackOperationplanChanges(ref, field, newValue);
 }
 
 function getStatusIcon(s) {
@@ -106,9 +124,8 @@ function getStatusIcon(s) {
 function displayStatusIcon(op) {
   return getStatusIcon(getStatus(op));
 }
-
 </script>
 
-// TODO The template still needs to be compiled on the fly... but if I try to do it I get the $ funtion redefinition error.
-<template src="../../../templates/input/kanbancard.html">
-</template>
+// TODO The template still needs to be compiled on the fly... but if I try to do it I get the $
+funtion redefinition error.
+<template src="../../../templates/input/kanbancard.html"></template>

@@ -651,13 +651,22 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     setEditFormValues(field, value) {
-      window.displayongrid(this.operationplan.reference, field, value);
-      this.setKanbanCardValue(
-        this.operationplan.reference,
-        field,
-        this.operationplan.status,
-        value
-      );
+      switch (this.mode) {
+        case 'table':
+          window.displayongrid(this.operationplan.reference, field, value);
+          break;
+        case 'kanban':
+          this.setKanbanCardValue(
+            this.operationplan.reference,
+            field,
+            this.operationplan.status,
+            value
+          );
+          break;
+        case 'default':
+          break;
+      }
+
       this.editForm[field] = value;
 
       // Capture old status before updating
@@ -668,7 +677,7 @@ export const useOperationplansStore = defineStore('operationplans', {
         this.operationplan.status = value;
 
         // Move the Kanban card to the new column
-        this.moveKanbanCard(this.operationplan.reference, oldStatus, value);
+        if (this.mode === 'kanban') this.moveKanbanCard(this.operationplan.reference, oldStatus, value);
       } else if (field === 'startdate' || field === 'operationplan__startdate') {
         this.operationplan.start = value;
         this.operationplan[field] = value;

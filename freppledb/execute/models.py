@@ -101,7 +101,7 @@ class Task(models.Model):
                 worker_alive, "%Y-%m-%d %H:%M:%S"
             ) > timedelta(seconds=30):
                 Task.objects.using(database).filter(
-                    status="waiting",
+                    status="Waiting",
                     submitted__lte=Now() - timedelta(seconds=30),
                 ).update(status="Canceled")
             for t in Task.objects.using(database).filter(
@@ -132,7 +132,7 @@ class Task(models.Model):
                 child_task.processid = None
                 child_task.status = "Canceled"
                 child_task.save(using=database)
-        elif self.status != "waiting":
+        elif self.status != "Waiting":
             return
         self.processid = None
         self.status = "Canceled"
@@ -254,13 +254,11 @@ class ScheduledTask(models.Model):
     @staticmethod
     def updateScenario(database):
         with connections[database].cursor() as cursor:
-            cursor.execute(
-                """
+            cursor.execute("""
                 select count(*)
                 from execute_schedule
                 where next_run is not null
-                """
-            )
+                """)
             scheduled = cursor.fetchone()[0]
             with connections[DEFAULT_DB_ALIAS].cursor() as cursor_dflt:
                 cursor_dflt.execute(

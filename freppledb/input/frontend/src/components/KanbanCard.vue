@@ -89,6 +89,9 @@ function setStatus(op, s) {
   store.setEditFormValues(field, s);
   store.trackOperationplanChanges(ref, field, s);
   op[field] = s;
+
+  // Move the card between Kanban columns
+  store.moveKanbanCard(ref, oldVal, s);
 }
 
 // Sync Kanban card changes to OperationplanFormCard
@@ -96,12 +99,20 @@ function changeCard(opplan, field, oldValue, newValue) {
   if (!opplan) return;
   const ref = opplan.reference || opplan.operationplan__reference;
 
+  // Determine the old status (current status before change)
+  const oldStatus = opplan.status || opplan.operationplan__status;
+
   // Update the kanban card display
-  store.setKanbanCardValue(ref, field, opplan.status || opplan.operationplan__status, newValue);
+  store.setKanbanCardValue(ref, field, oldStatus, newValue);
 
   // Sync to OperationplanFormCard and track for saving
   store.setEditFormValues(field, newValue);
   store.trackOperationplanChanges(ref, field, newValue);
+
+  // If status changed, move the card between Kanban columns
+  if (field === 'status' && oldStatus !== newValue) {
+    store.moveKanbanCard(ref, oldStatus, newValue);
+  }
 }
 
 function getStatusIcon(s) {
@@ -126,6 +137,6 @@ function displayStatusIcon(op) {
 }
 </script>
 
-// TODO The template still needs to be compiled on the fly... but if I try to do it I get the $
+// TODO The template still needs to be compiled on the fly... but if I try to do it I get the $ //
 funtion redefinition error.
 <template src="../../../templates/input/kanbancard.html"></template>

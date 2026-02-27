@@ -297,7 +297,6 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     setKanbanStatus(oldStatus, oldIndex, newStatus, newIndex, reference) {
       if (!this.kanbancolumns.includes(newStatus)) return;
-      // this.setEditFormValues('status', newStatus);
 
       const currentRef = this.operationplan?.reference || this.operationplan?.operationplan__reference;
       if (currentRef === reference) {
@@ -305,6 +304,46 @@ export const useOperationplansStore = defineStore('operationplans', {
       }
 
       this.trackOperationplanChanges(reference, 'status', newStatus);
+    },
+
+    // Move a card between Kanban columns when status changes
+    moveKanbanCard(reference, oldStatus, newStatus) {
+      if (!this.kanbancolumns.includes(newStatus)) return;
+      if (oldStatus === newStatus) return;
+
+      const oldColumn = this.kanbanoperationplans[oldStatus];
+      const newColumn = this.kanbanoperationplans[newStatus];
+
+      if (!oldColumn || !oldColumn.rows) return;
+
+      // Find the card in the old column
+      const cardIndex = oldColumn.rows.findIndex(row => row.reference == reference);
+      if (cardIndex === -1) {
+        console.error('Card not found in source column:', reference);
+        return;
+      }
+
+      // Remove from old column
+      const cardData = oldColumn.rows.splice(cardIndex, 1)[0];
+
+      // Update status fields
+      cardData.status = newStatus;
+      if (Object.prototype.hasOwnProperty.call(cardData, 'operationplan__status')) {
+        cardData.operationplan__status = newStatus;
+      }
+      cardData.dirty = true;
+
+      // Ensure new column exists
+      if (!newColumn) {
+        this.kanbanoperationplans[newStatus] = { rows: [], records: 0 };
+      }
+
+      // Add to new column
+      this.kanbanoperationplans[newStatus].rows.push(cardData);
+
+      // Update counters
+      oldColumn.records--;
+      this.kanbanoperationplans[newStatus].records++;
     },
 
     setFrozenColumns(frozen) {
@@ -615,9 +654,15 @@ export const useOperationplansStore = defineStore('operationplans', {
       );
       this.editForm[field] = value;
       
+      // Capture old status before updating
+      const oldStatus = this.operationplan.status;
+
       // Map kanban field names to operationplan fields and update
       if (field === 'status') {
         this.operationplan.status = value;
+
+        // Move the Kanban card to the new column
+        this.moveKanbanCard(this.operationplan.reference, oldStatus, value);
       } else if (field === 'startdate' || field === 'operationplan__startdate') {
         this.operationplan.start = value;
         this.operationplan[field] = value;

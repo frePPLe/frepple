@@ -190,8 +190,48 @@ inline ostream& operator<<(ostream& os, const Signal& d) {
   }
 }
 
-/* This stream is the general output for all logging and debugging messages. */
-extern ostream logger;
+/* A wrapper on a stream to atomically write lines to the log file. */
+class ThreadSafeLogProxy {
+ public:
+  ThreadSafeLogProxy(std::ostream& os) : os_(os), lock_(log_mutex) {}
+
+  operator std::ostream&() { return os_; }
+
+  operator std::ostream*() { return &os_; }
+
+  template <typename T>
+  ThreadSafeLogProxy& operator<<(const T& msg) {
+    os_ << msg;
+    return *this;
+  }
+
+  // Used to make "logger << endl" work
+  ThreadSafeLogProxy& operator<<(ostream& (*manipulator)(ostream&)) {
+    manipulator(os_);
+    return *this;
+  }
+
+  ThreadSafeLogProxy& flush() {
+    os_.flush();
+    return *this;
+  }
+
+  ThreadSafeLogProxy& rdbuf(std::streambuf* buf) {
+    os_.rdbuf(buf);
+    return *this;
+  }
+
+  ~ThreadSafeLogProxy() = default;
+
+  static ostream logger_base;
+
+ private:
+  static mutex log_mutex;
+  ostream& os_;
+  lock_guard<std::mutex> lock_;
+};
+
+#define logger ThreadSafeLogProxy(ThreadSafeLogProxy::logger_base)
 
 class StreambufWrapper : public filebuf {
  public:
@@ -2019,7 +2059,7 @@ class Serializer {
   Serializer(ostream& os) { m_fp = &os; }
 
   /* Default constructor. */
-  Serializer() { m_fp = &logger; }
+  Serializer() { m_fp = logger; }
 
   /* Update the flag to write references or not.
    * The value of the flag before the call is returned. This is useful

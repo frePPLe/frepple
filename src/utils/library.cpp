@@ -58,7 +58,8 @@ int Environment::processorcores = -1;
 
 // Output logging stream, whose input buffer is shared with either
 // Environment::logfile or cout.
-ostream logger(cout.rdbuf());
+mutex ThreadSafeLogProxy::log_mutex;
+ostream ThreadSafeLogProxy::logger_base(cout.rdbuf());
 
 // Output file stream
 StreambufWrapper Environment::logfile;

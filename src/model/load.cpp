@@ -338,7 +338,7 @@ Date LoadBucketizedFromEnd::getOperationPlanDate(const LoadPlan* lp,
     return ldplandate;
   else {
     // Offset is smaller than the effective duration.
-    OperationPlanState tmp = lp->getOperationPlan()->setOperationPlanParameters(
+    tmp = lp->getOperationPlan()->setOperationPlanParameters(
         lp->getOperationPlan()->getQuantity(), ldplandate, Date::infinitePast,
         false, false);
     return tmp.end;
@@ -360,7 +360,7 @@ Date LoadBucketizedFromStart::getOperationPlanDate(const LoadPlan* lp,
     return start ? tmp.start : tmp.end;
   else if (start) {
     // Offset is smaller than the effective duration.
-    OperationPlanState tmp = lp->getOperationPlan()->setOperationPlanParameters(
+    tmp = lp->getOperationPlan()->setOperationPlanParameters(
         lp->getOperationPlan()->getQuantity(), Date::infinitePast, ldplandate,
         true, false);
     return tmp.start;

@@ -160,7 +160,7 @@ Operation::~Operation() {
       // Remove from middle
       Operation* j = item->firstOperation;
       while (j && j->next && j->next != this) j = j->next;
-      if (j)
+      if (j && j->next == this)
         j->next = next;
       else
         logger << "Error: Corrupted Operation list on Item\n";
@@ -2296,7 +2296,7 @@ void Operation::setItem(Item* i) {
       // Remove from middle
       Operation* j = item->firstOperation;
       while (j && j->next && j->next != this) j = j->next;
-      if (j)
+      if (j && j->next == this)
         j->next = next;
       else
         throw LogicException("Corrupted Operation list on Item");

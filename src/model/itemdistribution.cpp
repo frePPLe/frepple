@@ -260,7 +260,7 @@ OperationItemDistribution::~OperationItemDistribution() {
     } else {
       // We were in the middle
       OperationItemDistribution* i = itemdist->firstOperation;
-      while (i->nextOperation != this && i->nextOperation) i = i->nextOperation;
+      while (i && i->nextOperation != this && i->nextOperation) i = i->nextOperation;
       if (!i)
         logger << "Error: ItemDistribution operation list corrupted\n";
       else

@@ -207,6 +207,12 @@ onMounted(() => {
   };
 
   const handleTriggerSave = (e) => {
+    store.saveOperationplanChanges().catch((err) => {
+      console.error('Failed to save operation plan:', err);
+    });
+  };
+
+  const handleTriggerUndo = (e) => {
     store.undo();
   };
 
@@ -289,6 +295,7 @@ onMounted(() => {
   rootEl.addEventListener('processAggregatedInfo', handleProcessAggregatedInfo);
   rootEl.addEventListener('displayonpanel', handleDisplayOnPanel);
   rootEl.addEventListener('triggerSave', handleTriggerSave);
+  rootEl.addEventListener('triggerUndo', handleTriggerUndo);
   rootEl.addEventListener('gridCellEdited', handleGridCellEdited);
   rootEl.addEventListener('refreshStatus', handleRefreshStatus);
   rootEl.addEventListener('hidden.bs.collapse', grid.saveColumnConfiguration);
@@ -305,6 +312,8 @@ onMounted(() => {
       proc: handleProcessAggregatedInfo,
       display: handleDisplayOnPanel,
       undo: handleUndoEvent,
+      triggerSave: handleTriggerSave,
+      triggerUndo: handleTriggerUndo,
       gridCellEdited: handleGridCellEdited,
       refreshStatus: handleRefreshStatus,
       setMode: handleSetMode,
@@ -325,6 +334,8 @@ onUnmounted(() => {
       info.rootEl.removeEventListener('processAggregatedInfo', info.handlers.proc);
       info.rootEl.removeEventListener('displayonpanel', info.handlers.display);
       info.rootEl.removeEventListener('undo', info.handlers.display);
+      info.rootEl.removeEventListener('triggerSave', info.handlers.triggerSave);
+      info.rootEl.removeEventListener('triggerUndo', info.handlers.triggerUndo);
       info.rootEl.removeEventListener('gridCellEdited', info.handlers.gridCellEdited);
       info.rootEl.removeEventListener('setMode', info.handlers.setMode);
       info.rootEl.removeEventListener('setRowHeight', info.handleSetRowHeight);

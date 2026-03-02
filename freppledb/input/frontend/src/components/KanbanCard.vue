@@ -15,6 +15,9 @@ DEALINGS IN THE SOFTWARE */
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
 import { numberFormat, dateTimeFormat, adminEscape, dateFormat } from '@common/utils.js';
+import {computed} from "vue";
+
+const urlPrefix = computed(() => window.url_prefix || '');
 
 const { t: ttt } = useI18n({
   useScope: 'global',

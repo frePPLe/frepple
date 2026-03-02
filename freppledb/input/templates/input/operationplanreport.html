@@ -153,17 +153,14 @@ rect.opplan {
     thefilter = filter;
   	if (preferences && preferences.mode == "kanban") {
       initialfilter = filter;
-  	  angular.element('#controller').scope().loadKanbanData(filter);
   	  return true;
   	}
   	else if (preferences && preferences.mode == "gantt") {
       initialfilter = filter;
-  	  angular.element('#controller').scope().loadGanttData(filter);
   	  return true;
   	}
     else if (preferences && preferences.mode && preferences.mode.startsWith("calendar")) {
       initialfilter = filter;
-      angular.element('#controller').scope().loadCalendarData(filter);
       return true;
     }
     return false;
@@ -194,7 +191,6 @@ rect.opplan {
   function getDirtyData() {
   	if (preferences && preferences.mode && (preferences.mode == "kanban" || preferences.mode == "gantt" || preferences.mode.startsWith("calendar"))) {
       initialfilter = thefilter;
-      return angular.element('#controller').scope().getDirtyCards();
     }
   	else {
       var dirty = jQuery("#grid").getChangedCells('dirty');
@@ -236,19 +232,41 @@ rect.opplan {
     });
     jQuery("#save").on('click', function() {
       jQuery(window).off('beforeunload', upload.warnUnsavedChanges);
-      });
+      
+      if (mode === 'kanban') {
+        // Dispatch event to Vue component for kanban mode
+        const event = new CustomEvent('triggerSave', {
+          detail: {
+            execute: 'triggerSave',
+            reference: null,
+            status: null,
+            selectedRows: null
+          }
+        });
+        document.getElementById('app').dispatchEvent(event);
+      } else {
+        // Use existing jqGrid save for table mode
+        upload.save();
+      }
+    });
     jQuery("#undo").on('click', function() {
       jQuery(window).off('beforeunload', upload.warnUnsavedChanges);
-      operationplanChanges = {};
-      const event = new CustomEvent('singleSelect', {
-      detail: {
-          execute: 'undo',
-          reference: null,
-          status: null,
-          selectedRows: null
-        }
-      });
-      document.getElementById('app').dispatchEvent(event);
+      
+      if (mode === 'kanban') {
+        // Dispatch event to Vue component for kanban mode
+        const event = new CustomEvent('triggerUndo', {
+          detail: {
+            execute: 'undo',
+            reference: null,
+            status: null,
+            selectedRows: null
+          }
+        });
+        document.getElementById('app').dispatchEvent(event);
+      } else {
+        // Use existing jqGrid undo for table mode
+        upload.undo();
+      }
     });
     jQuery("#actionsul li, button#actions1").on('click', function() {
       const event = new CustomEvent("refreshStatus", {

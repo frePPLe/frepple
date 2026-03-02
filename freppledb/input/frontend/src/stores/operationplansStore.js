@@ -488,7 +488,12 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     async saveOperationplanChanges() {
-      const changes = this.operationplanChanges;
+      const changes = [];
+      for (const [key, value] of Object.entries(this.operationplanChanges)) {
+        value.id = key;
+        changes.push(value);
+      }
+      console.log(496, 'saveOperationplanChanges: ', changes);
       if (!changes || Object.keys(changes).length === 0) return;
       try {
         await operationplanService.postOperationplanDetails(changes);

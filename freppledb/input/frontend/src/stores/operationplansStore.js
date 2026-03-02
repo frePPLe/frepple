@@ -121,6 +121,9 @@ export const useOperationplansStore = defineStore('operationplans', {
     isCalendarMode: (window) => window.mode.startsWith('calendar'),
 
     hasSelected: (state) => state.selectedOperationplans?.length > 0,
+    hasChanges(state) {
+      return Object.keys(state.operationplanChanges).length > 0;
+    },
     getMode(state) {
       state.mode = window.mode;
     },
@@ -160,7 +163,11 @@ export const useOperationplansStore = defineStore('operationplans', {
     isChanged(reference, field = null) {
       if (!reference) return false;
       if (!field) return Object.keys(this.operationplanChanges).includes(reference);
-      else return Object.prototype.hasOwnProperty.call(this.operationplanChanges, reference) && Object.prototype.hasOwnProperty.call(this.operationplanChanges[reference], field);
+      else
+        return (
+          Object.prototype.hasOwnProperty.call(this.operationplanChanges, reference) &&
+          Object.prototype.hasOwnProperty.call(this.operationplanChanges[reference], field)
+        );
     },
 
     async loadOperationplans(references = [], selectedFlag, selectedRows, isDataSaved = false) {
@@ -304,7 +311,8 @@ export const useOperationplansStore = defineStore('operationplans', {
     setKanbanStatus(oldStatus, oldIndex, newStatus, newIndex, reference) {
       if (!this.kanbancolumns.includes(newStatus)) return;
 
-      const currentRef = this.operationplan?.reference || this.operationplan?.operationplan__reference;
+      const currentRef =
+        this.operationplan?.reference || this.operationplan?.operationplan__reference;
       if (currentRef === reference) {
         this.operationplan.status = newStatus;
       }
@@ -323,7 +331,7 @@ export const useOperationplansStore = defineStore('operationplans', {
       if (!oldColumn || !oldColumn.rows) return;
 
       // Find the card in the old column
-      const cardIndex = oldColumn.rows.findIndex(row => row.reference == reference);
+      const cardIndex = oldColumn.rows.findIndex((row) => row.reference == reference);
       if (cardIndex === -1) {
         console.error('Card not found in source column:', reference);
         return;
@@ -477,6 +485,22 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.editForm = { setQuantity: null, setStart: '', setEnd: '', setRemark: '' };
       this.selectedOperationplans = [];
       this.operationplanChanges = {};
+    },
+
+    async saveOperationplanChanges() {
+      const changes = this.operationplanChanges;
+      if (!changes || Object.keys(changes).length === 0) return;
+      try {
+        await operationplanService.postOperationplanDetails(changes);
+        this.operationplanChanges = {};
+        this.undo();
+      } catch (e) {
+        this.setError({
+          title: 'Save failed',
+          message: e.message || 'Unknown error',
+          type: 'error',
+        });
+      }
     },
 
     // Error handling
@@ -677,7 +701,8 @@ export const useOperationplansStore = defineStore('operationplans', {
         this.operationplan.status = value;
 
         // Move the Kanban card to the new column
-        if (this.mode === 'kanban') this.moveKanbanCard(this.operationplan.reference, oldStatus, value);
+        if (this.mode === 'kanban')
+          this.moveKanbanCard(this.operationplan.reference, oldStatus, value);
       } else if (field === 'startdate' || field === 'operationplan__startdate') {
         this.operationplan.start = value;
         this.operationplan[field] = value;

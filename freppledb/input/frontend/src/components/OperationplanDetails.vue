@@ -12,7 +12,7 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION * WITH THE SOFTWARE OR 
 DEALINGS IN THE SOFTWARE */
 
 <script setup lang="js">
-import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
 import OperationplanFormCard from '@/components/OperationplanFormCard.vue';
@@ -26,7 +26,7 @@ import NetworkStatusCard from '@/components/NetworkStatusCard.vue';
 import DownstreamCard from '@/components/DownstreamCard.vue';
 import UpstreamCard from '@/components/UpstreamCard.vue';
 import SupplyInformationCard from '@/components/SupplyInformationCard.vue';
-import KanbanBoard from "@/components/KanbanBoard.vue";
+import KanbanBoard from '@/components/KanbanBoard.vue';
 import { debounce } from '@common/utils.js';
 
 const { t: ttt } = useI18n({
@@ -77,6 +77,26 @@ function undo() {
     store.undo();
   }
 }
+
+// Watch for changes and enable/disable SAVE and UNDO buttons
+watch(
+  () => store.hasChanges,
+  (hasChanges) => {
+    if (typeof jQuery !== 'undefined') {
+      if (hasChanges) {
+        jQuery('#save, #undo')
+          .removeClass('btn-primary btn-danger')
+          .addClass('btn-danger')
+          .prop('disabled', false);
+      } else {
+        jQuery('#save, #undo')
+          .removeClass('btn-danger')
+          .addClass('btn-primary')
+          .prop('disabled', true);
+      }
+    }
+  }
+);
 
 function getWidgetComponent(widgetName) {
   const componentMap = {
@@ -145,12 +165,16 @@ onMounted(() => {
       } else if (detail.selectedRows.length > 1) {
         handleAllSelectEvent(e, true);
       } else if (detail.selectedRows.length < 2) {
-        store.loadOperationplans([detail.reference], detail.status, detail.selectedRows, window.savedData);
+        store.loadOperationplans(
+          [detail.reference],
+          detail.status,
+          detail.selectedRows,
+          window.savedData
+        );
       }
     } else {
       store.undo();
     }
-
   };
 
   const handleAllSelectEvent = (e, isSingleSelect) => {
@@ -325,7 +349,7 @@ onUnmounted(() => {
       <template v-if="col.cols?.[0]">
         <template v-for="(widget, index) in col.cols[0].widgets || []" :key="index">
           <div v-if="shouldShowWidget(widget[0])" class="card widget mb-3" :data-widget="widget[0]">
-            <component :is="getWidgetComponent(widget[0])" :widget="widget"/>
+            <component :is="getWidgetComponent(widget[0])" :widget="widget" />
           </div>
         </template>
       </template>

@@ -40,10 +40,14 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     to the frePPLe settings in Odoo. Only that user can run an "import from Odoo" task
     in frePPLe.
 
-- | 18, 19: refined logic to get the due date of a sales order line.
+- | 18, 19: Refined logic to get the due date of a sales order line.
   | We now use in order of preference the date of the delivery stock move, the committed
     date on the sales order line, the committed date on the sale order, or the ordering
     date.
+
+- | 18, 19: Support for production by lot or unique serial number.
+  | Manufacturing orders for such products need a specific calculation of the
+    intended production quantity.
 
 .. rubric:: System administration
 

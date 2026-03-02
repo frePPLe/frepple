@@ -5,7 +5,6 @@
 <script>
 $(function() {
   $("#fromdate, #todate").change(function(){
-    console.log(window.location, $("#fromdate").val(), $("#todate").val());
     const url = new URL(window.location);
     const fromdate = $("#fromdate").val();
     const todate = $("#todate").val();

@@ -232,7 +232,7 @@ rect.opplan {
     });
     jQuery("#save").on('click', function() {
       jQuery(window).off('beforeunload', upload.warnUnsavedChanges);
-      
+
       if (mode === 'kanban') {
         // Dispatch event to Vue component for kanban mode
         const event = new CustomEvent('triggerSave', {
@@ -251,7 +251,7 @@ rect.opplan {
     });
     jQuery("#undo").on('click', function() {
       jQuery(window).off('beforeunload', upload.warnUnsavedChanges);
-      
+
       if (mode === 'kanban') {
         // Dispatch event to Vue component for kanban mode
         const event = new CustomEvent('triggerUndo', {

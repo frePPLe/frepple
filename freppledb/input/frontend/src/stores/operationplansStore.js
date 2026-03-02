@@ -119,7 +119,6 @@ export const useOperationplansStore = defineStore('operationplans', {
     isKanbanMode: (window) => window.mode === 'kanban',
     isGanttMode: (window) => window.mode === 'gantt',
     isCalendarMode: (window) => window.mode.startsWith('calendar'),
-
     hasSelected: (state) => state.selectedOperationplans?.length > 0,
     hasChanges(state) {
       return Object.keys(state.operationplanChanges).length > 0;

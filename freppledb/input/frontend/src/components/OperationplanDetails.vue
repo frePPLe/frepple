@@ -71,12 +71,19 @@ const handleAttemptModeChange = (e) => {
 const confirmModeChange = () => {
   unsavedChangesModal.value = false;
   if (pendingModeChange) {
-    store.saveOperationplanChanges().then(() => {
-      pendingModeChange();
-      pendingModeChange = null;
-    }).catch((err) => {
-      console.error('Failed to save operation plan before mode change:', err);
-    });
+    store
+      .saveOperationplanChanges()
+      .then(() => {
+        // Only proceed with mode change if save was successful (no more pending changes)
+        if (!store.hasChanges) {
+          pendingModeChange();
+        }
+        pendingModeChange = null;
+      })
+      .catch((err) => {
+        console.error('Failed to save operation plan before mode change:', err);
+        pendingModeChange = null;
+      });
   }
 };
 
@@ -381,18 +388,10 @@ onUnmounted(() => {
       type="warning"
     >
       <template #actions>
-        <button
-          type="button"
-          class="btn btn-primary"
-          @click="cancelModeChange"
-        >
+        <button type="button" class="btn btn-primary" @click="cancelModeChange">
           {{ ttt('Return to page') }}
         </button>
-        <button
-          type="button"
-          class="btn btn-danger"
-          @click="confirmModeChange"
-        >
+        <button type="button" class="btn btn-danger" @click="confirmModeChange">
           {{ ttt('Save') }}
         </button>
       </template>

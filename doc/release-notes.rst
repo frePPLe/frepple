@@ -54,6 +54,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | Manufacturing orders for such products need a specific calculation of the
     intended production quantity.
 
+- | 17, 18, 19: Bug fix when exporting POs/MOs/DOs from the sales order table. The exported
+    quantity could be incorrect if some rows were unselected.
+
 .. rubric:: Production planning
 
 - | Performance improvements on models with complex calendars (typically for bucketized

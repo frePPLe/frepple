@@ -108,11 +108,22 @@ class Task(models.Model):
                 status__contains="%",
                 finished__isnull=True,
                 started__isnull=False,
-                started__lte=Now() - timedelta(hours=3),
             ):
-                t.killProcess()
+                if t.started < datetime.now() - timedelta(hours=3):
+                    t.killProcess()
+                else:
+                    t.checkHealthy()
         except Exception as e:
             pass
+
+    def checkHealthy(self):
+        if self.processid and not psutil.pid_exists(self.processid):
+            # processid doesn't exist, we cancel the task
+            self.message = "Canceled process"
+            self.processid = None
+            self.status = "Canceled"
+            database = self._state.db
+            self.save(using=database)
 
     def killProcess(self):
         # Kill the process and its children with signal 9

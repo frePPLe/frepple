@@ -15,6 +15,12 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Odoo integration
 
+- | We have added tags stable-17.0, stable-18.0 and stable-19.0
+    in the connector github repository.
+  | For production use, you should always pick up the connector from that tag.
+  | It is possible that some connector changes are still being work on.
+    The head of the branch should only be used for testing and development.
+
 - | 18, 19: Changed the behavior when a bill of material doesn't specify
     an operation on which a component needs to be consumed.
   | Odoo then consumes the component on the LAST operation.
@@ -48,6 +54,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 18, 19: Support for production by lot or unique serial number.
   | Manufacturing orders for such products need a specific calculation of the
     intended production quantity.
+
+.. rubric:: Production planning
+
+- | Performance improvements on models with complex calendars (typically for bucketized
+    capacity) and when running in UTC timezone.
 
 .. rubric:: System administration
 

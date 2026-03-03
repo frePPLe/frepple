@@ -31,7 +31,22 @@ rect.opplan {
 </style>
 {% endblock %}
 
-{% block extrahead %}{{block.super}}
+{% block extrahead %}
+<script>
+  function getVisibleSelectedIds() {
+    pageIDs = (jQuery("#grid").jqGrid && jQuery("#grid").jqGrid('getDataIDs')) || [];
+    const vueSelectedOperationPlans = (upload.selectedRows || []).map((op) => op.reference || op);
+
+    // filter out selected IDs that do not belong to this page
+    upload.selectedRows = pageIDs.filter((id) => vueSelectedOperationPlans.includes(id));
+
+    return upload.selectedRows;
+  }
+
+  // Expose to global scope for use in jqGrid callbacks
+  window.getVisibleSelectedIds = getVisibleSelectedIds;
+</script>
+{{block.super}}
 <script src="{{STATIC_URL}}js/d3.min.js"></script>
 
 {% if debug_js %}
@@ -100,19 +115,6 @@ rect.opplan {
       }
     }
   }
-
-  function getVisibleSelectedIds() {
-    pageIDs = jQuery("#grid").jqGrid && jQuery("#grid").jqGrid('getDataIDs') || [];
-    const vueSelectedOperationPlans = upload.selectedRows.map((op) => op.reference || op);
-
-    // filter out selected IDs that do not belong to this page
-    upload.selectedRows = pageIDs.filter((id) => vueSelectedOperationPlans.includes(id));
-
-    return upload.selectedRows
-  }
-
-  // Expose to global scope for use in jqGrid callbacks
-  window.getVisibleSelectedIds = getVisibleSelectedIds;
 
   function saveData(rows, ok_callback) {
       $.ajax({
@@ -252,7 +254,7 @@ rect.opplan {
     jQuery("#undo").on('click', function() {
       jQuery(window).off('beforeunload', upload.warnUnsavedChanges);
 
-      if (mode === 'kanban') {
+
         // Dispatch event to Vue component for kanban mode
         const event = new CustomEvent('triggerUndo', {
           detail: {
@@ -263,10 +265,10 @@ rect.opplan {
           }
         });
         document.getElementById('app').dispatchEvent(event);
-      } else {
+
         // Use existing jqGrid undo for table mode
         upload.undo();
-      }
+
     });
     jQuery("#actionsul li, button#actions1").on('click', function() {
       const event = new CustomEvent("refreshStatus", {
@@ -280,78 +282,94 @@ rect.opplan {
       document.getElementById('app').dispatchEvent(event);
     });
     jQuery("#gridmode").on('click', function() {
-      mode = "table";
-      const event = new CustomEvent("setMode", {
-        detail: { mode: "table" }
+      attemptModeChange('table', function() {
+        mode = "table";
+        const event = new CustomEvent("setMode", {
+          detail: { mode: "table" }
+        });
+        document.getElementById('app').dispatchEvent(event);
+        setVisibleByMode(mode);
+        setActiveButton('gridmode');
+        grid.saveColumnConfiguration();
       });
-      document.getElementById('app').dispatchEvent(event);
-      setVisibleByMode(mode);
-      setActiveButton('gridmode');
-      grid.saveColumnConfiguration();
     });
     jQuery("#kanbanmode").on('click', function() {
-      preferences.height = Math.floor(jQuery("#content-main").height());
-      mode = "kanban";
-      const event = new CustomEvent("setMode", {
-        detail: { mode: "kanban" }
+      attemptModeChange('kanban', function() {
+        preferences.height = Math.floor(jQuery("#content-main").height());
+        mode = "kanban";
+        const event = new CustomEvent("setMode", {
+          detail: { mode: "kanban" }
+        });
+        document.getElementById('app').dispatchEvent(event);
+        setVisibleByMode(mode);
+        setActiveButton('kanbanmode');
+        grid.saveColumnConfiguration();
       });
-      document.getElementById('app').dispatchEvent(event);
-      setVisibleByMode(mode);
-      setActiveButton('kanbanmode');
-      grid.saveColumnConfiguration();
     });
     jQuery("#calendarmonth").on('click', function() {
-      mode = "calendarmonth";
-      const event = new CustomEvent("setMode", {
-        detail: { mode: "calendarmonth" }
-      });
-      document.getElementById('app').dispatchEvent(event);
-      setVisibleByMode('calendar');
-      setActiveButton('calendarmode');
+      // mode = "calendarmonth";
+      // const event = new CustomEvent("setMode", {
+      //   detail: { mode: "calendarmonth" }
+      // });
+      // document.getElementById('app').dispatchEvent(event);
+      // setVisibleByMode('calendar');
+      // setActiveButton('calendarmode');
+      attemptModeChange('calendarmonth', function () {
+        preferences.height = Math.floor(jQuery("#content-main").height());
+        mode = "calendarmonth";
+        const event = new CustomEvent("setMode", {
+            detail: {mode: "calendarmonth"}
+        });
+        document.getElementById('app').dispatchEvent(event);
 
-      grid.saveColumnConfiguration(function() {
-        location.reload();
+        grid.saveColumnConfiguration(function () {
+          location.reload();
+        });
       });
     });
     jQuery("#calendarweek").on('click', function() {
-      mode = "calendarweek";
-      const event = new CustomEvent("setMode", {
-        detail: { mode: "calendarweek" }
-      });
-      document.getElementById('app').dispatchEvent(event);
-      setVisibleByMode('calendar');
-      setActiveButton('calendarmode');
+      attemptModeChange('calendarweek', function () {
+        preferences.height = Math.floor(jQuery("#content-main").height());
+        mode = "calendarweek";
+        const event = new CustomEvent("setMode", {
+          detail: {mode: "calendarweek"}
+        });
+        document.getElementById('app').dispatchEvent(event);
 
-      grid.saveColumnConfiguration(function() {
-        location.reload();
+        grid.saveColumnConfiguration(function () {
+          location.reload();
+        });
       });
     });
     jQuery("#calendarday").on('click', function() {
-      mode = "calendarday";
-      const event = new CustomEvent("setMode", {
-        detail: { mode: "calendarday" }
-      });
-      document.getElementById('app').dispatchEvent(event);
-      setVisibleByMode('calendar');
-      setActiveButton('calendarmode');
+    attemptModeChange('calendarday', function () {
+      preferences.height = Math.floor(jQuery("#content-main").height());
+        mode = "calendarday";
+        const event = new CustomEvent("setMode", {
+          detail: {mode: "calendarday"}
+        });
+        document.getElementById('app').dispatchEvent(event);
 
-      grid.saveColumnConfiguration(function() {
-        location.reload();
+        grid.saveColumnConfiguration(function () {
+          location.reload();
+        });
       });
     });
     jQuery('#zoomin').on("click", function() { zoom(0.5); });
     jQuery('#zoomout').on("click", function() { zoom(2); });
     {% if showGantt %}
     jQuery("#ganttmode").on('click', function() {
-      mode = "gantt";
-      const event = new CustomEvent("setMode", {
-        detail: { mode: "gantt" }
-      });
-      document.getElementById('app').dispatchEvent(event);
-      setVisibleByMode(mode);
+      attemptModeChange('gantt', function() {
+        mode = "gantt";
+        const event = new CustomEvent("setMode", {
+          detail: { mode: "gantt" }
+        });
+        document.getElementById('app').dispatchEvent(event);
+        setVisibleByMode(mode);
 
-      grid.saveColumnConfiguration(function() {
-        location.reload();
+        grid.saveColumnConfiguration(function() {
+          location.reload();
+        });
       });
     });
     jQuery("#zoomin, #zoomout").removeClass("d-none");
@@ -558,15 +576,15 @@ afterSaveCell: function(rowid, cellname, value, iRow, iCol) {
 multiboxonly: false,
 loadComplete: function(data) {
   const pageSelectedIDs = getVisibleSelectedIds();
-  const changedOperationplanReferences = Object.keys(operationplanChanges);
+  const changedOperationplanReferences = Object.keys(window.operationplanChanges);
   if (Object.keys(changedOperationplanReferences) > 0) {
     changedOperationplanReferences.forEach((reference) => {
       console.log("435 loadComplete", changedOperationplanReferences.reference);
       if (pageSelectedIDs.includes(reference)) {
-        const changedCellsKeys = Object.keys(operationplanChanges[id]);
+        const changedCellsKeys = Object.keys(window.operationplanChanges[id]);
         changedCellsKeys.forEach((field) => {
           try {
-            displayongrid(id, field, operationplanChanges[id][field]);
+            displayongrid(id, field, window.operationplanChanges[id][field]);
           } catch (e) {
             // ignore
           }
@@ -574,7 +592,7 @@ loadComplete: function(data) {
       }
     });
   }
-  const IDs = Object.keys(operationplanChanges);
+  const IDs = Object.keys(window.operationplanChanges);
 
   jQuery('#curerror').html("");
   getVisibleSelectedIds().forEach(function(op) {
@@ -650,4 +668,17 @@ loadComplete: function(data) {
 {% block after_table %}
 <div id="app"></div>
 <div id="popup" class="modal fade in" role="dialog" style="z-index: 10000"></div>
+
+<script>
+  // Send event to show dialog if there are unsaved changes
+  function attemptModeChange(targetMode, modeChangeFunction) {
+    const event = new CustomEvent("attemptModeChange", {
+      detail: {
+        mode: targetMode,
+        modeChangeFunction: modeChangeFunction
+      }
+    });
+    document.getElementById('app').dispatchEvent(event);
+  }
+</script>
 {% endblock %}

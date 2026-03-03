@@ -28,6 +28,7 @@ import UpstreamCard from '@/components/UpstreamCard.vue';
 import SupplyInformationCard from '@/components/SupplyInformationCard.vue';
 import KanbanBoard from '@/components/KanbanBoard.vue';
 import { debounce } from '@common/utils.js';
+import InfoDialog from '@common/components/InfoDialog.vue';
 
 const { t: ttt } = useI18n({
   useScope: 'global',
@@ -51,9 +52,38 @@ const preferences = computed(() => window.preferences || {});
 
 const isKanbanMode = computed(() => store.isKanbanMode);
 
-const databaseerrormodal = ref(false);
-const rowlimiterrormodal = ref(false);
-const modalcallback = ref({ resolve: () => {} });
+const unsavedChangesModal = ref(false);
+
+let pendingModeChange = null;
+
+const handleAttemptModeChange = (e) => {
+  const detail = e?.detail || {};
+  if (!detail.mode || !detail.modeChangeFunction) return;
+
+  if (store.hasChanges) {
+    pendingModeChange = detail.modeChangeFunction;
+    unsavedChangesModal.value = true;
+  } else {
+    detail.modeChangeFunction();
+  }
+};
+
+const confirmModeChange = () => {
+  unsavedChangesModal.value = false;
+  if (pendingModeChange) {
+    store.saveOperationplanChanges().then(() => {
+      pendingModeChange();
+      pendingModeChange = null;
+    }).catch((err) => {
+      console.error('Failed to save operation plan before mode change:', err);
+    });
+  }
+};
+
+const cancelModeChange = () => {
+  unsavedChangesModal.value = false;
+  pendingModeChange = null;
+};
 
 function save() {
   if (store.hasChanges) {
@@ -68,13 +98,6 @@ function save() {
         type: 'error',
       };
     });
-  }
-}
-
-// Enhanced undo method
-function undo() {
-  if (store.hasChanges) {
-    store.undo();
   }
 }
 
@@ -302,6 +325,7 @@ onMounted(() => {
   rootEl.addEventListener('shown.bs.collapse', grid.saveColumnConfiguration);
   rootEl.addEventListener('setMode', handleSetMode);
   rootEl.addEventListener('setRowHeight', handleSetRowHeight);
+  rootEl.addEventListener('attemptModeChange', handleAttemptModeChange);
 
   // Save references to handlers so they can be removed on unmount
   appElement.value = {
@@ -318,6 +342,7 @@ onMounted(() => {
       refreshStatus: handleRefreshStatus,
       setMode: handleSetMode,
       handleSetRowHeight: handleSetRowHeight,
+      attemptModeChange: handleAttemptModeChange,
     },
   };
 
@@ -339,6 +364,7 @@ onUnmounted(() => {
       info.rootEl.removeEventListener('gridCellEdited', info.handlers.gridCellEdited);
       info.rootEl.removeEventListener('setMode', info.handlers.setMode);
       info.rootEl.removeEventListener('setRowHeight', info.handleSetRowHeight);
+      info.rootEl.removeEventListener('attemptModeChange', info.handlers.attemptModeChange);
     } catch (err) {
       console.log('Failed to remove event listeners from app root element:', err);
     }
@@ -348,6 +374,29 @@ onUnmounted(() => {
 
 <template>
   <div class="row">
+    <InfoDialog
+      v-model="unsavedChangesModal"
+      :title="ttt('Save or cancel your changes first')"
+      :message="ttt('There are unsaved changes on this page.')"
+      type="warning"
+    >
+      <template #actions>
+        <button
+          type="button"
+          class="btn btn-primary"
+          @click="cancelModeChange"
+        >
+          {{ ttt('Return to page') }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          @click="confirmModeChange"
+        >
+          {{ ttt('Save') }}
+        </button>
+      </template>
+    </InfoDialog>
     <KanbanBoard v-if="isKanbanMode" />
     <div
       v-for="col in preferences.widgets"
@@ -364,79 +413,6 @@ onUnmounted(() => {
           </div>
         </template>
       </template>
-    </div>
-  </div>
-
-  <!-- Modal -->
-  <div
-    id="popup2"
-    class="modal"
-    role="dialog"
-    style="z-index: 10000; overflow-y: visible"
-    tabindex="-1"
-  >
-    <div class="modal-dialog" :style="{ width: databaseerrormodal ? '500px' : '300px' }">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title text-capitalize">
-            <span v-if="!databaseerrormodal && !rowlimiterrormodal">
-              {{ ttt('unsaved changes') }}
-            </span>
-            <span v-else-if="rowlimiterrormodal">
-              {{ ttt('gantt chart rows limit') }}
-            </span>
-            <span v-else-if="databaseerrormodal">
-              {{ ttt('database transaction failed') }}
-            </span>
-          </h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
-
-        <div v-if="!databaseerrormodal && !rowlimiterrormodal" class="modal-body">
-          <p>{{ ttt('Do you want to save your changes first?') }}</p>
-        </div>
-
-        <div v-if="!databaseerrormodal && rowlimiterrormodal" class="modal-body">
-          <p>{{ ttt('The Gantt chart is limited to ' + rowlimit + ' rows.') }}</p>
-          <p>{{ ttt('Please be patient, the chart may take some time to complete.') }}</p>
-        </div>
-
-        <div
-          v-if="databaseerrormodal"
-          class="modal-body"
-          style="height: 350px; overflow: auto"
-        ></div>
-
-        <div class="modal-footer justify-content-between">
-          <input
-            type="submit"
-            id="cancelAbutton"
-            role="button"
-            @click="
-              modalcallback.resolve('continue');
-              rowlimiterrormodal = false;
-            "
-            class="btn btn-primary"
-            data-bs-dismiss="modal"
-            :value="ttt('Continue')"
-          />
-          <input
-            v-if="!databaseerrormodal && !rowlimiterrormodal"
-            type="submit"
-            id="saveAbutton"
-            role="button"
-            @click="modalcallback.resolve('save')"
-            class="btn btn-primary"
-            data-bs-dismiss="modal"
-            :value="ttt('Save')"
-          />
-        </div>
-      </div>
     </div>
   </div>
 </template>

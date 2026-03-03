@@ -484,6 +484,10 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.editForm = { setQuantity: null, setStart: '', setEnd: '', setRemark: '' };
       this.selectedOperationplans = [];
       this.operationplanChanges = {};
+      window.operationplanChanges = toRaw(this.operationplanChanges);
+      if (this.mode === 'kanban') {
+        this.loadKanbanData();
+      }
     },
 
     async saveOperationplanChanges() {

@@ -2632,7 +2632,7 @@ var ERPconnection = {
           }
           const tablebodycontent = $('<tbody/>');
           for (let i = 0; i < data[dataType].length; i++) {
-            const row = $('<tr/>').attr('orderreference', data[dataType][i][0][1]).attr('ordertype', dataType);
+            const row = $('<tr/>').attr('orderreference', data[dataType][i][0][1]).attr('ordertype', dataType).attr('data-row-index', modal_table_row_index);
             const td = $('<td/>');
 
             td.append($('<input/>').attr({
@@ -2647,11 +2647,11 @@ var ERPconnection = {
             for (let j = 0; j < labels.length; j++) {
               if (!data[dataType][i][j][2]) {
                 if (data[dataType][i][j][0] == 'quantity') {
-                  row.append($('<td class="align-middle"/><input type="number" value="' + parseFloat(data[dataType][i][j][1]) + '" id="quantity' + modal_table_row_index + '"/>'));
+                  row.append($('<td class="align-middle"><input type="number" value="' + parseFloat(data[dataType][i][j][1]) + '" id="quantity' + modal_table_row_index + '"/></td>'));
                 } else if (data[dataType][i][j][0] === 'receipt date' || data[dataType][i][j][0] === 'end date') {
-                  row.append($('<td class="align-middle"/><input type="datetime-local" value="' + data[dataType][i][j][1] + '" title="due date" required="" id="due' + modal_table_row_index + '"></modal_table_row_indexnput>'));
+                  row.append($('<td class="align-middle"><input type="datetime-local" value="' + data[dataType][i][j][1] + '" title="due date" required="" id="due' + modal_table_row_index + '"></td>'));
                 } else if (data[dataType][i][j][0] == 'supplier') {
-                  row.append($('<td class="align-middle"/><input type="text" value="' + data[dataType][i][j][1] + '" title="supplier" required="" id="supplier' + modal_table_row_index + '"></input>'));
+                  row.append($('<td class="align-middle"><input type="text" value="' + data[dataType][i][j][1] + '" title="supplier" required="" id="supplier' + modal_table_row_index + '"></td>'));
                 } else {
                   row.append($('<td class="align-middle"/>').text(formatValue(data[dataType][i][j])));
                 }
@@ -2696,11 +2696,11 @@ var ERPconnection = {
           const cellsData = {};
           const rows = $('#popup .modal-body tbody input[type=checkbox]:checked').parent().parent();
 
-          index = 0;
           for (const row of rows) {
-            let date = '.modal-body #due' + index;
-            let quantity = '.modal-body #quantity' + index;
-            let supplier = '.modal-body #supplier' + index;
+            const rowIndex = row.getAttribute('data-row-index');
+            let date = '.modal-body #due' + rowIndex;
+            let quantity = '.modal-body #quantity' + rowIndex;
+            let supplier = '.modal-body #supplier' + rowIndex;
 
             // Always send seconds even if they are 0
             newDate = ($(date).val().length === 16) ? $(date).val() + ":00" : $(date).val();
@@ -2712,7 +2712,6 @@ var ERPconnection = {
               'enddate': newDate,
               'supplier': $(supplier).val()
             });
-            index++;
           }
 
           $('#popup .modal-body').html(gettext('connecting') + '...');

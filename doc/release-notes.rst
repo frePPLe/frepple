@@ -15,11 +15,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Odoo integration
 
-- | We have added tags stable-17.0, stable-18.0 and stable-19.0
+- | We have added branches 17.0-dev, 18.0-dev and 19.0-dev
     in the connector github repository.
-  | For production use, you should always pick up the connector from that tag.
-  | It is possible that some connector changes are still being work on.
-    The head of the branch should only be used for testing and development.
+  | This allows us to separate active development from the stable version
+    of the connector.
 
 - | 18, 19: Changed the behavior when a bill of material doesn't specify
     an operation on which a component needs to be consumed.

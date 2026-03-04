@@ -874,13 +874,13 @@ class OdooSendRecommendations(PlanTask):
                 yield {
                     "tab": "sale",
                     "type": "latedelivery",
-                    "data": {"constraints": [c.description for c in i.constraints]},
+                    "data": {},
                     "sale_order_line_id": int(so[1]),
                     "product_id": int(i.item.subcategory.split(",")[1]),
                     "startdate": i.due.isoformat(),
                     "enddate": late_date.isoformat() if late_date else None,
                     "quantity": late_quantity,
-                    "recommendation": recommendation,
+                    "recommendation": f"{recommendation}{"\\n" if i.constraints else ""}{"\\n".join([c.description for c in i.constraints]) if i.constraints else ""}",
                 }
             if not self.loglevel:
                 print(f"Generated {so_count} sales order recommendations")

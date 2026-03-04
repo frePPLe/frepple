@@ -51,7 +51,7 @@ Addition of extra views and fields in Odoo
 .. important::
 
    This page applies to Odoo connectors installed before March 2026.
-   See `this page <../odoo-from-march-2026/using-the-connector-in-odoo.html#addition-of-extra-views-and-fields-in-odoo>`_ for 19.
+   See `this page <../odoo-from-march-2026/using-the-connector-in-odoo.html#addition-of-extra-views-and-fields-in-odoo>`_ for later versions.
 
 * | Because some manufacturing concepts do not exist in odoo, the manufacturing app
     has been enhanced to include the following objects.

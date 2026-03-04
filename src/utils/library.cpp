@@ -84,6 +84,7 @@ void LibraryUtils::initialize() {
 
   // Set the process name
   Environment::setProcessName();
+  Date::is_utc = string(tzname[0]) == "UTC" || string(tzname[0]) == "GMT";
 
   // Initialize Xerces parser
   xercesc::XMLPlatformUtils::Initialize();

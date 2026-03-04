@@ -621,6 +621,8 @@ class Date {
   Date(const char* s, bool) { parse(s); }
 
  public:
+  static bool is_utc;
+
   /* A utility function that uses the C function localtime to compute the
    * details of the current time: day of the week, day of the month,
    * day of the year, hour, minutes, seconds
@@ -630,7 +632,10 @@ class Date {
     // static structure is used for all calls. In a multi-threaded environment
     // the function is not to be used.
     // The POSIX standard defines a re-entrant version of the function.
-    localtime_r(&lval, tm_struct);
+    if (is_utc)
+      gmtime_r(&lval, tm_struct);
+    else
+      localtime_r(&lval, tm_struct);
   }
 
   /* Constructor initialized with a long value. */
@@ -783,7 +788,10 @@ class DateDetail {
     // static structure is used for all calls. In a multi-threaded environment
     // the function is not to be used.
     // The POSIX standard defines a re-entrant version of the function.
-    localtime_r(&(d.lval), &time_info);
+    if (Date::is_utc)
+      gmtime_r(&(d.lval), &time_info);
+    else
+      localtime_r(&(d.lval), &time_info);
   }
 
   inline DateDetail(const Date* d) : val(d->lval) {
@@ -791,7 +799,10 @@ class DateDetail {
     // static structure is used for all calls. In a multi-threaded environment
     // the function is not to be used.
     // The POSIX standard defines a re-entrant version of the function.
-    localtime_r(&(d->lval), &time_info);
+    if (Date::is_utc)
+      gmtime_r(&(d->lval), &time_info);
+    else
+      localtime_r(&(d->lval), &time_info);
   }
 
   /* Convert a DateDetail object into a Date object. */
@@ -805,7 +816,7 @@ class DateDetail {
   inline DateDetail(int year, int month, int day, int hr = 0, int min = 0,
                     int sec = 0)
       : val(-1) {
-    time_info.tm_isdst = -1;
+    time_info.tm_isdst = Date::is_utc ? 0 : -1;
     time_info.tm_year = year - 1900;
     time_info.tm_mon = month - 1;
     time_info.tm_mday = day;
@@ -839,9 +850,15 @@ class DateDetail {
    * these limits.
    */
   void normalize() const {
-    const_cast<struct tm*>(&time_info)->tm_isdst = -1;
-    const_cast<DateDetail*>(this)->val =
-        mktime(const_cast<struct tm*>(&time_info));
+    if (Date::is_utc) {
+      const_cast<struct tm*>(&time_info)->tm_isdst = 0;
+      const_cast<DateDetail*>(this)->val =
+          timegm(const_cast<struct tm*>(&time_info));
+    } else {
+      const_cast<struct tm*>(&time_info)->tm_isdst = -1;
+      const_cast<DateDetail*>(this)->val =
+          mktime(const_cast<struct tm*>(&time_info));
+    }
   }
 
   /* Return the weekday: 0 = sunday, 6 = saturday */
@@ -887,7 +904,7 @@ class DateDetail {
     time_info.tm_sec = 0;
     time_info.tm_min = 0;
     time_info.tm_hour = 0;
-    val = -1;
+    if (!Date::is_utc) val = -1;
   }
 
   /* Go back till midnight of the next day. */

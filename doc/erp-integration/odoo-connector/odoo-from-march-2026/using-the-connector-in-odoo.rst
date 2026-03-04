@@ -3,8 +3,9 @@ Addition of menus in Odoo
 
 .. important::
 
-   This page applies to Odoo 19.
-   See `this page <../odoo-before-v19/using-the-connector-in-odoo.html>`_ for earlier versions.
+   This page applies to Odoo connectors installed after March 2026.
+   See `this page <../odoo-before-march-2026/using-the-connector-in-odoo.html>`_ for
+   Odoo connectors installed before March 2026.
 
 After installation, users find the following additional features in odoo:
 
@@ -20,8 +21,8 @@ Addition of extra views and fields in Odoo
 
 .. important::
 
-   This page applies to Odoo 19.
-   See `this page <../odoo-before-v19/using-the-connector-in-odoo.html#addition-of-extra-views-and-fields-in-odoo>`_ for earlier versions.
+   This page applies to Odoo connectors installed after March 2026.
+   See `this page <../odoo-before-march-2026/using-the-connector-in-odoo.html#addition-of-extra-views-and-fields-in-odoo>`_ for earlier versions.
 
 * | A new table has been added to Odoo with **frepple recommendations** on your plan.
 
@@ -88,8 +89,8 @@ Quoting capabilities
 
 .. important::
 
-   This page applies to Odoo 19.
-   See `this page <../odoo-before-v19/using-the-connector-in-odoo.html#quoting-capabilities>`_ for earlier versions.
+   This page applies to Odoo connectors installed after March 2026.
+   See `this page <../odoo-before-march-2026/using-the-connector-in-odoo.html#quoting-capabilities>`_ for earlier versions.
 
 Starting from Odoo 17, the connectors also allow the planner to use the frePPLe quoting
 module from Odoo.

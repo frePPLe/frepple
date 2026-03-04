@@ -3,8 +3,9 @@ Data mapping details
 
 .. important::
 
-   This page applies to Odoo 16, 17and 18.
-   See `this page <../odoo-from-v19/data-mapping.html>`_ for 19.
+   This page applies to Odoo connectors installed before March 2026.
+   See `this page <../odoo-from-march-2026/data-mapping.html>`_ for
+   Odoo connectors installed after March 2026.
 
 The connector doesn't cover all possible configurations of Odoo and frePPLe.
 The connector will very likely require some customization to fit your particular

@@ -494,14 +494,13 @@ export const useOperationplansStore = defineStore('operationplans', {
       const changes = [];
       for (const [key, value] of Object.entries(this.operationplanChanges)) {
         value.id = key;
-        changes.push(value);
+        changes.push(toRaw({ ...value, id: key }));
       }
-      console.log(496, 'saveOperationplanChanges: ', changes);
       if (!changes || Object.keys(changes).length === 0) return;
       try {
-        await operationplanService.postOperationplanDetails(changes);
-        this.operationplanChanges = {};
-        this.undo();
+        await operationplanService.postOperationplanDetails(changes).then(
+          this.undo()
+        );
       } catch (e) {
         this.setError({
           title: 'Save failed',

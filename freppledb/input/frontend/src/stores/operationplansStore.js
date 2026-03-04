@@ -494,7 +494,7 @@ export const useOperationplansStore = defineStore('operationplans', {
       const changes = [];
       for (const [key, value] of Object.entries(this.operationplanChanges)) {
         value.id = key;
-        changes.push(value);
+        changes.push(toRaw({ ...value, id: key }));
       }
       console.log(496, 'saveOperationplanChanges: ', changes);
       if (!changes || Object.keys(changes).length === 0) return;

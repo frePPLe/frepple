@@ -50,6 +50,7 @@
                 data-bs-toggle="tooltip"
                 data-bs-html="true"
                 :title="ttt(s)"
+                :disabled="actions.hasOwnProperty('erp_incr_export') || !editable"
                 @click="setStatus(opplan, s)"
               >
                 <i class="fa" :class="getStatusIcon(s)"></i>

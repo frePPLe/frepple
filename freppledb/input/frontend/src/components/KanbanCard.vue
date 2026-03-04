@@ -38,7 +38,10 @@ const props = defineProps({
 });
 
 const mode = window.mode;
+
 const editable = true;
+// eslint-disable-next-line no-undef
+const actions = window.actions;
 const calendarmode = 'duration';
 
 function isStart(opplan, dt) {

@@ -25,6 +25,9 @@ const { t: ttt } = useI18n({
 });
 
 const store = useOperationplansStore();
+const editable = true;
+// eslint-disable-next-line no-undef
+const actions = window.actions;
 
 onMounted(async () => {
   window.setHeights();
@@ -48,6 +51,13 @@ onMounted(async () => {
           ghostClass: 'sortable-ghost',
           dragClass: 'sortable-drag',
           animation: 150,
+          onMove: (evt) => {
+            // Prevent dragging to a different column
+            if (actions.hasOwnProperty('erp_incr_export') || !editable) {
+              return false;
+            }
+            return true;
+          },
           onEnd: (evt) => {
             const reference = evt.item
               ?.querySelector('[data-reference]')
@@ -56,6 +66,7 @@ onMounted(async () => {
             const newStatus = evt.item.parentElement.getAttribute('data-column');
             if (!reference || !newStatus || !oldStatus) return;
 
+            if (actions.hasOwnProperty('erp_incr_export') || !editable) return;
             // Mark data as unsaved for legacy UI buttons
             window.isDataSaved = false;
 
@@ -178,7 +189,7 @@ const kanbanoperationplans = computed(() => {
       }
     }
     result[col] = tmp;
-  })
+  });
   return result;
 });
 
@@ -223,8 +234,18 @@ function formatInventoryStatus(opplan) {
 }
 
 function selectCard(opplan) {
-  if (store.operationplan.reference && store.operationplan.reference == opplan.reference && opplan.selected) return;
-  if (store.operationplan.operationplan__reference && store.operationplan.operationplan__reference == opplan.reference && opplan.selected) return;
+  if (
+    store.operationplan.reference &&
+    store.operationplan.reference == opplan.reference &&
+    opplan.selected
+  )
+    return;
+  if (
+    store.operationplan.operationplan__reference &&
+    store.operationplan.operationplan__reference == opplan.reference &&
+    opplan.selected
+  )
+    return;
   opplan.selected = true;
   store.loadOperationplans([opplan.reference], true, [opplan.reference], true);
 }
@@ -248,8 +269,7 @@ function selectCard(opplan) {
                 data-bs-toggle="dropdown"
                 aria-haspopup="true"
                 aria-expanded="true"
-              ><i class="fa fa-ellipsis-h"></i
-              ></a>
+                ><i class="fa fa-ellipsis-h"></i></a>
               <ul class="dropdown-menu dropdown-menu-right" style="min-width: 0">
                 <li>
                   <a class="dropdown-item text-capitalize" @click="hideColumn(col)">

@@ -1,6 +1,6 @@
-======================
-Odoo before March 2026
-======================
+==========================================
+Odoo connectors installed before March 2026
+==========================================
 
 This documentation applies to the Odoo-frepple integration for the Odoo connectors
 installed before March 2026.

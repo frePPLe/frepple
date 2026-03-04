@@ -128,6 +128,24 @@ watch(
   }
 );
 
+// Watch for selection changes and update legacy buttons
+watch(
+  () => store.selectedOperationplans,
+  (selected) => {
+    // Update button states for kanban mode
+    if (typeof jQuery !== 'undefined' && store.mode === 'kanban') {
+      const hasVisible = selected && selected.length > 0;
+      ['#actions1', '#actions2', '#segments1', '#copy_selected', '#delete_selected'].forEach(  // TODO: activate copy and delete
+        (s) => {
+          const el = jQuery(s);
+          if (el.length) el.prop('disabled', !hasVisible);
+        }
+      );
+    }
+  },
+  { deep: true }
+);
+
 function getWidgetComponent(widgetName) {
   const componentMap = {
     operationplan: OperationplanFormCard,

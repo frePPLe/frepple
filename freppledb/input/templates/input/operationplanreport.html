@@ -124,6 +124,15 @@ rect.opplan {
         headers: { "Authorization": "Bearer " + service_token },
         contentType: "application/json",
         success: function () {
+          const event = new CustomEvent('triggerUndo', {
+            detail: {
+              execute: 'undo',
+              reference: null,
+              status: null,
+              selectedRows: null
+            }
+          });
+          document.getElementById('app').dispatchEvent(event);
           upload.undo();
           jQuery("#save i").addClass('hidden');
           jQuery(".ng-dirty").removeClass('ng-dirty');
@@ -133,7 +142,6 @@ rect.opplan {
         error: ajaxerror
     });
     operationplanChanges = {};
-    isDataSaved = true; // for test
   }
 
   function extraPreference() {

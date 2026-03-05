@@ -72,7 +72,7 @@ function isEnd(opplan, dt) {
 }
 
 function isSelected(OPPreference) {
-  return OPPreference === store.operationplan.reference;
+  return OPPreference === undefined ? false : OPPreference === store.operationplan.reference;
 }
 
 function getStatus(op) {

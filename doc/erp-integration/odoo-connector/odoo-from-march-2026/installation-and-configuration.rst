@@ -67,7 +67,7 @@ The section below describes the installation and configuration of these.
         regardless of any reserved quantities in odoo. The implicit assumption is
         that any reservations will be unreserved in Odoo when needed.
 
-    * | Frepple inerface user:
+    * | Frepple interface user:
       | The user authorized to import data from Odoo into frePPLe. If left empty,
         any Odoo user can pull data from Odoo into frePPLe.
       | The frepple interface user should be the same user declared in the odoo.user

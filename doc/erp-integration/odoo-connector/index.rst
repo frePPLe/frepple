@@ -12,6 +12,6 @@ FrePPLe provides an integration with `Odoo <https://www.odoo.com>`_, a leading o
    :maxdepth: 2
 
    overview
-   odoo-before-v19/index.rst
-   odoo-from-v19/index.rst
+   odoo-before-march-2026/index.rst
+   odoo-from-march-2026/index.rst
 

@@ -3,8 +3,9 @@ Installation and configuration
 
 .. important::
 
-   This page applies to Odoo 16, 17 and 18.
-   See `this page <../odoo-from-v19/installation-and-configuration.html>`_ for 19.
+   This page applies to Odoo connectors installed after March 2026.
+   See `this page <../odoo-before-march-2026/installation-and-configuration.html>`_ for
+   Odoo connectors installed before March 2026.
 
 The connector has 2 components:
 
@@ -26,7 +27,7 @@ The section below describes the installation and configuration of these.
   * | **Install the Odoo addon**
     | The addon code is found in the github repository https://github.com/frePPLe/odoo.
       Use the branch from the subfolder matching your Odoo version.
-    | The addon is also available from the `Odoo app store <https://apps.odoo.com/apps/modules/16.0/frepple/>`_
+    | The addon is also available from the `odoo app store <https://apps.odoo.com/apps/modules/16.0/frepple/>`_
 
   * | **Configure the Odoo server**
     | If your Odoo instance is running in multi-database mode you need to
@@ -63,8 +64,15 @@ The section below describes the installation and configuration of these.
       | When this flag is checked, frepple fully respects the material
         reservations of odoo. Frepple only plans with the unreserved materials.
       | When this flag is false, frepple plans with the full material availability
-        regardless of any reserved quantities in Odoo. The implicit assumption is
+        regardless of any reserved quantities in odoo. The implicit assumption is
         that any reservations will be unreserved in Odoo when needed.
+
+    * | Frepple interface user:
+      | The user authorized to import data from Odoo into frePPLe. If left empty,
+        any Odoo user can pull data from Odoo into frePPLe.
+      | The frepple interface user should be the same user declared in the odoo.user
+        parameter in frePPLe.
+      | It is highly recommended for security reasons not to leave this field empty.
 
     .. image:: _images/odoo-settings.png
        :alt: Configuring the Odoo add-on.
@@ -124,19 +132,6 @@ The section below describes the installation and configuration of these.
     * | Update the DATABASE section such that the SECRET_WEBTOKEN_KEY setting of each
         scenario is equal to the web token key configured in Odoo.
 
-    * | Make sure the setting MIDDLEWARE doesn't include the
-        "django.middleware.clickjacking.XFrameOptionsMiddleware" class.
-
-    * | If frePPLe and Odoo are installed on 2 different domains (example: https://myfrepple.frepple.com
-        and https://myodoo.odoo.com), then following lines need to be added:
-
-        .. code-block:: Python
-
-           CONTENT_SECURITY_POLICY = "frame-ancestors 'self' domain-of-your-odoo-server;"
-           X_FRAME_OPTIONS = None
-           SESSION_COOKIE_SAMESITE = "none"
-           CSRF_COOKIE_SAMESITE = "none"               # NOTE: "none", not None
-
   * **Configure parameters**
 
     | Some parameters need to be configured in the "admin / parameters" screen. The
@@ -174,7 +169,7 @@ The section below describes the installation and configuration of these.
         of the overridden records is also edited.
 
     * | odoo.delta:
-      | Only sales order lines with a write date greater than current date minus Odoo.delta days will be pulled.
+      | Only sales order lines with a write date greater than current date minus odoo.delta days will be pulled.
         Default:999 (Pull entire demand history)
       | For the first import, this parameter should be left to its default value (999) to import all the Odoo
         sales orders into frePPLe.
@@ -188,7 +183,7 @@ The section below describes the installation and configuration of these.
   Out of the box, the integrated solution will grant only the root and admin users
   access to all frepple functionality. Others users need to be explicitly granted access.
 
-  * | In Odoo, you allow people to access frepple by granting the "frepple user" access
+  * | In odoo, you allow people to access frepple by granting the "frepple user" access
       right.
     | The access is not granted by default.
     | You'll need to switch to developer mode to edit this access right.
@@ -197,7 +192,7 @@ The section below describes the installation and configuration of these.
       with frepple.
     | Of course, you can add additional users in frepple beyond these Odoo users.
 
-  * | These Odoo users are added to the "Odoo users" group in frepple. The members of
+  * | These Odoo users are added to the "odoo users" group in frepple. The members of
       that group get complete permissions in frepple.
     | You can change the default permissions of the group.
     | You can also grant additional priviliges to a user beyond the privileges of the group.

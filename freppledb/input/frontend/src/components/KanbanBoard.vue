@@ -172,7 +172,7 @@ const kanbanoperationplans = computed(() => {
     const tmp = store.kanbanoperationplans[col];
     if (tmp && tmp.rows) {
       for (const x of tmp.rows) {
-        x.type = x.operationplan__type || x.type || "PO";
+        x.type = x.operationplan__type || x.type || window.default_operationplan_type;
         if (Object.prototype.hasOwnProperty.call(x, "quantity"))
           x.quantity = parseFloat(x.quantity);
         if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity"))

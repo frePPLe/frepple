@@ -97,6 +97,9 @@ function setStatus(op, s) {
 function changeCard(opplan, field, oldValue, newValue) {
   if (!opplan) return;
   const ref = opplan.reference || opplan.operationplan__reference;
+  if (opplan.type === 'WO' && opplan.operationplan__status) {
+    field = field === 'operationplan__status' ? 'status' : field;
+  };
 
   // Determine the old status (current status before change)
   const oldStatus = opplan.status || opplan.operationplan__status;

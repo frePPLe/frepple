@@ -23,8 +23,6 @@
     </div>
     <div v-if="opplan.type === 'PO'">
         <p>
-            <!--        this is for dragging-->
-            <!--        <i v-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;-->
             <i
                     class="fa fa-shopping-cart"
                     data-bs-toggle="tooltip"
@@ -32,8 +30,6 @@
                     :title="ttt('Purchase Order')"
             ></i>&nbsp;
             <strong>{{ opplan.operationplan__reference || opplan.reference }}</strong>&nbsp;
-            <!--        this is for dragging-->
-            <!--        <i v-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i>&nbsp;-->
             <i
                     v-if="!editable || !isSelected(opplan.reference)"
                     class="fa"
@@ -249,11 +245,6 @@
     </div>
     <div v-if="(opplan.type || opplan.operationplan__type || type) === 'DO'">
         <p>
-        <span v-if="store.isChanged(opplan.reference, null) && !isSelected(opplan.reference)" class="badge bg-danger float-end">{{
-                ttt('unsaved')
-            }}</span>
-            <!--        this is for dragging-->
-            <!--        <i v-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;-->
             <i
                     class="fa fa-truck"
                     data-bs-toggle="tooltip"
@@ -261,8 +252,6 @@
                     :title="ttt('Distribution Order')"
             ></i
             >&nbsp; <strong>{{ opplan.operationplan__reference || opplan.reference }}</strong>&nbsp;
-            <!--        this is for dragging-->
-            <!--        <i v-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i>&nbsp;-->
             <i
                     v-if="!editable || !isSelected(opplan.reference)"
                     class="fa"
@@ -671,9 +660,6 @@
     </div>
     <div v-if="opplan.type === 'MO' || opplan.type === 'WO'">
         <p>
-        <span v-if="store.isChanged(opplan.reference, null) && !isSelected(opplan.reference)" class="badge bg-danger float-end">{{
-                ttt('unsaved')
-            }}</span>
             <i
                     class="fa fa-wrench"
                     data-bs-toggle="tooltip"
@@ -682,8 +668,6 @@
             ></i>&nbsp;
             <strong>{{ opplan.operationplan__reference || opplan.reference }}</strong>
             &nbsp;
-            <!--        this is for dragging-->
-            <!--        <i v-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i>&nbsp;-->
             <i
                     v-if="!editable || !isSelected(opplan.reference)"
                     class="fa"

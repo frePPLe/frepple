@@ -352,7 +352,7 @@ export const useOperationplansStore = defineStore('operationplans', {
       }
 
       // Add to new column
-      this.kanbanoperationplans[newStatus].rows.push(cardData);
+      this.kanbanoperationplans[newStatus].rows.unshift(cardData);
 
       // Update counters
       oldColumn.records--;
@@ -668,16 +668,16 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     setKanbanCardValue(id, field, statusKey, value) {
-      if (
-        field === 'startdate' ||
-        field === 'enddate' ||
-        field === 'quantity' ||
-        field === 'quantity_completed' ||
-        field === 'remark' ||
-        (field === 'status' && this.kanbancolumns.includes(statusKey))
+      const target = this.kanbanoperationplans[statusKey].rows.filter((x) => x.reference === id)[0];
+      const targetKeys = Object.keys(target);
+
+      if (this.kanbancolumns.includes(statusKey)
       ) {
-        this.kanbanoperationplans[statusKey].rows.filter((x) => x.reference === id)[0][field] =
-          value;
+        field = targetKeys.includes(field) ? field : field.includes('operationplan__') ? field.replace('operationplan__','') : 'operationplan__' + field;
+        if (['MO', 'DO'].includes(target.type) && field === 'quantity' ) {
+          field = 'operationplan__quantity';
+        }
+        this.kanbanoperationplans[statusKey].rows.filter((x) => x.reference === id)[0][field] = value;
       }
     },
 
@@ -704,7 +704,7 @@ export const useOperationplansStore = defineStore('operationplans', {
       const oldStatus = this.operationplan.status;
 
       // Map kanban field names to operationplan fields and update
-      if (field === 'status') {
+      if (['status', 'operationplan__status'].includes(field)) {
         this.operationplan.status = value;
 
         // Move the Kanban card to the new column

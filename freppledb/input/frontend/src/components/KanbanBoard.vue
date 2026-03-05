@@ -90,10 +90,7 @@ onMounted(async () => {
               }
               cardData.dirty = true;
 
-              // If the current operationplan is the one being moved, update it
-              // if (store.operationplan.reference === reference || store.operationplan.operationplan__reference === reference) {
               store.setKanbanStatus(oldStatus, oldIndex, newStatus, newIndex, reference);
-              // }
 
               if (!store.kanbanoperationplans[newStatus]) {
                 store.kanbanoperationplans[newStatus] = { rows: [], records: 0 };
@@ -173,6 +170,7 @@ const kanbanoperationplans = computed(() => {
     if (tmp && tmp.rows) {
       for (const x of tmp.rows) {
         x.type = x.operationplan__type || x.type || window.default_operationplan_type;
+        x.reference = x.operationplan__reference || x.reference;
         if (Object.prototype.hasOwnProperty.call(x, "quantity"))
           x.quantity = parseFloat(x.quantity);
         if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity"))

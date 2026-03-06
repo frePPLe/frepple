@@ -688,7 +688,7 @@
       <i class="fa fa-box" data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('Stock')"></i>&nbsp; <strong>
       {{ opplan.item__name || opplan.item }} @ {{ opplan.location }}</strong>&nbsp;
       <a @click.stop=""
-         :href="urlPrefix + '/detail/input/buffer/' + adminEscape(opplan.item__name + ' @ ' + opplan.location ) + '/'">
+         :href="urlPrefix + '/detail/input/buffer/' + adminEscape((opplan.item__name || opplan.item) + ' @ ' + opplan.location ) + '/'">
         <i class="fa fa-caret-right"></i>
       </a>
     </p>

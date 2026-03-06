@@ -497,10 +497,21 @@ export const useOperationplansStore = defineStore('operationplans', {
         changes.push(toRaw({ ...value, id: key }));
       }
       if (!changes || Object.keys(changes).length === 0) return;
+
+      changes.map(x => {
+        delete x.end;
+        delete x.start;
+        // delete x.id;
+        if (x.startdate) {x.startdate = x.startdate.replace('T', ' ')};
+        if (x.enddate) {x.enddate = x.enddate.replace('T', ' ')};
+        if (x.operationplan__startdate) {x.operationplan__startdate = x.startdate.replace('T', ' ')};
+        if (x.operationplan__enddate) {x.operationplan__enddate = x.operationplan__enddate.replace('T', ' ')};
+        return x
+      })
+
       try {
-        await operationplanService.postOperationplanDetails(changes).then(
-          this.undo()
-        );
+        await operationplanService.postOperationplanDetails(changes)
+        this.undo()
       } catch (e) {
         this.setError({
           title: 'Save failed',

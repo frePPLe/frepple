@@ -37,6 +37,42 @@ const { t: ttt } = useI18n({
 
 const appElement = ref(null);
 const store = useOperationplansStore();
+const showCopyDialog = ref(false);
+const copySelectedItems = ref([]);
+const copyDialogError = ref('');
+
+const showDeleteDialog = ref(false);
+const deleteSelectedItems = ref([]);
+const deleteDialogError = ref('');
+const deleteUrl = ref('');
+
+const confirmCopy = async () => {
+  const sel = copySelectedItems.value;
+  try {
+    const response = await $.ajax({
+      url: location.pathname,
+      data: JSON.stringify([{ copy: sel }]),
+      type: 'POST',
+      contentType: 'application/json',
+      success: function () {
+        $('#delete_selected, #copy_selected, #edit_selected').prop('disabled', true);
+        $('.cbox, #cb_grid.cbox').prop('checked', false);
+        showCopyDialog.value = false;
+        copySelectedItems.value = [];
+        store.loadKanbanData();
+      },
+      error: function (result) {
+        if (result.status == 401) {
+          location.reload();
+          return;
+        }
+        copyDialogError.value = result.responseText;
+      },
+    });
+  } catch (err) {
+    copyDialogError.value = err.message || 'Copy failed';
+  }
+};
 
 // Use shared debouncer to throttle grid cell edits applied to the store
 const applyGridCellEditDebounced = debounce((payload) => {
@@ -135,7 +171,7 @@ watch(
     // Update button states for kanban mode
     if (typeof jQuery !== 'undefined' && store.mode === 'kanban') {
       const hasVisible = selected && selected.length > 0;
-      ['#actions1', '#actions2', '#segments1', '#copy_selected', '#delete_selected'].forEach(  // TODO: activate copy and delete
+      ['#actions1', '#actions2', '#segments1', '#copy_selected', '#delete_selected'].forEach(
         (s) => {
           const el = jQuery(s);
           if (el.length) el.prop('disabled', !hasVisible);
@@ -260,6 +296,59 @@ onMounted(() => {
     });
   };
 
+  const handleTriggerCopy = async (e) => {
+    const sel = store.selectedOperationplans || [];
+    if (sel.length > 0) {
+      copySelectedItems.value = sel;
+      copyDialogError.value = '';
+      showCopyDialog.value = true;
+    }
+  };
+
+  const handleTriggerDelete = async (e) => {
+    const sel = store.selectedOperationplans || [];
+    const url = e?.detail?.url || window.url_prefix + '/data/operationplan/operationplan/';
+    deleteUrl.value = url;
+    if (sel.length === 1) {
+      // Redirect to Django delete page for single item
+      location.href = url + encodeURIComponent(sel[0]) + '/delete/';
+    } else if (sel.length > 0) {
+      deleteSelectedItems.value = sel;
+      deleteDialogError.value = '';
+      showDeleteDialog.value = true;
+    }
+  };
+
+  const confirmDelete = async () => {
+    const sel = deleteSelectedItems.value;
+    const url = deleteUrl.value;
+    try {
+      const response = await $.ajax({
+        url: url,
+        data: JSON.stringify([{ delete: sel }]),
+        type: 'POST',
+        contentType: 'application/json',
+        success: function () {
+          $('#delete_selected, #copy_selected, #edit_selected').prop('disabled', true);
+          $('.cbox, #cb_grid.cbox').prop('checked', false);
+          showDeleteDialog.value = false;
+          deleteSelectedItems.value = [];
+          store.loadKanbanData();
+        },
+        error: function (result) {
+          if (result.status == 401) {
+            location.reload();
+            return;
+          }
+          deleteDialogError.value = result.responseText;
+        },
+      });
+    } catch (err) {
+      console.error('Delete failed:', err);
+      deleteDialogError.value = err.message || 'Delete failed';
+    }
+  };
+
   const handleTriggerUndo = (e) => {
     store.undo();
   };
@@ -343,6 +432,8 @@ onMounted(() => {
   rootEl.addEventListener('processAggregatedInfo', handleProcessAggregatedInfo);
   rootEl.addEventListener('displayonpanel', handleDisplayOnPanel);
   rootEl.addEventListener('triggerSave', handleTriggerSave);
+  rootEl.addEventListener('triggerCopy', handleTriggerCopy);
+  rootEl.addEventListener('triggerDelete', handleTriggerDelete);
   rootEl.addEventListener('triggerUndo', handleTriggerUndo);
   rootEl.addEventListener('gridCellEdited', handleGridCellEdited);
   rootEl.addEventListener('refreshStatus', handleRefreshStatus);
@@ -362,6 +453,8 @@ onMounted(() => {
       display: handleDisplayOnPanel,
       undo: handleUndoEvent,
       triggerSave: handleTriggerSave,
+      triggerCopy: handleTriggerCopy,
+      triggerDelete: handleTriggerDelete,
       triggerUndo: handleTriggerUndo,
       gridCellEdited: handleGridCellEdited,
       refreshStatus: handleRefreshStatus,
@@ -385,6 +478,8 @@ onUnmounted(() => {
       info.rootEl.removeEventListener('displayonpanel', info.handlers.display);
       info.rootEl.removeEventListener('undo', info.handlers.display);
       info.rootEl.removeEventListener('triggerSave', info.handlers.triggerSave);
+      info.rootEl.removeEventListener('triggerCopy', info.handlers.triggerCopy);
+      info.rootEl.removeEventListener('triggerDelete', info.handlers.triggerDelete);
       info.rootEl.removeEventListener('triggerUndo', info.handlers.triggerUndo);
       info.rootEl.removeEventListener('gridCellEdited', info.handlers.gridCellEdited);
       info.rootEl.removeEventListener('setMode', info.handlers.setMode);
@@ -414,6 +509,48 @@ onUnmounted(() => {
         </button>
       </template>
     </InfoDialog>
+
+    <InfoDialog
+      v-model="showCopyDialog"
+      :title="ttt('Copy data')"
+      :message="
+        ttt('You are about to duplicate %s objects').replace('%s', copySelectedItems.length)
+      "
+      :details="copyDialogError"
+      :type="copyDialogError ? 'error' : 'info'"
+    >
+      <template #actions>
+        <button type="button" class="btn btn-gray" @click="showCopyDialog = false">
+          {{ ttt('Cancel') }}
+        </button>
+        <button type="button" class="btn btn-primary" @click="confirmCopy">
+          {{ ttt('Confirm') }}
+        </button>
+      </template>
+    </InfoDialog>
+
+    <InfoDialog
+      v-model="showDeleteDialog"
+      :title="ttt('Delete data')"
+      :message="
+        ttt('You are about to delete %s objects AND ALL RELATED RECORDS!').replace(
+          '%s',
+          deleteSelectedItems.length
+        )
+      "
+      :details="deleteDialogError"
+      :type="deleteDialogError ? 'error' : 'warning'"
+    >
+      <template #actions>
+        <button type="button" class="btn btn-gray" @click="showDeleteDialog = false">
+          {{ ttt('Cancel') }}
+        </button>
+        <button type="button" class="btn btn-primary" @click="confirmDelete">
+          {{ ttt('Confirm') }}
+        </button>
+      </template>
+    </InfoDialog>
+
     <KanbanBoard v-if="isKanbanMode" />
     <div
       v-for="col in preferences.widgets"

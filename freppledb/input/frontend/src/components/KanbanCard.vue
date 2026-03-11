@@ -40,7 +40,7 @@ const props = defineProps({
 const mode = window.mode;
 
 const editable = true;
-// eslint-disable-next-line no-undef
+
 const actions = window.actions;
 const calendarmode = 'duration';
 
@@ -99,7 +99,7 @@ function changeCard(opplan, field, oldValue, newValue) {
   const ref = opplan.reference || opplan.operationplan__reference;
   if (opplan.type === 'WO' && opplan.operationplan__status) {
     field = field === 'operationplan__status' ? 'status' : field;
-  };
+  }
 
   // Determine the old status (current status before change)
   const oldStatus = opplan.status || opplan.operationplan__status;

@@ -26,7 +26,7 @@ const { t: ttt } = useI18n({
 
 const store = useOperationplansStore();
 const editable = true;
-// eslint-disable-next-line no-undef
+ 
 const actions = window.actions;
 
 onMounted(async () => {

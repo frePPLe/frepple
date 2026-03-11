@@ -424,126 +424,23 @@
       </span>
       <i class="fa fa-wrench" data-bs-toggle="tooltip" data-bs-html="true"
          :title="ttt('Manufacturing Order')"></i>&nbsp;
-      <strong>{{ opplan.operationplan__reference || opplan.reference }}</strong>
-      &nbsp;
-      <i v-if="!editable || !isSelected(opplan.reference)" class="fa" :class="
-            opplan.status ==='confirmed' || opplan.operationplan__status ==='confirmed'
-              ? 'fa-lock'
-              : '' +
-                  ',' +
-                  (opplan.status ==='approved' || opplan.operationplan__status ==='approved')
-                ? 'fa-unlock-alt'
-                : '' +
-                    ',' +
-                    (opplan.status ==='proposed' || opplan.operationplan__status ==='proposed')
-                  ? 'fa-unlock'
-                  : '' +
-                      ',' +
-                      (opplan.status ==='completed' || opplan.operationplan__status ==='completed')
-                    ? 'fa-check'
-                    : '' +
-                        ',' +
-                        (opplan.status ==='closed' || opplan.operationplan__status ==='closed')
-                      ? 'fa-times'
-                      : ''
-          " aria-hidden="true"></i>
+      <strong>{{ opplan.operationplan__reference || opplan.reference }}</strong>&nbsp;
+      <i v-if="!editable || !isSelected(opplan.reference)" class="fa" :class="displayStatusIcon(opplan)"
+        aria-hidden="true"></i>
       <span class="btn-group" role="group" v-if="editable && isSelected(opplan.reference)">
-        <button v-if="!opplan.hasOwnProperty('operationplan__status')" type="button" class="btn btn-sm"
-                :class="[opplan.status ==='proposed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-                data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('proposed')" @click="
-              changeCard(opplan, 'status', opplan.status, 'proposed');
-              opplan.status = 'proposed';
-            ">
-          <i class="fa fa-unlock"></i>
-        </button>
-        <button v-if="!opplan.hasOwnProperty('operationplan__status')" type="button" class="btn btn-sm"
-                :class="[opplan.status ==='approved' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-                data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('approved')" @click="
-              changeCard(opplan, 'status', opplan.status, 'approved');
-              opplan.status = 'approved';
-            ">
-          <i class="fa fa-unlock-alt"></i>
-        </button>
-        <button v-if="!opplan.hasOwnProperty('operationplan__status')" type="button" class="btn btn-sm"
-                :class="[opplan.status ==='confirmed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-                data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('confirmed')" @click="
-              changeCard(opplan, 'status', opplan.status, 'confirmed');
-              opplan.status = 'confirmed';
-            ">
-          <i class="fa fa-lock"></i>
-        </button>
-        <button v-if="!opplan.hasOwnProperty('operationplan__status')" type="button" class="btn btn-sm"
-                :class="[opplan.status ==='completed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-                data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('completed')" @click="
-              changeCard(opplan, 'status', opplan.status, 'completed');
-              opplan.status = 'completed';
-            ">
-          <i class="fa fa-check"></i>
-        </button>
-        <button v-if="!opplan.hasOwnProperty('operationplan__status')" type="button" class="btn btn-sm"
-                :class="[opplan.status ==='closed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-                data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('closed')" @click="
-              changeCard(opplan, 'status', opplan.status, 'closed');
-              opplan.status = 'closed';
-            ">
-          <i class="fa fa-times"></i>
-        </button>
-        <button v-if="opplan.hasOwnProperty('operationplan__status')" type="button" class="btn btn-sm"
-                :class="[opplan.operationplan__status ==='proposed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-                data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('proposed')" @click="
-              changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'proposed');
-              opplan.operationplan__status = 'proposed';
-            ">
-          <i class="fa fa-unlock"></i>
-        </button>
-        <button v-if="opplan.hasOwnProperty('operationplan__status')" type="button" class="btn btn-sm"
-                :class="[opplan.operationplan__status ==='approved' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-                data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('approved')" @click="
-              changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'approved');
-              opplan.operationplan__status = 'approved';
-            ">
-          <i class="fa fa-unlock-alt"></i>
-        </button>
-        <button v-if="opplan.hasOwnProperty('operationplan__status')" type="button" class="btn btn-sm"
-                :class="[opplan.operationplan__status ==='confirmed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-                data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('confirmed')" @click="
-              changeCard(
-                opplan,
-                'operationplan__status',
-                opplan.operationplan__status,
-                'confirmed'
-              );
-              opplan.operationplan__status = 'confirmed';
-            ">
-          <i class="fa fa-lock"></i>
-        </button>
-        <button v-if="opplan.hasOwnProperty('operationplan__status')" type="button" class="btn btn-sm"
-                :class="[opplan.operationplan__status ==='completed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-                data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('completed')" @click="
-              changeCard(
-                opplan,
-                'operationplan__status',
-                opplan.operationplan__status,
-                'completed'
-              );
-              opplan.operationplan__status = 'completed';
-            ">
-          <i class="fa fa-check"></i>
-        </button>
-        <button v-if="opplan.hasOwnProperty('operationplan__status')" type="button" class="btn btn-sm"
-                :class="[opplan.operationplan__status ==='closed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-                data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('closed')" @click="
-              changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'closed');
-              opplan.operationplan__status = 'closed';
-            ">
-          <i class="fa fa-times"></i>
+        <button v-for="s in ['proposed','approved','confirmed','completed','closed']" :key="s" type="button"
+                class="btn btn-sm btn-primary"
+                :class="[getStatus(opplan) === s ? 'active' : '', store.isChanged(opplan.reference, 'status') && s === opplan.status ? 'btn-danger' : '']"
+                data-bs-toggle="tooltip" data-bs-html="true" :title="ttt(s)"
+                :disabled="actions.hasOwnProperty('erp_incr_export') || !editable" @click="setStatus(opplan, s)">
+          <i class="fa" :class="getStatusIcon(s)"></i>
         </button>
       </span>
     </p>
-    <p v-if="opplan.item__name || opplan.operationplan__item__name">
-      {{ opplan.item__name || opplan.operationplan__item__name }}&nbsp;
+    <p v-if="opplan.item__name || opplan.operationplan__item__name || opplan.item">
+      {{ opplan.item__name || opplan.operationplan__item__name || opplan.item }}&nbsp;
       <a @click.stop=""
-         :href="urlPrefix + '/detail/input/item/' + adminEscape(opplan.item__name || opplan.operationplan__item__name) + '/'">
+         :href="urlPrefix + '/detail/input/item/' + adminEscape(opplan.item__name || opplan.operationplan__item__name || opplan.item) + '/'">
         <i class="fa fa-caret-right"></i>
       </a>
     </p>
@@ -551,7 +448,6 @@
       {{ opplan.item__description || opplan.operationplan__item__description }}&nbsp;
     </p>
     <p>
-      <!--        this <P> has changes compared to angular -->
       {{ opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation }}&nbsp;
       <a @click.stop=""
          :href="urlPrefix + '/detail/input/operation/' + adminEscape(opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation) + '/'">
@@ -561,20 +457,21 @@
     <p v-if="opplan.operation__description || opplan.operationplan__operation__description">
       {{ opplan.operation__description || opplan.operationplan__operation__description }}&nbsp;
     </p>
-    <p
-        data-ng-class="{'dirty': opplan.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal')}">
+      <p :class="
+          opplan.hasOwnProperty('quantityOriginal') ||
+          opplan.hasOwnProperty('operationplan__quantityOriginal')
+            ? 'dirty'
+            : ''
+        ">
       <span v-if="!editable || !isSelected(opplan.reference)">{{
         numberFormat(opplan.operationplan__quantity || opplan.quantity)
         }}</span>
-      <input class="form-control"
-             :class="store.isChanged(opplan.reference, 'operationplan__quantity') ? 'ng-dirty' : ''" v-if="
+      <input class="form-control" :class="store.isChanged(opplan.reference, 'operationplan__quantity') ? 'ng-dirty' : ''" v-if="
             editable &&
             isSelected(opplan.reference) &&
             opplan.hasOwnProperty('operationplan__quantity')
-          " type="number" step="0" min="0" @focus="oldValue = opplan.operationplan__quantity"
-             v-model="opplan.operationplan__quantity" @input="
-            changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)
-          "/>
+          " type="number" step="0" min="0" @focus="oldValue = opplan.operationplan__quantity" v-model="opplan.operationplan__quantity"
+            @input="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)"/>
       <input class="form-control" :class="store.isChanged(opplan.reference, 'quantity') ? 'ng-dirty' : ''" v-if="
             editable &&
             isSelected(opplan.reference) &&

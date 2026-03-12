@@ -1434,35 +1434,33 @@ class AlertsWidget(Widget):
         entities = request.GET.get("entities", cls.entities).split(",")
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
-            '<thead><tr><th class="alignleft">%s</th><th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
+            '<thead><tr><th class="alignleft">%s</th><th class="text-center">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("type"))),
                 capfirst(force_str(_("count"))),
-                capfirst(force_str(_("weight"))),
             ),
         ]
         cursor = connections[request.database].cursor()
         query = """
-            select name, count(*), sum(weight)
+            select name, count(*)
             from out_problem
             where entity in (%s)
             group by name
             order by name
-        """ % (
+            """ % (
             ", ".join(["%s"] * len(entities))
         )
         cursor.execute(query, entities)
         alt = False
         for res in cursor.fetchall():
             result.append(
-                '<tr%s><td class="text-decoration-underline"><a href="%s/problem/?noautofilter&name=%s">%s</a></td><td class="text-center">%d</td><td class="text-center">%d</td></tr>'
+                '<tr%s><td class="text-decoration-underline"><a href="%s/problem/?noautofilter&name=%s">%s</a></td><td class="text-center">%d</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     request.prefix,
                     quote(res[0]),
                     res[0],
                     res[1],
-                    res[2],
                 )
             )
             alt = not alt
@@ -1471,16 +1469,6 @@ class AlertsWidget(Widget):
 
 
 Dashboard.register(AlertsWidget)
-
-
-class DemandAlertsWidget(AlertsWidget):
-    name = "demand_alerts"
-    title = _("demand alerts")
-    url = "/problem/?noautofilter&entity=demand"
-    entities = "demand"
-
-
-Dashboard.register(DemandAlertsWidget)
 
 
 class CapacityAlertsWidget(AlertsWidget):

@@ -716,12 +716,16 @@ class OdooSendRecommendations(PlanTask):
                     po_products.append(i.itemsupplier.item.name)
                     if not recommendation:
                         recommendation = "Stock replenishment"
+                    try:
+                        res_partner_id = int(
+                            i.itemsupplier.supplier.name.rsplit(" ", 1)[1]
+                        )
+                    except:
+                        res_partner_id = None
                     yield {
                         "tab": "purchase",
                         "type": "purchase",
-                        "res_partner_id": int(
-                            i.itemsupplier.supplier.name.rsplit(" ", 1)[1]
-                        ),
+                        "res_partner_id": res_partner_id,
                         "product_id": int(j.item.subcategory.split(",")[1]),
                         "startdate": j.start.isoformat(),
                         "enddate": j.end.isoformat(),
@@ -790,14 +794,18 @@ class OdooSendRecommendations(PlanTask):
                     mo_count += 1
                     if not recommendation:
                         recommendation = "Stock replenishment"
-
-                    if j.operation.category == "subcontractor":
+                    try:
+                        res_partner_id = int(j.operation.subcategory.rsplit(" ", 1)[-1])
+                    except:
+                        res_partner_id = None
+                    if (
+                        j.operation.category == "subcontractor"
+                        and j.status == "proposed"
+                    ):
                         yield {
                             "tab": "purchase",
                             "type": "purchase",
-                            "res_partner_id": int(
-                                j.operation.subcategory.rsplit(" ", 1)[-1]
-                            ),
+                            "res_partner_id": res_partner_id,
                             "product_id": int(
                                 j.operation.item.subcategory.split(",")[1]
                             ),

@@ -161,16 +161,14 @@ rect.opplan {
 
   function extraSearchUpdate(filter) {
     thefilter = filter;
+    initialfilter = filter;
   	if (preferences && preferences.mode == "kanban") {
-      initialfilter = filter;
   	  return true;
   	}
   	else if (preferences && preferences.mode == "gantt") {
-      initialfilter = filter;
   	  return true;
   	}
     else if (preferences && preferences.mode && preferences.mode.startsWith("calendar")) {
-      initialfilter = filter;
       return true;
     }
     return false;

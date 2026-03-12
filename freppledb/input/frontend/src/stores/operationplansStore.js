@@ -684,11 +684,17 @@ export const useOperationplansStore = defineStore('operationplans', {
 
       if (this.kanbancolumns.includes(statusKey)
       ) {
-        field = targetKeys.includes(field) ? field : field.includes('operationplan__') ? field.replace('operationplan__','') : 'operationplan__' + field;
-        if (['MO', 'DO'].includes(target.type) && field === 'quantity' ) {
-          field = 'operationplan__quantity';
+        let newField = targetKeys.includes(field) ? field : field.includes('operationplan__') ? field.replace('operationplan__','') : 'operationplan__' + newField;
+        if (['DO', 'MO', 'WO'].includes(target.type) && newField === 'quantity') {
+          if (['ResourceDetail', 'InventoryDetail'].includes(window.reportkey.split('.').pop()) || target.type === 'DO')
+            newField = 'operationplan__quantity';
         }
-        this.kanbanoperationplans[statusKey].rows.filter((x) => x.reference === id)[0][field] = value;
+        if (['DO', 'MO', 'WO'].includes(target.type) && newField === 'quantity_completed') {
+          if (['ResourceDetail', 'InventoryDetail'].includes(window.reportkey.split('.').pop()) || target.type === 'DO')
+            newField = 'operationplan__quantity_completed';
+        }
+        if (['DO', 'MO', 'WO'].includes(target.type) && newField === 'startdate') {}
+        this.kanbanoperationplans[statusKey].rows.filter((x) => x.reference === id)[0][newField] = value;
       }
     },
 

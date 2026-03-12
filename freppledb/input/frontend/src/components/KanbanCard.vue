@@ -38,6 +38,7 @@ const props = defineProps({
 });
 
 const mode = window.mode;
+const reportKey = window.reportkey.split('.').pop();
 
 const editable = true;
 

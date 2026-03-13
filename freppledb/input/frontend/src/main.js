@@ -1,7 +1,8 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import { createPinia } from "pinia";
-import { i18n } from '@/i18n/i18n.js'
+import { createApp } from 'vue';
+import App from './App.vue';
+import { createPinia } from 'pinia';
+import { i18n } from '@/i18n/i18n.js';
+import 'vue-cal/style.css';
 
 window.appInstance = null;
 

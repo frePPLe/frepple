@@ -27,6 +27,7 @@ import DownstreamCard from '@/components/DownstreamCard.vue';
 import UpstreamCard from '@/components/UpstreamCard.vue';
 import SupplyInformationCard from '@/components/SupplyInformationCard.vue';
 import KanbanBoard from '@/components/KanbanBoard.vue';
+import CalendarBoard from '@/components/CalendarBoard.vue';
 import { debounce } from '@common/utils.js';
 import InfoDialog from '@common/components/InfoDialog.vue';
 
@@ -87,6 +88,7 @@ const applyGridCellEditDebounced = debounce((payload) => {
 const preferences = computed(() => window.preferences || {});
 
 const isKanbanMode = computed(() => store.isKanbanMode);
+const isCalendarMode = computed(() => store.isCalendarMode);
 
 const unsavedChangesModal = ref(false);
 const showExportDialog = ref(false);
@@ -628,6 +630,7 @@ onUnmounted(() => {
     </InfoDialog>
 
     <KanbanBoard v-if="isKanbanMode" />
+    <CalendarBoard v-if="isCalendarMode" />
     <div
       v-for="col in preferences.widgets"
       :key="col.name"

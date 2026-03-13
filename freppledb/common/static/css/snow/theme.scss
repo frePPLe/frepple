@@ -1,7 +1,7 @@
-$light: #E5E7EF;
+$light: #e5e7ef;
 $dark: $light;
 
-$primary: #A3997C;
+$primary: #a3997c;
 $secondary: lighten($light, 5%);
 $success: #508513;
 $info: #03a9f4;
@@ -21,7 +21,7 @@ $gray-900: #212529 !default;
 $black: #000 !default;
 
 // Body background
-$body-bg: #ECECEC;
+$body-bg: #ececec;
 
 // Table color
 $table-color: #333;
@@ -39,31 +39,33 @@ $navbar-brand-height: 3rem;
 
 // Fonts
 $font-size-base: 0.8rem;
-$font-family-sans-serif: 'FontAwesome', 'Open sans', Helvetica, Verdana, Arial, sans-serif;
-$font-family-monospace: 'FontAwesome', Menlo, Monaco, Consolas, "Courier New", monospace;
+$font-family-sans-serif:
+  "FontAwesome", "Open sans", Helvetica, Verdana, Arial, sans-serif;
+$font-family-monospace:
+  "FontAwesome", Menlo, Monaco, Consolas, "Courier New", monospace;
 $body-color: #333333;
 
 // Grid breakpoints
 $grid-breakpoints: (
-    xs: 0,
-    sm: 576px,
-    md: 768px,
-    lg: 1050px,
-    // Increased from the default 992px to account for the wide navbar
-    xl: 1200px,
-    xxl: 1400px
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 1050px,
+  // Increased from the default 992px to account for the wide navbar
+  xl: 1200px,
+  xxl: 1400px,
 );
 
 $theme-colors: (
-    "primary": $primary,
-    "secondary": $secondary,
-    "success": $success,
-    "info": $info,
-    "warning": $warning,
-    "danger": $danger,
-    "light": $light,
-    "dark": $dark,
-    "gray": $gray-600
+  "primary": $primary,
+  "secondary": $secondary,
+  "success": $success,
+  "info": $info,
+  "warning": $warning,
+  "danger": $danger,
+  "light": $light,
+  "dark": $dark,
+  "gray": $gray-600,
 );
 
 // You probably don't need to update the variables below this line.
@@ -101,3 +103,35 @@ $nav-link-color: $body-color;
 $nav-tabs-border-color: $light;
 $nav-tabs-border-radius: 0;
 $spacer: 1rem;
+
+// vue-cal overrides
+.vuecal-frepple {
+  font-family: $font-family-sans-serif;
+  font-size: $font-size-base;
+
+  .vuecal__title-bar {
+    background-color: $primary;
+    color: white;
+    font-size: $font-size-base;
+  }
+
+  .vuecal__btn {
+    color: $body-color;
+    background: transparent;
+    border: none;
+  }
+
+  .vuecal__cell--today {
+    background-color: rgba($primary, 0.1);
+  }
+
+  .vuecal__cell--selected {
+    background-color: rgba($primary, 0.2);
+  }
+
+  .vuecal__event {
+    background-color: $primary;
+    color: white;
+    border-radius: 4px;
+  }
+}

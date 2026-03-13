@@ -1,0 +1,5 @@
+/**
+  * vue-cal v5.0.1-rc.40
+  * (c) 2024-2026 Antoni Andre <antoniandre.web@gmail.com>
+  * @license MIT
+  */const a=["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"],e=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"],s=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"],t=["Января","Февраля","Марта","Апреля","Мая","Июня","Июля","Августа","Сентября","Октября","Ноября","Декабря"],n="Годы",k="Год",o="Месяц",y="Неделя",w="Дни",d="День",r="Сегодня",h="Нет событий",m="Весь день",v="Удалить",l="Создать событие",D="dddd D MMMM YYYY",E={weekDays:a,weekDaysShort:e,months:s,monthsGenitive:t,years:n,year:"Год",month:o,week:y,days:"Дни",day:d,today:r,noEvent:h,allDay:m,deleteEvent:v,createEvent:l,dateFormat:D};export{m as allDay,l as createEvent,D as dateFormat,d as day,w as days,E as default,v as deleteEvent,o as month,s as months,t as monthsGenitive,h as noEvent,r as today,y as week,a as weekDays,e as weekDaysShort,k as year,n as years};

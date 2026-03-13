@@ -174,16 +174,16 @@ rect.opplan {
     return false;
   }
 
-  function setHeights() {
-      var initializing = jQuery('.column-body.d-none').length > 0;
-      var saved = window.preferences && window.preferences.height;
-      var h = (initializing && saved) ? Math.floor(saved) : jQuery('#content-main').height();
+  function setHeights(e, $el, opt) {
+      // If called from the resizable plugin, $el is #content-main
+      // If called manually, we use the current height of the element
+      var h = ($el && $el.height) ? $el.height() : jQuery('#content-main').height();
 
       jQuery('#grid').setGridWidth(jQuery('#content-main').width());
       jQuery('#grid').setGridHeight(h - 60);
 
-      // Initialize and then maintain Kanban column heights
       jQuery('.column-body').removeClass('d-none').css('height', h - 60);
+      jQuery('#calendar .calendar-vuecal').css('height', h - 60);
   }
 
   function setWidths() {
@@ -235,6 +235,9 @@ rect.opplan {
       resizeHeight: true,
       onDrag: setHeights,
       onDragEnd: function (e, $el, opt) {
+        if (typeof preferences !== 'undefined') {
+          preferences.height = Math.floor(jQuery("#content-main").height());
+        }
         grid.saveColumnConfiguration();
       }
     });
@@ -321,13 +324,6 @@ rect.opplan {
       });
     });
     jQuery("#calendarmonth").on('click', function() {
-      // mode = "calendarmonth";
-      // const event = new CustomEvent("setMode", {
-      //   detail: { mode: "calendarmonth" }
-      // });
-      // document.getElementById('app').dispatchEvent(event);
-      // setVisibleByMode('calendar');
-      // setActiveButton('calendarmode');
       attemptModeChange('calendarmonth', function () {
         preferences.height = Math.floor(jQuery("#content-main").height());
         mode = "calendarmonth";
@@ -335,9 +331,10 @@ rect.opplan {
             detail: {mode: "calendarmonth"}
         });
         document.getElementById('app').dispatchEvent(event);
+        setVisibleByMode(mode.startsWith('calendar') ? 'calendar' : mode);
 
         grid.saveColumnConfiguration(function () {
-          location.reload();
+          // No page reload - Vue handles calendar mode
         });
       });
     });
@@ -349,9 +346,10 @@ rect.opplan {
           detail: {mode: "calendarweek"}
         });
         document.getElementById('app').dispatchEvent(event);
+        setVisibleByMode(mode.startsWith('calendar') ? 'calendar' : mode);
 
         grid.saveColumnConfiguration(function () {
-          location.reload();
+          // No page reload - Vue handles calendar mode
         });
       });
     });
@@ -363,9 +361,10 @@ rect.opplan {
           detail: {mode: "calendarday"}
         });
         document.getElementById('app').dispatchEvent(event);
+        setVisibleByMode(mode.startsWith('calendar') ? 'calendar' : mode);
 
         grid.saveColumnConfiguration(function () {
-          location.reload();
+          // No page reload - Vue handles calendar mode
         });
       });
     });
@@ -415,31 +414,6 @@ rect.opplan {
 
   jQuery("#workarea").css('overflow-x', 'visible');
   jQuery("#resize-handle").css({ 'display': 'inline-block' });
-
-  jQuery("#content-main").resizable({
-    handleSelector: "#resize-handle",
-    resizeWidth: false,
-    resizeHeight: true,
-    onDrag: function (e, $el, opt) {
-      jQuery("#grid").setGridHeight(jQuery("#content-main").height() - 52);
-
-      // Notify Vue about new height so it can update the store
-      const newHeight = Math.floor(jQuery("#content-main").height());
-      document.getElementById('app')?.dispatchEvent(
-              new CustomEvent('setRowHeight', { detail: { height: newHeight, source: 'drag' } })
-      );
-    },
-    onDragEnd: function (e, $el, opt) {
-      if (typeof grid !== 'undefined' && typeof grid.saveColumnConfiguration === 'function') {
-        grid.saveColumnConfiguration();
-      }
-      // Persist preference through Vue store
-      const newHeight = Math.floor(jQuery("#content-main").height());
-      document.getElementById('app')?.dispatchEvent(
-              new CustomEvent('setRowHeight', { detail: { height: newHeight, source: 'dragend' } })
-      );
-    }
-  });
 
   // Set jqGrid single select behavior
   jQuery("#grid").jqGrid("setGridParam", { singleSelectClickMode: "selectonly" });
@@ -693,6 +667,13 @@ loadComplete: function(data) {
       }
     });
     document.getElementById('app').dispatchEvent(event);
+  }
+
+  if (window.preferences && window.preferences.height) {
+      const h = Math.max(150, Math.floor(window.preferences.height));
+      jQuery('#content-main').css('height', h + 'px');
+      // Now setHeights() will pick up the height we just set on #content-main
+      setHeights();
   }
 </script>
 {% endblock %}

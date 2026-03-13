@@ -115,10 +115,10 @@ export const useOperationplansStore = defineStore('operationplans', {
   }),
 
   getters: {
-    isTableMode: (window) => window.mode === 'table',
-    isKanbanMode: (window) => window.mode === 'kanban',
-    isGanttMode: (window) => window.mode === 'gantt',
-    isCalendarMode: (window) => window.mode.startsWith('calendar'),
+    isTableMode: (state) => state.mode === 'table',
+    isKanbanMode: (state) => state.mode === 'kanban',
+    isGanttMode: (state) => state.mode === 'gantt',
+    isCalendarMode: (state) => state.mode.startsWith('calendar'),
     hasSelected: (state) => state.selectedOperationplans?.length > 0,
     hasChanges(state) {
       return Object.keys(state.operationplanChanges).length > 0;
@@ -157,6 +157,11 @@ export const useOperationplansStore = defineStore('operationplans', {
     setCalendarMode(newCalendarMode) {
       this.calendarmode = newCalendarMode;
       this.preferences.calendarmode = newCalendarMode;
+    },
+
+    setGrouping(newGrouping) {
+      this.grouping = newGrouping;
+      this.preferences.grouping = newGrouping;
     },
 
     isChanged(reference, field = null) {
@@ -498,20 +503,28 @@ export const useOperationplansStore = defineStore('operationplans', {
       }
       if (!changes || Object.keys(changes).length === 0) return;
 
-      changes.map(x => {
+      changes.map((x) => {
         delete x.end;
         delete x.start;
         // delete x.id;
-        if (x.startdate) {x.startdate = x.startdate.replace('T', ' ')};
-        if (x.enddate) {x.enddate = x.enddate.replace('T', ' ')};
-        if (x.operationplan__startdate) {x.operationplan__startdate = x.startdate.replace('T', ' ')};
-        if (x.operationplan__enddate) {x.operationplan__enddate = x.operationplan__enddate.replace('T', ' ')};
-        return x
-      })
+        if (x.startdate) {
+          x.startdate = x.startdate.replace('T', ' ');
+        }
+        if (x.enddate) {
+          x.enddate = x.enddate.replace('T', ' ');
+        }
+        if (x.operationplan__startdate) {
+          x.operationplan__startdate = x.startdate.replace('T', ' ');
+        }
+        if (x.operationplan__enddate) {
+          x.operationplan__enddate = x.operationplan__enddate.replace('T', ' ');
+        }
+        return x;
+      });
 
       try {
-        await operationplanService.postOperationplanDetails(changes)
-        this.undo()
+        await operationplanService.postOperationplanDetails(changes);
+        this.undo();
       } catch (e) {
         this.setError({
           title: 'Save failed',
@@ -682,19 +695,17 @@ export const useOperationplansStore = defineStore('operationplans', {
       const target = this.kanbanoperationplans[statusKey].rows.filter((x) => x.reference === id)[0];
       const targetKeys = Object.keys(target);
 
-      if (this.kanbancolumns.includes(statusKey)
-      ) {
-        let newField = targetKeys.includes(field) ? field : field.includes('operationplan__') ? field.replace('operationplan__','') : 'operationplan__' + newField;
-        if (['DO', 'MO', 'WO'].includes(target.type) && newField === 'quantity') {
-          if (['ResourceDetail', 'InventoryDetail'].includes(window.reportkey.split('.').pop()) || target.type === 'DO')
-            newField = 'operationplan__quantity';
+      if (this.kanbancolumns.includes(statusKey)) {
+        field = targetKeys.includes(field)
+          ? field
+          : field.includes('operationplan__')
+            ? field.replace('operationplan__', '')
+            : 'operationplan__' + field;
+        if (['MO', 'DO'].includes(target.type) && field === 'quantity') {
+          field = 'operationplan__quantity';
         }
-        if (['DO', 'MO', 'WO'].includes(target.type) && newField === 'quantity_completed') {
-          if (['ResourceDetail', 'InventoryDetail'].includes(window.reportkey.split('.').pop()) || target.type === 'DO')
-            newField = 'operationplan__quantity_completed';
-        }
-        if (['DO', 'MO', 'WO'].includes(target.type) && newField === 'startdate') {}
-        this.kanbanoperationplans[statusKey].rows.filter((x) => x.reference === id)[0][newField] = value;
+        this.kanbanoperationplans[statusKey].rows.filter((x) => x.reference === id)[0][field] =
+          value;
       }
     },
 

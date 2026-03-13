@@ -200,6 +200,9 @@ importers:
       vue:
         specifier: ^3.5.13
         version: 3.5.21(typescript@5.8.2)
+      vue-cal:
+        specifier: next
+        version: 5.0.1-rc.40(vue@3.5.21(typescript@5.8.2))
       vue-i18n:
         specifier: ^9.14.5
         version: 9.14.5(vue@3.5.21(typescript@5.8.2))
@@ -3617,6 +3620,11 @@ packages:
   void-elements@3.1.0:
     resolution: {integrity: sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==}
     engines: {node: '>=0.10.0'}
+
+  vue-cal@5.0.1-rc.40:
+    resolution: {integrity: sha512-OirrwhxT2aWwhTpYu18R9ZFBHYIkA3UOnD+IsjBpqsM5fudMa3Dn17Jw/05gPpf1F4qslEOQWMcK2ZYN20CTjQ==}
+    peerDependencies:
+      vue: ^3.5.11
 
   vue-eslint-parser@10.0.0:
     resolution: {integrity: sha512-xGtmOQJzWUIi6opA7CfJTJsJyCRjibJKHNzq39yqJ/f4AJ+N7Ngr7lDZMl/9ePaobBnsZgifu+7G6bST+gaYJA==}
@@ -7329,6 +7337,10 @@ snapshots:
 
   void-elements@3.1.0:
     optional: true
+
+  vue-cal@5.0.1-rc.40(vue@3.5.21(typescript@5.8.2)):
+    dependencies:
+      vue: 3.5.21(typescript@5.8.2)
 
   vue-eslint-parser@10.0.0(eslint@9.23.0(jiti@2.4.2)):
     dependencies:

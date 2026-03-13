@@ -277,15 +277,23 @@ rect.opplan {
 
     });
     jQuery("#actionsul li, button#actions1").on('click', function() {
-      const event = new CustomEvent("refreshStatus", {
-        detail: {
-          execute: 'refreshStatus',
-          reference: null,
-          status: jQuery("#actions").val(),
-          selectedRows: null,
-        }
-      });
-      document.getElementById('app').dispatchEvent(event);
+      const action = jQuery("#actions").val();
+      if (mode === 'kanban' && action === 'erp_incr_export') {
+        const event = new CustomEvent("triggerERPExport", {
+          detail: { mode: mode }
+        });
+        document.getElementById('app').dispatchEvent(event);
+      } else {
+        const event = new CustomEvent("refreshStatus", {
+          detail: {
+            execute: 'refreshStatus',
+            reference: null,
+            status: action,
+            selectedRows: null,
+          }
+        });
+        document.getElementById('app').dispatchEvent(event);
+      }
     });
     jQuery("#gridmode").on('click', function() {
       attemptModeChange('table', function() {

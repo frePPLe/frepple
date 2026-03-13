@@ -89,6 +89,9 @@ const preferences = computed(() => window.preferences || {});
 const isKanbanMode = computed(() => store.isKanbanMode);
 
 const unsavedChangesModal = ref(false);
+const showExportDialog = ref(false);
+const exportDialogError = ref('');
+const exporting = ref(false);
 
 let pendingModeChange = null;
 
@@ -222,6 +225,60 @@ function shouldShowWidget(widgetName) {
     (widgetConditions[widgetName] && widgetConditions[widgetName]())
   );
 }
+
+const handleERPExport = () => {
+  const op = store.operationplan;
+  if (!op || !op.reference) return;
+
+  const status = op.status || op.operationplan__status;
+  if (!['proposed', 'approved', 'confirmed'].includes(status)) {
+    exportDialogError.value = ttt('No records with status proposed, approved or confirmed');
+    showExportDialog.value = true;
+    exporting.value = true;
+    return;
+  }
+
+  showExportDialog.value = true;
+  exportDialogError.value = '';
+  exporting.value = false;
+};
+
+const confirmExport = async () => {
+  const op = store.operationplan;
+  if (!op || !op.reference) return;
+
+  const status = op.status || op.operationplan__status;
+  if (!['proposed', 'approved', 'confirmed'].includes(status)) {
+    exporting.value = true;
+    return;
+  }
+
+  exporting.value = true;
+
+  try {
+    const response = await $.ajax({
+      url: window.url_prefix + '/erp/upload/',
+      data: JSON.stringify([op]),
+      type: 'POST',
+      contentType: 'application/json',
+    });
+
+    if (response && response.result && response.result[0] && response.result[0].status === 'ok') {
+      exportDialogError.value = '';
+    } else if (response && response.result && response.result[0] && response.result[0].messages) {
+      exportDialogError.value = response.result[0].messages.join('\n');
+    }
+  } catch (err) {
+    if (err.responseJSON && err.responseJSON.detail) {
+      exportDialogError.value = err.responseJSON.detail;
+    } else if (err.responseText) {
+      exportDialogError.value = err.responseText;
+    } else {
+      exportDialogError.value = err.statusText || ttt('Export failed');
+    }
+  }
+  exporting.value = true;
+};
 
 onMounted(() => {
   const saveHeightPrefDebounced = debounce(() => {
@@ -437,6 +494,7 @@ onMounted(() => {
   rootEl.addEventListener('triggerUndo', handleTriggerUndo);
   rootEl.addEventListener('gridCellEdited', handleGridCellEdited);
   rootEl.addEventListener('refreshStatus', handleRefreshStatus);
+  rootEl.addEventListener('triggerERPExport', handleERPExport);
   rootEl.addEventListener('hidden.bs.collapse', grid.saveColumnConfiguration);
   rootEl.addEventListener('shown.bs.collapse', grid.saveColumnConfiguration);
   rootEl.addEventListener('setMode', handleSetMode);
@@ -458,6 +516,7 @@ onMounted(() => {
       triggerUndo: handleTriggerUndo,
       gridCellEdited: handleGridCellEdited,
       refreshStatus: handleRefreshStatus,
+      triggerERPExport: handleERPExport,
       setMode: handleSetMode,
       handleSetRowHeight: handleSetRowHeight,
       attemptModeChange: handleAttemptModeChange,
@@ -546,6 +605,23 @@ onUnmounted(() => {
           {{ ttt('Cancel') }}
         </button>
         <button type="button" class="btn btn-primary" @click="confirmDelete">
+          {{ ttt('Confirm') }}
+        </button>
+      </template>
+    </InfoDialog>
+
+    <InfoDialog
+      v-model="showExportDialog"
+      :title="ttt('Export')"
+      :message="ttt('Export selected records?')"
+      :details="exportDialogError"
+      :type="exportDialogError ? 'error' : 'info'"
+    >
+      <template #actions>
+        <button type="button" class="btn btn-gray" @click="showExportDialog = false">
+          {{ exporting ? ttt('Close') : ttt('Cancel') }}
+        </button>
+        <button v-if="!exporting" type="button" class="btn btn-primary" @click="confirmExport">
           {{ ttt('Confirm') }}
         </button>
       </template>

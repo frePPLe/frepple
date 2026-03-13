@@ -329,39 +329,38 @@ export const useOperationplansStore = defineStore('operationplans', {
       if (!this.kanbancolumns.includes(newStatus)) return;
       if (oldStatus === newStatus) return;
 
-      const oldColumn = this.kanbanoperationplans[oldStatus];
-      const newColumn = this.kanbanoperationplans[newStatus];
+      // We need to check all columns because multiple cards with same reference
+      // might exist in different status columns
+      // or at least ensure we move ALL matching cards from the oldStatus column.
 
+      const oldColumn = this.kanbanoperationplans[oldStatus];
       if (!oldColumn || !oldColumn.rows) return;
 
-      // Find the card in the old column
-      const cardIndex = oldColumn.rows.findIndex((row) => row.reference == reference);
-      if (cardIndex === -1) {
-        console.error('Card not found in source column:', reference);
-        return;
+      // Find all matching cards
+      let cardIndex;
+      while ((cardIndex = oldColumn.rows.findIndex((row) => row.reference == reference)) !== -1) {
+        // Remove from old column
+        const cardData = oldColumn.rows.splice(cardIndex, 1)[0];
+
+        // Update status fields
+        cardData.status = newStatus;
+        if (Object.prototype.hasOwnProperty.call(cardData, 'operationplan__status')) {
+          cardData.operationplan__status = newStatus;
+        }
+        cardData.dirty = true;
+
+        // Ensure new column exists
+        if (!this.kanbanoperationplans[newStatus]) {
+          this.kanbanoperationplans[newStatus] = { rows: [], records: 0 };
+        }
+
+        // Add to new column
+        this.kanbanoperationplans[newStatus].rows.unshift(cardData);
+
+        // Update counters
+        oldColumn.records--;
+        this.kanbanoperationplans[newStatus].records++;
       }
-
-      // Remove from old column
-      const cardData = oldColumn.rows.splice(cardIndex, 1)[0];
-
-      // Update status fields
-      cardData.status = newStatus;
-      if (Object.prototype.hasOwnProperty.call(cardData, 'operationplan__status')) {
-        cardData.operationplan__status = newStatus;
-      }
-      cardData.dirty = true;
-
-      // Ensure new column exists
-      if (!newColumn) {
-        this.kanbanoperationplans[newStatus] = { rows: [], records: 0 };
-      }
-
-      // Add to new column
-      this.kanbanoperationplans[newStatus].rows.unshift(cardData);
-
-      // Update counters
-      oldColumn.records--;
-      this.kanbanoperationplans[newStatus].records++;
     },
 
     setFrozenColumns(frozen) {
@@ -503,28 +502,20 @@ export const useOperationplansStore = defineStore('operationplans', {
       }
       if (!changes || Object.keys(changes).length === 0) return;
 
-      changes.map((x) => {
+      changes.map(x => {
         delete x.end;
         delete x.start;
         // delete x.id;
-        if (x.startdate) {
-          x.startdate = x.startdate.replace('T', ' ');
-        }
-        if (x.enddate) {
-          x.enddate = x.enddate.replace('T', ' ');
-        }
-        if (x.operationplan__startdate) {
-          x.operationplan__startdate = x.startdate.replace('T', ' ');
-        }
-        if (x.operationplan__enddate) {
-          x.operationplan__enddate = x.operationplan__enddate.replace('T', ' ');
-        }
-        return x;
-      });
+        if (x.startdate) {x.startdate = x.startdate.replace('T', ' ')};
+        if (x.enddate) {x.enddate = x.enddate.replace('T', ' ')};
+        if (x.operationplan__startdate) {x.operationplan__startdate = x.startdate.replace('T', ' ')};
+        if (x.operationplan__enddate) {x.operationplan__enddate = x.operationplan__enddate.replace('T', ' ')};
+        return x
+      })
 
       try {
-        await operationplanService.postOperationplanDetails(changes);
-        this.undo();
+        await operationplanService.postOperationplanDetails(changes)
+        this.undo()
       } catch (e) {
         this.setError({
           title: 'Save failed',
@@ -692,20 +683,35 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     setKanbanCardValue(id, field, statusKey, value) {
-      const target = this.kanbanoperationplans[statusKey].rows.filter((x) => x.reference === id)[0];
-      const targetKeys = Object.keys(target);
+      // Iterate through all columns to find all cards with the same reference
+      for (const columnKey in this.kanbanoperationplans) {
+        const column = this.kanbanoperationplans[columnKey];
+        if (!column || !column.rows) continue;
 
-      if (this.kanbancolumns.includes(statusKey)) {
-        field = targetKeys.includes(field)
-          ? field
-          : field.includes('operationplan__')
-            ? field.replace('operationplan__', '')
-            : 'operationplan__' + field;
-        if (['MO', 'DO'].includes(target.type) && field === 'quantity') {
-          field = 'operationplan__quantity';
-        }
-        this.kanbanoperationplans[statusKey].rows.filter((x) => x.reference === id)[0][field] =
-          value;
+        const targets = column.rows.filter((x) => x.reference === id);
+
+        targets.forEach((target) => {
+          const targetKeys = Object.keys(target);
+
+          // Determine the correct field name (handling operationplan__ prefix)
+          let newField = targetKeys.includes(field)
+            ? field
+            : field.includes('operationplan__')
+              ? field.replace('operationplan__', '')
+              : 'operationplan__' + field;
+
+          // Special handling for quantity fields based on record type
+          if (['DO', 'MO', 'WO'].includes(target.type)) {
+            if (newField === 'quantity' || newField === 'quantity_completed') {
+              if (['ResourceDetail', 'InventoryDetail'].includes(window.reportkey.split('.').pop()) || target.type === 'DO') {
+                newField = 'operationplan__' + newField.replace('operationplan__', '');
+              }
+            }
+          }
+
+          // Update the value on the card
+          target[newField] = value;
+        });
       }
     },
 

@@ -656,6 +656,7 @@ void Problem::List::clean(Demand* d) const {
   if (constraints.empty()) return;
 
   map<Operation*, bool> critical_path;
+  Duration critical_path_duration;
   Date start_critical_path = Date::infiniteFuture;
   vector<OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
   short lvl_prev = -1;
@@ -680,20 +681,21 @@ void Problem::List::clean(Demand* d) const {
       for (auto lvl_cnt = lvl_prev; lvl_cnt >= 0; --lvl_cnt) {
         if (!opplans[lvl_cnt]) continue;
         if (!in_critical_path) {
-          for (auto p = constraints.begin();
-               p != constraints.end() && !in_critical_path; ++p) {
+          for (auto cstrt = constraints.begin();
+               cstrt != constraints.end() && !in_critical_path; ++cstrt) {
             Operation* oper = nullptr;
-            if (p->hasType<ConstraintDistributionLeadTime,
-                           ConstraintManufacturingLeadTime,
-                           ConstraintPurchasingLeadTime>())
-              oper = static_cast<Operation*>(p->getOwner());
-            else if (p->hasType<ProblemCapacityOverload>())
-              oper = static_cast<ProblemCapacityOverload*>(&*p)->getOperation();
-            else if (p->hasType<ProblemAwaitSupply>()) {
-              if (p->getOwner()->hasType<Operation>())
-                oper = static_cast<Operation*>(p->getOwner());
-              else if (p->getOwner()->hasType<Buffer>()) {
-                auto* b = static_cast<Buffer*>(p->getOwner());
+            if (cstrt->hasType<ConstraintDistributionLeadTime,
+                               ConstraintManufacturingLeadTime,
+                               ConstraintPurchasingLeadTime>())
+              oper = static_cast<Operation*>(cstrt->getOwner());
+            else if (cstrt->hasType<ProblemCapacityOverload>())
+              oper = static_cast<ProblemCapacityOverload*>(&*cstrt)
+                         ->getOperation();
+            else if (cstrt->hasType<ProblemAwaitSupply>()) {
+              if (cstrt->getOwner()->hasType<Operation>())
+                oper = static_cast<Operation*>(cstrt->getOwner());
+              else if (cstrt->getOwner()->hasType<Buffer>()) {
+                auto* b = static_cast<Buffer*>(cstrt->getOwner());
                 if (b->getItem() ==
                         opplans[lvl_cnt]->getOperation()->getItem() &&
                     b->getLocation() ==
@@ -701,9 +703,18 @@ void Problem::List::clean(Demand* d) const {
                   oper = opplans[lvl_cnt]->getOperation();
               }
             }
+
+            Duration branch_duration;
+            for (auto c = lvl_cnt; c >= 0; --c)
+              if (opplans[c])
+                branch_duration +=
+                    opplans[c]->getEnd() - opplans[c]->getStart();
+
             if (oper && oper == opplans[lvl_cnt]->getOperation() &&
-                opplans[lvl_cnt]->getStart() < start_critical_path) {
+                (branch_duration > critical_path_duration ||
+                 opplans[lvl_cnt]->getStart() < start_critical_path)) {
               // New critical path identified
+              critical_path_duration = branch_duration;
               start_critical_path = opplans[lvl_cnt]->getStart();
               if (!critical_path.empty()) critical_path.clear();
               in_critical_path = true;
@@ -724,34 +735,41 @@ void Problem::List::clean(Demand* d) const {
   }
 
   // Evaluate the final end-to-end path.
-  if (lvl_prev > 0) {
+  if (lvl_prev >= 0) {
     bool in_critical_path = false;
     for (auto lvl_cnt = lvl_prev; lvl_cnt >= 0; --lvl_cnt) {
       if (!in_critical_path) {
-        for (auto p = constraints.begin();
-             p != constraints.end() && !in_critical_path; ++p) {
+        for (auto cstrt = constraints.begin();
+             cstrt != constraints.end() && !in_critical_path; ++cstrt) {
           Operation* oper = nullptr;
-          if (p->hasType<ConstraintDistributionLeadTime,
-                         ConstraintManufacturingLeadTime,
-                         ConstraintPurchasingLeadTime>())
-            oper = static_cast<Operation*>(p->getOwner());
-          else if (p->hasType<ProblemCapacityOverload>())
-            oper = static_cast<ProblemCapacityOverload*>(&*p)->getOperation();
-          else if (p->hasType<ProblemAwaitSupply>()) {
-            if (p->getOwner()->hasType<Operation>())
-              oper = static_cast<Operation*>(p->getOwner());
-            else if (p->getOwner()->hasType<Buffer>()) {
-              auto* b = static_cast<Buffer*>(p->getOwner());
+          if (cstrt->hasType<ConstraintDistributionLeadTime,
+                             ConstraintManufacturingLeadTime,
+                             ConstraintPurchasingLeadTime>())
+            oper = static_cast<Operation*>(cstrt->getOwner());
+          else if (cstrt->hasType<ProblemCapacityOverload>())
+            oper =
+                static_cast<ProblemCapacityOverload*>(&*cstrt)->getOperation();
+          else if (cstrt->hasType<ProblemAwaitSupply>()) {
+            if (cstrt->getOwner()->hasType<Operation>())
+              oper = static_cast<Operation*>(cstrt->getOwner());
+            else if (cstrt->getOwner()->hasType<Buffer>()) {
+              auto* b = static_cast<Buffer*>(cstrt->getOwner());
               if (b->getItem() == opplans[lvl_cnt]->getOperation()->getItem() &&
                   b->getLocation() ==
                       opplans[lvl_cnt]->getOperation()->getLocation())
                 oper = opplans[lvl_cnt]->getOperation();
             }
           }
+
+          Duration branch_duration;
+          for (auto c = lvl_cnt; c >= 0; --c)
+            if (opplans[c])
+              branch_duration += opplans[c]->getEnd() - opplans[c]->getStart();
           if (oper && oper == opplans[lvl_cnt]->getOperation() &&
-              opplans[lvl_cnt]->getStart() < start_critical_path) {
+              (branch_duration > critical_path_duration ||
+               opplans[lvl_cnt]->getStart() < start_critical_path)) {
             // New critical path identified
-            start_critical_path = opplans[lvl_cnt]->getStart();
+            critical_path_duration = branch_duration;
             if (!critical_path.empty()) critical_path.clear();
             in_critical_path = true;
           }
@@ -769,16 +787,16 @@ void Problem::List::clean(Demand* d) const {
 
   // Critical path is now identified.
   // Now remove any constraint that is not on that path.
-  for (auto p = constraints.begin(); p != constraints.end();) {
+  for (auto cstrt = constraints.begin(); cstrt != constraints.end();) {
     bool keep = true;
-    if (p->hasType<ConstraintDistributionLeadTime,
-                   ConstraintManufacturingLeadTime,
-                   ConstraintPurchasingLeadTime>()) {
-      auto* oper = static_cast<Operation*>(p->getOwner());
+    if (cstrt->hasType<ConstraintDistributionLeadTime,
+                       ConstraintManufacturingLeadTime,
+                       ConstraintPurchasingLeadTime>()) {
+      auto* oper = static_cast<Operation*>(cstrt->getOwner());
       auto found = critical_path.find(oper);
       if (found == critical_path.end() || !found->second) keep = false;
-    } else if (p->hasType<ProblemCapacityOverload>()) {
-      auto res = static_cast<Resource*>(p->getOwner());
+    } else if (cstrt->hasType<ProblemCapacityOverload>()) {
+      auto res = static_cast<Resource*>(cstrt->getOwner());
       keep = false;
       for (auto& o : critical_path) {
         for (const auto& ld : o.first->getLoads()) {
@@ -789,19 +807,19 @@ void Problem::List::clean(Demand* d) const {
         }
         if (keep) break;
       }
-    } else if (p->hasType<ProblemAwaitSupply>()) {
-      auto ow = p->getOwner();
+    } else if (cstrt->hasType<ProblemAwaitSupply>()) {
+      auto ow = cstrt->getOwner();
       if (ow->hasType<Buffer>()) {
       } else if (ow->hasType<Operation>()) {
         if (!critical_path.contains(static_cast<Operation*>(ow))) keep = false;
       }
     }
     if (keep)
-      ++p;
+      ++cstrt;
     else {
-      auto tmp = &*p;
+      auto tmp = &*cstrt;
       constraints.unlink(tmp);
-      ++p;
+      ++cstrt;
       delete tmp;
     }
   }

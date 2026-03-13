@@ -759,7 +759,7 @@
             ? 'dirty'
             : ''
         "
-    >{{opplan.quantity}}x{{opplan.operationplan__quantity}}x{{reportKey}}
+    >
       <span v-if="!editable || !isSelected(opplan.reference)"
         >{{ numberFormat(opplan.operationplan__quantity || opplan.quantity)
         }}</span

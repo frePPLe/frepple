@@ -1,0 +1,1490 @@
+.vuecal__header {
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none
+}
+
+.vuecal__views-bar {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: center
+}
+
+.vuecal__title-bar {
+    display: flex
+}
+
+.vuecal__header .vuecal__transition-wrap {
+    position: relative;
+    flex-grow: 1;
+    min-height: 1px
+}
+
+.vuecal__header .vuecal__transition-wrap > div {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    white-space: nowrap;
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center
+}
+
+.vuecal__title {
+    position: relative;
+    justify-content: center;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 1.05em
+}
+
+.vuecal__title small {
+    display: inline-flex;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 400;
+    font-size: .8em;
+    background: #00000026
+}
+
+.vuecal__header nav {
+    background-color: #fff3
+}
+
+.vuecal__nav {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center
+}
+
+.vuecal__nav--today {
+    position: relative;
+    align-items: center;
+    display: flex
+}
+
+.vuecal__nav--today[disabled] {
+    cursor: default
+}
+
+.vuecal__nav--today.vuecal__nav--default {
+    text-transform: uppercase
+}
+
+.vuecal__nav--prev.vuecal__nav--default:before, .vuecal__nav--next.vuecal__nav--default:before {
+    content: "";
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    padding: .25em;
+    transform: translate(-1px) rotate(-45deg)
+}
+
+.vuecal__nav--prev.vuecal__nav--default:before {
+    border-width: 2px 0 0 2px;
+    transform: translate(1px) rotate(-45deg)
+}
+
+.vuecal__event {
+    position: absolute;
+    left: 0;
+    right: 0
+}
+
+.vuecal__event--resizing, .vuecal__event--dragging-ghost {
+    z-index: 100
+}
+
+.vuecal__event--dragging-original {
+    opacity: 0;
+    transition: opacity .1s
+}
+
+.vuecal__scrollable--month-view .vuecal__event, .vuecal__all-day .vuecal__event {
+    position: relative
+}
+
+.vuecal__event--resizing {
+    z-index: 100
+}
+
+.vuecal__event-resizer {
+    position: absolute;
+    inset: auto 0 0;
+    height: 8px;
+    background-color: #fff;
+    opacity: .1;
+    transition: .25s;
+    cursor: ns-resize
+}
+
+.vuecal__event-resizer:hover {
+    opacity: .25
+}
+
+.vuecal--horizontal .vuecal__event-resizer {
+    inset: 0 0 0 auto;
+    height: auto;
+    width: 8px;
+    cursor: ew-resize
+}
+
+.vuecal-delete-btn-enter-active {
+    transition: .35s cubic-bezier(.175, .885, .32, 1.275)
+}
+
+.vuecal-delete-btn-enter-from {
+    transform: scale(0) rotate(-90deg)
+}
+
+.vuecal-delete-btn-enter-to {
+    transform: scale(1)
+}
+
+.vuecal-delete-btn-leave-active {
+    transition: .3s ease-in-out;
+    transform: scale(0)
+}
+
+.vuecal__cell {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none
+}
+
+.vuecal__scrollable--day-view .vuecal__cell, .vuecal__scrollable--days-view .vuecal__cell, .vuecal__scrollable--week-view .vuecal__cell {
+    min-width: var(--vuecal-min-cell-size, 0px)
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__cell, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__cell, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__cell {
+    min-width: 0;
+    min-height: var(--vuecal-min-cell-size, 0px)
+}
+
+.vuecal__scrollable--day-view .vuecal__cell--has-schedules, .vuecal__scrollable--days-view .vuecal__cell--has-schedules, .vuecal__scrollable--week-view .vuecal__cell--has-schedules {
+    min-width: max(var(--vuecal-min-cell-size), var(--vuecal-min-schedule-size, 0px) * var(--vuecal-schedules-count, 0))
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__cell--has-schedules, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__cell--has-schedules, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__cell--has-schedules {
+    min-width: 0;
+    min-height: max(var(--vuecal-min-cell-size), var(--vuecal-min-schedule-size, 0px) * var(--vuecal-schedules-count, 0))
+}
+
+.vuecal__cell--has-schedules {
+    align-items: stretch
+}
+
+.vuecal__cell--out-of-range {
+    opacity: .4
+}
+
+.vuecal__cell--disabled {
+    cursor: not-allowed
+}
+
+.vuecal--view-has-time .vuecal__cell:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(0deg, var(--vuecal-border-color, #ddd) 0, transparent 1px var(--vuecal-time-cell-size)) 0 1px;
+    background-size: 100% var(--vuecal-time-cell-size)
+}
+
+.vuecal--view-has-time.vuecal--horizontal .vuecal__cell:before {
+    background: linear-gradient(90deg, var(--vuecal-border-color, #ddd) 0, transparent 1px var(--vuecal-time-cell-size)) 0 1px;
+    background-size: var(--vuecal-time-cell-size) 100%
+}
+
+.vuecal__special-hours {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    left: 0;
+    right: 0;
+    pointer-events: none
+}
+
+.vuecal--horizontal .vuecal__special-hours {
+    flex-direction: row;
+    left: auto;
+    right: auto;
+    top: 0;
+    bottom: 0
+}
+
+.vuecal__now-line {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 0;
+    border-top: 1px solid;
+    border-color: #f009;
+    z-index: 3
+}
+
+.vuecal__now-line:before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 0;
+    border: 5px solid transparent;
+    border-left-color: inherit
+}
+
+.vuecal__now-line span {
+    position: absolute;
+    right: 1px;
+    font-size: 10px;
+    opacity: .7;
+    pointer-events: none
+}
+
+.vuecal__event-placeholder {
+    background-color: #23b5b5;
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding-top: 2px;
+    padding-left: 4px;
+    border-radius: 4px;
+    font-size: 11px;
+    line-height: 1
+}
+
+.vuecal--horizontal .vuecal__event-placeholder {
+    left: auto;
+    right: auto;
+    top: 0;
+    bottom: 0
+}
+
+.vuecal__headings {
+    position: sticky;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    z-index: 4;
+    height: calc(var(--vuecal-weekday-bar-size) + var(--vuecal-schedules-bar-size) + var(--vuecal-all-day-bar-size));
+    white-space: nowrap;
+    background-color: var(--vuecal-secondary-color)
+}
+
+.vuecal--horizontal .vuecal__headings {
+    flex-direction: row;
+    width: calc(var(--vuecal-weekday-bar-size) + var(--vuecal-schedules-bar-size) + var(--vuecal-all-day-bar-size));
+    height: 100%
+}
+
+.vuecal__weekdays-headings {
+    display: flex
+}
+
+.vuecal__weekday {
+    flex: 1 1 0;
+    align-items: center;
+    background-color: inherit
+}
+
+.vuecal__scrollable--day-view .vuecal__weekday, .vuecal__scrollable--days-view .vuecal__weekday, .vuecal__scrollable--week-view .vuecal__weekday {
+    min-width: var(--vuecal-min-cell-size, 0px)
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__weekday, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__weekday, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__weekday {
+    min-width: 0;
+    min-height: var(--vuecal-min-cell-size, 0px)
+}
+
+.vuecal__all-day {
+    position: relative;
+    display: flex;
+    flex-grow: 1;
+    height: var(--vuecal-all-day-bar-size)
+}
+
+.vuecal__all-day-cell {
+    display: flex;
+    flex: 1 1 0;
+    background-color: var(--vuecal-secondary-color)
+}
+
+.vuecal__all-day-resizer {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 1px;
+    cursor: row-resize;
+    background-color: var(--vuecal-secondary-color);
+    z-index: 10
+}
+
+.vuecal__all-day-resizer:hover {
+    height: 2px;
+    background-color: var(--vuecal-primary-color)
+}
+
+.vuecal__all-day-resizer:before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    right: 0;
+    bottom: -5px;
+    left: 0
+}
+
+.vuecal__time-column {
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+    padding-top: calc(var(--vuecal-weekday-bar-size) + var(--vuecal-schedules-bar-size) + var(--vuecal-all-day-bar-size));
+    background-color: var(--vuecal-secondary-color);
+    position: sticky;
+    left: 0;
+    top: 0;
+    z-index: 5;
+    border-right: .5px solid var(--vuecal-border-color)
+}
+
+.vuecal__all-day-label {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(var(--vuecal-weekday-bar-size) + var(--vuecal-schedules-bar-size) + var(--vuecal-all-day-bar-size));
+    margin-top: calc((var(--vuecal-weekday-bar-size) + var(--vuecal-schedules-bar-size) + var(--vuecal-all-day-bar-size)) * -1);
+    padding-top: calc(var(--vuecal-weekday-bar-size) + var(--vuecal-schedules-bar-size));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-size: .85em;
+    background: var(--vuecal-secondary-color);
+    border-bottom: 1px solid var(--vuecal-border-color);
+    z-index: 1
+}
+
+.vuecal__time-cell {
+    position: relative;
+    display: flex;
+    flex: 1 0 auto;
+    font-size: .85em;
+    height: var(--vuecal-time-cell-size)
+}
+
+.vuecal__time-cell:before {
+    content: "";
+    position: absolute;
+    right: 0;
+    width: 5px;
+    top: .5px;
+    border-top: .5px solid var(--vuecal-border-color)
+}
+
+.vuecal__time-cell label {
+    opacity: .5;
+    padding-left: 4px;
+    padding-right: 8px;
+    line-height: 0
+}
+
+.vuecal__scrollable--day-view.vuecal__scrollable--no-schedules .vuecal__time-cell:first-child label, .vuecal__scrollable--has-all-day-bar .vuecal__time-cell:not(.vuecal__time-cell+.vuecal__time-cell) label {
+    margin-top: .5em;
+    font-size: .9em;
+    opacity: .4
+}
+
+.vuecal__body {
+    position: relative;
+    display: grid;
+    grid-template-columns:repeat(var(--vuecal-grid-columns), 1fr);
+    grid-template-rows:repeat(var(--vuecal-grid-rows), 1fr);
+    height: 100%
+}
+
+.vuecal__time-at-cursor {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 1px dashed var(--vuecal-border-color);
+    pointer-events: none;
+    z-index: 10
+}
+
+.vuecal__time-at-cursor label {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 100%;
+    transform: translateY(-50%);
+    margin-right: 4px;
+    padding: 0 3px;
+    font-size: .7rem;
+    letter-spacing: -.04em;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-radius: 99em
+}
+
+.vuecal--horizontal .vuecal__time-at-cursor {
+    left: auto;
+    right: auto;
+    top: 0;
+    bottom: 0;
+    border-top: none;
+    border-left: 1px dashed var(--vuecal-border-color)
+}
+
+.vuecal--horizontal .vuecal__time-at-cursor label {
+    top: auto;
+    bottom: 100%;
+    right: auto;
+    left: 50%;
+    transform: translate(-50%);
+    margin-right: 0;
+    margin-bottom: 4px
+}
+
+.vuecal {
+    --vuecal-grid-columns: 7;
+    --vuecal-grid-rows: 6;
+    --vuecal-weekday-bar-size: 1.7rem;
+    --vuecal-schedules-bar-size: 1.7rem;
+    --vuecal-all-day-bar-size: 2rem;
+    --vuecal-time-cell-size: 50px;
+    --vuecal-min-cell-size: 0px;
+    --vuecal-min-schedule-size: 0px;
+    --vuecal-transition-duration: .25s;
+    display: flex;
+    flex-direction: column;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    z-index: 0
+}
+
+.vuecal--date-picker {
+    --vuecal-weekday-bar-size: 1.3rem
+}
+
+.vuecal--timeless {
+    --vuecal-all-day-bar-size: 0px
+}
+
+.vuecal, .vuecal *, .vuecal :before, .vuecal :after {
+    box-sizing: border-box
+}
+
+.vuecal .grow {
+    flex-grow: 1
+}
+
+.vuecal__body-wrap {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+    width: max(var(--vuecal-schedules-count) * var(--vuecal-min-schedule-size) * var(--vuecal-grid-columns), 100%)
+}
+
+.vuecal--horizontal .vuecal__body-wrap {
+    flex-direction: row;
+    width: auto;
+    height: max(var(--vuecal-schedules-count) * var(--vuecal-min-schedule-size) * var(--vuecal-grid-rows), 100%)
+}
+
+.vuecal__scrollable-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+    min-height: 1px
+}
+
+.vuecal__scrollable {
+    position: relative;
+    overflow: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column
+}
+
+.vuecal__scrollable--row, .vuecal__scrollable--has-week-numbers {
+    flex-direction: row
+}
+
+.vuecal__week-numbers {
+    display: flex;
+    flex-direction: column;
+    padding-top: calc(var(--vuecal-weekday-bar-size) + var(--vuecal-schedules-bar-size) + var(--vuecal-all-day-bar-size))
+}
+
+.vuecal__week-number {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    width: 1.4em
+}
+
+.vuecal__schedules-headings {
+    display: flex;
+    flex-grow: 1
+}
+
+.vuecal__schedule {
+    position: relative;
+    display: flex;
+    flex-grow: 1;
+    flex-basis: 0;
+    justify-content: center;
+    overflow: hidden
+}
+
+.vuecal__scrollable--day-view .vuecal__schedule, .vuecal__scrollable--days-view .vuecal__schedule, .vuecal__scrollable--week-view .vuecal__schedule {
+    min-width: var(--vuecal-min-schedule-size, 0)
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view, .vuecal--horizontal .vuecal__scrollable--days-view, .vuecal--horizontal .vuecal__scrollable--week-view {
+    display: grid;
+    grid-template-columns:auto;
+    grid-template-rows:0fr 1fr
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__schedules-headings, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__schedules-headings, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__schedules-headings {
+    flex-direction: column;
+    width: var(--vuecal-schedules-bar-size)
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__schedule, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__schedule, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__schedule {
+    min-width: 0;
+    min-height: var(--vuecal-min-schedule-size, 0)
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__time-column, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__time-column, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__time-column {
+    flex-direction: row;
+    align-self: flex-start;
+    padding-top: 0;
+    padding-left: calc(var(--vuecal-weekday-bar-size) + var(--vuecal-schedules-bar-size) + var(--vuecal-all-day-bar-size))
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__all-day-label, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__all-day-label, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__all-day-label {
+    height: 100%;
+    width: calc(var(--vuecal-weekday-bar-size) + var(--vuecal-schedules-bar-size) + var(--vuecal-all-day-bar-size));
+    margin-top: 0;
+    margin-left: calc((var(--vuecal-weekday-bar-size) + var(--vuecal-schedules-bar-size) + var(--vuecal-all-day-bar-size)) * -1);
+    padding-top: 0;
+    padding-left: calc(var(--vuecal-weekday-bar-size) + var(--vuecal-schedules-bar-size))
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__time-cell, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__time-cell, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__time-cell {
+    width: var(--vuecal-time-cell-size);
+    height: 100%;
+    align-items: center
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__body, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__body, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__body {
+    --vuecal-grid-columns: 1;
+    --vuecal-grid-rows: 7;
+    display: grid;
+    grid-template-columns:repeat(var(--vuecal-grid-columns), 1fr);
+    grid-template-rows:repeat(var(--vuecal-grid-rows), 1fr);
+    flex: 1;
+    width: 100%;
+    height: auto
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__weekdays-headings, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__weekdays-headings, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__weekdays-headings {
+    flex-direction: column;
+    width: var(--vuecal-weekday-bar-size);
+    flex-shrink: 0
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__all-day, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__all-day, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__all-day {
+    flex-direction: column;
+    height: 100%;
+    width: var(--vuecal-all-day-bar-size)
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__now-line, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__now-line, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__now-line {
+    left: auto;
+    top: 0;
+    width: 0;
+    height: 100%;
+    border-top: none;
+    border-left: 1px solid
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__cell--has-schedules, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__cell--has-schedules, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__cell--has-schedules {
+    flex-direction: column
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__schedule--cell, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__schedule--cell, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__schedule--cell {
+    flex-direction: row;
+    height: 100%
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view .vuecal__event, .vuecal--horizontal .vuecal__scrollable--days-view .vuecal__event, .vuecal--horizontal .vuecal__scrollable--week-view .vuecal__event {
+    left: auto;
+    right: auto;
+    top: 0;
+    bottom: 0;
+    width: auto
+}
+
+.vuecal--horizontal .vuecal__scrollable--day-view.vuecal--view-has-time .vuecal__cell:before, .vuecal--horizontal .vuecal__scrollable--days-view.vuecal--view-has-time .vuecal__cell:before, .vuecal--horizontal .vuecal__scrollable--week-view.vuecal--view-has-time .vuecal__cell:before {
+    background: linear-gradient(90deg, var(--vuecal-border-color, #ddd) 0, transparent 1px var(--vuecal-time-cell-size)) 0 1px;
+    background-size: var(--vuecal-time-cell-size) 100%
+}
+
+.vuecal-slide-fade--left-enter-active, .vuecal-slide-fade--left-leave-active, .vuecal-slide-fade--right-enter-active, .vuecal-slide-fade--right-leave-active {
+    transition: var(--vuecal-transition-duration) ease-in-out
+}
+
+.vuecal-slide-fade--left-enter-from, .vuecal-slide-fade--right-leave-to {
+    transform: translate(-12px);
+    opacity: 0
+}
+
+.vuecal-slide-fade--left-leave-to, .vuecal-slide-fade--right-enter-from {
+    transform: translate(12px);
+    opacity: 0
+}
+
+.vuecal-slide-fade--left-enter-active, .vuecal-slide-fade--right-enter-active, .vuecal-slide-fade--left-leave-active ~ .vuecal-slide-fade--left-leave-active, .vuecal-slide-fade--right-leave-active ~ .vuecal-slide-fade--right-leave-active {
+    position: absolute !important;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0
+}
+
+.vuecal-event-delete-leave-active {
+    transition: .15s ease-out
+}
+
+.vuecal-event-delete-leave-to {
+    opacity: 0;
+    transform: translateY(.5rem)
+}
+
+.vuecal-shrink-enter-active, .vuecal-shrink-leave-active {
+    transition: transform .2s, opacity .2s
+}
+
+.vuecal-shrink-enter-from, .vuecal-shrink-leave-to {
+    opacity: 0
+}
+
+.vuecal--default-theme {
+    --vuecal-primary-color: #1976D2;
+    --vuecal-secondary-color: #fff;
+    --vuecal-base-color: #000;
+    --vuecal-contrast-color: #fff;
+    --vuecal-border-color: color-mix(in srgb, var(--vuecal-base-color) 8%, transparent);
+    --vuecal-header-color: var(--vuecal-secondary-color);
+    --vuecal-event-color: var(--vuecal-contrast-color);
+    --vuecal-event-border-color: currentColor;
+    --vuecal-border-radius: 6px;
+    --vuecal-height: 500px;
+    --vuecal-min-cell-size: 1rem;
+    position: relative;
+    border-radius: var(--vuecal-border-radius);
+    color: var(--vuecal-base-color);
+    height: var(--vuecal-height)
+}
+
+.vuecal--default-theme.vuecal--dragging-event {
+    cursor: grabbing
+}
+
+.vuecal--default-theme.vuecal--resizing-event {
+    cursor: ns-resize
+}
+
+.vuecal--default-theme.vuecal--horizontal.vuecal--resizing-event {
+    cursor: ew-resize
+}
+
+.vuecal--default-theme.vuecal--dark {
+    --vuecal-primary-color: #316191;
+    --vuecal-secondary-color: #2e2e2e;
+    --vuecal-base-color: #fff;
+    --vuecal-contrast-color: #000;
+    --vuecal-border-color: color-mix(in srgb, var(--vuecal-base-color) 8%, transparent);
+    --vuecal-header-color: var(--vuecal-base-color);
+    --vuecal-event-color: var(--vuecal-base-color);
+    --vuecal-event-border-color: color-mix(in srgb, var(--vuecal-base-color) 50%, transparent)
+}
+
+.vuecal--default-theme .vuecal__header {
+    background-color: var(--vuecal-primary-color);
+    color: var(--vuecal-header-color);
+    border-top-left-radius: var(--vuecal-border-radius);
+    border-top-right-radius: var(--vuecal-border-radius)
+}
+
+.vuecal--default-theme .vuecal__views-bar, .vuecal--default-theme .vuecal__title-bar {
+    padding-top: 4px;
+    padding-bottom: 4px
+}
+
+.vuecal--default-theme .vuecal__title-bar {
+    position: relative;
+    background-color: var(--vuecal-primary-color);
+    padding-left: .6em;
+    padding-right: .6em;
+    background-color: color-mix(in srgb, var(--vuecal-secondary-color) 20%, transparent)
+}
+
+.vuecal--default-theme .vuecal__view-button, .vuecal--default-theme .vuecal__nav, .vuecal--default-theme button.vuecal__title {
+    background: none;
+    border: none;
+    color: inherit
+}
+
+.vuecal--default-theme .vuecal__view-button:not([disabled]), .vuecal--default-theme .vuecal__nav:not([disabled]), .vuecal--default-theme button.vuecal__title:not([disabled]) {
+    cursor: pointer
+}
+
+.vuecal--default-theme .vuecal__view-button, .vuecal--default-theme .vuecal__nav, .vuecal--default-theme button.vuecal__title, .vuecal--default-theme .vuecal__nav--today {
+    transition: .3s;
+    border: 1px solid transparent;
+    padding: 2px 12px;
+    border-radius: 4px;
+    align-self: center
+}
+
+.vuecal--default-theme .vuecal__view-button:hover, .vuecal--default-theme .vuecal__nav:hover, .vuecal--default-theme button.vuecal__title:hover, .vuecal--default-theme .vuecal__nav--today:hover {
+    background-color: #ffffff1f
+}
+
+.vuecal--default-theme .vuecal__view-button--active, .vuecal--default-theme .vuecal__view-button--active:hover, .vuecal--default-theme .vuecal__nav--active, .vuecal--default-theme .vuecal__nav--active:hover, .vuecal--default-theme button.vuecal__title--active, .vuecal--default-theme button.vuecal__title--active:hover, .vuecal--default-theme .vuecal__nav--today--active, .vuecal--default-theme .vuecal__nav--today--active:hover, .vuecal--default-theme .vuecal__view-button:active, .vuecal--default-theme .vuecal__nav:active, .vuecal--default-theme button.vuecal__title:active, .vuecal--default-theme .vuecal__nav--today:active {
+    background-color: #ffffff40
+}
+
+.vuecal--default-theme .vuecal__view-button:focus-visible, .vuecal--default-theme .vuecal__nav:focus-visible, .vuecal--default-theme button.vuecal__title:focus-visible, .vuecal--default-theme .vuecal__nav--today:focus-visible {
+    border-color: #ffffffbf
+}
+
+.vuecal--default-theme .vuecal__view-button {
+    text-transform: uppercase;
+    font-size: .9em
+}
+
+.vuecal--default-theme button.vuecal__title {
+    line-height: .9
+}
+
+.vuecal--default-theme .vuecal__nav--prev, .vuecal--default-theme .vuecal__nav--next {
+    width: 2em;
+    aspect-ratio: 1;
+    border-radius: 99em
+}
+
+.vuecal--default-theme .vuecal__nav--prev:dir(rtl), .vuecal--default-theme .vuecal__nav--next:dir(rtl) {
+    transform: rotate(180deg)
+}
+
+.vuecal--default-theme .vuecal__nav--today {
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-right: 3px;
+    font-size: .85em
+}
+
+.vuecal--default-theme .vuecal__scrollable-wrap {
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 4%, transparent);
+    border: 1px solid var(--vuecal-border-color);
+    border-top: none;
+    border-bottom-left-radius: var(--vuecal-border-radius);
+    border-bottom-right-radius: var(--vuecal-border-radius);
+    overflow: hidden
+}
+
+.vuecal--default-theme .vuecal__scrollable-wrap:first-child {
+    border-top-left-radius: var(--vuecal-border-radius);
+    border-top-right-radius: var(--vuecal-border-radius)
+}
+
+.vuecal--default-theme .vuecal__scrollable {
+    display: grid;
+    grid-template-columns:1fr 0fr
+}
+
+.vuecal--default-theme .vuecal__scrollable--row {
+    grid-template-columns:0fr 1fr
+}
+
+.vuecal--default-theme .vuecal__scrollable--no-schedules {
+    --vuecal-schedules-bar-size: 0px
+}
+
+.vuecal--default-theme .vuecal__scrollable--day-view {
+    --vuecal-weekday-bar-size: 0px
+}
+
+.vuecal--default-theme .vuecal__scrollable--month-view, .vuecal--default-theme .vuecal__scrollable--no-all-day-bar {
+    --vuecal-all-day-bar-size: 0px
+}
+
+.vuecal--default-theme .vuecal__scrollable--year-view, .vuecal--default-theme .vuecal__scrollable--years-view {
+    overflow: hidden
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__scrollable {
+    grid-template-columns:auto;
+    grid-template-rows:1fr 0fr
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__scrollable--row {
+    grid-template-columns:auto;
+    grid-template-rows:0fr 1fr
+}
+
+.vuecal--default-theme .vuecal__scrollable--day-view .vuecal__body, .vuecal--default-theme .vuecal__scrollable--days-view .vuecal__body, .vuecal--default-theme .vuecal__scrollable--week-view .vuecal__body {
+    max-height: var(--vuecal-body-max-height, initial)
+}
+
+.vuecal--default-theme .vuecal__week-number small {
+    width: 1.4em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1;
+    font-size: .8em;
+    background-color: color-mix(in srgb, var(--vuecal-base-color) 8%, transparent);
+    color: color-mix(in srgb, var(--vuecal-base-color) 70%, transparent);
+    border-radius: 4px
+}
+
+.vuecal--default-theme .vuecal__weekday {
+    display: flex;
+    justify-content: center;
+    padding: 2px 1px;
+    overflow: hidden;
+    letter-spacing: -.03em;
+    text-overflow: ellipsis;
+    gap: 4px;
+    font-size: .95em;
+    background-color: var(--vuecal-secondary-color)
+}
+
+.vuecal--default-theme .vuecal__weekday--today {
+    font-weight: 700
+}
+
+.vuecal--default-theme .vuecal__weekday-day {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: .8
+}
+
+.vuecal--default-theme .vuecal__weekday-date {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--vuecal-base-color) 15%, transparent);
+    aspect-ratio: 1;
+    width: 1.7em;
+    border-radius: 99em;
+    overflow: hidden;
+    line-height: 1;
+    font-size: .9em;
+    letter-spacing: -.1em;
+    text-indent: -.15em
+}
+
+.vuecal--default-theme .vuecal__weekday--today .vuecal__weekday-date {
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 80%, transparent);
+    color: #fff
+}
+
+.vuecal--default-theme.vuecal--light .vuecal__weekday:not(.vuecal__weekday--today) .vuecal__weekday-date {
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 20%, transparent)
+}
+
+.vuecal--default-theme .vuecal__scrollable--has-schedules .vuecal__weekday {
+    padding: 0
+}
+
+.vuecal--default-theme .vuecal__scrollable--has-schedules .vuecal__weekday-date {
+    width: 1.5em
+}
+
+.vuecal--default-theme .vuecal__schedule--heading {
+    height: 12px;
+    font-size: 12px;
+    align-items: center
+}
+
+.vuecal--default-theme .vuecal__cell {
+    overflow: hidden;
+    box-shadow: 0 0 0 .5px var(--vuecal-border-color) inset
+}
+
+.vuecal--default-theme.vuecal--lg .vuecal__scrollable--month-view .vuecal__cell {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end
+}
+
+.vuecal--default-theme .vuecal__cell:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1
+}
+
+.vuecal--default-theme.vuecal--light .vuecal__cell:before {
+    filter: saturate(2)
+}
+
+.vuecal--default-theme .vuecal__cell--today:before, .vuecal--default-theme .vuecal__cell--current-month:before, .vuecal--default-theme .vuecal__cell--current-year:before {
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 10%, transparent)
+}
+
+.vuecal--default-theme .vuecal__cell--selected:before {
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 25%, transparent)
+}
+
+.vuecal--default-theme.vuecal--light .vuecal__cell--today:before, .vuecal--default-theme.vuecal--light .vuecal__cell--current-month:before, .vuecal--default-theme.vuecal--light .vuecal__cell--current-year:before {
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 5%, transparent)
+}
+
+.vuecal--default-theme.vuecal--light .vuecal__cell--selected:before {
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 10%, transparent)
+}
+
+.vuecal--default-theme .vuecal__cell-date {
+    position: sticky;
+    top: 0;
+    font-weight: 700
+}
+
+.vuecal--default-theme .vuecal__cell--disabled .vuecal__cell-date {
+    opacity: .5
+}
+
+.vuecal--default-theme:is(.vuecal--sm,.vuecal--lg) .vuecal__scrollable--month-view .vuecal__cell:before {
+    display: none
+}
+
+.vuecal--default-theme:is(.vuecal--sm,.vuecal--lg) .vuecal__scrollable--month-view .vuecal__cell-date {
+    padding: 4px;
+    border-radius: 99em;
+    width: 2em;
+    aspect-ratio: 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin: 4px;
+    font-size: 13px;
+    letter-spacing: -.5px;
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 25%, transparent)
+}
+
+.vuecal--default-theme:is(.vuecal--sm,.vuecal--lg) .vuecal__scrollable--month-view .vuecal__cell--today .vuecal__cell-date {
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 60%, transparent)
+}
+
+.vuecal--default-theme:is(.vuecal--sm,.vuecal--lg) .vuecal__scrollable--month-view .vuecal__cell--selected .vuecal__cell-date {
+    background-color: var(--vuecal-primary-color)
+}
+
+.vuecal--default-theme.vuecal--light:is(.vuecal--sm,.vuecal--lg) .vuecal__scrollable--month-view .vuecal__cell-date {
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 8%, transparent)
+}
+
+.vuecal--default-theme.vuecal--light:is(.vuecal--sm,.vuecal--lg) .vuecal__scrollable--month-view .vuecal__cell--today .vuecal__cell-date {
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 22%, transparent)
+}
+
+.vuecal--default-theme.vuecal--light:is(.vuecal--sm,.vuecal--lg) .vuecal__scrollable--month-view .vuecal__cell--selected .vuecal__cell-date {
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 40%, transparent)
+}
+
+.vuecal--default-theme .vuecal__cell--out-of-scope .vuecal__cell-date {
+    opacity: .4
+}
+
+.vuecal--default-theme .vuecal__scrollable--month-view .vuecal__cell-events {
+    overflow: hidden;
+    flex-grow: 1;
+    width: 100%;
+    padding-left: 4px
+}
+
+.vuecal--default-theme.vuecal--timeless .vuecal__cell-events {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 4px;
+    gap: 4px
+}
+
+.vuecal--default-theme .vuecal__scrollable--no-schedules.vuecal__scrollable--day-view .vuecal__cell-events, .vuecal--default-theme .vuecal__scrollable--no-schedules.vuecal__scrollable--days-view .vuecal__cell-events, .vuecal--default-theme .vuecal__scrollable--no-schedules.vuecal__scrollable--week-view .vuecal__cell-events {
+    position: absolute;
+    top: 0;
+    right: 8px;
+    bottom: 0;
+    left: 0
+}
+
+.vuecal--default-theme .vuecal__scrollable--no-schedules.vuecal__scrollable--day-view .vuecal__cell-events:dir(rtl), .vuecal--default-theme .vuecal__scrollable--no-schedules.vuecal__scrollable--days-view .vuecal__cell-events:dir(rtl), .vuecal--default-theme .vuecal__scrollable--no-schedules.vuecal__scrollable--week-view .vuecal__cell-events:dir(rtl) {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 8px
+}
+
+.vuecal--default-theme .vuecal__all-day .vuecal__cell-events {
+    width: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0
+}
+
+.vuecal--default-theme .vuecal__time-cell {
+    display: flex;
+    justify-content: flex-end
+}
+
+.vuecal--default-theme .vuecal__time-cell-label {
+    font-size: 11px;
+    letter-spacing: -.5px;
+    color: #00000080;
+    margin-top: -7.5px;
+    background: #fff;
+    width: 98%;
+    z-index: 1;
+    padding-right: 2px;
+    align-self: flex-start
+}
+
+.vuecal--default-theme .vuecal__time-cell:nth-child(1) .vuecal__time-cell-label {
+    margin-top: -1px;
+    font-size: 10px;
+    background: none
+}
+
+.vuecal--default-theme .vuecal__event {
+    display: flex;
+    width: 90%;
+    background-color: var(--vuecal-primary-color);
+    color: var(--vuecal-event-color);
+    border: 1px solid var(--vuecal-event-border-color);
+    border-radius: 4px;
+    line-height: 1;
+    z-index: 1
+}
+
+.vuecal--default-theme .vuecal__event--background {
+    width: 100%;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+    z-index: 0
+}
+
+.vuecal--default-theme .vuecal__event--cut-top {
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0
+}
+
+.vuecal--default-theme .vuecal__event--cut-bottom {
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0
+}
+
+.vuecal--default-theme .vuecal__event--cut-left {
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0
+}
+
+.vuecal--default-theme .vuecal__event--cut-right {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0
+}
+
+.vuecal--default-theme .vuecal__event:not(.vuecal__event--background):hover {
+    z-index: 3
+}
+
+.vuecal--default-theme .vuecal__event-details {
+    flex-grow: 1;
+    overflow: hidden;
+    padding: 2px;
+    font-size: 12px
+}
+
+.vuecal--default-theme .vuecal__event-time {
+    white-space: nowrap;
+    line-height: 1;
+    letter-spacing: -.5px;
+    font-size: 11px
+}
+
+.vuecal--default-theme .vuecal__event-comma {
+    padding-right: 4px
+}
+
+.vuecal--default-theme .vuecal__event-resizer {
+    inset: auto -1px -1px;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit
+}
+
+.vuecal--default-theme .vuecal__event-delete {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    padding: 2px;
+    font-size: .8em;
+    cursor: pointer;
+    background-color: #ff4242;
+    border: 1px solid rgba(255, 255, 255, .5);
+    color: transparent;
+    border-radius: 99em;
+    aspect-ratio: 1;
+    width: 1.5em
+}
+
+.vuecal--default-theme .vuecal__event-delete:before, .vuecal--default-theme .vuecal__event-delete:after {
+    content: "";
+    position: absolute;
+    border-radius: 99em;
+    top: 50%;
+    height: 2px;
+    left: 20%;
+    right: 20%;
+    background-color: var(--vuecal-event-color)
+}
+
+.vuecal--default-theme .vuecal__event-delete:before {
+    transform: translateY(-50%) rotate(45deg)
+}
+
+.vuecal--default-theme .vuecal__event-delete:after {
+    transform: translateY(-50%) rotate(-45deg)
+}
+
+.vuecal--default-theme.vuecal--timeless .vuecal__event {
+    position: relative;
+    width: 100%
+}
+
+.vuecal--default-theme .vuecal__scrollable--month-view .vuecal__event {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    width: 100%
+}
+
+.vuecal--default-theme .vuecal__scrollable--month-view .vuecal__event-details {
+    display: flex;
+    padding-top: 1px;
+    padding-bottom: 1px
+}
+
+.vuecal--default-theme.vuecal--horizontal {
+    --vuecal-weekday-bar-size: 6rem;
+    --vuecal-schedules-bar-size: 4rem;
+    --vuecal-all-day-bar-size: 8rem;
+    --vuecal-min-cell-size: 20rem
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__time-column {
+    border-right: none;
+    border-bottom: .5px solid var(--vuecal-border-color);
+    height: 25px
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__all-day-label {
+    border-bottom: none;
+    border-right: .5px solid var(--vuecal-border-color)
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__time-cell {
+    justify-content: flex-start
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__time-cell:before {
+    left: 0;
+    top: auto;
+    bottom: 0;
+    width: 0;
+    height: 5px;
+    border-top: none;
+    border-left: .5px solid var(--vuecal-border-color)
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__time-cell label {
+    transform: translate(-50%);
+    padding: 0;
+    line-height: 1
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__scrollable--day-view.vuecal__scrollable--no-schedules .vuecal__time-cell:first-child label, .vuecal--default-theme.vuecal--horizontal .vuecal__scrollable--has-all-day-bar .vuecal__time-cell:not(.vuecal__time-cell+.vuecal__time-cell) label {
+    display: none
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__weekdays-headings {
+    text-align: right
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__weekday {
+    justify-content: flex-end;
+    padding: 0 6px;
+    box-shadow: 0 0 0 .5px var(--vuecal-border-color) inset
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__all-day-resizer {
+    bottom: 0;
+    right: 0;
+    height: 100%;
+    width: 1px;
+    cursor: col-resize
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__all-day-resizer:before {
+    top: 0;
+    right: -5px;
+    bottom: 0;
+    left: -5px
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__now-line {
+    border-color: #f009;
+    z-index: 3
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__now-line:before {
+    left: -6px;
+    top: auto;
+    bottom: 0;
+    border-left-color: transparent;
+    border-bottom-color: inherit
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__now-line span {
+    left: 2px
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__scrollable--no-schedules.vuecal__scrollable--day-view .vuecal__cell-events, .vuecal--default-theme.vuecal--horizontal .vuecal__scrollable--no-schedules.vuecal__scrollable--days-view .vuecal__cell-events, .vuecal--default-theme.vuecal--horizontal .vuecal__scrollable--no-schedules.vuecal__scrollable--week-view .vuecal__cell-events {
+    top: 0;
+    right: 0;
+    bottom: 8px;
+    left: 0
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__all-day .vuecal__cell-events {
+    width: 90%;
+    margin: 1px auto 0 1px
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__event {
+    height: 90%;
+    width: auto
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__event-resizer {
+    inset: -1px -1px -1px auto;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: inherit;
+    border-top-right-radius: inherit
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__all-day .vuecal__event {
+    height: auto
+}
+
+.vuecal--default-theme.vuecal--horizontal .vuecal__schedule--heading {
+    justify-content: flex-end;
+    padding-right: 6px;
+    box-shadow: 0 0 0 .5px var(--vuecal-border-color) inset
+}
+
+.vuecal--default-theme.vuecal--sm .vuecal__view-button, .vuecal--default-theme.vuecal--sm .vuecal__nav, .vuecal--default-theme.vuecal--sm .vuecal__title button, .vuecal--default-theme.vuecal--sm .vuecal__nav--today {
+    padding-left: 8px;
+    padding-right: 8px
+}
+
+.vuecal--default-theme.vuecal--xs {
+    width: 350px;
+    height: 250px
+}
+
+.vuecal--default-theme.vuecal--xs .vuecal__view-button, .vuecal--default-theme.vuecal--xs .vuecal__nav, .vuecal--default-theme.vuecal--xs .vuecal__title button, .vuecal--default-theme.vuecal--xs .vuecal__nav--today {
+    padding-left: 4px;
+    padding-right: 4px
+}
+
+.vuecal--default-theme.vuecal--xs .vuecal__title {
+    gap: 4px
+}
+
+.vuecal--default-theme.vuecal--xs .vuecal__title small {
+    padding-left: 3px;
+    padding-right: 3px
+}
+
+.vuecal--default-theme.vuecal--xs .vuecal__body {
+    width: 100%
+}
+
+.vuecal--default-theme.vuecal--xs .vuecal__scrollable--year-view .vuecal__body, .vuecal--default-theme.vuecal--xs .vuecal__scrollable--years-view .vuecal__body {
+    margin: auto
+}
+
+.vuecal--default-theme.vuecal--date-picker {
+    font-size: 12px;
+    width: 210px
+}
+
+.vuecal--default-theme.vuecal--date-picker:has(.vuecal__views-bar) {
+    height: 260px
+}
+
+.vuecal--default-theme.vuecal--date-picker .vuecal__views-bar, .vuecal--default-theme.vuecal--date-picker .vuecal__title-bar {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    height: 2em
+}
+
+.vuecal--default-theme.vuecal--date-picker .vuecal__title-bar {
+    padding-left: .3em;
+    padding-right: .3em
+}
+
+.vuecal--default-theme.vuecal--date-picker .vuecal__nav--today, .vuecal--default-theme.vuecal--date-picker .vuecal__view-button {
+    font-size: .9em
+}
+
+.vuecal--default-theme.vuecal--date-picker .vuecal__nav--prev, .vuecal--default-theme.vuecal--date-picker .vuecal__nav--next {
+    width: 1.6em
+}
+
+.vuecal--default-theme.vuecal--date-picker .vuecal__nav--prev:before, .vuecal--default-theme.vuecal--date-picker .vuecal__nav--next:before {
+    padding: .22em
+}
+
+.vuecal--default-theme.vuecal--date-picker .vuecal__weekday {
+    font-size: .95em
+}
+
+.vuecal--default-theme.vuecal--date-picker .vuecal__body {
+    padding: 2px;
+    gap: 2px
+}
+
+.vuecal--default-theme.vuecal--date-picker .vuecal__scrollable--year-view .vuecal__body {
+    padding: .6em;
+    gap: .8em
+}
+
+.vuecal--default-theme.vuecal--date-picker .vuecal__scrollable--month-view .vuecal__body, .vuecal--default-theme.vuecal--date-picker .vuecal__scrollable--year-view .vuecal__body, .vuecal--default-theme.vuecal--date-picker .vuecal__scrollable--years-view .vuecal__body {
+    align-items: center
+}
+
+.vuecal--default-theme.vuecal--date-picker .vuecal__cell {
+    aspect-ratio: 1;
+    border-radius: 99em;
+    font-weight: 700;
+    font-size: 1em;
+    box-shadow: none
+}
+
+.vuecal--default-theme.vuecal--date-picker .vuecal__scrollable--day-view .vuecal__cell, .vuecal--default-theme.vuecal--date-picker .vuecal__scrollable--days-view .vuecal__cell, .vuecal--default-theme.vuecal--date-picker .vuecal__scrollable--week-view .vuecal__cell {
+    aspect-ratio: initial;
+    border-radius: 0;
+    font-weight: 400
+}
+
+.vuecal--default-theme.vuecal--date-picker .vuecal__scrollable--years-view .vuecal__cell {
+    padding: 6px
+}
+
+.vuecal--default-theme.vuecal--date-picker .vuecal__scrollable--month-view .vuecal__cell, .vuecal--default-theme.vuecal--date-picker .vuecal__scrollable--years-view .vuecal__cell {
+    font-size: .9em
+}
+
+.vuecal--default-theme.vuecal--date-picker .vuecal__cell-date {
+    font-weight: 700
+}
+
+.vuecal--default-theme.vuecal--date-picker.vuecal--dark .vuecal__cell--today:before, .vuecal--default-theme.vuecal--date-picker.vuecal--dark .vuecal__cell--current-month:before, .vuecal--default-theme.vuecal--date-picker.vuecal--dark .vuecal__cell--current-year:before {
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 50%, transparent)
+}
+
+.vuecal--default-theme.vuecal--date-picker.vuecal--dark .vuecal__scrollable--month-view .vuecal__cell--selected:before, .vuecal--default-theme.vuecal--date-picker.vuecal--dark .vuecal__scrollable--year-view .vuecal__cell--selected:before, .vuecal--default-theme.vuecal--date-picker.vuecal--dark .vuecal__scrollable--years-view .vuecal__cell--selected:before {
+    background-color: var(--vuecal-primary-color)
+}
+
+.vuecal--default-theme.vuecal--date-picker.vuecal--light .vuecal__cell--today:before, .vuecal--default-theme.vuecal--date-picker.vuecal--light .vuecal__cell--current-month:before, .vuecal--default-theme.vuecal--date-picker.vuecal--light .vuecal__cell--current-year:before {
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 12%, transparent)
+}
+
+.vuecal--default-theme.vuecal--date-picker.vuecal--light .vuecal--dark .vuecal__scrollable--month-view .vuecal__cell--selected:before, .vuecal--default-theme.vuecal--date-picker.vuecal--light .vuecal--dark .vuecal__scrollable--year-view .vuecal__cell--selected:before, .vuecal--default-theme.vuecal--date-picker.vuecal--light .vuecal--dark .vuecal__scrollable--years-view .vuecal__cell--selected:before {
+    background-color: color-mix(in srgb, var(--vuecal-primary-color) 28%, transparent)
+}
+
+.calendar-board[data-v-a35c5e6b] {
+    padding: 10px
+}
+
+.calendar-navbar[data-v-a35c5e6b] {
+    margin-bottom: 15px;
+    align-items: center
+}
+
+.calendar-header[data-v-a35c5e6b] {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.1em
+}
+
+.ver-align-middle[data-v-a35c5e6b] {
+    vertical-align: middle
+}
+
+.hor-align-right[data-v-a35c5e6b] {
+    text-align: right
+}
+
+.alignleft[data-v-a35c5e6b] {
+    text-align: left
+}

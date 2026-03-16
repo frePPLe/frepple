@@ -7,6 +7,11 @@ Release notes
 This release is scheduled for early April 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Production planning
+
+- | Bug fix: Some models experienced issues with excess proposed supply in the
+    presence of operation multiples and temporary unresolvable material shortages.
+
 9.14.0 (2026-03-06)
 ===================
 

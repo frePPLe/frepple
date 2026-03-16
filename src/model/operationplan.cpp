@@ -1682,7 +1682,7 @@ double OperationPlan::isExcess(bool use_zero) const {
 
     flpln_excess_qty -= i->getFlow()->getQuantityFixed();
     if (flpln_excess_qty < topopplan->getOperation()->getSizeMultiple() *
-                                   i->getFlow()->getQuantity() +
+                                   i->getFlow()->getQuantity() -
                                ROUNDING_ERROR)
       // Not excess or an unavoidable leftover
       return 0.0;

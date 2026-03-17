@@ -56,7 +56,7 @@ def add_extra_model_fields(sender, **kwargs):
             return
     model_path.append(sender.__name__)
     model_path = ".".join(model_path)
-    for field_name, label, fieldtype, editable, initially_hidden in chain(
+    for field_name, label, fieldtype, editable, initially_hidden, unique in chain(
         _register.get(model_path, []), _register.get(sender._meta.db_table, [])
     ):
         if sender._meta.parents:
@@ -75,6 +75,7 @@ def add_extra_model_fields(sender, **kwargs):
                 "blank": True,
                 "db_index": True,
                 "editable": editable,
+                "unique": unique,
             }
             if register_args and "max_length" in register_args:
                 kwargs["max_length"] = register_args["max_length"]
@@ -148,6 +149,7 @@ def registerAttribute(model, attrlist, **kwargs):
       - fieldtype: supports "boolean", "duration", "integer", "number", "string", "time", "date", "datetime", "foreignkey:XXXX"
       - editable: set to false to disable users from changing the field, default=True
       - initially_hidden: set to true to hide this attribute by default in a screen, default=False
+      - unique: set to true to enforce uniqueness of the field value, default=False
     """
     if model not in _register:
         _register[model] = []
@@ -155,8 +157,10 @@ def registerAttribute(model, attrlist, **kwargs):
         if len(attr) < 3:
             raise Exception("Invalid attribute definition: %s" % attr)
         elif len(attr) == 3:
-            _register[model].append(attr + (True, False))
+            _register[model].append(attr + (True, False, False))
         elif len(attr) == 4:
+            _register[model].append(attr + (False, False))
+        elif len(attr) == 5:
             _register[model].append(attr + (False,))
         else:
             _register[model].append(attr)
@@ -168,7 +172,7 @@ def registerAttribute(model, attrlist, **kwargs):
 def getAttributes(model):
     """
     Return all attributes for a given model in the format:
-      fieldname, label, fieldtype, editable (default=True), initially_hidden (default=False)
+      fieldname, label, fieldtype, editable (default=True), initially_hidden (default=False), unique (default=False)
     """
     if not model._meta.proxy:
         model_path = model.__module__.split(".")
@@ -204,7 +208,9 @@ def getAttributeFields(
     from freppledb.common.report import GridFieldDuration, GridFieldTime
 
     result = []
-    for field_name, label, fieldtype, dflt_editable, hidden in getAttributes(model):
+    for field_name, label, fieldtype, dflt_editable, hidden, unique in getAttributes(
+        model
+    ):
         if related_name_prefix:
             field_name = "%s__%s" % (related_name_prefix, field_name)
             label = "%s - %s" % (model._meta.verbose_name, label)
@@ -345,10 +351,10 @@ def addAttributesFromDatabase():
             for x in cursor.fetchall():
                 table = x[0]
                 if table in attributes:
-                    attributes[table].append((x[1], x[2], x[3], x[4], x[5]))
+                    attributes[table].append((x[1], x[2], x[3], x[4], x[5], False))
                 else:
                     attributes[table] = [
-                        (x[1], x[2], x[3], x[4], x[5]),
+                        (x[1], x[2], x[3], x[4], x[5], False),
                     ]
             if not attributes:
                 # Shortcut for performance reasons

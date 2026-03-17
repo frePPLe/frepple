@@ -290,171 +290,45 @@
           "
         aria-hidden="true"
       ></i>
+        <span
+          class="btn-group"
+          role="group"
+          v-if="editable && isSelected(opplan.reference) && !opplan.hasOwnProperty('operationplan__status')"
+        >
+        <button
+          v-for="s in ['proposed','approved','confirmed','completed','closed']"
+          :key="s"
+          type="button"
+          class="btn btn-sm"
+          :class="[getStatus(opplan) === s ? 'active' : '', store.isChanged(opplan.reference, 'status') && s === opplan.status ? 'btn-danger' : 'btn-primary']"
+          data-bs-toggle="tooltip"
+          data-bs-html="true"
+          :title="ttt(s)"
+          :disabled="actions.hasOwnProperty('erp_incr_export') || !editable"
+          @click="setStatus(opplan, s)"
+        >
+          <i class="fa" :class="getStatusIcon(s)"></i>
+        </button>
+      </span>
+
       <span
         class="btn-group"
         role="group"
-        v-if="editable && isSelected(opplan.reference)"
+        v-if="editable && isSelected(opplan.reference) && opplan.hasOwnProperty('operationplan__status')"
       >
         <button
-          v-if="!opplan.hasOwnProperty('operationplan__status')"
+          v-for="s in ['proposed','approved','confirmed','completed','closed']"
+          :key="s"
           type="button"
           class="btn btn-sm"
-          :class="[opplan.status ==='proposed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
+          :class="[getStatus(opplan) === s ? 'active' : '', store.isChanged(opplan.reference, 'status') && s === opplan.operationplan__status ? 'btn-danger' : ' btn-primary']"
           data-bs-toggle="tooltip"
           data-bs-html="true"
-          :title="ttt('proposed')"
-          @click="
-              changeCard(opplan, 'status', opplan.status, 'proposed');
-              opplan.status = 'proposed';
-            "
+          :title="ttt(s)"
+          :disabled="actions.hasOwnProperty('erp_incr_export') || !editable"
+          @click="setStatus(opplan, s)"
         >
-          <i class="fa fa-unlock"></i>
-        </button>
-        <button
-          v-if="!opplan.hasOwnProperty('operationplan__status')"
-          type="button"
-          class="btn btn-sm"
-          :class="[opplan.status ==='approved' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-          data-bs-toggle="tooltip"
-          data-bs-html="true"
-          :title="ttt('approved')"
-          @click="
-              changeCard(opplan, 'status', opplan.status, 'approved');
-              opplan.status = 'approved';
-            "
-        >
-          <i class="fa fa-unlock-alt"></i>
-        </button>
-        <!--          the next 3 buttons from angular check for operationplan__status but use opplan.status-->
-        <button
-          v-if="!opplan.hasOwnProperty('operationplan__status')"
-          type="button"
-          class="btn btn-sm"
-          :class="[opplan.status ==='confirmed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-          data-bs-toggle="tooltip"
-          data-bs-html="true"
-          :title="ttt('confirmed')"
-          @click="
-              changeCard(opplan, 'status', opplan.status, 'confirmed');
-              opplan.status = 'confirmed';
-            "
-        >
-          <i class="fa fa-lock"></i>
-        </button>
-        <button
-          v-if="!opplan.hasOwnProperty('operationplan__status')"
-          type="button"
-          class="btn btn-sm"
-          :class="[opplan.status ==='completed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-          data-bs-toggle="tooltip"
-          data-bs-html="true"
-          :title="ttt('completed')"
-          @click="
-              changeCard(opplan, 'status', opplan.status, 'completed');
-              opplan.status = 'completed';
-            "
-        >
-          <i class="fa fa-check"></i>
-        </button>
-        <button
-          v-if="!opplan.hasOwnProperty('operationplan__status')"
-          type="button"
-          class="btn btn-sm"
-          :class="[opplan.status ==='closed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-          data-bs-toggle="tooltip"
-          data-bs-html="true"
-          :title="ttt('closed')"
-          @click="
-              changeCard(opplan, 'status', opplan.status, 'closed');
-              opplan.status = 'closed';
-            "
-        >
-          <i class="fa fa-times"></i>
-        </button>
-        <button
-          v-if="opplan.hasOwnProperty('operationplan__status')"
-          type="button"
-          class="btn btn-sm"
-          :class="[opplan.operationplan__status ==='proposed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-          data-bs-toggle="tooltip"
-          data-bs-html="true"
-          :title="ttt('proposed')"
-          @click="
-              changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'proposed');
-              opplan.operationplan__status = 'proposed';
-            "
-        >
-          <i class="fa fa-unlock"></i>
-        </button>
-        <button
-          v-if="opplan.hasOwnProperty('operationplan__status')"
-          type="button"
-          class="btn btn-sm"
-          :class="[opplan.operationplan__status ==='approved' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-          data-bs-toggle="tooltip"
-          data-bs-html="true"
-          :title="ttt('approved')"
-          @click="
-              changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'approved');
-              opplan.operationplan__status = 'approved';
-            "
-        >
-          <i class="fa fa-unlock-alt"></i>
-        </button>
-        <button
-          v-if="opplan.hasOwnProperty('operationplan__status')"
-          type="button"
-          class="btn btn-sm"
-          :class="[opplan.operationplan__status ==='confirmed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-          data-bs-toggle="tooltip"
-          data-bs-html="true"
-          :title="ttt('confirmed')"
-          @click="
-              changeCard(
-                opplan,
-                'operationplan__status',
-                opplan.operationplan__status,
-                'confirmed'
-              );
-              opplan.operationplan__status = 'confirmed';
-            "
-        >
-          <i class="fa fa-lock"></i>
-        </button>
-        <button
-          v-if="opplan.hasOwnProperty('operationplan__status')"
-          type="button"
-          class="btn btn-sm"
-          :class="[opplan.operationplan__status ==='completed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-          data-bs-toggle="tooltip"
-          data-bs-html="true"
-          :title="ttt('completed')"
-          @click="
-              changeCard(
-                opplan,
-                'operationplan__status',
-                opplan.operationplan__status,
-                'completed'
-              );
-              opplan.operationplan__status = 'completed';
-            "
-        >
-          <i class="fa fa-check"></i>
-        </button>
-        <button
-          v-if="opplan.hasOwnProperty('operationplan__status')"
-          type="button"
-          class="btn btn-sm"
-          :class="[opplan.operationplan__status ==='closed' ? 'active' : '', store.isChanged(opplan.reference, 'status') ? 'btn-danger' : 'btn-primary']"
-          data-bs-toggle="tooltip"
-          data-bs-html="true"
-          :title="ttt('closed')"
-          @click="
-              changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'closed');
-              opplan.operationplan__status = 'closed';
-            "
-        >
-          <i class="fa fa-times"></i>
+          <i class="fa" :class="getStatusIcon(s)"></i>
         </button>
       </span>
     </p>

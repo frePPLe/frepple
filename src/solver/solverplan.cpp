@@ -559,7 +559,7 @@ void SolverCreate::SolverData::commit() {
     demands->clear();
 
     // Clean up excess inventory
-    scanExcess(solver->getPlanType() == 1);
+    scanExcess(solver->getPlanType() == 1 && solver->getConstraints() > 0);
   } catch (...) {
     // We come in this exception handling code only if there is a problem with
     // with this cluster that goes beyond problems with single orders.

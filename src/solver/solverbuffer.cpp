@@ -902,7 +902,9 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
                   break;
                 auto tmp = f.getOperationPlan();
                 if (tmp && (tmp->getConfirmed() || tmp->getApproved()) &&
-                    f.getDate() > data->state->q_date) {
+                    f.getDate() > data->state->q_date &&
+                    !tmp->getOperation()->getName().starts_with(
+                        "Correction for")) {
                   exists = true;
                   break;
                 }

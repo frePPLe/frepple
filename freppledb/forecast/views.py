@@ -2372,7 +2372,7 @@ class ForecastEditor:
                     v = getattr(obj, a[0], None)
                     attr.append(
                         [
-                            capfirst(force_str(label)),
+                            capfirst(force_str(a[1])),
                             round(v.total_seconds() / 86400) if v is not None else None,
                         ]
                     )

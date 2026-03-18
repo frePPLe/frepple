@@ -14,7 +14,7 @@ Extensions can be provided by the frepple team,
 or `developed by yourself <../developer-guide/creating-an-extension-app.html>`_.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    executesql
    forecast

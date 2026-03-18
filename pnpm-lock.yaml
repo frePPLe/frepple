@@ -43,8 +43,8 @@ importers:
         specifier: ~10.0.1
         version: 10.0.1(eslint@9.39.1(jiti@2.4.2))(vue-eslint-parser@10.0.0(eslint@9.39.1(jiti@2.4.2)))
       gettext-extractor:
-        specifier: ^4.0.1
-        version: 4.0.1
+        specifier: ^4.0.6
+        version: 4.0.6
       gettext-parser:
         specifier: ^8.0.0
         version: 8.0.0
@@ -2035,8 +2035,8 @@ packages:
     resolution: {integrity: sha512-2zblDBaFcb3rB4rF77XVnuINOE2h2k/OnqXAiy0IrTxUfV1iFp3la33oAQVY9pCpWU268WFYVt2t71hlMuLsOg==}
     engines: {node: '>=10'}
 
-  gettext-extractor@4.0.1:
-    resolution: {integrity: sha512-f11MbYAIeWCB8a5zYZu8W6/RLtjA6FBSpj8L9TdA1jIjkBsPSvJin6e1h3WsQxaiJcE6MPgFQb/lhTTl0k1Phw==}
+  gettext-extractor@4.0.6:
+    resolution: {integrity: sha512-V06SFy/KuWLRL+szfr+rleAnLdzUet/wfLlCo4d2qJ8yF0essGdxX5jBqpCx69TB5U6E3jIC9lZtpvnMkNSCTw==}
     engines: {node: '>=20'}
 
   gettext-parser@1.1.0:
@@ -2058,11 +2058,6 @@ packages:
   glob-parent@6.0.2:
     resolution: {integrity: sha512-XxwI8EOhVQgWp6iDL+3b0r86f4d6AX6zSU55HfB4ydCEuXLXc5FcYeOu+nnGftS4TEju/11rt4KJPTMgbfmv4A==}
     engines: {node: '>=10.13.0'}
-
-  glob@11.0.1:
-    resolution: {integrity: sha512-zrQDm8XPnYEKawJScsnM0QzobJxlT/kHOOlRTio8IH/GrmxRE5fjllkzdaHclIuNjUQTJYH2xHNIGfdpJkDJUw==}
-    engines: {node: 20 || >=22}
-    hasBin: true
 
   glob@11.1.0:
     resolution: {integrity: sha512-vuNwKSaKiqm7g0THUBu2x7ckSs3XJLXE+2ssL7/MfTGPLLcrJQ/4Uq1CjPTtO5cCIiRxqvN6Twy1qOwhL0Xjcw==}
@@ -2703,10 +2698,6 @@ packages:
   mimic-function@5.0.1:
     resolution: {integrity: sha512-VP79XUPxV2CigYP3jWwAUFSku2aKqBH7uTAapFWCBqutsbmDo96KY5o8uh6U+/YSIn5OxJnXp73beVkpqMIGhA==}
     engines: {node: '>=18'}
-
-  minimatch@10.0.3:
-    resolution: {integrity: sha512-IPZ167aShDZZUMdRk66cyQAW3qr0WzbHkPdMYa8bzZhlHhO3jALbKdxcaak7W9FfT2rZNpQuUu4Od7ILEpXSaw==}
-    engines: {node: 20 || >=22}
 
   minimatch@10.1.1:
     resolution: {integrity: sha512-enIvLvRAFZYXJzkCYG5RKmPfrFArdLv+R+lbQ53BmIMLIry74bjKzX6iHAm8WYamJkhSSEabrWN5D97XnKObjQ==}
@@ -5739,11 +5730,11 @@ snapshots:
 
   getobject@1.0.2: {}
 
-  gettext-extractor@4.0.1:
+  gettext-extractor@4.0.6:
     dependencies:
       '@types/parse5': 5.0.3
       css-selector-parser: 1.4.1
-      glob: 11.0.1
+      glob: 11.1.0
       parse5: 6.0.1
       pofile: 1.0.11
       typescript: 5.8.2
@@ -5772,15 +5763,6 @@ snapshots:
   glob-parent@6.0.2:
     dependencies:
       is-glob: 4.0.3
-
-  glob@11.0.1:
-    dependencies:
-      foreground-child: 3.3.1
-      jackspeak: 4.1.1
-      minimatch: 10.0.3
-      minipass: 7.1.2
-      package-json-from-dist: 1.0.1
-      path-scurry: 2.0.0
 
   glob@11.1.0:
     dependencies:
@@ -6422,10 +6404,6 @@ snapshots:
   mimic-fn@4.0.0: {}
 
   mimic-function@5.0.1: {}
-
-  minimatch@10.0.3:
-    dependencies:
-      '@isaacs/brace-expansion': 5.0.0
 
   minimatch@10.1.1:
     dependencies:

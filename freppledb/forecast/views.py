@@ -528,26 +528,19 @@ class OverviewReport(GridPivot):
                     (),
                 ),
             }
-            for field_name, label, fieldtype, editable, hidden in getAttributes(Item):
-                attr["item__%s" % field_name] = RawSQL(
-                    "(select %s from item where name=forecastreport_view.item_id)"
-                    % field_name,
+            for a in getAttributes(Item):
+                attr[f"item__{a[0]}"] = RawSQL(
+                    f"(select {a[0]} from item where name=forecastreport_view.item_id)",
                     (),
                 )
-            for field_name, label, fieldtype, editable, hidden in getAttributes(
-                Location
-            ):
-                attr["location__%s" % field_name] = RawSQL(
-                    "(select %s from location where name=forecastreport_view.location_id)"
-                    % field_name,
+            for a in getAttributes(Location):
+                attr[f"location__{a[0]}"] = RawSQL(
+                    f"(select {a[0]} from location where name=forecastreport_view.location_id)",
                     (),
                 )
-            for field_name, label, fieldtype, editable, hidden in getAttributes(
-                Customer
-            ):
-                attr["customer__%s" % field_name] = RawSQL(
-                    "(select %s from customer where name=forecastreport_view.customer_id)"
-                    % field_name,
+            for a in getAttributes(Customer):
+                attr[f"customer__{a[0]}"] = RawSQL(
+                    f"(select {a[0]} from customer where name=forecastreport_view.customer_id)",
                     (),
                 )
             return ForecastPlanView.objects.order_by(
@@ -2330,69 +2323,63 @@ class ForecastEditor:
 
         # Auxilary function to return attributes
         def addAttributeValues(attr, obj, cls):
-            for field_name, label, fieldtype, editable, hidden in getAttributes(cls):
-                if fieldtype == "string" or fieldtype.startswith("foreignkey:"):
-                    attr.append(
-                        [capfirst(force_str(label)), getattr(obj, field_name, None)]
-                    )
-                elif fieldtype == "boolean":
-                    attr.append(
-                        [capfirst(force_str(label)), getattr(obj, field_name, False)]
-                    )
-                elif fieldtype == "number":
-                    if label.startswith("sales value"):
+            for a in getAttributes(cls):
+                if a[2] == "string" or a[2].startswith("foreignkey:"):
+                    attr.append([capfirst(force_str(a[1])), getattr(obj, a[0], None)])
+                elif a[2] == "boolean":
+                    attr.append([capfirst(force_str(a[1])), getattr(obj, a[0], False)])
+                elif a[2] == "number":
+                    if a[1].startswith("sales value"):
                         attr.append(
                             [
-                                capfirst(force_str(label)),
+                                capfirst(force_str(a[1])),
                                 currency[0]
-                                + str(float(getattr(obj, field_name, 0) or 0))
+                                + str(float(getattr(obj, a[0], 0) or 0))
                                 + currency[1],
                             ]
                         )
                     else:
                         attr.append(
                             [
-                                capfirst(force_str(label)),
-                                float(getattr(obj, field_name, 0) or 0),
+                                capfirst(force_str(a[1])),
+                                float(getattr(obj, a[0], 0) or 0),
                             ]
                         )
-                elif fieldtype == "integer":
+                elif a[2] == "integer":
                     attr.append(
                         [
-                            capfirst(force_str(label)),
-                            int(getattr(obj, field_name, 0) or 0),
+                            capfirst(force_str(a[1])),
+                            int(getattr(obj, a[0], 0) or 0),
                         ]
                     )
-                elif fieldtype == "date":
-                    v = getattr(obj, field_name, None)
+                elif a[2] == "date":
+                    v = getattr(obj, a[0], None)
                     attr.append(
                         [
-                            capfirst(force_str(label)),
+                            capfirst(force_str(a[1])),
                             v.strftime("%Y-%m-%d") if v else None,
                         ]
                     )
-                elif fieldtype == "datetime":
-                    v = getattr(obj, field_name, None)
+                elif a[2] == "datetime":
+                    v = getattr(obj, a[0], None)
                     attr.append(
                         [
-                            capfirst(force_str(label)),
+                            capfirst(force_str(a[1])),
                             v.strftime("%Y-%m-%d %H:%M:%S") if v else None,
                         ]
                     )
-                elif fieldtype == "duration":
-                    v = getattr(obj, field_name, None)
+                elif a[2] == "duration":
+                    v = getattr(obj, a[0], None)
                     attr.append(
                         [
                             capfirst(force_str(label)),
                             round(v.total_seconds() / 86400) if v is not None else None,
                         ]
                     )
-                elif fieldtype == "time":
-                    attr.append(
-                        [capfirst(force_str(label)), int(getattr(obj, field_name, 0))]
-                    )
+                elif a[2] == "time":
+                    attr.append([capfirst(force_str(a[1])), int(getattr(obj, a[0], 0))])
                 else:
-                    raise Exception("Invalid attribute type '%s'." % fieldtype)
+                    raise Exception("Invalid attribute type '%s'." % a[2])
 
         # Retrieve attributes
         result_attr = {}

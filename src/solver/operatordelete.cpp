@@ -211,6 +211,8 @@ void OperatorDelete::solve(const Buffer* b, void*) {
   // STEP 1: Remove shortages from the buffer
   // Delete the earliest unlocked consumer(s) after the start of a material
   // shortage.
+  // TODO: Do we keep this feature? It has dangerous side effects in datasets with
+  // unresolvable shortages. The plan quality is better without this.
   if (getConstrained()) {
     double unresolvable = 0.0;
 

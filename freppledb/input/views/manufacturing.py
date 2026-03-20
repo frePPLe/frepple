@@ -80,8 +80,7 @@ class OperationResourceList(GridReport):
     model = OperationResource
     frozenColumns = 1
     help_url = "modeling-wizard/manufacturing-capacity/operation-resources.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define operation resources</h3>
         <br>
         This table defines which resources are required to perfrom an operation.<br>
@@ -91,14 +90,21 @@ class OperationResourceList(GridReport):
         <a href="{{request.prefix}}/wizard/load/production/?currentstep=8" class="btn btn-primary">Wizard to upload operation resources<br>from a spreadsheet</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     @classmethod
     def initialize(reportclass, request):
         if reportclass._attributes_added != 2:
             reportclass._attributes_added = 2
             reportclass.attr_sql = ""
+
+            # Adding custom operationmaterial attributes
+            for f in getAttributeFields(OperationResource):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += (
+                    "operationresource.%s, " % f.name.split("__")[-1]
+                )
+
             # Adding custom operation attributes
             for f in getAttributeFields(
                 Operation,
@@ -398,8 +404,7 @@ class OperationMaterialList(GridReport):
     model = OperationMaterial
     frozenColumns = 1
     help_url = "modeling-wizard/manufacturing-bom/operation-materials.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define operation materials</h3>
         <br>
         This table defines what item(s) an operation is consuming and producing.<br>
@@ -410,14 +415,21 @@ class OperationMaterialList(GridReport):
         <a href="{{request.prefix}}/wizard/load/production/?currentstep=3" class="btn btn-primary">Wizard to upload operation materials<br>from a spreadsheet</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     @classmethod
     def initialize(reportclass, request):
         if reportclass._attributes_added != 2:
             reportclass._attributes_added = 2
             reportclass.attr_sql = ""
+
+            # Adding custom operationmaterial attributes
+            for f in getAttributeFields(OperationMaterial):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += (
+                    "operationmaterial.%s, " % f.name.split("__")[-1]
+                )
+
             # Adding custom operation attributes
             for f in getAttributeFields(
                 Operation,
@@ -699,8 +711,7 @@ class CalendarList(GridReport):
     model = Calendar
     frozenColumns = 1
     help_url = "model-reference/calendars.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define calendars</h3>
         <br>
         A calendar represents a numeric value that is varying over time.<br><br>
@@ -717,8 +728,7 @@ class CalendarList(GridReport):
         <a href="{{request.prefix}}/data/input/calendar/add/" class="btn btn-primary">Create a single calendar<br>in a form</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     rows = (
         GridFieldText(
@@ -823,8 +833,7 @@ class CalendarBucketList(GridReport):
     model = CalendarBucket
     frozenColumns = 1
     help_url = "model-reference/calendar-buckets.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define calendar buckets</h3>
         <br>
         A calendar represents a numeric value that is varying over time.<br><br>
@@ -834,8 +843,7 @@ class CalendarBucketList(GridReport):
         <a href="{{request.prefix}}/data/input/calendarbucket/add/" class="btn btn-primary">Create a single calendar bucket</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     @classmethod
     def initialize(reportclass, request):
@@ -910,8 +918,7 @@ class OperationList(GridReport):
     model = Operation
     frozenColumns = 1
     help_url = "modeling-wizard/manufacturing-bom/operations.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define operations</h3>
         <br>
         An operation is a manufacturing operation consuming some items (a bill of material) to produce a
@@ -922,8 +929,7 @@ class OperationList(GridReport):
         <a href="{{request.prefix}}/wizard/load/production/?currentstep=3" class="btn btn-primary">Wizard to upload operations<br>from a spreadsheet</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     @classmethod
     def initialize(reportclass, request):
@@ -1149,15 +1155,13 @@ class SubOperationList(GridReport):
     model = SubOperation
     frozenColumns = 1
     help_url = "model-reference/suboperations.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define suboperations</h3>
         <br>
         This table is DEPRECATED.<br><br>
         Instead, use the field "owner" in the operation table to define steps in a routing operation.<br>
         <br>
-        """
-    )
+        """)
     rows = (
         GridFieldInteger("id", title=_("identifier"), key=True, initially_hidden=True),
         GridFieldText(
@@ -1414,8 +1418,7 @@ class OperationDependencyList(GridReport):
     model = OperationDependency
     frozenColumns = 1
     help_url = "model-reference/operation-dependencies.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define operation dependencies</h3>
         <br>
         This table defines relations between operations.<br>
@@ -1433,8 +1436,7 @@ class OperationDependencyList(GridReport):
         defining intermediate items.<br>
         <br>
         <br>
-        """
-    )
+        """)
     rows = (
         GridFieldInteger(
             "id",
@@ -1704,8 +1706,7 @@ class ManufacturingOrderList(OperationPlanMixin):
     editable = True
     height = 250
     help_url = "modeling-wizard/manufacturing-bom/manufacturing-orders.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define manufacturing orders</h3>
         <br>
         This table contains the "confirmed" manufacturing orders.<br><br>
@@ -1716,8 +1717,7 @@ class ManufacturingOrderList(OperationPlanMixin):
         <a href="{{request.prefix}}/wizard/load/production/?currentstep=7" onclick="window.location = $(event.target).attr('href'); event.preventDefault();" class="btn btn-primary">Wizard to upload manufacturing orders<br>from a spreadsheet</a>
         </div>
         <br>
-        """
-    )
+        """)
     calendarmode = "duration"
 
     @classmethod
@@ -2562,8 +2562,7 @@ class WorkOrderList(OperationPlanMixin):
     editable = True
     height = 250
     help_url = "modeling-wizard/manufacturing-bom/work-orders.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define work orders</h3>
         <br>
         This table contains the "confirmed" work orders.<br><br>
@@ -2574,8 +2573,7 @@ class WorkOrderList(OperationPlanMixin):
         <a href="{{request.prefix}}/wizard/load/production/?currentstep=7" onclick="window.location = $(event.target).attr('href'); event.preventDefault();" class="btn btn-primary">Wizard to upload manufacturing orders<br>from a spreadsheet</a>
         </div>
         <br>
-        """
-    )
+        """)
     calendarmode = "duration"
 
     @classmethod

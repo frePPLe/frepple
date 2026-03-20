@@ -541,6 +541,10 @@ class TimeLine {
   /* This function is used to trace the consistency of the data structure. */
   bool check() const;
 
+  bool hasTimeVaryingMinimum() const {
+    return lastMin != nullptr && lastMin->prevMin != nullptr;
+  }
+
  private:
   /* A pointer to the first event in the timeline. */
   Event* first = nullptr;

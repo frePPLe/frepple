@@ -86,6 +86,9 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     // UI state
     loading: false,
+    exporting: false,
+    exportError: null,
+    exportSuccess: null,
     error: { title: '', showError: false, message: '', details: '', type: 'error' },
     dataRowHeight: window.preferences?.height || null,
     width: 300,
@@ -132,12 +135,6 @@ export const useOperationplansStore = defineStore('operationplans', {
   },
 
   actions: {
-    initializeMode() {
-      // Sync with window preferences on init
-      this.mode = window.preferences?.mode || window.mode || 'table';
-      console.log('Mode initialized to:', this.mode);
-    },
-
     setMode(newMode) {
       this.mode = newMode;
       window.mode = newMode;
@@ -145,13 +142,6 @@ export const useOperationplansStore = defineStore('operationplans', {
         window.preferences.mode = newMode;
       }
       console.log('Store mode updated to:', newMode);
-    },
-
-    syncModeFromWindow() {
-      if (window.mode && window.mode !== this.mode) {
-        this.mode = window.mode;
-        console.log('Synced mode from window:', this.mode);
-      }
     },
 
     setCalendarMode(newCalendarMode) {
@@ -479,9 +469,9 @@ export const useOperationplansStore = defineStore('operationplans', {
       }
     },
 
-    // async save(data) {
-    //   console.log(314, 'save: ', data);
-    // },
+    setExporting(status) {
+      this.exporting = status;
+    },
 
     undo() {
       this.operationplan = new Operationplan();
@@ -502,26 +492,98 @@ export const useOperationplansStore = defineStore('operationplans', {
       }
       if (!changes || Object.keys(changes).length === 0) return;
 
-      changes.map(x => {
+      changes.map((x) => {
         delete x.end;
         delete x.start;
         // delete x.id;
-        if (x.startdate) {x.startdate = x.startdate.replace('T', ' ')};
-        if (x.enddate) {x.enddate = x.enddate.replace('T', ' ')};
-        if (x.operationplan__startdate) {x.operationplan__startdate = x.startdate.replace('T', ' ')};
-        if (x.operationplan__enddate) {x.operationplan__enddate = x.operationplan__enddate.replace('T', ' ')};
-        return x
-      })
+        if (x.startdate) {
+          x.startdate = x.startdate.replace('T', ' ');
+        }
+        if (x.enddate) {
+          x.enddate = x.enddate.replace('T', ' ');
+        }
+        if (x.operationplan__startdate) {
+          x.operationplan__startdate = x.startdate.replace('T', ' ');
+        }
+        if (x.operationplan__enddate) {
+          x.operationplan__enddate = x.operationplan__enddate.replace('T', ' ');
+        }
+        return x;
+      });
 
       try {
-        await operationplanService.postOperationplanDetails(changes)
-        this.undo()
+        await operationplanService.postOperationplanDetails(changes);
+        this.undo();
       } catch (e) {
         this.setError({
           title: 'Save failed',
           message: e.message || 'Unknown error',
           type: 'error',
         });
+      }
+    },
+
+    async erpExport() {
+      try {
+        // Send the FULL operationplan object (matching table mode behavior)
+        // This ensures consistency with what frepple.js sends in table mode
+        const exportData = {
+          // The backend only needs these fields
+          "reference": this.operationplan.reference,
+          "type": this.operationplan.type,
+          "quantity": this.operationplan.quantity,
+          "enddate": this.operationplan.end,
+          "owner": this.operationplan.owner,
+
+          // ...this.operationplan,
+        };
+
+        // Use the Vue service instead of direct AJAX
+        const response = await operationplanService.exportToERP([exportData]);
+
+        // Handle successful response
+        if (
+          response &&
+          response.responseData &&
+          response.responseData.value &&
+          response.responseData.value[0] &&
+          response.responseData.value[0].status === 'ok'
+        ) {
+          this.exportError = null;
+          // store.undo();
+        } else if (
+          response &&
+          response.responseData &&
+          response.responseData.value &&
+          response.responseData.value[0] &&
+          response.responseData.value[0].messages
+        ) {
+          this.exportError = response.responseData.value[0].messages.join('\n');
+        } else {
+          this.exportError = 'Export failed: Unexpected response format from server';
+        }
+      } catch (err) {
+        console.error('Export error:', err);
+
+        // Handle different error types
+        if (err.response) {
+          // Server responded with error status
+          if (err.response.data && err.response.data.detail) {
+            this.exportError = err.response.data.detail;
+          } else if (err.response.data && err.response.data.message) {
+            this.exportError = err.response.data.message;
+          } else {
+            this.exportError = 'Server error: ' + (err.response.status || 'Unknown');
+          }
+        } else if (err.request) {
+          // Request made but no response received
+          this.exportError = 'No response from server';
+        } else {
+          // Something else happened in setting up the request
+          this.exportError = err.message || 'Export failed: Unknown error';
+        }
+      } finally {
+        this.setExporting(false);
       }
     },
 
@@ -703,7 +765,10 @@ export const useOperationplansStore = defineStore('operationplans', {
           // Special handling for quantity fields based on record type
           if (['DO', 'MO', 'WO'].includes(target.type)) {
             if (newField === 'quantity' || newField === 'quantity_completed') {
-              if (['ResourceDetail', 'InventoryDetail'].includes(window.reportkey.split('.').pop()) || target.type === 'DO') {
+              if (
+                ['ResourceDetail', 'InventoryDetail'].includes(window.reportkey.split('.').pop()) ||
+                target.type === 'DO'
+              ) {
                 newField = 'operationplan__' + newField.replace('operationplan__', '');
               }
             }

@@ -36,6 +36,10 @@ export const operationplanService = {
     return api.post('settings/', preferencesData );
   },
 
+  async exportToERP(postData) {
+    return api.post('erp/upload/', postData );
+  },
+
   async getKanbanData(params) {
     const searchParams = new URLSearchParams(params).toString();
     const endpoint = (location.pathname.startsWith(window.url_prefix)

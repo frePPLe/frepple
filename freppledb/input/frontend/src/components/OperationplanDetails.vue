@@ -30,6 +30,7 @@ import KanbanBoard from '@/components/KanbanBoard.vue';
 import CalendarBoard from '@/components/CalendarBoard.vue';
 import { debounce } from '@common/utils.js';
 import InfoDialog from '@common/components/InfoDialog.vue';
+import ErrorDialog from '@common/components/ErrorDialog.vue';
 
 const { t: ttt } = useI18n({
   useScope: 'global',
@@ -92,8 +93,9 @@ const isCalendarMode = computed(() => store.isCalendarMode);
 
 const unsavedChangesModal = ref(false);
 const showExportDialog = ref(false);
+const showExportErrorDialog = ref(false);
 const exportDialogError = ref('');
-const exporting = ref(false);
+const exporting = computed(() => store.exporting);
 
 let pendingModeChange = null;
 
@@ -228,6 +230,31 @@ function shouldShowWidget(widgetName) {
   );
 }
 
+const confirmERPExport = async () => {
+  exportDialogError.value = '';
+  await store.erpExport();
+  if (store.exportError) {
+    if (store.exportError === 'No response from server') {
+      exportDialogError.value = ttt('No response from server');
+    } else if (store.exportError === 'No records with status proposed, approved or confirmed') {
+      exportDialogError.value = ttt('No records with status proposed, approved or confirmed');
+    } else if (store.exportError.startsWith('Server error: ')) {
+      exportDialogError.value = ttt('Server error: ') + store.exportError.split(': ')[1];
+    } else if (store.exportError === 'Export failed: Unexpected response format from server') {
+      exportDialogError.value = ttt('Export failed: Unexpected response format from server');
+    } else if (store.exportError === 'Export failed: Unknown error') {
+      exportDialogError.value = ttt('Export failed: Unknown error');
+    } else {
+      exportDialogError.value = store.exportError;
+    }
+    store.exportError = null;
+    showExportDialog.value = false;
+    showExportErrorDialog.value = true;
+  } else {
+    showExportDialog.value = false;
+  }
+};
+
 const handleERPExport = () => {
   const op = store.operationplan;
   if (!op || !op.reference) return;
@@ -236,50 +263,12 @@ const handleERPExport = () => {
   if (!['proposed', 'approved', 'confirmed'].includes(status)) {
     exportDialogError.value = ttt('No records with status proposed, approved or confirmed');
     showExportDialog.value = true;
-    exporting.value = true;
+    store.setExporting(false);
     return;
   }
 
-  showExportDialog.value = true;
   exportDialogError.value = '';
-  exporting.value = false;
-};
-
-const confirmExport = async () => {
-  const op = store.operationplan;
-  if (!op || !op.reference) return;
-
-  const status = op.status || op.operationplan__status;
-  if (!['proposed', 'approved', 'confirmed'].includes(status)) {
-    exporting.value = true;
-    return;
-  }
-
-  exporting.value = true;
-
-  try {
-    const response = await $.ajax({
-      url: window.url_prefix + '/erp/upload/',
-      data: JSON.stringify([op]),
-      type: 'POST',
-      contentType: 'application/json',
-    });
-
-    if (response && response.result && response.result[0] && response.result[0].status === 'ok') {
-      exportDialogError.value = '';
-    } else if (response && response.result && response.result[0] && response.result[0].messages) {
-      exportDialogError.value = response.result[0].messages.join('\n');
-    }
-  } catch (err) {
-    if (err.responseJSON && err.responseJSON.detail) {
-      exportDialogError.value = err.responseJSON.detail;
-    } else if (err.responseText) {
-      exportDialogError.value = err.responseText;
-    } else {
-      exportDialogError.value = err.statusText || ttt('Export failed');
-    }
-  }
-  exporting.value = true;
+  showExportDialog.value = true;
 };
 
 onMounted(() => {
@@ -545,6 +534,7 @@ onUnmounted(() => {
       info.rootEl.removeEventListener('gridCellEdited', info.handlers.gridCellEdited);
       info.rootEl.removeEventListener('setMode', info.handlers.setMode);
       info.rootEl.removeEventListener('setRowHeight', info.handleSetRowHeight);
+      info.rootEl.removeEventListener('triggerERPExport', info.handlers.triggerERPExport);
       info.rootEl.removeEventListener('attemptModeChange', info.handlers.attemptModeChange);
     } catch (err) {
       console.log('Failed to remove event listeners from app root element:', err);
@@ -616,18 +606,22 @@ onUnmounted(() => {
       v-model="showExportDialog"
       :title="ttt('Export')"
       :message="ttt('Export selected records?')"
-      :details="exportDialogError"
-      :type="exportDialogError ? 'error' : 'info'"
     >
       <template #actions>
         <button type="button" class="btn btn-gray" @click="showExportDialog = false">
           {{ exporting ? ttt('Close') : ttt('Cancel') }}
         </button>
-        <button v-if="!exporting" type="button" class="btn btn-primary" @click="confirmExport">
+        <button v-if="!exporting" type="button" class="btn btn-primary" @click="confirmERPExport">
           {{ ttt('Confirm') }}
         </button>
       </template>
     </InfoDialog>
+
+    <ErrorDialog
+      v-model="showExportErrorDialog"
+      :title="ttt('Export Error')"
+      :details="exportDialogError"
+    />
 
     <KanbanBoard v-if="isKanbanMode" />
     <CalendarBoard v-if="isCalendarMode" />

@@ -1195,7 +1195,11 @@ class ValidateAggregatedData(PlanTask):
 class CalculateForecast(PlanTask):
     description = "Calculate statistical forecast and forecast consumption"
     sequence = 170
-    label = ("fcst", _("Generate forecast"))
+    label = (
+        "fcst",
+        _("Generate forecast"),
+        _("Calculate statistical forecast and forecast consumption"),
+    )
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):

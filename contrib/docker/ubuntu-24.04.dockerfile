@@ -62,7 +62,7 @@ ENV LC_ALL=C.UTF-8
 
 # Download postgres clients (use when there are major postgresql releases which aren't in this ubuntu release)
 RUN apt-get -y -q update && \
-  DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends curl ca-certificates gnupg && \
+  DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends curl ca-certificates gnupg openssh-server && \
   curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
   echo "deb http://apt.postgresql.org/pub/repos/apt/ noble-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
   apt-get -y -q update && \

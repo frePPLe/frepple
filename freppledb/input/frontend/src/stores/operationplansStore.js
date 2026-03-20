@@ -141,7 +141,7 @@ export const useOperationplansStore = defineStore('operationplans', {
       if (window.preferences) {
         window.preferences.mode = newMode;
       }
-      console.log('Store mode updated to:', newMode);
+      this.undo();
     },
 
     setCalendarMode(newCalendarMode) {

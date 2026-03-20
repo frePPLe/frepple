@@ -279,7 +279,7 @@ rect.opplan {
         upload.undo();
 
     });
-    jQuery("#actionsul li a, button#actions1").on('click', function(event) {
+    jQuery("#actionsul li a, button#actions1").off('click').on('click', function(event) {
       let action = jQuery(this).attr('name') || jQuery(this).prop('name');
       if (!action) {
         // Dropdown menu items
@@ -289,13 +289,11 @@ rect.opplan {
         action = jQuery("#actions").val();
       }
 
-      if (mode === 'kanban' && action === 'erp_incr_export') {
+      if ((mode === 'kanban' || mode.startsWith('calendar')) && action === 'erp_incr_export') {
         const customEvent = new CustomEvent("triggerERPExport", {
           detail: { mode: mode }
         });
         document.getElementById('app').dispatchEvent(customEvent);
-        event.stopImmediatePropagation();
-        event.preventDefault();
       } else if (action) {
         const customEvent = new CustomEvent("refreshStatus", {
           detail: {
@@ -306,7 +304,16 @@ rect.opplan {
           }
         });
         document.getElementById('app').dispatchEvent(customEvent);
+
+        if (mode === 'table' || mode === 'gantt') {
+          // Traditional table mode or Gantt mode
+          $("#actions1 span").text($(this).text());
+          $("#actions").val(action);
+          grid.runAction(action);
+        }
       }
+      event.stopImmediatePropagation();
+      event.preventDefault();
     });
     jQuery("#gridmode").on('click', function() {
       attemptModeChange('table', function() {
@@ -421,6 +428,7 @@ rect.opplan {
   }
 
   window.displayongrid = displayongrid;
+  window.setHeights = setHeights;
 
   jQuery("#workarea").css('overflow-x', 'visible');
   jQuery("#resize-handle").css({ 'display': 'inline-block' });
@@ -640,6 +648,10 @@ loadComplete: function(data) {
   var selectedIds = sel.map(function(x){ return (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x); });
   var hasVisible = selectedIds.filter(function(id){ return id !== 'cb' && visibleIds.indexOf(id) !== -1; }).length > 0;
   ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=jQuery(s); if (el.length) el.prop('disabled', !hasVisible); });
+
+  if (window.preferences && window.preferences.height) {
+    setHeights();
+  }
 },
 {% endblock %}
 
@@ -683,7 +695,7 @@ loadComplete: function(data) {
       const h = Math.max(150, Math.floor(window.preferences.height));
       jQuery('#content-main').css('height', h + 'px');
       // Now setHeights() will pick up the height we just set on #content-main
-      setHeights();
+      setTimeout(setHeights, 100);
   }
 </script>
 {% endblock %}

@@ -532,14 +532,13 @@ onUnmounted(() => {
       info.rootEl.removeEventListener('allSelect', info.handlers.all);
       info.rootEl.removeEventListener('processAggregatedInfo', info.handlers.proc);
       info.rootEl.removeEventListener('displayonpanel', info.handlers.display);
-      info.rootEl.removeEventListener('undo', info.handlers.display);
+      info.rootEl.removeEventListener('triggerUndo', info.handlers.triggerUndo);
       info.rootEl.removeEventListener('triggerSave', info.handlers.triggerSave);
       info.rootEl.removeEventListener('triggerCopy', info.handlers.triggerCopy);
       info.rootEl.removeEventListener('triggerDelete', info.handlers.triggerDelete);
-      info.rootEl.removeEventListener('triggerUndo', info.handlers.triggerUndo);
       info.rootEl.removeEventListener('gridCellEdited', info.handlers.gridCellEdited);
       info.rootEl.removeEventListener('setMode', info.handlers.setMode);
-      info.rootEl.removeEventListener('setRowHeight', info.handleSetRowHeight);
+      info.rootEl.removeEventListener('setRowHeight', info.handlers.handleSetRowHeight);
       info.rootEl.removeEventListener('triggerERPExport', info.handlers.triggerERPExport);
       info.rootEl.removeEventListener('attemptModeChange', info.handlers.attemptModeChange);
     } catch (err) {

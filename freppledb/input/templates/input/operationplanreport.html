@@ -279,15 +279,25 @@ rect.opplan {
         upload.undo();
 
     });
-    jQuery("#actionsul li, button#actions1").on('click', function() {
-      const action = jQuery("#actions").val();
+    jQuery("#actionsul li a, button#actions1").on('click', function(event) {
+      let action = jQuery(this).attr('name') || jQuery(this).prop('name');
+      if (!action) {
+        // Dropdown menu items
+        action = jQuery(this).parent().attr('name') || jQuery(this).parent().prop('name');
+      }
+      if (!action && jQuery("#actions").length) {
+        action = jQuery("#actions").val();
+      }
+
       if (mode === 'kanban' && action === 'erp_incr_export') {
-        const event = new CustomEvent("triggerERPExport", {
+        const customEvent = new CustomEvent("triggerERPExport", {
           detail: { mode: mode }
         });
-        document.getElementById('app').dispatchEvent(event);
-      } else {
-        const event = new CustomEvent("refreshStatus", {
+        document.getElementById('app').dispatchEvent(customEvent);
+        event.stopImmediatePropagation();
+        event.preventDefault();
+      } else if (action) {
+        const customEvent = new CustomEvent("refreshStatus", {
           detail: {
             execute: 'refreshStatus',
             reference: null,
@@ -295,7 +305,7 @@ rect.opplan {
             selectedRows: null,
           }
         });
-        document.getElementById('app').dispatchEvent(event);
+        document.getElementById('app').dispatchEvent(customEvent);
       }
     });
     jQuery("#gridmode").on('click', function() {

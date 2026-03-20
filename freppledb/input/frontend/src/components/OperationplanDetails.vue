@@ -255,20 +255,26 @@ const confirmERPExport = async () => {
   }
 };
 
-const handleERPExport = () => {
-  const op = store.operationplan;
-  if (!op || !op.reference) return;
-
-  const status = op.status || op.operationplan__status;
-  if (!['proposed', 'approved', 'confirmed'].includes(status)) {
-    exportDialogError.value = ttt('No records with status proposed, approved or confirmed');
-    showExportDialog.value = true;
-    store.setExporting(false);
-    return;
-  }
-
-  exportDialogError.value = '';
+const handleERPExport = (e) => {
+  const isKanban = e?.detail?.mode === 'kanban';
   showExportDialog.value = true;
+  exportDialogError.value = '';
+
+  if (isKanban) {
+    const op = store.operationplan;
+    if (!op || !op.reference) {
+      // In Kanban, we might have multiple selected cards, or just clicked the toolbar button.
+      // If we don't have a single "active" operationplan, we skip the status check here.
+      // The actual export will handle multiple selections if implemented in the store.
+      return;
+    }
+
+    const status = op?.status || op?.operationplan__status;
+    if (!['proposed', 'approved', 'confirmed'].includes(status)) {
+      exportDialogError.value = ttt('No records with status proposed, approved or confirmed');
+      store.setExporting(false);
+    }
+  }
 };
 
 onMounted(() => {

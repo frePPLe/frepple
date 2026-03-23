@@ -771,6 +771,12 @@ class Problem::List {
    */
   void clear(Problem* = nullptr);
 
+  unsigned int size() const {
+    unsigned int cnt = 0;
+    for (auto* p = first; p; p = p->nextProblem) ++cnt;
+    return cnt;
+  }
+  
   /* Add a problem to the list. */
   Problem* push(const MetaClass*, const Object*, Date, Date, double = 0.0,
                 Operation* = nullptr, bool = false);

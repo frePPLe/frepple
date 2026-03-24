@@ -94,7 +94,6 @@ from .management.commands.scheduletasks import scheduler
 
 import logging
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -725,7 +724,7 @@ def CancelTask(request, taskid):
         raise Http404("Only ajax post requests allowed")
     try:
         task = Task.objects.all().using(request.database).get(pk=taskid)
-        if task.processid or task.status == "waiting":
+        if task.processid or task.status == "Waiting":
             task.killProcess()
         else:
             return HttpResponseServerError("Task isn't running or waiting to run")
@@ -1245,7 +1244,7 @@ def exportWorkbook(request):
     for entity_name in request.POST.getlist("entities"):
         try:
             # Initialize
-            (app_label, model_label) = entity_name.split(".")
+            app_label, model_label = entity_name.split(".")
             model = apps.get_model(app_label, model_label)
             # Verify access rights
             permname = get_permission_codename("change", model._meta)

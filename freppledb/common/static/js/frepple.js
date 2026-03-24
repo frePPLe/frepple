@@ -542,12 +542,12 @@ jQuery.extend($.fn.fmatter, {
   },
 
   longstring: function (cellvalue, options, rowdata) {
-    if (typeof cellvalue !== 'string') return "";
+    if (typeof cellvalue !== 'string' || cellvalue === '') return "";
     var tipcontent = $.jgrid.htmlEncode(cellvalue);
     if (tipcontent)
       return '<span data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="' + tipcontent + '">' + tipcontent + '</span>';
     else
-      return tipcontentreturn;
+      return tipcontent;
   },
 
   selectbutton: function (cellvalue, options, rowdata) {

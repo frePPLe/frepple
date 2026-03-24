@@ -598,7 +598,7 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
 }
 
 void Problem::List::pop(Problem* p) {
-  Problem* q = p ? q = p->nextProblem : first;
+  Problem* q = p ? p->nextProblem : first;
   auto tail = p;
   if (p)
     // Skip the problem that was passed as argument
@@ -656,7 +656,8 @@ void Problem::List::clean(Demand* d) const {
   if (constraints.empty()) return;
 
   map<Operation*, bool> critical_path;
-  Duration critical_path_duration;
+  map<Operation*, bool> all_critical_paths;
+  Duration critical_path_duration(-1L);
   Date start_critical_path = Date::infiniteFuture;
   vector<OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
   short lvl_prev = -1;
@@ -676,6 +677,19 @@ void Problem::List::clean(Demand* d) const {
 
     // Evaluate when we identified end-to-end path.
     short lvl = p.getLevel();
+    if (lvl == 0) {
+      // New delivery path starts, which can have its own critical path
+      critical_path_duration = -1L;
+      start_critical_path = Date::infiniteFuture;
+      for (auto i : critical_path) {
+        auto e = all_critical_paths.find(i.first);
+        if (e == all_critical_paths.end() || (!e->second && i.second)) {
+          all_critical_paths[i.first] = i.second;
+      }
+      critical_path_duration = -1L;
+      start_critical_path = Date::infiniteFuture;
+      critical_path.clear();
+    }
     if (lvl <= lvl_prev && lvl_prev >= 0) {
       bool in_critical_path = false;
       for (auto lvl_cnt = lvl_prev; lvl_cnt >= 0; --lvl_cnt) {
@@ -729,7 +743,8 @@ void Problem::List::clean(Demand* d) const {
     }
 
     // Prepare next level
-    if (lvl >= opplans.size()) opplans.resize(lvl + 5);
+    if (static_cast<std::size_t>(lvl) >= opplans.size())
+      opplans.resize(lvl + 5);
     opplans[lvl] = p.getOperationPlan();
     lvl_prev = lvl;
   }
@@ -780,6 +795,12 @@ void Problem::List::clean(Demand* d) const {
         critical_path[opplans[lvl_cnt]->getOperation()] =
             opplans[lvl_cnt]->getProposed();
     }
+    for (auto i : critical_path) {
+      auto e = all_critical_paths.find(i.first);
+      if (e == all_critical_paths.end() || (!e->second && i.second)) {
+        all_critical_paths[i.first] = i.second;
+      }
+    }
   }
 
   // For unplanned orders, we can't clean the constraint list.
@@ -793,12 +814,12 @@ void Problem::List::clean(Demand* d) const {
                        ConstraintManufacturingLeadTime,
                        ConstraintPurchasingLeadTime>()) {
       auto* oper = static_cast<Operation*>(cstrt->getOwner());
-      auto found = critical_path.find(oper);
-      if (found == critical_path.end() || !found->second) keep = false;
+      auto found = all_critical_paths.find(oper);
+      if (found == all_critical_paths.end() || !found->second) keep = false;
     } else if (cstrt->hasType<ProblemCapacityOverload>()) {
       auto res = static_cast<Resource*>(cstrt->getOwner());
       keep = false;
-      for (auto& o : critical_path) {
+      for (auto& o : all_critical_paths) {
         for (const auto& ld : o.first->getLoads()) {
           if (ld.getResource() == res) {
             keep = true;
@@ -811,7 +832,8 @@ void Problem::List::clean(Demand* d) const {
       auto ow = cstrt->getOwner();
       if (ow->hasType<Buffer>()) {
       } else if (ow->hasType<Operation>()) {
-        if (!critical_path.contains(static_cast<Operation*>(ow))) keep = false;
+        if (!all_critical_paths.contains(static_cast<Operation*>(ow)))
+          keep = false;
       }
     }
     if (keep)

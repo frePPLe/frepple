@@ -136,5 +136,7 @@ DEMAND CONSTRAINT	5. order 1	Purchasing lead time on 'Purchase 5. raw material @
 DEMAND CONSTRAINT	6. order 1	Manufacturing lead time on '6. produce end item'	2019-12-28T09:00:00 / 2020-01-01T09:00:00
 DEMAND CONSTRAINT	6. order 1	Purchasing lead time on 'Purchase 6. raw material @ 6. factory from 6. supplier'	2019-12-26T09:00:00 / 2020-01-01T00:00:00
 DEMAND CONSTRAINT	8. order 1	Manufacturing lead time on '8. produce end item - alt 1'	2019-11-28T00:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	8. order 1	Manufacturing lead time on '8. produce intermediate item'	2019-12-31T00:00:00 / 2020-01-01T00:00:00
+DEMAND CONSTRAINT	8. order 1	Purchasing lead time on 'Purchase 8. raw material @ 8. factory from 8. supplier'	2019-12-25T00:00:00 / 2020-01-01T00:00:00
 DEMAND CONSTRAINT	9. order 1	Manufacturing lead time on '9. produce end item'	2019-12-26T00:00:00 / 2020-01-01T00:00:00
 DEMAND CONSTRAINT	9. order 1	Purchasing lead time on 'Purchase 9. component 2 @ 9. factory from 9. supplier'	2019-12-24T00:00:00 / 2020-01-01T00:00:00

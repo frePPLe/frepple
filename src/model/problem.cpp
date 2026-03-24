@@ -683,7 +683,7 @@ void Problem::List::clean(Demand* d) const {
       start_critical_path = Date::infiniteFuture;
       for (auto i : critical_path) {
         auto e = all_critical_paths.find(i.first);
-        if (e == all_critical_paths.end() || (!e->second && i.second)) {
+        if (e == all_critical_paths.end() || (!e->second && i.second))
           all_critical_paths[i.first] = i.second;
       }
       critical_path_duration = -1L;

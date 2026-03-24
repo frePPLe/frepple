@@ -12,6 +12,13 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Bug fix: Some models experienced issues with excess proposed supply in the
     presence of operation multiples and temporary unresolvable material shortages.
 
+.. rubric:: Odoo integration
+
+- | 18, 19: The default behavior for bringing draft purhase orders (aka RFQs) into
+    frePPLe has been adjusted.
+  | Earlier releases didn't bring them in.
+  | Now we bring them in to reduce the risk of re-proposing a new, duplicate RFQ.
+
 9.14.0 (2026-03-06)
 ===================
 

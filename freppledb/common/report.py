@@ -1634,7 +1634,7 @@ class GridReport(View):
         recs = cls.count_query(request, *args, **kwargs)
         if "rows" in request.GET:
             try:
-                 request.pagesize = max(int(request.GET["rows"]), 25)
+                request.pagesize = max(int(request.GET["rows"]), 25)
             except (ValueError, TypeError):
                 request.pagesize = 25
         total_pages = math.ceil(float(recs) / request.pagesize)
@@ -2921,7 +2921,12 @@ class GridReport(View):
             return ~models.Q(**{"%s__in" % reportrow.field_name: accepted})
         else:
             return ~models.Q(
-                **{"%s__in" % reportrow.field_name: smart_str(data).strip().split(",")}
+                **{
+                    "%s__in"
+                    % reportrow.field_name: [
+                        x.strip() for x in smart_str(data).strip().split(",")
+                    ]
+                }
             )
 
     @staticmethod
@@ -2937,7 +2942,12 @@ class GridReport(View):
             return models.Q(**{"%s__in" % reportrow.field_name: accepted})
         else:
             return models.Q(
-                **{"%s__in" % reportrow.field_name: smart_str(data).strip().split(",")}
+                **{
+                    "%s__in"
+                    % reportrow.field_name: [
+                        x.strip() for x in smart_str(data).strip().split(",")
+                    ]
+                }
             )
 
     @staticmethod
@@ -3401,7 +3411,7 @@ class GridPivot(GridReport):
         page = "page" in request.GET and int(request.GET["page"]) or 1
         if "rows" in request.GET:
             try:
-                 request.pagesize = max(int(request.GET["rows"]), 25)
+                request.pagesize = max(int(request.GET["rows"]), 25)
             except (ValueError, TypeError):
                 request.pagesize = 25
         total_pages = math.ceil(float(recs) / request.pagesize)

@@ -264,12 +264,12 @@ class ReportManager(GridReport):
 
     @staticmethod
     def _filter_ni(reportrow, field, data):
-        args = smart_str(data).strip().split(",")
+        args = [x.strip() for x in smart_str(data).strip().split(",")]
         return ('"%s" not in (%s)' % (field, ",".join(["%s"] * len(args))), args)
 
     @staticmethod
     def _filter_in(reportrow, field, data):
-        args = smart_str(data).strip().split(",")
+        args = [x.strip() for x in smart_str(data).strip().split(",")]
         return ('"%s" in (%s)' % (field, ",".join(["%s"] * len(args))), args)
 
     @staticmethod

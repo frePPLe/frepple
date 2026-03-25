@@ -23,6 +23,7 @@
 
 import frepple
 
+import asyncio
 from collections import OrderedDict
 import json
 
@@ -397,6 +398,7 @@ class OperationplanService(AsyncHttpConsumer):
                         errors.append("Error saving plan")
 
             self.scope["response_headers"].append((b"Content-Type", b"text/html"))
+            await asyncio.sleep(0)  # Allow event loop to clear pending events
             if errors:
                 await self.send_response(
                     500,

@@ -4,7 +4,7 @@
 {% block extrahead %}{{block.super}}
 <style>
 svg {
-  background-color: #FFF;
+  background-color: #ffffff;
   cursor: default;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -15,32 +15,85 @@ svg {
 
 path.flow {
   fill: none;
-  stroke: #000;
+  stroke: #475569;
+  stroke-width: 1.5px;
   cursor: default;
   marker-mid: url(#arrow);
 }
 
 path.load {
   fill: none;
-  stroke: #000;
+  stroke: #94a3b8;
+  stroke-width: 1.2px;
   cursor: default;
-  stroke-dasharray: 5,5;
+  stroke-dasharray: 5,4;
 }
 
 path.depends {
   fill: none;
-  stroke: #000;
+  stroke: #475569;
+  stroke-width: 1.5px;
   cursor: default;
   marker-mid: url(#dependsmarker);
 }
 
 text {
-  font: 10px sans-serif;
+  font: 10px 'Inter', 'Segoe UI', sans-serif;
   pointer-events: none;
+  fill: #1e293b;
+  letter-spacing: 0.01em;
 }
 
 text.id {
   text-anchor: middle;
+  fill: #ffffff !important;
+  font-weight: 600;
+  font-size: 10px;
+}
+
+g.node-routing text, g.node-alternate text, g.node-split text {
+  fill: #ffffff !important;
+  font-weight: 700;
+  font-size: 11px;
+  paint-order: stroke;
+  stroke: rgba(15, 23, 42, 0.55);
+  stroke-width: 2.5px;
+  stroke-linejoin: round;
+}
+
+.collapse-control {
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.collapse-control-icon {
+  stroke: #475569;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  pointer-events: all;
+}
+
+#buffer-tooltip {
+  position: fixed;
+  background: #ffffff;
+  color: #000000;
+  font: 11px 'Inter', 'Segoe UI', sans-serif;
+  padding: 4px 8px;
+  border-radius: 5px;
+  border: 1px solid #cccccc;
+  pointer-events: none;
+  white-space: pre;
+  z-index: 9999;
+  display: none;
+}
+
+.collapse-control-label {
+  font: 11px 'Inter', 'Segoe UI', sans-serif;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: all;
+  fill: #475569;
 }
 </style>
 <script src="{{STATIC_URL}}js/d3.min.js"></script>
@@ -70,6 +123,270 @@ var minlevel = 0;
 var maxlevel = 0;
 var path;
 var shapes;
+var level_controls;
+var routing_label_overlay;
+var collapsed_upstream = {};
+var collapsed_downstream = {};
+var visible_nodes = {};
+
+function isOperationNode(d)
+{
+  return d && ['operation', 'operation_alternate', 'routing', 'split', 'alternate'].includes(d.type);
+}
+
+function collectReachable(nodeid, reverse)
+{
+  var visited = {};
+  var stack = [nodeid];
+  visited[nodeid] = true;
+  while (stack.length) {
+    var current = stack.pop();
+    for (var i = 0; i < links.length; i++) {
+      var src = links[i].source.id;
+      var tgt = links[i].target.id;
+      var next = -1;
+      if (reverse) {
+        if (tgt == current) next = src;
+      }
+      else {
+        if (src == current) next = tgt;
+      }
+      if (next >= 0 && !visited[next]) {
+        visited[next] = true;
+        stack.push(next);
+      }
+    }
+  }
+  return visited;
+}
+
+function getLevelSeedIds(level)
+{
+  var seeds = {};
+  for (var i = 0; i < nodes.length; i++)
+    if (nodes[i].level == level)
+        seeds[nodes[i].id] = true;
+  return seeds;
+}
+
+function expandHiddenWithRoutingFamilies(hidden_nodes, reverse)
+{
+  var changed = true;
+  while (changed) {
+    changed = false;
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      if (!hidden_nodes[node.id] || node.parent < 0)
+        continue;
+      var parentnode = nodes[node.parent];
+      if (!parentnode || parentnode.type != 'routing')
+        continue;
+
+      if (!hidden_nodes[parentnode.id]) {
+        hidden_nodes[parentnode.id] = true;
+        changed = true;
+      }
+
+      for (var j = 0; j < nodes.length; j++)
+        if (nodes[j].parent == parentnode.id) {
+          if (!hidden_nodes[nodes[j].id]) {
+            hidden_nodes[nodes[j].id] = true;
+            changed = true;
+          }
+          var sibling_branch = collectReachable(nodes[j].id, reverse);
+          for (var sibling_nodeid in sibling_branch)
+            if (!hidden_nodes[sibling_nodeid]) {
+              hidden_nodes[sibling_nodeid] = true;
+              changed = true;
+            }
+        }
+    }
+  }
+  return hidden_nodes;
+}
+
+function hideHiddenRoutingUpstreamBuffers(hidden_nodes, preserve_upstream)
+{
+  var changed = true;
+  while (changed) {
+    changed = false;
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      if (!hidden_nodes[node.id] || node.parent < 0)
+        continue;
+      var parentnode = nodes[node.parent];
+      if (!parentnode || parentnode.type != 'routing')
+        continue;
+
+      var upstream_nodes = collectReachable(node.id, true);
+      for (var upstream_id in upstream_nodes) {
+        var upstream_node = nodes[parseInt(upstream_id)];
+        if (
+          upstream_node
+          && upstream_node.type == 'buffer'
+          && !preserve_upstream[upstream_id]
+          && !hidden_nodes[upstream_id]
+        ) {
+          hidden_nodes[upstream_id] = true;
+          changed = true;
+        }
+      }
+    }
+  }
+  return hidden_nodes;
+}
+
+function hideHiddenOperationUpstreams(hidden_nodes, preserve_upstream)
+{
+  var changed = true;
+  while (changed) {
+    changed = false;
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      if (!hidden_nodes[node.id] || !isOperationNode(node))
+        continue;
+
+      var upstream_nodes = collectReachable(node.id, true);
+      for (var upstream_id in upstream_nodes)
+        if (!preserve_upstream[upstream_id] && !hidden_nodes[upstream_id]) {
+          hidden_nodes[upstream_id] = true;
+          changed = true;
+        }
+    }
+  }
+  return hidden_nodes;
+}
+
+function hideResourcesOfHiddenNodes(hidden_nodes)
+{
+  for (var i = 0; i < nodes.length; i++) {
+    var node = nodes[i];
+    if (node.type != 'resource') continue;
+    var all_ops_hidden = true;
+    var has_any_op = false;
+    for (var j = 0; j < links.length; j++) {
+      if (links[j].type != 'load') continue;
+      if (links[j].target.id != node.id) continue;
+      has_any_op = true;
+      if (!hidden_nodes[links[j].source.id]) {
+        all_ops_hidden = false;
+        break;
+      }
+    }
+    if (has_any_op && all_ops_hidden)
+      hidden_nodes[node.id] = true;
+  }
+  return hidden_nodes;
+}
+
+function applyVisibilityFilters()
+{
+  for (var i = 0; i < nodes.length; i++)
+    visible_nodes[nodes[i].id] = true;
+
+  var preserve_visible = {};
+  var effective_upstream = null;
+  var effective_downstream = null;
+
+  for (var collapsed_level_up in collapsed_upstream)
+    if (collapsed_upstream[collapsed_level_up]) {
+      var up_level = parseFloat(collapsed_level_up);
+      if (effective_upstream === null || up_level < effective_upstream)
+        effective_upstream = up_level;
+    }
+
+  for (var collapsed_level_down in collapsed_downstream)
+    if (collapsed_downstream[collapsed_level_down]) {
+      var down_level = parseFloat(collapsed_level_down);
+      if (effective_downstream === null || down_level > effective_downstream)
+        effective_downstream = down_level;
+    }
+
+  if (effective_upstream !== null) {
+      var hidden_upstream = {};
+      var upstream_seeds = getLevelSeedIds(effective_upstream);
+      for (var seed in upstream_seeds) {
+        preserve_visible[seed] = true;
+        var seed_hidden_upstream = collectReachable(parseInt(seed), true);
+        for (var nodeid in seed_hidden_upstream)
+          hidden_upstream[nodeid] = true;
+      }
+      hidden_upstream = expandHiddenWithRoutingFamilies(hidden_upstream, true);
+      hidden_upstream = hideResourcesOfHiddenNodes(hidden_upstream);
+      for (var nodeid in hidden_upstream)
+        if (!preserve_visible[nodeid]) visible_nodes[nodeid] = false;
+    }
+
+  if (effective_downstream !== null) {
+      var hidden_downstream = {};
+      var downstream_seeds = getLevelSeedIds(effective_downstream);
+      var preserve_upstream_path = {};
+      for (var seed2 in downstream_seeds) {
+        preserve_visible[seed2] = true;
+        var seed_hidden_downstream = collectReachable(parseInt(seed2), false);
+        for (var nodeid2 in seed_hidden_downstream)
+          hidden_downstream[nodeid2] = true;
+
+        var seed_upstream_path = collectReachable(parseInt(seed2), true);
+        for (var upstreamid in seed_upstream_path)
+          preserve_upstream_path[upstreamid] = true;
+      }
+      hidden_downstream = expandHiddenWithRoutingFamilies(hidden_downstream, false);
+      hidden_downstream = hideHiddenOperationUpstreams(hidden_downstream, preserve_upstream_path);
+      hidden_downstream = hideHiddenRoutingUpstreamBuffers(hidden_downstream, preserve_upstream_path);
+      hidden_downstream = hideResourcesOfHiddenNodes(hidden_downstream);
+      for (var nodeid2 in hidden_downstream)
+        if (!preserve_visible[nodeid2]) visible_nodes[nodeid2] = false;
+    }
+
+  if (shapes)
+    shapes.style('display', function(d) {
+      return visible_nodes[d.id] ? null : 'none';
+    });
+
+  if (path)
+    path.style('display', function(d) {
+      return (visible_nodes[d.source.id] && visible_nodes[d.target.id]) ? null : 'none';
+    });
+
+  if (level_controls) {
+    level_controls.style('display', function(d) {
+      for (var lvl in collapsed_upstream)
+        if (collapsed_upstream[lvl] && d.level > parseFloat(lvl)) return 'none';
+      for (var lvl2 in collapsed_downstream)
+        if (collapsed_downstream[lvl2] && d.level < parseFloat(lvl2)) return 'none';
+      return null;
+    });
+    level_controls.select('line.level-upstream-vertical')
+      .style('display', function(d) {
+        return d.show_upstream && !collapsed_upstream[d.level] ? null : 'none';
+      });
+    level_controls.select('line.level-downstream-vertical')
+      .style('display', function(d) {
+        return d.show_downstream && !collapsed_downstream[d.level] ? null : 'none';
+      });
+  }
+}
+
+function toggleCollapsedLevel(level, direction)
+{
+  var collapsed_set = direction == 'upstream' ? collapsed_upstream : collapsed_downstream;
+  if (collapsed_set[level])
+    delete collapsed_set[level];
+  else {
+    for (var existing_level in collapsed_set)
+      if (collapsed_set[existing_level])
+        delete collapsed_set[existing_level];
+    collapsed_set[level] = true;
+  }
+  applyVisibilityFilters();
+}
+
+function clickedLevelCollapseControl(d, direction)
+{
+  d3.event.stopPropagation();
+  toggleCollapsedLevel(d.level, direction);
+}
 
 function clickedShaped(d)
 {
@@ -84,6 +401,56 @@ function clickedShaped(d)
   	);
 }
 
+
+function nodeTransform(d) {
+  if (d.parent >= 0 && d.suboperindex >= 0) {
+    // Suboperation of a routing
+    var parentnode = nodes[d.parent];
+    var parentw = parentnode && parentnode.halfW ? (2 * parentnode.halfW) : 105;
+    var cols = parentnode && parentnode.colnb > 0 ? parentnode.colnb : 1;
+    var subops = parentnode && parentnode.numsuboperations > 0 ? parentnode.numsuboperations : 1;
+    var basescale = parentw / 105;
+    if (d.rownb > 0)
+      return 'translate(' + d.x + ' ' + d.y + ') scale(' + (basescale / cols) + ' 1)';
+    else
+      return 'translate(' + d.x + ' ' + d.y + ') scale(' + (basescale / subops) + ' 1)';
+  }
+  return 'translate(' + d.x + ' ' + d.y + ')';
+}
+
+function updateGraphGeometry()
+{
+  if (shapes)
+    shapes.attr('transform', nodeTransform);
+  drawPaths();
+  updateLevelControlPositions();
+  if (routing_label_overlay)
+    routing_label_overlay.selectAll('text.id')
+      .attr('x', function(d) { return d.x; })
+      .attr('y', function(d) { return d.y + 4; });
+}
+
+function updateLevelControlPositions()
+{
+  if (!level_controls)
+    return;
+
+  var top_y = Infinity;
+  for (var i = 0; i < nodes.length; i++) {
+    var node = nodes[i];
+    if (visible_nodes[node.id] === false)
+      continue;
+    if (node.y < top_y)
+      top_y = node.y;
+  }
+
+  if (!isFinite(top_y))
+    top_y = 60;
+
+  var controls_y = Math.max(24, top_y - 55);
+  level_controls
+    .attr('transform', function(d) { return 'translate(' + d.x + ' ' + controls_y + ')'; });
+}
 
 // Update force layout (called automatically each iteration)
 function tick(e)
@@ -105,29 +472,45 @@ function tick(e)
         else
         {
           // Suboperation of a routing
+          var parentnode = nodes[d.parent];
+          var parentw = parentnode && parentnode.halfW ? (2 * parentnode.halfW) : 105;
+          var halfparentw = parentw / 2;
           if (d.rownb > 0) {
           	d.y = nodes[d.parent].y - 40 + (d.rownb-0.5) * 80 / nodes[d.parent].rownb;
-          	d.x = nodes[d.parent].x - 52.5 + (d.colnb-0.5) * 105 / nodes[d.parent].colnb;
+	          d.x = nodes[d.parent].x - halfparentw + (d.colnb-0.5) * parentw / nodes[d.parent].colnb;
     	  }
     	  else {
     	  	d.y = nodes[d.parent].y;
-          	d.x = nodes[d.parent].x - 52.5 + (d.suboperindex-0.5) * 105 / nodes[d.parent].numsuboperations;
+	          d.x = nodes[d.parent].x - halfparentw + (d.suboperindex-0.5) * parentw / nodes[d.parent].numsuboperations;
     	 }
         }
       }
       else
       {
-        d.x += (width_level * (0.5 + maxlevel - d.level) - d.x) * k;
+        var target_x = width_level * (0.5 + maxlevel - d.level);
+        // Hard-pin all top-level nodes to their exact level column
+        d.x = target_x;
         if (d.type != 'buffer')
            d.y += (1000 - d.y) * k / 10;
       }
     }
+    else if (d.parent < 0)
+    {
+      // Hard-pin all top-level nodes to their exact level column
+      d.x = width_level * (0.5 + maxlevel - d.level);
+      d.y += (1000 - d.y) * k / 10;
+    }
     if (d.parent >= 0 && d.suboperindex >= 0) {
       // Suboperation of a routing
+      var parentnode2 = nodes[d.parent];
+      var parentw2 = parentnode2 && parentnode2.halfW ? (2 * parentnode2.halfW) : 105;
+      var cols2 = parentnode2 && parentnode2.colnb > 0 ? parentnode2.colnb : 1;
+      var subops2 = parentnode2 && parentnode2.numsuboperations > 0 ? parentnode2.numsuboperations : 1;
+      var basescale2 = parentw2 / 105;
       if (d.rownb > 0)
-      	return 'translate(' + d.x + ' ' + d.y + ') scale(' + (1.0/nodes[d.parent].colnb) + ' 1)';
+      	return 'translate(' + d.x + ' ' + d.y + ') scale(' + (basescale2 / cols2) + ' 1)';
       else
-      	return 'translate(' + d.x + ' ' + d.y + ') scale(' + (1.0/nodes[d.parent].numsuboperations) + ' 1)';
+      	return 'translate(' + d.x + ' ' + d.y + ') scale(' + (basescale2 / subops2) + ' 1)';
 	}
     else
       return 'translate(' + d.x + ' ' + d.y + ')';
@@ -138,10 +521,83 @@ function tick(e)
     if (e.charges[i]) e.charges[i] -= (2000 * (nodes[i].numsuboperations+1) + e.charges[i]) * 0.3;
 
   // Draw paths
+  drawPaths();
+}
+
+function drawPaths() {
+  if (!path) return;
   path.attr('d', function(d) {
-    return 'M' + d.source.x + ',' + d.source.y
-       + 'L' + ((d.source.x+d.target.x)/2) + ',' + ((d.source.y+d.target.y)/2)
-       + 'L' + d.target.x + ',' + d.target.y;
+    var sx = d.source.x;
+    var sy = d.source.y;
+    var tx = d.target.x;
+    var ty = d.target.y;
+
+    if (d.source.type == 'itemsupplier') {
+      var sdx = tx - sx;
+      var sdy = ty - sy;
+      var shw = d.source.halfW || 52;
+      var sscale = Math.max(Math.abs(sdx) / shw, Math.abs(sdy) / 13);
+      if (sscale > 0) { sx += sdx / sscale; sy += sdy / sscale; }
+    }
+    if (d.target.type == 'itemsupplier') {
+      var tdx = sx - tx;
+      var tdy = sy - ty;
+      var thw = d.target.halfW || 52;
+      var tscale2 = Math.max(Math.abs(tdx) / thw, Math.abs(tdy) / 13);
+      if (tscale2 > 0) { tx += tdx / tscale2; ty += tdy / tscale2; }
+    }
+    if (d.source.type == 'itemdistribution' || d.source.type == 'itemdistribution_alternate') {
+      var dsx = tx - sx;
+      var dsy = ty - sy;
+      var dshw = d.source.halfW || 52;
+      var dscale = Math.max(Math.abs(dsx) / dshw, Math.abs(dsy) / 13);
+      if (dscale > 0) { sx += dsx / dscale; sy += dsy / dscale; }
+    }
+    if (d.target.type == 'itemdistribution' || d.target.type == 'itemdistribution_alternate') {
+      var dtx = sx - tx;
+      var dty = sy - ty;
+      var dthw = d.target.halfW || 52;
+      var tscale = Math.max(Math.abs(dtx) / dthw, Math.abs(dty) / 13);
+      if (tscale > 0) { tx += dtx / tscale; ty += dty / tscale; }
+    }
+    // Also handle operations and routings with dynamic width
+    var pillTypesPath = ['operation','operation_alternate','routing','alternate','split'];
+    if (pillTypesPath.indexOf(d.source.type) >= 0 && d.source.halfW) {
+      var osdx = tx - sx, osdy = ty - sy;
+      var oscale = Math.max(Math.abs(osdx) / d.source.halfW, Math.abs(osdy) / 13);
+      if (oscale > 0) { sx += osdx / oscale; sy += osdy / oscale; }
+    }
+    if (pillTypesPath.indexOf(d.target.type) >= 0 && d.target.halfW) {
+      var otdx = sx - tx, otdy = sy - ty;
+      var otscale = Math.max(Math.abs(otdx) / d.target.halfW, Math.abs(otdy) / 13);
+      if (otscale > 0) { tx += otdx / otscale; ty += otdy / otscale; }
+    }
+    if (d.source.type == 'resource') {
+      var rsdx = tx - sx;
+      var rsdy = ty - sy;
+      var rshw = d.source.halfW || 22;
+      var rshh = d.source.halfH || 14;
+      var rsscale = Math.max(Math.abs(rsdx) / rshw, Math.abs(rsdy) / rshh);
+      if (rsscale > 0) { sx += rsdx / rsscale; sy += rsdy / rsscale; }
+    }
+    if (d.target.type == 'resource') {
+      var rtdx = sx - tx;
+      var rtdy = sy - ty;
+      var rthw = d.target.halfW || 22;
+      var rthh = d.target.halfH || 14;
+      var rtscale = Math.max(Math.abs(rtdx) / rthw, Math.abs(rtdy) / rthh);
+      if (rtscale > 0) { tx += rtdx / rtscale; ty += rtdy / rtscale; }
+    }
+
+    var mx = (sx + tx) / 2;
+    var my = (sy + ty) / 2;
+    var cp1x = (sx + mx) / 2;
+    var cp1y = my;
+    var cp2x = (mx + tx) / 2;
+    var cp2y = my;
+    return 'M' + sx + ',' + sy
+       + 'C' + cp1x + ',' + cp1y + ' ' + cp1x + ',' + cp1y + ' ' + mx + ',' + my
+       + 'C' + cp2x + ',' + cp2y + ' ' + cp2x + ',' + cp2y + ' ' + tx + ',' + ty;
   });
 }
 
@@ -152,13 +608,19 @@ function drawGraph(jsondata)
   	return;
 
   var count = -1;
+  var itemsuppliers_by_buffer = {};
+  var realdepth_levels = {};
   for (var oper in jsondata['rows'])
   {
     // Don't add the same operation twice
-    if ( jsondata['rows'][oper]['operation'] in operations) continue;
+    if (
+      jsondata['rows'][oper]['operation'] in operations
+      && jsondata['rows'][oper]['type'] != 'purchase'
+    ) continue;
 
     // Keep track of the levels
     var level = parseInt(jsondata['rows'][oper]['realdepth']);
+    realdepth_levels[level] = true;
     if (level < minlevel) minlevel = level;
     if (level > maxlevel) maxlevel = level;
 
@@ -174,10 +636,7 @@ function drawGraph(jsondata)
       || jsondata['rows'][oper]['type'] == 'split')
       nodetype = jsondata['rows'][oper]['type'];
     else if (jsondata['rows'][oper]['type'] == 'purchase') {
-    	if (jsondata['rows'][oper]['alternate'] == 'true')
-          nodetype = 'itemsupplier_alternate';
-    	else
-    	  nodetype = 'itemsupplier';
+    	nodetype = 'itemsupplier';
     }
     else if (jsondata['rows'][oper]['type'] == 'distribution') {
     	if (jsondata['rows'][oper]['alternate'] == 'true')
@@ -188,22 +647,46 @@ function drawGraph(jsondata)
     var numsuboperations = 0;
     if ('numsuboperations' in jsondata['rows'][oper])
       numsuboperations = Math.abs(parseInt(jsondata['rows'][oper]['numsuboperations']));
-    count ++;
-    var operindex = nodes.push({
-       id: count,
-       level: level,
-       name: jsondata['rows'][oper]['operation'],
-       weight:1,
-       type: nodetype,
-       parent: parentoper,
-       suboperindex: parseInt(jsondata['rows'][oper]['suboperation']),
-       numsuboperations: numsuboperations,
-       y: 1000 + count,
-       charge: parentoper>-1 ? 0 : -200,
-       rownb: parseInt(jsondata['rows'][oper]['rownb']),
-       colnb: parseInt(jsondata['rows'][oper]['colnb']),
-       }) - 1;
-    operations[jsondata['rows'][oper]['operation']] = count;
+    var supplier_buffer_key = null;
+    var operindex = -1;
+    if (nodetype == 'itemsupplier') {
+      var supplier_buffers = [];
+      for (var b in jsondata['rows'][oper]['buffers'])
+        supplier_buffers.push(jsondata['rows'][oper]['buffers'][b][0]);
+      supplier_buffers.sort();
+      supplier_buffer_key = supplier_buffers.join('|');
+      if (supplier_buffer_key && supplier_buffer_key in itemsuppliers_by_buffer)
+        operindex = itemsuppliers_by_buffer[supplier_buffer_key];
+    }
+    if (operindex < 0) {
+      count ++;
+      operindex = nodes.push({
+         id: count,
+         level: level,
+         name: jsondata['rows'][oper]['operation'],
+         item: jsondata['rows'][oper]['item'] || jsondata['rows'][oper]['operation'],
+         tooltip: [(jsondata['rows'][oper]['type'] == "purchase")? jsondata['rows'][oper]['operation'].replace(" from ", " from:\n") + " (" + jsondata['rows'][oper]['priority'] + ")" : jsondata['rows'][oper]['operation']],
+         weight:1,
+         type: nodetype,
+         parent: parentoper,
+         suboperindex: parseInt(jsondata['rows'][oper]['suboperation']),
+         numsuboperations: numsuboperations,
+         y: 1000 + count,
+         charge: parentoper>-1 ? 0 : -200,
+         rownb: parseInt(jsondata['rows'][oper]['rownb']),
+         colnb: parseInt(jsondata['rows'][oper]['colnb']),
+         }) - 1;
+      if (supplier_buffer_key)
+        itemsuppliers_by_buffer[supplier_buffer_key] = operindex;
+    }
+    else if (nodetype == 'itemsupplier') {
+      var purchase_parts = jsondata['rows'][oper]['operation'].split(" from ");
+      var merged_tooltip = (purchase_parts.length > 1 ? purchase_parts[1] : jsondata['rows'][oper]['operation'])
+        + " (" + jsondata['rows'][oper]['priority'] + ")";
+      if (nodes[operindex].tooltip.indexOf(merged_tooltip) < 0)
+        nodes[operindex].tooltip.push(merged_tooltip);
+    }
+    operations[jsondata['rows'][oper]['operation']] = nodes[operindex].id;
 
     // Check if a blocking/blockedby operation exists
 
@@ -298,7 +781,8 @@ function drawGraph(jsondata)
     .call(d3.behavior.zoom().on("zoom", function() {
         var ev = d3.event;
         $("#svggraph > g").attr("transform", "translate(" + ev.translate + ") scale(" + ev.scale + ")");
-      }));
+      }))
+    .on('dblclick.zoom', null);
 
   $("#graph").scrollTop(800);
   force = d3.layout.force()
@@ -310,7 +794,8 @@ function drawGraph(jsondata)
     .linkStrength( function(d,i) {
       return (d.type == 'load') ? 0.5 : 1;
       })
-    .on('tick', tick);
+    .on('tick', tick)
+    .stop();
 
   // Handles to link and node element groups
   path = svg.append('svg:g').selectAll('path');
@@ -327,41 +812,520 @@ function drawGraph(jsondata)
   shapes = shapes.data(nodes, function(d) { return d.id; });
 
   // Add new nodes
-  var g = shapes.enter().append('svg:g').on('click', function(d) {clickedShaped(d);});
-  g.append("svg:use")
-    .attr("xlink:href", function(d) { return "#" + d.type; })
-    .style("opacity", function(d) { return (d.suboperindex > 0) ? 0.75 : 1; })
-    .attr("transform", function(d) {
-       if (d.numsuboperations)
-       {
-         if (d.type == 'alternate' || d.type == 'split')
-           // Top alternate operation
-           return "scale(1,"+ (2+d.numsuboperations) +")";
-         else
-           // Top routing operation
-           if (d.rownb > 0)
-           	return "translate(0 -8) scale(1,"+ (1+d.rownb) +")";
-           else
-           	return "scale(1,1.4)";
-       }
-       else
-         return '';
-       });
+  var g = shapes.enter().append('svg:g')
+    .attr('class', function(d) { return 'node-' + d.type; })
+    .on('click', function(d) {
+      if (d3.event.defaultPrevented) return;
+      clickedShaped(d);
+    });
+
+  var nodeDrag = d3.behavior.drag()
+    .on('dragstart', function(d) {
+      if (d.parent >= 0) return;
+      d3.event.sourceEvent.stopPropagation();
+    })
+    .on('drag', function(d) {
+      if (d.parent >= 0) return;
+      d.x += d3.event.dx;
+      d.y += d3.event.dy;
+      updateGraphGeometry();
+    });
+
+  g.call(nodeDrag);
+
+  // Pill-shaped nodes get a direct <rect> so we can resize it to fit the label.
+  // Buffer keeps <use>; resource gets a dedicated ellipse sized to its label.
+  var pillTypes = ['operation','operation_alternate','routing','alternate','split',
+                   'itemsupplier','itemdistribution','itemdistribution_alternate'];
+
+  // For pill nodes: append background rect + any icon overlay via <use>
+  g.filter(function(d) { return pillTypes.indexOf(d.type) >= 0; })
+   .append('svg:rect')
+   .attr('class', function(d) { return 'bg-rect ' + d.type; })
+   .attr('rx', 13).attr('ry', 13)
+   .attr('height', 26)
+   .attr('width', 104)          // default; will be resized after text measurement
+   .attr('x', -52).attr('y', -13)
+   .style('cursor', 'pointer')
+   .style('fill', function(d) {
+      if (d.type === 'operation') return '#2563eb';
+      if (d.type === 'operation_alternate') return '#93c5fd';
+      if (d.type === 'itemsupplier') return '#0d9488';
+      if (d.type === 'itemdistribution') return '#0ea5e9';
+      if (d.type === 'itemdistribution_alternate') return '#06b6d4';
+    if (d.type === 'routing') return '#93c5fd';
+      if (d.type === 'alternate' || d.type === 'split') return '#0f172a';
+      return '#2563eb';
+   })
+   .style('stroke', function(d) {
+      if (d.type === 'routing') return '#64748b';
+      if (d.type === 'alternate' || d.type === 'split') return '#475569';
+      return 'none';
+   })
+   .style('stroke-width', function(d) {
+      return (d.type === 'routing' || d.type === 'alternate' || d.type === 'split') ? '1.5' : '0';
+   })
+   .style('filter', 'url(#dropshadow)')
+   .style('opacity', function(d) { return (d.suboperindex > 0) ? 0.75 : 1; });
+
+  // For pill nodes that have icons (itemsupplier, itemdistribution*): overlay the icon via <use>
+  g.filter(function(d) {
+      return d.type === 'itemsupplier' || d.type === 'itemdistribution' || d.type === 'itemdistribution_alternate';
+    })
+   .append('svg:use')
+   .attr('xlink:href', function(d) { return '#icon-' + d.type; })
+   .style('pointer-events', 'none');
+
+  // Buffer keeps original icon-only <use>
+  g.filter(function(d) { return d.type === 'buffer'; })
+   .append("svg:use")
+   .attr("xlink:href", function(d) { return "#" + d.type; })
+   .style("opacity", function(d) { return (d.suboperindex > 0) ? 0.75 : 1; })
+   .attr("transform", function(d) {
+      if (d.numsuboperations)
+      {
+        if (d.type == 'alternate' || d.type == 'split')
+          return "scale(1,"+ (2+d.numsuboperations) +")";
+        else
+          if (d.rownb > 0)
+            return "translate(0 -8) scale(1,"+ (1+d.rownb) +")";
+          else
+            return "scale(1,1.4)";
+      }
+      else
+        return '';
+      });
+
+  // Resource nodes use a dedicated oval that we resize to fit the label.
+  g.filter(function(d) { return d.type === 'resource'; })
+   .append('svg:ellipse')
+   .attr('class', 'bg-ellipse resource')
+   .attr('cx', 0)
+   .attr('cy', 0)
+   .attr('rx', 22)
+   .attr('ry', 14)
+   .style('cursor', 'pointer')
+   .style('fill', '#f97316')
+   .style('filter', 'url(#glowfilter)')
+   .style('opacity', function(d) { return (d.suboperindex > 0) ? 0.75 : 1; });
+
+  // Routing/alternate/split pill nodes also need the scaling transform on their rect
+  g.filter(function(d) {
+      return (d.type === 'routing' || d.type === 'alternate' || d.type === 'split') && d.numsuboperations;
+    })
+   .select('rect.bg-rect')
+   .attr('transform', function(d) {
+      if (d.type === 'alternate' || d.type === 'split')
+        return "scale(1,"+ (2+d.numsuboperations) +")";
+      if (d.rownb > 0)
+        return "translate(0 -8) scale(1,"+ (1+d.rownb) +")";
+      return "scale(1,1.4)";
+   });
+
+  var level_list = [];
+  for (var lvl in realdepth_levels)
+    level_list.push(parseInt(lvl));
+  level_list.sort(function(a, b) { return a - b; });
+
+  var level_controls_data = [];
+  for (var li = 0; li < level_list.length; li++)
+    level_controls_data.push({
+      level: level_list[li],
+      x: width_level * (0.5 + maxlevel - level_list[li]),
+      y: 900,
+      show_upstream: li < level_list.length - 1,
+      show_downstream: li > 0
+    });
+
+  level_controls = svg.append('svg:g').selectAll('g.level-control')
+    .data(level_controls_data)
+    .enter()
+    .append('svg:g')
+    .attr('class', 'level-control')
+    .attr('transform', function(d) { return 'translate(' + d.x + ' ' + d.y + ')'; });
+
+  level_controls.append('svg:circle')
+    .attr('class', 'collapse-control level-upstream')
+    .attr('cx', -12)
+    .attr('cy', 0)
+    .attr('r', 9)
+    .style('display', function(d) { return d.show_upstream ? null : 'none'; })
+    .style('fill', '#f1f5f9')
+    .style('stroke', '#94a3b8')
+    .style('stroke-width', '1.5')
+    .on('click', function(d) { clickedLevelCollapseControl(d, 'upstream'); })
+    .append('svg:title')
+    .text(function(d) { return 'Collapse/expand upstream for level ' + d.level; });
+
+  level_controls.append('svg:line')
+    .attr('class', 'collapse-control collapse-control-icon level-upstream-horizontal')
+    .attr('x1', -16)
+    .attr('y1', 0)
+    .attr('x2', -8)
+    .attr('y2', 0)
+    .style('display', function(d) { return d.show_upstream ? null : 'none'; })
+    .on('click', function(d) { clickedLevelCollapseControl(d, 'upstream'); });
+
+  level_controls.append('svg:line')
+    .attr('class', 'collapse-control collapse-control-icon level-upstream-vertical')
+    .attr('x1', -12)
+    .attr('y1', -4)
+    .attr('x2', -12)
+    .attr('y2', 4)
+    .style('display', function(d) { return d.show_upstream ? null : 'none'; })
+    .on('click', function(d) { clickedLevelCollapseControl(d, 'upstream'); });
+
+  level_controls.append('svg:circle')
+    .attr('class', 'collapse-control level-downstream')
+    .attr('cx', 12)
+    .attr('cy', 0)
+    .attr('r', 9)
+    .style('display', function(d) { return d.show_downstream ? null : 'none'; })
+    .style('fill', '#f1f5f9')
+    .style('stroke', '#94a3b8')
+    .style('stroke-width', '1.5')
+    .on('click', function(d) { clickedLevelCollapseControl(d, 'downstream'); })
+    .append('svg:title')
+    .text(function(d) { return 'Collapse/expand downstream for level ' + d.level; });
+
+  level_controls.append('svg:line')
+    .attr('class', 'collapse-control collapse-control-icon level-downstream-horizontal')
+    .attr('x1', 8)
+    .attr('y1', 0)
+    .attr('x2', 16)
+    .attr('y2', 0)
+    .style('display', function(d) { return d.show_downstream ? null : 'none'; })
+    .on('click', function(d) { clickedLevelCollapseControl(d, 'downstream'); });
+
+  level_controls.append('svg:line')
+    .attr('class', 'collapse-control collapse-control-icon level-downstream-vertical')
+    .attr('x1', 12)
+    .attr('y1', -4)
+    .attr('x2', 12)
+    .attr('y2', 4)
+    .style('display', function(d) { return d.show_downstream ? null : 'none'; })
+    .on('click', function(d) { clickedLevelCollapseControl(d, 'downstream'); });
     //.call(force.drag);
 
-  // Show node IDs
-  g.filter( function(d, i) {return (d.type != 'operation' && d.type != 'operation_alternate')|| d.suboperindex <= 0;} )
+  updateLevelControlPositions();
+
+  // Show node IDs — appended inside each node's <g> as original
+  // Buffers are excluded: they show their name on hover via <title> instead
+  // itemsupplier/itemdistribution handled separately below
+  g.filter( function(d, i) {
+      return ((d.type != 'operation' && d.type != 'operation_alternate') || d.suboperindex <= 0)
+        && d.type != 'itemsupplier'
+        && d.type != 'itemdistribution'
+        && d.type != 'itemdistribution_alternate'
+        && d.type != 'buffer';
+    } )
    .append('svg:text')
    .attr('x', 0)
    .attr('y', 4)
    .attr('class', 'id')
+  .attr('fill', '#ffffff')
+  .style('fill', '#ffffff')
    .text(function(d) { return d.name; });
+
+  // itemsupplier label: item name centered in the right portion of the pill (after the cart icon)
+  g.filter(function(d) { return d.type === 'itemsupplier'; })
+   .append('svg:text')
+   .attr('x', 12)
+   .attr('y', 4)
+   .attr('class', 'id')
+  .attr('fill', '#ffffff')
+  .style('fill', '#ffffff')
+   .text(function(d) { return d.item; });
+
+  // itemdistribution label: item name in the right portion of the pill (after the truck icon)
+  g.filter(function(d) { return d.type === 'itemdistribution' || d.type === 'itemdistribution_alternate'; })
+   .append('svg:text')
+   .attr('x', 12)
+   .attr('y', 4)
+   .attr('class', 'id')
+  .attr('fill', '#ffffff')
+  .style('fill', '#ffffff')
+   .text(function(d) { return d.item; });
+
+  // Add instant hover tooltip to all nodes (replaces slow native <title>)
+  g.on('mouseover', function(d) {
+      $('#buffer-tooltip').text(d.tooltip ? d.tooltip.join('\n') : d.name).show();
+    })
+    .on('mousemove', function() {
+      var tip = $('#buffer-tooltip');
+      var tipW = tip.outerWidth();
+      var tipH = tip.outerHeight();
+      var x = d3.event.clientX + 10;
+      var y = d3.event.clientY - 32;
+      if (x + tipW > window.innerWidth) x = d3.event.clientX - tipW - 10;
+      if (y + tipH > window.innerHeight) y = d3.event.clientY - tipH - 8;
+      if (y < 0) y = d3.event.clientY + 16;
+      tip.css({ top: y, left: x });
+    })
+    .on('mouseout', function() {
+      $('#buffer-tooltip').hide();
+    });
 
   // Remove old nodes
   shapes.exit().remove();
 
-  // Set the graph in motion
+  // Resize pill rects to fit their text labels.
+  // Must happen after text is in DOM so getBBox() works.
+  var iconWidth = 40;  // reserved left lane for icon + separator + gap
+  var hPad = 16;       // horizontal padding on each side (right side)
+  var minPillW = 60;   // minimum pill width
+  d3.selectAll('g[class^="node-"] rect.bg-rect').each(function(d) {
+    var nodeGroup = this.parentNode;
+    var textEl = d3.select(nodeGroup).select('text.id').node();
+    if (!textEl) return;
+    var hasIcon = (d.type === 'itemsupplier' || d.type === 'itemdistribution' || d.type === 'itemdistribution_alternate');
+    var textW;
+    try { textW = textEl.getBBox().width; } catch(e) { return; }
+    var leftPad = hasIcon ? iconWidth : hPad;
+    var totalW = Math.max(minPillW, leftPad + textW + hPad);
+    var halfW = totalW / 2;
+    d3.select(this).attr('width', totalW).attr('x', -halfW);
+    // Store halfW on node data for edge offset and collision detection
+    d.halfW = halfW;
+
+    // Keep cart/truck icon pinned near the left edge as pill width grows.
+    if (hasIcon) {
+      var iconUse = d3.select(nodeGroup).select('use');
+      if (!iconUse.empty())
+        iconUse.attr('transform', 'translate(' + (-halfW + 52) + ' 0)');
+    }
+
+    // Re-center text: for icon nodes offset right of icon, else centered
+    if (hasIcon)
+      d3.select(textEl).attr('x', -halfW + leftPad + textW / 2);
+    else
+      d3.select(textEl).attr('x', 0);
+  });
+
+  var resourceHpad = 18;
+  var resourceMinHalfW = 22;
+  var resourceHalfH = 14;
+  d3.selectAll('g.node-resource ellipse.bg-ellipse.resource').each(function(d) {
+    var nodeGroup = this.parentNode;
+    var textEl = d3.select(nodeGroup).select('text.id').node();
+    if (!textEl) return;
+    var textW;
+    try { textW = textEl.getBBox().width; } catch(e) { return; }
+    var halfW = Math.max(resourceMinHalfW, textW / 2 + resourceHpad);
+    d3.select(this).attr('rx', halfW).attr('ry', resourceHalfH);
+    d.halfW = halfW;
+    d.halfH = resourceHalfH;
+    d3.select(textEl).attr('x', 0);
+  });
+
+  // Fix z-order for routing labels: collect routing/alternate/split nodes,
+  // remove their text from inside the <g>, and re-add them in a top-level
+  // overlay group that paints after all shapes.
+  var shapesParent = d3.select(d3.selectAll('#svggraph > g')[0][1]);
+  routing_label_overlay = svg.append('svg:g').attr('class', 'routing-label-overlay');
+
+  var routingLabelNodes = nodes.filter(function(d) {
+    return d.type === 'routing' || d.type === 'alternate' || d.type === 'split';
+  });
+
+  // Remove text from inside the routing <g> elements
+  d3.selectAll('g.node-routing text.id, g.node-alternate text.id, g.node-split text.id')
+    .remove();
+
+  // Add equivalent text elements to the overlay, bound to node data
+  routing_label_overlay.selectAll('text.id')
+    .data(routingLabelNodes, function(d) { return d.id; })
+    .enter()
+    .append('svg:text')
+    .attr('class', 'id routing-label')
+    .attr('fill', '#ffffff')
+    .style('fill', '#ffffff')
+    .attr('text-anchor', 'middle')
+    .attr('x', function(d) { return d.x || 0; })
+    .attr('y', function(d) { return (d.y || 0) + 4; })
+    .text(function(d) { return d.name; });
+
+  // Compute layout silently — run all ticks without animation then stop
   force.start();
+  for (var t = 0; t < 300; ++t) force.tick();
+  force.stop();
+
+  var minSpacing = 32;
+  var pinnedTypes = ['itemsupplier', 'itemdistribution', 'itemdistribution_alternate', 'buffer'];
+
+  // Step 1: assign each buffer's y = average y of connected operations (non-pinned neighbours)
+  // assign each itemsupplier's y = y of its connected buffer
+  // This derives a natural order from the operation layout.
+  var neighbourSum = {}, neighbourCount = {};
+  for (var li2 = 0; li2 < links.length; li2++) {
+    var lnk = links[li2];
+    if (lnk.type !== 'flow') continue;
+    var src = lnk.source, tgt = lnk.target;
+    // For each pinned node, accumulate y from its non-pinned (operation) neighbours
+    [src, tgt].forEach(function(pinned, idx) {
+      var other = idx === 0 ? tgt : src;
+      if (pinnedTypes.indexOf(pinned.type) < 0) return;
+      if (neighbourSum[pinned.id] === undefined) {
+        neighbourSum[pinned.id] = 0;
+        neighbourCount[pinned.id] = 0;
+      }
+      neighbourSum[pinned.id] += other.y;
+      neighbourCount[pinned.id]++;
+    });
+  }
+  // Assign derived y to buffers from operations
+  for (var ni = 0; ni < nodes.length; ni++) {
+    var n = nodes[ni];
+    if (n.type !== 'buffer') continue;
+    if (neighbourCount[n.id] > 0)
+      n.y = neighbourSum[n.id] / neighbourCount[n.id];
+  }
+  // Now assign itemsupplier y from their connected buffer (which is now positioned)
+  for (var li3 = 0; li3 < links.length; li3++) {
+    var lnk3 = links[li3];
+    if (lnk3.type !== 'flow') continue;
+    var src3 = lnk3.source, tgt3 = lnk3.target;
+    if (src3.type === 'itemsupplier' && tgt3.type === 'buffer') src3.y = tgt3.y;
+    if (tgt3.type === 'itemsupplier' && src3.type === 'buffer') tgt3.y = src3.y;
+  }
+
+  // Step 2: for each level of pinned nodes, sort by current y (which now mirrors
+  // operation order) then space evenly — preserving the sort order exactly.
+  var byLevel = {};
+  for (var ni2 = 0; ni2 < nodes.length; ni2++) {
+    var n2 = nodes[ni2];
+    if (pinnedTypes.indexOf(n2.type) < 0) continue;
+    var lk = n2.level;
+    if (!byLevel[lk]) byLevel[lk] = [];
+    byLevel[lk].push(n2);
+  }
+  for (var lk in byLevel) {
+    var group = byLevel[lk];
+    group.sort(function(a, b) { return a.y - b.y; });
+    var totalHeight = (group.length - 1) * minSpacing;
+    var meanY = group.reduce(function(s, nd) { return s + nd.y; }, 0) / group.length;
+    var startY = meanY - totalHeight / 2;
+    for (var gi = 0; gi < group.length; gi++)
+      group[gi].y = startY + gi * minSpacing;
+  }
+
+  // Step 2b: place resources above/below their linked operation instead of in-between
+  // operation-buffer lanes, and pick the side with less local overlap.
+  var resourceOps = {};
+  for (var rl = 0; rl < links.length; rl++) {
+    var rlink = links[rl];
+    if (rlink.type !== 'load') continue;
+    if (rlink.target.type !== 'resource') continue;
+    if (!resourceOps[rlink.target.id]) resourceOps[rlink.target.id] = [];
+    resourceOps[rlink.target.id].push(rlink.source);
+  }
+
+  function resourceOverlapScore(resNode, yPos) {
+    var score = 0;
+    for (var si = 0; si < nodes.length; si++) {
+      var other = nodes[si];
+      if (other.id === resNode.id || other.parent >= 0) continue;
+      var overlapX = (nodeHalfW(resNode) + nodeHalfW(other) + 8) - Math.abs(resNode.x - other.x);
+      var overlapY = (nodeHalfH(resNode) + nodeHalfH(other) + 8) - Math.abs(yPos - other.y);
+      if (overlapX > 0 && overlapY > 0)
+        score += overlapX * overlapY;
+    }
+    return score;
+  }
+
+  var resourceBaseOffset = 44;
+  var resourceOffsetStep = 20;
+  var resourceMaxAttempts = 6;
+  for (var rn = 0; rn < nodes.length; rn++) {
+    var resNode = nodes[rn];
+    if (resNode.type !== 'resource') continue;
+    var ops = resourceOps[resNode.id] || [];
+    if (!ops.length) continue;
+
+    // If shared by multiple operations, use their mean y as anchor.
+    var anchorY = 0;
+    for (var oi = 0; oi < ops.length; oi++)
+      anchorY += ops[oi].y;
+    anchorY /= ops.length;
+
+    var bestY = resNode.y;
+    var bestScore = Number.POSITIVE_INFINITY;
+    for (var attempt = 0; attempt < resourceMaxAttempts; attempt++) {
+      var offset = resourceBaseOffset + attempt * resourceOffsetStep;
+      var upY = anchorY - offset;
+      var downY = anchorY + offset;
+      var upScore = resourceOverlapScore(resNode, upY);
+      var downScore = resourceOverlapScore(resNode, downY);
+
+      if (upScore < bestScore) {
+        bestScore = upScore;
+        bestY = upY;
+      }
+      if (downScore < bestScore) {
+        bestScore = downScore;
+        bestY = downY;
+      }
+      if (bestScore === 0) break;
+    }
+    resNode.y = bestY;
+  }
+
+  // Step 3: 2D bounding-box collision resolution — push apart any overlapping nodes vertically
+  function nodeHalfW(n) {
+    if (n.halfW) return n.halfW;
+    if (n.type === 'operation' || n.type === 'operation_alternate') return 52;
+    if (n.type === 'itemsupplier') return 52;
+    if (n.type === 'itemdistribution' || n.type === 'itemdistribution_alternate') return 52;
+    if (n.type === 'routing' || n.type === 'alternate' || n.type === 'split') return 57;
+    if (n.type === 'buffer') return 16;
+    if (n.type === 'resource') return 22;
+    return 52;
+  }
+  function nodeHalfH(n) {
+    if (n.halfH) return n.halfH;
+    return (n.type === 'resource') ? 14 : 13;
+  }
+
+  var topNodes = [];
+  for (var ti = 0; ti < nodes.length; ti++)
+    if (nodes[ti].parent < 0) topNodes.push(nodes[ti]);
+
+  var padding = 6;
+  for (var pass2 = 0; pass2 < 100; pass2++) {
+    var anyOverlap = false;
+    for (var ai = 0; ai < topNodes.length; ai++) {
+      for (var bi2 = ai + 1; bi2 < topNodes.length; bi2++) {
+        var na = topNodes[ai];
+        var nb = topNodes[bi2];
+        var overlapX = (nodeHalfW(na) + nodeHalfW(nb) + padding) - Math.abs(na.x - nb.x);
+        var overlapY = (nodeHalfH(na) + nodeHalfH(nb) + padding) - Math.abs(na.y - nb.y);
+        if (overlapX > 0 && overlapY > 0) {
+          if (na.type === 'resource' && nb.type !== 'resource') {
+            na.y += (na.y <= nb.y) ? -overlapY : overlapY;
+          }
+          else if (nb.type === 'resource' && na.type !== 'resource') {
+            nb.y += (nb.y <= na.y) ? -overlapY : overlapY;
+          }
+          else if (na.y <= nb.y) {
+            na.y -= overlapY / 2;
+            nb.y += overlapY / 2;
+          }
+          else {
+            na.y += overlapY / 2;
+            nb.y -= overlapY / 2;
+          }
+          anyOverlap = true;
+        }
+      }
+    }
+    if (!anyOverlap) break;
+  }
+
+  // Re-apply transforms now that y positions are corrected
+  // Must use nodeTransform to preserve routing sub-operation scale transforms
+  updateGraphGeometry();
+
+  applyVisibilityFilters();
 }
 
 $(window).bind('resize', function() {
@@ -429,50 +1393,187 @@ ExpandColClick: true,
 {% block tabs %}{% tabs model %}{% endblock %}
 
 {% block before_table %}
+<div id="buffer-tooltip"></div>
 <div class="row" id="graphrow" style="min-height: 100px; text-align: center;">
 <div id="graph" class="col-md-12" style="min-height: 100px; clear: both; height: 345px; overflow: hidden;">
 <svg id="svggraph" width="100%" preserveAspectRatio="xMinYMin meet" style="cursor: move;">
 <defs>
+  <!-- Drop shadow filter -->
+  <filter id="dropshadow" x="-20%" y="-20%" width="140%" height="140%">
+    <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#00000028"/>
+  </filter>
+  <!-- Subtle glow for resources -->
+  <filter id="glowfilter" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#ff8c3a55"/>
+  </filter>
+
+  <!-- Arrow markers — slightly softer -->
   <marker id="arrow" viewBox="0 -5 10 10" refX="6" markerWidth="5" markerHeight="5" orient="auto">
-    <polygon points="0,-5 10,0 0,5" style="fill: #000;">
+    <polygon points="0,-4 10,0 0,4" style="fill: #475569;">
     </polygon>
   </marker>
   <marker id="dependsmarker" viewBox="0 -5 10 10" refX="6" markerWidth="5" markerHeight="5" orient="auto">
-    <polygon points="0,-5 10,0 0,5 5,0" style="fill: black">
+    <polygon points="0,-4 10,0 0,4 5,0" style="fill: #475569;">
     </polygon>
   </marker>
-  <rect id="operation" class="operation" width="100" height="25" x="-50" y="-9" rx="2" ry="2"
-    style="cursor: pointer; fill: #1f77b4;">
+
+  <!-- Icon-only defs (no background) for overlay on resizable pill nodes -->
+  <g id="icon-itemsupplier">
+    <path d="M-44,-5 h2 l2.5,7 h7 l2,-5 h-9.5"
+      style="fill: none; stroke: #ffffff; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;"></path>
+    <line x1="-40" y1="-3" x2="-40" y2="2" style="stroke: #ffffff; stroke-width: 1.1; stroke-linecap: round;"></line>
+    <line x1="-36.5" y1="-3" x2="-36.5" y2="2" style="stroke: #ffffff; stroke-width: 1.1; stroke-linecap: round;"></line>
+    <line x1="-43" y1="3.5" x2="-32" y2="3.5" style="stroke: #ffffff; stroke-width: 1.1; stroke-linecap: round;"></line>
+    <circle cx="-40.5" cy="6.5" r="1.8" style="fill: #ffffff;"></circle>
+    <circle cx="-34" cy="6.5" r="1.8" style="fill: #ffffff;"></circle>
+    <line x1="-28" y1="-8" x2="-28" y2="8" style="stroke: #ffffff; stroke-width: 1; stroke-opacity: 0.45; stroke-linecap: round;"></line>
+  </g>
+  <g id="icon-itemdistribution">
+    <path d="M-47,-2.5 h12 v-3.5 h5.5 l4,4 v6 h-2.5"
+      style="fill: none; stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round;"></path>
+    <line x1="-47" y1="-2.5" x2="-47" y2="4.5" style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <line x1="-47" y1="4.5" x2="-44.5" y2="4.5" style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <line x1="-36.5" y1="4.5" x2="-33.5" y2="4.5" style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <line x1="-27.5" y1="4.5" x2="-24.5" y2="4.5" style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <line x1="-30.5" y1="-5.5" x2="-27.5" y2="-2.5" style="stroke: #ffffff; stroke-width: 1.1; stroke-linecap: round;"></line>
+    <circle cx="-40.5" cy="5" r="2.1" style="fill: #ffffff;"></circle>
+    <circle cx="-30.5" cy="5" r="2.1" style="fill: #ffffff;"></circle>
+    <line x1="-20" y1="-8" x2="-20" y2="8" style="stroke: #ffffff; stroke-width: 1; stroke-opacity: 0.45; stroke-linecap: round;"></line>
+  </g>
+  <g id="icon-itemdistribution_alternate">
+    <path d="M-47,-2.5 h12 v-3.5 h5.5 l4,4 v6 h-2.5"
+      style="fill: none; stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round;"></path>
+    <line x1="-47" y1="-2.5" x2="-47" y2="4.5" style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <line x1="-47" y1="4.5" x2="-44.5" y2="4.5" style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <line x1="-36.5" y1="4.5" x2="-33.5" y2="4.5" style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <line x1="-27.5" y1="4.5" x2="-24.5" y2="4.5" style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <line x1="-30.5" y1="-5.5" x2="-27.5" y2="-2.5" style="stroke: #ffffff; stroke-width: 1.1; stroke-linecap: round;"></line>
+    <circle cx="-40.5" cy="5" r="2.1" style="fill: #ffffff;"></circle>
+    <circle cx="-30.5" cy="5" r="2.1" style="fill: #ffffff;"></circle>
+    <line x1="-20" y1="-8" x2="-20" y2="8" style="stroke: #ffffff; stroke-width: 1; stroke-opacity: 0.45; stroke-linecap: round;"></line>
+  </g>
+
+  <!-- Operation: pill-shaped, rich blue with shadow -->
+  <rect id="operation" class="operation" width="104" height="26" x="-52" y="-13" rx="13" ry="13"
+    style="cursor: pointer; fill: #2563eb; filter: url(#dropshadow);">
   </rect>
-  <rect id="itemsupplier" class="itemsupplier" width="100" height="25" x="-50" y="-9" rx="2" ry="2"
-    style="cursor: pointer; fill: #1f77b4;">
+
+  <!-- itemsupplier: pill rect with shopping cart icon on the left -->
+  <g id="itemsupplier" class="itemsupplier" style="cursor: pointer;">
+    <rect width="104" height="26" x="-52" y="-13" rx="13" ry="13"
+      style="fill: #0d9488; filter: url(#dropshadow);">
+    </rect>
+    <!-- cart body -->
+    <path d="M-44,-5 h2 l2.5,7 h7 l2,-5 h-9.5"
+      style="fill: none; stroke: #ffffff; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;">
+    </path>
+    <!-- cart dividers -->
+    <line x1="-40" y1="-3" x2="-40" y2="2"
+      style="stroke: #ffffff; stroke-width: 1.1; stroke-linecap: round;"></line>
+    <line x1="-36.5" y1="-3" x2="-36.5" y2="2"
+      style="stroke: #ffffff; stroke-width: 1.1; stroke-linecap: round;"></line>
+    <!-- cart base line -->
+    <line x1="-43" y1="3.5" x2="-32" y2="3.5"
+      style="stroke: #ffffff; stroke-width: 1.1; stroke-linecap: round;"></line>
+    <!-- wheels -->
+    <circle cx="-40.5" cy="6.5" r="1.8" style="fill: #ffffff;"></circle>
+    <circle cx="-34" cy="6.5" r="1.8" style="fill: #ffffff;"></circle>
+    <!-- vertical separator -->
+    <line x1="-28" y1="-8" x2="-28" y2="8"
+      style="stroke: #ffffff; stroke-width: 1; stroke-opacity: 0.45; stroke-linecap: round;"></line>
+  </g>
+
+  <!-- itemdistribution: pill rect with truck icon on the left -->
+  <g id="itemdistribution" class="itemdistribution" style="cursor: pointer;">
+    <rect width="104" height="26" x="-52" y="-13" rx="13" ry="13"
+      style="fill: #7c3aed; filter: url(#dropshadow);">
+    </rect>
+    <!-- truck outline -->
+    <path d="M-47,-2.5 h12 v-3.5 h5.5 l4,4 v6 h-2.5"
+      style="fill: none; stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round;">
+    </path>
+    <line x1="-47" y1="-2.5" x2="-47" y2="4.5"
+      style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <!-- undercarriage -->
+    <line x1="-47" y1="4.5" x2="-44.5" y2="4.5"
+      style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <line x1="-36.5" y1="4.5" x2="-33.5" y2="4.5"
+      style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <line x1="-27.5" y1="4.5" x2="-24.5" y2="4.5"
+      style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <!-- windshield -->
+    <line x1="-30.5" y1="-5.5" x2="-27.5" y2="-2.5"
+      style="stroke: #ffffff; stroke-width: 1.1; stroke-linecap: round;"></line>
+    <!-- wheels -->
+    <circle cx="-40.5" cy="5" r="2.1"
+      style="fill: #ffffff;"></circle>
+    <circle cx="-30.5" cy="5" r="2.1"
+      style="fill: #ffffff;"></circle>
+    <!-- vertical separator -->
+    <line x1="-20" y1="-8" x2="-20" y2="8"
+      style="stroke: #ffffff; stroke-width: 1; stroke-opacity: 0.45; stroke-linecap: round;"></line>
+  </g>
+
+  <!-- operation_alternate: pill-shaped, lighter blue -->
+  <rect id="operation_alternate" class="operation_alternate" width="104" height="26" x="-52" y="-13" rx="13" ry="13"
+    style="cursor: pointer; fill: #93c5fd; filter: url(#dropshadow);">
   </rect>
-  <rect id="itemdistribution" class="itemdistribution" width="100" height="25" x="-50" y="-9" rx="2" ry="2"
-    style="cursor: pointer; fill: #1f77b4;">
-  <rect id="operation_alternate" class="operation_alternate" width="100" height="25" x="-50" y="-9" rx="2" ry="2"
-    style="cursor: pointer; fill: #a8d1f0;">
+
+  <!-- itemdistribution_alternate: same pill + truck, lighter purple -->
+  <g id="itemdistribution_alternate" class="itemdistribution_alternate" style="cursor: pointer;">
+    <rect width="104" height="26" x="-52" y="-13" rx="13" ry="13"
+      style="fill: #a78bfa; filter: url(#dropshadow);">
+    </rect>
+    <!-- truck outline -->
+    <path d="M-47,-2.5 h12 v-3.5 h5.5 l4,4 v6 h-2.5"
+      style="fill: none; stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round;">
+    </path>
+    <line x1="-47" y1="-2.5" x2="-47" y2="4.5"
+      style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <!-- undercarriage -->
+    <line x1="-47" y1="4.5" x2="-44.5" y2="4.5"
+      style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <line x1="-36.5" y1="4.5" x2="-33.5" y2="4.5"
+      style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <line x1="-27.5" y1="4.5" x2="-24.5" y2="4.5"
+      style="stroke: #ffffff; stroke-width: 1.4; stroke-linecap: round;"></line>
+    <!-- windshield -->
+    <line x1="-30.5" y1="-5.5" x2="-27.5" y2="-2.5"
+      style="stroke: #ffffff; stroke-width: 1.1; stroke-linecap: round;"></line>
+    <!-- wheels -->
+    <circle cx="-40.5" cy="5" r="2.1"
+      style="fill: #ffffff;"></circle>
+    <circle cx="-30.5" cy="5" r="2.1"
+      style="fill: #ffffff;"></circle>
+    <!-- vertical separator -->
+    <line x1="-20" y1="-8" x2="-20" y2="8"
+      style="stroke: #ffffff; stroke-width: 1; stroke-opacity: 0.45; stroke-linecap: round;"></line>
+  </g>
+
+  <!-- routing: rounded rect, light blue with subtle border -->
+  <rect id="routing" class="routing" width="114" height="26" x="-57" y="-13" rx="13" ry="13"
+    style="cursor: pointer; fill: #93c5fd; stroke: #60a5fa; stroke-width: 1.5; filter: url(#dropshadow); vector-effect: non-scaling-stroke;">
   </rect>
-  <rect id="itemsupplier_alternate" class="itemsupplier_alternate" width="100" height="25" x="-50" y="-9" rx="2" ry="2"
-    style="cursor: pointer; fill: #a8d1f0;">
+
+  <!-- alternate: rounded rect, dark -->
+  <rect id="alternate" class="alternate" width="114" height="26" x="-57" y="-13" rx="13" ry="13"
+    style="cursor: pointer; fill: #0f172a; stroke: #475569; stroke-width: 1.5; filter: url(#dropshadow); vector-effect: non-scaling-stroke;">
   </rect>
-  <rect id="itemdistribution_alternate" class="itemdistribution_alternate" width="100" height="25" x="-50" y="-9" rx="2" ry="2"
-    style="cursor: pointer; fill: #a8d1f0;">
+
+  <!-- split: rounded rect, dark -->
+  <rect id="split" class="split" width="114" height="26" x="-57" y="-13" rx="13" ry="13"
+    style="cursor: pointer; fill: #0f172a; stroke: #475569; stroke-width: 1.5; filter: url(#dropshadow); vector-effect: non-scaling-stroke;">
   </rect>
-  <rect id="routing" class="routing" width="110" height="25" x="-55" y="-9" rx="2" ry="2"
-    style="cursor: pointer; fill: #ffffff; stroke: black; vector-effect: non-scaling-stroke;">
-  </rect>
-  <rect id="alternate" class="alternate" width="110" height="25" x="-55" y="-5" rx="2" ry="2"
-    style="cursor: pointer; fill: #ffffff; fill-opacity: 0; stroke: black; vector-effect: non-scaling-stroke;">
-  </rect>
-  <rect id="split" class="split" width="110" height="25" x="-55" y="-5" rx="2" ry="2"
-    style="cursor: pointer; fill: #ffffff; fill-opacity: 0; stroke: black; vector-effect: non-scaling-stroke;">
-  </rect>
-  <polygon id="buffer" class="buffer" points="0,-40 35,20 -35,20"
-    style="cursor: pointer; fill: #2ca02c;">
+
+  <!-- buffer: smaller equilateral-ish triangle, emerald green with shadow -->
+  <polygon id="buffer" class="buffer" points="0,-13 16,8 -16,8"
+    style="cursor: pointer; fill: #059669; filter: url(#dropshadow);">
   </polygon>
-  <circle id="resource" class="resource" cx="0" cy="0" r="30"
-    style="cursor: pointer; fill: #ff7f0e;">
-  </circle>
+
+  <!-- resource: oval fallback symbol -->
+  <ellipse id="resource" class="resource" cx="0" cy="0" rx="22" ry="14"
+    style="cursor: pointer; fill: #f97316; filter: url(#glowfilter);">
+  </ellipse>
 </defs>
 </svg>
 </div><span id="graph-resize-handle" class="fa fa-bars handle"></span>

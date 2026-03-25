@@ -874,6 +874,24 @@ function drawGraph(jsondata)
     .on('tick', tick)
     .stop();
 
+  // Alternating column backgrounds to show BOM level structure
+  var level_list_bg = [];
+  for (var lvl_k in realdepth_levels)
+    level_list_bg.push(parseInt(lvl_k));
+  level_list_bg.sort(function(a, b) { return a - b; });
+  var bg_layer = svg.append('svg:g').attr('class', 'bg-layer');
+  for (var li_bg = 0; li_bg < level_list_bg.length; li_bg++) {
+    if (li_bg % 2 === 0) {
+      bg_layer.append('svg:rect')
+        .attr('x', width_level * (maxlevel - level_list_bg[li_bg]))
+        .attr('y', -2000)
+        .attr('width', width_level)
+        .attr('height', 6000)
+        .style('fill', '#f1f5f9')
+        .style('pointer-events', 'none');
+    }
+  }
+
   // Handles to link and node element groups
   path = svg.append('svg:g').selectAll('path');
   shapes = svg.append('svg:g').selectAll('g');
@@ -905,6 +923,27 @@ function drawGraph(jsondata)
       if (d.parent >= 0) return;
       d.x += d3.event.dx;
       d.y += d3.event.dy;
+      // Move child suboperations with the parent
+      var parentw = d.halfW ? (2 * d.halfW) : 105;
+      var halfparentw = parentw / 2;
+      for (var ci = 0; ci < nodes.length; ci++) {
+        var child = nodes[ci];
+        if (child.parent !== d.id) continue;
+        if (child.suboperindex >= 0) {
+          // Suboperation of a routing
+          if (child.rownb > 0) {
+            child.y = d.y - 40 + (child.rownb - 0.5) * 80 / d.rownb;
+            child.x = d.x - halfparentw + (child.colnb - 0.5) * parentw / d.colnb;
+          } else {
+            child.y = d.y;
+            child.x = d.x - halfparentw + (child.suboperindex - 0.5) * parentw / d.numsuboperations;
+          }
+        } else {
+          // Suboperation of alternate/split
+          child.x = d.x;
+          child.y = d.y + (child.suboperindex + d.numsuboperations + 1) * 30 - 5;
+        }
+      }
       updateGraphGeometry();
     });
 
@@ -926,7 +965,7 @@ function drawGraph(jsondata)
    .style('cursor', 'pointer')
    .style('fill', function(d) {
       if (d.type === 'operation') return '#2563eb';
-      if (d.type === 'operation_alternate') return '#93c5fd';
+      if (d.type === 'operation_alternate') return '#60a5fa';
       if (d.type === 'itemsupplier') return '#0d9488';
       if (d.type === 'itemdistribution') return '#0ea5e9';
       if (d.type === 'itemdistribution_alternate') return '#06b6d4';
@@ -1360,7 +1399,9 @@ function drawGraph(jsondata)
   }
   function nodeHalfH(n) {
     if (n.halfH) return n.halfH;
-    return (n.type === 'resource') ? 14 : 13;
+    if (n.type === 'resource') return 14;
+    if (n.type === 'buffer') return 14;
+    return 13;
   }
 
   var topNodes = [];
@@ -1591,9 +1632,9 @@ ExpandColClick: true,
       style="stroke: #ffffff; stroke-width: 1; stroke-opacity: 0.45; stroke-linecap: round;"></line>
   </g>
 
-  <!-- operation_alternate: pill-shaped, lighter blue -->
+  <!-- operation_alternate: pill-shaped, mid blue (distinct from routing #93c5fd) -->
   <rect id="operation_alternate" class="operation_alternate" width="104" height="26" x="-52" y="-13" rx="13" ry="13"
-    style="cursor: pointer; fill: #93c5fd; filter: url(#dropshadow);">
+    style="cursor: pointer; fill: #60a5fa; filter: url(#dropshadow);">
   </rect>
 
   <!-- itemdistribution_alternate: same pill + truck, lighter purple -->
@@ -1642,8 +1683,8 @@ ExpandColClick: true,
     style="cursor: pointer; fill: #0f172a; stroke: #475569; stroke-width: 1.5; filter: url(#dropshadow); vector-effect: non-scaling-stroke;">
   </rect>
 
-  <!-- buffer: smaller equilateral-ish triangle, emerald green with shadow -->
-  <polygon id="buffer" class="buffer" points="0,-13 16,8 -16,8"
+  <!-- buffer: diamond shape — standard supply chain inventory symbol -->
+  <polygon id="buffer" class="buffer" points="0,-14 16,0 0,14 -16,0"
     style="cursor: pointer; fill: #059669; filter: url(#dropshadow);">
   </polygon>
 

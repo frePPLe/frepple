@@ -257,11 +257,12 @@ function hideHiddenOperationUpstreams(hidden_nodes, preserve_upstream)
   return hidden_nodes;
 }
 
-function hideResourcesOfHiddenNodes(hidden_nodes)
+function hideResourcesOfHiddenNodes(hidden_nodes, preserve_visible)
 {
   for (var i = 0; i < nodes.length; i++) {
     var node = nodes[i];
     if (node.type != 'resource') continue;
+    if (preserve_visible && preserve_visible[node.id]) continue;
     var all_ops_hidden = true;
     var has_any_op = false;
     for (var j = 0; j < links.length; j++) {
@@ -274,6 +275,72 @@ function hideResourcesOfHiddenNodes(hidden_nodes)
       }
     }
     if (has_any_op && all_ops_hidden)
+      hidden_nodes[node.id] = true;
+  }
+  return hidden_nodes;
+}
+
+function markSeedResourcesPreserved(seed_ids, preserve_visible)
+{
+  for (var j = 0; j < links.length; j++) {
+    if (links[j].type != 'load') continue;
+    if (links[j].target.type != 'resource') continue;
+
+    var srcid = links[j].source.id;
+    var srcnode = links[j].source;
+    if (seed_ids[srcid] || (srcnode.parent >= 0 && seed_ids[srcnode.parent]))
+      preserve_visible[links[j].target.id] = true;
+  }
+}
+
+function markSeedProducedBuffersPreserved(seed_ids, preserve_visible)
+{
+  for (var j = 0; j < links.length; j++) {
+    if (links[j].type != 'flow') continue;
+    if (links[j].target.type != 'buffer') continue;
+
+    var srcid = links[j].source.id;
+    var srcnode = links[j].source;
+    if (seed_ids[srcid] || (srcnode.parent >= 0 && seed_ids[srcnode.parent]))
+      preserve_visible[links[j].target.id] = true;
+  }
+}
+
+function hideSeedProducedBuffers(seed_ids, hidden_nodes)
+{
+  for (var j = 0; j < links.length; j++) {
+    if (links[j].type != 'flow') continue;
+    if (links[j].target.type != 'buffer') continue;
+
+    var srcid = links[j].source.id;
+    var srcnode = links[j].source;
+    if (seed_ids[srcid] || (srcnode.parent >= 0 && seed_ids[srcnode.parent]))
+      hidden_nodes[links[j].target.id] = true;
+  }
+}
+
+function hideBuffersOfHiddenProducers(hidden_nodes, preserve_visible)
+{
+  for (var i = 0; i < nodes.length; i++) {
+    var node = nodes[i];
+    if (node.type != 'buffer') continue;
+    if (preserve_visible[node.id]) continue;
+
+    var has_any_producer = false;
+    var all_producers_hidden = true;
+    for (var j = 0; j < links.length; j++) {
+      if (links[j].type != 'flow') continue;
+      if (links[j].target.id != node.id) continue;
+      if (!isOperationNode(links[j].source)) continue;
+
+      has_any_producer = true;
+      if (!hidden_nodes[links[j].source.id]) {
+        all_producers_hidden = false;
+        break;
+      }
+    }
+
+    if (has_any_producer && all_producers_hidden)
       hidden_nodes[node.id] = true;
   }
   return hidden_nodes;
@@ -306,13 +373,18 @@ function applyVisibilityFilters()
       var hidden_upstream = {};
       var upstream_seeds = getLevelSeedIds(effective_upstream);
       for (var seed in upstream_seeds) {
-        preserve_visible[seed] = true;
+        var seednode = nodes[parseInt(seed)];
+        if (seednode && seednode.type != 'buffer' && seednode.type != 'resource')
+          preserve_visible[seed] = true;
         var seed_hidden_upstream = collectReachable(parseInt(seed), true);
         for (var nodeid in seed_hidden_upstream)
           hidden_upstream[nodeid] = true;
       }
+      markSeedResourcesPreserved(upstream_seeds, preserve_visible);
+      markSeedProducedBuffersPreserved(upstream_seeds, preserve_visible);
       hidden_upstream = expandHiddenWithRoutingFamilies(hidden_upstream, true);
-      hidden_upstream = hideResourcesOfHiddenNodes(hidden_upstream);
+      hidden_upstream = hideBuffersOfHiddenProducers(hidden_upstream, preserve_visible);
+      hidden_upstream = hideResourcesOfHiddenNodes(hidden_upstream, preserve_visible);
       for (var nodeid in hidden_upstream)
         if (!preserve_visible[nodeid]) visible_nodes[nodeid] = false;
     }
@@ -322,7 +394,9 @@ function applyVisibilityFilters()
       var downstream_seeds = getLevelSeedIds(effective_downstream);
       var preserve_upstream_path = {};
       for (var seed2 in downstream_seeds) {
-        preserve_visible[seed2] = true;
+        var seednode2 = nodes[parseInt(seed2)];
+        if (seednode2 && seednode2.type != 'buffer' && seednode2.type != 'resource')
+          preserve_visible[seed2] = true;
         var seed_hidden_downstream = collectReachable(parseInt(seed2), false);
         for (var nodeid2 in seed_hidden_downstream)
           hidden_downstream[nodeid2] = true;
@@ -331,10 +405,13 @@ function applyVisibilityFilters()
         for (var upstreamid in seed_upstream_path)
           preserve_upstream_path[upstreamid] = true;
       }
+      markSeedResourcesPreserved(downstream_seeds, preserve_visible);
+      hideSeedProducedBuffers(downstream_seeds, hidden_downstream);
       hidden_downstream = expandHiddenWithRoutingFamilies(hidden_downstream, false);
       hidden_downstream = hideHiddenOperationUpstreams(hidden_downstream, preserve_upstream_path);
       hidden_downstream = hideHiddenRoutingUpstreamBuffers(hidden_downstream, preserve_upstream_path);
-      hidden_downstream = hideResourcesOfHiddenNodes(hidden_downstream);
+      hidden_downstream = hideBuffersOfHiddenProducers(hidden_downstream, preserve_visible);
+      hidden_downstream = hideResourcesOfHiddenNodes(hidden_downstream, preserve_visible);
       for (var nodeid2 in hidden_downstream)
         if (!preserve_visible[nodeid2]) visible_nodes[nodeid2] = false;
     }

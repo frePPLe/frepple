@@ -7,6 +7,12 @@ Release notes
 This release is scheduled for early April 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: User interface
+
+- | Supply path refactoring: The supply path has been redesigned to provide a
+    clearer visualization of the supply chain. Levels can be collapsed and expanded,
+    objects are draggable...
+
 .. rubric:: Production planning
 
 - | Bug fix: Some models experienced issues with excess proposed supply in the

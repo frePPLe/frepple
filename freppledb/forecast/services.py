@@ -23,6 +23,7 @@
 
 import frepple
 
+import asyncio
 import json
 
 from channels.db import database_sync_to_async
@@ -412,6 +413,7 @@ class ForecastService(AsyncHttpConsumer):
                         errors.append("Exception entering comment")
 
                 # Reply
+                await asyncio.sleep(0)  # Allow event loop to clear pending events
                 self.scope["response_headers"].append(
                     (b"Content-Type", b"application/json")
                 )

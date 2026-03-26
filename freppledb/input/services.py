@@ -29,6 +29,7 @@ import json
 
 from channels.db import database_sync_to_async
 from channels.generic.http import AsyncHttpConsumer
+from django.db import connections
 
 from freppledb.boot import getAttributes
 from freppledb.common.commands import PlanTaskRegistry
@@ -58,6 +59,9 @@ def savePlan(
             buffers=related_buffers,
             demands=related_demands,
         )
+        with connections[database].cursor() as cursor:
+            # This query forces Postgres to finalize all pending WAL writes
+            cursor.execute("SELECT pg_current_wal_insert_lsn()")
     except Exception as e:
         print("Error saving plan:", e)
         raise e
@@ -398,7 +402,7 @@ class OperationplanService(AsyncHttpConsumer):
                         errors.append("Error saving plan")
 
             self.scope["response_headers"].append((b"Content-Type", b"text/html"))
-            await asyncio.sleep(0)  # Allow event loop to clear pending events
+            await asyncio.sleep(0.01)  # Allow event loop to clear pending events
             if errors:
                 await self.send_response(
                     500,

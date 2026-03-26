@@ -1,5 +1,0 @@
-/**
-  * vue-cal v5.0.1-rc.40
-  * (c) 2024-2026 Antoni Andre <antoniandre.web@gmail.com>
-  * @license MIT
-  */const a=["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή","Σάββατο","Κυριακή"],e=["Ιανουάριος","Φεβρουάριος","Μάρτιος","Απρίλιος","Μάιος","Ιούνιος","Ιούλιος","Αύγουστος","Σεπτέμβριος","Οκτώβριος","Νοέμβριος","Δεκέμβριος"],s=["Ιανουαρίου","Φεβρουαρίου","Μαρτίου","Απριλίου","Μαΐου","Ιουνίου","Ιουλίου","Αυγούστου","Σεπτεμβρίου","Οκτωβρίου","Νοεμβρίου","Δεκεμβρίου"],Y="Έτη",t="Έτος",n="Μήνας",d="Εβδομάδα",o="Ημέρες",y="Ημέρα",m="Σήμερα",r="Κανένα συμβάν",v="Ημερήσιο συμβάν",l="Διαγραφή",h="Δημιουργία συμβάντος",E="dddd D MMMMG YYYY",D="π.μ.",M="μ.μ.",c={weekDays:a,months:e,monthsGenitive:s,years:"Έτη",year:t,month:n,week:d,days:o,day:y,today:m,noEvent:r,allDay:v,deleteEvent:l,createEvent:h,dateFormat:E,am:D,pm:M};export{v as allDay,D as am,h as createEvent,E as dateFormat,y as day,o as days,c as default,l as deleteEvent,n as month,e as months,s as monthsGenitive,r as noEvent,M as pm,m as today,d as week,a as weekDays,t as year,Y as years};

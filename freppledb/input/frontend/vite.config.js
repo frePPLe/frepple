@@ -20,9 +20,6 @@ export default defineConfig({
       protocol: 'ws',
       host: 'localhost',
     },
-    optimizeDeps: {
-      include: ['vue-cal'],
-    },
   },
   build: {
     outDir: '../static',

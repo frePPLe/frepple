@@ -183,7 +183,6 @@ rect.opplan {
       jQuery('#grid').setGridHeight(h - 60);
 
       jQuery('.column-body').removeClass('d-none').css('height', h - 60);
-      jQuery('#calendar .calendar-vuecal').css('height', h - 60);
   }
 
   function setWidths() {
@@ -351,7 +350,7 @@ rect.opplan {
         setVisibleByMode(mode.startsWith('calendar') ? 'calendar' : mode);
 
         grid.saveColumnConfiguration(function () {
-          // No page reload - Vue handles calendar mode
+          location.reload();
         });
       });
     });
@@ -366,7 +365,7 @@ rect.opplan {
         setVisibleByMode(mode.startsWith('calendar') ? 'calendar' : mode);
 
         grid.saveColumnConfiguration(function () {
-          // No page reload - Vue handles calendar mode
+          location.reload();
         });
       });
     });
@@ -381,7 +380,7 @@ rect.opplan {
         setVisibleByMode(mode.startsWith('calendar') ? 'calendar' : mode);
 
         grid.saveColumnConfiguration(function () {
-          // No page reload - Vue handles calendar mode
+          location.reload();
         });
       });
     });

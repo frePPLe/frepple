@@ -528,12 +528,11 @@ export const useOperationplansStore = defineStore('operationplans', {
         // Send the FULL operationplan object (matching table mode behavior)
         // This ensures consistency with what frepple.js sends in table mode
         const exportData = {
-          // The backend only needs these fields
+          // The backend only needs these fields in the python tests
           "reference": this.operationplan.reference,
           "type": this.operationplan.type,
           "quantity": this.operationplan.quantity,
-          "enddate": this.operationplan.end,
-          "owner": this.operationplan.owner,
+          "enddate": this.operationplan.end
 
           // ...this.operationplan,
         };

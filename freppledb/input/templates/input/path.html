@@ -3,7 +3,7 @@
 
 {% block extrahead %}{{block.super}}
 <style>
-svg {
+#svggraph {
   background-color: #ffffff;
   cursor: default;
   -webkit-user-select: none;
@@ -486,11 +486,15 @@ function nodeTransform(d) {
     var parentw = parentnode && parentnode.halfW ? (2 * parentnode.halfW) : 105;
     var cols = parentnode && parentnode.colnb > 0 ? parentnode.colnb : 1;
     var subops = parentnode && parentnode.numsuboperations > 0 ? parentnode.numsuboperations : 1;
-    var basescale = parentw / 105;
-    if (d.rownb > 0)
-      return 'translate(' + d.x + ' ' + d.y + ') scale(' + (basescale / cols) + ' 1)';
-    else
-      return 'translate(' + d.x + ' ' + d.y + ') scale(' + (basescale / subops) + ' 1)';
+    var subop_margin = 8;
+    var pill_margin = 4;
+    if (d.rownb > 0) {
+      var slot_w = (parentw - 2 * subop_margin) / cols;
+      return 'translate(' + d.x + ' ' + d.y + ') scale(' + ((slot_w - 2 * pill_margin) / 104) + ' 1)';
+    } else {
+      var slot_w = (parentw - 2 * subop_margin) / subops;
+      return 'translate(' + d.x + ' ' + d.y + ') scale(' + ((slot_w - 2 * pill_margin) / 104) + ' 1)';
+    }
   }
   return 'translate(' + d.x + ' ' + d.y + ')';
 }
@@ -552,13 +556,14 @@ function tick(e)
           var parentnode = nodes[d.parent];
           var parentw = parentnode && parentnode.halfW ? (2 * parentnode.halfW) : 105;
           var halfparentw = parentw / 2;
+          var subop_margin = 8;
           if (d.rownb > 0) {
-          	d.y = nodes[d.parent].y - 40 + (d.rownb-0.5) * 80 / nodes[d.parent].rownb;
-	          d.x = nodes[d.parent].x - halfparentw + (d.colnb-0.5) * parentw / nodes[d.parent].colnb;
+          	d.y = nodes[d.parent].y - 40 + subop_margin + (d.rownb-0.5) * (80 - 2*subop_margin) / nodes[d.parent].rownb;
+	          d.x = nodes[d.parent].x - halfparentw + subop_margin + (d.colnb-0.5) * (parentw - 2*subop_margin) / nodes[d.parent].colnb;
     	  }
     	  else {
     	  	d.y = nodes[d.parent].y;
-	          d.x = nodes[d.parent].x - halfparentw + (d.suboperindex-0.5) * parentw / nodes[d.parent].numsuboperations;
+	          d.x = nodes[d.parent].x - halfparentw + subop_margin + (d.suboperindex-0.5) * (parentw - 2*subop_margin) / nodes[d.parent].numsuboperations;
     	 }
         }
       }
@@ -583,11 +588,15 @@ function tick(e)
       var parentw2 = parentnode2 && parentnode2.halfW ? (2 * parentnode2.halfW) : 105;
       var cols2 = parentnode2 && parentnode2.colnb > 0 ? parentnode2.colnb : 1;
       var subops2 = parentnode2 && parentnode2.numsuboperations > 0 ? parentnode2.numsuboperations : 1;
-      var basescale2 = parentw2 / 105;
-      if (d.rownb > 0)
-      	return 'translate(' + d.x + ' ' + d.y + ') scale(' + (basescale2 / cols2) + ' 1)';
-      else
-      	return 'translate(' + d.x + ' ' + d.y + ') scale(' + (basescale2 / subops2) + ' 1)';
+      var subop_margin2 = 8;
+      var pill_margin2 = 4;
+      if (d.rownb > 0) {
+        var slot_w2 = (parentw2 - 2 * subop_margin2) / cols2;
+        return 'translate(' + d.x + ' ' + d.y + ') scale(' + ((slot_w2 - 2 * pill_margin2) / 104) + ' 1)';
+      } else {
+        var slot_w2 = (parentw2 - 2 * subop_margin2) / subops2;
+        return 'translate(' + d.x + ' ' + d.y + ') scale(' + ((slot_w2 - 2 * pill_margin2) / 104) + ' 1)';
+      }
 	}
     else
       return 'translate(' + d.x + ' ' + d.y + ')';
@@ -874,24 +883,6 @@ function drawGraph(jsondata)
     .on('tick', tick)
     .stop();
 
-  // Alternating column backgrounds to show BOM level structure
-  var level_list_bg = [];
-  for (var lvl_k in realdepth_levels)
-    level_list_bg.push(parseInt(lvl_k));
-  level_list_bg.sort(function(a, b) { return a - b; });
-  var bg_layer = svg.append('svg:g').attr('class', 'bg-layer');
-  for (var li_bg = 0; li_bg < level_list_bg.length; li_bg++) {
-    if (li_bg % 2 === 0) {
-      bg_layer.append('svg:rect')
-        .attr('x', width_level * (maxlevel - level_list_bg[li_bg]))
-        .attr('y', -2000)
-        .attr('width', width_level)
-        .attr('height', 6000)
-        .style('fill', '#f1f5f9')
-        .style('pointer-events', 'none');
-    }
-  }
-
   // Handles to link and node element groups
   path = svg.append('svg:g').selectAll('path');
   shapes = svg.append('svg:g').selectAll('g');
@@ -931,12 +922,13 @@ function drawGraph(jsondata)
         if (child.parent !== d.id) continue;
         if (child.suboperindex >= 0) {
           // Suboperation of a routing
+          var subop_margin = 8;
           if (child.rownb > 0) {
-            child.y = d.y - 40 + (child.rownb - 0.5) * 80 / d.rownb;
-            child.x = d.x - halfparentw + (child.colnb - 0.5) * parentw / d.colnb;
+            child.y = d.y - 40 + subop_margin + (child.rownb - 0.5) * (80 - 2*subop_margin) / d.rownb;
+            child.x = d.x - halfparentw + subop_margin + (child.colnb - 0.5) * (parentw - 2*subop_margin) / d.colnb;
           } else {
             child.y = d.y;
-            child.x = d.x - halfparentw + (child.suboperindex - 0.5) * parentw / d.numsuboperations;
+            child.x = d.x - halfparentw + subop_margin + (child.suboperindex - 0.5) * (parentw - 2*subop_margin) / d.numsuboperations;
           }
         } else {
           // Suboperation of alternate/split

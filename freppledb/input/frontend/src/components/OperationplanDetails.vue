@@ -620,6 +620,13 @@ onUnmounted(() => {
       </template>
     </InfoDialog>
 
+    <InfoDialog
+      v-model="store.exportSuccess"
+      :title="ttt('Export successful')"
+      :message="ttt('Export successful')"
+      type="info"
+    />
+
     <ErrorDialog
       v-model="showExportErrorDialog"
       :title="ttt('Export Error')"

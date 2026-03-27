@@ -429,6 +429,39 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.calendarevents = events;
     },
 
+    async loadCalendarData(thefilter) {
+      if (!this.mode.startsWith('calendar')) return;
+      if (!thefilter) {
+        thefilter = this.currentFilter || window.initialfilter;
+      }
+
+      const params = {
+        format: 'calendar',
+        sidx: this.sidx,
+        sord: this.sord,
+      };
+
+      if (thefilter) {
+        params.filters = JSON.stringify(thefilter);
+      }
+
+      try {
+        const endpoint =
+          (location.pathname.startsWith(window.url_prefix)
+            ? location.pathname.substring(window.url_prefix.length)
+            : location.pathname) +
+          '?' +
+          new URLSearchParams(params).toString();
+        const response = await operationplanService.getCalendarData(
+          endpoint.startsWith('/') ? endpoint.substring(1) : endpoint
+        );
+        this.calendarevents = response.responseData.value || [];
+      } catch (err) {
+        if (err.response && err.response.status === 401) location.reload();
+        throw err;
+      }
+    },
+
     // Preferences
     setPreferences(reportKey, preferences) {
       this.preferences = preferences;
@@ -542,20 +575,12 @@ export const useOperationplansStore = defineStore('operationplans', {
 
         // Handle successful response
         if (
-          response &&
-          response.responseData &&
-          response.responseData.value &&
-          response.responseData.value[0] &&
-          response.responseData.value[0].status === 'ok'
+          response.responseData?.value === 'OK'
         ) {
           this.exportError = null;
-          // store.undo();
+          this.exportSuccess = true;
         } else if (
-          response &&
-          response.responseData &&
-          response.responseData.value &&
-          response.responseData.value[0] &&
-          response.responseData.value[0].messages
+          response.responseData?.value[0]?.messages
         ) {
           this.exportError = response.responseData.value[0].messages.join('\n');
         } else {

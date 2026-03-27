@@ -164,7 +164,7 @@ jobs:
 
       - name: Send failure mail
         if: failure()
-        uses: dawidd6/action-send-mail@v4
+        uses: dawidd6/action-send-mail@v16
         with:
           connection_url: ${{secrets.MAIL_CONNECTION}}
           secure: false

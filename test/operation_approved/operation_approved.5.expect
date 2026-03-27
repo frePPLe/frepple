@@ -143,6 +143,7 @@ OPERATION	Purchase 5. component @ factory from 5. Supplier	2026-01-01T00:00:00	2
 OPERATION	Purchase 6. component @ factory from 6. Supplier	2026-02-22T00:00:00	2026-03-01T00:00:00	30	approved
 OPERATION	Purchase 6. component @ factory from 6. Supplier	2026-02-25T00:00:00	2026-03-04T00:00:00	90
 PROBLEM	precedence	Operation '7. task X2 step 2' starts before preceding operation ends	2026-01-15T00:00:00 / 2026-01-15T00:00:00
+DEMAND CONSTRAINT	10. sales order	Purchasing lead time on 'Purchase 10. item @ factory from 10. Supplier'	2025-12-25T00:00:00 / 2026-01-01T00:00:00
 DEMAND CONSTRAINT	4. sales order	Resource '4. Resource' has capacity shortage	2026-01-01T00:00:00 / 2026-01-04T00:00:00
 DEMAND CONSTRAINT	6. sales order	Manufacturing lead time on '6. Make item'	2025-12-29T00:00:00 / 2026-01-01T00:00:00
 DEMAND CONSTRAINT	6. sales order	Manufacturing lead time on '6. Make item subassembly'	2025-12-29T00:00:00 / 2026-01-01T00:00:00

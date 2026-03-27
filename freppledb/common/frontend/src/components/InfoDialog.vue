@@ -105,6 +105,7 @@ const handleBackdropClick = (event) => {
         <!-- Modal Footer -->
         <div class="modal-footer justify-content-between">
           <slot name="actions">
+            <div></div>
             <!-- Default actions -->
             <button type="button" class="btn btn-primary" @click="closeDialog">
               Close

@@ -879,7 +879,10 @@ var grid = {
         if (!collapsibleSet.has(collapsibleOption)) {
           collapsibleSet.add(collapsibleOption);
           let collapseIcon = '<i class="fa fa-chevron-right pt-1 float-end" style="cursor: pointer; z-index: 3000; position: relative"></i>';
-          availableoptions += '<li id="' + collapsibleSet.size * 1000 + '" class="list-group-item do-not-drag" style="cursor: pointer; border: none" onclick="grid.toggleCollapseSubOptions(\'' + collapsibleOption + '\',' + collapsibleSet.size * 1000 + ')">' + collapsibleOption + ' attributes' + collapseIcon + '</li>';
+          availableoptions += '<li id="' + collapsibleSet.size * 1000
+            + '" class="list-group-item do-not-drag" style="cursor: pointer; border: none" onclick="grid.toggleCollapseSubOptions(\''
+            + collapsibleOption + '\',' + collapsibleSet.size * 1000 + ')">'
+            + collapsibleOption + ' ' + gettext('attributes') + collapseIcon + '</li>';
         }
         availableoptions += '<li id="' + val0a[o] + '" type="' + collapsibleOption + '" class="list-group-item ps-4 d-none" style="cursor: move; border: none">' + o + '</li>';
       } else {

@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2025-11-05 16:59+0100\n"
+"PO-Revision-Date: 2026-03-27 16:41+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -1370,7 +1370,7 @@ msgstr "Naam moet alfanumeriek zijn"
 
 #: common/models.py:1584
 msgid "attribute"
-msgstr "attribuut"
+msgstr "eigenschap"
 
 #: common/models.py:1585 common/views.py:679
 #: inventoryplanning/templates/inventoryplanning/drp.html:2607
@@ -1845,7 +1845,7 @@ msgstr ""
 
 #: common/templates/admin/submit_line.html:5
 msgid "Save as new"
-msgstr "Opslaan als nieuw item"
+msgstr "Opslaan als nieuw"
 
 #: common/templates/admin/submit_line.html:6
 msgid "Save and add another"
@@ -2900,7 +2900,13 @@ msgstr ""
 "html=\"true\" data-bs-title=\"Genereer geen plannen in het "
 "verleden<br>Goedgekeurde en voorgestelde orders moeten in de toekomst liggen."
 "<br>Enkel bevestigde orders kunnen in het verleden liggen.\">Doorlooptijd: "
-"plan niet in het verleden</span>"
+"plan niet in het verleden</span>\n"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't generate manufacturing orders or "
+"distribution orders that start or end in the past.<br>Proposed and approved "
+"activities must all be in the future.<br>Only confirmed activities are "
+"allowed to be in the past.\">Manufacturing lead time: do not manufacture in "
+"the past</span>"
 
 #: execute/templates/commands/runplan.html:58
 msgid ""
@@ -4111,15 +4117,15 @@ msgstr "make to order"
 
 #: input/models/item.py:39
 msgid "Cost of the item"
-msgstr "Item kost"
+msgstr "Product kost"
 
 #: input/models/item.py:50
 msgid "Weight of the item"
-msgstr "Gewicht van het item"
+msgstr "Gewicht van het product"
 
 #: input/models/item.py:58
 msgid "Volume of the item"
-msgstr "Volume van het item"
+msgstr "Volume van het product"
 
 #: input/models/item.py:64
 msgid "Period of cover in days"
@@ -4341,13 +4347,13 @@ msgstr "Bevoren venster voor creatie van nieuwe shipments"
 #: input/views/inventory.py:1311 input/views/inventory.py:1318
 #: input/views/inventory.py:1325
 msgid "item distribution"
-msgstr "item distribution"
+msgstr "product distribution"
 
 #: input/models/itemdistribution.py:186
 #: input/templates/admin/input/item/change_form.html:18
 #: input/views/inventory.py:325
 msgid "item distributions"
-msgstr "item distributions"
+msgstr "product distributies"
 
 #: input/models/location.py:36 input/models/operation.py:174
 #: input/models/resource.py:101 input/models/supplier.py:43
@@ -4392,7 +4398,7 @@ msgstr "verdeel"
 
 #: input/models/operation.py:70
 msgid "Item produced by this operation"
-msgstr "Item geproduceerd door deze operatie"
+msgstr "Product geproduceerd door deze operatie"
 
 #: input/models/operation.py:83
 msgid "Parent operation (which must be of type routing, alternate or split)"
@@ -5294,7 +5300,7 @@ msgstr "segmentdetail"
 
 #: inventoryplanning/attributes.py:18
 msgid "Successor part"
-msgstr "Opvolger item"
+msgstr "Opvolger product"
 
 #: inventoryplanning/commands.py:654
 msgid "Compute inventory parameters"
@@ -5640,7 +5646,7 @@ msgstr "beginvoorraad"
 #: inventoryplanning/templates/inventoryplanning/drp.html:239
 #: output/templates/output/buffer.html:282 output/views/buffer.py:265
 msgid "start inventory days of cover"
-msgstr "beginvoorraad days of cover"
+msgstr "beginvoorraad dekkingsperiode"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:240
 #: inventoryplanning/templates/inventoryplanning/drp.html:1549
@@ -6420,7 +6426,7 @@ msgstr "Vraag rapport"
 
 #: output/views/pegging.py:78
 msgid "item description"
-msgstr "itemomschrijving"
+msgstr "productomschrijving"
 
 #: output/views/pegging.py:92
 msgid "required quantity"
@@ -6811,7 +6817,7 @@ msgstr "dashboard"
 #: wizard/templates/wizard/quickstart_forecast.html:61
 #: wizard/templates/wizard/quickstart_production.html:387
 msgid "item name"
-msgstr "item naam"
+msgstr "product naam"
 
 #: wizard/templates/wizard/quickstart_forecast.html:73
 #: wizard/templates/wizard/quickstart_production.html:399
@@ -6858,12 +6864,12 @@ msgstr "resourcenaam"
 
 #: wizard/templates/wizard/quickstart_production.html:212
 msgid "consumed items"
-msgstr "verbruikte items"
+msgstr "verbruikte producten"
 
 #: wizard/templates/wizard/quickstart_production.html:217
 #: wizard/templates/wizard/quickstart_production.html:295
 msgid "component or subassembly item name"
-msgstr "component- of subassembly item naam"
+msgstr "component- of subassembly productnaam"
 
 #: wizard/templates/wizard/quickstart_production.html:221
 #: wizard/templates/wizard/quickstart_production.html:299

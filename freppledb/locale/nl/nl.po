@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2025-11-05 16:59+0100\n"
+"PO-Revision-Date: 2026-03-27 16:41+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -119,7 +119,7 @@ msgstr "Annuleer"
 
 #: common/static/js/frepple.js:894 forecast/static/forecast/src/forecast.js:957
 msgid "Reset"
-msgstr "Herstel"
+msgstr "Reset"
 
 #: common/static/js/frepple.js:895 forecast/static/forecast/src/forecast.js:958
 msgid "OK"
@@ -1766,7 +1766,7 @@ msgstr "Naam moet alfanumeriek zijn"
 
 #: common/models.py:1584
 msgid "attribute"
-msgstr "attribuut"
+msgstr "eigenschap"
 
 #: common/models.py:1585 common/views.py:679
 #: inventoryplanning/templates/inventoryplanning/drp.html:2607
@@ -2210,7 +2210,7 @@ msgstr ""
 
 #: common/templates/admin/submit_line.html:5
 msgid "Save as new"
-msgstr "Opslaan als nieuw item"
+msgstr "Opslaan als nieuw"
 
 #: common/templates/admin/submit_line.html:6
 msgid "Save and add another"
@@ -3208,7 +3208,13 @@ msgstr ""
 "html=\"true\" data-bs-title=\"Genereer geen plannen in het "
 "verleden<br>Goedgekeurde en voorgestelde orders moeten in de toekomst liggen."
 "<br>Enkel bevestigde orders kunnen in het verleden liggen.\">Doorlooptijd: "
-"plan niet in het verleden</span>"
+"plan niet in het verleden</span>\n"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't generate manufacturing orders or "
+"distribution orders that start or end in the past.<br>Proposed and approved "
+"activities must all be in the future.<br>Only confirmed activities are "
+"allowed to be in the past.\">Manufacturing lead time: do not manufacture in "
+"the past</span>"
 
 #: execute/templates/commands/runplan.html:58
 msgid ""
@@ -4415,15 +4421,15 @@ msgstr "make to order"
 
 #: input/models/item.py:39
 msgid "Cost of the item"
-msgstr "Item kost"
+msgstr "Product kost"
 
 #: input/models/item.py:50
 msgid "Weight of the item"
-msgstr "Gewicht van het item"
+msgstr "Gewicht van het product"
 
 #: input/models/item.py:58
 msgid "Volume of the item"
-msgstr "Volume van het item"
+msgstr "Volume van het product"
 
 #: input/models/item.py:64
 msgid "Period of cover in days"
@@ -4645,13 +4651,13 @@ msgstr "Bevoren venster voor creatie van nieuwe shipments"
 #: input/views/inventory.py:1311 input/views/inventory.py:1318
 #: input/views/inventory.py:1325
 msgid "item distribution"
-msgstr "item distribution"
+msgstr "product distribution"
 
 #: input/models/itemdistribution.py:186
 #: input/templates/admin/input/item/change_form.html:18
 #: input/views/inventory.py:325
 msgid "item distributions"
-msgstr "item distributions"
+msgstr "product distributies"
 
 #: input/models/location.py:36 input/models/operation.py:174
 #: input/models/resource.py:101 input/models/supplier.py:43
@@ -4696,7 +4702,7 @@ msgstr "verdeel"
 
 #: input/models/operation.py:70
 msgid "Item produced by this operation"
-msgstr "Item geproduceerd door deze operatie"
+msgstr "Product geproduceerd door deze operatie"
 
 #: input/models/operation.py:83
 msgid "Parent operation (which must be of type routing, alternate or split)"
@@ -5589,7 +5595,7 @@ msgstr "segmentdetail"
 
 #: inventoryplanning/attributes.py:18
 msgid "Successor part"
-msgstr "Opvolger item"
+msgstr "Opvolger product"
 
 #: inventoryplanning/commands.py:654
 msgid "Compute inventory parameters"
@@ -5935,7 +5941,7 @@ msgstr "beginvoorraad"
 #: inventoryplanning/templates/inventoryplanning/drp.html:239
 #: output/templates/output/buffer.html:282 output/views/buffer.py:265
 msgid "start inventory days of cover"
-msgstr "beginvoorraad days of cover"
+msgstr "beginvoorraad dekkingsperiode"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:240
 #: inventoryplanning/templates/inventoryplanning/drp.html:1549
@@ -6708,7 +6714,7 @@ msgstr "Vraag rapport"
 
 #: output/views/pegging.py:78
 msgid "item description"
-msgstr "itemomschrijving"
+msgstr "productomschrijving"
 
 #: output/views/pegging.py:92
 msgid "required quantity"
@@ -7095,7 +7101,7 @@ msgstr "dashboard"
 #: wizard/templates/wizard/quickstart_forecast.html:61
 #: wizard/templates/wizard/quickstart_production.html:387
 msgid "item name"
-msgstr "item naam"
+msgstr "product naam"
 
 #: wizard/templates/wizard/quickstart_forecast.html:73
 #: wizard/templates/wizard/quickstart_production.html:399
@@ -7142,12 +7148,12 @@ msgstr "resourcenaam"
 
 #: wizard/templates/wizard/quickstart_production.html:212
 msgid "consumed items"
-msgstr "verbruikte items"
+msgstr "verbruikte producten"
 
 #: wizard/templates/wizard/quickstart_production.html:217
 #: wizard/templates/wizard/quickstart_production.html:295
 msgid "component or subassembly item name"
-msgstr "component- of subassembly item naam"
+msgstr "component- of subassembly productnaam"
 
 #: wizard/templates/wizard/quickstart_production.html:221
 #: wizard/templates/wizard/quickstart_production.html:299
@@ -7255,9 +7261,9 @@ msgid ""
 "table.\n"
 "                        <br><br>"
 msgstr ""
-"Een operatie krijgt de kleur van de categorie van het item die het "
+"Een operatie krijgt de kleur van de categorie van het product die het "
 "produceert.<br>\n"
-"De item categorie wordt ingevuld in de itemtabel\n"
+"De product categorie wordt ingevuld in de product tabel\n"
 "<br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1454
@@ -7267,9 +7273,9 @@ msgid ""
 "table.\n"
 "                        <br><br>"
 msgstr ""
-"Een operatie krijgt de kleur van de subcategorie van het item die het "
+"Een operatie krijgt de kleur van de subcategorie van het product die het "
 "produceert.<br>\n"
-"De item subcategorie wordt ingevuld in de itemtabel\n"
+"De product subcategorie wordt ingevuld in de product tabel\n"
 "<br><br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:304
@@ -7335,11 +7341,11 @@ msgstr "Intermitterend"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1414
 msgid "Item category color setup"
-msgstr "Setup voor kleur per item categorie"
+msgstr "Setup voor kleur per product categorie"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1448
 msgid "Item subcategory color setup"
-msgstr "Setup voor kleur per item subcategorie"
+msgstr "Setup voor kleur per product subcategorie"
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:30
 msgid "Manufacturing Order"
@@ -7581,11 +7587,11 @@ msgstr "historiek"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:30
 msgid "item category"
-msgstr "item categorie"
+msgstr "product categorie"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:33
 msgid "item subcategory"
-msgstr "item subcategorie"
+msgstr "product subcategorie"
 
 #: freppledb/quoting/static/quoting/quoting.html:85
 msgid "maximum lateness (in days)"
@@ -7690,58 +7696,7 @@ msgstr "{{ aggregatedoperationplans.count }} geselecteerd"
 msgid "{{m.label}}"
 msgstr "{{m.label}}"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1623
-msgid ""
-"An operation gets the color of the category of the item it produces.<br>\n"
-"                        The item categories should be filled in the item "
-"table.\n"
-"                        <br><br>"
-msgstr ""
-"Een operatie krijgt de kleur van de categorie van het geproduceerde product."
-"<br>\n"
-"De item categorien worden in de producttabel ingevuld.\n"
-"<br><br>"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1655
-msgid ""
-"An operation gets the color of the subcategory of the item it produces.<br>\n"
-"                        The item subcategories should be filled in the item "
-"table.\n"
-"                        <br><br>"
-msgstr ""
-"Een operatie krijgt de kleur van de subcategorie van het greproduceerde "
-"product<br>\n"
-"The product subcategorien worden in de producttabel ingegevuld.\n"
-"<br><br>"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1565
-msgid ""
-"An operation gets the color of the week where the pegged demand is due in.\n"
-"                        <br><br>"
-msgstr ""
-"Een operatie krijgt de kleur van de week van de leverdatum van de gelinkte "
-"verkooporders.\n"
-"<br><br>"
-
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:77
-msgid "Assign an extra resource"
-msgstr "Toekennen van een extra resource"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1558
-msgid "Due date color setup"
-msgstr "Setup kleuren voor leverdata"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1406
-#: freppledb/planningboard/static/planningboard/planningboard.html:1441
-#: freppledb/planningboard/static/planningboard/planningboard.html:1468
-msgid "Enter name"
-msgstr "Type de naam"
-
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:80
-msgid "Remove this resource"
-msgstr "Verwijder deze resource"
-
-#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:65
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:78
 msgid "There is no demand requiring this supply."
 msgstr "Er is geen vraag naar deze supply."
 
@@ -7761,12 +7716,16 @@ msgstr "Toon start en einddata"
 msgid "View start events"
 msgstr "Toon startdata"
 
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:52
-#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:233
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:66
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:247
 msgid "consumed proposed"
 msgstr "geconsumeerd voorgesteld"
 
-#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:35
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:243
+msgid "consumed total"
+msgstr "verbruikte hoeveelheid"
+
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:49
 msgid "delivery"
 msgstr "levering"
 
@@ -7774,15 +7733,11 @@ msgstr "levering"
 msgid "downstream operations"
 msgstr "downstream operaties"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:145
-msgid "export to {{erp}} failed"
-msgstr "exporteren naar {{erp}} mislukt"
-
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:19
 msgid "no downstream information"
 msgstr "geen downstream informatie"
 
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:40
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:54
 msgid "no inventory information"
 msgstr "geen stockinformatie"
 
@@ -7790,29 +7745,25 @@ msgstr "geen stockinformatie"
 msgid "no upstream information"
 msgstr "geen upstream informatie"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:230
-msgid "plus"
-msgstr "plus"
-
-#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:55
-#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:221
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:69
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:235
 msgid "produced proposed"
 msgstr "geproduceerd voorgesteld"
+
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:231
+msgid "produced total"
+msgstr "geproduceerde hoeveelheid"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:6
 msgid "selected"
 msgstr "geselecteerd"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:87
-msgid "set time horizon"
-msgstr "instellen tijdshorizon"
 
 #: freppledb/input/static/operationplandetail/calendar.html:24
 #: freppledb/input/static/operationplandetail/kanban.html:16
 msgid "shown"
 msgstr "getoond"
 
-#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:34
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:48
 msgid "stock"
 msgstr "stock"
 
@@ -7823,6 +7774,9 @@ msgstr "upstream operaties"
 #: freppledb/input/static/operationplandetail/month.html:13
 msgid "week number"
 msgstr "weeknummer"
+
+msgid "set time horizon"
+msgstr "instellen tijdshorizon"
 
 msgid "select measure"
 msgstr "selecteer measure"
@@ -7837,16 +7791,111 @@ msgid "Save changes"
 msgstr "Sla wijzigingen op"
 
 msgid "item-location"
-msgstr "item-locatie"
+msgstr "product-locatie"
 
 msgid "Enter your comment here..."
 msgstr "Geef je commentaar hier..."
 
-msgid "selected quote"
-msgstr "geselecteerde quote"
+msgid "Operation Plans"
+msgstr "Ingeplande operaties"
 
-msgid "current value"
-msgstr "huidige waarde"
+msgid "ID"
+msgstr "ID"
 
-msgid "no plan yet"
-msgstr "nog geen plan"
+msgid "Operation"
+msgstr "Operatie"
+
+msgid "Quantity"
+msgstr "Quantity"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Start Date"
+msgstr "Startdatum"
+
+msgid "End Date"
+msgstr "Einddatum"
+
+msgid "work order"
+msgstr "werkorder"
+
+msgid "Exporting..."
+msgstr "Exporteren..."
+
+msgid "No response from server"
+msgstr "Geen antwoord van de server"
+
+msgid "No records with status proposed, approved or confirmed"
+msgstr "Geen records met status voorgesteld, goedgekeurd of bevestigd"
+
+msgid "Server error: "
+msgstr "Serverfout: "
+
+msgid "Export failed: Unexpected response format from server"
+msgstr "Export fout: Onverwacht antwoordformaat van de server"
+
+msgid "Export failed: Unknown error"
+msgstr "Export fout: Onbekende error"
+
+msgid "Export Error"
+msgstr "Export foutmelding"
+
+#~ msgid ""
+#~ "An operation gets the color of the category of the item it produces.<br>\n"
+#~ "                        The item categories should be filled in the item "
+#~ "table.\n"
+#~ "                        <br><br>"
+#~ msgstr ""
+#~ "Een operatie krijgt de kleur van de categorie van het geproduceerde "
+#~ "product.<br>\n"
+#~ "De product categoriën worden in de producttabel ingevuld.\n"
+#~ "<br><br>"
+
+#~ msgid ""
+#~ "An operation gets the color of the subcategory of the item it produces."
+#~ "<br>\n"
+#~ "                        The item subcategories should be filled in the "
+#~ "item table.\n"
+#~ "                        <br><br>"
+#~ msgstr ""
+#~ "Een operatie krijgt de kleur van de subcategorie van het greproduceerde "
+#~ "product<br>\n"
+#~ "The product subcategorien worden in de producttabel ingegevuld.\n"
+#~ "<br><br>"
+
+#~ msgid ""
+#~ "An operation gets the color of the week where the pegged demand is due "
+#~ "in.\n"
+#~ "                        <br><br>"
+#~ msgstr ""
+#~ "Een operatie krijgt de kleur van de week van de leverdatum van de "
+#~ "gelinkte verkooporders.\n"
+#~ "<br><br>"
+
+#~ msgid "Assign an extra resource"
+#~ msgstr "Toekennen van een extra resource"
+
+#~ msgid "Due date color setup"
+#~ msgstr "Setup kleuren voor leverdata"
+
+#~ msgid "Enter name"
+#~ msgstr "Type de naam"
+
+#~ msgid "Remove this resource"
+#~ msgstr "Verwijder deze resource"
+
+#~ msgid "export to {{erp}} failed"
+#~ msgstr "exporteren naar {{erp}} mislukt"
+
+#~ msgid "plus"
+#~ msgstr "plus"
+
+#~ msgid "selected quote"
+#~ msgstr "geselecteerde quote"
+
+#~ msgid "current value"
+#~ msgstr "huidige waarde"
+
+#~ msgid "no plan yet"
+#~ msgstr "nog geen plan"

@@ -1476,7 +1476,11 @@ def importWorkbook(request):
             ):
                 yield _("Unsupported file format.")
                 continue
-            wb = load_workbook(filename=file, data_only=True)
+            try:
+                wb = load_workbook(filename=file, data_only=True)
+            except Exception:
+                yield _("Error reading excel file.")
+                continue
             models = []
             for ws_name in wb.sheetnames:
                 # Find the model

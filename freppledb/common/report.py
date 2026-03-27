@@ -2708,13 +2708,21 @@ class GridReport(View):
                     numerrors = 0
                     numwarnings = 0
                     firsterror = True
-                    yield '<tr"><th colspan="5">%s %s<div class="recordcount float-right"></div></th></tr>' % (
+                    yield '<tr><th colspan="5">%s %s<div class="recordcount float-right"></div></th></tr>' % (
                         capfirst(_("file")),
                         filename,
                     )
 
                     # Loop through the data records
-                    wb = load_workbook(filename=file, data_only=True)
+                    try:
+                        wb = load_workbook(filename=file, data_only=True)
+                    except Exception:
+                        yield '<tr><td class="sr-only">%s</td><td colspan="4">%s</td></tr>' % (
+                            cls.model._meta.verbose_name,
+                            capfirst(_("Error reading excel file.")),
+                        )
+                        continue
+
                     numsheets = len(wb.sheetnames)
 
                     for ws_name in wb.sheetnames:

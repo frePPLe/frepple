@@ -26,7 +26,7 @@ const { t: ttt } = useI18n({
 
 const store = useOperationplansStore();
 const editable = true;
- 
+
 const actions = window.actions;
 
 onMounted(async () => {
@@ -288,7 +288,7 @@ function selectCard(opplan) {
             </h3>
           </div>
           <div
-            class="card-body column-body d-none"
+            class="card-body column-body"
             style="overflow-y: auto;"
             :data-column="col"
           >

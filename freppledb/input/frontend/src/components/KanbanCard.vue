@@ -11,135 +11,227 @@ HOLDERS BE * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACT
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION * WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE */
 
-<script setup lang="js">
+<script lang="js">
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
 import { numberFormat, dateTimeFormat, adminEscape, dateFormat } from '@common/utils.js';
-import {computed} from "vue";
+import { computed, defineComponent } from "vue";
 
-const urlPrefix = computed(() => window.url_prefix || '');
-
-const { t: ttt } = useI18n({
-  useScope: 'global',
-  inheritLocale: true,
-});
-
-const store = useOperationplansStore();
-
-const props = defineProps({
-  opplan: {
-    type: Object,
-    default: () => {},
+export default defineComponent({
+  name: 'KanbanCard',
+  props: {
+    opplan: {
+      type: Object,
+      default: () => ({}),
+    },
+    opplan_index: {
+      type: Number,
+      default: 0,
+    },
   },
-  opplan_index: {
-    type: Number,
-    default: 0,
+  setup(props) {
+    const urlPrefix = computed(() => window.url_prefix || '');
+
+    const { t: ttt } = useI18n({
+      useScope: 'global',
+      inheritLocale: true,
+    });
+
+    const store = useOperationplansStore();
+
+    const mode = window.mode;
+    const reportKey = window.reportkey.split('.').pop();
+
+    const editable = true;
+
+    const actions = window.actions;
+    const calendarmode = 'duration';
+
+    function isStart(opplan, dt) {
+      const d = opplan.startdate || opplan.operationplan__startdate;
+      if (!d) return false;
+      else if (dt instanceof Date)
+        return (
+          d.getFullYear() === dt.getFullYear() &&
+          d.getMonth() === dt.getMonth() &&
+          d.getDate() === dt.getDate()
+        );
+      else return window.moment(d).isSame(dt.date, 'day');
+    }
+
+    function isEnd(opplan, dt) {
+      let d = opplan.enddate || opplan.operationplan__enddate;
+      if (!d) return false;
+      // Subtract 1 microsecond to assure that an end date of 00:00:00 is seen
+      // as ending on the previous day.
+      if (d > (opplan.startdate || opplan.operationplan__startdate)) d = new Date(d - 1);
+      if (dt instanceof Date)
+        return (
+          d.getFullYear() === dt.getFullYear() &&
+          d.getMonth() === dt.getMonth() &&
+          d.getDate() === dt.getDate()
+        );
+      else return window.moment(d).isSame(dt.date, 'day');
+    }
+
+    function isSelected(OPPreference) {
+      return OPPreference === undefined ? false : OPPreference === store.operationplan.reference;
+    }
+
+    function getStatus(op) {
+      return op && Object.prototype.hasOwnProperty.call(op, 'operationplan__status') ? op.operationplan__status : op?.status;
+    }
+
+    function setStatus(op, s) {
+      if (!op) return;
+      const field = op.hasOwnProperty('operationplan__status') ? 'operationplan__status' : 'status';
+      const oldVal = op[field];
+      // Use store to sync changes to OperationplanFormCard
+      const ref = op.reference || op.operationplan__reference;
+      store.setEditFormValues(field, s);
+      store.trackOperationplanChanges(ref, field, s);
+      op[field] = s;
+
+      // Move the card between Kanban columns
+      store.moveKanbanCard(ref, oldVal, s);
+    }
+
+    // Sync Kanban card changes to OperationplanFormCard
+    function changeCard(opplan, field, oldValue, newValue) {
+      if (!opplan) return;
+      const ref = opplan.reference || opplan.operationplan__reference;
+      if (opplan.type === 'WO' && opplan.operationplan__status) {
+        field = field === 'operationplan__status' ? 'status' : field;
+      }
+
+      // Determine the old status (current status before change)
+      const oldStatus = opplan.status || opplan.operationplan__status;
+
+      // Update the kanban card display
+      store.setKanbanCardValue(ref, field, oldStatus, newValue);
+
+      // Sync to OperationplanFormCard and track for saving
+      store.setEditFormValues(field, newValue);
+      store.trackOperationplanChanges(ref, field, newValue);
+
+      // If status changed, move the card between Kanban columns
+      if (field === 'status' && oldStatus !== newValue) {
+        store.moveKanbanCard(ref, oldStatus, newValue);
+      }
+    }
+
+    function getStatusIcon(s) {
+      switch (s) {
+        case 'confirmed':
+          return 'fa-lock';
+        case 'approved':
+          return 'fa-unlock-alt';
+        case 'proposed':
+          return 'fa-unlock';
+        case 'completed':
+          return 'fa-check';
+        case 'closed':
+          return 'fa-times';
+        default:
+          return '';
+      }
+    }
+
+    function displayStatusIcon(op) {
+      return getStatusIcon(getStatus(op));
+    }
+
+    return {
+      props,
+      urlPrefix,
+      ttt,
+      store,
+      mode,
+      reportKey,
+      editable,
+      actions,
+      calendarmode,
+      isStart,
+      isEnd,
+      isSelected,
+      getStatus,
+      setStatus,
+      changeCard,
+      getStatusIcon,
+      displayStatusIcon,
+      numberFormat,
+      dateTimeFormat,
+      adminEscape,
+      dateFormat
+    };
   },
+  template: `
+    <component
+      :is="innerComponent"
+      v-bind="$props"
+      :urlPrefix="urlPrefix"
+      :ttt="ttt"
+      :store="store"
+      :mode="mode"
+      :reportKey="reportKey"
+      :editable="editable"
+      :actions="actions"
+      :calendarmode="calendarmode"
+      :isStart="isStart"
+      :isEnd="isEnd"
+      :isSelected="isSelected"
+      :getStatus="getStatus"
+      :setStatus="setStatus"
+      :changeCard="changeCard"
+      :getStatusIcon="getStatusIcon"
+      :displayStatusIcon="displayStatusIcon"
+      :numberFormat="numberFormat"
+      :dateTimeFormat="dateTimeFormat"
+      :adminEscape="adminEscape"
+      :dateFormat="dateFormat"
+    />
+  `,
+  computed: {
+    innerComponent() {
+      const template = window.kanban_card_template || '<div v-if="false"></div>';
+      return defineComponent({
+        props: [
+          'opplan', 'opplan_index', 'urlPrefix', 'ttt', 'store', 'mode',
+          'reportKey', 'editable', 'actions', 'calendarmode', 'isStart',
+          'isEnd', 'isSelected', 'getStatus', 'setStatus', 'changeCard',
+          'getStatusIcon', 'displayStatusIcon', 'numberFormat',
+          'dateTimeFormat', 'adminEscape', 'dateFormat'
+        ],
+        setup(props) {
+          return {
+            props,
+            opplan: props.opplan,
+            opplan_index: props.opplan_index,
+            urlPrefix: props.urlPrefix,
+            ttt: props.ttt,
+            store: props.store,
+            mode: props.mode,
+            reportKey: props.reportKey,
+            editable: props.editable,
+            actions: props.actions,
+            calendarmode: props.calendarmode,
+            isStart: props.isStart,
+            isEnd: props.isEnd,
+            isSelected: props.isSelected,
+            getStatus: props.getStatus,
+            setStatus: props.setStatus,
+            changeCard: props.changeCard,
+            getStatusIcon: props.getStatusIcon,
+            displayStatusIcon: props.displayStatusIcon,
+            numberFormat: props.numberFormat,
+            dateTimeFormat: props.dateTimeFormat,
+            adminEscape: props.adminEscape,
+            dateFormat: props.dateFormat
+          };
+        },
+        template: template
+      });
+    }
+  }
 });
-
-const mode = window.mode;
-const reportKey = window.reportkey.split('.').pop();
-
-const editable = true;
-
-const actions = window.actions;
-const calendarmode = 'duration';
-
-function isStart(opplan, dt) {
-  const d = opplan.startdate || opplan.operationplan__startdate;
-  if (!d) return false;
-  else if (dt instanceof Date)
-    return (
-      d.getFullYear() === dt.getFullYear() &&
-      d.getMonth() === dt.getMonth() &&
-      d.getDate() === dt.getDate()
-    );
-  else return window.moment(d).isSame(dt.date, 'day');
-}
-
-function isEnd(opplan, dt) {
-  let d = opplan.enddate || opplan.operationplan__enddate;
-  if (!d) return false;
-  // Subtract 1 microsecond to assure that an end date of 00:00:00 is seen
-  // as ending on the previous day.
-  if (d > (opplan.startdate || opplan.operationplan__startdate)) d = new Date(d - 1);
-  if (dt instanceof Date)
-    return (
-      d.getFullYear() === dt.getFullYear() &&
-      d.getMonth() === dt.getMonth() &&
-      d.getDate() === dt.getDate()
-    );
-  else return window.moment(d).isSame(dt.date, 'day');
-}
-
-function isSelected(OPPreference) {
-  return OPPreference === undefined ? false : OPPreference === store.operationplan.reference;
-}
-
-function getStatus(op) {
-  return op && Object.prototype.hasOwnProperty.call(op, 'operationplan__status') ? op.operationplan__status : op?.status;
-}
-
-function setStatus(op, s) {
-  if (!op) return;
-  const field = op.hasOwnProperty('operationplan__status') ? 'operationplan__status' : 'status';
-  const oldVal = op[field];
-  // Use store to sync changes to OperationplanFormCard
-  const ref = op.reference || op.operationplan__reference;
-  store.setEditFormValues(field, s);
-  store.trackOperationplanChanges(ref, field, s);
-  op[field] = s;
-
-  // Move the card between Kanban columns
-  store.moveKanbanCard(ref, oldVal, s);
-}
-
-// Sync Kanban card changes to OperationplanFormCard
-function changeCard(opplan, field, oldValue, newValue) {
-  if (!opplan) return;
-  const ref = opplan.reference || opplan.operationplan__reference;
-  if (opplan.type === 'WO' && opplan.operationplan__status) {
-    field = field === 'operationplan__status' ? 'status' : field;
-  }
-
-  // Determine the old status (current status before change)
-  const oldStatus = opplan.status || opplan.operationplan__status;
-
-  // Update the kanban card display
-  store.setKanbanCardValue(ref, field, oldStatus, newValue);
-
-  // Sync to OperationplanFormCard and track for saving
-  store.setEditFormValues(field, newValue);
-  store.trackOperationplanChanges(ref, field, newValue);
-
-  // If status changed, move the card between Kanban columns
-  if (field === 'status' && oldStatus !== newValue) {
-    store.moveKanbanCard(ref, oldStatus, newValue);
-  }
-}
-
-function getStatusIcon(s) {
-  switch (s) {
-    case 'confirmed':
-      return 'fa-lock';
-    case 'approved':
-      return 'fa-unlock-alt';
-    case 'proposed':
-      return 'fa-unlock';
-    case 'completed':
-      return 'fa-check';
-    case 'closed':
-      return 'fa-times';
-    default:
-      return '';
-  }
-}
-
-function displayStatusIcon(op) {
-  return getStatusIcon(getStatus(op));
-}
 </script>
-
-// TODO The template still needs to be compiled on the fly... but if I try to do it I get the $ //
-funtion redefinition error.
-<template src="../../../templates/input/kanbancard.html"></template>

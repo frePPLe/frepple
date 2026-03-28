@@ -12,8 +12,16 @@ if (import.meta.env.DEV) {
   app.config.devtools = true;
   app.config.performance = true;
 }
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => app.mount('#app'));
+const mountApp = () => {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => app.mount('#app'));
+  } else {
+    app.mount('#app');
+  }
+};
+
+if (window.kanban_card_template_promise) {
+  window.kanban_card_template_promise.then(mountApp).catch(mountApp);
 } else {
-  app.mount('#app');
+  mountApp();
 }

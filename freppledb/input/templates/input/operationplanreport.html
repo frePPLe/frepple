@@ -57,6 +57,16 @@ rect.opplan {
 {% endif %}
 <script>
 
+  // Pre-load kanban card template
+  window.kanban_card_template_promise = fetch('{% url "operationplandetail" %}../input/kanbancard.html')
+    .then(response => response.text())
+    .then(html => {
+      // Strip {% verbatim %} and {% endverbatim %} if they exist
+      var cleanHtml = html.replace(/\{%\s*verbatim\s*%\}/g, '').replace(/\{%\s*endverbatim\s*%\}/g, '');
+      window.kanban_card_template = cleanHtml;
+      return cleanHtml;
+    });
+
   var urlParams = new URLSearchParams(window.location.search);
   var mode = preferences && preferences.mode || "table";
   var calendarmode = preferences && preferences.calendarmode || "{{reportclass.calendarmode}}";

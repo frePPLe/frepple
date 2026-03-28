@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-10-24 09:59+0200\n"
+"PO-Revision-Date: 2026-03-27 16:41+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:551
@@ -64,9 +64,9 @@ msgid ""
 "table.\n"
 "                        <br><br>"
 msgstr ""
-"Een operatie krijgt de kleur van de categorie van het item die het "
+"Een operatie krijgt de kleur van de categorie van het product die het "
 "produceert.<br>\n"
-"De item categorie wordt ingevuld in de itemtabel\n"
+"De product categorie wordt ingevuld in de product tabel\n"
 "<br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1454
@@ -76,9 +76,9 @@ msgid ""
 "table.\n"
 "                        <br><br>"
 msgstr ""
-"Een operatie krijgt de kleur van de subcategorie van het item die het "
+"Een operatie krijgt de kleur van de subcategorie van het product die het "
 "produceert.<br>\n"
-"De item subcategorie wordt ingevuld in de itemtabel\n"
+"De product subcategorie wordt ingevuld in de product tabel\n"
 "<br><br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:304
@@ -175,7 +175,7 @@ msgstr "Geschatte forecast error"
 
 #: freppledb/forecast/static/forecast/forecast.html:372
 msgid "Forecast method"
-msgstr "Forecast methode"
+msgstr "Forecastmethode"
 
 #: freppledb/forecast/static/forecast/forecast.html:82
 #: freppledb/planningboard/static/planningboard/planningboard.html:71
@@ -188,11 +188,11 @@ msgstr "Intermitterend"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1414
 msgid "Item category color setup"
-msgstr "Setup voor kleur per item categorie"
+msgstr "Setup voor kleur per product categorie"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1448
 msgid "Item subcategory color setup"
-msgstr "Setup voor kleur per item subcategorie"
+msgstr "Setup voor kleur per product subcategorie"
 
 #: freppledb/forecast/static/forecast/forecast.html:408
 msgid "Manual"
@@ -291,7 +291,7 @@ msgstr "Verwijder deze order uit het plan"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:903
 msgid "Reset"
-msgstr "Herstel"
+msgstr "Reset"
 
 #: freppledb/forecast/static/forecast/forecast.html:153
 #: freppledb/forecast/static/forecast/forecast.html:454
@@ -334,7 +334,7 @@ msgstr "Geselecteerde kruis"
 
 #: freppledb/forecast/static/forecast/forecast.html:417
 msgid "Selected forecast method"
-msgstr "Geselecteerde forecast methode"
+msgstr "Geselecteerde forecastmethode"
 
 #: freppledb/forecast/static/forecast/forecast.html:156
 msgid "Simulate changes without saving"
@@ -355,7 +355,7 @@ msgstr "Stock"
 #: freppledb/input/static/operationplandetail/operationplandetail.html:56
 #: freppledb/planningboard/static/planningboard/planningboard.html:136
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
-msgstr "De Gantt chart is beperkt tot {{row|limit}} rijen."
+msgstr "De Gantt chart is beperkt tot {{rowlimit}} rijen."
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1337
 msgid ""
@@ -725,11 +725,11 @@ msgstr "product"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:30
 msgid "item category"
-msgstr "item categorie"
+msgstr "product categorie"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:33
 msgid "item subcategory"
-msgstr "item subcategorie"
+msgstr "product subcategorie"
 
 #: freppledb/forecast/static/forecast/forecast.html:107
 msgid "items"

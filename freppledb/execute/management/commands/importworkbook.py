@@ -149,7 +149,11 @@ class Command(BaseCommand):
                     if "filename" not in locals():
                         filename = options["file"]
                     for file in filename:
-                        wb = load_workbook(filename=file, data_only=True)
+                        try:
+                            wb = load_workbook(filename=file, data_only=True)
+                        except Exception:
+                            print(force_str(_("Error reading excel file")))
+                            continue
                         models = []
                         for ws_name in wb.sheetnames:
                             # Find the model

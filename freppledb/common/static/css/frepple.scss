@@ -971,3 +971,9 @@ input[type="date"] {
 .sentence-capitalize::first-letter {
     text-transform: uppercase;
 }
+
+// Avoid excessively large search dialogs in the grids
+#fbox_grid {
+    max-height: min(calc(-150px + 100vh), 300px);
+    overflow-y: auto;
+}

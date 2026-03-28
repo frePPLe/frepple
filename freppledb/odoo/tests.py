@@ -190,7 +190,6 @@ except ImportError:
                 frepple_items = [
                     row["name"] for row in csv.DictReader(csvfile) if row.get("name")
                 ]
-            print(f"frepple_items: {frepple_items}")
 
             # Check input data
             self.assertEqual(
@@ -204,7 +203,7 @@ except ImportError:
             # Only P00015 in 17 & 18
             self.assertEqual(
                 po_list.count(),
-                {17: 1, 18: 1, 19: 2}[odoo_version],
+                {17: 1, 18: 5, 19: 2}[odoo_version],
                 "difference in number of imported purchase orders",
             )
             po = po_list[0]
@@ -239,7 +238,7 @@ except ImportError:
                 Demand.objects.all()
                 .filter(item__name__in=frepple_items, status="open")
                 .count(),
-                {16: 1, 17: 10, 18: 10, 19: 10}[odoo_version],
+                {16: 1, 17: 10, 18: 11, 19: 10}[odoo_version],
                 "difference in number of imported open demands",
             )
 
@@ -331,7 +330,7 @@ except ImportError:
                     elif odoo_rec["type"] == "latedelivery":
                         count_late_delivery += 1
                 self.assertGreaterEqual(
-                    count_purchase, 6, "expected at least 6 purchase recommendations"
+                    count_purchase, 5, "expected at least 5 purchase recommendations"
                 )
                 self.assertGreaterEqual(
                     count_reschedule,

@@ -72,8 +72,7 @@ jobs:
           export POSTGRES_HOST=localhost
           export POSTGRES_PORT=5432
           export FREPPLE_DATE_STYLE="day-month-year"
-          # Temporary allow continuing if the engine tests fail
-          ./test/runtest.py || true
+          ./test/runtest.py
           ./frepplectl.py test freppledb --verbosity=2
 
       - name: Test uninstalling apps
@@ -165,7 +164,7 @@ jobs:
 
       - name: Send failure mail
         if: failure()
-        uses: dawidd6/action-send-mail@v4
+        uses: dawidd6/action-send-mail@v16
         with:
           connection_url: ${{secrets.MAIL_CONNECTION}}
           secure: false

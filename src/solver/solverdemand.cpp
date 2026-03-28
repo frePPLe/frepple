@@ -258,7 +258,17 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             data->accept_partial_reply = false;
             data->recent_buffers.clear();
             data->dependency_list.clear();
+            auto num_constraints_before = l->getConstraints().size();
             deliveryoper->solve(*this, v);
+            if (loglevel > 0) {
+              for (auto& j : l->getConstraints()) {
+                if (num_constraints_before > 0)
+                  --num_constraints_before;
+                else
+                  logger << indentlevel
+                         << "  Constraint: " << j.getDescription() << '\n';
+              }
+            }
             Date next_date = data->state->a_date;
             bool broken_path = data->broken_path;
 

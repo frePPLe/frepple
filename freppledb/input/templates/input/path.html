@@ -1431,6 +1431,29 @@ function drawGraph(jsondata)
     if (!anyOverlap) break;
   }
 
+  // Recompute child suboperation positions after parent adjustments
+  for (var ci = 0; ci < nodes.length; ci++) {
+    var child = nodes[ci];
+    if (child.parent < 0) continue;
+    var pnode = nodes[child.parent];
+    if (!pnode) continue;
+    if (child.suboperindex >= 0) {
+      var pw = pnode.halfW ? (2 * pnode.halfW) : 105;
+      var hpw = pw / 2;
+      var sm = 8;
+      if (child.rownb > 0) {
+        child.y = pnode.y - 40 + sm + (child.rownb - 0.5) * (80 - 2*sm) / pnode.rownb;
+        child.x = pnode.x - hpw + sm + (child.colnb - 0.5) * (pw - 2*sm) / pnode.colnb;
+      } else {
+        child.y = pnode.y;
+        child.x = pnode.x - hpw + sm + (child.suboperindex - 0.5) * (pw - 2*sm) / pnode.numsuboperations;
+      }
+    } else {
+      child.x = pnode.x;
+      child.y = pnode.y + (child.suboperindex + pnode.numsuboperations + 1) * 30 - 5;
+    }
+  }
+
   // Re-apply transforms now that y positions are corrected
   // Must use nodeTransform to preserve routing sub-operation scale transforms
   updateGraphGeometry();

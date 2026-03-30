@@ -665,8 +665,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
     if ((f->getQuantity() <= 0 &&
          f->getCumulativeConsumed() + f->getQuantity() < endQty) ||
         (f->getQuantity() > 0 && f->getCumulativeConsumed() < endQty &&
-         !(f->getCumulativeConsumed() >
-           f->getCumulativeProduced() - f->getQuantity()))) {
+         f->getQuantity() <= f->getOnhand())) {
       // CASE 2A: Not consumed enough yet: move forward
       while (f != getFlowPlans().end() &&
              f->getCumulativeConsumed() <= startQty)
@@ -714,13 +713,26 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
       }
     } else {
       // CASE 2B: Consumed too much already: move backward
+      bool skip = false;
       while (f != getFlowPlans().end() &&
              ((f->getQuantity() <= 0 &&
                f->getCumulativeConsumed() + f->getQuantity() < endQty) ||
-              (f->getQuantity() > 0 && f->getCumulativeConsumed() < endQty &&
-               !(f->getCumulativeConsumed() >
-                 f->getCumulativeProduced() - f->getQuantity()))))
-        --f;
+              (f->getQuantity() > 0 && f->getCumulativeConsumed() < endQty))) {
+        ++f;
+        skip = true;
+        if (f == getFlowPlans().end()) {
+          f = getFlowPlans().rbegin();
+          break;
+        }
+      }
+      if (!skip)
+        while (f != getFlowPlans().end() &&
+               ((f->getQuantity() <= 0 &&
+                 f->getCumulativeConsumed() + f->getQuantity() < endQty) ||
+                (f->getQuantity() > 0 && f->getCumulativeConsumed() < endQty &&
+                 !(f->getCumulativeConsumed() >
+                   f->getCumulativeProduced() - f->getQuantity()))))
+          --f;
       while (f != getFlowPlans().end() &&
              f->getCumulativeConsumed() > startQty) {
         if (f->getQuantity() < -ROUNDING_ERROR) {
@@ -731,8 +743,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
                 startQty - (f->getCumulativeConsumed() + f->getQuantity());
           if (f->getCumulativeConsumed() > endQty)
             newqty -= f->getCumulativeConsumed() - endQty;
-          OperationPlan* opplan =
-              dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
+          auto opplan = dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
               (iter.getMaxLevel() > 0)) {

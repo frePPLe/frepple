@@ -358,7 +358,7 @@ void PeggingIterator::updateStack(const OperationPlan* op, double qty, double o,
   if (qty < ROUNDING_ERROR) return;
 
   // Check for loops in the pegging
-  for (auto & state : states) {
+  for (auto& state : states) {
     if (state.opplan == op && abs(state.quantity - qty) < ROUNDING_ERROR &&
         abs(state.offset - o) < ROUNDING_ERROR)  // We've been here before...
       return;

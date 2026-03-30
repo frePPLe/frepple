@@ -18,7 +18,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Bug fix: Some models experienced issues with excess proposed supply in the
     presence of operation multiples and temporary unresolvable material shortages.
 
-.. rubric:: Odoo integration
+- | Bug fix: The pegging between supply and demand would be partially missing when
+    the buffer has periods with negative inventory.
+
+.. rubric:: User interface
 
 - | 18, 19: The default behavior for bringing draft purhase orders (aka RFQs) into
     frePPLe has been adjusted.

@@ -11,6 +11,10 @@
       <item name="material" />
       <producing name="purchase material" />
     </buffer>
+    <buffer name="buffer stock material">
+      <item name="stock" />
+      <location name="store" />
+    </buffer>
   </buffers>
   <flows>
     <flow xsi:type="flow_end">
@@ -46,6 +50,60 @@
         <duration>P0D</duration>
       </operation>
     </demand>
+    <demand name="order stock item #1">
+      <quantity>10</quantity>
+      <due>2009-01-01T00:00:00</due>
+      <location name="store" />
+      <item name="stock" />
+    </demand>
+    <demand name="order stock item #2">
+      <quantity>10</quantity>
+      <due>2009-02-01T00:00:00</due>
+      <location name="store" />
+      <item name="stock" />
+    </demand>
+    <demand name="order stock item #3">
+      <quantity>10</quantity>
+      <due>2009-03-01T00:00:00</due>
+      <location name="store" />
+      <item name="stock" />
+    </demand>
+    <demand name="order stock item #4">
+      <quantity>10</quantity>
+      <due>2009-04-01T00:00:00</due>
+      <location name="store" />
+      <item name="stock" />
+    </demand>
+    <demand name="order stock item #5">
+      <quantity>10</quantity>
+      <due>2009-05-01T00:00:00</due>
+      <location name="store" />
+      <item name="stock" />
+    </demand>
+    <demand name="order stock item #6">
+      <quantity>10</quantity>
+      <due>2009-06-01T00:00:00</due>
+      <location name="store" />
+      <item name="stock" />
+    </demand>
+    <demand name="order stock item #7">
+      <quantity>10</quantity>
+      <due>2009-07-01T00:00:00</due>
+      <location name="store" />
+      <item name="stock" />
+    </demand>
+    <demand name="order stock item #8">
+      <quantity>10</quantity>
+      <due>2009-08-01T00:00:00</due>
+      <location name="store" />
+      <item name="stock" />
+    </demand>
+    <demand name="order stock item #9">
+      <quantity>10</quantity>
+      <due>2009-09-01T00:00:00</due>
+      <location name="store" />
+      <item name="stock" />
+    </demand>
   </demands>
   <operationplans>
     <operationplan id="1001">
@@ -62,10 +120,41 @@
       <quantity>100</quantity>
       <status>confirmed</status>
     </operationplan>
+    <operationplan ordertype="PO" end="2009-05-05T00:00:00"
+      reference="PO #1" quantity="100" status="confirmed">
+      <item name="stock"/>
+      <location name="store"/>
+      <supplier name="supplier"/>
+    </operationplan>
+    <operationplan ordertype="DLVR" end="2009-01-01T00:00:00"
+      reference="DLVR #1" quantity="10" status="confirmed">
+      <item name="stock" />
+      <location name="store" />
+      <demand name="order stock item #1"/>
+    </operationplan>
+    <operationplan ordertype="DLVR" end="2009-02-01T00:00:00"
+      reference="DLVR #2" quantity="10" status="confirmed">
+      <item name="stock" />
+      <location name="store" />
+      <demand name="order stock item #2"/>
+    </operationplan>
+    <operationplan ordertype="DLVR" end="2009-03-01T00:00:00"
+      reference="DLVR #3" quantity="10" status="confirmed">
+      <item name="stock" />
+      <location name="store" />
+      <demand name="order stock item #3"/>
+    </operationplan>
+    <operationplan ordertype="DLVR" end="2009-04-01T00:00:00"
+      reference="DLVR #4" quantity="10" status="confirmed">
+      <item name="stock" />
+      <location name="store" />
+      <demand name="order stock item #4"/>
+    </operationplan>
   </operationplans>
 
 <?python
 frepple.solver_mrp(constraints=15,loglevel=1,autofence=86400*999).solve()
+frepple.saveplan("output.2.xml")
 with open("output.1.xml","wt") as output:
   for opplan in frepple.operationplans():
     print ("Upstream pegging of operationplan with id %s with quantity %s of '%s':" % (

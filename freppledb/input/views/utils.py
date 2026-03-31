@@ -1406,440 +1406,6 @@ class PathReport(GridReport):
             )
 
     @classmethod
-    def getOperationsFromBuffersBatch(reportclass, cursor, buffer_requests, downstream):
-        """Execute a single SQL query for multiple buffer lookups at once."""
-        if not buffer_requests:
-            return
-
-        values_sql = ", ".join(["(%s, %s, %s, %s, %s)"] * len(buffer_requests))
-        params = []
-        for req in buffer_requests:
-            buffer_name = req["buffer_name"]
-            params.extend(
-                [
-                    buffer_name[0 : buffer_name.find(" @ ")],
-                    buffer_name[buffer_name.find(" @ ") + 3 :],
-                    req["depth"],
-                    req["previous_operation"],
-                    req["bom_quantity"],
-                ]
-            )
-
-        if downstream:
-            matching_ops_cte = """
-            matching_operations as (
-                select distinct operation.name as op_name, requested.depth, requested.previous_operation, requested.bom_quantity
-                from requested
-                inner join operationmaterial om on om.item_id = requested.item_name and om.quantity < 0
-                inner join operation on operation.name = om.operation_id
-                    and operation.location_id = requested.location_name
-                    and coalesce(operation.priority,1) != 0
-                    and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
-                where not exists (select 1 from operation p where p.name = operation.owner_id and p.priority = 0)
-                union
-                select distinct operation.name, requested.depth, requested.previous_operation, requested.bom_quantity
-                from requested
-                inner join operation on operation.item_id = requested.item_name
-                    and operation.location_id = requested.location_name
-                    and coalesce(operation.priority,1) != 0
-                    and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
-                inner join operation_dependency on operation.name = operation_dependency.operation_id
-                where not exists (select 1 from operation p where p.name = operation.owner_id and p.priority = 0)
-                union
-                select distinct operation.name, requested.depth, requested.previous_operation, requested.bom_quantity
-                from requested
-                inner join operation on operation.item_id = requested.item_name
-                    and operation.location_id = requested.location_name
-                    and coalesce(operation.priority,1) != 0
-                    and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
-                inner join operation_dependency on operation.name = operation_dependency.blockedby_id
-                where not exists (select 1 from operation p where p.name = operation.owner_id and p.priority = 0)
-            )
-            """
-            distribution_column = "origin_id"
-            purchasing_union = ""
-        else:
-            matching_ops_cte = """
-            matching_operations as (
-                select distinct operation.name as op_name, requested.depth, requested.previous_operation, requested.bom_quantity
-                from requested
-                inner join operation on operation.location_id = requested.location_name
-                    and operation.item_id = requested.item_name
-                    and coalesce(operation.priority,1) != 0
-                    and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
-                where not exists (select 1 from operation p where p.name = operation.owner_id and p.priority = 0)
-                union
-                select distinct operation.name, requested.depth, requested.previous_operation, requested.bom_quantity
-                from requested
-                inner join operationmaterial op1 on op1.item_id = requested.item_name and op1.quantity > 0
-                inner join operation on operation.name = op1.operation_id
-                    and operation.location_id = requested.location_name
-                    and coalesce(operation.priority,1) != 0
-                    and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
-                where not exists (select 1 from operation p where p.name = operation.owner_id and p.priority = 0)
-                union
-                select distinct operation.name, requested.depth, requested.previous_operation, requested.bom_quantity
-                from requested
-                inner join operation parentop on parentop.item_id = requested.item_name
-                inner join operation on operation.owner_id = parentop.name
-                    and operation.location_id = requested.location_name
-                    and coalesce(operation.priority,1) != 0
-                    and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
-                where not exists (select 1 from operation p where p.name = operation.owner_id and p.priority = 0)
-                union
-                select distinct operation.name, requested.depth, requested.previous_operation, requested.bom_quantity
-                from requested
-                inner join operation grandparentop on grandparentop.item_id = requested.item_name
-                inner join operation parentop on parentop.owner_id = grandparentop.name
-                inner join operation on operation.owner_id = parentop.name
-                    and operation.location_id = requested.location_name
-                    and coalesce(operation.priority,1) != 0
-                    and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
-                where not exists (select 1 from operation p where p.name = operation.owner_id and p.priority = 0)
-            )
-            """
-            distribution_column = "location_id"
-            purchasing_union = """
-            union all
-            select requested.depth,
-            requested.previous_operation,
-            requested.bom_quantity,
-            'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
-            location.name as location_id,
-            'purchase' as type,
-            itemsupplier.priority,
-            jsonb_build_object(item.name||' @ '|| location.name,1),
-            case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
-            itemsupplier.leadtime as duration,
-            null as duration_per,
-            null, null, null, null, null, null,
-            jsonb_build_object('operation_min', itemsupplier.sizeminimum,
-                               'operation_multiple', itemsupplier.sizemultiple,
-                               'operation_max', itemsupplier.sizemaximum) as sizes,
-            null, null, item.name, null, null, item.description,
-            null, null, item.uom, null, null
-            from requested
-            inner join item i_parent on true
-            inner join item on item.name = requested.item_name and item.lft between i_parent.lft and i_parent.rght
-            inner join itemsupplier on itemsupplier.item_id = i_parent.name
-            inner join location on location.name = requested.location_name and location.name = itemsupplier.location_id
-            union all
-            select requested.depth,
-            requested.previous_operation,
-            requested.bom_quantity,
-            'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
-            location.name as location_id,
-            'purchase' as type,
-            itemsupplier.priority,
-            jsonb_build_object(item.name||' @ '|| location.name,1),
-            case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
-            itemsupplier.leadtime as duration,
-            null as duration_per,
-            null, null, null, null, null, null,
-            jsonb_build_object('operation_min', itemsupplier.sizeminimum,
-                               'operation_multiple', itemsupplier.sizemultiple,
-                               'operation_max', itemsupplier.sizemaximum) as sizes,
-            null, null, item.name, null, null, item.description,
-            null, null, item.uom, null, null
-            from requested
-            inner join item i_parent on true
-            inner join item on item.name = requested.item_name and item.lft between i_parent.lft and i_parent.rght
-            inner join itemsupplier on itemsupplier.item_id = i_parent.name and itemsupplier.location_id is null
-            inner join location on location.name = requested.location_name and location.lft = location.rght - 1
-            """
-
-        query = """
-            with requested(item_name, location_name, depth, previous_operation, bom_quantity) as (
-                values %s
-            ),
-            %s
-            select distinct
-            depth,
-            previous_operation,
-            bom_quantity,
-            case when parentoperation is null then operation else sibling end,
-            case when parentoperation is null then operation_location else sibling_location end,
-            case when parentoperation is null then operation_type else sibling_type end,
-            case when parentoperation is null then operation_priority else sibling_priority end,
-            case when parentoperation is null then operation_om else sibling_om end,
-            case when parentoperation is null then operation_or else sibling_or end,
-            case when parentoperation is null then operation_duration else sibling_duration end,
-            case when parentoperation is null then operation_duration_per else sibling_duration_per end,
-            parentoperation,
-            parentoperation_type,
-            parentoperation_priority,
-            grandparentoperation,
-            grandparentoperation_type,
-            grandparentoperation_priority,
-            sizes,
-            grandparentitem_name,
-            parentitem_name,
-            item_name,
-            grandparentitem_description,
-            parentitem_description,
-            item_description,
-            (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
-            filter (where operation_dependency.blockedby_id is not null)
-            from operation_dependency where operation_id = operation),
-            (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
-            filter (where operation_dependency.operation_id is not null)
-            from operation_dependency where blockedby_id = operation),
-            item_uom,
-            (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
-            filter (where operation_dependency.blockedby_id is not null)
-            from operation_dependency where operation_id = parentoperation),
-            (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
-            filter (where operation_dependency.operation_id is not null)
-            from operation_dependency where blockedby_id = parentoperation)
-            from
-            (
-            select m.depth as depth,
-                     m.previous_operation as previous_operation,
-                     m.bom_quantity as bom_quantity,
-                     operation.name as operation,
-                     coalesce(operation.type,'fixed_time') operation_type,
-                     operation.location_id operation_location,
-                     operation.priority as operation_priority,
-                     operation.duration as operation_duration,
-                     operation.duration_per as operation_duration_per,
-                     case when operation.item_id is not null then jsonb_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::jsonb end
-                     ||jsonb_object_agg(operationmaterial.item_id||' @ '||coalesce(operationmaterial.location_id,operation.location_id),
-                                        coalesce(operationmaterial.quantity, operationmaterial.quantity_fixed, 0)) filter (where operationmaterial.id is not null and operationmaterial.quantity < 0) as operation_om,
-                     jsonb_object_agg(operationresource.resource_id, operationresource.quantity) filter (where operationresource.id is not null) as operation_or,
-                     parentoperation.name as parentoperation,
-                     parentoperation.type as parentoperation_type,
-                     parentoperation.priority parentoperation_priority,
-                     sibling.name as sibling,
-                     sibling.type as sibling_type,
-                     sibling.location_id as sibling_location,
-                     sibling.priority as sibling_priority,
-                     sibling.duration as sibling_duration,
-                     sibling.duration_per as sibling_duration_per,
-                     case when grandparentoperation.item_id is not null
-                     and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name)
-                     then jsonb_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::jsonb end
-                     ||case when parentoperation.item_id is not null
-                     and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name)
-                     then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
-                     ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
-                     ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||coalesce(siblingoperationmaterial.location_id,sibling.location_id),
-                                                 coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed, 0)) filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
-                     jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity) filter (where siblingoperationresource.id is not null) as sibling_or,
-                     grandparentoperation.name as grandparentoperation,
-                     grandparentoperation.type as grandparentoperation_type,
-                     grandparentoperation.priority as grandparentoperation_priority,
-                     jsonb_build_object('operation_min', operation.sizeminimum,
-                                        'operation_multiple', operation.sizemultiple,
-                                        'operation_max', operation.sizemaximum,
-                                        'parentoperation_min', parentoperation.sizeminimum,
-                                        'parentoperation_multiple', parentoperation.sizemultiple,
-                                        'parentoperation_max', parentoperation.sizemaximum,
-                                        'grandparentoperation_min', grandparentoperation.sizeminimum,
-                                        'grandparentoperation_multiple', grandparentoperation.sizemultiple,
-                                        'grandparentoperation_max', grandparentoperation.sizemaximum) as sizes,
-                     grandparentitem.name as grandparentitem_name,
-                     parentitem.name as parentitem_name,
-                     item.name as item_name,
-                     grandparentitem.description as grandparentitem_description,
-                     parentitem.description as parentitem_description,
-                     item.description as item_description,
-                     item.uom as item_uom
-            from matching_operations m
-            inner join operation on operation.name = m.op_name
-            left outer join operationmaterial on operationmaterial.operation_id = operation.name
-            left outer join operationresource on operationresource.operation_id = operation.name
-            left outer join operation parentoperation on parentoperation.name = operation.owner_id
-            left outer join operation grandparentoperation on grandparentoperation.name = parentoperation.owner_id
-            left outer join operation sibling on sibling.owner_id = parentoperation.name
-            left outer join operationmaterial siblingoperationmaterial on siblingoperationmaterial.operation_id = sibling.name
-            left outer join operationresource siblingoperationresource on siblingoperationresource.operation_id = sibling.name
-            left outer join item grandparentitem on grandparentitem.name = grandparentoperation.item_id
-            left outer join item parentitem on parentitem.name = parentoperation.item_id
-            left outer join item on item.name = coalesce(operation.item_id,
-                                                         (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
-            group by m.depth, m.previous_operation, m.bom_quantity,
-            operation.name, parentoperation.name, sibling.name, grandparentoperation.name,
-            grandparentitem.name, parentitem.name, item.name, grandparentitem.description, parentitem.description, item.description
-            ) t
-            union all
-            -- DISTRIBUTION OPERATIONS
-            select requested.depth,
-            requested.previous_operation,
-            requested.bom_quantity,
-            'Ship '||item.name||' from '||itemdistribution.origin_id||' to '||itemdistribution.location_id,
-            itemdistribution.location_id,
-            'distribution' as type,
-            itemdistribution.priority,
-            jsonb_build_object(item.name||' @ '||itemdistribution.origin_id, -1,
-                               item.name||' @ '||itemdistribution.location_id, 1) as operation_om,
-            case when itemdistribution.resource_id is not null
-            then jsonb_build_object(itemdistribution.resource_id, itemdistribution.resource_qty)
-            else '{}'::jsonb end operation_or,
-            leadtime as duration,
-            null as duration_per,
-            null, null, null, null, null, null,
-            jsonb_build_object('operation_min', itemdistribution.sizeminimum,
-                               'operation_multiple', itemdistribution.sizemultiple,
-                               'operation_max', itemdistribution.sizemaximum) as sizes,
-            null, null, item.name, null, null, item.description,
-            null, null, item.uom, null, null
-            from requested
-            inner join itemdistribution on itemdistribution.%s = requested.location_name
-            inner join item parent on parent.name = itemdistribution.item_id
-            inner join item on item.name = requested.item_name and item.lft between parent.lft and parent.rght
-            %s
-            order by depth, grandparentoperation_priority, grandparentoperation, parentoperation_priority, parentoperation, sibling_priority
-            """ % (values_sql, matching_ops_cte, distribution_column, purchasing_union)
-        cursor.execute(query, params)
-        for rec in cursor:
-            yield rec
-
-    @classmethod
-    def getOperationsFromNamesBatch(
-        reportclass, cursor, operation_requests, downstream
-    ):
-        """Execute a single SQL query for multiple operation name lookups at once."""
-        if not operation_requests:
-            return
-
-        values_sql = ", ".join(["(%s, %s, %s, %s)"] * len(operation_requests))
-        params = []
-        for req in operation_requests:
-            params.extend(
-                [
-                    req["operation_name"],
-                    req["depth"],
-                    req["previous_operation"],
-                    req["bom_quantity"],
-                ]
-            )
-
-        query = """
-            with requested(operation_name, depth, previous_operation, bom_quantity) as (
-                values %s
-            )
-            select distinct
-            depth,
-            previous_operation,
-            bom_quantity,
-            case when parentoperation is null then operation else sibling end,
-            case when parentoperation is null then operation_location else sibling_location end,
-            case when parentoperation is null then operation_type else sibling_type end,
-            case when parentoperation is null then operation_priority else sibling_priority end,
-            case when parentoperation is null then operation_om else sibling_om end,
-            case when parentoperation is null then operation_or else sibling_or end,
-            case when parentoperation is null then operation_duration else sibling_duration end,
-            case when parentoperation is null then operation_duration_per else sibling_duration_per end,
-            parentoperation,
-            parentoperation_type,
-            parentoperation_priority,
-            grandparentoperation,
-            grandparentoperation_type,
-            grandparentoperation_priority,
-            sizes,
-            grandparentitem_name,
-            parentitem_name,
-            item_name,
-            grandparentitem_description,
-            parentitem_description,
-            item_description,
-            (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
-            filter (where operation_dependency.blockedby_id is not null)
-            from operation_dependency where operation_id = operation),
-            (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
-            filter (where operation_dependency.operation_id is not null)
-            from operation_dependency where blockedby_id = operation),
-            item_uom,
-            (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
-            filter (where operation_dependency.blockedby_id is not null)
-            from operation_dependency where operation_id = parentoperation),
-            (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
-            filter (where operation_dependency.operation_id is not null)
-            from operation_dependency where blockedby_id = parentoperation)
-             from
-            (
-            select requested.depth as depth,
-                     requested.previous_operation as previous_operation,
-                     requested.bom_quantity as bom_quantity,
-                     operation.name as operation,
-                     coalesce(operation.type,'fixed_time') operation_type,
-                     operation.location_id operation_location,
-                     operation.priority as operation_priority,
-                     operation.duration as operation_duration,
-                     operation.duration_per as operation_duration_per,
-                     case when operation.item_id is not null then jsonb_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::jsonb end
-                     ||jsonb_object_agg(operationmaterial.item_id||' @ '||coalesce(operationmaterial.location_id,operation.location_id),
-                                        coalesce(operationmaterial.quantity, operationmaterial.quantity_fixed, 0)) filter (where operationmaterial.id is not null) as operation_om,
-                     jsonb_object_agg(operationresource.resource_id, operationresource.quantity) filter (where operationresource.id is not null) as operation_or,
-                     parentoperation.name as parentoperation,
-                     parentoperation.type as parentoperation_type,
-                     parentoperation.priority parentoperation_priority,
-                     sibling.name as sibling,
-                     sibling.type as sibling_type,
-                     sibling.location_id as sibling_location,
-                     sibling.priority as sibling_priority,
-                     sibling.duration as sibling_duration,
-                     sibling.duration_per as sibling_duration_per,
-                     case when grandparentoperation.item_id is not null
-                     and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name)
-                     then jsonb_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::jsonb end
-                     ||case when parentoperation.item_id is not null
-                     and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name)
-                     then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
-                     ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
-                     ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id,
-                                                 coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed, 0)) filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
-                     jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity) filter (where siblingoperationresource.id is not null) as sibling_or,
-                     grandparentoperation.name as grandparentoperation,
-                     grandparentoperation.type as grandparentoperation_type,
-                     grandparentoperation.priority as grandparentoperation_priority,
-                     jsonb_build_object('operation_min', operation.sizeminimum,
-                                        'operation_multiple', operation.sizemultiple,
-                                        'operation_max', operation.sizemaximum,
-                                        'parentoperation_min', parentoperation.sizeminimum,
-                                        'parentoperation_multiple', parentoperation.sizemultiple,
-                                        'parentoperation_max', parentoperation.sizemaximum,
-                                        'grandparentoperation_min', grandparentoperation.sizeminimum,
-                                        'grandparentoperation_multiple', grandparentoperation.sizemultiple,
-                                        'grandparentoperation_max', grandparentoperation.sizemaximum) as sizes,
-                     grandparentitem.name as grandparentitem_name,
-                     parentitem.name as parentitem_name,
-                     item.name as item_name,
-                     grandparentitem.description as grandparentitem_description,
-                     parentitem.description as parentitem_description,
-                     item.description as item_description,
-                     item.uom as item_uom
-            from operation
-            left outer join operationmaterial on operationmaterial.operation_id = operation.name
-            left outer join operationresource on operationresource.operation_id = operation.name
-            left outer join operation parentoperation on parentoperation.name = operation.owner_id
-            left outer join operation grandparentoperation on grandparentoperation.name = parentoperation.owner_id
-            left outer join operation sibling on sibling.owner_id = parentoperation.name
-            left outer join operationmaterial siblingoperationmaterial on siblingoperationmaterial.operation_id = sibling.name
-            left outer join operationresource siblingoperationresource on siblingoperationresource.operation_id = sibling.name
-            left outer join item grandparentitem on grandparentitem.name = grandparentoperation.item_id
-            left outer join item parentitem on parentitem.name = parentoperation.item_id
-            left outer join item on item.name = coalesce(operation.item_id,
-                                                         (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
-            inner join requested on (
-                operation.name = requested.operation_name
-                or parentoperation.name = requested.operation_name
-                or grandparentoperation.name = requested.operation_name
-            )
-            where coalesce(operation.priority,1) != 0 and
-            not exists (select 1 from operation parent_op where parent_op.name = operation.owner_id and parent_op.priority = 0)
-            and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
-            group by requested.depth, requested.previous_operation, requested.bom_quantity,
-            operation.name, parentoperation.name, sibling.name, grandparentoperation.name,
-            grandparentitem.name, parentitem.name, item.name, grandparentitem.description, parentitem.description, item.description
-            ) t
-            order by depth, grandparentoperation_priority, grandparentoperation, parentoperation_priority, parentoperation, sibling_priority
-            """ % values_sql
-        cursor.execute(query, params)
-        for rec in cursor:
-            yield rec
-
-    @classmethod
     def processRecord(
         reportclass,
         cursor,
@@ -2078,70 +1644,76 @@ class PathReport(GridReport):
                     continue
                 reportclass.node_count.add(buffer)
                 if float(quantity) < 0 and not downstream:
-                    reportclass.pending_buffer_requests.append(
-                        {
-                            "buffer_name": buffer,
-                            "depth": depth + 1,
-                            "previous_operation": i[0],
-                            "bom_quantity": float(quantity),
-                        }
+                    yield from reportclass.getOperationFromBuffer(
+                        request,
+                        cursor,
+                        buffer,
+                        downstream,
+                        depth + 1,
+                        i[0],
+                        float(quantity),
                     )
                 elif float(quantity) > 0 and downstream:
-                    reportclass.pending_buffer_requests.append(
-                        {
-                            "buffer_name": buffer,
-                            "depth": depth + 1,
-                            "previous_operation": i[0],
-                            "bom_quantity": float(quantity),
-                        }
+                    yield from reportclass.getOperationFromBuffer(
+                        request,
+                        cursor,
+                        buffer,
+                        downstream,
+                        depth + 1,
+                        i[0],
+                        float(quantity),
                     )
 
         if i[21] and not downstream:
             for blockedby in tuple(json.loads(i[21]).items()):
                 if not blockedby[0] in reportclass.operation_dict:
-                    reportclass.pending_operation_requests.append(
-                        {
-                            "operation_name": blockedby[0],
-                            "depth": depth + 1,
-                            "previous_operation": i[0],
-                            "bom_quantity": blockedby[1],
-                        }
+                    yield from reportclass.getOperationFromName(
+                        request,
+                        cursor,
+                        blockedby[0],
+                        downstream,
+                        depth + 1,
+                        i[0],
+                        blockedby[1],
                     )
 
         if i[22] and downstream:
             for blocking in tuple(json.loads(i[22]).items()):
                 if not blocking[0] in reportclass.operation_dict:
-                    reportclass.pending_operation_requests.append(
-                        {
-                            "operation_name": blocking[0],
-                            "depth": depth + 1,
-                            "previous_operation": i[0],
-                            "bom_quantity": blocking[1],
-                        }
+                    yield from reportclass.getOperationFromName(
+                        request,
+                        cursor,
+                        blocking[0],
+                        downstream,
+                        depth + 1,
+                        i[0],
+                        blocking[1],
                     )
 
         if i[24] and not downstream:
             for blockedby in tuple(json.loads(i[24]).items()):
                 if not blockedby[0] in reportclass.operation_dict:
-                    reportclass.pending_operation_requests.append(
-                        {
-                            "operation_name": blockedby[0],
-                            "depth": depth + 1,
-                            "previous_operation": i[0],
-                            "bom_quantity": blockedby[1],
-                        }
+                    yield from reportclass.getOperationFromName(
+                        request,
+                        cursor,
+                        blockedby[0],
+                        downstream,
+                        depth + 1,
+                        i[0],
+                        blockedby[1],
                     )
 
         if i[25] and downstream:
             for blocking in tuple(json.loads(i[25]).items()):
                 if not blocking[0] in reportclass.operation_dict:
-                    reportclass.pending_operation_requests.append(
-                        {
-                            "operation_name": blocking[0],
-                            "depth": depth + 1,
-                            "previous_operation": i[0],
-                            "bom_quantity": blocking[1],
-                        }
+                    yield from reportclass.getOperationFromName(
+                        request,
+                        cursor,
+                        blocking[0],
+                        downstream,
+                        depth + 1,
+                        i[0],
+                        blocking[1],
                     )
 
     @classmethod
@@ -2174,11 +1746,6 @@ class PathReport(GridReport):
         # we stop at 400 otherwise we could draw the full supply chain
         # in the case of downstream raw material.
         reportclass.node_count = set()
-
-        # Pending requests for batched processing.
-        # processRecord collects into these instead of recursing.
-        reportclass.pending_buffer_requests = []
-        reportclass.pending_operation_requests = []
 
         results = []
         with connections[request.database].cursor() as cursor:
@@ -2259,7 +1826,7 @@ class PathReport(GridReport):
                 d = Forecast.objects.get(name=forecast_name)
                 buffer_name = "%s @ %s" % (d.item.name, d.location.name)
 
-                for i in reportclass.getOperationFromBuffer(
+                yield from reportclass.getOperationFromBuffer(
                     request,
                     cursor,
                     buffer_name,
@@ -2267,51 +1834,10 @@ class PathReport(GridReport):
                     depth=0,
                     previousOperation=None,
                     bom_quantity=1,
-                ):
-                    results.append(i)
+                )
 
             else:
                 raise Exception("Supply path for an unknown entity")
-
-            # Drain pending requests in breadth-first batches.
-            # Each iteration processes all pending buffers and operations
-            # in two SQL calls instead of one call per buffer/operation.
-            while (
-                reportclass.pending_buffer_requests
-                or reportclass.pending_operation_requests
-            ):
-                buffer_batch = reportclass.pending_buffer_requests
-                operation_batch = reportclass.pending_operation_requests
-                reportclass.pending_buffer_requests = []
-                reportclass.pending_operation_requests = []
-
-                for rec in reportclass.getOperationsFromBuffersBatch(
-                    cursor, buffer_batch, reportclass.downstream
-                ):
-                    for result in reportclass.processRecord(
-                        cursor,
-                        rec[3:],
-                        request,
-                        rec[0],
-                        reportclass.downstream,
-                        rec[1],
-                        rec[2],
-                    ):
-                        results.append(result)
-
-                for rec in reportclass.getOperationsFromNamesBatch(
-                    cursor, operation_batch, reportclass.downstream
-                ):
-                    for result in reportclass.processRecord(
-                        cursor,
-                        rec[3:],
-                        request,
-                        rec[0],
-                        reportclass.downstream,
-                        rec[1],
-                        rec[2],
-                    ):
-                        results.append(result)
 
         # post-process results to calculate leaf field
         parents = [i["parent"] for i in results if i["parent"]]

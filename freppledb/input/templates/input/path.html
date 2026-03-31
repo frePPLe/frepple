@@ -443,6 +443,8 @@ function applyVisibilityFilters()
         return d.show_downstream && !collapsed_downstream[d.level] ? null : 'none';
       });
   }
+
+  updateLevelControlPositions();
 }
 
 function toggleCollapsedLevel(level, direction)
@@ -516,19 +518,30 @@ function updateLevelControlPositions()
   if (!level_controls)
     return;
 
+  // Find the absolute topmost y of any visible node or its children
   var top_y = Infinity;
   for (var i = 0; i < nodes.length; i++) {
     var node = nodes[i];
     if (visible_nodes[node.id] === false)
       continue;
-    if (node.y < top_y)
-      top_y = node.y;
+    if (node.type === 'resource')
+      continue;  // resources float freely, don't anchor controls to them
+    var ny = node.y;
+    // For routing/alternate/split parents, account for children above center
+    if ((node.type === 'routing' || node.type === 'alternate' || node.type === 'split') && node.numsuboperations) {
+      if (node.type === 'alternate' || node.type === 'split')
+        ny = node.y - 13;  // badge is above center
+      else if (node.rownb > 0)
+        ny = node.y - 40;  // routing box top
+    }
+    if (ny < top_y)
+      top_y = ny;
   }
 
   if (!isFinite(top_y))
     top_y = 60;
 
-  var controls_y = Math.max(24, top_y - 55);
+  var controls_y = top_y - 40;
   level_controls
     .attr('transform', function(d) { return 'translate(' + d.x + ' ' + controls_y + ')'; });
 }
@@ -578,8 +591,9 @@ function tick(e)
     }
     else if (d.parent < 0)
     {
-      // Hard-pin all top-level nodes to their exact level column
-      d.x = width_level * (0.5 + maxlevel - d.level);
+      // Hard-pin all top-level nodes to their exact level column (except resources)
+      if (d.type !== 'resource')
+        d.x = width_level * (0.5 + maxlevel - d.level);
       d.y += (1000 - d.y) * k / 10;
     }
     if (d.parent >= 0 && d.suboperindex >= 0) {
@@ -849,6 +863,51 @@ function drawGraph(jsondata)
         else
           links.push({source: nodes[bufindx], target: nodes[operindex], type: 'flow'});
       }
+    }
+  }
+
+  // Post-processing: ensure each buffer is to the left of its deepest consumer.
+  // For sub-operations (children of routing/alternate/split), the visual x position
+  // is based on the parent's level, so we use the parent's level when it is deeper.
+  for (var bufname in buffers) {
+    var bufidx = buffers[bufname];
+    var bufnode = nodes[bufidx];
+    var maxConsumerLevel = -Infinity;
+    for (var li = 0; li < links.length; li++) {
+      var lnk = links[li];
+      if (lnk.type !== 'flow') continue;
+      if (lnk.source.id !== bufnode.id) continue;
+      var consumer = lnk.target;
+      var effectiveLevel = consumer.level;
+      if (consumer.parent >= 0 && nodes[consumer.parent]) {
+        effectiveLevel = Math.max(effectiveLevel, nodes[consumer.parent].level);
+      }
+      if (effectiveLevel > maxConsumerLevel)
+        maxConsumerLevel = effectiveLevel;
+    }
+    if (maxConsumerLevel > -Infinity) {
+      var requiredLevel = maxConsumerLevel + 0.5;
+      if (bufnode.level < requiredLevel) {
+        bufnode.level = requiredLevel;
+        if (requiredLevel > maxlevel) maxlevel = requiredLevel;
+        if (requiredLevel < minlevel) minlevel = requiredLevel;
+      }
+    }
+  }
+
+  // Post-processing: ensure purchasing operations stay to the left of their buffer.
+  // After the buffer-level bump above, a buffer may have moved to a higher level than
+  // the itemsupplier that produces into it. Adjust the itemsupplier level accordingly.
+  for (var li4 = 0; li4 < links.length; li4++) {
+    var lnk4 = links[li4];
+    if (lnk4.type !== 'flow') continue;
+    if (lnk4.source.type !== 'itemsupplier') continue;
+    if (lnk4.target.type !== 'buffer') continue;
+    var requiredSupplierLevel = lnk4.target.level + 0.5;
+    if (lnk4.source.level < requiredSupplierLevel) {
+      lnk4.source.level = requiredSupplierLevel;
+      if (requiredSupplierLevel > maxlevel) maxlevel = requiredSupplierLevel;
+      if (requiredSupplierLevel < minlevel) minlevel = requiredSupplierLevel;
     }
   }
 
@@ -1258,124 +1317,222 @@ function drawGraph(jsondata)
   for (var t = 0; t < 300; ++t) force.tick();
   force.stop();
 
-  var minSpacing = 32;
+  var minSpacing = 42;
   var pinnedTypes = ['itemsupplier', 'itemdistribution', 'itemdistribution_alternate', 'buffer'];
 
-  // Step 1: assign each buffer's y = average y of connected operations (non-pinned neighbours)
-  // assign each itemsupplier's y = y of its connected buffer
-  // This derives a natural order from the operation layout.
-  var neighbourSum = {}, neighbourCount = {};
+  // Step 1: assign each buffer's y based ONLY on its consuming operations
+  // (the operations it feeds into). For sub-operations use the parent's y.
+  // Fall back to producer operations if there are no consumers.
+  var bufConsumerSum = {}, bufConsumerCount = {};
+  var bufProducerSum = {}, bufProducerCount = {};
   for (var li2 = 0; li2 < links.length; li2++) {
     var lnk = links[li2];
     if (lnk.type !== 'flow') continue;
-    var src = lnk.source, tgt = lnk.target;
-    // For each pinned node, accumulate y from its non-pinned (operation) neighbours
-    [src, tgt].forEach(function(pinned, idx) {
-      var other = idx === 0 ? tgt : src;
-      if (pinnedTypes.indexOf(pinned.type) < 0) return;
-      if (neighbourSum[pinned.id] === undefined) {
-        neighbourSum[pinned.id] = 0;
-        neighbourCount[pinned.id] = 0;
+    if (lnk.source.type === 'buffer') {
+      // buffer -> operation (consumer)
+      var consOp = lnk.target;
+      var consY = consOp.y;
+      if (consOp.parent >= 0 && nodes[consOp.parent])
+        consY = nodes[consOp.parent].y;
+      if (bufConsumerSum[lnk.source.id] === undefined) {
+        bufConsumerSum[lnk.source.id] = 0;
+        bufConsumerCount[lnk.source.id] = 0;
       }
-      neighbourSum[pinned.id] += other.y;
-      neighbourCount[pinned.id]++;
-    });
+      bufConsumerSum[lnk.source.id] += consY;
+      bufConsumerCount[lnk.source.id]++;
+    }
+    if (lnk.target.type === 'buffer') {
+      // operation -> buffer (producer)
+      var prodOp = lnk.source;
+      var prodY = prodOp.y;
+      if (prodOp.parent >= 0 && nodes[prodOp.parent])
+        prodY = nodes[prodOp.parent].y;
+      if (bufProducerSum[lnk.target.id] === undefined) {
+        bufProducerSum[lnk.target.id] = 0;
+        bufProducerCount[lnk.target.id] = 0;
+      }
+      bufProducerSum[lnk.target.id] += prodY;
+      bufProducerCount[lnk.target.id]++;
+    }
   }
-  // Assign derived y to buffers from operations
   for (var ni = 0; ni < nodes.length; ni++) {
     var n = nodes[ni];
     if (n.type !== 'buffer') continue;
-    if (neighbourCount[n.id] > 0)
-      n.y = neighbourSum[n.id] / neighbourCount[n.id];
+    if (bufConsumerCount[n.id] > 0)
+      n.y = bufConsumerSum[n.id] / bufConsumerCount[n.id];
+    else if (bufProducerCount[n.id] > 0)
+      n.y = bufProducerSum[n.id] / bufProducerCount[n.id];
   }
-  // Now assign itemsupplier y from their connected buffer (which is now positioned)
+
+  // Step 1b: assign itemsupplier/itemdistribution y from their connected buffer
+  var supplierNeighbourSum = {}, supplierNeighbourCount = {};
   for (var li3 = 0; li3 < links.length; li3++) {
     var lnk3 = links[li3];
     if (lnk3.type !== 'flow') continue;
     var src3 = lnk3.source, tgt3 = lnk3.target;
-    if (src3.type === 'itemsupplier' && tgt3.type === 'buffer') src3.y = tgt3.y;
-    if (tgt3.type === 'itemsupplier' && src3.type === 'buffer') tgt3.y = src3.y;
+    if (pinnedTypes.indexOf(src3.type) >= 0 && src3.type !== 'buffer' && tgt3.type === 'buffer') {
+      if (supplierNeighbourSum[src3.id] === undefined) {
+        supplierNeighbourSum[src3.id] = 0;
+        supplierNeighbourCount[src3.id] = 0;
+      }
+      supplierNeighbourSum[src3.id] += tgt3.y;
+      supplierNeighbourCount[src3.id]++;
+    }
+    if (pinnedTypes.indexOf(tgt3.type) >= 0 && tgt3.type !== 'buffer' && src3.type === 'buffer') {
+      if (supplierNeighbourSum[tgt3.id] === undefined) {
+        supplierNeighbourSum[tgt3.id] = 0;
+        supplierNeighbourCount[tgt3.id] = 0;
+      }
+      supplierNeighbourSum[tgt3.id] += src3.y;
+      supplierNeighbourCount[tgt3.id]++;
+    }
+  }
+  for (var sni = 0; sni < nodes.length; sni++) {
+    var sn = nodes[sni];
+    if (sn.type === 'buffer') continue;
+    if (pinnedTypes.indexOf(sn.type) < 0) continue;
+    if (supplierNeighbourCount[sn.id] > 0)
+      sn.y = supplierNeighbourSum[sn.id] / supplierNeighbourCount[sn.id];
   }
 
-  // Step 2: for each level of pinned nodes, sort by current y (which now mirrors
-  // operation order) then space evenly — preserving the sort order exactly.
-  var byLevel = {};
+  // Step 2: group consumed buffers per consuming operation and center each
+  // group symmetrically around that operation's y position.
+  // For sub-operations, use the parent operation as the anchor.
+  var bufsByConsumerOp = {};
+  var bufAssigned = {};
+  for (var lc = 0; lc < links.length; lc++) {
+    var lcnk = links[lc];
+    if (lcnk.type !== 'flow') continue;
+    if (lcnk.source.type !== 'buffer') continue;
+    var cOp = lcnk.target;
+    var anchorOp = cOp;
+    if (cOp.parent >= 0 && nodes[cOp.parent])
+      anchorOp = nodes[cOp.parent];
+    var anchorId = anchorOp.id;
+    if (!bufsByConsumerOp[anchorId]) bufsByConsumerOp[anchorId] = [];
+    // Avoid adding the same buffer to the same consumer group twice
+    var alreadyIn = false;
+    for (var chk = 0; chk < bufsByConsumerOp[anchorId].length; chk++)
+      if (bufsByConsumerOp[anchorId][chk].id === lcnk.source.id) { alreadyIn = true; break; }
+    if (!alreadyIn)
+      bufsByConsumerOp[anchorId].push(lcnk.source);
+  }
+  for (var consId in bufsByConsumerOp) {
+    var bufs = bufsByConsumerOp[consId];
+    var anchorNode = nodes[parseInt(consId)];
+    var anchorY = anchorNode.y;
+    bufs.sort(function(a, b) { return a.y - b.y; });
+    var totalH = (bufs.length - 1) * minSpacing;
+    var startBufY = anchorY - totalH / 2;
+    for (var bi = 0; bi < bufs.length; bi++) {
+      bufs[bi].y = startBufY + bi * minSpacing;
+      bufAssigned[bufs[bi].id] = true;
+    }
+  }
+
+  // For buffers with no consumer (produced only), group by level and space evenly
+  var producedOnlyByLevel = {};
   for (var ni2 = 0; ni2 < nodes.length; ni2++) {
     var n2 = nodes[ni2];
-    if (pinnedTypes.indexOf(n2.type) < 0) continue;
+    if (n2.type !== 'buffer') continue;
+    if (bufAssigned[n2.id]) continue;
     var lk = n2.level;
-    if (!byLevel[lk]) byLevel[lk] = [];
-    byLevel[lk].push(n2);
+    if (!producedOnlyByLevel[lk]) producedOnlyByLevel[lk] = [];
+    producedOnlyByLevel[lk].push(n2);
   }
-  for (var lk in byLevel) {
-    var group = byLevel[lk];
-    group.sort(function(a, b) { return a.y - b.y; });
-    var totalHeight = (group.length - 1) * minSpacing;
-    var meanY = group.reduce(function(s, nd) { return s + nd.y; }, 0) / group.length;
-    var startY = meanY - totalHeight / 2;
-    for (var gi = 0; gi < group.length; gi++)
-      group[gi].y = startY + gi * minSpacing;
-  }
-
-  // Step 2b: place resources above/below their linked operation instead of in-between
-  // operation-buffer lanes, and pick the side with less local overlap.
-  var resourceOps = {};
-  for (var rl = 0; rl < links.length; rl++) {
-    var rlink = links[rl];
-    if (rlink.type !== 'load') continue;
-    if (rlink.target.type !== 'resource') continue;
-    if (!resourceOps[rlink.target.id]) resourceOps[rlink.target.id] = [];
-    resourceOps[rlink.target.id].push(rlink.source);
+  for (var lk2 in producedOnlyByLevel) {
+    var grp = producedOnlyByLevel[lk2];
+    grp.sort(function(a, b) { return a.y - b.y; });
+    var totalH2 = (grp.length - 1) * minSpacing;
+    var meanY2 = grp.reduce(function(s, nd) { return s + nd.y; }, 0) / grp.length;
+    var startY2 = meanY2 - totalH2 / 2;
+    for (var gi2 = 0; gi2 < grp.length; gi2++)
+      grp[gi2].y = startY2 + gi2 * minSpacing;
   }
 
-  function resourceOverlapScore(resNode, yPos) {
-    var score = 0;
-    for (var si = 0; si < nodes.length; si++) {
-      var other = nodes[si];
-      if (other.id === resNode.id || other.parent >= 0) continue;
-      var overlapX = (nodeHalfW(resNode) + nodeHalfW(other) + 8) - Math.abs(resNode.x - other.x);
-      var overlapY = (nodeHalfH(resNode) + nodeHalfH(other) + 8) - Math.abs(yPos - other.y);
-      if (overlapX > 0 && overlapY > 0)
-        score += overlapX * overlapY;
-    }
-    return score;
+  // Per-level collision resolution for buffers to enforce minimum spacing
+  var bufsByLevel = {};
+  for (var ni3 = 0; ni3 < nodes.length; ni3++) {
+    var n3 = nodes[ni3];
+    if (n3.type !== 'buffer') continue;
+    var bk = n3.level;
+    if (!bufsByLevel[bk]) bufsByLevel[bk] = [];
+    bufsByLevel[bk].push(n3);
   }
-
-  var resourceBaseOffset = 44;
-  var resourceOffsetStep = 20;
-  var resourceMaxAttempts = 6;
-  for (var rn = 0; rn < nodes.length; rn++) {
-    var resNode = nodes[rn];
-    if (resNode.type !== 'resource') continue;
-    var ops = resourceOps[resNode.id] || [];
-    if (!ops.length) continue;
-
-    // If shared by multiple operations, use their mean y as anchor.
-    var anchorY = 0;
-    for (var oi = 0; oi < ops.length; oi++)
-      anchorY += ops[oi].y;
-    anchorY /= ops.length;
-
-    var bestY = resNode.y;
-    var bestScore = Number.POSITIVE_INFINITY;
-    for (var attempt = 0; attempt < resourceMaxAttempts; attempt++) {
-      var offset = resourceBaseOffset + attempt * resourceOffsetStep;
-      var upY = anchorY - offset;
-      var downY = anchorY + offset;
-      var upScore = resourceOverlapScore(resNode, upY);
-      var downScore = resourceOverlapScore(resNode, downY);
-
-      if (upScore < bestScore) {
-        bestScore = upScore;
-        bestY = upY;
+  for (var bk2 in bufsByLevel) {
+    var bgrp = bufsByLevel[bk2];
+    bgrp.sort(function(a, b) { return a.y - b.y; });
+    for (var bp = 0; bp < 50; bp++) {
+      var anyBufOverlap = false;
+      for (var bj = 0; bj < bgrp.length - 1; bj++) {
+        var gap = bgrp[bj + 1].y - bgrp[bj].y;
+        if (gap < minSpacing) {
+          var shift = (minSpacing - gap) / 2;
+          bgrp[bj].y -= shift;
+          bgrp[bj + 1].y += shift;
+          anyBufOverlap = true;
+        }
       }
-      if (downScore < bestScore) {
-        bestScore = downScore;
-        bestY = downY;
-      }
-      if (bestScore === 0) break;
+      if (!anyBufOverlap) break;
     }
-    resNode.y = bestY;
+  }
+
+  // Step 2 for producers feeding into buffers (itemsuppliers, operations, routings):
+  // Derive each producer's y from the final y of its produced buffer(s)
+  // so the vertical order matches the buffer order and arrows don't cross.
+  // Collect all top-level nodes that produce into at least one buffer.
+  var producerBufY = {};
+  var producerNodes = {};
+  for (var sl = 0; sl < links.length; sl++) {
+    var slnk = links[sl];
+    if (slnk.type !== 'flow') continue;
+    // producer -> buffer
+    if (slnk.target.type === 'buffer' && isOperationNode(slnk.source)) {
+      var prodNode = slnk.source;
+      // For sub-operations, use the parent as the producer
+      if (prodNode.parent >= 0 && nodes[prodNode.parent])
+        prodNode = nodes[prodNode.parent];
+      if (!producerBufY[prodNode.id]) producerBufY[prodNode.id] = [];
+      producerBufY[prodNode.id].push(slnk.target.y);
+      producerNodes[prodNode.id] = prodNode;
+    }
+    if (slnk.target.type === 'buffer' && pinnedTypes.indexOf(slnk.source.type) >= 0 && slnk.source.type !== 'buffer') {
+      if (!producerBufY[slnk.source.id]) producerBufY[slnk.source.id] = [];
+      producerBufY[slnk.source.id].push(slnk.target.y);
+      producerNodes[slnk.source.id] = slnk.source;
+    }
+  }
+
+  // Group producers by level, set y from their buffer average, then sort together
+  var producerByLevel = {};
+  for (var pid in producerNodes) {
+    var pn = producerNodes[pid];
+    if (pn.parent >= 0) continue; // skip sub-operations
+    var bys = producerBufY[pn.id];
+    if (bys && bys.length > 0)
+      pn.y = bys.reduce(function(a, b) { return a + b; }, 0) / bys.length;
+    var plk = pn.level;
+    if (!producerByLevel[plk]) producerByLevel[plk] = [];
+    producerByLevel[plk].push(pn);
+  }
+  // Per-level collision resolution for all producers to enforce minimum spacing
+  // while preserving the buffer-derived sort order
+  for (var plk2 in producerByLevel) {
+    var pgrp = producerByLevel[plk2];
+    pgrp.sort(function(a, b) { return a.y - b.y; });
+    for (var pp = 0; pp < 50; pp++) {
+      var anyProdOverlap = false;
+      for (var pj = 0; pj < pgrp.length - 1; pj++) {
+        var pgap = pgrp[pj + 1].y - pgrp[pj].y;
+        if (pgap < minSpacing) {
+          var pshift = (minSpacing - pgap) / 2;
+          pgrp[pj].y -= pshift;
+          pgrp[pj + 1].y += pshift;
+          anyProdOverlap = true;
+        }
+      }
+      if (!anyProdOverlap) break;
+    }
   }
 
   // Step 3: 2D bounding-box collision resolution — push apart any overlapping nodes vertically
@@ -1396,11 +1553,98 @@ function drawGraph(jsondata)
     return 13;
   }
 
+  // Step 2b: place resources near their operation, preferring above/below at the
+  // operation's x. If overlapped, shift x rightward toward the next level (produced buffer).
+  var padding = 6;
+  var resourceOps = {};
+  for (var rl = 0; rl < links.length; rl++) {
+    var rlink = links[rl];
+    if (rlink.type !== 'load') continue;
+    if (rlink.target.type !== 'resource') continue;
+    if (!resourceOps[rlink.target.id]) resourceOps[rlink.target.id] = [];
+    resourceOps[rlink.target.id].push(rlink.source);
+  }
+
+  function resourceOverlapScore(resNode, xPos, yPos) {
+    var score = 0;
+    for (var si = 0; si < nodes.length; si++) {
+      var other = nodes[si];
+      if (other.id === resNode.id || other.parent >= 0) continue;
+      if (other.type === 'resource') continue;
+      var hw = nodeHalfW(resNode) + nodeHalfW(other) + padding;
+      var hh = nodeHalfH(resNode) + nodeHalfH(other) + padding;
+      var ox = hw - Math.abs(xPos - other.x);
+      var oy = hh - Math.abs(yPos - other.y);
+      if (ox > 0 && oy > 0)
+        score += ox * oy;
+    }
+    return score;
+  }
+
+  var resourceYOffsetStart = 30;
+  var resourceYOffsetStep = 14;
+  var resourceYAttempts = 20;
+  var resourceXSteps = 5;
+  for (var rn = 0; rn < nodes.length; rn++) {
+    var resNode = nodes[rn];
+    if (resNode.type !== 'resource') continue;
+    var ops = resourceOps[resNode.id] || [];
+    if (!ops.length) continue;
+
+    // Compute anchor y from linked operations (use parent for sub-operations)
+    var anchorY = 0;
+    var opX = 0;
+    for (var oi = 0; oi < ops.length; oi++) {
+      var effOp = ops[oi];
+      if (effOp.parent >= 0 && nodes[effOp.parent])
+        effOp = nodes[effOp.parent];
+      anchorY += effOp.y;
+      opX += effOp.x;
+    }
+    anchorY /= ops.length;
+    opX /= ops.length;
+
+    // The next level to the right is at opX - width_level/2 (produced buffer column)
+    var nextLevelX = opX - width_level / 2;
+    var isShared = ops.length > 1;
+
+    var bestX = opX;
+    var bestY = isShared ? (anchorY + resourceYOffsetStart) : (anchorY - resourceYOffsetStart);
+    var bestScore = Number.POSITIVE_INFINITY;
+
+    // For non-shared resources: try above first at op's x, then shift right
+    // For shared resources: try below first, then above
+    for (var xStep = 0; xStep <= resourceXSteps; xStep++) {
+      var tryX = opX + (nextLevelX - opX) * (xStep / resourceXSteps) * 0.8;
+      for (var yAttempt = 0; yAttempt < resourceYAttempts; yAttempt++) {
+        var yOffset = resourceYOffsetStart + yAttempt * resourceYOffsetStep;
+        var positions;
+        if (isShared)
+          positions = [anchorY + yOffset, anchorY - yOffset];
+        else
+          positions = [anchorY - yOffset, anchorY + yOffset];
+        for (var pi = 0; pi < positions.length; pi++) {
+          var tryY = positions[pi];
+          var sc = resourceOverlapScore(resNode, tryX, tryY);
+          if (sc < bestScore) {
+            bestScore = sc;
+            bestX = tryX;
+            bestY = tryY;
+          }
+          if (bestScore === 0) break;
+        }
+        if (bestScore === 0) break;
+      }
+      if (bestScore === 0) break;
+    }
+    resNode.x = bestX;
+    resNode.y = bestY;
+  }
+
   var topNodes = [];
   for (var ti = 0; ti < nodes.length; ti++)
     if (nodes[ti].parent < 0) topNodes.push(nodes[ti]);
 
-  var padding = 6;
   for (var pass2 = 0; pass2 < 100; pass2++) {
     var anyOverlap = false;
     for (var ai = 0; ai < topNodes.length; ai++) {

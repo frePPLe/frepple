@@ -573,7 +573,9 @@ void SolverCreate::solve(const Operation* oper, void* v) {
            << data->state->q_date << '\n';
 
   if (data->getSolver()->getBatchGrouping() &&
-      oper->getBatchWindow() > Duration(0L) && data->state->curBuffer) {
+      (oper->getBatchWindow() > Duration(0L) ||
+       data->state->q_date < Plan::instance().getCurrent()) &&
+      data->state->curBuffer) {
     auto requirement_in_window =
         min(-data->state->curBuffer->getOnHand(
                 data->state->q_date,

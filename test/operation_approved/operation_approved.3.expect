@@ -5,9 +5,8 @@ BUFFER	10. item @ factory	2026-01-01T00:00:00	5	13
 BUFFER	10. item @ factory	2026-01-01T00:00:00	4	17
 BUFFER	10. item @ factory	2026-01-01T00:00:00	3	20
 BUFFER	10. item @ factory	2026-01-01T00:00:00	-20	0
-BUFFER	11. component @ factory	2025-12-20T00:00:00	10	10
-BUFFER	11. component @ factory	2025-12-20T00:00:00	-10	0
-BUFFER	11. component @ factory	2025-12-25T00:00:00	5	5
+BUFFER	11. component @ factory	2025-12-20T00:00:00	15	15
+BUFFER	11. component @ factory	2025-12-20T00:00:00	-10	5
 BUFFER	11. component @ factory	2025-12-25T00:00:00	-5	0
 BUFFER	11. component @ factory	2026-01-25T00:00:00	100	100
 BUFFER	11. item @ factory	2026-01-01T00:00:00	10	10
@@ -20,9 +19,8 @@ BUFFER	12. component @ factory	2026-01-28T00:00:00	-10	90
 BUFFER	12. item @ factory	2026-01-01T00:00:00	15	15
 BUFFER	12. item @ factory	2026-01-01T00:00:00	-15	0
 BUFFER	12. item @ factory	2026-02-09T00:00:00	10	10
-BUFFER	13. component @ factory	2025-12-20T00:00:00	10	10
-BUFFER	13. component @ factory	2025-12-20T00:00:00	-10	0
-BUFFER	13. component @ factory	2025-12-25T00:00:00	5	5
+BUFFER	13. component @ factory	2025-12-20T00:00:00	15	15
+BUFFER	13. component @ factory	2025-12-20T00:00:00	-10	5
 BUFFER	13. component @ factory	2025-12-25T00:00:00	-5	0
 BUFFER	13. component @ factory	2026-01-25T00:00:00	100	100
 BUFFER	13. item @ factory	2026-01-01T00:00:00	10	10
@@ -137,13 +135,11 @@ OPERATION	Purchase 10. item @ factory from 10. Supplier	2025-12-25T00:00:00	2026
 OPERATION	Purchase 10. item @ factory from 10. Supplier	2025-12-25T00:00:00	2026-01-01T00:00:00	5	approved
 OPERATION	Purchase 10. item @ factory from 10. Supplier	2025-12-25T00:00:00	2026-01-01T00:00:00	4	approved
 OPERATION	Purchase 10. item @ factory from 10. Supplier	2025-12-25T00:00:00	2026-01-01T00:00:00	3	approved
-OPERATION	Purchase 11. component @ factory from 11. Supplier	2025-10-11T00:00:00	2025-12-20T00:00:00	10
-OPERATION	Purchase 11. component @ factory from 11. Supplier	2025-10-16T00:00:00	2025-12-25T00:00:00	5
+OPERATION	Purchase 11. component @ factory from 11. Supplier	2025-10-11T00:00:00	2025-12-20T00:00:00	15
 OPERATION	Purchase 11. component @ factory from 11. Supplier	2025-11-16T00:00:00	2026-01-25T00:00:00	100	confirmed
 OPERATION	Purchase 12. component @ factory from 12. Supplier	2025-10-06T00:00:00	2025-12-15T00:00:00	15
 OPERATION	Purchase 12. component @ factory from 12. Supplier	2025-11-16T00:00:00	2026-01-25T00:00:00	100	confirmed
-OPERATION	Purchase 13. component @ factory from 13. Supplier	2025-10-11T00:00:00	2025-12-20T00:00:00	10
-OPERATION	Purchase 13. component @ factory from 13. Supplier	2025-10-16T00:00:00	2025-12-25T00:00:00	5
+OPERATION	Purchase 13. component @ factory from 13. Supplier	2025-10-11T00:00:00	2025-12-20T00:00:00	15
 OPERATION	Purchase 13. component @ factory from 13. Supplier	2025-11-16T00:00:00	2026-01-25T00:00:00	100	confirmed
 OPERATION	Purchase 2. item @ factory from 2. Supplier	2025-12-25T00:00:00	2026-01-01T00:00:00	100	approved
 OPERATION	Purchase 3. component @ factory from 3. Supplier	2026-01-19T00:00:00	2026-01-26T00:00:00	100	approved

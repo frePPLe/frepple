@@ -180,6 +180,14 @@ class Operation(AuditModel):
         on_delete=models.SET_NULL,
         help_text=_("Calendar defining the working hours and holidays"),
     )
+    batchwindow = models.DurationField(
+        _("batching window"),
+        null=True,
+        blank=True,
+        help_text=_(
+            "The solver algorithm will scan for opportunities to create batches within this time window before and after the requirement date"
+        ),
+    )
 
     def __str__(self):
         return self.name

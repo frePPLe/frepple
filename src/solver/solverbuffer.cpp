@@ -374,52 +374,6 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             theDelta = fence_free;
           }
         }
-
-        // Solution zero-bis: Await confirmed supply of an MTO material
-        // on the generic buffer.
-        /*
-        if (b->getItem()->hasType<ItemMTO>() && b->getBatch()) {
-          auto generic_buffer =
-              Buffer::findOrCreate(b->getItem(), b->getLocation());
-          auto free_generic =
-              generic_buffer->getOnHand(Date::infiniteFuture, true);
-          if (free_generic > -theDelta) {
-            for (auto scanner = generic_buffer->getFlowPlans().begin();
-                 scanner != generic_buffer->getFlowPlans().end() &&
-                 scanner->getDate() <
-                     max(theDate, Plan::instance().getCurrent()) + autofence;
-                 ++scanner) {
-              if (scanner->getQuantity() <= 0 ||
-                  scanner->getDate() <= requested_date)
-                continue;
-              auto tmp = scanner->getOperationPlan();
-              if (tmp && (tmp->getConfirmed() || tmp->getApproved()
-                && !tmp->getOperation()->getName().starts_with("Correction")) {
-        if (firstmsg1 && data->logConstraints && data->constraints)
-                  data->constraints->push(
-                      ProblemAwaitSupply::metadata, generic_buffer, theDate,
-                      scanner->getDate(), theDelta);
-                if (scanner->getDate() > requested_date &&
-                    scanner->getDate() < extraConfirmedDate)
-                  extraConfirmedDate = scanner->getDate();
-                if (getLogLevel() > 1 && firstmsg1) {
-                  logger
-                      << indentlevel
-                      << "Refuse to create extra supply because confirmed or "
-                         "approved generic-MTO supply is already available at "
-                      << extraConfirmedDate << '\n';
-                  firstmsg1 = false;
-                }
-                supply_exists_already = true;
-                if (shortage < -prev->getOnhand())
-                  shortage = -prev->getOnhand();
-                tried_requested_date = true;  // Disables an extra supply check
-                break;
-              }
-            }
-          }
-        }
-        */
       }
 
       // Solution zero-tris: use stock and confirmed supply on alternate

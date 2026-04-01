@@ -1146,6 +1146,9 @@ class OperationList(GridReport):
             initially_hidden=True,
             editable=False,
         ),
+        GridFieldDuration(
+            "batchwindow", title=_("batching window"), initially_hidden=True
+        ),
     )
 
 

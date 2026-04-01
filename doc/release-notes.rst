@@ -15,6 +15,13 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Production planning
 
+- | Manufacturing orders now respect the batch window of the operations.
+  | When requirements are close to each other, the algorithm now
+    plans a single producing manufacturing order to cover the requirements.
+  | In this release this feature is only active when running a plan without any
+    constraints. In future releases we will also support this when running a plan
+    with constraints.
+
 - | Bug fix: Some models experienced issues with excess proposed supply in the
     presence of operation multiples and temporary unresolvable material shortages.
 

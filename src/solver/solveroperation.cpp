@@ -572,6 +572,20 @@ void SolverCreate::solve(const Operation* oper, void* v) {
            << "' is asked: " << data->state->q_qty << "  "
            << data->state->q_date << '\n';
 
+  if (data->getSolver()->getBatchGrouping() &&
+      oper->getBatchWindow() > Duration(0L) && data->state->curBuffer) {
+    auto requirement_in_window =
+        min(-data->state->curBuffer->getOnHand(
+                data->state->q_date,
+                max(data->state->q_date, Plan::instance().getCurrent()) +
+                    oper->getBatchWindow(),
+                true, true),
+            oper->getSizeMaximum());
+    if (requirement_in_window > data->state->q_qty) {
+      data->state->q_qty = requirement_in_window;
+    }
+  }
+
   auto asked_date = data->state->q_date;
   auto asked_qty = data->state->q_qty;
   auto original_q_qty = asked_qty;
@@ -2114,7 +2128,7 @@ PyObject* Solver::createsBatches(PyObject* self, PyObject*) {
   return Py_BuildValue("");
 }
 
-void Solver::createsBatches(Operation* oper, void* v) {
+void Solver::createsBatches(Operation* oper, void*) {
   // Filter applicable operations:
   //  - batch window is positive
   //  - not loading any constrained resources

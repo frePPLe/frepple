@@ -153,6 +153,9 @@ class SolverCreate : public Solver {
    */
   bool propagate = true;
 
+  /* When set to true, the solver will group operation plans together. */
+  bool batchgrouping = false;
+
   /* Index of the cluster to replan selectively. */
   int cluster = -1;
 
@@ -346,6 +349,8 @@ class SolverCreate : public Solver {
     create_deliveries = other.create_deliveries;
     administrativeleadtime = other.administrativeleadtime;
     minimumdelay = other.minimumdelay;
+    propagate = other.propagate;
+    batchgrouping = other.batchgrouping;
     rotateResources = other.rotateResources;
     iteration_threshold = other.iteration_threshold;
     iteration_accuracy = other.iteration_accuracy;
@@ -367,6 +372,8 @@ class SolverCreate : public Solver {
     create_deliveries = other.create_deliveries;
     administrativeleadtime = other.administrativeleadtime;
     minimumdelay = other.minimumdelay;
+    propagate = other.propagate;
+    batchgrouping = other.batchgrouping;
     rotateResources = other.rotateResources;
     iteration_threshold = other.iteration_threshold;
     iteration_accuracy = other.iteration_accuracy;
@@ -599,6 +606,10 @@ class SolverCreate : public Solver {
   bool getPropagate() const { return propagate; }
 
   void setPropagate(bool b) { propagate = b; }
+
+  bool getBatchGrouping() const { return batchgrouping; }
+
+  void setBatchGrouping(bool b) { batchgrouping = b; }
 
   Duration getAdministrativeLeadTime() const { return administrativeleadtime; }
 

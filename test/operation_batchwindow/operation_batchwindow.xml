@@ -681,10 +681,15 @@ print("CREATING CONSTRAINED PLAN")
 sol = frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, lazydelay=12*3600)
 sol.solve()
 frepple.saveplan("output.1.xml")
-print("CREATING UNCONSTRAINED PLAN")
+print("CREATING SMART UNCONSTRAINED PLAN")
 sol.plantype = 2
 sol.solve()
 frepple.saveplan("output.2.xml")
+print("CREATING SIMPLE UNCONSTRAINED PLAN")
+sol.plantype = 2
+sol.constraints = 0
+sol.solve()
+frepple.saveplan("output.3.xml")
 ?>
 
 </plan>

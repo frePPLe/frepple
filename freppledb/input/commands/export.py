@@ -1065,6 +1065,7 @@ class exportOperations(PlanTask):
                     i.priority if i.priority != 1 else None,
                     i.effective_start if i.effective_start != default_start else None,
                     i.effective_end if i.effective_end != default_end else None,
+                    i.batchwindow if i.batchwindow else None,
                     cls.timestamp,
                 ]
                 for a in attrs:
@@ -1096,10 +1097,10 @@ class exportOperations(PlanTask):
                 (name,fence,posttime,sizeminimum,sizemultiple,sizemaximum,type,
                 duration,duration_per,location_id,cost,search,description,category,
                 subcategory,source,item_id,priority,effective_start,effective_end,
-                lastmodified,owner_id%s)
+                batchwindow,lastmodified,owner_id%s)
                 values(%%s,%%s * interval '1 second',%%s * interval '1 second',%%s,%%s,
                 %%s,%%s,%%s * interval '1 second',%%s * interval '1 second',%%s,%%s,%%s,
-                %%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,null%s)
+                %%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,null%s)
                 on conflict (name)
                 do update set
                   fence=excluded.fence,
@@ -1121,6 +1122,7 @@ class exportOperations(PlanTask):
                   priority=excluded.priority,
                   effective_start=excluded.effective_start,
                   effective_end=excluded.effective_end,
+                  batchwindow=excluded.batchwindow,
                   lastmodified=excluded.lastmodified,
                   owner_id=excluded.owner_id
                   %s

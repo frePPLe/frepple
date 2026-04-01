@@ -266,6 +266,7 @@ void SolverCreate::SolverData::commit() {
 
       // Step 1: Create a delivery operationplan for all demands
       solver->setPropagate(false);
+      solver->setBatchGrouping(true);
       if (solver->getCreateDeliveries()) {
         for (auto& demand : *demands) {
           if (solver->userexit_demand)
@@ -293,8 +294,8 @@ void SolverCreate::SolverData::commit() {
               isGroupMember ? demand->getOwner()->getDue() : demand->getDue();
           while (plan_qty > ROUNDING_ERROR) {
             // Respect minimum shipment quantities
-            if (plan_qty < demand->getMinShipment())
-              plan_qty = demand->getMinShipment();
+            auto m = demand->getMinShipment();
+            if (plan_qty < m) plan_qty = m;
             state->curBuffer = nullptr;
             state->q_qty = plan_qty;
             state->q_date = due;
@@ -334,79 +335,7 @@ void SolverCreate::SolverData::commit() {
       // Step 3: Solve buffer by buffer, ordered by level
       buffer_solve_shortages_only = false;
       for (short lvl = -1; lvl <= HasLevel::getNumberOfLevels(); ++lvl) {
-        // Step 1: Allocate from generic-MTO buffers to MTO-batch buffers
-        /*
-        for (auto& b : Buffer::all()) {
-          if (b.getLevel() != lvl ||
-              (cluster != -1 && cluster != b.getCluster()) || !b.getItem() ||
-              !b.getItem()->hasType<ItemMTO>() || !b.getBatch().empty())
-            // Not your turn yet...
-            continue;
-
-          // Loop while we still have available material
-          bool changed = true;
-          while (changed &&
-                 b.getOnHand(Date::infiniteFuture) > ROUNDING_ERROR) {
-            changed = false;
-            // Find the first available material
-            OperationPlan::flowplanlist::Event* producer = nullptr;
-            double available = 0.0;
-            for (auto& flpln : b.getFlowPlans()) {
-              if (flpln.getQuantity() <= 0) continue;
-              available = flpln.getAvailable();
-              if (available > ROUNDING_ERROR) {
-                producer = &flpln;
-                break;
-              }
-            }
-            if (!producer) break;
-
-            // Loop through all batch-MTO buffers and see which one has the
-            // earliest requirement for that material
-            FlowPlan* consumer = nullptr;
-            auto bufiter = b.getItem()->getBufferIterator();
-            while (auto batchbuf = bufiter.next()) {
-              if (batchbuf->getBatch().empty()) continue;
-              for (auto& flpln : batchbuf->getFlowPlans()) {
-                if (flpln.getQuantity() >= 0 ||
-                    flpln.getDate() < producer->getDate())
-                  continue;
-                if (flpln.getOnhandAfterDate() < -ROUNDING_ERROR &&
-                    (!consumer || consumer->getDate() > flpln.getDate())) {
-                  consumer = static_cast<FlowPlan*>(&flpln);
-                  break;
-                }
-              }
-            }
-            if (!consumer) break;
-
-            // Flip the consumer from the batch-MTO to the generic-MTO buffer
-            changed = true;
-            if (available > -consumer->getQuantity()) {
-              if (getLogLevel() > 1)
-                logger << solver->indentlevel << "  Buffer '" << b
-                       << "' allocates from generic MTO buffer '"
-                       << consumer->getBuffer()
-                       << "' : " << -consumer->getQuantity() << " on "
-                       << consumer->getDate() << '\n';
-              consumer->setBuffer(&b);
-            } else {
-              if (getLogLevel() > 1)
-                logger << solver->indentlevel << "  Buffer '" << b
-                       << "' allocates from generic MTO buffer '"
-                       << consumer->getBuffer() << "' : " << available << " on "
-                       << consumer->getDate() << '\n';
-              auto extraflpln = new FlowPlan(consumer->getOperationPlan(),
-                                             consumer->getFlow(),
-                                             consumer->getDate(), -available);
-              extraflpln->setBuffer(&b);
-              consumer->setQuantityRaw(consumer->getQuantity() + available);
-            }
-          }
-        }
-        */
-
-        // Step 2: propagate through this level of buffers
+        // Propagate through this level of buffers
         for (auto& b : Buffer::all()) {
           if (b.getLevel() != lvl ||
               (cluster != -1 && cluster != b.getCluster()))
@@ -545,11 +474,13 @@ void SolverCreate::SolverData::commit() {
       solveSafetyStock(solver, false);
     }
 
-    // Operation batching postprocessing
-    for (auto& o : Operation::all()) {
-      if (cluster == -1 || o.getCluster() == cluster)
-        solver->createsBatches(&o, this);
-    }
+    // Operation batching postprocessing when constraints are active.
+    // The level-by-level unconstrained plan has its own batch grouping.
+    if (solver->getConstraints() > 0)
+      for (auto& o : Operation::all()) {
+        if (cluster == -1 || o.getCluster() == cluster)
+          solver->createsBatches(&o, this);
+      }
 
     // Clean the constraint list
     if (solver->getConstraints())

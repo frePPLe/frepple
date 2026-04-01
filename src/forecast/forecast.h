@@ -1818,6 +1818,8 @@ class ForecastSolver : public Solver {
   friend class Forecast;
 
  public:
+  using Solver::solve;
+
   /* An auxiliary method to return metrics from a forecast methods. */
   struct Metrics {
     double smape;

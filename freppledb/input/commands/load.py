@@ -1013,8 +1013,8 @@ class loadOperations(LoadTask):
                     type, duration, duration_per, location_id, cost, search, description,
                     category, subcategory, source, item_id, priority, effective_start,
                     effective_end, available_id,
-                    (select type from item where item.name = operation.item_id)
-                    %s
+                    (select type from item where item.name = operation.item_id),
+                    batchwindow %s
                     FROM operation %s
                     """
                     % (attrsql, filter_where)
@@ -1111,7 +1111,9 @@ class loadOperations(LoadTask):
                             x.available = frepple.calendar(name=i[20])
                         if i[13] == "subcontractor":
                             x.nolocationcalendar = True
-                        idx = 22
+                        if i[22]:
+                            x.batchwindow = i[22].total_seconds()
+                        idx = 23
                         for a in attrs:
                             setattr(x, a, i[idx])
                             idx += 1

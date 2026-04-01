@@ -332,6 +332,7 @@ double Buffer::getOnHand(Date d1, Date d2, bool min, bool use_safetystock,
         record = tmp;
       else {
         // In the active range: check if new record
+        if (prev_Date > d2) return record;
         if (min) {
           if (tmp < record) record = tmp;
         } else {

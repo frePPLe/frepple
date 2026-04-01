@@ -524,11 +524,13 @@ function updateLevelControlPositions()
     var node = nodes[i];
     if (visible_nodes[node.id] === false)
       continue;
-    if (node.type === 'resource')
-      continue;  // resources float freely, don't anchor controls to them
     var ny = node.y;
+    // For resources, account for their ellipse height
+    if (node.type === 'resource') {
+      ny = node.y - (node.halfH || 14);
+    }
     // For routing/alternate/split parents, account for children above center
-    if ((node.type === 'routing' || node.type === 'alternate' || node.type === 'split') && node.numsuboperations) {
+    else if ((node.type === 'routing' || node.type === 'alternate' || node.type === 'split') && node.numsuboperations) {
       if (node.type === 'alternate' || node.type === 'split')
         ny = node.y - 13;  // badge is above center
       else if (node.rownb > 0)
@@ -1592,6 +1594,25 @@ function drawGraph(jsondata)
   }
 
   var placedResources = {};
+
+  // Compute the collapse-controls y-boundary so resources aren't placed on top of them.
+  // This mirrors the logic in updateLevelControlPositions().
+  var controlsTopY = Infinity;
+  for (var cti = 0; cti < nodes.length; cti++) {
+    var ctn = nodes[cti];
+    if (ctn.type === 'resource') continue;
+    if (ctn.parent >= 0) continue;
+    if (visible_nodes[ctn.id] === false) continue;
+    var cny = ctn.y;
+    if ((ctn.type === 'routing' || ctn.type === 'alternate' || ctn.type === 'split') && ctn.numsuboperations) {
+      if (ctn.type === 'alternate' || ctn.type === 'split') cny = ctn.y - 13;
+      else if (ctn.rownb > 0) cny = ctn.y - 40;
+    }
+    if (cny < controlsTopY) controlsTopY = cny;
+  }
+  // The controls sit at controlsTopY - 40; the clickable circle has radius ~8
+  var resourceMinY = isFinite(controlsTopY) ? (controlsTopY - 40 - 12) : -Infinity;
+
   function resourceOverlapScore(resNode, xPos, yPos, resOps) {
     var score = 0;
     var resHW = nodeHalfW(resNode);
@@ -1651,6 +1672,13 @@ function drawGraph(jsondata)
       var xDist = Math.abs(xPos - scOther.x);
       if (xDist < sameColumnClearance)
         score += (sameColumnClearance - xDist) * 20;
+    }
+
+    // Penalty for overlapping the collapse controls row
+    if (isFinite(resourceMinY)) {
+      var resTop = yPos - resHH;
+      if (resTop < resourceMinY)
+        score += (resourceMinY - resTop) * 50;
     }
 
     return score;

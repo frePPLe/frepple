@@ -626,6 +626,26 @@ function tick(e)
 
 function drawPaths() {
   if (!path) return;
+
+  // Pre-compute per-operation load link indices so we can spread dashed lines.
+  // Group by source operation id: each load link gets an index and a count.
+  var loadByOp = {};
+  path.each(function(d) {
+    if (d.type !== 'load') return;
+    var opId = d.source.id;
+    if (!loadByOp[opId]) loadByOp[opId] = [];
+    loadByOp[opId].push(d);
+  });
+  for (var opId in loadByOp) {
+    var grp = loadByOp[opId];
+    // Sort by target resource y so the spread order is stable
+    grp.sort(function(a, b) { return a.target.y - b.target.y; });
+    for (var gi = 0; gi < grp.length; gi++) {
+      grp[gi]._loadIndex = gi;
+      grp[gi]._loadCount = grp.length;
+    }
+  }
+
   path.attr('d', function(d) {
     var sx = d.source.x;
     var sy = d.source.y;
@@ -691,6 +711,15 @@ function drawPaths() {
 
     var mx = (sx + tx) / 2;
     var my = (sy + ty) / 2;
+
+    // For load links sharing a source operation, spread control points vertically
+    // so the dashed lines fan out and don't overlap each other.
+    if (d.type === 'load' && d._loadCount > 1) {
+      var spreadTotal = 12 * (d._loadCount - 1);
+      var offset = -spreadTotal / 2 + d._loadIndex * 12;
+      my += offset;
+    }
+
     var cp1x = (sx + mx) / 2;
     var cp1y = my;
     var cp2x = (mx + tx) / 2;
@@ -866,48 +895,45 @@ function drawGraph(jsondata)
     }
   }
 
-  // Post-processing: ensure each buffer is to the left of its deepest consumer.
-  // For sub-operations (children of routing/alternate/split), the visual x position
-  // is based on the parent's level, so we use the parent's level when it is deeper.
-  for (var bufname in buffers) {
-    var bufidx = buffers[bufname];
-    var bufnode = nodes[bufidx];
-    var maxConsumerLevel = -Infinity;
-    for (var li = 0; li < links.length; li++) {
-      var lnk = links[li];
-      if (lnk.type !== 'flow') continue;
-      if (lnk.source.id !== bufnode.id) continue;
-      var consumer = lnk.target;
-      var effectiveLevel = consumer.level;
-      if (consumer.parent >= 0 && nodes[consumer.parent]) {
-        effectiveLevel = Math.max(effectiveLevel, nodes[consumer.parent].level);
-      }
-      if (effectiveLevel > maxConsumerLevel)
-        maxConsumerLevel = effectiveLevel;
-    }
-    if (maxConsumerLevel > -Infinity) {
-      var requiredLevel = maxConsumerLevel + 0.5;
-      if (bufnode.level < requiredLevel) {
-        bufnode.level = requiredLevel;
-        if (requiredLevel > maxlevel) maxlevel = requiredLevel;
-        if (requiredLevel < minlevel) minlevel = requiredLevel;
-      }
-    }
-  }
+  // Post-processing: ensure all arrows point left-to-right (source.level > target.level).
+  // Higher level = further left on screen. We iteratively bump source levels until no
+  // right-to-left arrows remain. For sub-operations, we adjust the parent instead since
+  // the child's visual position is derived from its parent.
+  var levelChanged = true;
+  var maxRelaxIter = 50;
+  while (levelChanged && maxRelaxIter-- > 0) {
+    levelChanged = false;
+    for (var li5 = 0; li5 < links.length; li5++) {
+      var lnk5 = links[li5];
+      if (lnk5.type !== 'flow' && lnk5.type !== 'depends') continue;
 
-  // Post-processing: ensure purchasing operations stay to the left of their buffer.
-  // After the buffer-level bump above, a buffer may have moved to a higher level than
-  // the itemsupplier that produces into it. Adjust the itemsupplier level accordingly.
-  for (var li4 = 0; li4 < links.length; li4++) {
-    var lnk4 = links[li4];
-    if (lnk4.type !== 'flow') continue;
-    if (lnk4.source.type !== 'itemsupplier') continue;
-    if (lnk4.target.type !== 'buffer') continue;
-    var requiredSupplierLevel = lnk4.target.level + 0.5;
-    if (lnk4.source.level < requiredSupplierLevel) {
-      lnk4.source.level = requiredSupplierLevel;
-      if (requiredSupplierLevel > maxlevel) maxlevel = requiredSupplierLevel;
-      if (requiredSupplierLevel < minlevel) minlevel = requiredSupplierLevel;
+      var src = lnk5.source;
+      var tgt = lnk5.target;
+
+      // Effective visual level: for sub-operations use parent level if higher
+      var srcLevel = src.level;
+      if (src.parent >= 0 && nodes[src.parent])
+        srcLevel = Math.max(srcLevel, nodes[src.parent].level);
+      var tgtLevel = tgt.level;
+      if (tgt.parent >= 0 && nodes[tgt.parent])
+        tgtLevel = Math.max(tgtLevel, nodes[tgt.parent].level);
+
+      if (srcLevel > tgtLevel) continue; // already left-to-right
+
+      // Minimum gap: 0.5 when one side is a buffer, 1 between two operations
+      var gap = (src.type === 'buffer' || tgt.type === 'buffer') ? 0.5 : 1;
+      var requiredLevel = tgtLevel + gap;
+
+      // Determine which node to actually bump (parent for sub-operations)
+      var nodeToFix = src;
+      if (src.parent >= 0 && nodes[src.parent])
+        nodeToFix = nodes[src.parent];
+
+      if (nodeToFix.level < requiredLevel) {
+        nodeToFix.level = requiredLevel;
+        if (requiredLevel > maxlevel) maxlevel = requiredLevel;
+        levelChanged = true;
+      }
     }
   }
 
@@ -1565,26 +1591,75 @@ function drawGraph(jsondata)
     resourceOps[rlink.target.id].push(rlink.source);
   }
 
-  function resourceOverlapScore(resNode, xPos, yPos) {
+  var placedResources = {};
+  function resourceOverlapScore(resNode, xPos, yPos, resOps) {
     var score = 0;
+    var resHW = nodeHalfW(resNode);
+    var resHH = nodeHalfH(resNode);
+
+    // Penalty for overlapping with other nodes
     for (var si = 0; si < nodes.length; si++) {
       var other = nodes[si];
       if (other.id === resNode.id || other.parent >= 0) continue;
-      if (other.type === 'resource') continue;
-      var hw = nodeHalfW(resNode) + nodeHalfW(other) + padding;
-      var hh = nodeHalfH(resNode) + nodeHalfH(other) + padding;
+      if (other.type === 'resource' && !placedResources[other.id]) continue;
+      var hw = resHW + nodeHalfW(other) + padding;
+      var hh = resHH + nodeHalfH(other) + padding;
       var ox = hw - Math.abs(xPos - other.x);
       var oy = hh - Math.abs(yPos - other.y);
       if (ox > 0 && oy > 0)
         score += ox * oy;
     }
+
+    // Penalty for crossing flow/depends arrow paths.
+    // Arrows are bezier curves from source to target; we approximate with
+    // a few linear samples and penalise if the resource box overlaps any.
+    var arrowClearance = resHH + 8;
+    for (var ali = 0; ali < links.length; ali++) {
+      var alnk = links[ali];
+      if (alnk.type !== 'flow' && alnk.type !== 'depends') continue;
+      // Skip links connected to this resource
+      if (alnk.source.id === resNode.id || alnk.target.id === resNode.id) continue;
+
+      var asx = alnk.source.x, asy = alnk.source.y;
+      var atx = alnk.target.x, aty = alnk.target.y;
+
+      // Quick x-range check: resource must be between source and target horizontally
+      var aMinX = Math.min(asx, atx);
+      var aMaxX = Math.max(asx, atx);
+      if (xPos + resHW < aMinX - padding || xPos - resHW > aMaxX + padding) continue;
+
+      // Sample the arrow y at the resource's x using linear interpolation
+      var adx = atx - asx;
+      if (Math.abs(adx) < 1) adx = (adx >= 0 ? 1 : -1);
+      var at = Math.max(0, Math.min(1, (xPos - asx) / adx));
+      var arrowY = asy + (aty - asy) * at;
+
+      var vertDist = Math.abs(arrowY - yPos);
+      if (vertDist < arrowClearance)
+        score += (arrowClearance - vertDist) * 10;
+    }
+
+    // Penalty for placing a resource at the same x-column as another already-placed
+    // resource. When two resources share the same x, their dashed load lines become
+    // visually indistinguishable (both vertical). Force horizontal separation.
+    var sameColumnClearance = nodeHalfW(resNode) * 3;
+    for (var sci = 0; sci < nodes.length; sci++) {
+      var scOther = nodes[sci];
+      if (scOther.id === resNode.id) continue;
+      if (scOther.type !== 'resource') continue;
+      if (!placedResources[scOther.id]) continue;
+      var xDist = Math.abs(xPos - scOther.x);
+      if (xDist < sameColumnClearance)
+        score += (sameColumnClearance - xDist) * 20;
+    }
+
     return score;
   }
 
   var resourceYOffsetStart = 30;
   var resourceYOffsetStep = 14;
-  var resourceYAttempts = 20;
-  var resourceXSteps = 5;
+  var resourceYAttempts = 40;
+  var resourceXSteps = 8;
   for (var rn = 0; rn < nodes.length; rn++) {
     var resNode = nodes[rn];
     if (resNode.type !== 'resource') continue;
@@ -1606,16 +1681,25 @@ function drawGraph(jsondata)
 
     // The next level to the right is at opX - width_level/2 (produced buffer column)
     var nextLevelX = opX - width_level / 2;
+    // Also try the other side (to the left of the operation on screen)
+    var prevLevelX = opX + width_level / 2;
     var isShared = ops.length > 1;
 
     var bestX = opX;
     var bestY = isShared ? (anchorY + resourceYOffsetStart) : (anchorY - resourceYOffsetStart);
     var bestScore = Number.POSITIVE_INFINITY;
 
-    // For non-shared resources: try above first at op's x, then shift right
-    // For shared resources: try below first, then above
-    for (var xStep = 0; xStep <= resourceXSteps; xStep++) {
-      var tryX = opX + (nextLevelX - opX) * (xStep / resourceXSteps) * 0.8;
+    // Try positions on both sides of the operation's x, fanning out
+    // xOffsets: [0, right1, left1, right2, left2, right3, left3, ...]
+    var xPositions = [opX];
+    for (var xsi = 1; xsi <= resourceXSteps; xsi++) {
+      var frac = (xsi / resourceXSteps) * 0.8;
+      xPositions.push(opX + (nextLevelX - opX) * frac);
+      xPositions.push(opX + (prevLevelX - opX) * frac);
+    }
+
+    for (var xpi = 0; xpi < xPositions.length; xpi++) {
+      var tryX = xPositions[xpi];
       for (var yAttempt = 0; yAttempt < resourceYAttempts; yAttempt++) {
         var yOffset = resourceYOffsetStart + yAttempt * resourceYOffsetStep;
         var positions;
@@ -1625,7 +1709,7 @@ function drawGraph(jsondata)
           positions = [anchorY - yOffset, anchorY + yOffset];
         for (var pi = 0; pi < positions.length; pi++) {
           var tryY = positions[pi];
-          var sc = resourceOverlapScore(resNode, tryX, tryY);
+          var sc = resourceOverlapScore(resNode, tryX, tryY, ops);
           if (sc < bestScore) {
             bestScore = sc;
             bestX = tryX;
@@ -1639,6 +1723,7 @@ function drawGraph(jsondata)
     }
     resNode.x = bestX;
     resNode.y = bestY;
+    placedResources[resNode.id] = true;
   }
 
   var topNodes = [];
@@ -1673,6 +1758,38 @@ function drawGraph(jsondata)
       }
     }
     if (!anyOverlap) break;
+  }
+
+  // Post-pass: nudge resources that ended up on top of arrow paths
+  for (var rp = 0; rp < 50; rp++) {
+    var anyArrowHit = false;
+    for (var rni = 0; rni < topNodes.length; rni++) {
+      var rn2 = topNodes[rni];
+      if (rn2.type !== 'resource') continue;
+      var rHH = nodeHalfH(rn2);
+      var rHW = nodeHalfW(rn2);
+      var arrowClr = rHH + 8;
+      for (var ali2 = 0; ali2 < links.length; ali2++) {
+        var al2 = links[ali2];
+        if (al2.type !== 'flow' && al2.type !== 'depends') continue;
+        if (al2.source.id === rn2.id || al2.target.id === rn2.id) continue;
+        var asx2 = al2.source.x, asy2 = al2.source.y;
+        var atx2 = al2.target.x, aty2 = al2.target.y;
+        var aMinX2 = Math.min(asx2, atx2);
+        var aMaxX2 = Math.max(asx2, atx2);
+        if (rn2.x + rHW < aMinX2 - padding || rn2.x - rHW > aMaxX2 + padding) continue;
+        var adx2 = atx2 - asx2;
+        if (Math.abs(adx2) < 1) adx2 = (adx2 >= 0 ? 1 : -1);
+        var at2 = Math.max(0, Math.min(1, (rn2.x - asx2) / adx2));
+        var arrowY2 = asy2 + (aty2 - asy2) * at2;
+        var vd2 = arrowY2 - rn2.y;
+        if (Math.abs(vd2) < arrowClr) {
+          rn2.y += (vd2 >= 0) ? -(arrowClr - Math.abs(vd2)) : (arrowClr - Math.abs(vd2));
+          anyArrowHit = true;
+        }
+      }
+    }
+    if (!anyArrowHit) break;
   }
 
   // Recompute child suboperation positions after parent adjustments

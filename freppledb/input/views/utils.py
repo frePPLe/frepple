@@ -1459,7 +1459,7 @@ class PathReport(GridReport):
                     )
 
         # First can we go further ?
-        if len(reportclass.node_count) > 400:
+        if len(reportclass.node_count) > 800:
             return
         opdetail = json.loads(i[14])
 

@@ -315,6 +315,11 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args,
         else
           throw DataException("Can't find constraint owner");
       }
+    } else if (cnstrnt_type == ConstraintOverdueDemand::metadata->type) {
+      Demand* obj = Demand::find(cnstrnt_owner);
+      if (!obj) throw DataException("Can't find constraint owner");
+      cnstrnt = dmd->getConstraints().push(ConstraintOverdueDemand::metadata,
+                                           obj, cnstrnt_start, cnstrnt_end);
     } else if (cnstrnt_type == ProblemSyncDemand::metadata->type) {
       Demand* obj = Demand::find(cnstrnt_owner);
       if (!obj) throw DataException("Can't find constraint owner");

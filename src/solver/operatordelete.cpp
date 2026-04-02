@@ -208,11 +208,12 @@ void OperatorDelete::solve(const Buffer* b, void*) {
   Buffer::flowplanlist::const_iterator fend = b->getFlowPlans().end();
   if (fiter == fend) return;  // There isn't a single flowplan in the buffer
 
+  /*
   // STEP 1: Remove shortages from the buffer
   // Delete the earliest unlocked consumer(s) after the start of a material
   // shortage.
-  // TODO: Do we keep this feature? It has dangerous side effects in datasets with
-  // unresolvable shortages. The plan quality is better without this.
+  // TODO: Do we keep this feature? It has dangerous side effects in datasets
+  // with unresolvable shortages. The plan quality is better without this.
   if (getConstrained()) {
     double unresolvable = 0.0;
 
@@ -312,10 +313,11 @@ void OperatorDelete::solve(const Buffer* b, void*) {
       }
     }
   }
+  */
 
   // STEP 2: Remove excess inventory at the end of the planning horizon.
-  // Delete the earliest unlocked producer(s) that leave(s) excess at any later
-  // point in the horizon.
+  // Delete the earliest unlocked producer(s) that leave(s) excess at any
+  // later point in the horizon.
   fiter = b->getFlowPlans().rbegin();
   if (fiter == fend) return;
   double excess =

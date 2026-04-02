@@ -320,8 +320,27 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args,
       if (!obj) throw DataException("Can't find constraint owner");
       cnstrnt = dmd->getConstraints().push(ProblemSyncDemand::metadata, obj,
                                            cnstrnt_start, cnstrnt_end);
+    } else if (cnstrnt_type ==
+               ConstraintManufacturingLeadTime::metadata->type) {
+      auto* obj = Operation::find(cnstrnt_owner);
+      if (!obj) throw DataException("Can't find constraint owner");
+      cnstrnt =
+          dmd->getConstraints().push(ConstraintManufacturingLeadTime::metadata,
+                                     obj, cnstrnt_start, cnstrnt_end);
+    } else if (cnstrnt_type == ConstraintDistributionLeadTime::metadata->type) {
+      auto* obj = Operation::find(cnstrnt_owner);
+      if (!obj) throw DataException("Can't find constraint owner");
+      cnstrnt =
+          dmd->getConstraints().push(ConstraintDistributionLeadTime::metadata,
+                                     obj, cnstrnt_start, cnstrnt_end);
+    } else if (cnstrnt_type == ConstraintPurchasingLeadTime::metadata->type) {
+      auto* obj = Operation::find(cnstrnt_owner);
+      if (!obj) throw DataException("Can't find constraint owner");
+      cnstrnt =
+          dmd->getConstraints().push(ConstraintPurchasingLeadTime::metadata,
+                                     obj, cnstrnt_start, cnstrnt_end);
     } else
-      throw DataException("Invalid constraint type");
+      throw DataException("Invalid constraint type '" + cnstrnt_type + "'");
     Py_IncRef(cnstrnt);
     return cnstrnt;
   } catch (...) {

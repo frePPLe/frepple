@@ -553,11 +553,7 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
         const_cast<Resource*>(dynamic_cast<const Resource*>(o)), st, nd, w,
         false);
     static_cast<ProblemCapacityOverload*>(p)->setKeep(keep);
-    if (oper)
-      static_cast<ProblemCapacityOverload*>(p)->setOperation(oper);
-    else
-      throw LogicException(
-          "Logging a capacity constraint should always be on an operation");
+    if (oper) static_cast<ProblemCapacityOverload*>(p)->setOperation(oper);
   } else if (m == ProblemMaterialShortage::metadata)
     p = new ProblemMaterialShortage(
         const_cast<Buffer*>(dynamic_cast<const Buffer*>(o)), st, nd, w, false);
@@ -583,6 +579,15 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
   } else if (m == ProblemSyncDemand::metadata)
     p = new ProblemSyncDemand(
         const_cast<Demand*>(dynamic_cast<const Demand*>(o)), st, nd);
+  else if (m == ConstraintDistributionLeadTime::metadata)
+    p = new ConstraintDistributionLeadTime(
+        const_cast<Operation*>(dynamic_cast<const Operation*>(o)), st, nd);
+  else if (m == ConstraintPurchasingLeadTime::metadata)
+    p = new ConstraintPurchasingLeadTime(
+        const_cast<Operation*>(dynamic_cast<const Operation*>(o)), st, nd);
+  else if (m == ConstraintManufacturingLeadTime::metadata)
+    p = new ConstraintManufacturingLeadTime(
+        const_cast<Operation*>(dynamic_cast<const Operation*>(o)), st, nd);
   else
     throw LogicException("Problem factory can't create this type of problem");
 

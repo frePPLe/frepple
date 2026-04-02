@@ -575,7 +575,8 @@ void SolverCreate::solve(const Operation* oper, void* v) {
   if (data->getSolver()->getBatchGrouping() &&
       (oper->getBatchWindow() > Duration(0L) ||
        data->state->q_date < Plan::instance().getCurrent()) &&
-      data->state->curBuffer) {
+      data->state->curBuffer &&
+      (!oper->getOwner() || !oper->getOwner()->hasType<OperationRouting>())) {
     auto requirement_in_window =
         min(-data->state->curBuffer->getOnHand(
                 data->state->q_date,
@@ -585,6 +586,9 @@ void SolverCreate::solve(const Operation* oper, void* v) {
             oper->getSizeMaximum());
     if (requirement_in_window > data->state->q_qty) {
       data->state->q_qty = requirement_in_window;
+      logger << indentlevel << "Quantity increased to " << data->state->q_qty
+             << " to group requirements within " << oper->getBatchWindow()
+             << "\n";
     }
   }
 
@@ -1064,6 +1068,25 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   } else
     // Using the routing as the delivery operation of a demand
     flow_qty_per = 1.0;
+
+  if (data->getSolver()->getBatchGrouping() &&
+      (oper->getBatchWindow() > Duration(0L) ||
+       data->state->q_date < Plan::instance().getCurrent()) &&
+      data->state->curBuffer) {
+    auto requirement_in_window =
+        min(-data->state->curBuffer->getOnHand(
+                data->state->q_date,
+                max(data->state->q_date, Plan::instance().getCurrent()) +
+                    oper->getBatchWindow(),
+                true, true),
+            oper->getSizeMaximum());
+    if (requirement_in_window > data->state->q_qty) {
+      data->state->q_qty = requirement_in_window;
+      logger << indentlevel << "Quantity increased to " << data->state->q_qty
+             << " to group requirements within " << oper->getBatchWindow()
+             << "\n";
+    }
+  }
 
   // Because we already took care of it... @todo not correct if the suboperation
   // is again a owning operation

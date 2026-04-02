@@ -483,28 +483,44 @@ function clickedShaped(d)
 
 function nodeTransform(d) {
   if (d.parent >= 0 && d.suboperindex >= 0) {
-    // Suboperation of a routing
+    // Suboperation of a routing — compute desired width (no scale transform)
     var parentnode = nodes[d.parent];
     var parentw = parentnode && parentnode.halfW ? (2 * parentnode.halfW) : 105;
     var cols = parentnode && parentnode.colnb > 0 ? parentnode.colnb : 1;
     var subops = parentnode && parentnode.numsuboperations > 0 ? parentnode.numsuboperations : 1;
     var subop_margin = 8;
     var pill_margin = 4;
+    var slot_w;
     if (d.rownb > 0) {
-      var slot_w = (parentw - 2 * subop_margin) / cols;
-      return 'translate(' + d.x + ' ' + d.y + ') scale(' + ((slot_w - 2 * pill_margin) / 104) + ' 1)';
+      slot_w = (parentw - 2 * subop_margin) / cols;
     } else {
-      var slot_w = (parentw - 2 * subop_margin) / subops;
-      return 'translate(' + d.x + ' ' + d.y + ') scale(' + ((slot_w - 2 * pill_margin) / 104) + ' 1)';
+      slot_w = (parentw - 2 * subop_margin) / subops;
     }
+    d._subopW = slot_w - 2 * pill_margin;
   }
   return 'translate(' + d.x + ' ' + d.y + ')';
+}
+
+function resizeSubopRects() {
+  if (!shapes) return;
+  shapes.each(function(d) {
+    if (d.parent >= 0 && d.suboperindex >= 0 && d._subopW) {
+      var rect = d3.select(this).select('rect.bg-rect');
+      if (!rect.empty()) {
+        rect.attr('width', d._subopW)
+            .attr('x', -d._subopW / 2)
+            .attr('rx', 13).attr('ry', 13);
+        d.halfW = d._subopW / 2;
+      }
+    }
+  });
 }
 
 function updateGraphGeometry()
 {
   if (shapes)
     shapes.attr('transform', nodeTransform);
+  resizeSubopRects();
   drawPaths();
   updateLevelControlPositions();
   if (routing_label_overlay)
@@ -599,24 +615,25 @@ function tick(e)
       d.y += (1000 - d.y) * k / 10;
     }
     if (d.parent >= 0 && d.suboperindex >= 0) {
-      // Suboperation of a routing
+      // Suboperation of a routing — compute desired width (no scale transform)
       var parentnode2 = nodes[d.parent];
       var parentw2 = parentnode2 && parentnode2.halfW ? (2 * parentnode2.halfW) : 105;
       var cols2 = parentnode2 && parentnode2.colnb > 0 ? parentnode2.colnb : 1;
       var subops2 = parentnode2 && parentnode2.numsuboperations > 0 ? parentnode2.numsuboperations : 1;
       var subop_margin2 = 8;
       var pill_margin2 = 4;
+      var slot_w2;
       if (d.rownb > 0) {
-        var slot_w2 = (parentw2 - 2 * subop_margin2) / cols2;
-        return 'translate(' + d.x + ' ' + d.y + ') scale(' + ((slot_w2 - 2 * pill_margin2) / 104) + ' 1)';
+        slot_w2 = (parentw2 - 2 * subop_margin2) / cols2;
       } else {
-        var slot_w2 = (parentw2 - 2 * subop_margin2) / subops2;
-        return 'translate(' + d.x + ' ' + d.y + ') scale(' + ((slot_w2 - 2 * pill_margin2) / 104) + ' 1)';
+        slot_w2 = (parentw2 - 2 * subop_margin2) / subops2;
       }
+      d._subopW = slot_w2 - 2 * pill_margin2;
 	}
-    else
       return 'translate(' + d.x + ' ' + d.y + ')';
     });
+
+  resizeSubopRects();
 
   // Gradually increase the repulsive charges between objects to "-2000 * object size"
   for (var i in e.charges)
@@ -938,6 +955,32 @@ function drawGraph(jsondata)
       }
     }
   }
+
+  // Compact levels: after relaxation, level numbers may have large gaps
+  // (e.g. 0, 0.5, 1, 1.5, 8, 8.5, 10, 10.5). Remap to a dense sequence
+  // (0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5) so unused levels don't waste space.
+  var uniqueLevels = {};
+  for (var ci2 = 0; ci2 < nodes.length; ci2++)
+    uniqueLevels[nodes[ci2].level] = true;
+  var sortedLevels = [];
+  for (var ul in uniqueLevels)
+    sortedLevels.push(parseFloat(ul));
+  sortedLevels.sort(function(a, b) { return a - b; });
+  var levelMap = {};
+  for (var li6 = 0; li6 < sortedLevels.length; li6++)
+    levelMap[sortedLevels[li6]] = li6 * 0.5;
+  for (var ci3 = 0; ci3 < nodes.length; ci3++)
+    nodes[ci3].level = levelMap[nodes[ci3].level];
+  // Remap the collapse-control level set to match compacted levels
+  var remapped_realdepth = {};
+  for (var rdl in realdepth_levels) {
+    var orig = parseFloat(rdl);
+    if (levelMap[orig] !== undefined)
+      remapped_realdepth[levelMap[orig]] = true;
+  }
+  realdepth_levels = remapped_realdepth;
+  minlevel = sortedLevels.length > 0 ? 0 : minlevel;
+  maxlevel = sortedLevels.length > 0 ? (sortedLevels.length - 1) * 0.5 : maxlevel;
 
   // Compute the initial horizontal position
   width = $("#graph").width();
@@ -1313,6 +1356,31 @@ function drawGraph(jsondata)
     d3.select(textEl).attr('x', 0);
   });
 
+  // After text measurement: if any node's pill width would overlap the
+  // adjacent level column, increase width_level and reposition all nodes.
+  var hSpacingPad = 20;  // minimum horizontal gap between a node edge and the next level center
+  var maxHalfW = 0;
+  for (var hwi = 0; hwi < nodes.length; hwi++) {
+    if (nodes[hwi].halfW && nodes[hwi].halfW > maxHalfW)
+      maxHalfW = nodes[hwi].halfW;
+  }
+  // Levels are spaced by width_level/2 for half-levels (buffer columns).
+  // A node centered at its level's x extends halfW in each direction.
+  // The adjacent half-level center is at width_level/2 away.
+  // We need: halfW + hSpacingPad < width_level / 2
+  var neededWidthLevel = (maxHalfW + hSpacingPad) * 2;
+  if (neededWidthLevel > width_level) {
+    width_level = neededWidthLevel;
+    for (var hwj = 0; hwj < nodes.length; hwj++)
+      nodes[hwj].x = width_level * (0.5 + maxlevel - nodes[hwj].level);
+    // Update SVG width to accommodate the new spacing
+    var newWidth = width_level * (maxlevel - minlevel + 1);
+    if (newWidth > width) {
+      width = newWidth;
+      d3.select('#svggraph').attr('width', width).attr('viewBox', '0 0 ' + width + ' 400');
+    }
+  }
+
   // Fix z-order for routing labels: collect routing/alternate/split nodes,
   // remove their text from inside the <g>, and re-add them in a top-level
   // overlay group that paints after all shapes.
@@ -1478,7 +1546,7 @@ function drawGraph(jsondata)
       grp[gi2].y = startY2 + gi2 * minSpacing;
   }
 
-  // Per-level collision resolution for buffers to enforce minimum spacing
+  // Per-level spacing for buffers — deterministic scan
   var bufsByLevel = {};
   for (var ni3 = 0; ni3 < nodes.length; ni3++) {
     var n3 = nodes[ni3];
@@ -1489,20 +1557,21 @@ function drawGraph(jsondata)
   }
   for (var bk2 in bufsByLevel) {
     var bgrp = bufsByLevel[bk2];
+    if (bgrp.length < 2) continue;
     bgrp.sort(function(a, b) { return a.y - b.y; });
-    for (var bp = 0; bp < 50; bp++) {
-      var anyBufOverlap = false;
-      for (var bj = 0; bj < bgrp.length - 1; bj++) {
-        var gap = bgrp[bj + 1].y - bgrp[bj].y;
-        if (gap < minSpacing) {
-          var shift = (minSpacing - gap) / 2;
-          bgrp[bj].y -= shift;
-          bgrp[bj + 1].y += shift;
-          anyBufOverlap = true;
-        }
-      }
-      if (!anyBufOverlap) break;
+    var bOrigMean = 0;
+    for (var bm = 0; bm < bgrp.length; bm++) bOrigMean += bgrp[bm].y;
+    bOrigMean /= bgrp.length;
+    for (var bj = 1; bj < bgrp.length; bj++) {
+      var bMinY = bgrp[bj - 1].y + minSpacing;
+      if (bgrp[bj].y < bMinY)
+        bgrp[bj].y = bMinY;
     }
+    var bNewMean = 0;
+    for (var bm2 = 0; bm2 < bgrp.length; bm2++) bNewMean += bgrp[bm2].y;
+    bNewMean /= bgrp.length;
+    var bDrift = bOrigMean - bNewMean;
+    for (var bm3 = 0; bm3 < bgrp.length; bm3++) bgrp[bm3].y += bDrift;
   }
 
   // Step 2 for producers feeding into buffers (itemsuppliers, operations, routings):
@@ -1543,24 +1612,24 @@ function drawGraph(jsondata)
     if (!producerByLevel[plk]) producerByLevel[plk] = [];
     producerByLevel[plk].push(pn);
   }
-  // Per-level collision resolution for all producers to enforce minimum spacing
-  // while preserving the buffer-derived sort order
+  // Per-level spacing for producers — deterministic scan
   for (var plk2 in producerByLevel) {
     var pgrp = producerByLevel[plk2];
+    if (pgrp.length < 2) continue;
     pgrp.sort(function(a, b) { return a.y - b.y; });
-    for (var pp = 0; pp < 50; pp++) {
-      var anyProdOverlap = false;
-      for (var pj = 0; pj < pgrp.length - 1; pj++) {
-        var pgap = pgrp[pj + 1].y - pgrp[pj].y;
-        if (pgap < minSpacing) {
-          var pshift = (minSpacing - pgap) / 2;
-          pgrp[pj].y -= pshift;
-          pgrp[pj + 1].y += pshift;
-          anyProdOverlap = true;
-        }
-      }
-      if (!anyProdOverlap) break;
+    var pOrigMean = 0;
+    for (var pm = 0; pm < pgrp.length; pm++) pOrigMean += pgrp[pm].y;
+    pOrigMean /= pgrp.length;
+    for (var pj = 1; pj < pgrp.length; pj++) {
+      var pMinY = pgrp[pj - 1].y + minSpacing;
+      if (pgrp[pj].y < pMinY)
+        pgrp[pj].y = pMinY;
     }
+    var pNewMean = 0;
+    for (var pm2 = 0; pm2 < pgrp.length; pm2++) pNewMean += pgrp[pm2].y;
+    pNewMean /= pgrp.length;
+    var pDrift = pOrigMean - pNewMean;
+    for (var pm3 = 0; pm3 < pgrp.length; pm3++) pgrp[pm3].y += pDrift;
   }
 
   // Step 3: 2D bounding-box collision resolution — push apart any overlapping nodes vertically
@@ -1581,8 +1650,10 @@ function drawGraph(jsondata)
     return 13;
   }
 
-  // Step 2b: place resources near their operation, preferring above/below at the
-  // operation's x. If overlapped, shift x rightward toward the next level (produced buffer).
+  // Step 2b: place resources near their operation(s).
+  // Single-op resource: prefer directly above, then above-right.
+  // Multi-op resource: prefer center of gravity of connected ops.
+  // Never overlap another element.
   var padding = 6;
   var resourceOps = {};
   for (var rl = 0; rl < links.length; rl++) {
@@ -1596,7 +1667,6 @@ function drawGraph(jsondata)
   var placedResources = {};
 
   // Compute the collapse-controls y-boundary so resources aren't placed on top of them.
-  // This mirrors the logic in updateLevelControlPositions().
   var controlsTopY = Infinity;
   for (var cti = 0; cti < nodes.length; cti++) {
     var ctn = nodes[cti];
@@ -1610,147 +1680,131 @@ function drawGraph(jsondata)
     }
     if (cny < controlsTopY) controlsTopY = cny;
   }
-  // The controls sit at controlsTopY - 40; the clickable circle has radius ~8
   var resourceMinY = isFinite(controlsTopY) ? (controlsTopY - 40 - 12) : -Infinity;
 
-  function resourceOverlapScore(resNode, xPos, yPos, resOps) {
-    var score = 0;
+  function resourceOverlaps(resNode, xPos, yPos) {
+    // Returns true if the resource at (xPos, yPos) overlaps any placed node
     var resHW = nodeHalfW(resNode);
     var resHH = nodeHalfH(resNode);
-
-    // Penalty for overlapping with other nodes
     for (var si = 0; si < nodes.length; si++) {
       var other = nodes[si];
       if (other.id === resNode.id || other.parent >= 0) continue;
       if (other.type === 'resource' && !placedResources[other.id]) continue;
       var hw = resHW + nodeHalfW(other) + padding;
       var hh = resHH + nodeHalfH(other) + padding;
-      var ox = hw - Math.abs(xPos - other.x);
-      var oy = hh - Math.abs(yPos - other.y);
-      if (ox > 0 && oy > 0)
-        score += ox * oy;
+      if (hw - Math.abs(xPos - other.x) > 0 && hh - Math.abs(yPos - other.y) > 0)
+        return true;
+      // Prevent two resources from sharing the same vertical line
+      if (other.type === 'resource' && placedResources[other.id]) {
+        var minXSep = resHW + nodeHalfW(other) + 40;
+        if (Math.abs(xPos - other.x) < minXSep)
+          return true;
+      }
     }
-
-    // Penalty for crossing flow/depends arrow paths.
-    // Arrows are bezier curves from source to target; we approximate with
-    // a few linear samples and penalise if the resource box overlaps any.
-    var arrowClearance = resHH + 8;
-    for (var ali = 0; ali < links.length; ali++) {
-      var alnk = links[ali];
-      if (alnk.type !== 'flow' && alnk.type !== 'depends') continue;
-      // Skip links connected to this resource
-      if (alnk.source.id === resNode.id || alnk.target.id === resNode.id) continue;
-
-      var asx = alnk.source.x, asy = alnk.source.y;
-      var atx = alnk.target.x, aty = alnk.target.y;
-
-      // Quick x-range check: resource must be between source and target horizontally
-      var aMinX = Math.min(asx, atx);
-      var aMaxX = Math.max(asx, atx);
-      if (xPos + resHW < aMinX - padding || xPos - resHW > aMaxX + padding) continue;
-
-      // Sample the arrow y at the resource's x using linear interpolation
-      var adx = atx - asx;
-      if (Math.abs(adx) < 1) adx = (adx >= 0 ? 1 : -1);
-      var at = Math.max(0, Math.min(1, (xPos - asx) / adx));
-      var arrowY = asy + (aty - asy) * at;
-
-      var vertDist = Math.abs(arrowY - yPos);
-      if (vertDist < arrowClearance)
-        score += (arrowClearance - vertDist) * 10;
-    }
-
-    // Penalty for placing a resource at the same x-column as another already-placed
-    // resource. When two resources share the same x, their dashed load lines become
-    // visually indistinguishable (both vertical). Force horizontal separation.
-    var sameColumnClearance = nodeHalfW(resNode) * 3;
-    for (var sci = 0; sci < nodes.length; sci++) {
-      var scOther = nodes[sci];
-      if (scOther.id === resNode.id) continue;
-      if (scOther.type !== 'resource') continue;
-      if (!placedResources[scOther.id]) continue;
-      var xDist = Math.abs(xPos - scOther.x);
-      if (xDist < sameColumnClearance)
-        score += (sameColumnClearance - xDist) * 20;
-    }
-
-    // Penalty for overlapping the collapse controls row
-    if (isFinite(resourceMinY)) {
-      var resTop = yPos - resHH;
-      if (resTop < resourceMinY)
-        score += (resourceMinY - resTop) * 50;
-    }
-
-    return score;
+    // Check collapse controls boundary
+    if (isFinite(resourceMinY) && (yPos - resHH) < resourceMinY)
+      return true;
+    return false;
   }
 
-  var resourceYOffsetStart = 30;
-  var resourceYOffsetStep = 14;
-  var resourceYAttempts = 40;
-  var resourceXSteps = 8;
   for (var rn = 0; rn < nodes.length; rn++) {
     var resNode = nodes[rn];
     if (resNode.type !== 'resource') continue;
     var ops = resourceOps[resNode.id] || [];
     if (!ops.length) continue;
 
-    // Compute anchor y from linked operations (use parent for sub-operations)
+    // Compute center of gravity of connected operations
     var anchorY = 0;
-    var opX = 0;
+    var anchorX = 0;
     for (var oi = 0; oi < ops.length; oi++) {
       var effOp = ops[oi];
       if (effOp.parent >= 0 && nodes[effOp.parent])
         effOp = nodes[effOp.parent];
       anchorY += effOp.y;
-      opX += effOp.x;
+      anchorX += effOp.x;
     }
     anchorY /= ops.length;
-    opX /= ops.length;
+    anchorX /= ops.length;
 
-    // The next level to the right is at opX - width_level/2 (produced buffer column)
-    var nextLevelX = opX - width_level / 2;
-    // Also try the other side (to the left of the operation on screen)
-    var prevLevelX = opX + width_level / 2;
-    var isShared = ops.length > 1;
-
-    var bestX = opX;
-    var bestY = isShared ? (anchorY + resourceYOffsetStart) : (anchorY - resourceYOffsetStart);
-    var bestScore = Number.POSITIVE_INFINITY;
-
-    // Try positions on both sides of the operation's x, fanning out
-    // xOffsets: [0, right1, left1, right2, left2, right3, left3, ...]
-    var xPositions = [opX];
-    for (var xsi = 1; xsi <= resourceXSteps; xsi++) {
-      var frac = (xsi / resourceXSteps) * 0.8;
-      xPositions.push(opX + (nextLevelX - opX) * frac);
-      xPositions.push(opX + (prevLevelX - opX) * frac);
+    // Build candidate positions, ordered by preference:
+    // For single-op: exhaust ALL above positions before trying below
+    // For multi-op: try above first at each step, then below
+    var candidates = [];
+    var ySteps = [152, 192, 232, 272, 320, 376, 440, 512, 600];
+    var xOffsets = [0];
+    // Add small x offsets toward the right (toward buffer column)
+    for (var xo = 1; xo <= 4; xo++) {
+      xOffsets.push(-xo * width_level * 0.1);  // right on screen (lower x = right)
+      xOffsets.push(xo * width_level * 0.1);   // left on screen
     }
 
-    for (var xpi = 0; xpi < xPositions.length; xpi++) {
-      var tryX = xPositions[xpi];
-      for (var yAttempt = 0; yAttempt < resourceYAttempts; yAttempt++) {
-        var yOffset = resourceYOffsetStart + yAttempt * resourceYOffsetStep;
-        var positions;
-        if (isShared)
-          positions = [anchorY + yOffset, anchorY - yOffset];
-        else
-          positions = [anchorY - yOffset, anchorY + yOffset];
-        for (var pi = 0; pi < positions.length; pi++) {
-          var tryY = positions[pi];
-          var sc = resourceOverlapScore(resNode, tryX, tryY, ops);
-          if (sc < bestScore) {
-            bestScore = sc;
-            bestX = tryX;
-            bestY = tryY;
-          }
-          if (bestScore === 0) break;
-        }
-        if (bestScore === 0) break;
+    var isSingleOp = (ops.length === 1);
+    if (isSingleOp) {
+      // Try ALL above positions first (all x offsets, all y steps)
+      for (var xi = 0; xi < xOffsets.length; xi++) {
+        var cx = anchorX + xOffsets[xi];
+        for (var yi = 0; yi < ySteps.length; yi++)
+          candidates.push({ x: cx, y: anchorY - ySteps[yi] });
       }
-      if (bestScore === 0) break;
+      // Then ALL below positions as last resort
+      for (var xi2 = 0; xi2 < xOffsets.length; xi2++) {
+        var cx2 = anchorX + xOffsets[xi2];
+        for (var yi2 = 0; yi2 < ySteps.length; yi2++)
+          candidates.push({ x: cx2, y: anchorY + ySteps[yi2] });
+      }
+    } else {
+      // Multi-op: above first at each (x, y) step, then below
+      for (var xi3 = 0; xi3 < xOffsets.length; xi3++) {
+        var cx3 = anchorX + xOffsets[xi3];
+        for (var yi3 = 0; yi3 < ySteps.length; yi3++) {
+          candidates.push({ x: cx3, y: anchorY - ySteps[yi3] });
+          candidates.push({ x: cx3, y: anchorY + ySteps[yi3] });
+        }
+      }
     }
-    resNode.x = bestX;
-    resNode.y = bestY;
+
+    // Pick the first candidate that doesn't overlap anything
+    var placed = false;
+    for (var ci = 0; ci < candidates.length; ci++) {
+      if (!resourceOverlaps(resNode, candidates[ci].x, candidates[ci].y)) {
+        resNode.x = candidates[ci].x;
+        resNode.y = candidates[ci].y;
+        placed = true;
+        break;
+      }
+    }
+    // Fallback: if all candidates overlap, pick the one with least overlap area
+    if (!placed) {
+      var bestScore = Number.POSITIVE_INFINITY;
+      var bestX = anchorX, bestY = anchorY - 28;
+      var resHW = nodeHalfW(resNode);
+      var resHH = nodeHalfH(resNode);
+      for (var ci2 = 0; ci2 < candidates.length; ci2++) {
+        var score = 0;
+        var cx2 = candidates[ci2].x, cy2 = candidates[ci2].y;
+        for (var si2 = 0; si2 < nodes.length; si2++) {
+          var other2 = nodes[si2];
+          if (other2.id === resNode.id || other2.parent >= 0) continue;
+          if (other2.type === 'resource' && !placedResources[other2.id]) continue;
+          var hw2 = resHW + nodeHalfW(other2) + padding;
+          var hh2 = resHH + nodeHalfH(other2) + padding;
+          var ovx2 = hw2 - Math.abs(cx2 - other2.x);
+          var ovy2 = hh2 - Math.abs(cy2 - other2.y);
+          if (ovx2 > 0 && ovy2 > 0)
+            score += ovx2 * ovy2;
+        }
+        // Add distance penalty to keep resources close
+        var dist = Math.abs(cx2 - anchorX) + Math.abs(cy2 - anchorY);
+        score += dist * 0.01;
+        if (score < bestScore) {
+          bestScore = score;
+          bestX = cx2;
+          bestY = cy2;
+        }
+      }
+      resNode.x = bestX;
+      resNode.y = bestY;
+    }
     placedResources[resNode.id] = true;
   }
 
@@ -1840,6 +1894,235 @@ function drawGraph(jsondata)
     } else {
       child.x = pnode.x;
       child.y = pnode.y + (child.suboperindex + pnode.numsuboperations + 1) * 30 - 5;
+    }
+  }
+
+  // Final pass: re-anchor each buffer to the average y of all its connected
+  // operations (consumers + producers), then propagate that position upstream
+  // to the producers feeding into the buffer.
+
+  // 1) Collect all connected operation y-values per buffer
+  var bufConnY = {};  // bufId -> array of operation y values
+  for (var fli = 0; fli < links.length; fli++) {
+    var flnk = links[fli];
+    if (flnk.type !== 'flow') continue;
+    var bufNode, opNode;
+    if (flnk.source.type === 'buffer') {
+      bufNode = flnk.source;
+      opNode = flnk.target;
+    } else if (flnk.target.type === 'buffer') {
+      bufNode = flnk.target;
+      opNode = flnk.source;
+    } else continue;
+    var opY = opNode.y;
+    if (opNode.parent >= 0 && nodes[opNode.parent])
+      opY = nodes[opNode.parent].y;
+    if (!bufConnY[bufNode.id]) bufConnY[bufNode.id] = [];
+    bufConnY[bufNode.id].push(opY);
+  }
+
+  // 2) Move each buffer to the average y of its connected operations
+  for (var bti = 0; bti < nodes.length; bti++) {
+    var btn = nodes[bti];
+    if (btn.type !== 'buffer') continue;
+    if (bufConnY[btn.id] && bufConnY[btn.id].length > 0) {
+      var yArr = bufConnY[btn.id];
+      btn.y = yArr.reduce(function(a, b) { return a + b; }, 0) / yArr.length;
+    }
+  }
+
+  // 3) Enforce minimum spacing between ALL top-level non-resource elements
+  //    on the same level. Uses deterministic placement: sort by y, then scan
+  //    and push each element down if it's too close to the previous one.
+  //    The group is then re-centered around its original mean y.
+  function enforcePerLevelSpacing() {
+    var elsByLevel = {};
+    for (var ei = 0; ei < nodes.length; ei++) {
+      var en = nodes[ei];
+      if (en.parent >= 0) continue;
+      if (en.type === 'resource') continue;
+      var elk = en.level;
+      if (!elsByLevel[elk]) elsByLevel[elk] = [];
+      elsByLevel[elk].push(en);
+    }
+    for (var elk2 in elsByLevel) {
+      var egrp = elsByLevel[elk2];
+      if (egrp.length < 2) continue;
+      egrp.sort(function(a, b) { return a.y - b.y; });
+      // Remember original center
+      var origMean = 0;
+      for (var em = 0; em < egrp.length; em++) origMean += egrp[em].y;
+      origMean /= egrp.length;
+      // Deterministic scan: ensure each element is at least minSpacing from previous
+      for (var ej = 1; ej < egrp.length; ej++) {
+        var minY = egrp[ej - 1].y + minSpacing;
+        if (egrp[ej].y < minY)
+          egrp[ej].y = minY;
+      }
+      // Re-center the group around the original mean
+      var newMean = 0;
+      for (var em2 = 0; em2 < egrp.length; em2++) newMean += egrp[em2].y;
+      newMean /= egrp.length;
+      var drift = origMean - newMean;
+      for (var em3 = 0; em3 < egrp.length; em3++) egrp[em3].y += drift;
+    }
+  }
+  enforcePerLevelSpacing();
+
+  // 4) Propagate buffer positions upstream: move each producer to match the
+  //    average y of the buffer(s) it produces into.
+  //    This covers itemsuppliers, itemdistributions, and operations/routings.
+  var prodBufYFinal = {};   // producerId -> [buffer y values]
+  var prodNodeFinal = {};   // producerId -> node reference
+  for (var pli = 0; pli < links.length; pli++) {
+    var plnk = links[pli];
+    if (plnk.type !== 'flow') continue;
+    if (plnk.target.type !== 'buffer') continue;
+    var prodOp = plnk.source;
+    // For sub-operations, adjust the parent
+    if (prodOp.parent >= 0 && nodes[prodOp.parent])
+      prodOp = nodes[prodOp.parent];
+    if (!prodBufYFinal[prodOp.id]) prodBufYFinal[prodOp.id] = [];
+    prodBufYFinal[prodOp.id].push(plnk.target.y);
+    prodNodeFinal[prodOp.id] = prodOp;
+  }
+  for (var ppid in prodNodeFinal) {
+    var ppn = prodNodeFinal[ppid];
+    if (ppn.parent >= 0) continue;  // skip sub-operations
+    var pbys = prodBufYFinal[ppn.id];
+    if (pbys && pbys.length > 0)
+      ppn.y = pbys.reduce(function(a, b) { return a + b; }, 0) / pbys.length;
+  }
+
+  // 5) Enforce minimum spacing among ALL top-level non-resource nodes per level
+  //    after producers have been repositioned.
+  enforcePerLevelSpacing();
+
+  // 6) Recompute child suboperation positions for any moved parent
+  for (var ci2 = 0; ci2 < nodes.length; ci2++) {
+    var child2 = nodes[ci2];
+    if (child2.parent < 0) continue;
+    var pnode2 = nodes[child2.parent];
+    if (!pnode2) continue;
+    if (child2.suboperindex >= 0) {
+      var pw2 = pnode2.halfW ? (2 * pnode2.halfW) : 105;
+      var hpw2 = pw2 / 2;
+      var sm2 = 8;
+      if (child2.rownb > 0) {
+        child2.y = pnode2.y - 40 + sm2 + (child2.rownb - 0.5) * (80 - 2*sm2) / pnode2.rownb;
+        child2.x = pnode2.x - hpw2 + sm2 + (child2.colnb - 0.5) * (pw2 - 2*sm2) / pnode2.colnb;
+      } else {
+        child2.y = pnode2.y;
+        child2.x = pnode2.x - hpw2 + sm2 + (child2.suboperindex - 0.5) * (pw2 - 2*sm2) / pnode2.numsuboperations;
+      }
+    } else {
+      child2.x = pnode2.x;
+      child2.y = pnode2.y + (child2.suboperindex + pnode2.numsuboperations + 1) * 30 - 5;
+    }
+  }
+
+  // 7) Full 2D bounding-box collision resolution to restore vertical margins
+  //    between all top-level elements after repositioning.
+  //    Use minSpacing/2 as the vertical half-gap so that the total distance
+  //    between node centers is at least minSpacing.
+  var halfGap = minSpacing / 2;
+  for (var pass3 = 0; pass3 < 100; pass3++) {
+    var anyOvlp3 = false;
+    for (var ai3 = 0; ai3 < topNodes.length; ai3++) {
+      for (var bi3 = ai3 + 1; bi3 < topNodes.length; bi3++) {
+        var na3 = topNodes[ai3];
+        var nb3 = topNodes[bi3];
+        var ovX3 = (nodeHalfW(na3) + nodeHalfW(nb3) + padding) - Math.abs(na3.x - nb3.x);
+        var ovY3 = (nodeHalfH(na3) + nodeHalfH(nb3) + halfGap) - Math.abs(na3.y - nb3.y);
+        if (ovX3 > 0 && ovY3 > 0) {
+          if (na3.type === 'resource' && nb3.type !== 'resource') {
+            na3.y += (na3.y <= nb3.y) ? -ovY3 : ovY3;
+          }
+          else if (nb3.type === 'resource' && na3.type !== 'resource') {
+            nb3.y += (nb3.y <= na3.y) ? -ovY3 : ovY3;
+          }
+          else if (na3.y <= nb3.y) {
+            na3.y -= ovY3 / 2;
+            nb3.y += ovY3 / 2;
+          }
+          else {
+            na3.y += ovY3 / 2;
+            nb3.y -= ovY3 / 2;
+          }
+          anyOvlp3 = true;
+        }
+      }
+    }
+    if (!anyOvlp3) break;
+  }
+
+  // 8) Recompute child suboperation positions once more after collision fixes
+  for (var ci3 = 0; ci3 < nodes.length; ci3++) {
+    var child3 = nodes[ci3];
+    if (child3.parent < 0) continue;
+    var pnode3 = nodes[child3.parent];
+    if (!pnode3) continue;
+    if (child3.suboperindex >= 0) {
+      var pw3 = pnode3.halfW ? (2 * pnode3.halfW) : 105;
+      var hpw3 = pw3 / 2;
+      var sm3 = 8;
+      if (child3.rownb > 0) {
+        child3.y = pnode3.y - 40 + sm3 + (child3.rownb - 0.5) * (80 - 2*sm3) / pnode3.rownb;
+        child3.x = pnode3.x - hpw3 + sm3 + (child3.colnb - 0.5) * (pw3 - 2*sm3) / pnode3.colnb;
+      } else {
+        child3.y = pnode3.y;
+        child3.x = pnode3.x - hpw3 + sm3 + (child3.suboperindex - 0.5) * (pw3 - 2*sm3) / pnode3.numsuboperations;
+      }
+    } else {
+      child3.x = pnode3.x;
+      child3.y = pnode3.y + (child3.suboperindex + pnode3.numsuboperations + 1) * 30 - 5;
+    }
+  }
+
+  // 9) Final resource re-placement: ensure every resource is above its
+  //    connected operation(s) and does not overlap any other element.
+  //    Post-processing passes may have pushed resources below.
+  for (var rfn = 0; rfn < nodes.length; rfn++) {
+    var rfRes = nodes[rfn];
+    if (rfRes.type !== 'resource') continue;
+    var rfOps = resourceOps[rfRes.id] || [];
+    if (!rfOps.length) continue;
+    // Compute anchor from connected operations
+    var rfAnchorY = 0, rfAnchorX = 0;
+    for (var rfoi = 0; rfoi < rfOps.length; rfoi++) {
+      var rfEff = rfOps[rfoi];
+      if (rfEff.parent >= 0 && nodes[rfEff.parent])
+        rfEff = nodes[rfEff.parent];
+      rfAnchorY += rfEff.y;
+      rfAnchorX += rfEff.x;
+    }
+    rfAnchorY /= rfOps.length;
+    rfAnchorX /= rfOps.length;
+    // If resource is at or below its operation, re-place it above
+    if (rfRes.y >= rfAnchorY - 80) {
+      var rfYSteps = [152, 192, 232, 272, 320, 376, 440, 512, 600];
+      var rfXOffsets = [0];
+      for (var rfxo = 1; rfxo <= 4; rfxo++) {
+        rfXOffsets.push(-rfxo * width_level * 0.1);
+        rfXOffsets.push(rfxo * width_level * 0.1);
+      }
+      var rfPlaced = false;
+      for (var rfxi = 0; rfxi < rfXOffsets.length; rfxi++) {
+        var rfCx = rfAnchorX + rfXOffsets[rfxi];
+        for (var rfyi = 0; rfyi < rfYSteps.length; rfyi++) {
+          var rfTryY = rfAnchorY - rfYSteps[rfyi];
+          if (!resourceOverlaps(rfRes, rfCx, rfTryY)) {
+            rfRes.x = rfCx;
+            rfRes.y = rfTryY;
+            rfPlaced = true;
+            break;
+          }
+        }
+        if (rfPlaced) break;
+      }
+      // If still can't place above without overlap, at least push above anchor
+      if (!rfPlaced)
+        rfRes.y = rfAnchorY - 152;
     }
   }
 

@@ -927,6 +927,8 @@ class SolverCreate : public Solver {
 
     void unmaskTemporaryShortages();
 
+    void backward_sweep();
+
     void scanExcess(bool constrained);
 
     /* Pointer to the command manager. */

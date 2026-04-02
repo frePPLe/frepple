@@ -334,36 +334,7 @@ void SolverCreate::SolverData::commit() {
 
       // Step 3: Solve buffer by buffer, ordered by level
       buffer_solve_shortages_only = false;
-      for (short lvl = -1; lvl <= HasLevel::getNumberOfLevels(); ++lvl) {
-        // Propagate through this level of buffers
-        for (auto& b : Buffer::all()) {
-          if (b.getLevel() != lvl ||
-              (cluster != -1 && cluster != b.getCluster()))
-            // Not your turn yet...
-            continue;
-
-          // Given the demand, ROQ and safety stock, we resolve the shortage
-          // with an unconstrained propagation to the next level.
-          state->curBuffer = nullptr;
-          state->q_qty = -1.0;
-          state->q_date = Date::infinitePast;
-          state->a_cost = 0.0;
-          state->a_penalty = 0.0;
-          state->curDemand = nullptr;
-          state->curOwnerOpplan = nullptr;
-          state->blockedOpplan = nullptr;
-          state->dependency = nullptr;
-          state->a_qty = 0;
-          try {
-            b.solve(*solver, this);
-            getCommandManager()->commit();
-          } catch (const exception& e) {
-            logger << "Error propagating through buffer '" << b
-                   << "': " << e.what() << '\n';
-            getCommandManager()->rollback();
-          }
-        }
-      }
+      backward_sweep();
 
       // Clean up excess inventory
       scanExcess(false);
@@ -588,6 +559,39 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver,
     }
   if (getLogLevel() > 0) logger << "Finished safety stock replenishment pass\n";
   safety_stock_planning = false;
+}
+
+void SolverCreate::SolverData::backward_sweep() {
+  auto* solver = getSolver();
+  for (short lvl = -1; lvl <= HasLevel::getNumberOfLevels(); ++lvl) {
+    // Propagate through this level of buffers
+    for (auto& b : Buffer::all()) {
+      if (b.getLevel() != lvl || (cluster != -1 && cluster != b.getCluster()))
+        // Not your turn yet...
+        continue;
+
+      // Given the demand, ROQ and safety stock, we resolve the shortage
+      // with an unconstrained propagation to the next level.
+      state->curBuffer = nullptr;
+      state->q_qty = -1.0;
+      state->q_date = Date::infinitePast;
+      state->a_cost = 0.0;
+      state->a_penalty = 0.0;
+      state->curDemand = nullptr;
+      state->curOwnerOpplan = nullptr;
+      state->blockedOpplan = nullptr;
+      state->dependency = nullptr;
+      state->a_qty = 0;
+      try {
+        b.solve(*solver, this);
+        getCommandManager()->commit();
+      } catch (const exception& e) {
+        logger << "Error propagating through buffer '" << b << "': "
+               << e.what() << '\n';
+        getCommandManager()->rollback();
+      }
+    }
+  }
 }
 
 void SolverCreate::SolverData::scanExcess(bool constrained) {

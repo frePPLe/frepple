@@ -219,6 +219,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <xsd:element name="detectproblems" type="xsd:boolean" />
       <xsd:element name="posttime" type="xsd:duration" />
       <xsd:element name="fence" type="xsd:duration" />
+      <xsd:element name="batchwindow" type="xsd:duration" />
       <xsd:element name="size_minimum" type="positiveDouble" />
       <xsd:element name="size_minimum_calendar" type="calendar" />
       <xsd:element name="size_multiple" type="positiveDouble" />
@@ -231,6 +232,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <xsd:element name="available" type="calendar" />
       <xsd:element name="search" type="search" />
       <xsd:element name="nolocationcalendar" type="xsd:boolean" />
+	  <xsd:element name="resetshelflife" type="xsd:boolean" />
       <xsd:element name="dependencies">
         <xsd:complexType>
           <xsd:sequence>
@@ -244,6 +246,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <xsd:attribute name="detectproblems" type="xsd:boolean" />
     <xsd:attribute name="posttime" type="xsd:duration" />
     <xsd:attribute name="fence" type="xsd:duration" />
+    <xsd:attribute name="batchwindow" type="xsd:duration" />
     <xsd:attribute name="size_minimum" type="positiveDouble" />
     <xsd:attribute name="size_multiple" type="positiveDouble" />
     <xsd:attribute name="size_maximum" type="positiveDouble" />

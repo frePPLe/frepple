@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <name>Test model for effective operations</name>
   <description>
@@ -675,6 +675,236 @@
     </operationplan>
   </operationplans>
 
+  <!-- Case 6: MO without grouping, PO with grouping -->
+  <operations>
+    <operation name="6. operation">
+      <item name="6. item"/>
+      <location name="factory"/>
+      <flows>
+        <flow>
+          <item name="6. component"/>
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <duration>P1D</duration>
+    </operation>
+  </operations>
+  <suppliers>
+    <supplier name="6. supplier">
+      <itemsuppliers>
+        <itemsupplier>
+          <item name="6. component"/>
+          <leadtime>P7D</leadtime>
+          <priority>2</priority>
+          <batchwindow>P30D</batchwindow>
+          <size_minimum>10</size_minimum>
+          <size_multiple>5</size_multiple>
+        </itemsupplier>
+      </itemsuppliers>
+    </supplier>
+  </suppliers>
+  <demands>
+    <demand name="6. order 1">
+      <quantity>6</quantity>
+      <due>2021-01-01T00:00:00</due>
+      <item name="6. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="6. order 2">
+      <quantity>6</quantity>
+      <due>2021-01-08T00:00:00</due>
+      <item name="6. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="6. order 3">
+      <quantity>6</quantity>
+      <due>2021-01-15T00:00:00</due>
+      <item name="6. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="6. order 4">
+      <quantity>6</quantity>
+      <due>2021-01-22T00:00:00</due>
+      <item name="6. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="6. order 5">
+      <quantity>6</quantity>
+      <due>2021-01-29T00:00:00</due>
+      <item name="6. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="6. order 6">
+      <quantity>6</quantity>
+      <due>2021-02-05T00:00:00</due>
+      <item name="6. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="6. order 7">
+      <quantity>6</quantity>
+      <due>2021-02-12T00:00:00</due>
+      <item name="6. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="6. order 8">
+      <quantity>6</quantity>
+      <due>2021-02-19T00:00:00</due>
+      <item name="6. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="6. order 9">
+      <quantity>6</quantity>
+      <due>2021-02-26T00:00:00</due>
+      <item name="6. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="6. order 10">
+      <quantity>6</quantity>
+      <due>2021-03-05T00:00:00</due>
+      <item name="6. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="6. order 11">
+      <quantity>6</quantity>
+      <due>2021-03-12T00:00:00</due>
+      <item name="6. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="6. order 12">
+      <quantity>6</quantity>
+      <due>2021-03-19T00:00:00</due>
+      <item name="6. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="6. order 13">
+      <quantity>6</quantity>
+      <due>2021-03-26T00:00:00</due>
+      <item name="6. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="6. order 14">
+      <quantity>6</quantity>
+      <due>2021-04-07T00:00:00</due>
+      <item name="6. item" />
+      <location name="factory"/>
+    </demand>
+  </demands>
+
+  <!-- Case 7: MO and PO with grouping -->
+  <operations>
+    <operation name="7. operation">
+      <item name="7. item"/>
+      <location name="factory"/>
+      <batchwindow>P20D</batchwindow>
+      <flows>
+        <flow>
+          <item name="7. component"/>
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <duration>P1D</duration>
+    </operation>
+  </operations>
+  <suppliers>
+    <supplier name="7. supplier">
+      <itemsuppliers>
+        <itemsupplier>
+          <item name="7. component"/>
+          <leadtime>P7D</leadtime>
+          <priority>2</priority>
+          <batchwindow>P30D</batchwindow>
+          <size_minimum>10</size_minimum>
+          <size_multiple>5</size_multiple>
+        </itemsupplier>
+      </itemsuppliers>
+    </supplier>
+  </suppliers>
+  <demands>
+    <demand name="7. order 1">
+      <quantity>6</quantity>
+      <due>2021-01-01T00:00:00</due>
+      <item name="7. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="7. order 2">
+      <quantity>6</quantity>
+      <due>2021-01-08T00:00:00</due>
+      <item name="7. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="7. order 3">
+      <quantity>6</quantity>
+      <due>2021-01-15T00:00:00</due>
+      <item name="7. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="7. order 4">
+      <quantity>6</quantity>
+      <due>2021-01-22T00:00:00</due>
+      <item name="7. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="7. order 5">
+      <quantity>6</quantity>
+      <due>2021-01-29T00:00:00</due>
+      <item name="7. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="7. order 6">
+      <quantity>6</quantity>
+      <due>2021-02-05T00:00:00</due>
+      <item name="7. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="7. order 7">
+      <quantity>6</quantity>
+      <due>2021-02-12T00:00:00</due>
+      <item name="7. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="7. order 8">
+      <quantity>6</quantity>
+      <due>2021-02-19T00:00:00</due>
+      <item name="7. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="7. order 9">
+      <quantity>6</quantity>
+      <due>2021-02-26T00:00:00</due>
+      <item name="7. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="7. order 10">
+      <quantity>6</quantity>
+      <due>2021-03-05T00:00:00</due>
+      <item name="7. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="7. order 11">
+      <quantity>6</quantity>
+      <due>2021-03-12T00:00:00</due>
+      <item name="7. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="7. order 12">
+      <quantity>6</quantity>
+      <due>2021-03-19T00:00:00</due>
+      <item name="7. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="7. order 13">
+      <quantity>6</quantity>
+      <due>2021-03-26T00:00:00</due>
+      <item name="7. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="7. order 14">
+      <quantity>6</quantity>
+      <due>2021-04-07T00:00:00</due>
+      <item name="7. item" />
+      <location name="factory"/>
+    </demand>
+  </demands>
 
   <?python
 print("CREATING CONSTRAINED PLAN")

@@ -467,15 +467,20 @@ function clickedLevelCollapseControl(d, direction)
   toggleCollapsedLevel(d.level, direction);
 }
 
+function isNonClickableOperationType(type)
+{
+  return ['purchase', 'itemsupplier', 'itemdistribution', 'itemdistribution_alternate'].includes(type);
+}
+
 function clickedShaped(d)
 {
   if (
   	d.hasOwnProperty('type')
-  	&& ['routing',  'purchase', 'itemsupplier', 'itemdistribution'].includes(d.type)
+	  	&& isNonClickableOperationType(d.type)
   	)
     return; // Don't show links for non existing operations
   window.open(
-  	url_prefix + '/detail/input/' + d.type.replace('_alternate', '') + '/' + admin_escape(d.name) +'/',
+  	url_prefix + '/detail/input/' + d.type.replace('_alternate', '') .replace('routing','operation')+ '/' + admin_escape(d.name) +'/',
   	"_self"
   	);
 }
@@ -1084,7 +1089,7 @@ function drawGraph(jsondata)
    .attr('height', 26)
    .attr('width', 104)          // default; will be resized after text measurement
    .attr('x', -52).attr('y', -13)
-   .style('cursor', 'pointer')
+  .style('cursor', function(d) { return isNonClickableOperationType(d.type) ? 'default' : 'pointer'; })
    .style('fill', function(d) {
       if (d.type === 'operation') return '#2563eb';
       if (d.type === 'operation_alternate') return '#60a5fa';

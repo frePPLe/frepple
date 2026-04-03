@@ -56,6 +56,7 @@ import { Location } from '../models/location.js';
 import { Customer } from '../models/customer.js';
 import { forecastService } from '../services/forecastService.js';
 import { toRaw } from "vue";
+import {i18n} from "@/i18n/i18n.js";
 
 export const useForecastsStore = defineStore('forecasts', {
   state: () => ({
@@ -317,6 +318,8 @@ export const useForecastsStore = defineStore('forecasts', {
       const { loading, backendError, responseData } = result;
       this.loading = loading;
 
+      const ttt = i18n.global.t;
+
       if (backendError) {
         throw new Error(backendError.value.message || 'API Error');
       }
@@ -326,7 +329,8 @@ export const useForecastsStore = defineStore('forecasts', {
 
         this.item.update(data['attributes']['item']);
         if (this.itemTree[0] && this.itemTree[0].item === this.item.Name) {
-          this.itemTree[0].description = data['attributes']['item'].filter(x => x[0] === 'Description')[0][1];
+          const desc = data['attributes']['item'].find(x => [ttt('Description').toLowerCase(), 'description'].includes(x[0].toLowerCase()));
+          if (desc) this.itemTree[0].description = desc[1];
         }
 
         this.location.update(data['attributes']['location']);
@@ -627,6 +631,8 @@ export const useForecastsStore = defineStore('forecasts', {
     async getForecastDetails(itemName = null, locationName = null, customerName = null) {
       this.error = null;
 
+      const ttt = i18n.global.t;
+
       try {
         const result = await forecastService.getForecastDetails(this.currentMeasure, itemName, locationName, customerName);
 
@@ -642,7 +648,10 @@ export const useForecastsStore = defineStore('forecasts', {
 
           this.item.update(result['attributes']['item']);
           // set the description in the item selection card in the top of the screen in case it is null (url as filter)
-          if (this.itemTree[0].item === this.item.Name) this.itemTree[0].description = result['attributes']['item'].filter(x => x[0] === 'Description')[0][1];
+          if (this.itemTree[0].item === this.item.Name) {
+            const desc = result['attributes']['item'].find(x => [ttt('Description').toLowerCase(), 'description'].includes(x[0].toLowerCase()));
+            if (desc) this.itemTree[0].description = desc[1];
+          }
 
           this.location.update(result['attributes']['location']);
           this.customer.update(result['attributes']['customer']);

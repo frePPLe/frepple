@@ -131,7 +131,7 @@ var visible_nodes = {};
 
 function isOperationNode(d)
 {
-  return d && ['operation', 'operation_alternate', 'routing', 'split', 'alternate'].includes(d.type);
+  return d && ['operation', 'operation_alternate', 'routing', 'split', 'alternate', 'itemsupplier', 'itemdistribution', 'itemdistribution_alternate'].includes(d.type);
 }
 
 function collectReachable(nodeid, reverse)
@@ -280,6 +280,41 @@ function hideResourcesOfHiddenNodes(hidden_nodes, preserve_visible)
   return hidden_nodes;
 }
 
+function hideOperationsWithAllBuffersHidden(hidden_nodes, preserve_visible)
+{
+  var changed = true;
+  while (changed) {
+    changed = false;
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      if (hidden_nodes[node.id]) continue;
+      if (preserve_visible && preserve_visible[node.id]) continue;
+      if (!isOperationNode(node)) continue;
+      var has_any_buffer = false;
+      var all_buffers_hidden = true;
+      for (var j = 0; j < links.length; j++) {
+        if (links[j].type != 'flow') continue;
+        var buf = null;
+        if (links[j].source.id == node.id && links[j].target.type == 'buffer')
+          buf = links[j].target;
+        else if (links[j].target.id == node.id && links[j].source.type == 'buffer')
+          buf = links[j].source;
+        if (!buf) continue;
+        has_any_buffer = true;
+        if (!hidden_nodes[buf.id]) {
+          all_buffers_hidden = false;
+          break;
+        }
+      }
+      if (has_any_buffer && all_buffers_hidden) {
+        hidden_nodes[node.id] = true;
+        changed = true;
+      }
+    }
+  }
+  return hidden_nodes;
+}
+
 function markSeedResourcesPreserved(seed_ids, preserve_visible)
 {
   for (var j = 0; j < links.length; j++) {
@@ -372,18 +407,19 @@ function applyVisibilityFilters()
   if (effective_upstream !== null) {
       var hidden_upstream = {};
       var upstream_seeds = getLevelSeedIds(effective_upstream);
+      // Preserve all nodes at the button's own level
+      for (var seed in upstream_seeds)
+        preserve_visible[seed] = true;
+      // Only hide nodes strictly upstream of the button's level
       for (var seed in upstream_seeds) {
-        var seednode = nodes[parseInt(seed)];
-        if (seednode && seednode.type != 'buffer' && seednode.type != 'resource')
-          preserve_visible[seed] = true;
         var seed_hidden_upstream = collectReachable(parseInt(seed), true);
         for (var nodeid in seed_hidden_upstream)
-          hidden_upstream[nodeid] = true;
+          if (!upstream_seeds[nodeid])
+            hidden_upstream[nodeid] = true;
       }
-      markSeedResourcesPreserved(upstream_seeds, preserve_visible);
-      markSeedProducedBuffersPreserved(upstream_seeds, preserve_visible);
       hidden_upstream = expandHiddenWithRoutingFamilies(hidden_upstream, true);
       hidden_upstream = hideBuffersOfHiddenProducers(hidden_upstream, preserve_visible);
+      hidden_upstream = hideOperationsWithAllBuffersHidden(hidden_upstream, preserve_visible);
       hidden_upstream = hideResourcesOfHiddenNodes(hidden_upstream, preserve_visible);
       for (var nodeid in hidden_upstream)
         if (!preserve_visible[nodeid]) visible_nodes[nodeid] = false;
@@ -393,24 +429,25 @@ function applyVisibilityFilters()
       var hidden_downstream = {};
       var downstream_seeds = getLevelSeedIds(effective_downstream);
       var preserve_upstream_path = {};
+      // Preserve all nodes at the button's own level
       for (var seed2 in downstream_seeds) {
-        var seednode2 = nodes[parseInt(seed2)];
-        if (seednode2 && seednode2.type != 'buffer' && seednode2.type != 'resource')
-          preserve_visible[seed2] = true;
-        var seed_hidden_downstream = collectReachable(parseInt(seed2), false);
-        for (var nodeid2 in seed_hidden_downstream)
-          hidden_downstream[nodeid2] = true;
-
+        preserve_visible[seed2] = true;
         var seed_upstream_path = collectReachable(parseInt(seed2), true);
         for (var upstreamid in seed_upstream_path)
           preserve_upstream_path[upstreamid] = true;
       }
-      markSeedResourcesPreserved(downstream_seeds, preserve_visible);
-      hideSeedProducedBuffers(downstream_seeds, hidden_downstream);
+      // Only hide nodes strictly downstream of the button's level
+      for (var seed2 in downstream_seeds) {
+        var seed_hidden_downstream = collectReachable(parseInt(seed2), false);
+        for (var nodeid2 in seed_hidden_downstream)
+          if (!downstream_seeds[nodeid2])
+            hidden_downstream[nodeid2] = true;
+      }
       hidden_downstream = expandHiddenWithRoutingFamilies(hidden_downstream, false);
       hidden_downstream = hideHiddenOperationUpstreams(hidden_downstream, preserve_upstream_path);
       hidden_downstream = hideHiddenRoutingUpstreamBuffers(hidden_downstream, preserve_upstream_path);
       hidden_downstream = hideBuffersOfHiddenProducers(hidden_downstream, preserve_visible);
+      hidden_downstream = hideOperationsWithAllBuffersHidden(hidden_downstream, preserve_visible);
       hidden_downstream = hideResourcesOfHiddenNodes(hidden_downstream, preserve_visible);
       for (var nodeid2 in hidden_downstream)
         if (!preserve_visible[nodeid2]) visible_nodes[nodeid2] = false;
@@ -539,12 +576,10 @@ function updateLevelControlPositions()
   if (!level_controls)
     return;
 
-  // Find the absolute topmost y of any visible node or its children
+  // Find the absolute topmost y of any node or its children (regardless of visibility)
   var top_y = Infinity;
   for (var i = 0; i < nodes.length; i++) {
     var node = nodes[i];
-    if (visible_nodes[node.id] === false)
-      continue;
     var ny = node.y;
     // For resources, account for their ellipse height
     if (node.type === 'resource') {
@@ -1167,7 +1202,7 @@ function drawGraph(jsondata)
 
   var level_list = [];
   for (var lvl in realdepth_levels)
-    level_list.push(parseInt(lvl));
+    level_list.push(parseFloat(lvl));
   level_list.sort(function(a, b) { return a - b; });
 
   var level_controls_data = [];

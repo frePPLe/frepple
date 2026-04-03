@@ -381,13 +381,14 @@ void Buffer::setMinimum(double m) {
   for (auto& flowplan : flowplans)
     if (flowplan.getEventType() == 3) {
       // Update existing event
-      static_cast<flowplanlist::EventMinQuantity*>(&flowplan)->setMin(min_val);
+      static_cast<flowplanlist::EventMinQuantity*>(&flowplan)->setMin(
+          max(min_val, 0.0));
       return;
     }
 
   // Create new event
   auto newEvent = new flowplanlist::EventMinQuantity(
-      Plan::instance().getCurrent(), &flowplans, min_val);
+      Plan::instance().getCurrent(), &flowplans, max(min_val, 0.0));
   flowplans.insert(newEvent);
 }
 
@@ -421,8 +422,8 @@ void Buffer::setMinimumCalendar(Calendar* cal) {
   double curMin = 0.0;
   for (Calendar::EventIterator x(min_cal); x.getDate() < Date::infiniteFuture;
        ++x)
-    if (curMin != x.getValue()) {
-      curMin = x.getValue();
+    if (curMin != max(x.getValue(), 0.0)) {
+      curMin = max(x.getValue(), 0.0);
       auto* newBucket =
           new flowplanlist::EventMinQuantity(x.getDate(), &flowplans, curMin);
       flowplans.insert(newBucket);

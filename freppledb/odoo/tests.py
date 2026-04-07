@@ -313,7 +313,7 @@ except ImportError:
                     "frepple.recommendation",
                     [],
                     {},
-                    ["id", "type", "quantity", "product_id"],
+                    ["id", "type", "quantity", "product_id", "startdate", "enddate"],
                 ):
                     if odoo_rec["type"] == "purchase":
                         count_purchase += 1
@@ -404,12 +404,39 @@ except ImportError:
                             produce_rec["product_id"][0],
                             "different product after approving the produce recommendation",
                         )
+                        self.assertEqual(
+                            odoo_moline["date_start"],
+                            produce_rec["startdate"],
+                            "different start date after approving the produce recommendation",
+                        )
+                        self.assertEqual(
+                            odoo_moline["date_finished"],
+                            produce_rec["enddate"],
+                            "different end date after approving the produce recommendation",
+                        )
                         cnt += 1
                     self.assertEqual(
                         cnt,
                         1,
                         "unexpected number of manufacturing orders after approving the produce recommendation",
                     )
+                if reschedule_rec:
+                    for odoo_mo in self.odooRPC(
+                        "mrp.production",
+                        [("id", "=", reschedule_rec["id"])],
+                        {"limit": 1, "order": "create_date desc"},
+                    ):
+                        self.assertEqual(
+                            odoo_mo["date_start"],
+                            reschedule_rec["startdate"],
+                            "different start date after approving the reschedule recommendation",
+                        )
+                        self.assertEqual(
+                            odoo_mo["date_finished"],
+                            reschedule_rec["enddate"],
+                            "different end date after approving the reschedule recommendation",
+                        )
+
                 # Make sure the records have been deleted from the recommendation
                 self.assertEqual(
                     count_produce

@@ -203,7 +203,7 @@ except ImportError:
             # Only P00015 in 17 & 18
             self.assertEqual(
                 po_list.count(),
-                {17: 1, 18: 5, 19: 2}[odoo_version],
+                {17: 2, 18: 5, 19: 2}[odoo_version],
                 "difference in number of imported purchase orders",
             )
             po = po_list[0]

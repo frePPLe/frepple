@@ -265,9 +265,9 @@ class Command(BaseCommand):
                     name,
                     "odoo",
                     (
-                        "--init=base,frepple,freppledata,sale_management"
+                        "--init=base,frepple,freppledata,sale_management,purchase_requisition"
                         if options["multidb"]
-                        else "--init=base,frepple,freppledata,autologin,sale_management"
+                        else "--init=base,frepple,freppledata,autologin,sale_management,purchase_requisition"
                     ),
                     (
                         "--load=web,frepple"
@@ -332,7 +332,9 @@ class Command(BaseCommand):
                 [
                     "docker",
                     "run",
-                    "--rm","--add-host", "host.docker.internal:host-gateway"
+                    "--rm",
+                    "--add-host",
+                    "host.docker.internal:host-gateway",
                 ]
                 + [
                     "-v",
@@ -394,8 +396,7 @@ class Command(BaseCommand):
                         options["frepple_url"],
                     )
                 )
-                cursor.execute(
-                    """
+                cursor.execute("""
                     select res_company.name, stock_warehouse.name
                     from res_company
                     inner join res_users
@@ -404,8 +405,7 @@ class Command(BaseCommand):
                     inner join stock_warehouse
                         on stock_warehouse.company_id = res_company.id
                     order by stock_warehouse.id
-                    """
-                )
+                    """)
                 company, mfglocation = cursor.fetchone()
 
         if options["verbosity"]:

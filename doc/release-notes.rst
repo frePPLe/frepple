@@ -32,7 +32,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | Some people throw ugly data to frepple. We treat negatives safety stocks values now
     as a zero.
 
-.. rubric:: User interface
+.. rubric:: Odoo integration
 
 - | 18, 19: The default behavior for bringing draft purhase orders (aka RFQs) into
     frePPLe has been adjusted.

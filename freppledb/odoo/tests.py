@@ -561,3 +561,52 @@ except ImportError:
                 )
                 cnt += 1
             self.assertEqual(cnt, 1, "expected to approve 1 purchase order")
+
+            # Test blanket order
+            # look for a blanket order in odoo
+            for odoo_prl in self.odooRPC(
+                "purchase.requisition.line",
+                [("product_qty", ">", 0)],
+                {"limit": 1, "order": "write_date desc"},
+            ):
+                product_name = odoo_prl["product_id"][1]
+                # product_id has a blanket order, we need to export a PO for that product
+                proposed_po = (
+                    PurchaseOrder.objects.filter(
+                        item__name=product_name, status="proposed"
+                    )
+                    .order_by("startdate")
+                    .first()
+                )
+                if proposed_po:
+                    response = self.client.post(
+                        "/erp/upload/",
+                        json.dumps(
+                            [
+                                {
+                                    "reference": proposed_po.reference,
+                                    "type": "PO",
+                                    "quantity": float(proposed_po.quantity),
+                                    "enddate": datetime.strftime(
+                                        proposed_po.enddate, "%Y-%m-%dT%H:%M:%S"
+                                    ),
+                                }
+                            ]
+                        ),
+                        content_type="application/json",
+                    )
+                    self.assertEqual(
+                        response.status_code,
+                        200,
+                        "couldn't upload the proposed purchase order",
+                    )
+                    for odoo_po in self.odooRPC(
+                        "purchase.order",
+                        [("origin", "=", "frePPLe"), ("state", "=", "draft")],
+                        {"limit": 1, "order": "write_date desc"},
+                    ):
+                        self.assertEqual(
+                            odoo_po["requisition_id"][0],
+                            odoo_prl["requisition_id"][0],
+                            "different blanket order id",
+                        )

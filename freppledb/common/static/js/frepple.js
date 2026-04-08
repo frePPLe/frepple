@@ -3135,13 +3135,28 @@ function sameOrigin(url) {
 //----------------------------------------------------------------------------
 
 function about_show() {
+  $.jgrid.hideModal("#searchmodfbox_grid");
+  hideModal('timebuckets');
+  content = '<div class="modal-dialog">' +
+    '<div class="modal-content">' +
+    '<div class="modal-header">' +
+    '<h5 class="modal-title">About frePPLe</h5>' +
+    '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
+    '</div>' +
+    '<div class="modal-body" style="min-height: 280px">' +
+    '<div class="row"><div class="col text-center">' +
+    '<div class="text-center text-capitalize m-5">' + gettext('collecting data') + '...</div>' +
+    '<div id="animatedcog" class="fa fa-cog fa-spin fa-2x fa-fw"></div>' +
+    '</div></div>' +
+    '</div>';
+  $('#popup').html(content);
+  showModal('popup');
+
   $.ajax({
     url: "/about/",
     type: "GET",
     contentType: "application/json",
     success: function (data) {
-      hideModal('timebuckets');
-      $.jgrid.hideModal("#searchmodfbox_grid");
       content = '<div class="modal-dialog">' +
         '<div class="modal-content">' +
         '<div class="modal-header">' +
@@ -3165,7 +3180,6 @@ function about_show() {
         content += i + '<br>';
       content += '</div></div></div></div></div>';
       $('#popup').html(content);
-      showModal('popup');
     },
     error: ajaxerror
   });

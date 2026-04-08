@@ -257,12 +257,14 @@ class OdooReadData(PlanTask):
                 loglevel = 0
 
             with connections[database].cursor() as cursor:
-                cursor.execute("""
+                cursor.execute(
+                    """
                     select coalesce(max(reference::bigint), 0) as max_reference
                     from operationplan
                     where reference ~ '^[0-9]*$'
                     and char_length(reference) <= 9
-                    """)
+                    """
+                )
                 d = cursor.fetchone()
                 frepple.settings.id = d[0] + 1
 
@@ -495,13 +497,16 @@ class OdooDeltaChangeSource(PlanTask):
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        return (
-            1
-            if kwargs.get("exportstatic", False)
-            and "odoo_" in kwargs.get("source", False)
-            and float(Parameter.getValue("odoo.delta", database, "999")) < 999
-            else -1
-        )
+        try:
+            return (
+                1
+                if kwargs.get("exportstatic", False)
+                and "odoo_" in kwargs.get("source", False)
+                and float(Parameter.getValue("odoo.delta", database, "999")) < 999
+                else -1
+            )
+        except Exception:
+            return -1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):

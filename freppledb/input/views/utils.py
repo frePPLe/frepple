@@ -23,6 +23,9 @@
 
 from datetime import datetime
 import json
+import os
+from urllib.parse import quote
+from urllib.request import Request, urlopen
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -41,7 +44,7 @@ from django.utils.text import format_lazy
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 
-from freppledb.common.auth import getWebserviceAuthorization
+from freppledb.common.models import Parameter
 from freppledb.common.report import (
     GridReport,
     GridFieldText,
@@ -52,6 +55,7 @@ from freppledb.common.report import (
     getCurrentDate,
     getHorizon,
 )
+from freppledb.common.utils import get_databases
 from freppledb.input.models import (
     Resource,
     Operation,
@@ -64,7 +68,7 @@ from freppledb.input.models import (
     OperationPlanResource,
 )
 from freppledb.admin import data_site
-from freppledb.webservice.utils import getWebServiceContext
+from freppledb.webservice.utils import getWebServiceContext, getWebserviceAuthorization
 
 import logging
 
@@ -679,7 +683,7 @@ class PathReport(GridReport):
         )
 
         if not downstream:
-            query = query + """
+            query += """
         union all
       -- PURCHASING OPERATIONS
       select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
@@ -1420,7 +1424,8 @@ class PathReport(GridReport):
         if not reportclass.routing_dependencies_done:
             reportclass.routing_dependencies_done = True
             reportclass.routing_operation_position = {}
-            cursor.execute("""
+            cursor.execute(
+                """
             with q as (
                 with recursive cte as
                 (
@@ -1446,7 +1451,8 @@ class PathReport(GridReport):
                 )
             select owner_id, name, row_number() over(partition by owner_id, y order by name) as x, y from q
             order by 1,2,3
-            """)
+            """
+            )
             for rec in cursor:
                 reportclass.routing_operation_position[rec[1]] = (rec[2], rec[3])
                 # for the routing, x,y refers to the number of rows and columns
@@ -1715,6 +1721,48 @@ class PathReport(GridReport):
                         i[0],
                         blocking[1],
                     )
+
+    @classmethod
+    def data_query(reportclass, request, *args, fields=None, page=None, **kwargs):
+        if (
+            Parameter.getValue(
+                "pathreport_optimization", request.database, "false"
+            ).lower()
+            == "true"
+        ):
+            try:
+                if "FREPPLE_TEST" in os.environ:
+                    host = get_databases()[request.database]["TEST"].get(
+                        "FREPPLE_PORT", None
+                    )
+                else:
+                    host = get_databases()[request.database].get("FREPPLE_PORT", None)
+                path = "whereused" if reportclass.downstream else "supplypath"
+                token = getWebserviceAuthorization(user=request.user.username, exp=600)
+                objecttype = {
+                    "input.buffer": "buffer",
+                    "input.demand": "demand",
+                    "input.resource": "resource",
+                    "input.operation": "operation",
+                    "input.item": "item",
+                    "input.forecast": "demand",
+                }[str(reportclass.objecttype._meta)]
+                with urlopen(
+                    Request(
+                        f"http://{host}/{path}/{objecttype}/{quote(args[0], safe='')}/",
+                        headers={"Authorization": f"Bearer {token}"},
+                    )
+                ) as response:
+                    if response.status == 200:
+                        request.data = response.read().decode(
+                            encoding="utf-8", errors="ignore"
+                        )
+                        request.data = json.loads(request.data)
+                        return request.data
+            except Exception as e:
+                print("Error calling webservice: %s" % e)
+        # Fallback to the old method of using database queries
+        return super().data_query(request, *args, fields=fields, page=page, **kwargs)
 
     @classmethod
     def query(reportclass, request, basequery):
@@ -2378,7 +2426,8 @@ class OperationPlanDetail(View):
                           or sales.SO is not null
                           or (items.name = %%s and location.name = %%s)
                         order by items.name, location.name
-                        """ % (settings.DATE_FORMAT_JS,),
+                        """
+                        % (settings.DATE_FORMAT_JS,),
                         (
                             opplan.item_id,
                             current_date,

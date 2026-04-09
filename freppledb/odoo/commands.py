@@ -257,14 +257,12 @@ class OdooReadData(PlanTask):
                 loglevel = 0
 
             with connections[database].cursor() as cursor:
-                cursor.execute(
-                    """
+                cursor.execute("""
                     select coalesce(max(reference::bigint), 0) as max_reference
                     from operationplan
                     where reference ~ '^[0-9]*$'
                     and char_length(reference) <= 9
-                    """
-                )
+                    """)
                 d = cursor.fetchone()
                 frepple.settings.id = d[0] + 1
 
@@ -513,7 +511,7 @@ class OdooDeltaChangeSource(PlanTask):
         with connections[database].cursor() as cursor:
             cursor.execute(
                 """
-                update demand set source = 'demand history' where source = %s;
+                update demand set source = 'demand history' where source = %s and status = 'closed';
                 """,
                 (kwargs.get("source", None),),
             )

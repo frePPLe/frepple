@@ -444,24 +444,24 @@ class PathReport(GridReport):
         GridFieldText(
             "resources", editable=False, sortable=False, extra="formatter:reslistfmt"
         ),
-        GridFieldText("buffers", editable=False, sortable=False, hidden=True),
-        GridFieldText("suboperation", editable=False, sortable=False, hidden=True),
-        GridFieldText("numsuboperations", editable=False, sortable=False, hidden=True),
-        GridFieldText("parentoper", editable=False, sortable=False, hidden=True),
-        GridFieldText("realdepth", editable=False, sortable=False, hidden=True),
-        GridFieldText("id", editable=False, sortable=False, hidden=True),
-        GridFieldText("parent", editable=False, sortable=False, hidden=True),
-        GridFieldText("leaf", editable=False, sortable=False, hidden=True),
-        GridFieldText("expanded", editable=False, sortable=False, hidden=True),
-        GridFieldText("alternate", editable=False, sortable=False, hidden=True),
-        GridFieldText("blockedby", editable=False, sortable=False, hidden=True),
-        GridFieldText("blocking", editable=False, sortable=False, hidden=True),
+        GridFieldText("buffers", editable=False, sortable=False, hidden=False),
+        GridFieldText("suboperation", editable=False, sortable=False, hidden=False),
+        GridFieldText("numsuboperations", editable=False, sortable=False, hidden=False),
+        GridFieldText("parentoper", editable=False, sortable=False, hidden=False),
+        GridFieldText("realdepth", editable=False, sortable=False, hidden=False),
+        GridFieldText("id", editable=False, sortable=False, hidden=False),
+        GridFieldText("parent", editable=False, sortable=False, hidden=False),
+        GridFieldText("leaf", editable=False, sortable=False, hidden=False),
+        GridFieldText("expanded", editable=False, sortable=False, hidden=False),
+        GridFieldText("alternate", editable=False, sortable=False, hidden=False),
+        GridFieldText("blockedby", editable=False, sortable=False, hidden=False),
+        GridFieldText("blocking", editable=False, sortable=False, hidden=False),
         # for time_per/fixed_time operations, rownb,y refer to the position (row,col)
         # of the suboperation in a routing when operation dependencies exist in the routing
         # for routing opertions, rownb,colnb refer to the number of rows and columns the routing should
         # have. If no depndencies exist in that routing, rownb and colnb are None
-        GridFieldInteger("rownb", editable=False, sortable=False, hidden=True),
-        GridFieldInteger("colnb", editable=False, sortable=False, hidden=True),
+        GridFieldInteger("rownb", editable=False, sortable=False, hidden=False),
+        GridFieldInteger("colnb", editable=False, sortable=False, hidden=False),
     )
 
     # Attributes to be specified by the subclasses
@@ -1730,6 +1730,9 @@ class PathReport(GridReport):
             ).lower()
             == "true"
         ):
+            import time
+
+            start_time = time.perf_counter()
             try:
                 if "FREPPLE_TEST" in os.environ:
                     host = get_databases()[request.database]["TEST"].get(
@@ -1758,10 +1761,17 @@ class PathReport(GridReport):
                             encoding="utf-8", errors="ignore"
                         )
                         request.data = json.loads(request.data)
-                        return request.data
+                        print("done with svc")
+                        # return request.data
             except Exception as e:
                 print("Error calling webservice: %s" % e)
+            finally:
+                print(
+                    "PathReport.data_query webservice call took %.3f seconds"
+                    % (time.perf_counter() - start_time)
+                )
         # Fallback to the old method of using database queries
+        print("Using database queries")
         return super().data_query(request, *args, fields=fields, page=page, **kwargs)
 
     @classmethod
@@ -1923,6 +1933,39 @@ class PathReport(GridReport):
                 i["parentoper"] and i["parentoper"] in alternate_ops
             ):
                 i["alternate"] = "true"
+
+        def normalize(item):
+            """Recursively converts tuples to lists for comparison."""
+            if isinstance(item, (list, tuple)):
+                return [normalize(i) for i in item]
+            return item
+
+        if hasattr(request, "data"):
+            from datetime import timedelta
+
+            print("------------------------------------")
+            for db_item, svc_item in zip(
+                sorted(results, key=lambda x: (x["depth"], x["operation"])),
+                sorted(request.data, key=lambda x: (x["depth"], x["operation"])),
+            ):
+                if svc_item["duration_per"] is not None:
+                    svc_item["duration_per"] = timedelta(
+                        seconds=svc_item["duration_per"]
+                    )
+                if svc_item["duration"] is not None:
+                    svc_item["duration"] = timedelta(seconds=svc_item["duration"])
+                if db_item == svc_item:
+                    print(f"Match: {db_item}")
+                else:
+                    print(f"Mismatch: {db_item}")
+                    for key in set(db_item.keys()) | set(svc_item.keys()):
+                        val_db = normalize(db_item.get(key, "N/A in db"))
+                        val_svc = normalize(svc_item.get(key, "N/A in svc"))
+
+                        if val_db != val_svc:
+                            print(f"  - Key '{key}':")
+                            print(f"      DB:  {val_db}")
+                            print(f"      SVC: {val_svc}")
 
         yield from results
 

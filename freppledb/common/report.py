@@ -3240,7 +3240,11 @@ class GridReport(View):
         if filters:
             z = cls._get_q_filter(request, filters)
             if z:
-                return items.filter(z)
+                try:
+                    return items.filter(z)
+                except Exception as e:
+                    # Nothing passes an invalid filter
+                    return items.filter(pk=-1)
             else:
                 return items
 

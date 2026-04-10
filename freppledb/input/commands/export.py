@@ -879,18 +879,22 @@ class exportLocations(PlanTask):
             for i in frepple.locations():
                 if source and source != i.source:
                     continue
-                r = [
-                    i.name,
-                    i.description,
-                    i.available and i.available.name or None,
-                    i.category,
-                    i.subcategory,
-                    i.source,
-                    cls.timestamp,
-                ]
-                for a in attrs:
-                    r.append(getattr(i, a[0], None))
-                yield r
+                try:
+                    frepple.supplier(name=i.name, action="C")
+                except:
+                    # It's not a supplier location
+                    r = [
+                        i.name,
+                        i.description,
+                        i.available and i.available.name or None,
+                        i.category,
+                        i.subcategory,
+                        i.source,
+                        cls.timestamp,
+                    ]
+                    for a in attrs:
+                        r.append(getattr(i, a[0], None))
+                    yield r
 
         def getOwners():
             for i in frepple.locations():

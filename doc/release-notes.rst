@@ -1,11 +1,14 @@
 Release notes
 -------------
 
-9.15.0 (Upcoming release)
+9.16.0 (Upcoming release)
 ========================
 
-This release is scheduled for early April 2026.
+This release is scheduled for mid May 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+9.15.0 (2026-04-10)
+===================
 
 .. rubric:: User interface
 

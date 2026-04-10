@@ -37,24 +37,24 @@ Generic instructions
       for your hardware. Use "data warehouse" as application type and also assure the
       max_connection setting is moved from the default 100 to eg 400.
 
-   #. Frepple uses 2 database roles to access the database. These are configured as USER 
+   #. Frepple uses 2 database roles to access the database. These are configured as USER
       (for full access) and SQL_ROLE (for read-only access to some tables in report manager)
       in the DATABASES section of your /etc/frepple/djangosettings.py file.
-      
+
       All objects in your new databases should be owned by the USER.
 
    #. The database user USER should be granted the SQL_ROLE.
-   
+
       It's possible that this grant was not part of your dump-restore process. If so, you
       can correct that by running the following SQL command as a database administrator.
 
       ::
 
          GRANT <SQL_ROLE> TO <USER>;
-   
+
 #. **Install the new frePPLe release.**
 
-   Install the new .deb or .rpm package.
+   Install the new .deb package.
    ::
 
       sudo dpkg --force-confold -i ./*.deb

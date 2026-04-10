@@ -39,7 +39,6 @@ venv
 
 # Packaging
 *.deb
-*.rpm
 *.tar.gz
 *.tgz
 *.egg-info

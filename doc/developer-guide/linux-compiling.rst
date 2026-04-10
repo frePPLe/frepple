@@ -45,7 +45,7 @@ or even reuse these containers.
      cd <project_directory>/build
      cmake --install .
 
-#. Optionally, create a installation .deb or .rpm package
+#. Optionally, create a installation .deb package
 
    ::
 

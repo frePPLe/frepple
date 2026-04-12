@@ -151,12 +151,12 @@ void JSONInputFile::parse(Object* pRoot) {
       throw DataException("Maximum JSON file size is 300MB");
     }
     t.seekg(0, std::ios::beg);
-    char* buffer = new char[length];
-    t.read(buffer, length);
+    unique_ptr<char[]> buffer(new char[length]);
+    t.read(buffer.get(), length);
     t.close();
 
     // Parse the data
-    JSONInput::parse(pRoot, buffer);
+    JSONInput::parse(pRoot, buffer.get());
   }
 }
 

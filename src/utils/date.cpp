@@ -30,10 +30,6 @@
 
 namespace frepple::utils {
 
-string Date::format("%Y-%m-%dT%H:%M:%S");
-string DateRange::separator = " / ";
-size_t DateRange::separatorlength = 3;
-
 /* This is the earliest date that we can represent. This not the
  * traditional epoch start, but a year later. 1/1/1970 gave troubles
  * when using a timezone with positive offset to GMT.
@@ -129,8 +125,8 @@ DateRange::operator string() const {
   char* pos = r + start.toCharBuffer(r);
 
   // Append the separator
-  strcat(pos, separator.c_str());
-  pos += separatorlength;
+  strcat(pos, separator.data());
+  pos += separator.size();
 
   // Append the end date
   end.toCharBuffer(pos);

@@ -224,14 +224,14 @@ int main(int argc, char* argv[]) {
         else if (p.extension() == ".json")
           FreppleReadJSONFile(argv[i]);
         else
-          FreppleReadXMLFile(argv[i], validate, validate_only);
+          FreppleReadXMLFile(argv[i], validate, validate_only, true);
       }
     }
 
     // When no filenames are specified, we read the standard input
     if (!input) {
       FreppleInitialize();
-      FreppleReadXMLFile(nullptr, validate, validate_only);
+      FreppleReadXMLFile(nullptr, validate, validate_only, true);
     }
   } catch (const exception& e) {
     ostringstream ch;

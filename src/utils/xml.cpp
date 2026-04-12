@@ -35,12 +35,12 @@ std::hash<string> Keyword::hasher;
 xercesc::XMLTranscoder* XMLInput::utf8_encoder = nullptr;
 
 char* XMLInput::transcodeUTF8(const XMLCh* xercesChars) {
-  XMLSize_t charsEaten;
+  XMLSize_t charsEaten = 0;
   XMLSize_t charsReturned = utf8_encoder->transcodeTo(
       xercesChars, xercesc::XMLString::stringLen(xercesChars),
-      (XMLByte*)encodingbuffer, 10240, charsEaten,
+      (XMLByte*)encodingbuffer, encodingbuffersize - 1, charsEaten,
       xercesc::XMLTranscoder::UnRep_RepChar);
-  encodingbuffer[charsReturned] = 0;
+  encodingbuffer[min(charsReturned, encodingbuffersize - 1)] = 0;
   return encodingbuffer;
 }
 
@@ -49,7 +49,7 @@ XMLInput::XMLInput() : objects(maxobjects), data(maxdata) {
     xercesc::XMLTransService::Codes resCode;
     utf8_encoder =
         xercesc::XMLPlatformUtils::fgTransService->makeNewTranscoderFor(
-            "UTF-8", resCode, 10240);
+            "UTF-8", resCode, encodingbuffersize);
     if (!XMLInput::utf8_encoder)
       logger << "Can't initialize UTF-8 transcoder: reason " << resCode << '\n';
   }
@@ -60,7 +60,7 @@ void XMLInput::processingInstruction(const XMLCh* const target,
   char* type = xercesc::XMLString::transcode(target);
   char* value = xercesc::XMLString::transcode(data);
   try {
-    if (!strcmp(type, "python")) {
+    if (!strcmp(type, "python") && allowPythonInstructions) {
       // "python" is the only processing instruction which we process.
       // Others will be silently ignored
       try {

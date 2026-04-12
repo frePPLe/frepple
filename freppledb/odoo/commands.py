@@ -257,12 +257,14 @@ class OdooReadData(PlanTask):
                 loglevel = 0
 
             with connections[database].cursor() as cursor:
-                cursor.execute("""
+                cursor.execute(
+                    """
                     select coalesce(max(reference::bigint), 0) as max_reference
                     from operationplan
                     where reference ~ '^[0-9]*$'
                     and char_length(reference) <= 9
-                    """)
+                    """
+                )
                 d = cursor.fetchone()
                 frepple.settings.id = d[0] + 1
 
@@ -315,6 +317,9 @@ class OdooReadData(PlanTask):
                             data.translate({ord(i): None for i in "\f\v\b"}),
                             False,
                             False,
+                            False,
+                            None,
+                            False,  # Important!
                         )
 
             except HTTPError as e:

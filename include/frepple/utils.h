@@ -52,6 +52,7 @@ inline bool unused_function() { return PyDateTimeAPI == nullptr; }
 #include <stack>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <thread>
 #include <typeinfo>
 #include <unordered_map>
@@ -601,7 +602,7 @@ class Date {
    * The default date format is %Y-%m-%dT%H:%M:%S, which is the standard
    * format defined in the XML Schema standard.
    */
-  static string format;
+  static constexpr string_view format = "%Y-%m-%dT%H:%M:%S";
 
   /* The internal representation of a date is a single long value. */
   time_t lval;
@@ -642,7 +643,7 @@ class Date {
   Date() : lval(infinitePast.lval) {}
 
   /* Constructor initialized with a string and an optional format string. */
-  Date(const char* s, const char* f = format.c_str()) {
+  Date(const char* s, const char* f = format.data()) {
     parse(s, f);
     checkFinite(lval);
   }
@@ -705,8 +706,7 @@ class Date {
    * Date and time. */
   static Date now() { return Date(time(0)); }
 
-  /* Converts the date to a string. The format can be controlled by the
-   * setFormat() function. */
+  /* Converts the date to a string. */
   operator string() const {
     char str[30];
     toCharBuffer(str);
@@ -726,13 +726,7 @@ class Date {
   time_t getTicks() const { return lval; }
 
   /* Function that parses a string according to the format string. */
-  void parse(const char*, const char* = format.c_str());
-
-  /* Updates the default date format. */
-  static void setFormat(const string& n) { format = n; }
-
-  /* Retrieves the default date format. */
-  static string getFormat() { return format; }
+  void parse(const char*, const char* = format.data());
 
   /* A constant representing the infinite past, i.e. the earliest time which
    * we can represent.
@@ -816,7 +810,7 @@ class DateDetail {
 
   inline size_t toCharBuffer(char* str) const {
     if (val < 0) normalize();
-    return strftime(str, 30, Date::format.c_str(), &time_info);
+    return strftime(str, 30, Date::format.data(), &time_info);
   }
 
   string toString(const char* fmt) const {
@@ -826,8 +820,7 @@ class DateDetail {
     return str;
   }
 
-  /* Converts the date to a string. The format can be controlled by the
-   * setFormat() function. */
+  /* Converts the date to a string. */
   operator string() const {
     char str[30];
     toCharBuffer(str);
@@ -1090,14 +1083,8 @@ class DateRange {
   /* Convert the daterange to a string. */
   operator string() const;
 
-  /* Updates the default seperator. */
-  static void setSeparator(const string& n) {
-    separator = n;
-    separatorlength = n.size();
-  }
-
-  /* Retrieves the default seperator. */
-  static const string& getSeparator() { return separator; }
+  /* Separator to be used when printing this string. */
+  static constexpr string_view separator = " / ";
 
  private:
   /* Start date of the interval. */
@@ -1105,17 +1092,11 @@ class DateRange {
 
   /* End dat of the interval. */
   Date end;
-
-  /* Separator to be used when printing this string. */
-  static string separator;
-
-  /* Separator to be used when printing this string. */
-  static size_t separatorlength;
 };
 
 /* Prints a date range to the outputstream. */
 inline ostream& operator<<(ostream& os, const DateRange& dr) {
-  return os << dr.getStart() << DateRange::getSeparator() << dr.getEnd();
+  return os << dr.getStart() << DateRange::separator << dr.getEnd();
 }
 
 //

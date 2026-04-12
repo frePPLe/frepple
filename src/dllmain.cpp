@@ -128,7 +128,9 @@ void FreppleInitialize(bool procesInitializationFiles) {
   if (!init.empty()) {
     // Execute the commands in the file
     try {
-      XMLInputFile(init).parse(&Plan::instance(), true);
+      XMLInputFile p_init(init);
+      p_init.setAllowPython(true);
+      p_init.parse(&Plan::instance(), true);
     } catch (...) {
       logger << "Exception caught during execution of 'init.xml'\n";
       throw;
@@ -144,22 +146,32 @@ void FreppleReadXMLData(const char* x, bool validate, bool validateonly) {
     XMLInputString(x).parse(&Plan::instance(), validate);
 }
 
-void FreppleReadXMLFile(const char* filename, bool validate,
-                        bool validateonly) {
+void FreppleReadXMLFile(const char* filename, bool validate, bool validateonly,
+                        bool allowPython) {
   if (!filename) {
     // Read from standard input
     xercesc::StdInInputSource in;
-    if (validateonly)
+    if (validateonly) {
       // When no root object is passed, only the input validation happens
-      XMLInput().parse(in, nullptr, true);
-    else
-      XMLInput().parse(in, &Plan::instance(), validate);
-  } else if (validateonly)
+      auto p = XMLInput();
+      if (allowPython) p.setAllowPython(true);
+      p.parse(in, nullptr, true);
+    } else {
+      auto p = XMLInput();
+      if (allowPython) p.setAllowPython(true);
+      p.parse(in, &Plan::instance(), validate);
+    }
+  } else if (validateonly) {
     // Read and validate a file
-    XMLInputFile(filename).parse(nullptr, true);
-  else
+    auto p = XMLInputFile(filename);
+    if (allowPython) p.setAllowPython(true);
+    p.parse(nullptr, true);
+  } else {
     // Read, execute and optionally validate a file
-    XMLInputFile(filename).parse(&Plan::instance(), validate);
+    auto p = XMLInputFile(filename);
+    if (allowPython) p.setAllowPython(true);
+    p.parse(&Plan::instance(), validate);
+  }
 }
 
 void FreppleReadJSONFile(const char* filename) {
@@ -187,59 +199,3 @@ void FreppleExit() {
 }
 
 void FreppleLog(const string& msg) { logger << msg << '\n'; }
-
-extern "C" void FreppleLog(const char* msg) { logger << msg << '\n'; }
-
-extern "C" int FreppleWrapperInitialize() {
-  try {
-    FreppleInitialize();
-  } catch (...) {
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
-}
-
-extern "C" int FreppleWrapperReadXMLData(char* d, bool v, bool c) {
-  try {
-    FreppleReadXMLData(d, v, c);
-  } catch (...) {
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
-}
-
-extern "C" int FreppleWrapperReadXMLFile(const char* f, bool v, bool c) {
-  try {
-    FreppleReadXMLFile(f, v, c);
-  } catch (...) {
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
-}
-
-extern "C" int FreppleWrapperReadPythonFile(const char* f) {
-  try {
-    FreppleReadPythonFile(f);
-  } catch (...) {
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
-}
-
-extern "C" int FreppleWrapperSaveFile(char* f) {
-  try {
-    FreppleSaveFile(f);
-  } catch (...) {
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
-}
-
-extern "C" int FreppleWrapperExit() {
-  try {
-    FreppleExit();
-  } catch (...) {
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
-}

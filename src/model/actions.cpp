@@ -35,10 +35,10 @@ namespace frepple {
 PyObject* readXMLfile(PyObject*, PyObject* args) {
   // Pick up arguments
   char* filename = nullptr;
-  int validate(1), validate_only(0);
+  int validate(1), validate_only(0), allowpython(1);
   PyObject* userexit = nullptr;
-  if (!PyArg_ParseTuple(args, "|siiO:readXMLfile", &filename, &validate,
-                        &validate_only, &userexit))
+  if (!PyArg_ParseTuple(args, "|siiOi:readXMLfile", &filename, &validate,
+                        &validate_only, &userexit, &allowpython))
     return nullptr;
 
   // Free Python interpreter for other threads
@@ -50,7 +50,8 @@ PyObject* readXMLfile(PyObject*, PyObject* args) {
       // Read from standard input
       xercesc::StdInInputSource in;
       XMLInput p;
-      if (userexit) p.setUserExit(userexit);
+      if (userexit && userexit != Py_None) p.setUserExit(userexit);
+      if (allowpython) p.setAllowPython(true);
       if (validate_only != 0)
         // When no root object is passed, only the input validation happens
         p.parse(in, nullptr, true);
@@ -58,7 +59,8 @@ PyObject* readXMLfile(PyObject*, PyObject* args) {
         p.parse(in, &Plan::instance(), validate != 0);
     } else {
       XMLInputFile p(filename);
-      if (userexit) p.setUserExit(userexit);
+      if (userexit && userexit != Py_None) p.setUserExit(userexit);
+      if (allowpython) p.setAllowPython(true);
       if (validate_only != 0)
         // Read and validate a file
         p.parse(nullptr, true);
@@ -84,10 +86,10 @@ PyObject* readXMLfile(PyObject*, PyObject* args) {
 PyObject* readXMLdata(PyObject*, PyObject* args) {
   // Pick up arguments
   char* data;
-  int validate(1), validate_only(0), loglevel(0);
+  int validate(1), validate_only(0), loglevel(0), allowpython(1);
   PyObject* userexit = nullptr;
-  if (!PyArg_ParseTuple(args, "s|iiiO:readXMLdata", &data, &validate,
-                        &validate_only, &loglevel, &userexit))
+  if (!PyArg_ParseTuple(args, "s|iiiOi:readXMLdata", &data, &validate,
+                        &validate_only, &loglevel, &userexit, &allowpython))
     return nullptr;
 
   // Free Python interpreter for other threads
@@ -97,8 +99,9 @@ PyObject* readXMLdata(PyObject*, PyObject* args) {
   try {
     if (!data) throw DataException("No input data");
     XMLInputString p(data);
-    if (userexit) p.setUserExit(userexit);
+    if (userexit && userexit != Py_None) p.setUserExit(userexit);
     if (loglevel) p.setLogLevel(1);
+    if (allowpython) p.setAllowPython(true);
     if (validate_only != 0)
       p.parse(nullptr, true);
     else

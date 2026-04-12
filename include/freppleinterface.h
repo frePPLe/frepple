@@ -78,7 +78,7 @@ void FreppleReadXMLData(const char*, bool, bool);
  * processing is finished. The method can throw exceptions, and the client
  * is responsible for defining the correct handlers for these.
  */
-void FreppleReadXMLFile(const char*, bool, bool);
+void FreppleReadXMLFile(const char*, bool, bool, bool);
 
 void FreppleReadJSONFile(const char*);
 
@@ -117,57 +117,4 @@ void FreppleExit();
  */
 void FreppleLog(const std::string&);
 
-/* The functions listed below can be called from C. */
-extern "C" {
-
-#endif
-/* Echo a message in the frePPLe log stream (which is either a file or
- * the standard output stream).
- */
-void FreppleLog(const char*);
-
-/* Same as FreppleInitialize, but catches all exceptions and returns a
- * status instead.
- *
- * Use this function when calling the library from C or VB applications.
- */
-int FreppleWrapperInitialize();
-
-/* Same as FreppleReadXMLData, but catches all exceptions and returns a
- * status instead.
- *
- * Use this function when calling the library from C or VB applications.
- */
-int FreppleWrapperReadXMLData(char*, bool, bool);
-
-/* Same as FreppleReadXMLFile, but catches all exceptions and returns a
- * status instead.
- *
- * Use this function when calling the library from C or VB applications.
- */
-int FreppleWrapperReadXMLFile(const char*, bool, bool);
-
-/* Same as FreppleReadPythonFile, but catches all exceptions and returns a
- * status instead.
- *
- * Use this function when calling the library from C or VB applications.
- */
-int FreppleWrapperReadPythonFile(const char*);
-
-/* Same as FreppleSaveFile, but catches all exceptions and returns a
- * status instead.
- *
- * Use this function when calling the library from C or VB applications.
- */
-int FreppleWrapperSaveFile(char*);
-
-/* Same as FreppleExit, but catches all exceptions and returns a
- * status instead.
- *
- * Use this function when calling the library from C or VB applications.
- */
-int FreppleWrapperExit();
-
-#ifdef __cplusplus
-}  // End of "extern C"
 #endif

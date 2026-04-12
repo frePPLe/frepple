@@ -46,8 +46,6 @@
 #include <xercesc/util/XMLException.hpp>
 #include <xercesc/util/XMLUni.hpp>
 
-
-
 namespace frepple::utils {
 
 // Forward declarations
@@ -78,6 +76,7 @@ class XMLInput : public DataInput,
    */
   static const int maxobjects = 30;
   static const int maxdata = 200;
+  static const XMLSize_t encodingbuffersize = 10240;
 
  public:
   struct fld {
@@ -137,8 +136,13 @@ class XMLInput : public DataInput,
 
   short loglevel = 0;
 
+  /* Controls whether <?python ... ?> processing instructions are executed.
+   * Defaults to false (secure). Enable only when the XML source is trusted.
+   */
+  bool allowPythonInstructions = false;
+
   /* A buffer used for transcoding XML data. */
-  char encodingbuffer[10240];
+  char encodingbuffer[encodingbuffersize];
 
   /* Handler called when a new element tag is encountered.
    * It pushes a new element on the stack and calls the current handler.
@@ -153,7 +157,8 @@ class XMLInput : public DataInput,
    * data section to the current handler, then pop it off the element
    * stack.
    */
-  void endElement(const XMLCh* const, const XMLCh* const, const XMLCh* const) override;
+  void endElement(const XMLCh* const, const XMLCh* const,
+                  const XMLCh* const) override;
 
   /* Handler called when character data are read in.
    * The data string is add it to the current element data.
@@ -203,6 +208,11 @@ class XMLInput : public DataInput,
   bool getAbortOnDataError() const { return abortOnDataException; }
 
   void setLogLevel(short v) { loglevel = v; }
+
+  /* Controls whether <?python ... ?> processing instructions are executed.
+   * Must be explicitly enabled for trusted input sources. */
+  void setAllowPython(bool v) { allowPythonInstructions = v; }
+  bool getAllowPython() const { return allowPythonInstructions; }
 
   /* Transcode the Xerces XML characters to our UTF8 encoded buffer. */
   char* transcodeUTF8(const XMLCh*);
@@ -378,7 +388,8 @@ class XMLSerializer : public Serializer {
   /* Start writing a new object. This method will open a new XML-tag.
    * Output: \<TAG TAG1="val1"\>
    */
-  void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1) override {
+  void BeginObject(const Keyword& t, const Keyword& attr1,
+                   const string& val1) override {
     *m_fp << indentstring << "<" << t << " " << attr1.getFullName() << "=\"";
     escape(val1);
     *m_fp << "\">\n";
@@ -388,7 +399,8 @@ class XMLSerializer : public Serializer {
   /* Start writing a new object. This method will open a new XML-tag.
    * Output: \<TAG TAG1="val1"\>
    */
-  void BeginObject(const Keyword& t, const Keyword& attr1, const Date val1) override {
+  void BeginObject(const Keyword& t, const Keyword& attr1,
+                   const Date val1) override {
     *m_fp << indentstring << "<" << t << " " << attr1 << "=\"" << val1
           << "\">\n";
     incIndent();
@@ -397,7 +409,8 @@ class XMLSerializer : public Serializer {
   /* Start writing a new object. This method will open a new XML-tag.
    * Output: \<TAG TAG1="val1"\>
    */
-  void BeginObject(const Keyword& t, const Keyword& attr1, const int val1) override {
+  void BeginObject(const Keyword& t, const Keyword& attr1,
+                   const int val1) override {
     *m_fp << indentstring << "<" << t << " " << attr1 << "=\"" << val1
           << "\">\n";
     incIndent();
@@ -456,7 +469,9 @@ class XMLSerializer : public Serializer {
 
   /* Write the string to the output. No XML-tags are added, so this method
    * is used for passing text straight into the output file. */
-  void writeString(const string& c) override { *m_fp << indentstring << c << "\n"; }
+  void writeString(const string& c) override {
+    *m_fp << indentstring << c << "\n";
+  }
 
   /* Write an unsigned long value enclosed opening and closing tags.
    * Output: \<TAG_T\>uint\</TAG_T\> */
@@ -498,7 +513,8 @@ class XMLSerializer : public Serializer {
 
   /* Writes an element with a string attribute.
    * Output: \<TAG_U TAG_T="string"/\> */
-  void writeElement(const Keyword& u, const Keyword& t, const string& val) override {
+  void writeElement(const Keyword& u, const Keyword& t,
+                    const string& val) override {
     if (val.empty())
       *m_fp << indentstring << "<" << u << "/>\n";
     else {
@@ -510,13 +526,15 @@ class XMLSerializer : public Serializer {
 
   /* Writes an element with a long attribute.
    * Output: \<TAG_U TAG_T="val"/\> */
-  void writeElement(const Keyword& u, const Keyword& t, const long val) override {
+  void writeElement(const Keyword& u, const Keyword& t,
+                    const long val) override {
     *m_fp << indentstring << "<" << u << " " << t << "=\"" << val << "\"/>\n";
   }
 
   /* Writes an element with a date attribute.
    * Output: \<TAG_U TAG_T="val"/\> */
-  void writeElement(const Keyword& u, const Keyword& t, const Date& val) override {
+  void writeElement(const Keyword& u, const Keyword& t,
+                    const Date& val) override {
     *m_fp << indentstring << "<" << u << " " << t << "=\"" << string(val)
           << "\"/>\n";
   }
@@ -558,7 +576,8 @@ class XMLSerializer : public Serializer {
           << " " << t3 << "=\"" << val3 << "\"/>\n";
   }
 
-  void writeElement(const Keyword& u, const PooledString& v, const double val) override {
+  void writeElement(const Keyword& u, const PooledString& v,
+                    const double val) override {
     *m_fp << indentstring << "<" << u << " " << v << "=\"" << val << "\"/>\n";
   }
 
@@ -705,4 +724,4 @@ class XMLSerializerString : public XMLSerializer {
   ostringstream os;
 };
 
-} // namespace frepple::utils
+}  // namespace frepple::utils

@@ -937,9 +937,9 @@ class ExportStaticForecast(PlanTask):
                   %s
                 """
                 % (
-                    "".join([",%s" % i for i in attrs]),
+                    "".join(",%s" % i for i in attrs),
                     ",%s" * len(attrs),
-                    "".join([",\n%s=excluded.%s" % (i, i) for i in attrs]),
+                    "".join(",\n%s=excluded.%s" % (i, i) for i in attrs),
                 ),
                 getData(),
             )

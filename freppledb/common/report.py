@@ -697,7 +697,7 @@ class GridReport(View):
         elif isinstance(value, timedelta):
             return _parseSeconds(value, excel_duration_in_days)
         elif isinstance(value, (list, tuple)):
-            return "|".join([str(cls._localize(i, decimal_separator)) for i in value])
+            return "|".join(str(cls._localize(i, decimal_separator)) for i in value)
         else:
             return value
 
@@ -1113,7 +1113,7 @@ class GridReport(View):
                     cell.comment = CellComment(
                         force_str(
                             _("Accepted values are: %s")
-                            % ", ".join([c[0] for c in f.choices])
+                            % ", ".join(c[0] for c in f.choices)
                         ),
                         "Author",
                     )
@@ -2108,7 +2108,7 @@ class GridReport(View):
                                 ok = False
                                 resp.write(
                                     "Invalid choice %s: expected %s<br>"
-                                    % (v, ", ".join([c[0] for c in r.choices]))
+                                    % (v, ", ".join(c[0] for c in r.choices))
                                 )
                         elif isinstance(r, GridFieldBool):
                             if v is not None:
@@ -3920,7 +3920,7 @@ class GridPivot(GridReport):
                         cell.comment = CellComment(
                             force_str(
                                 _("Accepted values are: %s")
-                                % ", ".join([c[0] for c in f.choices])
+                                % ", ".join(c[0] for c in f.choices)
                             ),
                             "Author",
                         )
@@ -3949,7 +3949,7 @@ class GridPivot(GridReport):
                     cell.comment = CellComment(
                         force_str(
                             _("Accepted values are: %s")
-                            % ", ".join([c[0] for c in f.choices])
+                            % ", ".join(c[0] for c in f.choices)
                         ),
                         "Author",
                     )

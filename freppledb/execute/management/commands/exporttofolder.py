@@ -322,7 +322,7 @@ class Command(BaseCommand):
                     user=self.user,
                     logfile=logfile,
                 )
-            task.arguments = " ".join(['"%s"' % i for i in args])
+            task.arguments = " ".join('"%s"' % i for i in args)
             task.processid = os.getpid()
             task.save(using=self.database)
 

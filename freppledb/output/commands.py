@@ -1083,7 +1083,7 @@ class ExportOperationPlans(PlanTask):
             forecastfield1,
             "".join(",%s " % a[0] for a in cls.attrs),
             forecastfield0,
-            "".join([", %s = excluded.%s" % (a[0], a[0]) for a in cls.attrs]),
+            "".join(", %s = excluded.%s" % (a[0], a[0]) for a in cls.attrs),
         )
 
         cursor.execute(sql)

@@ -776,7 +776,7 @@ class Problem::List {
     for (auto* p = first; p; p = p->nextProblem) ++cnt;
     return cnt;
   }
-  
+
   /* Add a problem to the list. */
   Problem* push(const MetaClass*, const Object*, Date, Date, double = 0.0,
                 Operation* = nullptr, bool = false);
@@ -8697,6 +8697,8 @@ class Plan : public Plannable, public Object {
 
   Duration autofence;
 
+  Duration shortage_tolerance = -1L;  // Defaults to same value as autofence
+
   bool completed_allow_future = false;
 
   bool wip_produce_full_quantity = false;
@@ -8777,6 +8779,15 @@ class Plan : public Plannable, public Object {
       logger << "Warning: Invalid autofence\n";
     else
       autofence = l;
+  }
+
+  Duration getShortageTolerance() const { return shortage_tolerance; }
+
+  void setShortageTolerance(Duration l) {
+    if (l < 0L)
+      logger << "Warning: Invalid shortage tolerance\n";
+    else
+      shortage_tolerance = l;
   }
 
   Duration getDeliveryDuration() const {
@@ -8884,6 +8895,8 @@ class Plan : public Plannable, public Object {
     m->addStringRefField<Plan>(Tags::name, &Plan::getName, &Plan::setName);
     m->addDurationField<Plan>(Tags::autofence, &Plan::getAutoFence,
                               &Plan::setAutoFence);
+    m->addDurationField<Plan>(Tags::shortage_tolerance, &Plan::getShortageTolerance,
+                              &Plan::setShortageTolerance);
     m->addDurationField<Plan>(Tags::deliveryduration,
                               &Plan::getDeliveryDuration,
                               &Plan::setDeliveryDuration, 0L, DONT_SERIALIZE);

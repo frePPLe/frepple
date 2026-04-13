@@ -496,7 +496,8 @@ class loadParameter(LoadTask):
                        'COMPLETED.allow_future', 'WIP.produce_full_quantity',
                        'plan.individualPoolResources',
                        'plan.autoFenceOperations', 'plan.deliveryDuration',
-                       'plan.move_approved_early'
+                       'plan.move_approved_early',
+                       'plan.shortage_tolerance'
                        )
                     """
                 )
@@ -525,6 +526,8 @@ class loadParameter(LoadTask):
                         frepple.settings.deliveryduration = float(rec[1]) * 3600
                     elif rec[0] == "plan.move_approved_early":
                         frepple.settings.moveApprovedEarly = int(rec[1])
+                    elif rec[0] == "plan.shortage_tolerance":
+                         frepple.settings.shortage_tolerance = float(rec[1]) * 86400
                 current_set = False
                 if "loadplan" in os.environ and last_current_date:
                     try:

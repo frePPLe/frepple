@@ -896,7 +896,7 @@ class OdooSendRecommendations(PlanTask):
                     "startdate": i.due.isoformat(),
                     "enddate": late_date.isoformat() if late_date else None,
                     "quantity": late_quantity,
-                    "recommendation": f"{recommendation}{"\\n" if i.constraints else ""}{"\\n".join([c.description for c in i.constraints]) if i.constraints else ""}",
+                    "recommendation": f"{recommendation}{"\\n" if i.constraints else ""}{"\\n".join(c.description for c in i.constraints) if i.constraints else ""}",
                 }
             if not self.loglevel:
                 print(f"Generated {so_count} sales order recommendations")

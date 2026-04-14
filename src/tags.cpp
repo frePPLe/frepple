@@ -26,7 +26,6 @@
 #include "frepple/utils.h"
 using namespace frepple;
 
-
 namespace frepple::utils {
 
 const Keyword Tags::action("action");
@@ -213,6 +212,7 @@ const Keyword Tags::setupend("setupend");
 const Keyword Tags::setupmatrices("setupmatrices");
 const Keyword Tags::setupmatrix("setupmatrix");
 const Keyword Tags::setuponly("setuponly");
+const Keyword Tags::shortage_tolerance("shortage_tolerance");
 const Keyword Tags::size_maximum("size_maximum");
 const Keyword Tags::setupoverride("setupoverride");
 const Keyword Tags::size_minimum("size_minimum");
@@ -262,5 +262,4 @@ const Keyword Tags::volume("volume");
 const Keyword Tags::weight("weight");
 const Keyword Tags::wip_produce_full_quantity("wip_produce_full_quantity");
 
-} // namespace frepple::utils
-
+}  // namespace frepple::utils

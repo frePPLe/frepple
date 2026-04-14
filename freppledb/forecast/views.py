@@ -2084,7 +2084,7 @@ class ForecastEditor:
                     if not m.computed
                 ]
             ),
-            ", ".join(["cte.%s" % m.name for m in request.measures if not m.computed]),
+            ", ".join("cte.%s" % m.name for m in request.measures if not m.computed),
         )
 
         result = {}

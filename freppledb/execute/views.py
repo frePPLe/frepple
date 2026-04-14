@@ -826,7 +826,7 @@ def logfile(request, taskid):
         request,
         "execute/logfrepple.html",
         {
-            "title": " ".join([force_str(capfirst(_("log file"))), taskid]),
+            "title": f"{force_str(capfirst(_('log file')))} {taskid}",
             "logdata": logdata,
             "taskid": taskid,
             "filesize": sizeof_fmt(filesize),
@@ -1301,7 +1301,7 @@ def exportWorkbook(request):
                             cell.comment = CellComment(
                                 force_str(
                                     _("Accepted values are: %s")
-                                    % ", ".join([c[0] for c in i.choices])
+                                    % ", ".join(c[0] for c in i.choices)
                                 ),
                                 "Author",
                             )
@@ -1347,7 +1347,7 @@ def exportWorkbook(request):
                             cell.comment = CellComment(
                                 force_str(
                                     _("Accepted values are: %s")
-                                    % ", ".join([c[0] for c in i.choices])
+                                    % ", ".join(c[0] for c in i.choices)
                                 ),
                                 "Author",
                             )

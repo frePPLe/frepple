@@ -586,8 +586,8 @@ void SolverCreate::SolverData::backward_sweep() {
         b.solve(*solver, this);
         getCommandManager()->commit();
       } catch (const exception& e) {
-        logger << "Error propagating through buffer '" << b << "': "
-               << e.what() << '\n';
+        logger << "Error propagating through buffer '" << b << "': " << e.what()
+               << '\n';
         getCommandManager()->rollback();
       }
     }
@@ -635,7 +635,8 @@ void SolverCreate::SolverData::scanExcess(bool constrained) {
 }
 
 void SolverCreate::SolverData::maskTemporaryShortages() {
-  auto fence = Plan::instance().getAutoFence();
+  auto fence = Plan::instance().getShortageTolerance();
+  if (fence < 0L) fence = Plan::instance().getAutoFence();
   if (!fence)
     // Autofence value of 0 doesn't mask any temporary shortages
     return;

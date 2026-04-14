@@ -157,7 +157,7 @@ class CrumbsNode(Node):
         req.session["crumbs"][req.prefix] = cur
 
         # Now create HTML code to return
-        return "".join([i[1] for i in cur])
+        return "".join(i[1] for i in cur)
 
     def __repr__(self):
         return "<Crumbs Node>"

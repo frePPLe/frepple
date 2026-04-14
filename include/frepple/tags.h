@@ -215,6 +215,7 @@ class Tags {
   static const Keyword setupmatrix;
   static const Keyword setuponly;
   static const Keyword setupoverride;
+  static const Keyword shortage_tolerance;
   static const Keyword size_maximum;
   static const Keyword size_minimum;
   static const Keyword size_minimum_calendar;

@@ -1,0 +1,88 @@
+name: Run odoo 19 integration test
+
+on:
+  repository_dispatch:
+    types: [odoo_connector_19]
+  workflow_dispatch:
+
+env:
+  odoo_connector_branch: 19.0-dev
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: frepple
+          POSTGRES_PASSWORD: frepple
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checking out source code
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Set up Nodes
+        uses: actions/setup-node@v6
+
+      - name: Install packages
+        run: |
+          sudo apt update
+          sudo apt install --no-upgrade libxerces-c-dev openssl libssl-dev libpq5 libpq-dev postgresql-client python3 python3-dev python3-venv python3-setuptools
+          sudo npm -g install pnpm@latest-10
+          pnpm install --frozen-lockfile
+
+      - name: Build
+        run: |
+          git submodule update --remote --checkout --force
+          grunt
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build ${{github.workspace}}/build --config Release --target package -- -j 4
+          cmake --build ${{github.workspace}}/build --config Release --target doc
+          cp djangosettings.py djangosettings.original.py
+          . ${{github.workspace}}/venv/bin/activate
+          echo "PATH=$PATH" >> $GITHUB_ENV
+          echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
+
+      - name: Odoo integration test
+        run: |
+          # First make the checkout unshallow
+          git -C freppledb/odoo/odoo_addon remote set-branches origin '*'
+          git -C freppledb/odoo/odoo_addon fetch --all
+          git -C freppledb/odoo/odoo_addon checkout "remotes/origin/${{ env.odoo_connector_branch }}"
+          sed -i 's/# "freppledb.odoo"/"freppledb.odoo"/g' djangosettings.py
+          export POSTGRES_HOST=localhost
+          export POSTGRES_PORT=5432
+          ./frepplectl.py test freppledb.odoo
+
+      - name: "Keep logs"
+        uses: actions/upload-artifact@v6
+        if: ${{ failure() }}
+        with:
+          name: test_logs
+          path: logs
+          retention-days: 1
+
+      - name: Send failure mail
+        if: failure()
+        uses: dawidd6/action-send-mail@v16
+        with:
+          connection_url: ${{secrets.MAIL_CONNECTION}}
+          secure: false
+          subject: "Github action failure: Failure Odoo ${{ env.odoo_connector_branch }} integration test"
+          from: '"frepple devops" <devops@frepple.com>'
+          to: '"frepple devops" <devops@frepple.com>'
+          body: |
+            Please check the logs at https://github.com/frePPLe/frepple/actions/runs/${{ github.run_id }}
+          html_body: |
+            <p>Please check <a href="https://github.com/frePPLe/frepple/actions/runs/${{ github.run_id }}">the logs</a>.</p>

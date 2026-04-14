@@ -8895,8 +8895,9 @@ class Plan : public Plannable, public Object {
     m->addStringRefField<Plan>(Tags::name, &Plan::getName, &Plan::setName);
     m->addDurationField<Plan>(Tags::autofence, &Plan::getAutoFence,
                               &Plan::setAutoFence);
-    m->addDurationField<Plan>(Tags::shortage_tolerance, &Plan::getShortageTolerance,
-                              &Plan::setShortageTolerance);
+    m->addDurationField<Plan>(Tags::shortage_tolerance,
+                              &Plan::getShortageTolerance,
+                              &Plan::setShortageTolerance, -1L, DONT_SERIALIZE);
     m->addDurationField<Plan>(Tags::deliveryduration,
                               &Plan::getDeliveryDuration,
                               &Plan::setDeliveryDuration, 0L, DONT_SERIALIZE);

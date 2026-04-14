@@ -145,18 +145,25 @@ function enableSaveUndoButtons() {
     </div>
 
     <div
-        id="widget_bufferspanel"
-        class="card-body collapse"
-        :class="{ 'show': !isCollapsed }"
+      id="widget_bufferspanel"
+      class="card-body collapse"
+      :class="{ 'show': !isCollapsed }"
+      style="max-height: 50vh; overflow-y: auto; overflow-x: hidden;"
     >
-      <table class="table table-sm table-hover table-borderless">
+      <table class="table table-sm table-hover table-borderless" style="table-layout: fixed; width: 100%;">
         <thead>
-        <tr>
-          <td><b class="text-capitalize">{{ ttt('item') }}</b></td>
-          <td><b class="text-capitalize">{{ ttt('location') }}</b></td>
-          <td><b class="text-capitalize">{{ ttt('quantity') }}</b></td>
-          <td><b class="text-capitalize">{{ ttt('onhand') }}</b></td>
-          <td><b class="text-capitalize">{{ ttt('date') }}</b></td>
+        <tr v-if="store.operationplan.type === 'DO'">
+          <th style="width: 40%"><b class="text-capitalize">{{ ttt('item') }}</b></th>
+          <th style="width: 20%"><b class="text-capitalize">{{ ttt('location') }}</b></th>
+          <th style="width: 15%"><b class="text-capitalize">{{ ttt('quantity') }}</b></th>
+          <th style="width: 10%"><b class="text-capitalize">{{ ttt('onhand') }}</b></th>
+          <th style="width: 15%"><b class="text-capitalize">{{ ttt('date') }}</b></th>
+        </tr>
+        <tr v-else>
+          <th style="width: 40%"><b class="text-capitalize">{{ ttt('item') }}</b></th>
+          <th style="width: 20%"><b class="text-capitalize">{{ ttt('quantity') }}</b></th>
+          <th style="width: 20%"><b class="text-capitalize">{{ ttt('onhand') }}</b></th>
+          <th style="width: 20%"><b class="text-capitalize">{{ ttt('date') }}</b></th>
         </tr>
         </thead>
         <tbody>
@@ -165,30 +172,43 @@ function enableSaveUndoButtons() {
         </tr>
 
         <tr
-            v-for="(flowplan, index) in flowplans"
-            :key="index"
-            :class="(index===0 && flowplan.quantity > 0) ? 'border-top' : ''"
+          v-for="(flowplan, index) in flowplans"
+          :key="index"
+          :class="(index===0 && flowplan.quantity > 0) ? 'border-top' : ''"
         >
           <!-- Item column - with or without alternates -->
-          <td v-if="!flowplan.alternates" style="white-space: nowrap">
-              <span style="padding-right: 3px"
-                  v-if="flowplan.buffer?.description"
-                  :title="flowplan.buffer.description"
-                  data-bs-toggle="tooltip"
+          <td v-if="!flowplan.alternates">
+            <div class="d-flex align-items-center">
+              <span
+                v-if="flowplan.buffer?.description"
+                data-bs-toggle="tooltip"
+                :title="flowplan.buffer.description"
+                class="text-truncate"
+                style="min-width: 0; padding-right: 3px"
               >
                 {{ flowplan.buffer?.item }}
               </span>
-            <span v-else style="padding-right: 3px">{{ flowplan.buffer?.item }}</span>
-            <a
+              <span
+                v-else
+                class="text-truncate"
+                style="min-width: 0; padding-right: 3px"
+                :title="flowplan.buffer?.item"
+                data-bs-toggle="tooltip"
+              >
+                {{ flowplan.buffer?.item }}
+              </span>
+              <a
                 :href="`${urlPrefix}/detail/input/item/${adminEscape(flowplan.buffer?.item)}/`"
                 @click.stop
-            >
-              <span class="fa fa-caret-right"></span>
-            </a>
+                class="flex-shrink-0"
+              >
+                <span class="fa fa-caret-right"></span>
+              </a>
+            </div>
           </td>
 
-          <td v-else style="white-space: nowrap">
-            <div class="dropdown">
+          <td v-else>
+            <div class="dropdown d-flex w-100">
               <button
                   class="btn btn-primary text-capitalize"
                   data-bs-toggle="dropdown"
@@ -221,7 +241,7 @@ function enableSaveUndoButtons() {
           </td>
 
           <!-- Location column -->
-          <td>{{ flowplan.buffer?.location }}</td>
+          <td v-if="store.operationplan.type === 'DO'">{{ flowplan.buffer?.location }}</td>
 
           <!-- Quantity column -->
           <td>{{ numberFormat(flowplan.quantity) }}</td>

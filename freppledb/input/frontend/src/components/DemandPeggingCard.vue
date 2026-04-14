@@ -90,21 +90,21 @@ onMounted(() => {
         id="widget_demandpegging"
         class="card-body collapse mb-1"
         :class="{ 'show': !isCollapsed }"
-        style="max-height: 15em; overflow: auto"
+        style="max-height: 15em; overflow-y: auto; overflow-x: hidden;"
     >
       <div v-if="!hasPeggingDemand">
         {{ ttt('There is no demand requiring this supply.') }}
       </div>
 
       <div v-else class="table-responsive">
-        <table class="table table-sm table-hover table-borderless">
+        <table class="table table-sm table-hover table-borderless" style="table-layout: fixed; width: 100%;">
           <thead>
-          <tr>
-            <td><b class="text-capitalize">{{ ttt('name') }}</b></td>
-            <td><b class="text-capitalize">{{ ttt('item') }}</b></td>
-            <td><b class="text-capitalize">{{ ttt('due') }}</b></td>
-            <td><b class="text-capitalize">{{ ttt('quantity') }}</b></td>
-          </tr>
+            <tr>
+              <th style="width: 20%"><b class="text-capitalize">{{ ttt('name') }}</b></th>
+              <th style="width: 40%"><b class="text-capitalize">{{ ttt('item') }}</b></th>
+              <th style="width: 20%"><b class="text-capitalize">{{ ttt('due') }}</b></th>
+              <th style="width: 20%"><b class="text-capitalize">{{ ttt('quantity') }}</b></th>
+            </tr>
           </thead>
           <tbody>
           <tr v-for="(demand, index) in peggingDemand" :key="index">
@@ -121,20 +121,33 @@ onMounted(() => {
 
             <!-- Item column -->
             <td>
-              <span
+              <div class="d-flex align-items-center">
+                <span
                   v-if="demand.demand?.item?.description"
                   :title="demand.demand.item.description"
                   data-bs-toggle="tooltip"
-              >
-                {{ demand.demand.item.name }}
-              </span>
-              <span v-else style="padding-right: 3px">{{ demand.demand?.item?.name }}</span>
-              <a
+                  class="text-truncate"
+                  style="min-width: 0; padding-right: 3px"
+                >
+                  {{ demand.demand.item.name }}
+                </span>
+                <span
+                  v-else
+                  class="text-truncate"
+                  style="min-width: 0; padding-right: 3px"
+                  :title="demand.demand?.item?.name"
+                  data-bs-toggle="tooltip"
+                >
+                  {{ demand.demand?.item?.name }}
+                </span>
+                <a
                   :href="`${urlPrefix}/detail/input/item/${adminEscape(demand.demand?.item?.name)}/`"
                   @click.stop
-              >
-                <span class=" fa fa-caret-right"></span>
-              </a>
+                  class="flex-shrink-0"
+                >
+                  <span class="fa fa-caret-right"></span>
+                </a>
+              </div>
             </td>
 
             <!-- Due date column -->

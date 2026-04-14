@@ -977,3 +977,12 @@ input[type="date"] {
     max-height: min(calc(-150px + 100vh), 300px);
     overflow-y: auto;
 }
+
+// Truncate long txt fields
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+

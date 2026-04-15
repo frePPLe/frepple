@@ -207,9 +207,7 @@ set(CPACK_SOURCE_IGNORE_FILES
   "^${PROJECT_SOURCE_DIR}/static$"
   "^${PROJECT_SOURCE_DIR}/localsettings.*py$"
   "^${PROJECT_SOURCE_DIR}/node_modules"
-  "^${PROJECT_SOURCE_DIR}/bin/.*\\\\.exe$"
   "^${PROJECT_SOURCE_DIR}/bin/frepple$"
-  "^${PROJECT_SOURCE_DIR}/bin/frepple.dll$"
   "^${PROJECT_SOURCE_DIR}/bin/libfrepple.*"
   "^${PROJECT_SOURCE_DIR}/bin/.*\\\\.pdb$"
 )

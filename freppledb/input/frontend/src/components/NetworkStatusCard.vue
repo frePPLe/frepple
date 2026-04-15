@@ -127,6 +127,7 @@ onMounted(() => {
         id="widget_networkstatus"
         class="card-body collapse"
         :class="{ 'show': !isCollapsed }"
+        style="max-height: 15em; overflow-y: auto; overflow-x: hidden;"
     >
       <table class="table table-sm table-hover table-borderless">
         <thead>

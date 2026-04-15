@@ -59,7 +59,7 @@ const filteredUpstream = computed(() => {
     <h5 class="card-title fs-5 me-auto text-capitalize">{{ ttt('upstream operations') }}</h5>
     <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
   </div>
-  <div id="widget_upstream" class="card-body collapse" :class="{ 'show': !isCollapsed }">
+  <div id="widget_upstream" class="card-body collapse" :class="{ 'show': !isCollapsed }" style="max-height: 15em; overflow-y: auto; overflow-x: hidden;">
     <table class="table table-sm table-hover table-borderless"><thead><tr>
       <td><b class="text-capitalize">{{ ttt('level') }}</b></td>
       <td><b class="text-capitalize">{{ ttt('reference') }}</b></td>

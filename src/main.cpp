@@ -35,7 +35,9 @@
 using namespace std;
 
 #ifndef NDEBUG
-extern "C" const char* __asan_default_options() { return "detect_leaks=0"; }
+extern "C" const char* __asan_default_options() {
+  return "detect_leaks=0:halt_on_error=1:abort_on_error=1";
+}
 #endif
 
 void usage() {

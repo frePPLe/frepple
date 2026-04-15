@@ -667,8 +667,9 @@ void SolverCreate::SolverData::maskTemporaryShortages() {
               correction = new OperationFixedTime();
               correction->setName("Correction for " + buf.getName());
               correction->setHidden(true);
-              new FlowEnd(correction, &buf, -1);
-              new FlowStart(correction, &buf, 1);
+              // Important not to trigger cluster recalculation.
+              new FlowEnd(correction, &buf, -1, false);
+              new FlowStart(correction, &buf, 1, false);
             }
             auto opplan = correction->createOperationPlan(
                 qty, flpln->getDate(), shortage_ends, buf.getBatch());

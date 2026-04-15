@@ -645,7 +645,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                     "model": self.model,
                     "opts": self.model._meta,
                     "object_id": quote(object_id),
-                    "active_tab": "comments",
+                    "active_tab": "messages",
                     "comments": comments,
                 },
             )

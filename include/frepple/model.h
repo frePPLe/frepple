@@ -5619,21 +5619,23 @@ class Flow : public Object,
   ~Flow() override;
 
   /* Constructor. */
-  explicit Flow(Operation* o, Buffer* b, double q) : quantity(q) {
+  explicit Flow(Operation* o, Buffer* b, double q, bool recomputeLevels = true)
+      : quantity(q) {
     setBuffer(b);
     setOperation(o);
     initType(metadata);
-    HasLevel::triggerLazyRecomputation();
+    if (recomputeLevels) HasLevel::triggerLazyRecomputation();
   }
 
   /* Constructor. */
-  explicit Flow(Operation* o, Buffer* b, double q, const DateRange& e)
+  explicit Flow(Operation* o, Buffer* b, double q, const DateRange& e,
+                bool recomputeLevels = true)
       : quantity(q) {
     setBuffer(b);
     setOperation(o);
     setEffective(e);
     initType(metadata);
-    HasLevel::triggerLazyRecomputation();
+    if (recomputeLevels) HasLevel::triggerLazyRecomputation();
   }
 
   /* Search an existing object. */
@@ -5863,7 +5865,9 @@ class Flow : public Object,
 class FlowStart : public Flow {
  public:
   /* Constructor. */
-  explicit FlowStart(Operation* o, Buffer* b, double q) : Flow(o, b, q) {}
+  explicit FlowStart(Operation* o, Buffer* b, double q,
+                     bool recomputeLevels = true)
+      : Flow(o, b, q, recomputeLevels) {}
 
   /* This constructor is called from the plan begin_element function. */
   explicit FlowStart() {}
@@ -5886,7 +5890,9 @@ class FlowStart : public Flow {
 class FlowEnd : public Flow {
  public:
   /* Constructor. */
-  explicit FlowEnd(Operation* o, Buffer* b, double q) : Flow(o, b, q) {}
+  explicit FlowEnd(Operation* o, Buffer* b, double q,
+                   bool recomputeLevels = true)
+      : Flow(o, b, q, recomputeLevels) {}
 
   /* This constructor is called from the plan begin_element function. */
   explicit FlowEnd() {}

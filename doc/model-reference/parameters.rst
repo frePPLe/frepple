@@ -124,6 +124,9 @@ WIP.produce_full_quantity            | Controls how material is produced from pa
                                        still produce the full quantity of the material. We assume that the
                                        produced material will only be booked as inventory when the
                                        manufacturing order is fully finished.
+pathreport_optimization              | Activates a fast version of the supply path report, suitable for
+                                       deep bill of materials with many components.
+                                     | Default is false.
 ==================================== =======================================================================
 
 **Demand forecasting parameters**

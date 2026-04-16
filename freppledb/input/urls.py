@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django.urls import re_path
+from django.urls import path, re_path
 from django.views.generic.base import TemplateView
 
 from freppledb import mode
@@ -571,4 +571,6 @@ else:
 
     svcpatterns = [
         re_path(r"^operationplan/$", services.OperationplanService.as_asgi()),
+        path("supplypath/<str:model>/<str:name>/", services.SupplyPathSvc.as_asgi()),
+        path("whereused/<str:model>/<str:name>/", services.SupplyPathSvc.as_asgi()),
     ]

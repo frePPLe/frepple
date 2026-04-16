@@ -131,15 +131,15 @@ opplanAttributes = [a for a in getAttributes(OperationPlan)]
 
 
 class OperationplanService(AsyncHttpConsumer):
-    msgtemplate = """
-        <!doctype html>
-        <html lang="en">
-            <head>
-            <meta http-equiv="content-type" content="text/html; charset=utf-8">
-            </head>
-            <body>%s</body>
-        </html>
-        """
+    msgtemplate = (
+        "<!doctype html>\n"
+        '<html lang="en">\n'
+        "<head>\n"
+        '<meta http-equiv="content-type" content="text/html; charset=utf-8">\n'
+        "</head>\n"
+        "<body>%s</body>\n"
+        "</html>\n"
+    )
 
     async def handle(self, body):
         errors = []
@@ -420,5 +420,269 @@ class OperationplanService(AsyncHttpConsumer):
             await self.send_response(
                 500,
                 b"Error updating operationplans",
+                headers=self.scope["response_headers"],
+            )
+
+
+class SupplyPathSvc(AsyncHttpConsumer):
+    msgtemplate = (
+        "<!doctype html>\n"
+        '<html lang="en">\n'
+        "<head>\n"
+        '<meta http-equiv="content-type" content="text/html; charset=utf-8">\n'
+        "</head>\n"
+        "<body>%s</body>\n"
+        "</html>\n"
+    )
+
+    def recurseOperations(
+        self, op, depth, real_depth, quantity, results, upstream, parent_id
+    ):
+        print("visiting", op, depth, quantity, upstream, parent_id)
+        # Avoid duplicates
+        if any(o["operation"] == op.name for o in results):
+            print("already visited")
+            return
+
+        # Add the current operation to the result list
+        id = len(results) + 1
+        if not op.hidden or isinstance(
+            op, (frepple.operation_itemsupplier, frepple.operation_itemdistribution)
+        ):
+            v = {
+                "depth": depth,
+                "id": id,
+                "operation": op.name,
+                "priority": op.priority,
+                "type": op.__class__.__name__[10:],
+                "item": op.item.name if op.item else None,
+                "description": op.item.description if op.item else None,
+                "uom": op.item.uom if op.item else None,
+                "location": op.location.name if op.location else None,
+                "resources": sorted((l.resource.name, l.quantity) for l in op.loads)
+                or None,
+                "parentoper": (
+                    op.owner.name if op.owner and not op.owner.hidden else None
+                ),
+                "suboperation": 1 if parent_id else 0,
+                "duration": getattr(op, "duration", None),
+                "duration_per": getattr(op, "duration_per", None),
+                "quantity": quantity,
+                "buffers": sorted((fl.buffer.name, fl.quantity) for fl in op.flows)
+                or None,
+                "parent": parent_id,
+                "leaf": "false" if op.owner else None,
+                "expanded": "true",
+                "numsuboperations": (
+                    len(list(c for c in op.suboperations))
+                    if isinstance(
+                        op,
+                        (
+                            frepple.operation_routing,
+                            frepple.operation_alternate,
+                            frepple.operation_split,
+                        ),
+                    )
+                    else 0
+                ),
+                "realdepth": real_depth,
+                "sizeminimum": op.size_minimum,
+                "sizemaximum": op.size_maximum if op.size_maximum < 1e20 else None,
+                "sizemultiple": op.size_multiple,
+                "alternate": "false",  # TODO
+                "blockedby": None,  # TODO
+                "blocking": None,  # TODO
+                "rownb": None,  # TODO
+                "colnb": None,  # TODO
+            }
+            if parent_id:
+                v["alternate_priority"] = op.priority
+                v["alternate_operation"] = op.owner.name if op.owner else None
+            results.append(v)
+        else:
+            depth -= 1
+            real_depth -= 1
+
+        # Recurse to the next level: flows
+        for fl in sorted(
+            op.flows,
+            key=lambda f: (f.quantity < 0 or f.quantity_fixed < 0, f.buffer.item.name),
+            reverse=True,
+        ):
+            if (
+                upstream
+                and (fl.quantity < 0 or fl.quantity_fixed < 0)
+                and fl.buffer.producing
+            ):
+                print(
+                    "flow upstream",
+                    max(depth, 0),
+                    upstream,
+                    fl.buffer.name,
+                    fl.quantity,
+                    fl.buffer.producing,
+                )
+                self.recurseOperations(
+                    fl.buffer.producing,
+                    max(depth + 1, 0),
+                    max(real_depth + 1, 0),
+                    -quantity * fl.quantity,
+                    results,
+                    upstream,
+                    None,
+                )
+            elif not upstream and (fl.quantity > 0 or fl.quantity_fixed > 0):
+                for fl2 in fl.buffer.flows:
+                    if fl2.quantity < 0 or fl2.quantity_fixed < 0:
+                        o = fl2.operation
+                        if o.owner and isinstance(o.owner, frepple.operation_routing):
+                            o = o.owner
+                        if o.priority != 0:
+                            print(
+                                "flow downstream",
+                                max(depth, 0),
+                                upstream,
+                                fl2.operation.name,
+                                -quantity * fl.quantity * fl2.quantity,
+                            )
+                            self.recurseOperations(
+                                fl2.operation,
+                                max(depth + 1, 0),
+                                max(real_depth + 1, 0),
+                                -quantity * fl.quantity * fl2.quantity,
+                                results,
+                                upstream,
+                                id,
+                            )
+
+        # Recurse to the next level: suboperations
+        if isinstance(
+            op,
+            (
+                frepple.operation_routing,
+                frepple.operation_alternate,
+                frepple.operation_split,
+            ),
+        ):
+            print("children", depth, op.__class__.__name__)
+            for c in op.suboperations:
+                if not (
+                    isinstance(op, frepple.operation_alternate)
+                    and c.operation.priority == 0
+                ):
+                    print("child", depth, c.operation.name)
+                    self.recurseOperations(
+                        c.operation,
+                        max(depth + 1, 0),
+                        max(real_depth, 0),  # Doesn't increase for suboperations
+                        quantity,
+                        results,
+                        upstream,
+                        id,
+                    )
+
+        # Recurse to the next level: dependencies
+        for d in op.blockedby if upstream else op.blocking:
+            print("dependencies", depth, d.first.name, d.second.name)
+            self.recurseOperations(
+                d.second if upstream else d.first,
+                max(depth + 1, 0),
+                max(real_depth + 1, 0),
+                quantity * d.quantity,
+                results,
+                upstream,
+                id,
+            )
+
+    async def handle(self, body):
+        try:
+            model = self.scope["url_route"]["kwargs"].get("model", None)
+            name = self.scope["url_route"]["kwargs"].get("name", None)
+            upstream = self.scope["path"].startswith("/supplypath/")
+
+            # No permission check needed here, because this url is only exposed internally.
+
+            # Find set of operations to start with
+            operations = []
+            try:
+                if model == "item":
+                    it = frepple.item(name=name, action="C")
+                    if it:
+                        if upstream:
+                            operations.extend(buf.producing for buf in it.buffers)
+                        else:
+                            for buf in it.buffers:
+                                for fl in buf.flows:
+                                    if fl.quantity < 0 or fl.quantity_fixed < 0:
+                                        o = fl.operation
+                                        if o.owner and isinstance(
+                                            o.owner, frepple.operation_routing
+                                        ):
+                                            o = o.owner
+                                        if o.priority != 0:
+                                            operations.append(o)
+                elif model == "operation":
+                    oper = frepple.operation(name=name, action="C")
+                    if oper:
+                        operations.append(oper)
+                elif model == "resource":
+                    res = frepple.resource(name=name, action="C")
+                    if res:
+                        operations.extend(l.operation for l in res.loads)
+                elif model == "buffer":
+                    buf = frepple.buffer(name=name, action="C")
+                    if buf:
+                        operations.append(buf.producing)
+                elif model in ("demand", "forecast"):
+                    demand = frepple.demand(name=name, action="C")
+                    if demand:
+                        if demand.operation:
+                            operations.append(demand.operation)
+                        elif demand.item and demand.location:
+                            operations.append(
+                                frepple.buffer(
+                                    name=f"{demand.item.name} @ {demand.location.name}"
+                                ).producing
+                            )
+            except Exception:
+                # Ignore "object not found" exceptions
+                pass
+
+            if not operations:
+                self.scope["response_headers"].append((b"Content-Type", b"text/html"))
+                await self.send_response(
+                    404,
+                    (self.msgtemplate % "Not found").encode(),
+                    headers=self.scope["response_headers"],
+                )
+                return
+
+            # Recursively collect all operations
+            results = []
+            print("in", upstream, [o.name for o in operations])
+            for o in operations:
+                self.recurseOperations(o, 0, 0, 1.0, results, upstream, None)
+            for i in results:
+                print("out", i)
+
+            # Return the result
+            self.scope["response_headers"].append(
+                (b"Content-Type", b"application/json")
+            )
+            await self.send_response(
+                200,
+                json.dumps(results).encode(),
+                headers=self.scope["response_headers"],
+            )
+
+        except Exception as e:  # TEMP for debugging
+            import traceback
+
+            traceback.print_exc()
+            print("exception " % e)
+            self.scope["response_headers"].append((b"Content-Type", b"text/html"))
+            await self.send_response(
+                500,
+                (self.msgtemplate % "Error retrieving supply path").encode(),
                 headers=self.scope["response_headers"],
             )

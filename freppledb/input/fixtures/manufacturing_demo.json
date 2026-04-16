@@ -4619,6 +4619,14 @@
         }
     },
     {
+        "model": "common.parameter",
+        "fields": {
+            "name": "pathreport_optimization",
+            "value": "false",
+            "description": "Activates a fast version of the supply path report, suitable for deep bill of materials with many components. Default: false."
+        }
+    },
+    {
         "model": "common.userpreference",
         "fields": {
             "property": "freppledb.planningboard",

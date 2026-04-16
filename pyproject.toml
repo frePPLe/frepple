@@ -25,7 +25,14 @@ Changelog = "https://frepple.com/docs/current/release-notes"
 
 [tool.setuptools.packages.find]
 include = ["freppledb*"]
+exclude = ["*frontend*"]
 namespaces = true
 
+[tool.setuptools]
+include-package-data = false
+
 [tool.setuptools.package-data]
-"*" = ["*"]
+"*" = ["**"]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["frontend/**", "*/frontend/**"]

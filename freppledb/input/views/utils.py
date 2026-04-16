@@ -23,6 +23,9 @@
 
 from datetime import datetime
 import json
+import os
+from urllib.parse import quote
+from urllib.request import Request, urlopen
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -41,7 +44,7 @@ from django.utils.text import format_lazy
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 
-from freppledb.common.auth import getWebserviceAuthorization
+from freppledb.common.models import Parameter
 from freppledb.common.report import (
     GridReport,
     GridFieldText,
@@ -52,6 +55,7 @@ from freppledb.common.report import (
     getCurrentDate,
     getHorizon,
 )
+from freppledb.common.utils import get_databases
 from freppledb.input.models import (
     Resource,
     Operation,
@@ -64,7 +68,7 @@ from freppledb.input.models import (
     OperationPlanResource,
 )
 from freppledb.admin import data_site
-from freppledb.webservice.utils import getWebServiceContext
+from freppledb.webservice.utils import getWebServiceContext, getWebserviceAuthorization
 
 import logging
 
@@ -440,24 +444,24 @@ class PathReport(GridReport):
         GridFieldText(
             "resources", editable=False, sortable=False, extra="formatter:reslistfmt"
         ),
-        GridFieldText("buffers", editable=False, sortable=False, hidden=True),
-        GridFieldText("suboperation", editable=False, sortable=False, hidden=True),
-        GridFieldText("numsuboperations", editable=False, sortable=False, hidden=True),
-        GridFieldText("parentoper", editable=False, sortable=False, hidden=True),
-        GridFieldText("realdepth", editable=False, sortable=False, hidden=True),
-        GridFieldText("id", editable=False, sortable=False, hidden=True),
-        GridFieldText("parent", editable=False, sortable=False, hidden=True),
-        GridFieldText("leaf", editable=False, sortable=False, hidden=True),
-        GridFieldText("expanded", editable=False, sortable=False, hidden=True),
-        GridFieldText("alternate", editable=False, sortable=False, hidden=True),
-        GridFieldText("blockedby", editable=False, sortable=False, hidden=True),
-        GridFieldText("blocking", editable=False, sortable=False, hidden=True),
+        GridFieldText("buffers", editable=False, sortable=False, hidden=False),
+        GridFieldText("suboperation", editable=False, sortable=False, hidden=False),
+        GridFieldText("numsuboperations", editable=False, sortable=False, hidden=False),
+        GridFieldText("parentoper", editable=False, sortable=False, hidden=False),
+        GridFieldText("realdepth", editable=False, sortable=False, hidden=False),
+        GridFieldText("id", editable=False, sortable=False, hidden=False),
+        GridFieldText("parent", editable=False, sortable=False, hidden=False),
+        GridFieldText("leaf", editable=False, sortable=False, hidden=False),
+        GridFieldText("expanded", editable=False, sortable=False, hidden=False),
+        GridFieldText("alternate", editable=False, sortable=False, hidden=False),
+        GridFieldText("blockedby", editable=False, sortable=False, hidden=False),
+        GridFieldText("blocking", editable=False, sortable=False, hidden=False),
         # for time_per/fixed_time operations, rownb,y refer to the position (row,col)
         # of the suboperation in a routing when operation dependencies exist in the routing
         # for routing opertions, rownb,colnb refer to the number of rows and columns the routing should
         # have. If no depndencies exist in that routing, rownb and colnb are None
-        GridFieldInteger("rownb", editable=False, sortable=False, hidden=True),
-        GridFieldInteger("colnb", editable=False, sortable=False, hidden=True),
+        GridFieldInteger("rownb", editable=False, sortable=False, hidden=False),
+        GridFieldInteger("colnb", editable=False, sortable=False, hidden=False),
     )
 
     # Attributes to be specified by the subclasses
@@ -679,7 +683,7 @@ class PathReport(GridReport):
         )
 
         if not downstream:
-            query = query + """
+            query += """
         union all
       -- PURCHASING OPERATIONS
       select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
@@ -1420,7 +1424,8 @@ class PathReport(GridReport):
         if not reportclass.routing_dependencies_done:
             reportclass.routing_dependencies_done = True
             reportclass.routing_operation_position = {}
-            cursor.execute("""
+            cursor.execute(
+                """
             with q as (
                 with recursive cte as
                 (
@@ -1446,7 +1451,8 @@ class PathReport(GridReport):
                 )
             select owner_id, name, row_number() over(partition by owner_id, y order by name) as x, y from q
             order by 1,2,3
-            """)
+            """
+            )
             for rec in cursor:
                 reportclass.routing_operation_position[rec[1]] = (rec[2], rec[3])
                 # for the routing, x,y refers to the number of rows and columns
@@ -1717,6 +1723,58 @@ class PathReport(GridReport):
                     )
 
     @classmethod
+    def data_query(reportclass, request, *args, fields=None, page=None, **kwargs):
+        if (
+            Parameter.getValue(
+                "pathreport_optimization", request.database, "false"
+            ).lower()
+            == "true"
+        ):
+            import time
+
+            start_time = time.perf_counter()
+            try:
+                if "FREPPLE_TEST" in os.environ:
+                    host = get_databases()[request.database]["TEST"].get(
+                        "FREPPLE_PORT", None
+                    )
+                else:
+                    host = get_databases()[request.database].get("FREPPLE_PORT", None)
+                path = "whereused" if reportclass.downstream else "supplypath"
+                token = getWebserviceAuthorization(user=request.user.username, exp=600)
+                objecttype = {
+                    "input.buffer": "buffer",
+                    "input.demand": "demand",
+                    "input.resource": "resource",
+                    "input.operation": "operation",
+                    "input.item": "item",
+                    "input.forecast": "demand",
+                }[str(reportclass.objecttype._meta)]
+                with urlopen(
+                    Request(
+                        f"http://{host}/{path}/{objecttype}/{quote(args[0], safe='')}/",
+                        headers={"Authorization": f"Bearer {token}"},
+                    )
+                ) as response:
+                    if response.status == 200:
+                        request.data = response.read().decode(
+                            encoding="utf-8", errors="ignore"
+                        )
+                        request.data = json.loads(request.data)
+                        print("done with svc")
+                        # return request.data
+            except Exception as e:
+                print("Error calling webservice: %s" % e)
+            finally:
+                print(
+                    "PathReport.data_query webservice call took %.3f seconds"
+                    % (time.perf_counter() - start_time)
+                )
+        # Fallback to the old method of using database queries
+        print("Using database queries")
+        return super().data_query(request, *args, fields=fields, page=page, **kwargs)
+
+    @classmethod
     def query(reportclass, request, basequery):
         """
         A function that recurses upstream or downstream in the supply chain.
@@ -1875,6 +1933,39 @@ class PathReport(GridReport):
                 i["parentoper"] and i["parentoper"] in alternate_ops
             ):
                 i["alternate"] = "true"
+
+        def normalize(item):
+            """Recursively converts tuples to lists for comparison."""
+            if isinstance(item, (list, tuple)):
+                return [normalize(i) for i in item]
+            return item
+
+        if hasattr(request, "data"):
+            from datetime import timedelta
+
+            print("------------------------------------")
+            for db_item, svc_item in zip(
+                sorted(results, key=lambda x: (x["depth"], x["operation"])),
+                sorted(request.data, key=lambda x: (x["depth"], x["operation"])),
+            ):
+                if svc_item["duration_per"] is not None:
+                    svc_item["duration_per"] = timedelta(
+                        seconds=svc_item["duration_per"]
+                    )
+                if svc_item["duration"] is not None:
+                    svc_item["duration"] = timedelta(seconds=svc_item["duration"])
+                if db_item == svc_item:
+                    print(f"Match: {db_item}")
+                else:
+                    print(f"Mismatch: {db_item}")
+                    for key in set(db_item.keys()) | set(svc_item.keys()):
+                        val_db = normalize(db_item.get(key, "N/A in db"))
+                        val_svc = normalize(svc_item.get(key, "N/A in svc"))
+
+                        if val_db != val_svc:
+                            print(f"  - Key '{key}':")
+                            print(f"      DB:  {val_db}")
+                            print(f"      SVC: {val_svc}")
 
         yield from results
 
@@ -2378,7 +2469,8 @@ class OperationPlanDetail(View):
                           or sales.SO is not null
                           or (items.name = %%s and location.name = %%s)
                         order by items.name, location.name
-                        """ % (settings.DATE_FORMAT_JS,),
+                        """
+                        % (settings.DATE_FORMAT_JS,),
                         (
                             opplan.item_id,
                             current_date,

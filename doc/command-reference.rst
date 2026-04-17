@@ -408,6 +408,9 @@ access to the files restricted.
         # Get an list of available data files with their size and timestamp:
         GET /execute/uploadtofolder/0/
 
+        # Delete a data file
+        DELETE /execute/deletefromfolder/0/<filename>/
+
         # Download all your data files:
         GET /execute/downloadfromfolder/0/
 

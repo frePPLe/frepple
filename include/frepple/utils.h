@@ -7001,13 +7001,7 @@ class MetaFieldIteratorClass : public MetaFieldBase {
 // LIBRARY INITIALISATION
 //
 
-/* This class holds functions that used for maintenance of the library.
- *
- * Its static member function 'initialize' should be called BEFORE the
- * first use of any class in the library.
- * The member function 'finialize' will be called automatically at the
- * end of the program.
- */
+/* This class is used for initialization. */
 class LibraryUtils {
  public:
   static void initialize();

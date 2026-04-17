@@ -854,7 +854,9 @@ class Solver : public Object {
 
   static PyObject* solve(PyObject*, PyObject*);
 
-  virtual void solve(void* = nullptr) = 0;
+  virtual void solve(void* = nullptr) {
+    throw LogicException("Called undefined solve(void*) method");
+  };
 
   virtual void solve(const Plan*, void* = nullptr) {
     throw LogicException("Called undefined solve(Plan*) method");

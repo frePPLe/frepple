@@ -34,6 +34,9 @@
 
 namespace frepple {
 
+// Forward declarations
+class OperatorForward;
+
 /* A solver class to remove excess material.
  *
  * The class works in a single thread only.
@@ -112,6 +115,8 @@ class OperatorDelete : public Solver {
   bool propagate = true;
 };
 
+enum class direction { downstream, upstream, both, none };
+
 /* This solver implements a heuristic algorithm for planning demands.
  *
  * One by one the demands are processed. The demand will consume step by step
@@ -129,7 +134,12 @@ class OperatorDelete : public Solver {
  */
 class SolverCreate : public Solver {
  public:
+  class SolverData;
+
   using Solver::solve;
+
+  // Used to indent the logfile in a readable way
+  indent indentlevel;
 
  protected:
   /* This variable stores the constraint which the solver should respect.
@@ -139,9 +149,6 @@ class SolverCreate : public Solver {
   bool create_deliveries = true;
 
   bool rotateResources = true;
-
-  // Used to indent the logfile in a readable way
-  indent indentlevel;
 
   /* Used to force the buffer safety stock solver method to resolve
    * only the material shortages. */
@@ -338,7 +345,9 @@ class SolverCreate : public Solver {
     commands.setCommandManager(&mgr);
   }
 
-  /* Copy constructor */
+  /* Copy constructor.
+   * TODO Ideally the solver is made non-copyable.
+   */
   SolverCreate(const SolverCreate& other) : commands(this) {
     initType(metadata);
     commands.setCommandManager(&mgr);
@@ -365,29 +374,8 @@ class SolverCreate : public Solver {
     erasePreviousFirst = other.erasePreviousFirst;
   }
 
-  /* Copy assignment operator. */
-  SolverCreate& operator=(const SolverCreate& other) {
-    plantype = other.plantype;
-    lazydelay = other.lazydelay;
-    create_deliveries = other.create_deliveries;
-    administrativeleadtime = other.administrativeleadtime;
-    minimumdelay = other.minimumdelay;
-    propagate = other.propagate;
-    batchgrouping = other.batchgrouping;
-    rotateResources = other.rotateResources;
-    iteration_threshold = other.iteration_threshold;
-    iteration_accuracy = other.iteration_accuracy;
-    iteration_max = other.iteration_max;
-    resource_iteration_max = other.resource_iteration_max;
-    userexit_flow = other.userexit_flow;
-    userexit_demand = other.userexit_demand;
-    userexit_nextdemand = other.userexit_nextdemand;
-    userexit_buffer = other.userexit_buffer;
-    userexit_resource = other.userexit_resource;
-    userexit_operation = other.userexit_operation;
-    erasePreviousFirst = other.erasePreviousFirst;
-    return *this;
-  }
+  /* Copy assignment is disallowed. */
+  SolverCreate& operator=(const SolverCreate& other) = delete;
 
   /* Destructor. */
   ~SolverCreate() override {}
@@ -769,7 +757,6 @@ class SolverCreate : public Solver {
   /* Flag to specify whether we erase the previous plan first or not. */
   bool erasePreviousFirst = true;
 
- protected:
   /* This class is used to store the solver status during the
    * ask-reply calls of the solver.
    */
@@ -848,10 +835,36 @@ class SolverCreate : public Solver {
     OperationPlan* keepAssignments = nullptr;
   };
 
+  /* Command manager used when autocommit is switched off. */
+  CommandManager mgr;
+
+  /* An auxilary method that will create an extra operationplan to
+   * supply the requested quantity.
+   * It calls the checkOperation method to check the feasibility
+   * of the new operationplan.
+   */
+  OperationPlan* createOperation(const Operation*, SolverData*,
+                                 bool propagate = true,
+                                 bool start_or_end = true,
+                                 double* qty_per = nullptr,
+                                 double* qty_fixed = nullptr,
+                                 bool use_offset = true);
+
+  /* Verifies whether this operationplan violates the leadtime
+   * constraints. */
+  bool checkOperationLeadTime(OperationPlan*, SolverData&, bool);
+
+  /* Verifies whether this operationplan violates the capacity constraint.
+   * In case it does the operationplan is moved to an earlier or later
+   * feasible date.
+   */
+  void checkOperationCapacity(OperationPlan*, SolverData&);
+
   /* This class is a helper class of the SolverCreate class.
    *
    * It stores the solver state maintained by each solver thread.
    */
+ public:
   class SolverData {
     friend class SolverCreate;
 
@@ -1015,6 +1028,8 @@ class SolverCreate : public Solver {
     // Recursively collect all dependencies.
     void populateDependencies(const Operation*);
 
+    OperatorForward* operator_forward = nullptr;
+
    public:
     /* Pointer to the current solver status. */
     State* state;
@@ -1023,35 +1038,11 @@ class SolverCreate : public Solver {
     State* prevstate;
   };
 
+ private:
   /* When autocommit is switched off, this command structure will contain
    * all plan changes.
    */
   SolverData commands;
-
-  /* Command manager used when autocommit is switched off. */
-  CommandManager mgr;
-
-  /* An auxilary method that will create an extra operationplan to
-   * supply the requested quantity.
-   * It calls the checkOperation method to check the feasibility
-   * of the new operationplan.
-   */
-  OperationPlan* createOperation(const Operation*, SolverData*,
-                                 bool propagate = true,
-                                 bool start_or_end = true,
-                                 double* qty_per = nullptr,
-                                 double* qty_fixed = nullptr,
-                                 bool use_offset = true);
-
-  /* Verifies whether this operationplan violates the leadtime
-   * constraints. */
-  bool checkOperationLeadTime(OperationPlan*, SolverData&, bool);
-
-  /* Verifies whether this operationplan violates the capacity constraint.
-   * In case it does the operationplan is moved to an earlier or later
-   * feasible date.
-   */
-  void checkOperationCapacity(OperationPlan*, SolverData&);
 
  public:
   /* This function will check all constraints for an operationplan
@@ -1089,6 +1080,161 @@ class SolverCreate : public Solver {
   SolverData& getCommands() { return commands; }
 };
 
+/* This solver updates the plan by moving operationplans to later dates.
+ * It's a forward sweep resolving infeasibilities by delaying operations, much
+ * like a bulldozer pushing forward a pile of earth.
+ *
+ * This class is a child-solver for the SolverCreate class. The state,
+ * configuration, threading and command manager are all managed by the parent
+ * solver. This class is only a placeholder for the solver logic.
+ */
+class OperatorForward : public Solver, public NonCopyable {
+ public:
+  using Solver::solve;
+
+  /* Constructor. */
+  OperatorForward(SolverCreate::SolverData* d, int c = -1,
+                  CommandManager* mgr = nullptr)
+      : cmds(mgr), data(d), cluster(c) {}
+
+  bool getPropagate() const { return propagate; }
+
+  void setPropagate(bool b) { propagate = b; }
+
+  /* Solve a single cluster. */
+  void solve(const Plan*, void* = nullptr) override;
+
+  /* Resolve material shortages by delaying consumers. */
+  void solve(const Buffer*, void* = nullptr) override;
+
+  /* Infinite buffers require no propagation. */
+  void solve(const BufferInfinite*, void* = nullptr) override {}
+
+  /* Propagate the infeasilities on a single resource.
+   * Solve overloads by delaying operationplans.
+   */
+  void solve(const Resource*, void* = nullptr) override;
+
+  /* Propagate the infeasilities on a single resource.
+   * Solve overloads by delaying operationplans.
+   */
+  void solve(const ResourceBuckets*, void* = nullptr) override;
+
+  /* Infinite resources require no propagation. */
+  void solve(const ResourceInfinite*, void* = nullptr) override {}
+
+  /* Solve infeasibilities on an operationplan by postponing the downstream
+   * consumers.
+   */
+  void solve(OperationPlan*, void* = nullptr);
+
+  /* Move out all operationplans to start beyond the current date and the
+   * fence.
+   */
+  void solve(const Operation*, void* = nullptr) override;
+
+  bool getAcceptTabuCandidate() const { return acceptTabuCandidate; }
+
+  void setAcceptTabuCandidate(bool b) { acceptTabuCandidate = b; }
+
+  /* Add a command to move the start date of the operationplan. */
+  void addMoveStartDate(OperationPlan* op, Date d) {
+    auto i = original_dates.lower_bound(op);
+    if (i != original_dates.end() && i->first != op)
+      original_dates.insert(i, make_pair(op, op->getStart()));
+    if (data->getSolver()->getAutocommit())
+      op->setStart(d);
+    else
+      cmds->add(new CommandMoveOperationPlan(op, d, Date::infinitePast));
+  }
+
+  /* Add a command to move the end date of the operationplan. */
+  void addMoveEndDate(OperationPlan* op, Date d) {
+    auto i = original_dates.lower_bound(op);
+    if (i != original_dates.end() && i->first != op)
+      original_dates.insert(i, make_pair(op, op->getStart()));
+    if (data->getSolver()->getAutocommit())
+      op->getOperation()->setOperationPlanParameters(op, op->getQuantity(),
+                                                     Date::infinitePast, d,
+                                                     true, true, false, true);
+    else
+      cmds->add(new CommandMoveOperationPlan(op, Date::infinitePast, d, -1.0,
+                                             false, true));
+  }
+
+  void addResize(FlowPlan* flplan, double qty, bool) {
+    if (data->getSolver()->getAutocommit())
+      flplan->setQuantity(qty, true);
+    else {
+      logger << "Warning:can't undo this flowplan resize" << endl;  // TODO
+      flplan->setQuantity(qty, true);
+    }
+  }
+
+  /* Compare candidate operationplans. */
+  bool compareCandidates(OperationPlan*, OperationPlan*,
+                         Date = Date::infinitePast) const;
+
+  static bool compare_loadplans(const LoadPlan*&, const LoadPlan*&);
+
+  struct compareLoadPlans {
+    OperatorForward* data = nullptr;
+    compareLoadPlans(OperatorForward* d) : data(d) {}
+    bool operator()(const LoadPlan*&, const LoadPlan*&);
+  };
+
+ private:
+  CommandManager* cmds = nullptr;
+
+  bool propagate = true;
+
+  /* Used internally to avoid infinite loops. */
+  static constexpr unsigned short MAX_LOOP = 10000;
+
+  /* Flag whether a candidate on the tabu list is acceptable as candidate
+   * or not. */
+  bool acceptTabuCandidate = false;
+
+  SolverCreate::SolverData* data = nullptr;
+
+  /* Keeps track of previous moves. This is used to maintain stability
+   * during moves. */
+  map<OperationPlan*, Date> original_dates;
+
+  /* An identifier of the cluster being planned. */
+  int cluster;
+
+  direction excess_scanner = direction::both;
+
+  /* Add a operationplan to the tabu list. Operationplans in this list can't
+   * be touched by the move solver.
+   */
+  void addTabu(OperationPlan* o, double weight = DBL_MAX) {
+    if (o) tabu[o] = weight;
+  }
+
+  /* Empty the list of tabu operationplans. */
+  void resetTabu() { tabu.clear(); }
+
+  /* Only candidates passing this function are acceptable. */
+  bool isValidCandidate(OperationPlan* opplan) const;
+
+  /* A list of (almost) untouchable operationplans. */
+  map<OperationPlan*, double> tabu;
+
+  /* A list of operationplans that we can't resolve. */
+  set<OperationPlan*> unresolvables;
+
+  /* Flowplan currently being propagated. */
+  FlowPlan* curFlowPlan = nullptr;
+
+  /* Loadplan currently being propagated. */
+  LoadPlan* curLoadPlan = nullptr;
+
+  /* OperationPlan currently being propagated. */
+  OperationPlan* curOperationPlan = nullptr;
+};
+
 class SolverPropagateStatus : public Solver {
  public:
   using Solver::solve;
@@ -1107,9 +1253,7 @@ class SolverPropagateStatus : public Solver {
   static const MetaClass* metadata;
 };
 
-/* This class holds functions that used for maintenance of the solver
- * code.
- */
+/* This class is used for initialization. */
 class LibrarySolver {
  public:
   static void initialize();

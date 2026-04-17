@@ -129,10 +129,8 @@ SolverCreate::SolverData::SolverData(SolverCreate* s, int c, deque<Demand*>* d)
       logConstraints(true),
       state(statestack),
       prevstate(statestack - 1) {
-  assert(s);
-
-  // Delete operator
   operator_delete = new OperatorDelete();
+  // operator_forward = new OperatorForward(this, c, mgr);
   operator_delete->setLogLevel(s->getLogLevel());
 }
 
@@ -142,7 +140,10 @@ void SolverCreate::SolverData::setCommandManager(CommandManager* a) {
   if (operator_delete) operator_delete->setCommandManager(a);
 }
 
-SolverCreate::SolverData::~SolverData() { delete operator_delete; };
+SolverCreate::SolverData::~SolverData() {
+  delete operator_delete;
+  delete operator_forward;
+};
 
 bool SolverCreate::isLeadTimeConstrained(const Operation* oper) const {
   if (oper && (oper->hasType<OperationItemSupplier>() ||

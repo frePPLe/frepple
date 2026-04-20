@@ -257,3 +257,25 @@ image. Here is a an example dockerfile that adds a new frePPLe app (coded as a P
 The folder with all customizations is typically put under
 version control. This allows a clear process for maintaining your custom code
 and upgrading to new frePPLe releases.
+
+*****************************************
+Override the entry point of the container
+*****************************************
+
+The standard container runs an apache web server as entry point. It is possible run extra
+and/or different processes in your container.
+
+There are two options to do this:
+
+* | You can add extra startup scripts in the /etc/frepple/entrypoint.d folder.
+  | We use `run-parts <https://manpages.ubuntu.com/manpages/noble/man8/run-parts.8.html>`_ to
+    execute the scripts in that folder before the web server starts. This allows you to
+    run extra configuration commands, or to start extra daemon processes.
+
+* | You can pass your command as an argument to the docker run command.
+  | This will execute your command instead of the web server.
+
+.. code-block:: bash
+
+   # Run a temporary container and execute the command "ls /" in it.
+   docker run --rm --name frepple-cmd22 frepple-community:latest ls /

@@ -7,6 +7,15 @@ Release notes
 This release is scheduled for mid May 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: System administration
+
+- | The docker image now allows overriding the entrypoint and skipping the database initialization.
+  | Only very specific usage of the frepple docker image need this capability.
+
+.. rubric:: Upgrade compatibility heads-up
+
+| No breaking changes in this release.
+
 9.15.0 (2026-04-10)
 ===================
 
@@ -41,6 +50,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     frePPLe has been adjusted.
   | Earlier releases didn't bring them in.
   | Now we bring them in to reduce the risk of re-proposing a new, duplicate RFQ.
+
+.. rubric:: Upgrade compatibility heads-up
+
+| No breaking changes in this release.
 
 9.14.0 (2026-03-06)
 ===================

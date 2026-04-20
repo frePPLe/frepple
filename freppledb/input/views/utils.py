@@ -1424,8 +1424,7 @@ class PathReport(GridReport):
         if not reportclass.routing_dependencies_done:
             reportclass.routing_dependencies_done = True
             reportclass.routing_operation_position = {}
-            cursor.execute(
-                """
+            cursor.execute("""
             with q as (
                 with recursive cte as
                 (
@@ -1451,8 +1450,7 @@ class PathReport(GridReport):
                 )
             select owner_id, name, row_number() over(partition by owner_id, y order by name) as x, y from q
             order by 1,2,3
-            """
-            )
+            """)
             for rec in cursor:
                 reportclass.routing_operation_position[rec[1]] = (rec[2], rec[3])
                 # for the routing, x,y refers to the number of rows and columns
@@ -1762,7 +1760,23 @@ class PathReport(GridReport):
                         )
                         request.data = json.loads(request.data)
                         print("done with svc")
-                        # return request.data
+
+                        # post-process results to calculate leaf field
+                        parents = [i["parent"] for i in request.data if i["parent"]]
+                        for i in request.data:
+                            if i["type"] in [
+                                "time_per",
+                                "fixed_time",
+                                "purchase",
+                                "distribution",
+                            ]:
+                                i["leaf"] = (
+                                    "true" if i["id"] not in parents else "false"
+                                )
+                            else:
+                                i["leaf"] = "false"
+
+                        return request.data
             except Exception as e:
                 print("Error calling webservice: %s" % e)
             finally:
@@ -2469,8 +2483,7 @@ class OperationPlanDetail(View):
                           or sales.SO is not null
                           or (items.name = %%s and location.name = %%s)
                         order by items.name, location.name
-                        """
-                        % (settings.DATE_FORMAT_JS,),
+                        """ % (settings.DATE_FORMAT_JS,),
                         (
                             opplan.item_id,
                             current_date,

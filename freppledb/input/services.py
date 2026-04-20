@@ -435,6 +435,15 @@ class SupplyPathSvc(AsyncHttpConsumer):
         "</html>\n"
     )
 
+    operation_dict = {
+        "operation_routing": "routing",
+        "operation_itemdistribution": "distribution",
+        "operation_itemsupplier": "purchase",
+        "operation_time_per": "time_per",
+        "operation_fixed_time": "fixed_time",
+        "operation_alternate": "alternate",
+    }
+
     def recurseOperations(
         self, op, depth, real_depth, quantity, results, upstream, parent_id
     ):
@@ -449,12 +458,18 @@ class SupplyPathSvc(AsyncHttpConsumer):
         if not op.hidden or isinstance(
             op, (frepple.operation_itemsupplier, frepple.operation_itemdistribution)
         ):
+            suboperation_index = 0
+            if op.owner and isinstance(op.owner, frepple.operation_routing):
+                for i in op.owner.suboperations:
+                    suboperation_index += 1
+                    if i.priority == op.priority:
+                        break
             v = {
                 "depth": depth,
                 "id": id,
                 "operation": op.name,
                 "priority": op.priority,
-                "type": op.__class__.__name__[10:],
+                "type": self.operation_dict[op.__class__.__name__],
                 "item": op.item.name if op.item else None,
                 "description": op.item.description if op.item else None,
                 "uom": op.item.uom if op.item else None,
@@ -464,7 +479,7 @@ class SupplyPathSvc(AsyncHttpConsumer):
                 "parentoper": (
                     op.owner.name if op.owner and not op.owner.hidden else None
                 ),
-                "suboperation": 1 if parent_id else 0,
+                "suboperation": suboperation_index,
                 "duration": getattr(op, "duration", None),
                 "duration_per": getattr(op, "duration_per", None),
                 "quantity": quantity,
@@ -524,7 +539,7 @@ class SupplyPathSvc(AsyncHttpConsumer):
                 )
                 self.recurseOperations(
                     fl.buffer.producing,
-                    max(depth + 1, 0),
+                    (depth + 1 if op.owner and not op.owner.hidden else 2 + depth),
                     max(real_depth + 1, 0),
                     -quantity * fl.quantity,
                     results,
@@ -547,7 +562,11 @@ class SupplyPathSvc(AsyncHttpConsumer):
                             )
                             self.recurseOperations(
                                 fl2.operation,
-                                max(depth + 1, 0),
+                                (
+                                    depth + 1
+                                    if op.owner and not op.owner.hidden
+                                    else 2 + depth
+                                ),
                                 max(real_depth + 1, 0),
                                 -quantity * fl.quantity * fl2.quantity,
                                 results,
@@ -573,7 +592,7 @@ class SupplyPathSvc(AsyncHttpConsumer):
                     print("child", depth, c.operation.name)
                     self.recurseOperations(
                         c.operation,
-                        max(depth + 1, 0),
+                        (depth + 1 if op.owner and not op.owner.hidden else 2 + depth),
                         max(real_depth, 0),  # Doesn't increase for suboperations
                         quantity,
                         results,
@@ -586,7 +605,7 @@ class SupplyPathSvc(AsyncHttpConsumer):
             print("dependencies", depth, d.first.name, d.second.name)
             self.recurseOperations(
                 d.second if upstream else d.first,
-                max(depth + 1, 0),
+                (depth + 1 if op.owner and not op.owner.hidden else 2 + depth),
                 max(real_depth + 1, 0),
                 quantity * d.quantity,
                 results,
@@ -660,6 +679,14 @@ class SupplyPathSvc(AsyncHttpConsumer):
             # Recursively collect all operations
             results = []
             print("in", upstream, [o.name for o in operations])
+            self.operation_dict = {
+                "operation_routing": "routing",
+                "operation_itemdistribution": "distribution",
+                "operation_itemsupplier": "purchase",
+                "operation_time_per": "time_per",
+                "operation_fixed_time": "fixed_time",
+                "operation_alternate": "alternate",
+            }
             for o in operations:
                 self.recurseOperations(o, 0, 0, 1.0, results, upstream, None)
             for i in results:

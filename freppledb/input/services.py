@@ -515,8 +515,8 @@ class SupplyPathSvc(AsyncHttpConsumer):
                 v["alternate_operation"] = op.owner.name if op.owner else None
             results.append(v)
         else:
-            depth -= 1
-            real_depth -= 1
+            depth -= 1 if isinstance(op, frepple.operation_alternate) else 2
+            real_depth -= 2
 
         # Recurse to the next level: flows
         for fl in sorted(
@@ -544,7 +544,7 @@ class SupplyPathSvc(AsyncHttpConsumer):
                     -quantity * fl.quantity,
                     results,
                     upstream,
-                    None,
+                    id,
                 )
             elif not upstream and (fl.quantity > 0 or fl.quantity_fixed > 0):
                 for fl2 in fl.buffer.flows:
@@ -592,12 +592,12 @@ class SupplyPathSvc(AsyncHttpConsumer):
                     print("child", depth, c.operation.name)
                     self.recurseOperations(
                         c.operation,
-                        (depth + 1 if op.owner and not op.owner.hidden else 2 + depth),
+                        depth + 1,  # This is a suboperation, only one level extra
                         max(real_depth, 0),  # Doesn't increase for suboperations
                         quantity,
                         results,
                         upstream,
-                        id,
+                        id if isinstance(op, frepple.operation_routing) else parent_id,
                     )
 
         # Recurse to the next level: dependencies

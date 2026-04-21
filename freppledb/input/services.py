@@ -447,10 +447,8 @@ class SupplyPathSvc(AsyncHttpConsumer):
     def recurseOperations(
         self, op, depth, real_depth, quantity, results, upstream, parent_id
     ):
-        print("visiting", op, depth, quantity, upstream, parent_id)
         # Avoid duplicates
         if any(o["operation"] == op.name for o in results):
-            print("already visited")
             return
 
         # Add the current operation to the result list
@@ -459,16 +457,17 @@ class SupplyPathSvc(AsyncHttpConsumer):
             op, (frepple.operation_itemsupplier, frepple.operation_itemdistribution)
         ):
             suboperation_index = 0
-            if op.owner and isinstance(op.owner, frepple.operation_routing):
+            if op.owner:
                 for i in op.owner.suboperations:
                     suboperation_index += 1
-                    if i.priority == op.priority:
+                    if i.operation.name == op.name:
                         break
+
             v = {
                 "depth": depth,
                 "id": id,
                 "operation": op.name,
-                "priority": op.priority,
+                "priority": suboperation_index or op.priority,
                 "type": self.operation_dict[op.__class__.__name__],
                 "item": op.item.name if op.item else None,
                 "description": op.item.description if op.item else None,
@@ -529,14 +528,7 @@ class SupplyPathSvc(AsyncHttpConsumer):
                 and (fl.quantity < 0 or fl.quantity_fixed < 0)
                 and fl.buffer.producing
             ):
-                print(
-                    "flow upstream",
-                    max(depth, 0),
-                    upstream,
-                    fl.buffer.name,
-                    fl.quantity,
-                    fl.buffer.producing,
-                )
+
                 self.recurseOperations(
                     fl.buffer.producing,
                     (depth + 1 if op.owner and not op.owner.hidden else 2 + depth),
@@ -553,13 +545,6 @@ class SupplyPathSvc(AsyncHttpConsumer):
                         if o.owner and isinstance(o.owner, frepple.operation_routing):
                             o = o.owner
                         if o.priority != 0:
-                            print(
-                                "flow downstream",
-                                max(depth, 0),
-                                upstream,
-                                fl2.operation.name,
-                                -quantity * fl.quantity * fl2.quantity,
-                            )
                             self.recurseOperations(
                                 fl2.operation,
                                 (
@@ -583,13 +568,11 @@ class SupplyPathSvc(AsyncHttpConsumer):
                 frepple.operation_split,
             ),
         ):
-            print("children", depth, op.__class__.__name__)
             for c in op.suboperations:
                 if not (
                     isinstance(op, frepple.operation_alternate)
                     and c.operation.priority == 0
                 ):
-                    print("child", depth, c.operation.name)
                     self.recurseOperations(
                         c.operation,
                         depth + 1,  # This is a suboperation, only one level extra
@@ -602,7 +585,6 @@ class SupplyPathSvc(AsyncHttpConsumer):
 
         # Recurse to the next level: dependencies
         for d in op.blockedby if upstream else op.blocking:
-            print("dependencies", depth, d.first.name, d.second.name)
             self.recurseOperations(
                 d.second if upstream else d.first,
                 (depth + 1 if op.owner and not op.owner.hidden else 2 + depth),
@@ -678,7 +660,6 @@ class SupplyPathSvc(AsyncHttpConsumer):
 
             # Recursively collect all operations
             results = []
-            print("in", upstream, [o.name for o in operations])
             self.operation_dict = {
                 "operation_routing": "routing",
                 "operation_itemdistribution": "distribution",
@@ -689,8 +670,6 @@ class SupplyPathSvc(AsyncHttpConsumer):
             }
             for o in operations:
                 self.recurseOperations(o, 0, 0, 1.0, results, upstream, None)
-            for i in results:
-                print("out", i)
 
             # Return the result
             self.scope["response_headers"].append(

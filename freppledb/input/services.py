@@ -457,17 +457,19 @@ class SupplyPathSvc(AsyncHttpConsumer):
             op, (frepple.operation_itemsupplier, frepple.operation_itemdistribution)
         ):
             suboperation_index = 0
+            suboperation_priority = 0
             if op.owner:
                 for i in op.owner.suboperations:
                     suboperation_index += 1
                     if i.operation.name == op.name:
+                        suboperation_priority = i.priority
                         break
 
             v = {
                 "depth": depth,
                 "id": id,
                 "operation": op.name,
-                "priority": suboperation_index or op.priority,
+                "priority": suboperation_priority or op.priority,
                 "type": self.operation_dict[op.__class__.__name__],
                 "item": op.item.name if op.item else None,
                 "description": op.item.description if op.item else None,
@@ -478,7 +480,9 @@ class SupplyPathSvc(AsyncHttpConsumer):
                 "parentoper": (
                     op.owner.name if op.owner and not op.owner.hidden else None
                 ),
-                "suboperation": suboperation_index,
+                "suboperation": (
+                    suboperation_index if op.owner and not op.owner.hidden else 0
+                ),
                 "duration": getattr(op, "duration", None),
                 "duration_per": getattr(op, "duration_per", None),
                 "quantity": quantity,
@@ -504,23 +508,10 @@ class SupplyPathSvc(AsyncHttpConsumer):
                 "sizemaximum": op.size_maximum if op.size_maximum < 1e20 else None,
                 "sizemultiple": op.size_multiple,
                 "alternate": "false",  # TODO
-                "blockedby": (
-                    [
-                        [d.blockedby.name, d.quantity]
-                        for d in op.dependencies
-                        if d.blockedby != op
-                    ]
-                ),
-                "blocking": (
-                    [
-                        [d.operation.name, d.quantity]
-                        for o in [
-                            frepple.operation(name=i["operation"]) for i in results
-                        ]
-                        for d in o.dependencies
-                        if d.blockedby == op
-                    ]
-                ),
+                "blockedby": [[d.blockedby.name, d.quantity] for d in op.blockedby]
+                or None,
+                "blocking": [[d.operation.name, d.quantity] for d in op.blocking]
+                or None,
                 "rownb": None,  # TODO
                 "colnb": None,  # TODO
             }
@@ -599,7 +590,7 @@ class SupplyPathSvc(AsyncHttpConsumer):
                     )
 
         # Recurse to the next level: dependencies
-        for d in op.dependencies:
+        for d in op.blockedby if upstream else op.blocking:
             self.recurseOperations(
                 d.blockedby if upstream else d.operation,
                 (depth + 1 if op.owner and not op.owner.hidden else 2 + depth),

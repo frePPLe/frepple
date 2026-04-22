@@ -9,6 +9,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: User interface
 
+- | A new "dark" theme has been added.
+  | Its dark background with light-colored text supposedly reduces eye strain, minimizes
+    unwanted screen reflections, and can save battery.
+
 - | Supply path: Hovering with the mouse over an operation in the graph will now highlight
     the corresponding operation in the table making it easier to find in the table.
     And vice versa, hovering with the mouse over an operation in the table will now highlight

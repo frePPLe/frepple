@@ -1,0 +1,105 @@
+$light: #2b2b2b;
+$dark: #000000;
+
+$primary: #4a90e2;
+$secondary: #1f1f1f;
+$success: #4caf50;
+$info: #29b6f6;
+$warning: #ffd54f;
+$danger: #ff6b6b;
+
+$white: #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #6c757d !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black: #000 !default;
+
+// Body background
+$body-bg: #000;
+
+// Table color
+$table-color: #e9ecef;
+$table-color-state: #e9ecef;
+
+// Override background colors
+$table-bg: inherit;
+$card-bg: #111;
+$dropdown-bg: #111;
+$modal-content-bg: #111;
+$list-group-bg: #111;
+
+// Logo height
+$navbar-brand-height: 3rem;
+
+// Fonts
+$font-size-base: 0.8rem;
+$font-family-sans-serif: "FontAwesome", "Open sans", Helvetica, Verdana, Arial, sans-serif;
+$font-family-monospace: "FontAwesome", Menlo, Monaco, Consolas, "Courier New", monospace;
+$body-color: #e9ecef;
+
+// Grid breakpoints
+$grid-breakpoints: (
+    xs: 0,
+    sm: 576px,
+    md: 768px,
+    lg: 1050px,
+    // Increased from the default 992px to account for the wide navbar
+    xl: 1200px,
+    xxl: 1400px,
+);
+
+$theme-colors: (
+    "primary": $primary,
+    "secondary": $secondary,
+    "success": $success,
+    "info": $info,
+    "warning": $warning,
+    "danger": $danger,
+    "light": $light,
+    "dark": $dark,
+    "gray": $gray-600,
+);
+
+// You probably don't need to update the variables below this line.
+// These updates are normally generic for all frepple themes.
+$accordion-bg: $card-bg;
+$accordion-btn-focus-border-color: $primary;
+$accordion-button-active-bg: $secondary;
+$accordion-button-active-color: $body-color;
+$accordion-button-bg: $secondary;
+$accordion-button-color: $body-color;
+$accordion-button-padding-y: 0.5rem;
+$breadcrumb-divider-color: $body-color;
+$breadcrumb-divider: "\00a0\00a0\F0DA\00a0\00a0";
+$breadcrumb-item-padding-x: 0.2rem;
+$btn-active-bg-shade-amount: 70%;
+$card-title-spacer-y: 0;
+$dropdown-color: $body-color;
+$dropdown-link-active-bg: $gray-800;
+$dropdown-link-active-color: $body-color;
+$dropdown-link-hover-bg: $gray-800;
+$dropdown-link-hover-color: $body-color;
+$h1-font-size: $font-size-base * 1.5;
+$h2-font-size: $font-size-base * 1.25;
+$h3-font-size: $font-size-base * 1.25;
+$h4-font-size: $font-size-base * 1.25;
+$h5-font-size: $font-size-base * 1.25;
+$input-bg: #1a1a1a;
+$input-color: $body-color;
+$input-border-color: #333;
+$input-btn-focus-width: 2px;
+$link-color: $body-color;
+$link-decoration: none;
+$link-hover-color: lighten($body-color, 10%);
+$link-hover-decoration: none;
+$navbar-light-color: $body-color;
+$nav-link-color: $body-color;
+$nav-tabs-border-color: $gray-700;
+$nav-tabs-border-radius: 0;
+$spacer: 1rem;

@@ -275,7 +275,8 @@ CSV_CHARSET = "utf-8"  # locale.getdefaultlocale()[1]
 # If the list contains only a single value, the preferences screen will not
 # display users an option to choose the theme.
 THEMES = os.environ.get(
-    "FREPPLE_THEMES", "earth grass lemon odoo openbravo orange snow strawberry water"
+    "FREPPLE_THEMES",
+    "earth grass dark lemon odoo openbravo orange snow strawberry water",
 ).split()
 
 # Website where all documentation is available.

@@ -49,6 +49,7 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('package.json'),
     // SASS compilation
     sass: {
+      dark: themeconfig('freppledb/common', 'dark'),
       odoo: themeconfig('freppledb/common', 'odoo'),
       grass: themeconfig('freppledb/common', 'grass'),
       earth: themeconfig('freppledb/common', 'earth'),

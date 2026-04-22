@@ -41,7 +41,7 @@ the max_connections setting is moved from the default 100 to eg 400).
         FREPPLE_DATE_STYLE: "year-month-day"
         FREPPLE_DATE_STYLE_WITH_HOURS: "false"
         FREPPLE_TIME_ZONE: "UTC"
-        FREPPLE_THEMES: "earth grass lemon odoo openbravo orange snow strawberry water"
+        FREPPLE_THEMES: "earth grass dark lemon odoo openbravo orange snow strawberry water"
         FREPPLE_DEFAULT_THEME: "earth"
         FREPPLE_EMAIL_USE_TLS: "true"
         FREPPLE_DEFAULT_FROM_EMAIL: "your_email@domain.com"

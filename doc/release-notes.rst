@@ -7,6 +7,13 @@ Release notes
 This release is scheduled for mid May 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: User interface
+
+- | Supply path: Hovering with the mouse over an operation in the graph will now highlight
+    the corresponding operation in the table making it easier to find in the table.
+    And vice versa, hovering with the mouse over an operation in the table will now highlight
+    the corresponding operation in the graph.
+
 .. rubric:: System administration
 
 - | The docker image now allows overriding the entrypoint and skipping the database initialization.

@@ -95,6 +95,11 @@ g.node-routing text, g.node-alternate text, g.node-split text {
   pointer-events: all;
   fill: #475569;
 }
+
+.path-graph-highlight {
+  background-color: #dbeafe !important;
+  transition: background-color 0.15s ease;
+}
 </style>
 <script src="{{STATIC_URL}}js/d3.min.js"></script>
 <script>
@@ -852,6 +857,7 @@ function drawGraph(jsondata)
          id: count,
          level: level,
          name: jsondata['rows'][oper]['operation'],
+         operationNames: [jsondata['rows'][oper]['operation']],
          item: jsondata['rows'][oper]['item'] || jsondata['rows'][oper]['operation'],
          tooltip: [(jsondata['rows'][oper]['type'] == "purchase")? jsondata['rows'][oper]['operation'].replace(" from ", " from:\n") + " (" + (jsondata['rows'][oper]['priority'] || 1) + ")" : jsondata['rows'][oper]['operation']],
          weight:1,
@@ -873,6 +879,8 @@ function drawGraph(jsondata)
         + " (" + (jsondata['rows'][oper]['priority'] || 1) + ")";
       if (nodes[operindex].tooltip.indexOf(merged_tooltip) < 0)
         nodes[operindex].tooltip.push(merged_tooltip);
+      if (nodes[operindex].operationNames.indexOf(jsondata['rows'][oper]['operation']) < 0)
+        nodes[operindex].operationNames.push(jsondata['rows'][oper]['operation']);
     }
     operations[jsondata['rows'][oper]['operation']] = nodes[operindex].id;
 
@@ -1326,8 +1334,37 @@ function drawGraph(jsondata)
    .text(function(d) { return d.item; });
 
   // Add instant hover tooltip to all nodes (replaces slow native <title>)
+  // Also highlight the corresponding row in the table below
   g.on('mouseover', function(d) {
       $('#buffer-tooltip').text(d.tooltip ? d.tooltip.join('\n') : d.name).show();
+      // Highlight matching rows in the jqGrid table
+      var matchNames = d.operationNames || [d.name];
+      var grid = $("#grid");
+      var dataIds = grid.jqGrid('getDataIDs');
+      var $firstMatch = null;
+      for (var ri = 0; ri < dataIds.length; ri++) {
+        var rowData = grid.jqGrid('getRowData', dataIds[ri]);
+        if (rowData && rowData.operation) {
+          // The operation cell may contain HTML (detail formatter link), extract text
+          var opText = $('<div>').html(rowData.operation).text().trim();
+          if (matchNames.indexOf(opText) >= 0) {
+            var $row = grid.find('#' + $.escapeSelector(dataIds[ri]));
+            $row.addClass('path-graph-highlight');
+            if (!$firstMatch) $firstMatch = $row;
+          }
+        }
+      }
+      // Scroll the first matching row into view
+      if ($firstMatch) {
+        var $gridBody = $firstMatch.closest('.ui-jqgrid-bdiv');
+        if ($gridBody.length) {
+          var rowTop = $firstMatch.position().top;
+          var bodyH = $gridBody.height();
+          if (rowTop < 0 || rowTop > bodyH - $firstMatch.outerHeight()) {
+            $gridBody.scrollTop($gridBody.scrollTop() + rowTop - bodyH / 2);
+          }
+        }
+      }
     })
     .on('mousemove', function() {
       var tip = $('#buffer-tooltip');
@@ -1342,6 +1379,8 @@ function drawGraph(jsondata)
     })
     .on('mouseout', function() {
       $('#buffer-tooltip').hide();
+      // Remove highlight from all table rows
+      $("#grid").find('.path-graph-highlight').removeClass('path-graph-highlight');
     });
 
   // Remove old nodes

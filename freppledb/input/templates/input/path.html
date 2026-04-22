@@ -100,6 +100,26 @@ g.node-routing text, g.node-alternate text, g.node-split text {
   background-color: #dbeafe !important;
   transition: background-color 0.15s ease;
 }
+
+@keyframes path-node-shake {
+  0%, 100% { transform: var(--node-translate) rotate(0deg); }
+  15% { transform: var(--node-translate) rotate(-3deg); }
+  30% { transform: var(--node-translate) rotate(3deg); }
+  45% { transform: var(--node-translate) rotate(-2deg); }
+  60% { transform: var(--node-translate) rotate(2deg); }
+  75% { transform: var(--node-translate) rotate(-1deg); }
+}
+
+g.path-node-highlight rect.bg-rect,
+g.path-node-highlight ellipse.bg-ellipse {
+  stroke: #f59e0b !important;
+  stroke-width: 3px !important;
+  filter: url(#glowfilter) !important;
+}
+
+g.path-node-highlight {
+  animation: path-node-shake 0.5s ease;
+}
 </style>
 <script src="{{STATIC_URL}}js/d3.min.js"></script>
 <script>
@@ -2248,6 +2268,31 @@ $(window).resize(function() {
 	if ($("#content-main").height() < 150) $(".ui-jqgrid").css({height:150});
 	if ($("#graph").height() > $(window).height() - 350) $("#graph").height($(window).height() - 350);
 	$(".ui-jqgrid").css({height: ($(".ui-jqgrid-view").height() + $(".ui-jqgrid-pager").height()) + "px"});
+});
+
+// Highlight graph node when hovering over a table row
+$(document).on('mouseenter', '#grid tr.jqgrow', function() {
+  var rowId = $(this).attr('id');
+  var rowData = $("#grid").jqGrid('getRowData', rowId);
+  if (rowData && rowData.operation) {
+    var opText = $('<div>').html(rowData.operation).text().trim();
+    if (opText && opText in operations) {
+      var nodeId = operations[opText];
+      d3.selectAll('#svggraph g[class^="node-"]').each(function(d) {
+        if (d.id === nodeId || (d.operationNames && d.operationNames.indexOf(opText) >= 0)) {
+          var el = d3.select(this);
+          // Store current transform for the animation
+          var curTransform = el.attr('transform') || 'translate(0,0)';
+          this.style.setProperty('--node-translate', curTransform);
+          el.classed('path-node-highlight', true);
+        }
+      });
+    }
+  }
+});
+$(document).on('mouseleave', '#grid tr.jqgrow', function() {
+  d3.selectAll('#svggraph g.path-node-highlight')
+    .classed('path-node-highlight', false);
 });
 
 </script>

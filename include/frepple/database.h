@@ -35,7 +35,6 @@
 
 using namespace frepple;
 
-
 namespace frepple::utils {
 
 class DatabaseReader;
@@ -458,8 +457,8 @@ class DatabasePreparedStatement : public DatabaseStatementBase {
 
  private:
   string name;
-  int args = 0;
   vector<string> arg;
+  int args = 0;
 };
 
 inline ostream& operator<<(ostream& os, const DatabasePreparedStatement& stmt) {
@@ -666,6 +665,4 @@ class DatabaseWriter : public NonCopyable {
   thread worker;
 };
 
-} // namespace frepple::utils
-
-
+}  // namespace frepple::utils

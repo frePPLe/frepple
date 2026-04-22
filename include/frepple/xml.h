@@ -97,8 +97,8 @@ class XMLInput : public DataInput,
   struct obj {
     const MetaClass* cls;
     Object* object;
-    int start;
     size_t hash;
+    int start;
   };
   vector<obj> objects;
 
@@ -334,27 +334,6 @@ class XMLDataValueDict : public DataValueDict {
  */
 class XMLSerializer : public Serializer {
  public:
-  /* Updates the string that is printed as the first line of each XML
-   * document.
-   * The default value is:
-   *   <?xml version="1.0" encoding="UTF-8"?>
-   */
-  void setHeaderStart(const string& s) { headerStart = s; }
-
-  /* Returns the string that is printed as the first line of each XML
-   * document. */
-  string getHeaderStart() const { return headerStart; }
-
-  /* Updates the attributes that are written for the root element of each
-   * XML document.
-   * The default value is an empty string.
-   */
-  void setHeaderAtts(const string& s) { headerAtts = s; }
-
-  /* Returns the attributes that are written for the root element of each
-   * XML document. */
-  string getHeaderAtts() const { return headerAtts; }
-
   /* Constructor with a given stream. */
   XMLSerializer(ostream& os) : Serializer(os) { indentstring[0] = '\0'; }
 
@@ -657,18 +636,13 @@ class XMLSerializer : public Serializer {
   /* Decrease the indentation level. */
   void decIndent();
 
-  /* This string defines what will be printed at the start of each XML
-   * document. The default value is:
-   *   \<?xml version="1.0" encoding="UTF-8"?\>
-   */
-  string headerStart = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+  /* This is the start of each XML document. */
+  static inline const string headerStart =
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
-  /* This string defines what will be attributes are printed for the root
-   * element of each XML document.
-   * The default value is:
-   *    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   */
-  string headerAtts = "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
+  /* This is printed as attribute of the root element. */
+  static inline const string headerAtts =
+      "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
 
   /* This string is a null terminated string containing as many spaces as
    * indicated by the m_indent.

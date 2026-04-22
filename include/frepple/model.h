@@ -1583,7 +1583,7 @@ class OperationDependency : public Object, public HasSource {
  *   => event may or may not be created
  *   => If an event is created it points to a dummy not-allowed rule
  */
-class SetupEvent : public TimeLine<LoadPlan>::Event {
+class SetupEvent final : public TimeLine<LoadPlan>::Event {
   friend class TimeLine<LoadPlan>::Event;
   friend class OperationPlanState;
 
@@ -1652,16 +1652,14 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
   SetupEvent(TimeLine<LoadPlan>* t, Date d, const PooledString& s,
              SetupMatrixRule* r = nullptr, OperationPlan* o = nullptr,
              bool state = false)
-      : TimeLine<LoadPlan>::Event(5),
-        setup(s),
-        tmline(t),
-        opplan(o),
-        stateinfo(state) {
+      : setup(s), tmline(t), opplan(o), stateinfo(state) {
     initType(metadata);
     dt = d;
     rule = r;
     if (opplan && tmline && !stateinfo) tmline->insert(this);
   }
+
+  unsigned short getEventType() const override { return 5; }
 
   void setTimeLine(TimeLine<LoadPlan>* t) {
     if (stateinfo)
@@ -1773,11 +1771,11 @@ class OperationPlanDependency : public Object {
  *  - Operationplans can be organized in hierarchical structure, matching
  *    the operation hierarchies they belong to.
  */
-class OperationPlan : public Object,
-                      public HasProblems,
-                      public HasSource,
-                      private Tree::TreeNode,
-                      public NonCopyable {
+class OperationPlan final : public NonCopyable,
+                            public Object,
+                            public HasProblems,
+                            public HasSource,
+                            private Tree::TreeNode {
   friend class FlowPlan;
   friend class LoadPlan;
   friend class Demand;
@@ -2836,15 +2834,15 @@ class OperationPlan : public Object,
   /* Completed quantity. */
   double quantity_completed = 0.0;
 
-  /* Flags on the operationplan: status, consumematerial, consumecapacity,
-   * infeasible. */
-  unsigned short flags = 0;
-
   /* Free text description, similar to the remark field.
    * The difference is that this field is intended to be populated by the
    * planning algorithm rather than the user.
    */
   PooledString info;
+
+  /* Flags on the operationplan: status, consumematerial, consumecapacity,
+   * infeasible. */
+  unsigned short flags = 0;
 
   /* Hidden, static field to store the location during import. */
   static Location* loc;
@@ -5851,11 +5849,11 @@ class Flow : public Object,
   /* Constant quantity of the material consumption/production. */
   double quantity_fixed = 0.0;
 
-  /* Mode to select the preferred alternates. */
-  SearchMode search = SearchMode::PRIORITY;
-
   /* Offset from the start or end of the operation. */
   Duration offset;
+
+  /* Mode to select the preferred alternates. */
+  SearchMode search = SearchMode::PRIORITY;
 
   static PyObject* create(PyTypeObject* pytype, PyObject*, PyObject*);
 };
@@ -5967,7 +5965,7 @@ class FlowTransferBatch : public Flow {
  * Flowplans are owned by operationplans, which manage a container to store
  * them.
  */
-class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
+class FlowPlan final : public TimeLine<FlowPlan>::EventChangeOnhand {
   friend class OperationPlan::FlowPlanIterator;
   friend class OperationPlan;
   friend class FlowTransferBatch;
@@ -8023,11 +8021,11 @@ class Demand : public HasHierarchy<Demand>,
   /* A linked list with all demands of an item. */
   Demand* nextItemDemand = nullptr;
 
-  /* Priority. Lower numbers indicate a higher priority level.*/
-  int prio = 0;
-
   /* Batch name */
   PooledString batch;
+
+  /* Priority. Lower numbers indicate a higher priority level.*/
+  int prio = 0;
 
  protected:
   unsigned short flags = STATUS_OPEN + POLICY_INDEPENDENT;
@@ -8159,7 +8157,7 @@ class DemandGroup : public Demand {
  * object is created. These are then inserted in the timeline structure
  * associated with a resource.
  */
-class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
+class LoadPlan final : public TimeLine<LoadPlan>::EventChangeOnhand {
   friend class OperationPlan::LoadPlanIterator;
 
  public:
@@ -10000,11 +9998,11 @@ inline int OperationPlan::sizeLoadPlans() const {
 class OperationPlan::InterruptionIterator : public Object {
  private:
   Calendar::EventIterator cals[10];
-  unsigned short numCalendars;
   Date curdate;
   const OperationPlan* opplan;
   Date start;
   Date end;
+  unsigned short numCalendars;
   bool status = false;
 
  public:

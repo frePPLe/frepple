@@ -86,6 +86,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=date-time")
 set(CMAKE_CXX_FLAGS_PROFILING "${CMAKE_CXX_FLAGS_DEBUG} -DNDEBUG")
 set(CMAKE_C_FLAGS_PROFILING "${CMAKE_C_FLAGS_DEBUG} -DNDEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -Wuninitialized -Wunused -Wswitch -Wunused-parameter -Wall") # -Wextra
+# Extra debug flags for specific audits/analysis:
+# -Wpadded: Warn if memory isn't used efficiently due to padding and alignments.
 set(CMAKE_EXE_LINKER_FLAGS_PROFILING "")
 set(CMAKE_SHARED_LINKER_FLAGS_PROFILING "")
 

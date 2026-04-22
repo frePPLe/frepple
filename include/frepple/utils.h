@@ -1782,6 +1782,9 @@ class MetaClass : public NonCopyable {
     factoryMethod = f;
   }
 
+  /* Registry of all fields of the model. */
+  fieldlist fields;
+
   /* This is a list of objects that will receive a callback when the call
    * method is being used.
    * There is limited error checking in maintaining this list, and it is the
@@ -1791,9 +1794,6 @@ class MetaClass : public NonCopyable {
    * educated user.
    */
   list<Functor*> subscribers[4];
-
-  /* Registry of all fields of the model. */
-  fieldlist fields;
 };
 
 /* A MetaCategory instance represents metadata for a category of
@@ -3538,6 +3538,9 @@ class ThreadGroup : public NonCopyable {
   /* Mutex to protect the callable vector during multi-threaded execution. */
   mutex lock;
 
+  /* Stack with all registered functions and their invocation arguments. */
+  stack<callableWithArgument> callables;
+
   /* Specifies the maximum number of commands in the list that can be
    * executed in parallel.
    * The default value is 1, i.e. sequential execution.
@@ -3546,9 +3549,6 @@ class ThreadGroup : public NonCopyable {
    * a system-wide limit on the creation of threads.
    */
   int maxParallel;
-
-  /* Stack with all registered functions and their invocation arguments. */
-  stack<callableWithArgument> callables;
 
   /* This functions runs a single command execution thread. It is used as
    * a holder for the main routines of a trheaded routine.

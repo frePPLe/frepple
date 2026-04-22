@@ -808,14 +808,14 @@ void XMLSerializer::writeElementWithHeader(const Keyword& tag,
   assert(!currentObject);
 
   // Write the first line for the xml document
-  writeString(getHeaderStart());
+  writeString(headerStart);
 
   // Adjust current object pointer
   currentObject = object;
 
   // Write the object
   ++numObjects;
-  BeginObject(tag, getHeaderAtts());
+  BeginObject(tag, headerAtts);
   skipHead();
   object->writeElement(this, tag, getContentType());
 

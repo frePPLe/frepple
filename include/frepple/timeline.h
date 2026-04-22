@@ -57,20 +57,16 @@ class TimeLine {
     friend class iterator;
 
    protected:
-    double qty;
+    double qty = 0;
     double oh = 0;
     double cum_prod = 0;
     Event* next = nullptr;
     Event* prev = nullptr;
     Date dt;
-    unsigned short tp;
-    Event(unsigned short t, double q = 0.0) : qty(q), tp(t) {};
+    Event(double q = 0.0) : qty(q) {};
 
    public:
     ~Event() override = default;
-
-    /* Default constructor. */
-    Event() : tp(0), qty(0) {}
 
     /* Return the event type:
      *  - 0: null event, don't use
@@ -80,7 +76,7 @@ class TimeLine {
      *  - 4: set max on hand
      *  - 5: setup change (defined in model.h)
      */
-    inline unsigned short getEventType() const { return tp; }
+    virtual unsigned short getEventType() const = 0;
 
     /* Return the owning operationplan. */
     virtual OperationPlan* getOperationPlan() const = 0;
@@ -187,11 +183,12 @@ class TimeLine {
     friend class TimeLine<type>;
 
    public:
-    EventChangeOnhand(double qty = 0.0) : Event(1, qty) {}
+    EventChangeOnhand(double qty = 0.0) : Event(qty) {}
+    unsigned short getEventType() const override { return 1; }
   };
 
   /* A timeline event representing a change of the current value. */
-  class EventSetOnhand : public Event {
+  class EventSetOnhand final : public Event {
     friend class TimeLine<type>;
 
    private:
@@ -201,16 +198,18 @@ class TimeLine {
     EventSetOnhand* prevSet = nullptr;
 
    public:
-    EventSetOnhand(Date d, double q = 0.0) : Event(2), new_oh(q) {
+    EventSetOnhand(Date d, double q = 0.0) : new_oh(q) {
       this->dt = d;
       this->initType(EventPythonType->type_object());
     }
 
     OperationPlan* getOperationPlan() const override { return nullptr; }
+
+    unsigned short getEventType() const override { return 2; }
   };
 
   /* A timeline event representing a change of the minimum target. */
-  class EventMinQuantity : public Event {
+  class EventMinQuantity final : public Event {
     friend class TimeLine<type>;
     friend class Event;
 
@@ -225,7 +224,7 @@ class TimeLine {
     TimeLine<type>* getTimeLine() const override { return tmline; }
 
     EventMinQuantity(Date d, TimeLine<type>* t, double f = 0.0)
-        : Event(3), newMin(f), tmline(t) {
+        : newMin(f), tmline(t) {
       this->dt = d;
       this->initType(EventPythonType->type_object());
     }
@@ -240,10 +239,12 @@ class TimeLine {
     }
 
     OperationPlan* getOperationPlan() const override { return nullptr; }
+
+    unsigned short getEventType() const override { return 3; }
   };
 
   /* A timeline event representing a change of the maximum target. */
-  class EventMaxQuantity : public Event {
+  class EventMaxQuantity final : public Event {
     friend class Event;
     friend class TimeLine<type>;
 
@@ -258,7 +259,7 @@ class TimeLine {
     TimeLine<type>* getTimeLine() const override { return tmline; }
 
     EventMaxQuantity(Date d, TimeLine<type>* t, double f = 0.0)
-        : Event(4), newMax(f), tmline(t) {
+        : newMax(f), tmline(t) {
       this->dt = d;
       this->initType(EventPythonType->type_object());
     }
@@ -273,6 +274,8 @@ class TimeLine {
     }
 
     OperationPlan* getOperationPlan() const override { return nullptr; }
+
+    unsigned short getEventType() const override { return 4; }
   };
 
   /* This is bi-directional iterator through the timeline. */

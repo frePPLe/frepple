@@ -853,7 +853,7 @@ function drawGraph(jsondata)
          level: level,
          name: jsondata['rows'][oper]['operation'],
          item: jsondata['rows'][oper]['item'] || jsondata['rows'][oper]['operation'],
-         tooltip: [(jsondata['rows'][oper]['type'] == "purchase")? jsondata['rows'][oper]['operation'].replace(" from ", " from:\n") + " (" + jsondata['rows'][oper]['priority'] + ")" : jsondata['rows'][oper]['operation']],
+         tooltip: [(jsondata['rows'][oper]['type'] == "purchase")? jsondata['rows'][oper]['operation'].replace(" from ", " from:\n") + " (" + (jsondata['rows'][oper]['priority'] || 1) + ")" : jsondata['rows'][oper]['operation']],
          weight:1,
          type: nodetype,
          parent: parentoper,
@@ -870,7 +870,7 @@ function drawGraph(jsondata)
     else if (nodetype == 'itemsupplier') {
       var purchase_parts = jsondata['rows'][oper]['operation'].split(" from ");
       var merged_tooltip = (purchase_parts.length > 1 ? purchase_parts[1] : jsondata['rows'][oper]['operation'])
-        + " (" + jsondata['rows'][oper]['priority'] + ")";
+        + " (" + (jsondata['rows'][oper]['priority'] || 1) + ")";
       if (nodes[operindex].tooltip.indexOf(merged_tooltip) < 0)
         nodes[operindex].tooltip.push(merged_tooltip);
     }

@@ -504,8 +504,23 @@ class SupplyPathSvc(AsyncHttpConsumer):
                 "sizemaximum": op.size_maximum if op.size_maximum < 1e20 else None,
                 "sizemultiple": op.size_multiple,
                 "alternate": "false",  # TODO
-                "blockedby": None,  # TODO
-                "blocking": None,  # TODO
+                "blockedby": (
+                    [
+                        [d.blockedby.name, d.quantity]
+                        for d in op.dependencies
+                        if d.blockedby != op
+                    ]
+                ),
+                "blocking": (
+                    [
+                        [d.operation.name, d.quantity]
+                        for o in [
+                            frepple.operation(name=i["operation"]) for i in results
+                        ]
+                        for d in o.dependencies
+                        if d.blockedby == op
+                    ]
+                ),
                 "rownb": None,  # TODO
                 "colnb": None,  # TODO
             }
@@ -584,9 +599,9 @@ class SupplyPathSvc(AsyncHttpConsumer):
                     )
 
         # Recurse to the next level: dependencies
-        for d in op.blockedby if upstream else op.blocking:
+        for d in op.dependencies:
             self.recurseOperations(
-                d.second if upstream else d.first,
+                d.blockedby if upstream else d.operation,
                 (depth + 1 if op.owner and not op.owner.hidden else 2 + depth),
                 max(real_depth + 1, 0),
                 quantity * d.quantity,

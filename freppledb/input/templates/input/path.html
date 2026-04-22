@@ -1378,10 +1378,12 @@ function drawGraph(jsondata)
       if ($firstMatch) {
         var $gridBody = $firstMatch.closest('.ui-jqgrid-bdiv');
         if ($gridBody.length) {
-          var rowTop = $firstMatch.position().top;
+          var rowOffset = $firstMatch[0].offsetTop;
+          var scrollTop = $gridBody.scrollTop();
           var bodyH = $gridBody.height();
-          if (rowTop < 0 || rowTop > bodyH - $firstMatch.outerHeight()) {
-            $gridBody.scrollTop($gridBody.scrollTop() + rowTop - bodyH / 2);
+          var rowH = $firstMatch.outerHeight();
+          if (rowOffset < scrollTop || rowOffset + rowH > scrollTop + bodyH) {
+            $gridBody.animate({scrollTop: rowOffset - bodyH / 2 + rowH / 2}, 200);
           }
         }
       }

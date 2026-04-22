@@ -153,6 +153,7 @@ var routing_label_overlay;
 var collapsed_upstream = {};
 var collapsed_downstream = {};
 var visible_nodes = {};
+var graphZoom;
 
 function isOperationNode(d)
 {
@@ -1058,14 +1059,15 @@ function drawGraph(jsondata)
     nodes[i].x = width_level * (0.5 + maxlevel - nodes[i].level);
 
   // Initialize D3 force layout
+  graphZoom = d3.behavior.zoom().on("zoom", function() {
+      var ev = d3.event;
+      $("#svggraph > g").attr("transform", "translate(" + ev.translate + ") scale(" + ev.scale + ")");
+    });
   var svg = d3.select('#svggraph')
     .attr('width', width)
     .attr('height', 2000)
     .attr('viewBox','0 0 ' + width + ' 400')
-    .call(d3.behavior.zoom().on("zoom", function() {
-        var ev = d3.event;
-        $("#svggraph > g").attr("transform", "translate(" + ev.translate + ") scale(" + ev.scale + ")");
-      }))
+    .call(graphZoom)
     .on('dblclick.zoom', null);
 
   $("#graph").scrollTop(800);
@@ -2328,6 +2330,38 @@ $(document).on('mouseenter', '#grid tr.jqgrow', function() {
     var opText = $('<div>').html(rowData.operation).text().trim();
     if (opText && opText in operations) {
       var nodeId = operations[opText];
+
+      // Pan graph to show node if outside visible area
+      var targetNode = null;
+      for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].id === nodeId) {
+          targetNode = nodes[i];
+          break;
+        }
+      }
+      if (targetNode && graphZoom) {
+        var svgEl = document.getElementById('svggraph');
+        var vbAttr = svgEl.getAttribute('viewBox');
+        if (vbAttr) {
+          var vb = vbAttr.split(/[\s,]+/).map(Number);
+          var vb_x = vb[0], vb_y = vb[1], vb_w = vb[2], vb_h = vb[3];
+          var t = graphZoom.translate();
+          var s = graphZoom.scale();
+          var nx = targetNode.x * s + t[0];
+          var ny = targetNode.y * s + t[1];
+          var margin = 60;
+          if (nx < vb_x + margin || nx > vb_x + vb_w - margin ||
+              ny < vb_y + margin || ny > vb_y + vb_h - margin) {
+            var new_tx = vb_x + vb_w / 2 - targetNode.x * s;
+            var new_ty = vb_y + vb_h / 2 - targetNode.y * s;
+            graphZoom.translate([new_tx, new_ty]);
+            d3.selectAll('#svggraph > g')
+              .transition().duration(300)
+              .attr('transform', 'translate(' + new_tx + ',' + new_ty + ') scale(' + s + ')');
+          }
+        }
+      }
+
       d3.selectAll('#svggraph g[class^="node-"]').each(function(d) {
         if (d.id === nodeId || (d.operationNames && d.operationNames.indexOf(opText) >= 0)) {
           var el = d3.select(this);

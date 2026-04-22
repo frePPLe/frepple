@@ -2232,13 +2232,61 @@ function drawGraph(jsondata)
   updateGraphGeometry();
 
   applyVisibilityFilters();
+
+  // Auto-fit viewBox so all nodes are visible within the graph container
+  var bbox_min_x = Infinity, bbox_max_x = -Infinity;
+  var bbox_min_y = Infinity, bbox_max_y = -Infinity;
+  for (var fi = 0; fi < nodes.length; fi++) {
+    var nd = nodes[fi];
+    if (!visible_nodes[nd.id]) continue;
+    var hw = nd.halfW || 52;
+    var hh = nd.halfH || 14;
+    if ((nd.type === 'routing' || nd.type === 'alternate' || nd.type === 'split') && nd.numsuboperations > 0) {
+      if (nd.type === 'alternate' || nd.type === 'split')
+        hh = 13 * (2 + nd.numsuboperations);
+      else if (nd.rownb > 0)
+        hh = 40 + (nd.rownb > 1 ? nd.rownb * 13 : 13);
+      else
+        hh = 13 * 1.4;
+    }
+    if (nd.x - hw < bbox_min_x) bbox_min_x = nd.x - hw;
+    if (nd.x + hw > bbox_max_x) bbox_max_x = nd.x + hw;
+    if (nd.y - hh < bbox_min_y) bbox_min_y = nd.y - hh;
+    if (nd.y + hh > bbox_max_y) bbox_max_y = nd.y + hh;
+  }
+  if (isFinite(bbox_min_x) && isFinite(bbox_min_y)) {
+    var fitPad = 40;
+    var vb_x = bbox_min_x - fitPad;
+    var vb_y = bbox_min_y - fitPad;
+    var vb_w = (bbox_max_x - bbox_min_x) + 2 * fitPad;
+    var vb_h = (bbox_max_y - bbox_min_y) + 2 * fitPad;
+    var graphW = $("#graph").width();
+    var graphH = $("#graph").height();
+    // Expand the viewBox to match the viewport aspect ratio, centering the content
+    var viewportAspect = graphW / graphH;
+    var contentAspect = vb_w / vb_h;
+    if (contentAspect < viewportAspect) {
+      // Content is narrower than viewport — expand width and center horizontally
+      var newW = vb_h * viewportAspect;
+      vb_x -= (newW - vb_w) / 2;
+      vb_w = newW;
+    } else {
+      // Content is wider than viewport — expand height and center vertically
+      var newH = vb_w / viewportAspect;
+      vb_y -= (newH - vb_h) / 2;
+      vb_h = newH;
+    }
+    d3.select('#svggraph')
+      .attr('height', graphH)
+      .attr('viewBox', vb_x + ' ' + vb_y + ' ' + vb_w + ' ' + vb_h);
+    $("#graph").scrollTop(0);
+  }
 }
 
 $(window).bind('resize', function() {
   var width = $("#graph").width();
-  d3.select('#svggraph')
-  .attr('width', width)
-  .attr('viewBox','0 0 ' + width + ' 400');
+  var graphH = $("#graph").height();
+  d3.select('#svggraph').attr('width', width).attr('height', graphH);
 });
 
 $(function(){
@@ -2251,7 +2299,7 @@ $(function(){
     onDrag: function (e, $el, opt) {
       var width = $("#graph").width();
       var height = $("#graph").height();
-      d3.select('#svggraph').attr('width', width).attr('viewBox','0 0 ' + width +' '+ height );
+      d3.select('#svggraph').attr('width', width).attr('height', height);
 
       // Resize the bottom grid to fill the remaining space of the window
       var gridheight = $(window).height() - $("#content-main").offset().top - 40;

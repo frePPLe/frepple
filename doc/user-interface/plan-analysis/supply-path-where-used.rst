@@ -19,6 +19,7 @@ The report can follow the material flows in both directions:
   | It shows the path from raw material downstream towards all end items using
     the material.
 
+A user needs the "view operation" permission to access this report.
 
 .. image:: ../_images/supply-path.png
    :alt: Supply path

@@ -369,6 +369,10 @@ class PathReport(GridReport):
     multiselect = False
     help_url = "user-interface/plan-analysis/supply-path-where-used.html"
 
+    @classmethod
+    def has_permission(cls, user):
+        return user.has_perm("input.view_operation")
+
     rows = (
         GridFieldText("depth", title=_("depth"), editable=False, sortable=False),
         GridFieldText(
@@ -1424,7 +1428,8 @@ class PathReport(GridReport):
         if not reportclass.routing_dependencies_done:
             reportclass.routing_dependencies_done = True
             reportclass.routing_operation_position = {}
-            cursor.execute("""
+            cursor.execute(
+                """
             with q as (
                 with recursive cte as
                 (
@@ -1450,7 +1455,8 @@ class PathReport(GridReport):
                 )
             select owner_id, name, row_number() over(partition by owner_id, y order by name) as x, y from q
             order by 1,2,3
-            """)
+            """
+            )
             for rec in cursor:
                 reportclass.routing_operation_position[rec[1]] = (rec[2], rec[3])
                 # for the routing, x,y refers to the number of rows and columns
@@ -2483,7 +2489,8 @@ class OperationPlanDetail(View):
                           or sales.SO is not null
                           or (items.name = %%s and location.name = %%s)
                         order by items.name, location.name
-                        """ % (settings.DATE_FORMAT_JS,),
+                        """
+                        % (settings.DATE_FORMAT_JS,),
                         (
                             opplan.item_id,
                             current_date,

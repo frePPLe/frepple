@@ -144,6 +144,14 @@
         }
     },
     {
+        "pk": "plan.solver",
+        "model": "common.parameter",
+        "fields": {
+            "value": "heuristic",
+            "description": "Selects the solver to generate the plan. Possible choices are \"heuristic\" and \"heuristic_2\"."
+        }
+    },
+    {
         "model": "common.parameter",
         "fields": {
             "name": "display_time",

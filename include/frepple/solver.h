@@ -340,7 +340,7 @@ class SolverCreate : public Solver {
   void solve(void* v = nullptr) override;
 
   /* Constructor. */
-  SolverCreate() : commands(this) {
+  SolverCreate() : algorithm("heuristic"), commands(this) {
     initType(metadata);
     commands.setCommandManager(&mgr);
   }
@@ -372,6 +372,7 @@ class SolverCreate : public Solver {
     userexit_resource = other.userexit_resource;
     userexit_operation = other.userexit_operation;
     erasePreviousFirst = other.erasePreviousFirst;
+    algorithm = other.algorithm;
   }
 
   /* Copy assignment is disallowed. */
@@ -481,6 +482,15 @@ class SolverCreate : public Solver {
     auto old = shortagesonly;
     shortagesonly = b;
     return old;
+  }
+
+  const string& getAlgorithm() const { return algorithm; }
+
+  void setAlgorithm(const string& s) {
+    if (s != "heuristic" && s != "heuristic_2")
+      throw DataException(
+          "Invalid algorithm: must be 'heuristic' or 'heuristic_2'");
+    algorithm = s;
   }
 
   Duration getAutoFence() const {
@@ -654,6 +664,8 @@ class SolverCreate : public Solver {
                                  &Cls::getResourceIterationMax,
                                  &Cls::setResourceIterationMax);
     m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, &Cls::setCluster);
+    m->addStringRefField<Cls>(Tags::algorithm, &Cls::getAlgorithm,
+                              &Cls::setAlgorithm);
     m->addPointerField<Cls, CommandManager>(
         Tags::manager, &Cls::getCommandManager, &Cls::setCommandManager);
   }
@@ -721,6 +733,8 @@ class SolverCreate : public Solver {
    * consider it unplannable.
    */
   unsigned long resource_iteration_max = 500;
+
+  PooledString algorithm;
 
   /* A Python callback function that is called for each alternate
    * flow. If the callback function returns false, that alternate
@@ -940,6 +954,8 @@ class SolverCreate : public Solver {
 
     void unmaskTemporaryShortages();
 
+    void createDeliveries();
+
     void backward_sweep();
 
     void scanExcess(bool constrained);
@@ -1102,7 +1118,7 @@ class OperatorForward : public Solver, public NonCopyable {
   void setPropagate(bool b) { propagate = b; }
 
   /* Solve a single cluster. */
-  void solve(const Plan*, void* = nullptr) override;
+  void solve(void* = nullptr) override;
 
   /* Resolve material shortages by delaying consumers. */
   void solve(const Buffer*, void* = nullptr) override;

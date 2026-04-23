@@ -29,6 +29,7 @@ using namespace frepple;
 namespace frepple::utils {
 
 const Keyword Tags::action("action");
+const Keyword Tags::algorithm("algorithm");
 const Keyword Tags::allmembers("allmembers");
 const Keyword Tags::alternate("alternate");
 const Keyword Tags::alternates("alternates");

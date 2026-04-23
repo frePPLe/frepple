@@ -28,7 +28,7 @@
 
 namespace frepple {
 
-void OperatorForward::solve(const Plan*, void*) {
+void OperatorForward::solve(void*) {
   // Detect whether this cluster has operation dependencies.
   auto has_dependencies = false;
   for (auto& o : Operation::all()) {
@@ -634,8 +634,7 @@ void OperatorForward::solve(const Resource* res, void*) {
     current_loadplans.sort(compareLoadPlans(this));
     for (short pass = 0; pass <= 1 && !current_loadplans.empty(); ++pass) {
       for (auto f = current_loadplans.begin(); f != current_loadplans.end();) {
-        auto is_tabu =
-            tabu.find((*f)->getOperationPlan()) != tabu.end();
+        auto is_tabu = tabu.find((*f)->getOperationPlan()) != tabu.end();
         if ((pass == 0 && !is_tabu) || (pass == 1 && is_tabu)) {
           ++f;
           continue;

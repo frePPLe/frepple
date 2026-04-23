@@ -254,6 +254,7 @@ class SupplyPlanning(PlanTask):
             * float(Parameter.getValue("plan.administrativeLeadtime", database, "0")),
             autofence=86400
             * float(Parameter.getValue("plan.autoFenceOperations", database, "0")),
+            algorithm=Parameter.getValue("plan.solver", database, "heuristic").lower(),
         )
         if hasattr(cls, "debugResource"):
             cls.solver.userexit_resource = cls.debugResource

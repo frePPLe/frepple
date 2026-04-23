@@ -43863,8 +43863,8 @@
         "model": "common.parameter",
         "fields": {
             "name": "plan.solver",
-            "value": "distribution",
-            "description": "Selects the solver to generate the plan. Possible choices are \"heuristic\" and \"distribution\"."
+            "value": "heuristic_2",
+            "description": "Selects the solver to generate the plan. Possible choices are \"heuristic\" and \"heuristic_2\"."
         }
     },
     {

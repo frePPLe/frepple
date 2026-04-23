@@ -127,6 +127,11 @@ WIP.produce_full_quantity            | Controls how material is produced from pa
 pathreport_optimization              | Activates a fast version of the supply path report, suitable for
                                        deep bill of materials with many components.
                                      | Default is false.
+plan.solver                          | Selects the algorithm to use for generating the plan.
+                                     | Possible choices are "heuristic" (default), "heuristic_2" (an
+                                       emerging evolution of the heuristic algorithm) and "distribution"
+                                       (designed for distribution planning problems, only available in the
+                                       Enterprise and Cloud Editions).
 ==================================== =======================================================================
 
 **Demand forecasting parameters**

@@ -4567,7 +4567,7 @@
         "fields": {
             "name": "plan.solver",
             "value": "heuristic",
-            "description": "Selects the solver to generate the plan. Possible choices are \"heuristic\" and \"distribution\"."
+            "description": "Selects the solver to generate the plan. Possible choices are \"heuristic\" and \"heuristic_2\"."
         }
     },
     {

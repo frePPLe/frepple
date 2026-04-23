@@ -32,6 +32,7 @@
 class Tags {
  public:
   static const Keyword action;
+  static const Keyword algorithm;
   static const Keyword allmembers;
   static const Keyword alternate;
   static const Keyword alternates;

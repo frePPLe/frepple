@@ -130,7 +130,7 @@ SolverCreate::SolverData::SolverData(SolverCreate* s, int c, deque<Demand*>* d)
       state(statestack),
       prevstate(statestack - 1) {
   operator_delete = new OperatorDelete();
-  // operator_forward = new OperatorForward(this, c, mgr);
+  operator_forward = new OperatorForward(this, c, mgr);
   operator_delete->setLogLevel(s->getLogLevel());
 }
 
@@ -138,6 +138,67 @@ void SolverCreate::SolverData::setCommandManager(CommandManager* a) {
   if (mgr == a) return;
   mgr = a;
   if (operator_delete) operator_delete->setCommandManager(a);
+}
+
+void SolverCreate::SolverData::createDeliveries() {
+  auto* solver = getSolver();
+  for (auto& demand : *demands) {
+    if (solver->userexit_demand)
+      solver->userexit_demand.call(demand, PythonData(constrainedPlanning));
+
+    // Determine the quantity to be planned and the date for the planning
+    // loop.
+    double plan_qty = demand->getQuantity() - demand->getPlannedQuantity();
+    if (demand->getDue() == Date::infiniteFuture ||
+        demand->getDue() == Date::infinitePast)
+      continue;
+
+    // Select delivery operation.
+    Operation* deliveryoper = demand->getDeliveryOperation();
+    if (!deliveryoper) continue;
+
+    auto isGroupMember =
+        demand->getOwner() && demand->getOwner()->hasType<DemandGroup>() &&
+        static_cast<DemandGroup*>(demand->getOwner())->getPolicy() !=
+            Demand::POLICY_INDEPENDENT;
+    auto due = isGroupMember ? demand->getOwner()->getDue() : demand->getDue();
+    while (plan_qty > ROUNDING_ERROR) {
+      // Respect minimum shipment quantities.
+      auto m = demand->getMinShipment();
+      if (plan_qty < m) plan_qty = m;
+      state->curBuffer = nullptr;
+      state->q_qty = plan_qty;
+      state->q_date = due;
+      state->a_cost = 0.0;
+      state->a_penalty = 0.0;
+      state->curDemand = demand;
+      state->curOwnerOpplan = nullptr;
+      state->blockedOpplan = nullptr;
+      state->dependency = nullptr;
+      state->curBatch = demand->getBatch();
+      dependency_list.clear();
+      state->a_qty = 0;
+      try {
+        deliveryoper->solve(*solver, this);
+        getCommandManager()->commit();
+        plan_qty -= state->a_qty;
+        if (!state->a_qty) {
+          if (state->a_date == Date::infiniteFuture || state->a_date <= due)
+            break;
+          else
+            // Also unconstrained plan may need to repeat the loop.
+            // Can be caused with complete lack of any availability
+            // before the requirement date.
+            due = state->a_date;
+        }
+      } catch (const exception& e) {
+        logger << "Error creating delivery for '" << demand << "': " << e.what()
+               << '\n';
+        getCommandManager()->rollback();
+        break;
+      }
+    }
+  }
 }
 
 SolverCreate::SolverData::~SolverData() {
@@ -268,74 +329,35 @@ void SolverCreate::SolverData::commit() {
       // Step 1: Create a delivery operationplan for all demands
       solver->setPropagate(false);
       solver->setBatchGrouping(true);
-      if (solver->getCreateDeliveries()) {
-        for (auto& demand : *demands) {
-          if (solver->userexit_demand)
-            solver->userexit_demand.call(demand,
-                                         PythonData(constrainedPlanning));
-
-          // Determine the quantity to be planned and the date for the planning
-          // loop
-          double plan_qty =
-              demand->getQuantity() - demand->getPlannedQuantity();
-          if (demand->getDue() == Date::infiniteFuture ||
-              demand->getDue() == Date::infinitePast)
-            continue;
-
-          // Select delivery operation
-          Operation* deliveryoper = demand->getDeliveryOperation();
-          if (!deliveryoper) continue;
-
-          auto isGroupMember =
-              demand->getOwner() &&
-              demand->getOwner()->hasType<DemandGroup>() &&
-              static_cast<DemandGroup*>(demand->getOwner())->getPolicy() !=
-                  Demand::POLICY_INDEPENDENT;
-          auto due =
-              isGroupMember ? demand->getOwner()->getDue() : demand->getDue();
-          while (plan_qty > ROUNDING_ERROR) {
-            // Respect minimum shipment quantities
-            auto m = demand->getMinShipment();
-            if (plan_qty < m) plan_qty = m;
-            state->curBuffer = nullptr;
-            state->q_qty = plan_qty;
-            state->q_date = due;
-            state->a_cost = 0.0;
-            state->a_penalty = 0.0;
-            state->curDemand = demand;
-            state->curOwnerOpplan = nullptr;
-            state->blockedOpplan = nullptr;
-            state->dependency = nullptr;
-            state->curBatch = demand->getBatch();
-            dependency_list.clear();
-            state->a_qty = 0;
-            try {
-              deliveryoper->solve(*solver, this);
-              getCommandManager()->commit();
-              plan_qty -= state->a_qty;
-              if (!state->a_qty) {
-                if (state->a_date == Date::infiniteFuture ||
-                    state->a_date <= due)
-                  break;
-                else
-                  // Also unconstrained plan may need to repeat the loop.
-                  // Can be caused with complete lack of any availability
-                  // before the requirement date.
-                  due = state->a_date;
-              }
-            } catch (const exception& e) {
-              logger << "Error creating delivery for '" << demand
-                     << "': " << e.what() << '\n';
-              getCommandManager()->rollback();
-              break;
-            }
-          }
-        }
-      }
+      if (solver->getCreateDeliveries()) createDeliveries();
 
       // Step 3: Solve buffer by buffer, ordered by level
       buffer_solve_shortages_only = false;
       backward_sweep();
+
+      // Clean up excess inventory
+      scanExcess(false);
+    } else if (solver->getAlgorithm() == "heuristic_2") {
+      // Create a delivery operationplan for all demands
+      solver->setPropagate(false);
+      if (solver->getCreateDeliveries()) createDeliveries();
+
+      // Backward sweep
+      buffer_solve_shortages_only = false;
+      solver->setBatchGrouping(false);
+      backward_sweep();
+
+      // Step 4: Forward sweep
+      operator_forward->solve();
+
+      // TODO delete proposed, except deliveries
+
+      // TODO backward sweep again
+
+      // Forward sweep, from the feasible date
+      // buffer_solve_shortages_only = false;
+      // solver->setBatchGrouping(false);
+      // backward_sweep();
 
       // Clean up excess inventory
       scanExcess(false);

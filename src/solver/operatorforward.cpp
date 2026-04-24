@@ -29,6 +29,8 @@
 namespace frepple {
 
 void OperatorForward::solve(void*) {
+  auto& indentlevel = data->getSolver()->indentlevel;
+
   // Detect whether this cluster has operation dependencies.
   auto has_dependencies = false;
   for (auto& o : Operation::all()) {
@@ -38,6 +40,10 @@ void OperatorForward::solve(void*) {
       break;
     }
   }
+
+  if (getLogLevel() > 0)
+    logger << indentlevel << "Starting forward propagation in cluster "
+           << cluster << "\n";
 
   Date current = Plan::instance().getCurrent();
   for (auto& o : Operation::all()) {
@@ -126,6 +132,10 @@ void OperatorForward::solve(void*) {
       if (!action_at_level) break;
     }
   }
+
+  if (getLogLevel() > 0)
+    logger << indentlevel << "Finished forward propagation in cluster "
+           << cluster << "\n";
 }
 
 void OperatorForward::solve(OperationPlan* opplan, void*) {

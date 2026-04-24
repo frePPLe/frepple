@@ -905,7 +905,7 @@ class SolverCreate : public Solver {
     ~SolverData();
 
     /* Verbose mode is inherited from the solver. */
-    unsigned short getLogLevel() const { return sol ? sol->getLogLevel() : 0; }
+    short getLogLevel() const { return sol->getLogLevel(); }
 
     /* This function runs a single planning thread. Such a thread will loop
      * through the following steps:
@@ -1111,7 +1111,12 @@ class OperatorForward : public Solver, public NonCopyable {
   /* Constructor. */
   OperatorForward(SolverCreate::SolverData* d, int c = -1,
                   CommandManager* mgr = nullptr)
-      : cmds(mgr), data(d), cluster(c) {}
+      : cmds(mgr), data(d), cluster(c) {
+    if (d)
+      setLogLevel(d->getLogLevel());
+    else
+      throw LogicException("SolverData must be provided");
+  }
 
   bool getPropagate() const { return propagate; }
 

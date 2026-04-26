@@ -693,8 +693,8 @@ class ForecastBucketData {
       : fcstbkt(other.fcstbkt),
         fcst(other.fcst),
         dates(other.dates),
-        index(other.index),
-        measures(other.measures) {}
+        measures(other.measures),
+        index(other.index) {}
 
   ForecastBucketData(const ForecastBucketData&) = delete;
 
@@ -770,9 +770,9 @@ class ForecastBucketData {
   ForecastBucket* fcstbkt = nullptr;
   ForecastBase* fcst;
   DateRange dates;
+  MeasureList measures;
   short index;
   bool dirty = false;
-  MeasureList measures;
 };
 
 inline double ForecastMeasure::getValue(const ForecastBucketData& f) const {

@@ -3560,6 +3560,148 @@ class ThreadGroup : public NonCopyable {
 };
 
 //
+// STRING POOL CLASS
+//
+
+/* Implements a pool of re-usable string values, following the flyweight design
+ * pattern.
+ * The class is insert-only for non-mutable strings. Once a string is added to
+ * the pool, it will never be removed or modified.
+ */
+class PooledString {
+ private:
+  /* Pool of strings. */
+  static set<string> pool;
+  static mutex pool_lock;
+
+  /* Pointer to an element in the pool. */
+  string* ptr = nullptr;
+
+  void insert(const string& v) {
+    if (v.empty())
+      ptr = nullptr;
+    else {
+      lock_guard exclusive(pool_lock);
+      auto tmp = pool.insert(v);
+      ptr = const_cast<string*>(&*(tmp.first));
+    }
+  }
+
+ public:
+  const static PooledString emptystring;
+  const static string nullstring;
+  const static char nullchar;
+
+  static pair<size_t, size_t> getSize() {
+    return make_pair(
+        pool.size(),
+        pool.size() * (sizeof(set<string>::value_type) + 4 * sizeof(void*)));
+  }
+
+  /* Default constructor with empty pointer. */
+  PooledString() {}
+
+  /* Constructor from string.
+   * The constructor is explicit to avoid implicit calls to this
+   * constructor, which is slow.
+   */
+  explicit PooledString(const string& val) { insert(val); }
+
+  /* Constructor from a character pointer.
+   * The constructor is explicit to avoid implicit calls to this
+   * constructor, which is slow.
+   */
+  explicit PooledString(const char* val) { insert(string(val)); }
+
+  /* Copy constructor. */
+  PooledString(const PooledString& other) : ptr(other.ptr) {}
+
+  /* Assignment operator. */
+  PooledString& operator=(const PooledString& other) {
+    ptr = other.ptr;
+    return *this;
+  }
+
+  /* String assignment operator. */
+  PooledString& operator=(const string& val) {
+    insert(val);
+    return *this;
+  }
+
+  ~PooledString() {}
+
+  inline explicit operator bool() const { return ptr != nullptr; }
+
+  size_t hash() const { return Keyword::hash(ptr ? *ptr : nullstring); }
+
+  /* Equality operator. */
+  inline bool operator==(const PooledString& other) const {
+    return ptr == other.ptr;
+  }
+
+  /* Equality operator with a string. */
+  inline bool operator==(const string& other) const {
+    return ptr ? *ptr == other : other.empty();
+  }
+
+  /* Inequality operator. */
+  inline bool operator!=(const PooledString& other) const {
+    return ptr != other.ptr;
+  }
+
+  /* Conversion to string. */
+  operator const string&() const { return ptr ? *ptr : nullstring; }
+
+  /* Return true if the string is empty. */
+  inline bool empty() const { return !ptr; }
+
+  /* Return the character at a certain position in the string, or \0 if not
+   * found. */
+  const char& at(size_t pos) const { return ptr ? ptr->at(pos) : nullchar; }
+
+  /* Returns true if the argument is found in the string. */
+  bool contains(const string& c) const {
+    return ptr ? (ptr->find(c) != string::npos) : false;
+  }
+
+  /* Return the first character in the string. Or \0 if the string is empty. */
+  const char& front() const { return ptr ? ptr->front() : nullchar; }
+
+  /* Return the last character in the string. Or \0 if the string is empty. */
+  const char& back() const { return ptr ? ptr->back() : nullchar; }
+
+  /* Return the length of the string. */
+  size_t size() const { return ptr ? ptr->size() : 0; }
+
+  /* Returns true if the string starts with the argument. */
+  bool starts_with(const string& s) const {
+    return ptr ? (ptr->rfind(s, 0) == 0) : false;
+  }
+
+  inline const string& getString() const { return ptr ? *ptr : nullstring; }
+
+  bool operator<(const PooledString& other) const {
+    return (ptr ? *ptr : nullstring) < (other.ptr ? *other.ptr : nullstring);
+  }
+
+  /* Debugging function. */
+  static void print() {
+    lock_guard exclusive(pool_lock);
+    for (const auto& i : pool) logger << "   " << i << '\n';
+  }
+};
+
+/* Prints a pooled string to the outputstream. */
+inline ostream& operator<<(ostream& os, const PooledString& s) {
+  return os << string(s);
+}
+
+/* Prints a pooled string to the outputstream. */
+inline ostream& operator<<(ostream& os, const Keyword& s) {
+  return os << s.getName();
+}
+
+//
 // RED-BLACK TREE CLASS
 //
 
@@ -3659,6 +3801,13 @@ class Tree : public NonCopyable {
 
     /* Color of the node. This is used to keep the tree balanced. */
     Color color = Color::none;
+
+   protected:
+    /* Flag fields child classes can use.
+     * This is memory that is otherwise lost in padding added by
+     * the compiler, so it's "free".
+     */
+    unsigned int flags = 0;
   };
 
   /* Default constructor. */
@@ -3706,7 +3855,8 @@ class Tree : public NonCopyable {
       findLowerBound(newname, &found);
       if (found) {
         ostringstream o;
-        o << "Can't rename '" << obj->nm << newname << "': key already in use";
+        o << "Can't rename '" << obj->nm << "' to '" << newname
+          << "': key already in use";
         throw DataException(o.str());
       }
       erase(obj);
@@ -5000,141 +5150,8 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
   }
 };
 
-/* Implements a pool of re-usable string values, following the
- * flyweight design pattern.
- * TODO The implementation of this class is not thread-proof. Either this class
- * needs to use a shared pointer, or we simplify the design to implement an
- * add-only pool.
- */
-class PooledString {
- private:
-  /* Pool of strings. */
-  static set<string> pool;
-  static mutex pool_lock;
-
-  /* Pointer to an element in the pool. */
-  string* ptr = nullptr;
-
-  void insert(const string& v) {
-    if (v.empty())
-      ptr = nullptr;
-    else {
-      lock_guard exclusive(pool_lock);
-      auto tmp = pool.insert(v);
-      ptr = const_cast<string*>(&*(tmp.first));
-    }
-  }
-
- public:
-  const static PooledString emptystring;
-  const static string nullstring;
-  const static char nullchar;
-
-  static pair<size_t, size_t> getSize() {
-    return make_pair(
-        pool.size(),
-        pool.size() * (sizeof(set<string>::value_type) + 4 * sizeof(void*)));
-  }
-
-  /* Default constructor with empty pointer. */
-  PooledString() {}
-
-  /* Constructor from string.
-   * The constructor is explicit to avoid implicit calls to this
-   * constructor, which is slow.
-   */
-  explicit PooledString(const string& val) { insert(val); }
-
-  /* Constructor from a character pointer.
-   * The constructor is explicit to avoid implicit calls to this
-   * constructor, which is slow.
-   */
-  explicit PooledString(const char* val) { insert(string(val)); }
-
-  /* Copy constructor. */
-  PooledString(const PooledString& other) : ptr(other.ptr) {}
-
-  /* Assignment operator. */
-  PooledString& operator=(const PooledString& other) {
-    ptr = other.ptr;
-    return *this;
-  }
-
-  /* String assignment operator. */
-  PooledString& operator=(const string& val) {
-    insert(val);
-    return *this;
-  }
-
-  ~PooledString() {}
-
-  inline explicit operator bool() const { return ptr != nullptr; }
-
-  size_t hash() const { return Keyword::hash(ptr ? *ptr : nullstring); }
-
-  /* Equality operator. */
-  inline bool operator==(const PooledString& other) const {
-    return ptr == other.ptr;
-  }
-
-  /* Inequality operator. */
-  inline bool operator!=(const PooledString& other) const {
-    return ptr != other.ptr;
-  }
-
-  /* Conversion to string. */
-  operator const string&() const { return ptr ? *ptr : nullstring; }
-
-  /* Return true if the string is empty. */
-  inline bool empty() const { return !ptr; }
-
-  /* Return the character at a certain position in the string, or \0 if not
-   * found. */
-  const char& at(size_t pos) const { return ptr ? ptr->at(pos) : nullchar; }
-
-  /* Returns true if the argument is found in the string. */
-  bool contains(const string& c) const {
-    return ptr ? (ptr->find(c) != string::npos) : false;
-  }
-
-  /* Return the first character in the string. Or \0 if the string is empty. */
-  const char& front() const { return ptr ? ptr->front() : nullchar; }
-
-  /* Return the last character in the string. Or \0 if the string is empty. */
-  const char& back() const { return ptr ? ptr->back() : nullchar; }
-
-  /* Return the length of the string. */
-  size_t size() const { return ptr ? ptr->size() : 0; }
-
-  /* Returns true if the string starts with the argument. */
-  bool starts_with(const string& s) const {
-    return ptr ? (ptr->rfind(s, 0) == 0) : false;
-  }
-
-  inline const string& getString() const { return ptr ? *ptr : nullstring; }
-
-  bool operator<(const PooledString& other) const {
-    return (ptr ? *ptr : nullstring) < (other.ptr ? *other.ptr : nullstring);
-  }
-
-  /* Debugging function. */
-  static void print() {
-    lock_guard exclusive(pool_lock);
-    for (const auto& i : pool) logger << "   " << i << '\n';
-  }
-};
-
-/* Prints a pooled string to the outputstream. */
-inline ostream& operator<<(ostream& os, const PooledString& s) {
-  return os << string(s);
-}
-
-/* Prints a pooled string to the outputstream. */
-inline ostream& operator<<(ostream& os, const Keyword& s) {
-  return os << s.getName();
-}
-
 /* This is a decorator class for all objects having a source field. */
+template <class T>
 class HasSource {
  private:
   PooledString source;
@@ -5146,9 +5163,8 @@ class HasSource {
   /* Sets the source field. */
   void setSource(const string& c) { source = c; }
 
-  template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringRefField<Cls>(Tags::source, &Cls::getSource, &Cls::setSource);
+    m->addStringRefField<T>(Tags::source, &T::getSource, &T::setSource);
   }
 };
 
@@ -5156,7 +5172,8 @@ class HasSource {
  *
  * Instances of this class have a description, category and sub_category.
  */
-class HasDescription : public HasSource {
+template <class T>
+class HasDescription : public HasSource<T> {
  public:
   /* Returns the category. */
   const string& getCategory() const { return cat; }
@@ -5176,15 +5193,14 @@ class HasDescription : public HasSource {
   /* Sets the description field. */
   void setDescription(const string& f) { descr = f; }
 
-  template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringRefField<Cls>(Tags::category, &Cls::getCategory,
-                              &Cls::setCategory, "", BASE + PLAN);
-    m->addStringRefField<Cls>(Tags::subcategory, &Cls::getSubCategory,
-                              &Cls::setSubCategory, "", BASE + PLAN);
-    m->addStringRefField<Cls>(Tags::description, &Cls::getDescription,
-                              &Cls::setDescription, "", BASE + PLAN);
-    HasSource::registerFields<Cls>(m);
+    m->addStringRefField<T>(Tags::category, &T::getCategory, &T::setCategory,
+                            "", BASE + PLAN);
+    m->addStringRefField<T>(Tags::subcategory, &T::getSubCategory,
+                            &T::setSubCategory, "", BASE + PLAN);
+    m->addStringRefField<T>(Tags::description, &T::getDescription,
+                            &T::setDescription, "", BASE + PLAN);
+    HasSource<T>::registerFields(m);
   }
 
  private:
@@ -5205,7 +5221,7 @@ class HasDescription : public HasSource {
  * efficient provided the number of childre remains limited.
  */
 template <class T>
-class HasHierarchy : public HasName<T> {
+class HasHierarchy : public HasName<T>, public HasDescription<T> {
  public:
   class memberIterator;
   class memberRecursiveIterator;
@@ -5447,19 +5463,18 @@ class HasHierarchy : public HasName<T> {
     } while (swapped);
   }
 
-  template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
-                              MANDATORY);
-    m->addPointerField<Cls, Cls>(Tags::owner, &Cls::getOwner, &Cls::setOwner,
-                                 BASE + PARENT);
-    m->addIteratorField<Cls, typename Cls::memberIterator, Cls>(
-        Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, DETAIL);
-    m->addPointerField<Cls, Cls>(Tags::root, &Cls::getTop, nullptr,
-                                 DONT_SERIALIZE);
-    m->addIteratorField<Cls, typename Cls::memberRecursiveIterator, Cls>(
-        Tags::allmembers, *(Cls::metadata->typetag), &Cls::getAllMembers,
+    m->addStringRefField<T>(Tags::name, &T::getName, &T::setName, "",
+                            MANDATORY);
+    m->addPointerField<T, T>(Tags::owner, &T::getOwner, &T::setOwner,
+                             BASE + PARENT);
+    m->addIteratorField<T, typename T::memberIterator, T>(
+        Tags::members, *(T::metadata->typetag), &T::getMembers, DETAIL);
+    m->addPointerField<T, T>(Tags::root, &T::getTop, nullptr, DONT_SERIALIZE);
+    m->addIteratorField<T, typename T::memberRecursiveIterator, T>(
+        Tags::allmembers, *(T::metadata->typetag), &T::getAllMembers,
         DONT_SERIALIZE);
+    HasDescription<T>::registerFields(m);
   }
 
  private:

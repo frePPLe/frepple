@@ -94,7 +94,9 @@ class LibraryModel {
  * Manipulation of instances of this class need to be handled with the
  * methods on the friend class Calendar.
  */
-class CalendarBucket : public Object, public NonCopyable, public HasSource {
+class CalendarBucket : public Object,
+                       public NonCopyable,
+                       public HasSource<CalendarBucket> {
   friend class Calendar;
 
  private:
@@ -289,7 +291,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
     m->addPointerField<Cls, Calendar>(Tags::calendar, &Cls::getCalendar,
                                       &Cls::setCalendar,
                                       DONT_SERIALIZE + PARENT);
-    HasSource::registerFields<Cls>(m);
+    HasSource<Cls>::registerFields(m);
     m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
                            BASE + COMPUTED);
   }
@@ -356,7 +358,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
  *  - The minimum inventory desired in a buffer week by week.
  *  - The working hours and holidays at a certain location.
  */
-class Calendar : public HasName<Calendar>, public HasSource {
+class Calendar : public HasName<Calendar>, public HasSource<Calendar> {
  public:
   class EventIterator;  // Forward declaration
   friend class EventIterator;
@@ -472,7 +474,7 @@ class Calendar : public HasName<Calendar>, public HasSource {
   static inline void registerFields(MetaClass* m) {
     m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
                               MANDATORY);
-    HasSource::registerFields<Cls>(m);
+    HasSource<Cls>::registerFields(m);
     m->addDoubleField<Cls>(Tags::deflt, &Cls::getDefault, &Cls::setDefault);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
@@ -1233,7 +1235,7 @@ class HasLevel {
  * The 'available' calendar is used to model the working hours and holidays
  * of resources, buffers and operations.
  */
-class Location : public HasHierarchy<Location>, public HasDescription {
+class Location : public HasHierarchy<Location> {
   friend class ItemDistribution;
 
  public:
@@ -1270,8 +1272,7 @@ class Location : public HasHierarchy<Location>, public HasDescription {
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    HasHierarchy<Cls>::template registerFields<Cls>(m);
-    HasDescription::registerFields<Cls>(m);
+    HasHierarchy<Cls>::registerFields(m);
     m->addPointerField<Cls, Calendar>(Tags::available, &Cls::getAvailable,
                                       &Cls::setAvailable);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
@@ -1305,7 +1306,9 @@ class LocationDefault : public Location {
  * Demands can be associated with a customer, but there is no planning
  * behavior directly linked to customers.
  */
-class Customer : public HasHierarchy<Customer>, public HasDescription {
+class Customer : public HasHierarchy<Customer> {
+  friend class Demand;
+
  public:
   /* Default constructor. */
   explicit Customer() {}
@@ -1319,8 +1322,7 @@ class Customer : public HasHierarchy<Customer>, public HasDescription {
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    HasHierarchy<Cls>::template registerFields<Cls>(m);
-    HasDescription::registerFields<Cls>(m);
+    HasHierarchy<Cls>::registerFields(m);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
   }
@@ -1347,7 +1349,7 @@ class CustomerDefault : public Customer {
 };
 
 /* This abstracts class represents a supplier. */
-class Supplier : public HasHierarchy<Supplier>, public HasDescription {
+class Supplier : public HasHierarchy<Supplier> {
   friend class ItemSupplier;
 
  public:
@@ -1372,8 +1374,7 @@ class Supplier : public HasHierarchy<Supplier>, public HasDescription {
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    HasHierarchy<Cls>::template registerFields<Cls>(m);
-    HasDescription::registerFields<Cls>(m);
+    HasHierarchy<Cls>::registerFields(m);
     m->addIteratorField<Cls, itemlist::const_iterator, ItemSupplier>(
         Tags::itemsuppliers, Tags::itemsupplier, &Cls::getItemIterator, DETAIL);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
@@ -1398,15 +1399,12 @@ class SupplierDefault : public Supplier {
 /* A suboperation is used in operation types which have child
  * operations.
  */
-class SubOperation : public Object, public HasSource {
+class SubOperation : public Object, public HasSource<SubOperation> {
  private:
   /* Pointer to the parent operation. */
   Operation* owner = nullptr;
 
-  /* Pointer to the child operation.
-   * Note that the same child operation can be used in multiple parents.
-   * The child operation is completely unaware of its parents.
-   */
+  /* Pointer to the child operation. */
   Operation* oper = nullptr;
 
   /* Validity date range for the child operation. */
@@ -1468,7 +1466,7 @@ class SubOperation : public Object, public HasSource {
                          &Cls::setEffectiveStart);
     m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd,
                          &Cls::setEffectiveEnd, Date::infiniteFuture);
-    HasSource::registerFields<Cls>(m);
+    HasSource<Cls>::registerFields(m);
   }
 
   class iterator {
@@ -1490,7 +1488,10 @@ class SubOperation : public Object, public HasSource {
   };
 };
 
-class OperationDependency : public Object, public HasSource {
+class OperationDependency : public Object,
+                            public HasSource<OperationDependency> {
+  friend class Operation;
+
  private:
   Operation* oper = nullptr;
 
@@ -1566,7 +1567,7 @@ class OperationDependency : public Object, public HasSource {
     m->addDurationField<Cls>(Tags::hard_safety_leadtime,
                              &Cls::getHardSafetyLeadtime,
                              &Cls::setHardSafetyLeadtime);
-    HasSource::registerFields<Cls>(m);
+    HasSource<Cls>::registerFields(m);
   }
 };
 
@@ -1771,11 +1772,13 @@ class OperationPlanDependency : public Object {
  *  - Operationplans can be organized in hierarchical structure, matching
  *    the operation hierarchies they belong to.
  */
-class OperationPlan final : public NonCopyable,
-                            public Object,
+class OperationPlan final : public Object,
+                            private Tree::TreeNode,
                             public HasProblems,
-                            public HasSource,
-                            private Tree::TreeNode {
+                            public HasSource<OperationPlan>,
+                            public NonCopyable
+
+{
   friend class FlowPlan;
   friend class LoadPlan;
   friend class Demand;
@@ -2613,7 +2616,7 @@ class OperationPlan final : public NonCopyable,
                          BOOL_TRUE);
     m->addDoubleField<Cls>(Tags::quantity_completed, &Cls::getQuantityCompleted,
                            &Cls::setQuantityCompleted);
-    HasSource::registerFields<Cls>(m);
+    HasSource<Cls>::registerFields(m);
     m->addPointerField<Cls, OperationPlan>(Tags::owner, &Cls::getOwner,
                                            &Cls::setOwner);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
@@ -2840,10 +2843,6 @@ class OperationPlan final : public NonCopyable,
    */
   PooledString info;
 
-  /* Flags on the operationplan: status, consumematerial, consumecapacity,
-   * infeasible. */
-  unsigned short flags = 0;
-
   /* Hidden, static field to store the location during import. */
   static Location* loc;
 
@@ -2964,7 +2963,7 @@ SearchMode decodeSearchMode(const string& c);
 class Operation : public HasName<Operation>,
                   public HasLevel,
                   public Plannable,
-                  public HasDescription {
+                  public HasDescription<Operation> {
   friend class Flow;
   friend class Load;
   friend class OperationPlan;
@@ -3360,13 +3359,43 @@ class Operation : public HasName<Operation>,
   static PyObject* getFencePython(PyObject* self, PyObject* args);
 
   /* Return the search mode. */
-  SearchMode getSearch() const { return search; }
+  SearchMode getSearch() const {
+    if (flags & FLAGS_PRIORITY)
+      return SearchMode::PRIORITY;
+    else if (flags & FLAGS_MINCOST)
+      return SearchMode::MINCOST;
+    else if (flags & FLAGS_MINPENALTY)
+      return SearchMode::MINPENALTY;
+    else if (flags & FLAGS_MINCOSTPENALTY)
+      return SearchMode::MINCOSTPENALTY;
+    else
+      return SearchMode::PRIORITY;
+  }
 
   /* Update the search mode. */
-  void setSearch(const string a) { search = decodeSearchMode(a); }
+  void setSearch(const string a) { setSearch(decodeSearchMode(a)); }
 
   /* Update the search mode. */
-  void setSearch(SearchMode a) { search = a; }
+  void setSearch(SearchMode a) {
+    flags &= ~(FLAGS_PRIORITY | FLAGS_MINCOST | FLAGS_MINPENALTY |
+               FLAGS_MINCOSTPENALTY);
+    switch (a) {
+      case SearchMode::PRIORITY:
+        flags |= FLAGS_PRIORITY;
+        break;
+      case SearchMode::MINCOST:
+        flags |= FLAGS_MINCOST;
+        break;
+      case SearchMode::MINPENALTY:
+        flags |= FLAGS_MINPENALTY;
+        break;
+      case SearchMode::MINCOSTPENALTY:
+        flags |= FLAGS_MINCOSTPENALTY;
+        break;
+      default:
+        throw logic_error("Invalid search mode");
+    }
+  }
 
   void updateProblems() override;
 
@@ -3404,7 +3433,7 @@ class Operation : public HasName<Operation>,
   static inline void registerFields(MetaClass* m) {
     m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
                               MANDATORY);
-    HasDescription::registerFields<Cls>(m);
+    HasDescription<Cls>::registerFields(m);
     Plannable::registerFields<Cls>(m);
     m->addDurationField<Cls>(Tags::posttime, &Cls::getPostTime,
                              &Cls::setPostTime);
@@ -3550,14 +3579,15 @@ class Operation : public HasName<Operation>,
   /* Priority of the operation among alternates. */
   int priority = 1;
 
-  /* Bit fields. */
+  /* Flag fields. */
   static const unsigned short FLAGS_HIDDEN = 1;
   static const unsigned short FLAGS_MTO = 2;
   static const unsigned short FLAGS_NOLOCATIONCALENDAR = 4;
-  unsigned short flags = 0;
-
-  /* Mode to select the preferred alternates. */
-  SearchMode search = SearchMode::PRIORITY;
+  static const unsigned short FLAGS_PRIORITY = 8;
+  static const unsigned short FLAGS_MINCOST = 16;
+  static const unsigned short FLAGS_MINPENALTY = 32;
+  static const unsigned short FLAGS_MINCOSTPENALTY = 64;
+  unsigned short flags = FLAGS_PRIORITY;
 };
 
 /* Writes an operationplan to an output stream. */
@@ -4264,7 +4294,7 @@ inline OperationPlan::AlternateIterator OperationPlan::getAlternates() const {
 class ItemDistribution
     : public Object,
       public Association<Location, Item, ItemDistribution>::Node,
-      public HasSource {
+      public HasSource<ItemDistribution> {
   friend class OperationItemDistribution;
   friend class Item;
 
@@ -4468,7 +4498,7 @@ class ItemDistribution
         Tags::operations, Tags::operation, &Cls::getOperations, DONT_SERIALIZE);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
-    HasSource::registerFields<Cls>(m);
+    HasSource<Cls>::registerFields(m);
   }
 
  private:
@@ -4510,7 +4540,7 @@ class ItemDistribution
  *
  * This is an abstract class.
  */
-class Item : public HasHierarchy<Item>, public HasDescription {
+class Item : public HasHierarchy<Item> {
   friend class Buffer;
   friend class ItemSupplier;
   friend class ItemDistribution;
@@ -4633,8 +4663,7 @@ class Item : public HasHierarchy<Item>, public HasDescription {
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    HasHierarchy<Cls>::template registerFields<Cls>(m);
-    HasDescription::registerFields<Cls>(m);
+    HasHierarchy<Cls>::registerFields(m);
     m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost, 0);
     m->addDoubleField<Cls>(Tags::volume, &Cls::getVolume, &Cls::setVolume, 0);
     m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight, &Cls::setWeight, 0);
@@ -4719,7 +4748,7 @@ class ItemMTO : public Item {
  */
 class ItemSupplier : public Object,
                      public Association<Supplier, Item, ItemSupplier>::Node,
-                     public HasSource {
+                     public HasSource<ItemSupplier> {
   friend class OperationItemSupplier;
 
  public:
@@ -4912,7 +4941,7 @@ class ItemSupplier : public Object,
     m->addDurationField<Cls>(Tags::fence, &Cls::getFence, &Cls::setFence);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
-    HasSource::registerFields<Cls>(m);
+    HasSource<Cls>::registerFields(m);
   }
 
  private:
@@ -5083,10 +5112,7 @@ Supplier* OperationPlan::getSupplier() const {
 /* A buffer represents a combination of a item and location.
  * It is the entity for keeping modeling inventory.
  */
-class Buffer : public HasHierarchy<Buffer>,
-               public HasLevel,
-               public Plannable,
-               public HasDescription {
+class Buffer : public HasHierarchy<Buffer>, public HasLevel, public Plannable {
   friend class Flow;
   friend class FlowPlan;
 
@@ -5185,7 +5211,12 @@ class Buffer : public HasHierarchy<Buffer>,
   /* Returns the minimum inventory level. */
   double getMinimum() const { return min_val; }
 
-  /* Return true if this buffer represents a tool. */
+  /* Interpretation of the flag fields */
+  static const unsigned short TOOL = 1;  // Tool buffer or not (impacts pegging)
+  static const unsigned short NO_AUTOFENCE = 2;
+  static const unsigned short HIDDEN = 4;   // Hide from serialization
+  static const unsigned short IP_DATA = 8;  // This buffer is a decoupling point
+
   bool getTool() const { return (flags & TOOL) != 0; }
 
   /* Marks the buffer as a tool. */
@@ -5196,13 +5227,32 @@ class Buffer : public HasHierarchy<Buffer>,
       flags &= ~TOOL;
   }
 
-  bool getAutofence() const { return (flags & AUTOFENCE) != 0; }
+  bool getAutofence() const { return (flags & NO_AUTOFENCE) == 0; }
 
   void setAutofence(bool b) {
     if (b)
-      flags |= AUTOFENCE;
+      flags &= ~NO_AUTOFENCE;
     else
-      flags &= ~AUTOFENCE;
+      flags |= NO_AUTOFENCE;
+  }
+
+  bool getHidden() const override { return flags & HIDDEN; }
+
+  void setHidden(bool b) override {
+    if ((flags & HIDDEN) != b) setChanged();
+    if (b)
+      flags |= HIDDEN;
+    else
+      flags &= ~HIDDEN;
+  }
+
+  bool getIPFlag() const { return flags & IP_DATA; }
+
+  void setIPFlag(bool b) {
+    if (b)
+      flags |= IP_DATA;
+    else
+      flags &= ~IP_DATA;
   }
 
   /* Debugging function. */
@@ -5298,13 +5348,6 @@ class Buffer : public HasHierarchy<Buffer>,
 
   void updateProblems() override;
 
-  void setHidden(bool b) override {
-    if (hidden != b) setChanged();
-    hidden = b;
-  }
-
-  bool getHidden() const override { return hidden; }
-
   const MetaClass& getType() const override { return *metadata; }
   static const MetaCategory* metadata;
 
@@ -5315,8 +5358,7 @@ class Buffer : public HasHierarchy<Buffer>,
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    HasHierarchy<Cls>::template registerFields<Cls>(m);
-    HasDescription::registerFields<Cls>(m);
+    HasHierarchy<Cls>::registerFields(m);
     m->addPointerField<Cls, Operation>(Tags::producing,
                                        &Cls::getProducingOperation,
                                        &Cls::setProducingOperation);
@@ -5355,12 +5397,6 @@ class Buffer : public HasHierarchy<Buffer>,
   /* A dummy producing operation to mark uninitialized ones. */
   static OperationFixedTime* uninitializedProducing;
 
-  /* Returns true if this buffer is a decoupling point. */
-  bool getIPFlag() const { return ip_data; }
-
-  /* Marks a buffer as a decoupling point. */
-  void setIPFlag(bool b) { ip_data = b; }
-
  private:
   /* This models the dynamic part of the plan, representing all planned
    * material flows on this buffer. */
@@ -5368,9 +5404,6 @@ class Buffer : public HasHierarchy<Buffer>,
 
   /* This models the defined material flows on this buffer. */
   flowlist flows;
-
-  /* Hide this entity from serialization or not. */
-  bool hidden = false;
 
   /* This is the operation used to create extra material in this buffer. */
   Operation* producing_operation = uninitializedProducing;
@@ -5413,14 +5446,6 @@ class Buffer : public HasHierarchy<Buffer>,
 
   /* Marks MTO buffers. */
   PooledString batch;
-
-  /* A flag that marks whether this buffer represents a tool or not. */
-  static const unsigned short TOOL = 1;
-  static const unsigned short AUTOFENCE = 2;
-  unsigned short flags = AUTOFENCE;
-
-  /* Marks decoupling points. */
-  bool ip_data = false;
 };
 
 /* An internally generated operation to represent inventory. */
@@ -5613,7 +5638,7 @@ class BufferInfinite : public Buffer {
 class Flow : public Object,
              public Association<Operation, Buffer, Flow>::Node,
              public Solvable,
-             public HasSource {
+             public HasSource<Flow> {
  public:
   /* Destructor. */
   ~Flow() override;
@@ -5819,7 +5844,7 @@ class Flow : public Object,
                          &Cls::setEffectiveStart);
     m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd,
                          &Cls::setEffectiveEnd, Date::infiniteFuture);
-    HasSource::registerFields<Cls>(m);
+    HasSource<Cls>::registerFields(m);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
     // Not very nice: all flow subclasses appear to Python as instance of a
@@ -6213,7 +6238,7 @@ class FlowPlan final : public TimeLine<FlowPlan>::EventChangeOnhand {
 };
 
 /* An specific changeover rule in a setup matrix. */
-class SetupMatrixRule : public Object, public HasSource {
+class SetupMatrixRule : public Object, public HasSource<SetupMatrixRule> {
   friend class SetupMatrix;
 
  public:
@@ -6304,7 +6329,7 @@ class SetupMatrixRule : public Object, public HasSource {
     m->addPointerField<Cls, SetupMatrix>(
         Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix,
         DONT_SERIALIZE + PARENT);
-    HasSource::registerFields<Cls>(m);
+    HasSource<Cls>::registerFields(m);
   }
 
   /* Returns true if this rule matches with the from-setup and to-setup being
@@ -6424,7 +6449,7 @@ class SetupMatrixRuleDefault : public SetupMatrixRule {
 /* This class is used to represent a matrix defining the changeover
  * times between setups.
  */
-class SetupMatrix : public HasName<SetupMatrix>, public HasSource {
+class SetupMatrix : public HasName<SetupMatrix>, public HasSource<SetupMatrix> {
   friend class SetupMatrixRule;
 
  public:
@@ -6434,7 +6459,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource {
   static inline void registerFields(MetaClass* m) {
     m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
                               MANDATORY);
-    HasSource::registerFields<Cls>(m);
+    HasSource<Cls>::registerFields(m);
     m->addIteratorField<Cls, SetupMatrixRule::iterator, SetupMatrixRule>(
         Tags::rules, Tags::rule, &Cls::getRules, BASE + WRITE_OBJECT);
   }
@@ -6514,7 +6539,7 @@ class SetupMatrixDefault : public SetupMatrix {
 };
 
 /* This class models skills that can be assigned to resources. */
-class Skill : public HasName<Skill>, public HasSource {
+class Skill : public HasName<Skill>, public HasSource<Skill> {
   friend class ResourceSkill;
 
  public:
@@ -6544,7 +6569,7 @@ class Skill : public HasName<Skill>, public HasSource {
         Tags::resourceskills, Tags::resourceskill, &Cls::getResources);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
-    HasSource::registerFields<Cls>(m);
+    HasSource<Cls>::registerFields(m);
   }
 
  private:
@@ -6569,8 +6594,7 @@ class SkillDefault : public Skill {
  */
 class Resource : public HasHierarchy<Resource>,
                  public HasLevel,
-                 public Plannable,
-                 public HasDescription {
+                 public Plannable {
   friend class Load;
   friend class LoadPlan;
   friend class ResourceSkill;
@@ -6792,8 +6816,7 @@ class Resource : public HasHierarchy<Resource>,
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    HasHierarchy<Cls>::template registerFields<Cls>(m);
-    HasDescription::registerFields<Cls>(m);
+    HasHierarchy<Cls>::registerFields(m);
     m->addDoubleField<Cls>(Tags::maximum, &Cls::getMaximum, &Cls::setMaximum,
                            1);
     m->addPointerField<Cls, Calendar>(Tags::maximum_calendar,
@@ -7038,7 +7061,7 @@ class ResourceBuckets : public Resource {
 /* This class associates a resource with its skills. */
 class ResourceSkill : public Object,
                       public Association<Resource, Skill, ResourceSkill>::Node,
-                      public HasSource {
+                      public HasSource<ResourceSkill> {
  public:
   /* Default constructor. */
   explicit ResourceSkill() { initType(metadata); }
@@ -7089,7 +7112,7 @@ class ResourceSkill : public Object,
                          &Cls::setEffectiveStart);
     m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd,
                          &Cls::setEffectiveEnd, Date::infiniteFuture);
-    HasSource::registerFields<Cls>(m);
+    HasSource<Cls>::registerFields(m);
   }
 
  private:
@@ -7111,7 +7134,7 @@ class ResourceSkillDefault : public ResourceSkill {
 class Load : public Object,
              public Association<Operation, Resource, Load>::Node,
              public Solvable,
-             public HasSource {
+             public HasSource<Load> {
   friend class Resource;
   friend class Operation;
 
@@ -7284,7 +7307,7 @@ class Load : public Object,
     m->addStringRefField<Cls>(Tags::setup, &Cls::getSetupString,
                               &Cls::setSetupString);
     m->addPointerField<Cls, Skill>(Tags::skill, &Cls::getSkill, &Cls::setSkill);
-    HasSource::registerFields<Cls>(m);
+    HasSource<Cls>::registerFields(m);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
   }
@@ -7535,9 +7558,7 @@ class LoadBucketizedFromEnd : public Load {
  *
  * This is an abstract class.
  */
-class Demand : public HasHierarchy<Demand>,
-               public Plannable,
-               public HasDescription {
+class Demand : public HasHierarchy<Demand>, public Plannable {
   friend class Item;
 
  public:
@@ -7923,8 +7944,7 @@ class Demand : public HasHierarchy<Demand>,
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    HasHierarchy<Cls>::template registerFields<Cls>(m);
-    HasDescription::registerFields<Cls>(m);
+    HasHierarchy<Cls>::registerFields(m);
     m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity,
                            &Cls::setQuantity);
     m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem,

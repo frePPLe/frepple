@@ -9811,15 +9811,15 @@ class PeggingIterator : public NonCopyable, public Object {
   MemoryPool<state>::MemoryObjectList states;
   MemoryPool<state>::MemoryObjectList states_sorted;
 
+  /* Optimization to reuse elements on the stack. */
+  set<OperationPlan*> visited;
+  bool first;
+
   /* Follow the pegging upstream or downstream. */
   bool downstream;
 
   /* Used by the Python iterator to mark the first call. */
   bool firstIteration;
-
-  /* Optimization to reuse elements on the stack. */
-  bool first;
-  set<OperationPlan*> visited;
 
   /* Extra data structure to avoid duplicate operationplan ids in the list. */
   bool second_pass;

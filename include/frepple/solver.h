@@ -1112,6 +1112,8 @@ class OperatorForward : public Solver, public NonCopyable {
   OperatorForward(SolverCreate::SolverData* d, int c = -1,
                   CommandManager* mgr = nullptr)
       : cmds(mgr), data(d), cluster(c) {
+    // We'll never use this class from Python, but still need to do a dummy initialization.
+    PyObject_INIT(this, &PyBaseObject_Type);
     if (d)
       setLogLevel(d->getLogLevel());
     else

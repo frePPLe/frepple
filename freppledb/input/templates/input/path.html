@@ -554,16 +554,10 @@ function nodeTransform(d) {
     // Suboperation of a routing — compute desired width (no scale transform)
     var parentnode = nodes[d.parent];
     var parentw = parentnode && parentnode.halfW ? (2 * parentnode.halfW) : 105;
-    var cols = parentnode && parentnode.colnb > 0 ? parentnode.colnb : 1;
     var subops = parentnode && parentnode.numsuboperations > 0 ? parentnode.numsuboperations : 1;
     var subop_margin = 8;
     var pill_margin = 4;
-    var slot_w;
-    if (d.rownb > 0) {
-      slot_w = (parentw - 2 * subop_margin) / cols;
-    } else {
-      slot_w = (parentw - 2 * subop_margin) / subops;
-    }
+    var slot_w = (parentw - 2 * subop_margin) / subops;
     d._subopW = slot_w - 2 * pill_margin;
   }
   return 'translate(' + d.x + ' ' + d.y + ')';
@@ -615,7 +609,7 @@ function updateLevelControlPositions()
     else if ((node.type === 'routing' || node.type === 'alternate' || node.type === 'split') && node.numsuboperations) {
       if (node.type === 'alternate' || node.type === 'split')
         ny = node.y - 13;  // badge is above center
-      else if (node.rownb > 0)
+      else
         ny = node.y - 40;  // routing box top
     }
     if (ny < top_y)
@@ -654,14 +648,8 @@ function tick(e)
           var parentw = parentnode && parentnode.halfW ? (2 * parentnode.halfW) : 105;
           var halfparentw = parentw / 2;
           var subop_margin = 8;
-          if (d.rownb > 0) {
-          	d.y = nodes[d.parent].y - 40 + subop_margin + (d.rownb-0.5) * (80 - 2*subop_margin) / nodes[d.parent].rownb;
-	          d.x = nodes[d.parent].x - halfparentw + subop_margin + (d.colnb-0.5) * (parentw - 2*subop_margin) / nodes[d.parent].colnb;
-    	  }
-    	  else {
-    	  	d.y = nodes[d.parent].y;
-	          d.x = nodes[d.parent].x - halfparentw + subop_margin + (d.suboperindex-0.5) * (parentw - 2*subop_margin) / nodes[d.parent].numsuboperations;
-    	 }
+          d.y = nodes[d.parent].y;
+          d.x = nodes[d.parent].x - halfparentw + subop_margin + (d.suboperindex-0.5) * (parentw - 2*subop_margin) / nodes[d.parent].numsuboperations;
         }
       }
       else
@@ -684,16 +672,10 @@ function tick(e)
       // Suboperation of a routing — compute desired width (no scale transform)
       var parentnode2 = nodes[d.parent];
       var parentw2 = parentnode2 && parentnode2.halfW ? (2 * parentnode2.halfW) : 105;
-      var cols2 = parentnode2 && parentnode2.colnb > 0 ? parentnode2.colnb : 1;
       var subops2 = parentnode2 && parentnode2.numsuboperations > 0 ? parentnode2.numsuboperations : 1;
       var subop_margin2 = 8;
       var pill_margin2 = 4;
-      var slot_w2;
-      if (d.rownb > 0) {
-        slot_w2 = (parentw2 - 2 * subop_margin2) / cols2;
-      } else {
-        slot_w2 = (parentw2 - 2 * subop_margin2) / subops2;
-      }
+      var slot_w2 = (parentw2 - 2 * subop_margin2) / subops2;
       d._subopW = slot_w2 - 2 * pill_margin2;
 	}
       return 'translate(' + d.x + ' ' + d.y + ')';
@@ -888,8 +870,6 @@ function drawGraph(jsondata)
          numsuboperations: numsuboperations,
          y: 1000 + count,
          charge: parentoper>-1 ? 0 : -200,
-         rownb: parseInt(jsondata['rows'][oper]['rownb']),
-         colnb: parseInt(jsondata['rows'][oper]['colnb']),
          }) - 1;
       if (supplier_buffer_key)
         itemsuppliers_by_buffer[supplier_buffer_key] = operindex;
@@ -997,6 +977,12 @@ function drawGraph(jsondata)
 
       var src = lnk5.source;
       var tgt = lnk5.target;
+
+      // Skip depends links between suboperations of the same routing parent:
+      // they are positioned relative to their shared parent, so bumping the
+      // parent level would incorrectly push the whole routing upstream.
+      if (lnk5.type === 'depends' && src.parent >= 0 && src.parent === tgt.parent)
+        continue;
 
       // Effective visual level: for sub-operations use parent level if higher
       var srcLevel = src.level;
@@ -1123,13 +1109,8 @@ function drawGraph(jsondata)
         if (child.suboperindex >= 0) {
           // Suboperation of a routing
           var subop_margin = 8;
-          if (child.rownb > 0) {
-            child.y = d.y - 40 + subop_margin + (child.rownb - 0.5) * (80 - 2*subop_margin) / d.rownb;
-            child.x = d.x - halfparentw + subop_margin + (child.colnb - 0.5) * (parentw - 2*subop_margin) / d.colnb;
-          } else {
-            child.y = d.y;
-            child.x = d.x - halfparentw + subop_margin + (child.suboperindex - 0.5) * (parentw - 2*subop_margin) / d.numsuboperations;
-          }
+          child.y = d.y;
+          child.x = d.x - halfparentw + subop_margin + (child.suboperindex - 0.5) * (parentw - 2*subop_margin) / d.numsuboperations;
         } else {
           // Suboperation of alternate/split
           child.x = d.x;
@@ -1195,10 +1176,7 @@ function drawGraph(jsondata)
         if (d.type == 'alternate' || d.type == 'split')
           return "scale(1,"+ (2+d.numsuboperations) +")";
         else
-          if (d.rownb > 0)
-            return "translate(0 -8) scale(1,"+ (1+d.rownb) +")";
-          else
-            return "scale(1,1.4)";
+          return "scale(1,1.4)";
       }
       else
         return '';
@@ -1225,8 +1203,6 @@ function drawGraph(jsondata)
    .attr('transform', function(d) {
       if (d.type === 'alternate' || d.type === 'split')
         return "scale(1,"+ (2+d.numsuboperations) +")";
-      if (d.rownb > 0)
-        return "translate(0 -8) scale(1,"+ (1+d.rownb) +")";
       return "scale(1,1.4)";
    });
 
@@ -1779,7 +1755,7 @@ function drawGraph(jsondata)
     var cny = ctn.y;
     if ((ctn.type === 'routing' || ctn.type === 'alternate' || ctn.type === 'split') && ctn.numsuboperations) {
       if (ctn.type === 'alternate' || ctn.type === 'split') cny = ctn.y - 13;
-      else if (ctn.rownb > 0) cny = ctn.y - 40;
+      else cny = ctn.y - 40;
     }
     if (cny < controlsTopY) controlsTopY = cny;
   }
@@ -1987,13 +1963,8 @@ function drawGraph(jsondata)
       var pw = pnode.halfW ? (2 * pnode.halfW) : 105;
       var hpw = pw / 2;
       var sm = 8;
-      if (child.rownb > 0) {
-        child.y = pnode.y - 40 + sm + (child.rownb - 0.5) * (80 - 2*sm) / pnode.rownb;
-        child.x = pnode.x - hpw + sm + (child.colnb - 0.5) * (pw - 2*sm) / pnode.colnb;
-      } else {
-        child.y = pnode.y;
-        child.x = pnode.x - hpw + sm + (child.suboperindex - 0.5) * (pw - 2*sm) / pnode.numsuboperations;
-      }
+      child.y = pnode.y;
+      child.x = pnode.x - hpw + sm + (child.suboperindex - 0.5) * (pw - 2*sm) / pnode.numsuboperations;
     } else {
       child.x = pnode.x;
       child.y = pnode.y + (child.suboperindex + pnode.numsuboperations + 1) * 30 - 5;
@@ -2111,13 +2082,8 @@ function drawGraph(jsondata)
       var pw2 = pnode2.halfW ? (2 * pnode2.halfW) : 105;
       var hpw2 = pw2 / 2;
       var sm2 = 8;
-      if (child2.rownb > 0) {
-        child2.y = pnode2.y - 40 + sm2 + (child2.rownb - 0.5) * (80 - 2*sm2) / pnode2.rownb;
-        child2.x = pnode2.x - hpw2 + sm2 + (child2.colnb - 0.5) * (pw2 - 2*sm2) / pnode2.colnb;
-      } else {
-        child2.y = pnode2.y;
-        child2.x = pnode2.x - hpw2 + sm2 + (child2.suboperindex - 0.5) * (pw2 - 2*sm2) / pnode2.numsuboperations;
-      }
+      child2.y = pnode2.y;
+      child2.x = pnode2.x - hpw2 + sm2 + (child2.suboperindex - 0.5) * (pw2 - 2*sm2) / pnode2.numsuboperations;
     } else {
       child2.x = pnode2.x;
       child2.y = pnode2.y + (child2.suboperindex + pnode2.numsuboperations + 1) * 30 - 5;
@@ -2169,13 +2135,8 @@ function drawGraph(jsondata)
       var pw3 = pnode3.halfW ? (2 * pnode3.halfW) : 105;
       var hpw3 = pw3 / 2;
       var sm3 = 8;
-      if (child3.rownb > 0) {
-        child3.y = pnode3.y - 40 + sm3 + (child3.rownb - 0.5) * (80 - 2*sm3) / pnode3.rownb;
-        child3.x = pnode3.x - hpw3 + sm3 + (child3.colnb - 0.5) * (pw3 - 2*sm3) / pnode3.colnb;
-      } else {
-        child3.y = pnode3.y;
-        child3.x = pnode3.x - hpw3 + sm3 + (child3.suboperindex - 0.5) * (pw3 - 2*sm3) / pnode3.numsuboperations;
-      }
+      child3.y = pnode3.y;
+      child3.x = pnode3.x - hpw3 + sm3 + (child3.suboperindex - 0.5) * (pw3 - 2*sm3) / pnode3.numsuboperations;
     } else {
       child3.x = pnode3.x;
       child3.y = pnode3.y + (child3.suboperindex + pnode3.numsuboperations + 1) * 30 - 5;
@@ -2246,8 +2207,6 @@ function drawGraph(jsondata)
     if ((nd.type === 'routing' || nd.type === 'alternate' || nd.type === 'split') && nd.numsuboperations > 0) {
       if (nd.type === 'alternate' || nd.type === 'split')
         hh = 13 * (2 + nd.numsuboperations);
-      else if (nd.rownb > 0)
-        hh = 40 + (nd.rownb > 1 ? nd.rownb * 13 : 13);
       else
         hh = 13 * 1.4;
     }

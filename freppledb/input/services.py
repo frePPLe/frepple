@@ -507,13 +507,18 @@ class SupplyPathSvc(AsyncHttpConsumer):
                 "sizeminimum": op.size_minimum,
                 "sizemaximum": op.size_maximum if op.size_maximum < 1e20 else None,
                 "sizemultiple": op.size_multiple,
-                "alternate": "false",  # TODO
-                "blockedby": [[d.blockedby.name, d.quantity] for d in op.blockedby]
-                or None,
-                "blocking": [[d.operation.name, d.quantity] for d in op.blocking]
-                or None,
-                "rownb": None,  # TODO
-                "colnb": None,  # TODO
+                "alternate": (
+                    "true"
+                    if op.owner
+                    and isinstance(op.owner, frepple.operation_alternate)
+                    and len(
+                        [k for k in op.owner.suboperations if k.priority < op.priority]
+                    )
+                    > 0
+                    else "false"
+                ),
+                "blockedby": [[d.blockedby.name, d.quantity] for d in op.blockedby],
+                "blocking": [[d.operation.name, d.quantity] for d in op.blocking],
             }
             if parent_id:
                 v["alternate_priority"] = op.priority

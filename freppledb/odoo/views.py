@@ -507,10 +507,12 @@ def SubmittedFromOdoo(request):
             except Exception:
                 pass
 
+        constraint = None
         for filename, uploadedfile in request.FILES.items():
             if filename == "metadata":
                 # Store the attached metadata file.
                 parsed_data = json.loads(uploadedfile.read().decode("utf-8"))
+                constraint = parsed_data.get("constraint")
                 with open(
                     os.path.join(outputfolder, "metadata.json"), "w", encoding="utf-8"
                 ) as outfile:
@@ -529,7 +531,7 @@ def SubmittedFromOdoo(request):
             submitted=datetime.now(),
             status="Waiting",
             user=request.user,
-            arguments="--constraint=po_lt,mfg_lt,capa --plantype=1 "
+            arguments=f"--constraint={constraint or "po_lt,mfg_lt,capa"} --plantype=1 "
             "--env=odoo_read_1,fcst,supply,odoo_write_1,odoofromfiles --background",
         ).save(using=request.database)
         launchWorker(database=request.database)

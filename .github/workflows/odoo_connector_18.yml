@@ -5,6 +5,9 @@ on:
     types: [odoo_connector_18]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 env:
   odoo_connector_branch: 18.0-dev
 

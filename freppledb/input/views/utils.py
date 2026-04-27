@@ -448,24 +448,18 @@ class PathReport(GridReport):
         GridFieldText(
             "resources", editable=False, sortable=False, extra="formatter:reslistfmt"
         ),
-        GridFieldText("buffers", editable=False, sortable=False, hidden=False),
-        GridFieldText("suboperation", editable=False, sortable=False, hidden=False),
-        GridFieldText("numsuboperations", editable=False, sortable=False, hidden=False),
-        GridFieldText("parentoper", editable=False, sortable=False, hidden=False),
-        GridFieldText("realdepth", editable=False, sortable=False, hidden=False),
-        GridFieldText("id", editable=False, sortable=False, hidden=False),
-        GridFieldText("parent", editable=False, sortable=False, hidden=False),
-        GridFieldText("leaf", editable=False, sortable=False, hidden=False),
-        GridFieldText("expanded", editable=False, sortable=False, hidden=False),
-        GridFieldText("alternate", editable=False, sortable=False, hidden=False),
-        GridFieldText("blockedby", editable=False, sortable=False, hidden=False),
-        GridFieldText("blocking", editable=False, sortable=False, hidden=False),
-        # for time_per/fixed_time operations, rownb,y refer to the position (row,col)
-        # of the suboperation in a routing when operation dependencies exist in the routing
-        # for routing opertions, rownb,colnb refer to the number of rows and columns the routing should
-        # have. If no depndencies exist in that routing, rownb and colnb are None
-        GridFieldInteger("rownb", editable=False, sortable=False, hidden=False),
-        GridFieldInteger("colnb", editable=False, sortable=False, hidden=False),
+        GridFieldText("buffers", editable=False, sortable=False, hidden=True),
+        GridFieldText("suboperation", editable=False, sortable=False, hidden=True),
+        GridFieldText("numsuboperations", editable=False, sortable=False, hidden=True),
+        GridFieldText("parentoper", editable=False, sortable=False, hidden=True),
+        GridFieldText("realdepth", editable=False, sortable=False, hidden=True),
+        GridFieldText("id", editable=False, sortable=False, hidden=True),
+        GridFieldText("parent", editable=False, sortable=False, hidden=True),
+        GridFieldText("leaf", editable=False, sortable=False, hidden=True),
+        GridFieldText("expanded", editable=False, sortable=False, hidden=True),
+        GridFieldText("alternate", editable=False, sortable=False, hidden=True),
+        GridFieldText("blockedby", editable=False, sortable=False, hidden=True),
+        GridFieldText("blocking", editable=False, sortable=False, hidden=True),
     )
 
     # Attributes to be specified by the subclasses
@@ -1428,8 +1422,7 @@ class PathReport(GridReport):
         if not reportclass.routing_dependencies_done:
             reportclass.routing_dependencies_done = True
             reportclass.routing_operation_position = {}
-            cursor.execute(
-                """
+            cursor.execute("""
             with q as (
                 with recursive cte as
                 (
@@ -1455,8 +1448,7 @@ class PathReport(GridReport):
                 )
             select owner_id, name, row_number() over(partition by owner_id, y order by name) as x, y from q
             order by 1,2,3
-            """
-            )
+            """)
             for rec in cursor:
                 reportclass.routing_operation_position[rec[1]] = (rec[2], rec[3])
                 # for the routing, x,y refers to the number of rows and columns
@@ -1509,8 +1501,6 @@ class PathReport(GridReport):
                 "alternate": "false",
                 "blockedby": None,
                 "blocking": None,
-                "rownb": None,
-                "colnb": None,
             }
             reportclass.node_count.add(i[11])
             yield grandparentoperation
@@ -1560,16 +1550,6 @@ class PathReport(GridReport):
                 "alternate": "false",
                 "blockedby": tuple(json.loads(i[24]).items()) if i[24] else None,
                 "blocking": tuple(json.loads(i[25]).items()) if i[25] else None,
-                "rownb": (
-                    reportclass.routing_operation_position[i[8]][0]
-                    if i[8] in reportclass.routing_operation_position
-                    else None
-                ),
-                "colnb": (
-                    reportclass.routing_operation_position[i[8]][1]
-                    if i[8] in reportclass.routing_operation_position
-                    else None
-                ),
             }
             reportclass.node_count.add(i[8])
             yield parentoperation
@@ -1629,16 +1609,6 @@ class PathReport(GridReport):
                 "alternate_operation": (i[11] or i[8] or i[0]),
                 "blockedby": tuple(json.loads(i[21]).items()) if i[21] else None,
                 "blocking": tuple(json.loads(i[22]).items()) if i[22] else None,
-                "rownb": (
-                    reportclass.routing_operation_position[i[0]][0]
-                    if i[0] in reportclass.routing_operation_position
-                    else None
-                ),
-                "colnb": (
-                    reportclass.routing_operation_position[i[0]][1]
-                    if i[0] in reportclass.routing_operation_position
-                    else None
-                ),
             }
             reportclass.node_count.add(i[0])
             yield operation
@@ -1734,9 +1704,6 @@ class PathReport(GridReport):
             ).lower()
             == "true"
         ):
-            import time
-
-            start_time = time.perf_counter()
             try:
                 if "FREPPLE_TEST" in os.environ:
                     host = get_databases()[request.database]["TEST"].get(
@@ -1785,11 +1752,6 @@ class PathReport(GridReport):
                         return request.data
             except Exception as e:
                 print("Error calling webservice: %s" % e)
-            finally:
-                print(
-                    "PathReport.data_query webservice call took %.3f seconds"
-                    % (time.perf_counter() - start_time)
-                )
         # Fallback to the old method of using database queries
         print("Using database queries")
         return super().data_query(request, *args, fields=fields, page=page, **kwargs)
@@ -2489,8 +2451,7 @@ class OperationPlanDetail(View):
                           or sales.SO is not null
                           or (items.name = %%s and location.name = %%s)
                         order by items.name, location.name
-                        """
-                        % (settings.DATE_FORMAT_JS,),
+                        """ % (settings.DATE_FORMAT_JS,),
                         (
                             opplan.item_id,
                             current_date,

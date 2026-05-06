@@ -2853,6 +2853,10 @@ class GridReport(View):
             return ~models.Q(
                 **{"%s__exact" % reportrow.field_name: parseLocalizedDate(data)}
             )
+        elif isinstance(reportrow, GridFieldDuration):
+            return ~models.Q(
+                **{"%s__exact" % reportrow.field_name: parseInterval(data)}
+            )
         else:
             return ~models.Q(
                 **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}

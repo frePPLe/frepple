@@ -243,7 +243,9 @@ class ModelTabs(Node):
                 model = model.split(".")
                 ct = ContentType.objects.get(app_label=model[0], model=model[1])
             admn = data_site._registry[ct.model_class()]
-            if not hasattr(admn, "tabs"):
+            if not hasattr(admn, "tabs") and not (
+                hasattr(admn, "get_tabs") and callable(getattr(admn, "get_tabs"))
+            ):
                 return mark_safe("")
 
             # Render the admin class
@@ -252,7 +254,17 @@ class ModelTabs(Node):
             ]
             obj = context["object_id"]
             active_tab = context.get("active_tab", "edit")
-            for tab in admn.tabs:
+            # Support dynamic tabs: Only used by the Operation model to hide
+            # either the work order or the manufacturing order tab
+            if hasattr(admn, "get_tabs") and callable(getattr(admn, "get_tabs")):
+                try:
+                    tabs_list = admn.get_tabs(context["request"], obj)
+                except Exception:
+                    tabs_list = admn.tabs if hasattr(admn, "tabs") else []
+            else:
+                tabs_list = admn.tabs
+
+            for tab in tabs_list:
                 if "permissions" in tab:
                     # A single permission is required
                     if isinstance(tab["permissions"], str):
@@ -529,8 +541,7 @@ class MenuNode(Node):
 
         # Find all tables with data
         with connections[req.database].cursor() as cursor:
-            cursor.execute(
-                """
+            cursor.execute("""
                 select tablename from (
                   select c.relname as tablename,
                     query_to_xml(
@@ -544,8 +555,7 @@ class MenuNode(Node):
                     and pg_get_userbyid(c.relowner) = current_user
                   ) s
                 where xml_count is document;
-                """
-            )
+                """)
             present = set([i[0] for i in cursor])
 
         def generator(i):

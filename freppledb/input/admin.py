@@ -471,41 +471,74 @@ class Operation_admin(MultiDBModelAdmin):
             },
         ),
     )
-    tabs = [
-        {
-            "name": "edit",
-            "label": _("edit"),
-            "view": "admin:input_operation_change",
-            "permissions": "input.change_operation",
-        },
-        {
-            "name": "supplypath",
-            "label": _("supply path"),
-            "view": "supplypath_operation",
-        },
-        {"name": "whereused", "label": _("where used"), "view": "whereused_operation"},
-        {"name": "plan", "label": _("plan"), "view": "output_operation_plandetail"},
-        {
-            "name": "plandetail",
-            "label": _("manufacturing orders"),
-            "view": "input_manufacturingorder_by_operation",
-        },
-        {
-            "name": "plandetail",
-            "label": _("work orders"),
-            "view": "input_workorder_by_operation",
-        },
-        {
-            "name": "constraint",
-            "label": _("constrained demand"),
-            "view": "output_constraint_operation",
-        },
-        {
-            "name": "messages",
-            "label": _("messages"),
-            "view": "admin:input_operation_comment",
-        },
-    ]
+
+    def get_tabs(self, request, obj):
+        """Return tabs for this operation hiding either the work order or the manufacturing order tab."""
+        try:
+            op = (
+                Operation.objects.using(request.database)
+                .select_related("owner")
+                .filter(name=obj)
+                .first()
+            )
+        except Exception:
+            op = None
+
+        tabs = [
+            {
+                "name": "edit",
+                "label": _("edit"),
+                "view": "admin:input_operation_change",
+                "permissions": "input.change_operation",
+            },
+            {
+                "name": "supplypath",
+                "label": _("supply path"),
+                "view": "supplypath_operation",
+            },
+            {
+                "name": "whereused",
+                "label": _("where used"),
+                "view": "whereused_operation",
+            },
+            {"name": "plan", "label": _("plan"), "view": "output_operation_plandetail"},
+        ]
+
+        # Hide manufacturing orders tab when the operation has an owner of type 'routing'
+        is_suboperation = op and op.owner and op.owner.type == "routing"
+
+        if not is_suboperation:
+            tabs.append(
+                {
+                    "name": "plandetail",
+                    "label": _("manufacturing orders"),
+                    "view": "input_manufacturingorder_by_operation",
+                }
+            )
+        else:
+            tabs.append(
+                {
+                    "name": "plandetail",
+                    "label": _("work orders"),
+                    "view": "input_workorder_by_operation",
+                }
+            )
+
+        tabs.extend(
+            [
+                {
+                    "name": "constraint",
+                    "label": _("constrained demand"),
+                    "view": "output_constraint_operation",
+                },
+                {
+                    "name": "messages",
+                    "label": _("messages"),
+                    "view": "admin:input_operation_comment",
+                },
+            ]
+        )
+        return tabs
 
 
 @admin.register(SubOperation, site=data_site)

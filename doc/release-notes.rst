@@ -21,6 +21,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Supply path: Complex supply paths with many items and levels will now open much faster.
   |  Switch paramater pathreport_optimization to true to activate this feature.
 
+- | Fix for the filters on duration fields that now accept multiple formats ("D HH:MM:SS","HH:MM:SS","MM:SS"
+    and "SS").
+
 .. rubric:: System administration
 
 - | The docker image now allows overriding the entrypoint and skipping the database initialization.

@@ -796,9 +796,9 @@ The following arguments are used:
 
   - %j: Day of the year as a zero-padded decimal number. Eg: 001, 002, ..., 366
 
-  - %U: Week number of the year as a zero padded decimal number. Eg: 00, 01, ...
+  - %W: Week number of the year as a zero-padded decimal number. Week 1 contains the first Monday.
 
-  - %W: Week number of the year as a decimal number. Eg: 0, 1, ...
+  - %V: ISO 8601 week number as a zero-padded decimal number. Week 1 contains the first Thursday.
 
   - %%: A literal '%' character.
 

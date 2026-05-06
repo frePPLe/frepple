@@ -69,7 +69,8 @@ $theme-colors: (
 
 // Specific for the dark theme
 $card-border-color: #555555;
-$tooltip-color: $body-color;
+$tooltip-color: $black;
+$tooltip-bg: $white;
 $input-color: $body-color;
 $input-border-color: #333;
 $nav-tabs-border-color: $light;

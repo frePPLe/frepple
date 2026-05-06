@@ -150,20 +150,20 @@ function enableSaveUndoButtons() {
       :class="{ 'show': !isCollapsed }"
       style="max-height: 50vh; overflow-y: auto; overflow-x: hidden;"
     >
-      <table class="table table-sm table-hover table-borderless" style="table-layout: fixed; width: 100%;">
+      <table class="table table-sm table-hover table-borderless" style="table-layout: auto; width: 100%;">
         <thead>
         <tr v-if="store.operationplan.type === 'DO'">
-          <th style="width: 40%"><b class="text-capitalize">{{ ttt('item') }}</b></th>
-          <th style="width: 20%"><b class="text-capitalize">{{ ttt('location') }}</b></th>
-          <th style="width: 15%"><b class="text-capitalize">{{ ttt('quantity') }}</b></th>
-          <th style="width: 10%"><b class="text-capitalize">{{ ttt('onhand') }}</b></th>
-          <th style="width: 15%"><b class="text-capitalize">{{ ttt('date') }}</b></th>
+          <th style="width: 100%; max-width: 0; overflow: hidden; text-overflow: ellipsis"><b class="text-capitalize">{{ ttt('item') }}</b></th>
+          <th class="w-auto text-center px-3"><b class="text-capitalize text-center">{{ ttt('location') }}</b></th>
+          <th class="w-auto text-center px-3"><b class="text-capitalize text-center">{{ ttt('quantity') }}</b></th>
+          <th class="w-auto text-center px-3"><b class="text-capitalize text-center">{{ ttt('onhand') }}</b></th>
+          <th class="w-auto text-center px-3"><b class="text-capitalize text-center">{{ ttt('date') }}</b></th>
         </tr>
         <tr v-else>
-          <th style="width: 40%"><b class="text-capitalize">{{ ttt('item') }}</b></th>
-          <th style="width: 20%"><b class="text-capitalize">{{ ttt('quantity') }}</b></th>
-          <th style="width: 20%"><b class="text-capitalize">{{ ttt('onhand') }}</b></th>
-          <th style="width: 20%"><b class="text-capitalize">{{ ttt('date') }}</b></th>
+          <th style="width: 100%; max-width: 0; overflow: hidden; text-overflow: ellipsis"><b class="text-capitalize">{{ ttt('item') }}</b></th>
+          <th class="w-auto text-center px-3"><b class="text-capitalize">{{ ttt('quantity') }}</b></th>
+          <th class="w-auto text-center px-3"><b class="text-capitalize">{{ ttt('onhand') }}</b></th>
+          <th class="w-auto text-center px-3"><b class="text-capitalize">{{ ttt('date') }}</b></th>
         </tr>
         </thead>
         <tbody>
@@ -177,7 +177,7 @@ function enableSaveUndoButtons() {
           :class="(index===0 && flowplan.quantity > 0) ? 'border-top' : ''"
         >
           <!-- Item column - with or without alternates -->
-          <td v-if="!flowplan.alternates">
+          <td style="width: 100%; max-width: 0; overflow: hidden; text-overflow: ellipsis" v-if="!flowplan.alternates">
             <div class="d-flex align-items-center">
               <span
                 v-if="flowplan.buffer?.description"
@@ -207,7 +207,7 @@ function enableSaveUndoButtons() {
             </div>
           </td>
 
-          <td v-else>
+          <td style="width: 100%; max-width: 0; overflow: hidden; text-overflow: ellipsis" v-else>
             <div class="dropdown d-flex w-100">
               <button
                   class="btn btn-primary text-capitalize"
@@ -241,16 +241,16 @@ function enableSaveUndoButtons() {
           </td>
 
           <!-- Location column -->
-          <td v-if="store.operationplan.type === 'DO'">{{ flowplan.buffer?.location }}</td>
+          <td class="w-auto text-center px-3" v-if="store.operationplan.type === 'DO'">{{ flowplan.buffer?.location }}</td>
 
           <!-- Quantity column -->
-          <td>{{ numberFormat(flowplan.quantity) }}</td>
+          <td class="w-auto text-center px-3">{{ numberFormat(flowplan.quantity) }}</td>
 
           <!-- Onhand column -->
-          <td>{{ numberFormat(flowplan.onhand) }}</td>
+          <td class="w-auto text-center px-3">{{ numberFormat(flowplan.onhand) }}</td>
 
           <!-- Date column -->
-          <td style="white-space: nowrap">{{ dateTimeFormat(flowplan.date) }}</td>
+          <td class="w-auto text-center px-3" style="white-space: nowrap">{{ dateTimeFormat(flowplan.date) }}</td>
         </tr>
         </tbody>
       </table>

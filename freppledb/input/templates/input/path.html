@@ -4,7 +4,7 @@
 {% block extrahead %}{{block.super}}
 <style>
 #svggraph {
-  background-color: #ffffff;
+  background-color: var(--bs-card-bg);
   cursor: default;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -75,8 +75,8 @@ g.node-routing text, g.node-alternate text, g.node-split text {
 
 #buffer-tooltip {
   position: fixed;
-  background: #ffffff;
-  color: #000000;
+  background: var(--bs-tooltip-bg);
+  color: var(--bs-tooltip-color);
   font: 11px 'Inter', 'Segoe UI', sans-serif;
   padding: 4px 8px;
   border-radius: 5px;

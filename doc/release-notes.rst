@@ -43,6 +43,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | When navigating from odoo into frepple, we now redirect to a user's default scenario.
 
+- | 17, 18, 19: Fix for purchasing information in the item supplier table for variants.
+
 .. rubric:: Upgrade compatibility heads-up
 
 | No breaking changes in this release.

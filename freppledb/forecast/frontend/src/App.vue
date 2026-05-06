@@ -28,7 +28,9 @@ import ForecastSelection from "@/components/ForecastSelection.vue";
 import ForcastDetails from "@/components/ForcastDetails.vue";
 import ErrorDialog from '@common/components/ErrorDialog.vue';
 import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js';
+import { useI18n } from 'vue-i18n';
 
+const { t: ttt } = useI18n();
 const store = useForecastsStore();
 
 const showErrorDialog = computed({
@@ -71,7 +73,7 @@ watch(() => store.buckets, async (newBuckets) => {
       </div>
       <ErrorDialog
           v-model="showErrorDialog"
-          :title="store.error?.title || 'Error'"
+          :title="store.error?.title || ttt('Error')"
           :message="store.error?.message || ''"
           :details="store.error?.details || ''"
           :type="store.error?.type || 'error'"

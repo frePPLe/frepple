@@ -58,6 +58,8 @@ import { forecastService } from '../services/forecastService.js';
 import { toRaw } from "vue";
 import {i18n} from "@/i18n/i18n.js";
 
+const ttt = i18n.global.t;
+
 export const useForecastsStore = defineStore('forecasts', {
   state: () => ({
     item: new Item(),
@@ -215,8 +217,8 @@ export const useForecastsStore = defineStore('forecasts', {
       } catch (error) {
         console.error('Batch API Error:', error);
         this.setError({
-          title: 'Error',
-          message: 'Unable to fetch forecast data',
+          title: ttt('Error'),
+          message: ttt('Unable to fetch forecast data'),
           details: error.message,
           type: 'error'
         });
@@ -232,7 +234,13 @@ export const useForecastsStore = defineStore('forecasts', {
       this.loading = loading;
 
       if (backendError) {
-        throw new Error(backendError.value.message || 'API Error');
+        this.setError({
+          title: ttt('Error'),
+          message: ttt('API Error'),
+          details: "",
+          type: 'error'
+        });
+        throw new Error(backendError.value.message || ttt('API Error'));
       }
 
       if (responseData.value) {
@@ -263,7 +271,13 @@ export const useForecastsStore = defineStore('forecasts', {
       this.loading = loading;
 
       if (backendError) {
-        throw new Error(backendError.value.message || 'API Error');
+        this.setError({
+          title: ttt('Error'),
+          message: ttt('API Error'),
+          details: "",
+          type: 'error'
+        });
+        throw new Error(backendError.value.message || ttt('API Error'));
       }
 
       if (responseData.value) {
@@ -291,7 +305,13 @@ export const useForecastsStore = defineStore('forecasts', {
       this.loading = loading;
 
       if (backendError) {
-        throw new Error(backendError.value.message || 'API Error');
+        this.setError({
+          title: ttt('Error'),
+          message: ttt('API Error'),
+          details: "",
+          type: 'error'
+        });
+        throw new Error(backendError.value.message || ttt('API Error'));
       }
 
       if (responseData.value) {
@@ -321,7 +341,13 @@ export const useForecastsStore = defineStore('forecasts', {
       const ttt = i18n.global.t;
 
       if (backendError) {
-        throw new Error(backendError.value.message || 'API Error');
+        this.setError({
+          title: ttt('Error'),
+          message: ttt('API Error'),
+          details: "",
+          type: 'error'
+        });
+        throw new Error(backendError.value.message || ttt('API Error'));
       }
 
       if (responseData.value) {
@@ -507,7 +533,13 @@ export const useForecastsStore = defineStore('forecasts', {
         this.loading = loading;
 
         if (backendError) {
-          throw new Error(backendError.value.message || 'API Error');
+          this.setError({
+            title: ttt('Error'),
+            message: ttt('API Error'),
+            details: "",
+            type: 'error'
+          });
+          throw new Error(backendError.value.message || ttt('API Error'));
         }
 
         if (responseData.value) {
@@ -555,7 +587,13 @@ export const useForecastsStore = defineStore('forecasts', {
         this.loading = loading;
 
         if (backendError) {
-          throw new Error(backendError.value.message || 'API Error');
+          this.setError({
+            title: ttt('Error'),
+            message: ttt('API Error'),
+            details: "",
+            type: 'error'
+          });
+          throw new Error(backendError.value.message || ttt('API Error'));
         }
 
         if (responseData.value) {
@@ -574,7 +612,7 @@ export const useForecastsStore = defineStore('forecasts', {
           return result;
         } else {
           console.warn('⚠️ No data received from API');
-          this.setError({ title: "warning", error: null, message: "'⚠️ No data received from API'", details: "", type: "error" })
+          this.setError({ title: ttt("warning"), error: null, message: ttt("⚠️ No data received from API"), details: "", type: "error" })
           return {};
         }
 
@@ -597,7 +635,13 @@ export const useForecastsStore = defineStore('forecasts', {
         this.loading = loading;
 
         if (backendError) {
-          throw new Error(backendError.value.message || 'API Error');
+          this.setError({
+            title: ttt('Error'),
+            message: ttt('API Error'),
+            details: "",
+            type: 'error'
+          });
+          throw new Error(backendError.value.message || ttt('API Error'));
         }
 
         if (responseData.value) {
@@ -640,7 +684,13 @@ export const useForecastsStore = defineStore('forecasts', {
         this.loading = loading;
 
         if (backendError) {
-          throw new Error(backendError.value.message || 'API Error');
+          this.setError({
+            title: ttt('Error'),
+            message: ttt('API Error'),
+            details: "",
+            type: 'error'
+          });
+          throw new Error(backendError.value.message || ttt('API Error'));
         }
 
         if (responseData.value) {
@@ -967,6 +1017,12 @@ export const useForecastsStore = defineStore('forecasts', {
         this.loading = loading;
 
         if (backendError) {
+          this.setError({
+            title: ttt('API Error'),
+            message: ttt('Error in forecast changes'),
+            details: '',
+            type: 'error'
+          });
           throw new Error(backendError.value.message || 'API Error in forecast changes');
         }
 
@@ -978,8 +1034,8 @@ export const useForecastsStore = defineStore('forecasts', {
 
       } catch (error) {
         this.setError({
-          title: 'Error',
-          message: 'Unable to apply forecast changes',
+          title: ttt('Error'),
+          message: ttt('Unable to apply forecast changes'),
           details: error.response?.data?.message || error.message,
           type: 'error'
         });
@@ -1008,7 +1064,7 @@ export const useForecastsStore = defineStore('forecasts', {
         this.loading = loading;
 
         if (backendError) {
-          throw new Error(backendError.value.message || 'API Error');
+          throw new Error(backendError.value.message || ttt('API Error'));
         }
 
         if (!responseData.value) {
@@ -1017,8 +1073,8 @@ export const useForecastsStore = defineStore('forecasts', {
 
       } catch (error) {
         this.setError({
-          title: 'Error',
-          message: 'Unable to save preferences',
+          title: ttt('Error'),
+          message: ttt('Unable to save preferences'),
           details: error.response?.data?.message || error.message,
           type: 'error',
         });
@@ -1032,6 +1088,14 @@ export const useForecastsStore = defineStore('forecasts', {
     },
 
     setError(errorData) {
+      // Prevent duplicate error dialogs for the same error
+      if (
+        this.error.showError &&
+        this.error.message === (errorData.message || 'An error occurred') &&
+        this.error.title === (errorData.title || 'Error')
+      ) {
+        return;
+      }
       this.error = {
         showError: true,
         title: errorData.title || 'Error',

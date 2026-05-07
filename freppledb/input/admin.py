@@ -23,6 +23,7 @@
 
 from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
+from django.contrib.admin.utils import unquote
 
 from freppledb.input.models import (
     Buffer,
@@ -478,7 +479,7 @@ class Operation_admin(MultiDBModelAdmin):
             op = (
                 Operation.objects.using(request.database)
                 .select_related("owner")
-                .filter(name=obj)
+                .filter(name=unquote(obj))
                 .first()
             )
         except Exception:
@@ -506,6 +507,7 @@ class Operation_admin(MultiDBModelAdmin):
 
         # Hide manufacturing orders tab when the operation has an owner of type 'routing'
         is_suboperation = op and op.owner and op.owner.type == "routing"
+        print(f"Operation '{obj}' is a suboperation: {is_suboperation}")
 
         if not is_suboperation:
             tabs.append(

@@ -48,6 +48,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | 17, 18, 19: Fix for purchasing information in the item supplier table for variants.
 
+- | 17, 18, 19: Individual vendors will now appear in the item supplier table
+    instead of the company they belong to.
+
 .. rubric:: Upgrade compatibility heads-up
 
 | No breaking changes in this release.

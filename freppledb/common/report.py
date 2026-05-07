@@ -3048,7 +3048,6 @@ class GridReport(View):
             data = parseLocalizedDate(data)
         elif isinstance(reportrow, GridFieldDuration):
             data = parseInterval(data)
-            print(f"data={data}  smart_str(data).strip()={smart_str(data).strip()}")
         return models.Q(**{"%s__lte" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod

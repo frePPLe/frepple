@@ -1224,7 +1224,7 @@ var grid = {
         '<span class="fa fa-question-circle"></span>' +
         '</a><p>' +
         '<div class="input-group">' +
-        '<input type="text" readonly id="urladdress" class="input-group-text" style="background: white">' +
+        '<input type="text" readonly id="urladdress" class="input-group-text">' +
         '<span class="input-group-text fa fa-clipboard" id="copybutton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
         gettext("Copy to clipboard") + '"</span>' +
         '</div>' +
@@ -1255,7 +1255,7 @@ var grid = {
         '<span class="fa fa-question-circle"></span>' +
         '</a><p>' +
         '<div class="input-group">' +
-        '<input type="text" readonly id="urladdress" class="input-group-text" style="background: white">' +
+        '<input type="text" readonly id="urladdress" class="input-group-text">' +
         '<span class="input-group-text fa fa-clipboard" id="copybutton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
         gettext("Copy to clipboard") + '"</span>' +
         '</div>' +

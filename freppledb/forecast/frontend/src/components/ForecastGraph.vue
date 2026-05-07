@@ -387,7 +387,7 @@ onUnmounted(() => {
 <template>
   <div class="row mb-3">
     <div class="col">
-       <div id="forecastgraph" ref="graphContainer" style="height: 250px" class="card forecast-graph-container"></div>
+       <div id="forecastgraph" ref="graphContainer" style="height: 250px" class="forecast-graph-container"></div>
     </div>
   </div>
 </template>

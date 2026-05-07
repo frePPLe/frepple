@@ -80,7 +80,7 @@ function toggleRowVisibility(rowIndex) {
     <div class="card-header">
       <h5 class="card-title text-capitalize mb-0" translate=""><span>{{ ttt(modelName) }}</span></h5>
     </div>
-    <div class="card-body ps-0 pe-0 pt-2 pb-2"  style="overflow: auto">
+    <div class="card-body ps-0 pe-0 pt-2 pb-2 scrollbar"  style="overflow: auto">
       <div class="">
         <div :id="modelName + 'table'">
           <div class="d-flex w-100">

@@ -193,7 +193,7 @@ function changeEdit() {
                 class="form-control d-inline w-auto pristine untouched valid not-empty"
                 :value="store.editForm.startDate"
                 @input="setStartDate"
-                style="background: white !important"
+
               >
               &nbsp;{{ ttt('till') }}&nbsp;
               <input
@@ -203,7 +203,7 @@ function changeEdit() {
                 :value="store.editForm.endDate"
                 @input="setEndDate"
                 :min="store.editForm.startDate"
-                style="background: white !important"
+
               >
             </form>
 
@@ -226,7 +226,7 @@ function changeEdit() {
                   :value="store.editForm.setTo"
                   @input="setEditValue('setTo', $event.target.value)"
                   @focus="setEditMode('set')"
-                  style="width:8rem; background: white !important"
+                  style="width:8rem"
                 >
               </label>
               <div v-if="validationErrors.setTo" class="invalid-feedback d-block" style="font-size: 0.875em; margin-left: 2rem;">
@@ -252,7 +252,7 @@ function changeEdit() {
                   :value="store.editForm.increaseBy"
                   @input="setEditValue('increaseBy', $event.target.value)"
                   @focus="setEditMode('increase')"
-                  style="width:8rem; background: white !important"
+                  style="width:8rem"
                 >
               </label>
               <div v-if="validationErrors.increaseBy" class="invalid-feedback d-block" style="font-size: 0.875em; margin-left: 2rem;">
@@ -278,7 +278,7 @@ function changeEdit() {
                   :value="store.editForm.increaseByPercent"
                   @input="setEditValue('increaseByPercent', $event.target.value)"
                   @focus="setEditMode('increasePercent')"
-                  style="width:3rem; background: white !important"
+                  style="width:3rem"
                 > %
               </label>
               <div v-if="validationErrors.increaseByPercent" class="invalid-feedback d-block" style="font-size: 0.875em; margin-left: 2rem;">

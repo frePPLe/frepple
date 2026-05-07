@@ -228,14 +228,14 @@ const navigateToDrilldown = (event) => {
 <template>
   <div class="row mb-3">
     <div class="col">
-      <div class="panel" id="forecastgrid" style="background-color: transparent;">
+      <div class="card" id="forecastgrid" style="background-color: transparent;">
         <div class="forecast-grid-container">
           <!-- Row labels table -->
           <div class="pull-left" style="border-top-left-radius: 6px; border-bottom-left-radius: 6px;">
             <table class="table-sm table-hover" id="forecasttabletags">
               <thead class="thead-default">
               <tr>
-                <th style="background-color: #aaa; border-top-left-radius: 6px">&nbsp;</th>
+                <th style="background-color: var(--bs-card-cap-bg); border-top-left-radius: 6px">&nbsp;</th>
               </tr>
               </thead>
               <tbody>
@@ -256,7 +256,7 @@ const navigateToDrilldown = (event) => {
           <!-- Data table -->
           <form
               id="forecasttable"
-              name="forecasttable"
+              name="forecasttable" class="scrollbar"
               style="overflow-x: scroll; border-top-right-radius: 6px; border-bottom-right-radius: 6px;"
           >
             <table class="table-sm table-hover" id="fforecasttable">
@@ -266,7 +266,7 @@ const navigateToDrilldown = (event) => {
                     v-for="(bucket, bucketIndex) in visibleBuckets"
                     :key="bucketIndex"
                     class="text-center text-nowrap"
-                    style="background-color: #aaa"
+                    style="background-color: var(--bs-card-cap-bg)"
                     :title="`${formatDate(bucket.startdate)} - ${formatDate(bucket.enddate)}`"
                 >
                   {{ bucket.bucket }}

@@ -28,7 +28,7 @@ $table-color: #e9ecef; // #272B30;
 $table-color-state: #e9ecef;
 
 // Override background colors
-$table-bg: #515960;
+$table-bg: #3A3F44;
 $card-bg: #3A3F44;
 $dropdown-bg: #515960;
 $modal-content-bg: #3A3F44;
@@ -77,6 +77,7 @@ $input-border-color: #333;
 $nav-tabs-border-color: $secondary;
 $nav-tabs-link-hover-border-color: $body-bg;
 $navbar-light-hover-color: $body-color;
+$nav-tabs-link-active-color: $body-color;
 $dropdown-divider-bg: $gray-500;
 $min-contrast-ratio: 2.5;
 $input-group-addon-color: $body-color;
@@ -86,8 +87,7 @@ $jqgrid-header-bg: $table-bg;
 $card-cap-color: $body-color;
 
 .form-control,
-input[type="checkbox"],
-input[type="radio"] {
+input {
   color-scheme: dark;
 }
 

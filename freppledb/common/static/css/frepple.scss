@@ -57,7 +57,7 @@ $btn-close-color: $body-color;
 @import "../../../../node_modules/bootstrap/scss/utilities/api";
 
 :root {
-  --bs-card-cap-bg: #{$card-cap-bg};
+    --bs-card-cap-bg: #{$card-cap-bg};
 }
 
 // 5. frepple generic definitions
@@ -73,7 +73,7 @@ $btn-close-color: $body-color;
 // Tabs
 .nav-tabs {
     .nav-item .nav-link.active {
-        border-color: $light;
+        border-color: $secondary;
         border-top-width: 2px;
         border-left: none;
         border-right: none;
@@ -104,10 +104,6 @@ $btn-close-color: $body-color;
     .nav-item {
         user-select: none;
     }
-}
-
-.card-header {
-    background: $secondary;
 }
 
 .card-header-color,
@@ -172,14 +168,14 @@ form .module li:has(input[type=checkbox]) {
 .time {
     vector-effect: non-scaling-stroke;
     stroke-width: 1px;
-    stroke: rgb(0, 0, 0);
+    stroke: $body-color;
 }
 
 .axis path,
 .axis line,
 .miniaxis path {
     fill: none;
-    stroke: #000;
+    stroke: $body-color;
     shape-rendering: crispEdges;
 }
 
@@ -271,7 +267,8 @@ div.tt-menu.tt-open {
 .tt-menu,
 .list-group,
 .table-responsive,
-.ui-jqgrid-bdiv {
+.ui-jqgrid-bdiv,
+#jqgh_grid_operationplans {
     scrollbar-color: $dark $dropdown-bg;
 }
 

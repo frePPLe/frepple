@@ -10,26 +10,26 @@
 rect.opplan {
   vector-effect: non-scaling-stroke;
   stroke-width: 1px;
-  stroke: rgb(0,0,0);
+  stroke: var(--bs-body-color);
 }
 
 #main-row .tooltip.bottom .tooltip-arrow {
-  border-bottom-color: white;
+  border-bottom-color: var(--bs-tooltip-bg);
 }
 
 #main-row .tooltip.top .tooltip-arrow {
-  border-top-color: white;
+  border-top-color: var(--bs-tooltip-bg);
 }
 
 #main-row .tooltip.in {
-opacity: 1;
+  opacity: 1;
 }
 
 #main-row .tooltip-inner {
   text-align:left;
   white-space: nowrap;
-  color: #333;
-  background-color: white;
+  color: var(--bs-tooltip-color);
+  background-color: var(--bs-tooltip-bg);
 }
 
 </style>
@@ -321,7 +321,7 @@ loadComplete: function(data) {
       template: `
          <div class="tooltip opacity-100" role="tooltip">
            <div class="tooltip-arrow"></div>
-           <div class="tooltip-inner bg-white text-start text-body fs-6 p-3"></div>
+           <div class="tooltip-inner text-start text-body fs-6 p-3"></div>
          </div>`
     });
   });

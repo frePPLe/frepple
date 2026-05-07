@@ -34,6 +34,7 @@ $dropdown-bg: #515960;
 $modal-content-bg: #3A3F44;
 $modal-footer-bg: #3A3F44;
 $list-group-bg: #3A3F44;
+$card-cap-bg: #515960;
 
 // Logo height
 $navbar-brand-height: 3rem;
@@ -73,7 +74,8 @@ $tooltip-color: $black;
 $tooltip-bg: $white;
 $input-color: $body-color;
 $input-border-color: #333;
-$nav-tabs-border-color: $light;
+$nav-tabs-border-color: $secondary;
+$nav-tabs-link-hover-border-color: $body-bg;
 $navbar-light-hover-color: $body-color;
 $dropdown-divider-bg: $gray-500;
 $min-contrast-ratio: 2.5;
@@ -81,7 +83,6 @@ $input-group-addon-color: $body-color;
 $input-group-addon-bg: #515960;
 $link-opacity: 1;
 $jqgrid-header-bg: $table-bg;
-$card-cap-bg: #515960;
 $card-cap-color: $body-color;
 
 .form-control,

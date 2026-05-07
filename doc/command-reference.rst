@@ -630,13 +630,13 @@ Import data from odoo
 This command is only active when the Odoo integration app is installed. It brings
 all planning relevant data from Odoo into the frePPLe database.
 
-See :doc:`/erp-integration/odoo-connector/using-the-connector-in-frepple`
+See :doc:`/erp-integration/odoo-connector/odoo-from-march-2026/using-the-connector-in-frepple`
 
 .. tabs::
 
    .. tab:: Execution screen
 
-      .. image:: /erp-integration/odoo-connector/_images/odoo_import.png
+      .. image:: /erp-integration/odoo-connector/odoo-from-march-2026/_images/odoo_import.png
          :alt: Execution screen - import from odoo
 
    .. tab:: Command line
@@ -659,13 +659,13 @@ Pull demand history from odoo
 This command is only active when the Odoo integration app is installed. It pulls all
 the demand history in Odoo into the frePPLe database using the XML RPC API of Odoo.
 
-See :doc:`/erp-integration/odoo-connector/using-the-connector-in-frepple`
+See :doc:`/erp-integration/odoo-connector/odoo-from-march-2026/using-the-connector-in-frepple`
 
 .. tabs::
 
    .. tab:: Execution screen
 
-      .. image:: /erp-integration/odoo-connector/_images/odoo_pull_so_history.png
+      .. image:: /erp-integration/odoo-connector/odoo-from-march-2026/_images/odoo_pull_so_history.png
          :alt: Execution screen - pull demand history from odoo
 
    .. tab:: Command line
@@ -688,13 +688,23 @@ Export data to odoo
 This command is only active when the Odoo integration app is installed. It
 publishes part of the plan from frepple into odoo.
 
-See :doc:`/erp-integration/odoo-connector/using-the-connector-in-frepple`
+The following parts of the plan are exportedto odoo:
+
+- proposed purchase orders starting within the next 7 days
+
+- proposed distribution orders starting within the next 7 days
+
+- proposed manufacturing orders starting within the next 7 days
+
+- rescheduled new dates for approved work orders
+
+See :doc:`/erp-integration/odoo-connector/odoo-from-march-2026/using-the-connector-in-frepple`
 
 .. tabs::
 
    .. tab:: Execution screen
 
-      .. image:: /erp-integration/odoo-connector/_images/odoo_export.png
+      .. image:: /erp-integration/odoo-connector/odoo-from-march-2026/_images/odoo_export.png
          :alt: Execution screen - export to odoo
 
    .. tab:: Command line

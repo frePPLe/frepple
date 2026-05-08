@@ -926,10 +926,6 @@ export const useForecastsStore = defineStore('forecasts', {
             );
             break;
           case "increase": {
-            console.log(929, this.editForm.increaseBy,
-              isDiscrete ?
-                Math.round(parseInt(this.buckets[bckt][newMSR]) + this.editForm.increaseBy) :
-                parseFloat(this.buckets[bckt][newMSR]) + this.editForm.increaseBy);
             this.logChange(bckt, newMSR,
               isDiscrete ?
                 Math.round(parseInt(this.buckets[bckt][newMSR]) + this.editForm.increaseBy) :

@@ -218,8 +218,8 @@ function drawGraph() {
 
                 newgrad.append('stop')
                     .attr('offset', '0%')
-                    .attr('stop-color', 'white')
-                    .attr('stop-opacity', 1);
+                    .attr('stop-color', `rgb(255,${gradient_idx},0)`)
+                    .attr('stop-opacity', 0);
                 newgrad.append('stop')
                     .attr('offset', '40%')
                     .attr('stop-color', `rgb(255,${gradient_idx},0)`)
@@ -230,7 +230,7 @@ function drawGraph() {
                     .attr('stop-opacity', 1);
                 newgrad.append('stop')
                     .attr('offset', '100%')
-                    .attr('stop-color', 'white')
+                    .attr('stop-color', `rgb(255,${gradient_idx},0)`)
                     .attr('stop-opacity', 0);
               }
               return `url(#${gradId})`;

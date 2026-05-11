@@ -10,6 +10,7 @@
 @import "../../../../node_modules/bootstrap/scss/functions";
 
 // 2. Include frePPLe theme-specific definitions
+$theme-name: theme-name();
 @import "theme";
 
 $btn-close-color: $body-color;
@@ -1009,4 +1010,8 @@ svg text {
   --bs-btn-hover-bg: transparent;
   --bs-btn-hover-border-color: var(--bs-body-color);
   --bs-btn-active-bg: rgba(var(--bs-body-color-rgb), 0.1);
+}
+
+@if $theme-name =="dark" {
+  @include table-variant("success", $gray-600);
 }

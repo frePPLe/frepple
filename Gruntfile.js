@@ -31,7 +31,10 @@ function themeconfig(themefolder, themename) {
         themefolder + '/static/css/' + themename, // frePPLe theme folder
         'freppledb/common/static/css'//, // frePPLe folder
       ],
-      outputStyle: 'compressed'
+      outputStyle: 'compressed',
+      functions: {
+        'theme-name()': () => new sass.SassString(themename)
+      }
     },
     files: {}
   }

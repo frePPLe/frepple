@@ -86,15 +86,22 @@ $input-group-addon-bg: #515960;
 $link-opacity: 1;
 $jqgrid-header-bg: $table-bg;
 $card-cap-color: $body-color;
-$table-success: white;
 
-.form-control,
-input {
+.form-control {
   color-scheme: dark;
 }
 
-td[role="gridcell"][aria-describedby="grid_graph"] {
-  background-color: $gray-300;
+.related-lookup {
+  background-color: $body-color;
+  -webkit-mask-image: url(/static/admin/img/search.svg);
+  mask-image: url(/static/admin/img/search.svg);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-position: center;
+
+  /* Ensure no old background image is interfering */
+  background-image: none !important;
 }
 
 // You probably don't need to update the variables below this line.
@@ -109,7 +116,6 @@ $accordion-button-padding-y: 0.5rem;
 $breadcrumb-divider-color: $body-color;
 $breadcrumb-divider: "\00a0\00a0\F0DA\00a0\00a0";
 $breadcrumb-item-padding-x: 0.2rem;
-//$btn-active-bg-shade-amount: 70%;
 $card-title-spacer-y: 0;
 $dropdown-color: $body-color;
 $dropdown-link-active-bg: #272B30;

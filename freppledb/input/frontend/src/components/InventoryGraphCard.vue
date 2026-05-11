@@ -26,6 +26,7 @@ import { computed, onMounted, onUnmounted, watch, ref, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from "@/stores/operationplansStore.js";
 import { numberFormat, debounce, adminEscape } from "@common/utils.js";
+import { useGraphTooltip } from "@common/useGraphTooltip.js";
 
 const { t: ttt } = useI18n({
   useScope: 'global',
@@ -40,6 +41,8 @@ const props = defineProps({
     default: () => []
   }
 });
+
+const { showTooltip, hideTooltip, moveTooltip } = useGraphTooltip();
 
 const graphContainer = ref(null);
 let resizeObserver = null;
@@ -243,32 +246,26 @@ function drawGraph() {
             })
             .on('mouseenter', d => {
               const tiptext = `
-            <div style="text-align:center; font-weight:bold">${d.bucket}</div>
-            <table>
-              <tr><td class="text-capitalize pe-3">${ttt('start inventory')}</td><td class="text-end">${numberFormat(d.startinv)}</td></tr>
-              <tr><td class="text-capitalize pe-3">${ttt('produced total')}</td><td class="text-end">+&nbsp;${numberFormat(d.produced_total)}</td></tr>
-              <tr><td class="text-capitalize pe-3 px-3">${ttt('produced proposed')}</td><td class="text-end">${numberFormat(d.produced_proposed)}</td></tr>
-              <tr><td class="text-capitalize pe-3 px-3">${ttt('produced confirmed')}</td><td class="text-end">${numberFormat(d.produced_confirmed)}</td></tr>
-              <tr><td class="text-capitalize pe-3">${ttt('consumed total')}</td><td class="text-end">-&nbsp;${numberFormat(d.consumed_total)}</td></tr>
-              <tr><td class="text-capitalize pe-3 px-3">${ttt('consumed proposed')}</td><td class="text-end">${numberFormat(d.consumed_proposed)}</td></tr>
-              <tr><td class="text-capitalize pe-3 px-3">${ttt('consumed confirmed')}</td><td class="text-end">${numberFormat(d.consumed_confirmed)}</td></tr>
-              <tr><td class="text-capitalize pe-3">${ttt('end inventory')}</td><td class="text-end">=&nbsp;${numberFormat(d.endinv)}</td></tr>
-              <tr><td class="text-capitalize pe-3">${ttt('safety stock')}</td><td class="text-end">${numberFormat(d.safetystock)}</td></tr>
-            </table>
-          `;
-              if (window.graph?.showTooltip) {
-                window.graph.showTooltip(tiptext);
-              }
+                <div style="text-align:center; font-weight:bold">${d.bucket}</div>
+                <table>
+                  <tr><td class="text-capitalize pe-3">${ttt('start inventory')}</td><td class="text-end">${numberFormat(d.startinv)}</td></tr>
+                  <tr><td class="text-capitalize pe-3">${ttt('produced total')}</td><td class="text-end">+&nbsp;${numberFormat(d.produced_total)}</td></tr>
+                  <tr><td class="text-capitalize pe-3 px-3">${ttt('produced proposed')}</td><td class="text-end">${numberFormat(d.produced_proposed)}</td></tr>
+                  <tr><td class="text-capitalize pe-3 px-3">${ttt('produced confirmed')}</td><td class="text-end">${numberFormat(d.produced_confirmed)}</td></tr>
+                  <tr><td class="text-capitalize pe-3">${ttt('consumed total')}</td><td class="text-end">-&nbsp;${numberFormat(d.consumed_total)}</td></tr>
+                  <tr><td class="text-capitalize pe-3 px-3">${ttt('consumed proposed')}</td><td class="text-end">${numberFormat(d.consumed_proposed)}</td></tr>
+                  <tr><td class="text-capitalize pe-3 px-3">${ttt('consumed confirmed')}</td><td class="text-end">${numberFormat(d.consumed_confirmed)}</td></tr>
+                  <tr><td class="text-capitalize pe-3">${ttt('end inventory')}</td><td class="text-end">=&nbsp;${numberFormat(d.endinv)}</td></tr>
+                  <tr><td class="text-capitalize pe-3">${ttt('safety stock')}</td><td class="text-end">${numberFormat(d.safetystock)}</td></tr>
+                </table>
+              `;
+              showTooltip(tiptext);
             })
             .on('mouseleave', () => {
-              if (window.graph?.hideTooltip) {
-                window.graph.hideTooltip();
-              }
+              hideTooltip();
             })
             .on('mousemove', () => {
-              if (window.graph?.moveTooltip) {
-                window.graph.moveTooltip();
-              }
+              moveTooltip();
             });
       });
 

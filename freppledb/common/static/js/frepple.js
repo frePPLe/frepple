@@ -3257,7 +3257,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
     '</p>';
   if (isDragnDropUploadCapable()) {
     modalcontent += '' +
-      '<div class="box" style="outline: 2px dashed black; outline-offset: -1em">' +
+      '<div class="box" style="outline: 2px dashed var(--bs-body-color); outline-offset: -1em">' +
       '<div class=text-center box__input" style="text-align: center; padding: 20px;">' +
       '<input class="box__file d-none" type="file" id="csv_file" name="csv_file" data-multiple-caption="{count} ' + gettext("files selected") + '" multiple/>' +
       '<label class="d-block p-3" id="uploadlabel" for="csv_file">' +

@@ -56,10 +56,6 @@ $btn-close-color: $body-color;
 
 @import "../../../../node_modules/bootstrap/scss/utilities/api";
 
-:root {
-  --bs-card-cap-bg: #{$card-cap-bg};
-}
-
 // 5. frepple generic definitions
 
 .breadcrumb-item a {
@@ -79,7 +75,6 @@ $btn-close-color: $body-color;
     border-right: none;
   }
 }
-
 
 #nav-menu-header {
   .navbar-brand img {
@@ -561,7 +556,6 @@ h1 small {
   }
 
   .badge input {
-    color: $gray-600;
     padding-left: 0.25rem;
     padding-right: 0.25rem;
     padding-top: 0;

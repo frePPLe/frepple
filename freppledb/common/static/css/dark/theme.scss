@@ -74,6 +74,7 @@ $tooltip-color: $black;
 $tooltip-bg: $white;
 $input-color: $body-color;
 $input-border-color: #333;
+$table-border-color: #555555;
 $nav-tabs-border-color: $secondary;
 $nav-tabs-link-hover-border-color: $body-bg;
 $navbar-light-hover-color: $body-color;
@@ -85,10 +86,15 @@ $input-group-addon-bg: #515960;
 $link-opacity: 1;
 $jqgrid-header-bg: $table-bg;
 $card-cap-color: $body-color;
+$table-success: white;
 
 .form-control,
 input {
   color-scheme: dark;
+}
+
+td[role="gridcell"][aria-describedby="grid_graph"] {
+  background-color: $gray-300;
 }
 
 // You probably don't need to update the variables below this line.

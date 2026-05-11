@@ -149,6 +149,8 @@ def update_variable_in_file(file_path, var_name, new_value_code):
     else:
         # Variable not found, append it at the end
         new_assignment = f"{var_name} = {new_value_code}\n"
+        if lines and not lines[-1].endswith("\n"):
+            lines[-1] += "\n"
         new_lines = lines + [new_assignment]
 
     # Write the updated lines back to the file

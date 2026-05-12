@@ -552,7 +552,11 @@ class SupplyPathSvc(AsyncHttpConsumer):
                 "suboperation": (
                     suboperation_index if op.owner and not op.owner.hidden else 0
                 ),
-                "duration": self.format_seconds(getattr(op, "duration", None)),
+                "duration": self.format_seconds(
+                    op.itemdistribution.leadtime
+                    if isinstance(op, frepple.operation_itemdistribution)
+                    else getattr(op, "duration", None)
+                ),
                 "duration_per": self.format_seconds(getattr(op, "duration_per", None)),
                 "quantity": quantity,
                 "buffers": sorted((fl.buffer.name, fl.quantity) for fl in op.flows)

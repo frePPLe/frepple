@@ -26,6 +26,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: System administration
 
+- | Added support for PostgreSQL 18.
+
 - | The docker image now allows overriding the entrypoint and skipping the database initialization.
   | Only very specific usage of the frepple docker image need this capability.
 

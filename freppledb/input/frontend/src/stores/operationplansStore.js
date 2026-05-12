@@ -807,7 +807,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     setEditFormValues(field, value) {
       switch (this.mode) {
         case 'table':
-          window.displayongrid(this.operationplan.reference, field, value);
+          window.displayongrid(this.operationplan.reference[0], this.selectedOperationplans[0], field, value);
           break;
         case 'kanban':
           this.setKanbanCardValue(

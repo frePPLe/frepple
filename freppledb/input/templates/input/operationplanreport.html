@@ -418,17 +418,38 @@ rect.opplan {
     setVisibleByMode(mode.startsWith('calendar') ? 'calendar' : mode);
   });
 
-  // // Controller will call this function to pass values to the grid
-  function displayongrid(id, columnid, value) {
+  // Controller will call this function to pass values to the grid
+  function displayongrid(reference, id, columnid, value) {
+    if (!columnid) return;
+    var grid = jQuery("#grid");
+    console.log(425, reference, id, columnid, value, grid.jqGrid('getGridParam', 'colModel'));
+    // Resolve row id from reference when id is not provided
+    if (!id) {
+      var rowids = grid.jqGrid('getDataIDs');
+      if (rowids.indexOf(String(reference)) === -1) {
+        for (var i = 0; i < rowids.length; i++) {
+          var ref = grid.jqGrid('getCell', rowids[i], 'operationplan__reference');
+          if (String(ref) === String(reference)) {
+            id = rowids[i];
+            break;
+          }
+        }
+      } else {
+        id = reference;
+      }
+    }
+
+    if (!id) return;
+
     jQuery("#"+id).removeClass("edited").addClass("edited");
-    if (
-      columnid === "startdate" ||
-      columnid === "enddate" ||
-      columnid === "quantity" ||
-      columnid === "quantity_completed" ||
-      columnid === "remark" ||
+
+
+    if ( ["startdate", "enddate", "quantity", "quantity_completed", "remark", "status"].includes(columnid) ||
       (columnid === "status" && ['proposed', 'approved', 'confirmed', 'completed', 'closed'].indexOf(value) > -1)
     ) {
+      if (["freppledb.input.views.capacity.ResourceDetail", "freppledb.input.views.inventory.InventoryDetail"].includes(window.reportkey)) {
+        columnid = 'operationplan__' + columnid;
+      }
       jQuery("#grid").jqGrid("setCell", id, columnid, value, "dirty-cell");
       jQuery("#save, #undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
       jQuery(window).off('beforeunload', upload.warnUnsavedChanges);
@@ -592,14 +613,13 @@ multiboxonly: false,
 loadComplete: function(data) {
   const pageSelectedIDs = getVisibleSelectedIds();
   const changedOperationplanReferences = Object.keys(window.operationplanChanges);
-  if (Object.keys(changedOperationplanReferences) > 0) {
+  if (changedOperationplanReferences.length > 0) {
     changedOperationplanReferences.forEach((reference) => {
-      console.log("435 loadComplete", changedOperationplanReferences.reference);
       if (pageSelectedIDs.includes(reference)) {
-        const changedCellsKeys = Object.keys(window.operationplanChanges[id]);
+        const changedCellsKeys = Object.keys(window.operationplanChanges[reference]);
         changedCellsKeys.forEach((field) => {
           try {
-            displayongrid(id, field, window.operationplanChanges[id][field]);
+            displayongrid(reference, null, field, window.operationplanChanges[reference][field]);
           } catch (e) {
             // ignore
           }

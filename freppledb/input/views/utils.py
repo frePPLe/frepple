@@ -1691,7 +1691,6 @@ class PathReport(GridReport):
                             encoding="utf-8", errors="ignore"
                         )
                         request.data = json.loads(request.data)
-                        print("done with svc")
 
                         # post-process results to calculate leaf field
                         parents = [i["parent"] for i in request.data if i["parent"]]

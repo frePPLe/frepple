@@ -3276,7 +3276,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
   modalcontent += '' +
     '<br></form>' +
     '<div style="margin: 5px 0">' +
-    '<div id="uploadResponse" style="height: 50vh; resize: vertical; display: none; background-color: inherit; border: none; overflow: auto;"></div>' +
+    '<div id="uploadResponse" class="scrollbar" style="height: 50vh; resize: vertical; display: none; background-color: inherit; border: none; overflow: auto;"></div>' +
     '</div>' +
     '</div>' +
     '<div class="modal-footer justify-content-between">' +
@@ -3310,10 +3310,10 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
       e.stopPropagation();
     })
       .on('dragover dragenter', function () {
-        $('.box').removeClass('bg-warning').addClass('bg-warning');
+        $('.box').removeClass('bg-secondary').addClass('bg-secondary');
       })
       .on('dragleave dragend drop', function () {
-        $('.box').removeClass('bg-warning');
+        $('.box').removeClass('bg-secondary');
       })
       .on('drop', function (e) {
         if (multiple)

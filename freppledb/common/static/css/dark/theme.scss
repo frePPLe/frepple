@@ -99,8 +99,6 @@ $card-cap-color: $body-color;
   mask-repeat: no-repeat;
   -webkit-mask-size: contain;
   mask-position: center;
-
-  /* Ensure no old background image is interfering */
   background-image: none !important;
 }
 

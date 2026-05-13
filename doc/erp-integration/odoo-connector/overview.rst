@@ -5,7 +5,7 @@ Before going into the technical details, you might want to take one step back an
 `what Odoo cannot do for planners <https://frepple.com/blog/five_things_odoo_mrp_doesnt_do/>`_
 and why advanced planning is required for complex environments.
 
-.. image:: _images/odoo_planning_complexity.png
+.. image:: odoo-connectors/_images/odoo_planning_complexity.png
    :alt: Import data from Odoo
    :scale: 50%
 

@@ -76,11 +76,6 @@ Addition of extra views and fields in Odoo
 Quoting capabilities
 --------------------
 
-.. important::
-
-   This page applies to Odoo connectors installed after March 2026.
-   See `this page <../odoo-before-march-2026/using-the-connector-in-odoo.html#quoting-capabilities>`_ for earlier versions.
-
 Starting from Odoo 17, the connectors also allow the planner to use the frePPLe quoting
 module from Odoo.
 

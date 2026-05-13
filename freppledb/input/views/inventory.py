@@ -1482,18 +1482,6 @@ class InventoryDetail(OperationPlanMixin):
                 """,
                 [],
             ),
-            operationitem=RawSQL(
-                """
-                (
-                select coalesce(oper.item_id, oper_owner.item_id)
-                from operation oper
-                left outer join operation oper_owner
-                on oper.owner_id is not null and oper_owner.name = oper.owner_id
-                where operationplan.operation_id is not null and oper.name = operationplan.operation_id
-                )
-                """,
-                [],
-            ),
         )
 
     @classmethod
@@ -1660,7 +1648,7 @@ class InventoryDetail(OperationPlanMixin):
             initially_hidden=True,
         ),
         GridFieldText(
-            "operationitem",
+            "operationplan__item__name",
             title=format_lazy("{} - {}", _("operation"), _("item")),
             initially_hidden=True,
             formatter="detail",

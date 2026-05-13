@@ -38,7 +38,7 @@ def updateScenarioInfo(apps, schema_editor):
         ) != schema_editor.connection.settings_dict.get(
             "NAME"
         ):
-            with transaction.atomic():
+            with transaction.atomic(using=schema_editor.connection.alias):
                 ScheduledTask.updateScenario(schema_editor.connection.alias)
     except Exception as e:
         # On a new schema, the execute app may not be installed yet.

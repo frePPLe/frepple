@@ -1,5 +1,5 @@
 ==================================================
-Legacy odoo connectors installed before March 2026
+Legacy Odoo Connectors installed before March 2026
 ==================================================
 
 This documentation applies to the Odoo-frepple integration for the Odoo connectors

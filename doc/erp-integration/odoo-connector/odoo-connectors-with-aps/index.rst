@@ -1,9 +1,8 @@
-======================================================
-Odoo Connectors (without a dedicated frePPLe instance)
-======================================================
+=====================================
+Odoo Connectors using the APS Service
+=====================================
 
-The following pages describe the Odoo connectors that are available for Odoo users using
-the Advanced Planning and Scheduling (APS) service.
+The following pages describe the Odoo connectors without a dedicated frePPLe instance.
 
 .. toctree::
    :maxdepth: 1

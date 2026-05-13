@@ -15,7 +15,7 @@ DEALINGS IN THE SOFTWARE */
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@/stores/operationplansStore.js';
 import { numberFormat, dateTimeFormat, adminEscape, dateFormat } from '@common/utils.js';
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 
 export default defineComponent({
   name: 'KanbanCard',
@@ -38,6 +38,12 @@ export default defineComponent({
     });
 
     const store = useOperationplansStore();
+    const cardVersion = ref(0);
+    watch(
+      () => [props.opplan?.quantity, props.opplan?.operationplan__quantity],
+      () => { cardVersion.value++; },
+      { deep: false }
+    );
 
     const mode = window.mode;
     const reportKey = window.reportkey.split('.').pop();
@@ -146,6 +152,7 @@ export default defineComponent({
       urlPrefix,
       ttt,
       store,
+      cardVersion,
       mode,
       reportKey,
       editable,
@@ -168,6 +175,7 @@ export default defineComponent({
   template: `
     <component
       :is="innerComponent"
+      :key="cardVersion"
       v-bind="$props"
       :urlPrefix="urlPrefix"
       :ttt="ttt"

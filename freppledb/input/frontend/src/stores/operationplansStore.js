@@ -257,6 +257,25 @@ export const useOperationplansStore = defineStore('operationplans', {
             filters: JSON.stringify(colfilter),
           });
           this.kanbanoperationplans[key] = responseData.value;
+          const colData = this.kanbanoperationplans[key];
+          if (colData && colData.rows) {
+            for (const x of colData.rows) {
+              x.type = x.operationplan__type || x.type || window.default_operationplan_type;
+              x.reference = x.operationplan__reference || x.reference;
+              if (Object.prototype.hasOwnProperty.call(x, "quantity"))
+                x.quantity = parseFloat(x.quantity);
+              if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity"))
+                x.operationplan__quantity = parseFloat(x.operationplan__quantity);
+              if (Object.prototype.hasOwnProperty.call(x, "quantity_completed"))
+                x.quantity_completed = parseFloat(x.quantity_completed);
+              if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity_completed"))
+                x.operationplan__quantity_completed = parseFloat(x.operationplan__quantity_completed);
+              if (Object.prototype.hasOwnProperty.call(x, "operationplan__status"))
+                x.status = x.operationplan__status;
+              if (Object.prototype.hasOwnProperty.call(x, "operationplan__origin"))
+                x.origin = x.operationplan__origin;
+            }
+          }
         } catch (err) {
           if (err.response && err.response.status === 401) location.reload();
           throw err;
@@ -769,7 +788,6 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     setKanbanCardValue(id, field, statusKey, value) {
-      // Iterate through all columns to find all cards with the same reference
       for (const columnKey in this.kanbanoperationplans) {
         const column = this.kanbanoperationplans[columnKey];
         if (!column || !column.rows) continue;
@@ -778,14 +796,11 @@ export const useOperationplansStore = defineStore('operationplans', {
 
         targets.forEach((target) => {
           const targetKeys = Object.keys(target);
-
-          // Determine the correct field name (handling operationplan__ prefix)
           let newField = targetKeys.includes(field)
             ? field
             : field.includes('operationplan__')
               ? field.replace('operationplan__', '')
               : 'operationplan__' + field;
-
           // Special handling for quantity fields based on record type
           if (['DO', 'MO', 'WO'].includes(target.type)) {
             if (newField === 'quantity' || newField === 'quantity_completed') {
@@ -797,7 +812,6 @@ export const useOperationplansStore = defineStore('operationplans', {
               }
             }
           }
-
           // Update the value on the card
           target[newField] = value;
         });

@@ -169,20 +169,6 @@ const kanbanoperationplans = computed(() => {
     const tmp = store.kanbanoperationplans[col];
     if (tmp && tmp.rows) {
       for (const x of tmp.rows) {
-        x.type = x.operationplan__type || x.type || window.default_operationplan_type;
-        x.reference = x.operationplan__reference || x.reference;
-        if (Object.prototype.hasOwnProperty.call(x, "quantity"))
-          x.quantity = parseFloat(x.quantity);
-        if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity"))
-          x.operationplan__quantity = parseFloat(x.operationplan__quantity);
-        if (Object.prototype.hasOwnProperty.call(x, "quantity_completed"))
-          x.quantity_completed = parseFloat(x.quantity_completed);
-        if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity_completed"))
-          x.operationplan__quantity_completed = parseFloat(x.operationplan__quantity_completed);
-        if (Object.prototype.hasOwnProperty.call(x, "operationplan__status"))
-          x.status = x.operationplan__status;
-        if (Object.prototype.hasOwnProperty.call(x, "operationplan__origin"))
-          x.origin = x.operationplan__origin;
         [x.color, x.inventory_status] = formatInventoryStatus(x);
       }
     }

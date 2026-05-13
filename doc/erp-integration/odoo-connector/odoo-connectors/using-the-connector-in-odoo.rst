@@ -1,12 +1,6 @@
 Addition of menus in Odoo
 -------------------------
 
-.. important::
-
-   This page applies to Odoo connectors installed after March 2026.
-   See `this page <../odoo-before-march-2026/using-the-connector-in-odoo.html>`_ for
-   Odoo connectors installed before March 2026.
-
 After installation, users find the following additional features in odoo:
 
 * | The menu bar in the sales, purchase, inventory and manufacturing apps
@@ -18,11 +12,6 @@ After installation, users find the following additional features in odoo:
 
 Addition of extra views and fields in Odoo
 ------------------------------------------
-
-.. important::
-
-   This page applies to Odoo connectors installed after March 2026.
-   See `this page <../odoo-before-march-2026/using-the-connector-in-odoo.html#addition-of-extra-views-and-fields-in-odoo>`_ for earlier versions.
 
 * | A new table has been added to Odoo with **frepple recommendations** on your plan.
 

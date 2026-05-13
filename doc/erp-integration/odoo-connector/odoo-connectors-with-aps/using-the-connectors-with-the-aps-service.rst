@@ -1,14 +1,6 @@
 Using the connector with the Advanced Planning and Scheduling Service
 ---------------------------------------------------------------------
 
-.. important::
-
-   This page applies to Odoo connectors installed after March 2026.
-   See `this page <../odoo-before-march-2026/using-the-connector-in-frepple.html>`_ for
-   Odoo connectors installed before March 2026.
-
-.. image:: _images/aps_service.png
-  :alt: Advanced Planning and Scheduling Service
 
 * | **Overview**
   | Odoo users can use the frePPLe recommendation screen without a dedicated frePPLe instance.

@@ -1,12 +1,6 @@
 Installation and configuration
 ------------------------------
 
-.. important::
-
-   This page applies to Odoo connectors installed after March 2026.
-   See `this page <../odoo-before-march-2026/installation-and-configuration.html>`_ for
-   Odoo connectors installed before March 2026.
-
 The connector has 2 components:
 
 * | An Odoo addon:

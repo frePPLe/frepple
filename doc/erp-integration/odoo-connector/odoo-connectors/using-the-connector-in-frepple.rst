@@ -1,12 +1,6 @@
 Using the connector in frePPLe
 ------------------------------
 
-.. important::
-
-   This page applies to Odoo connectors installed after March 2026.
-   See `this page <../odoo-before-march-2026/using-the-connector-in-frepple.html>`_ for
-   Odoo connectors installed before March 2026.
-
 The Odoo integration brings new functionality to the user interface.
 
 * | **Plan generation options to "import Odoo data" and "send recommendations to odoo"**

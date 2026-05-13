@@ -1,6 +1,9 @@
 Using the connector with the Advanced Planning and Scheduling Service
 ---------------------------------------------------------------------
 
+.. image:: _images/aps_service.png
+   :alt: Import data from Odoo
+   :scale: 75%
 
 * | **Overview**
   | Odoo users can use the frePPLe recommendation screen without a dedicated frePPLe instance.

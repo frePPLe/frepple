@@ -121,8 +121,7 @@ class BufferList(GridReport):
     model = Buffer
     frozenColumns = 1
     help_url = "modeling-wizard/master-data/buffers.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define buffers</h3>
         <br>
         A buffer is a (logical of physical) inventory point for an item at a certain location.<br><br>
@@ -133,8 +132,7 @@ class BufferList(GridReport):
         <a href="{{request.prefix}}/wizard/load/production/?currentstep=7" class="btn btn-primary">Wizard to upload buffers<br>from a spreadsheet</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     rows = (
         GridFieldInteger(
@@ -346,8 +344,7 @@ class ItemDistributionList(GridReport):
     model = ItemDistribution
     frozenColumns = 1
     help_url = "modeling-wizard/distribution/item-distributions.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define item distributions</h3>
         <br>
         This table defines the possibility to transfer an item from one location to another.<br>
@@ -356,8 +353,7 @@ class ItemDistributionList(GridReport):
         <a href="{{request.prefix}}/data/input/itemdistribution/add/" class="btn btn-primary">Create a single item distribution<br>in a form</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     rows = (
         GridFieldInteger(
@@ -638,8 +634,7 @@ class DistributionOrderList(OperationPlanMixin):
     editable = True
     height = 250
     help_url = "modeling-wizard/distribution/distribution-orders.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define distribution orders</h3>
         <br>
         This table defines ongoing and proposed stock transfers between locations.<br><br>
@@ -650,8 +645,7 @@ class DistributionOrderList(OperationPlanMixin):
         <a href="{{request.prefix}}/data/input/distributionorder/add/" onclick="window.location = $(event.target).attr('href'); event.preventDefault();" class="btn btn-primary">Create a single distribution order<br>in a form</a>
         </div>
         <br>
-        """
-    )
+        """)
     calendarmode = "duration"
 
     @classmethod
@@ -1402,15 +1396,13 @@ class InventoryDetail(OperationPlanMixin):
     multiselect = True
     height = 250
     help_url = "user-interface/plan-analysis/inventory-detail-report.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Inventory detail</h3>
         <br>
         This table has a list of all stock changes.<br><br>
         The planning algorithm will populate this table, and as a user you normally don't need to create records in this table.<br>
         <br>
-        """
-    )
+        """)
     calendarmode = "duration"
 
     @classmethod
@@ -1483,11 +1475,23 @@ class InventoryDetail(OperationPlanMixin):
             ),
             operation=RawSQL(
                 """
-            case when exists (select 1 from operation where operationplan.operation_id = operation.name)
-            then operationplan.operation_id
-            else null
-            end
-            """,
+                case when exists (select 1 from operation where operationplan.operation_id = operation.name)
+                then operationplan.operation_id
+                else null
+                end
+                """,
+                [],
+            ),
+            operationitem=RawSQL(
+                """
+                (
+                select coalesce(oper.item_id, oper_owner.item_id)
+                from operation oper
+                left outer join operation oper_owner
+                on oper.owner_id is not null and oper_owner.name = oper.owner_id
+                where operationplan.operation_id is not null and oper.name = operationplan.operation_id
+                )
+                """,
                 [],
             ),
         )
@@ -1654,6 +1658,13 @@ class InventoryDetail(OperationPlanMixin):
             title=format_lazy("{} - {}", _("operation"), _("subcategory")),
             editable=False,
             initially_hidden=True,
+        ),
+        GridFieldText(
+            "operationitem",
+            title=format_lazy("{} - {}", _("operation"), _("item")),
+            initially_hidden=True,
+            formatter="detail",
+            extra='"role":"input/item"',
         ),
         GridFieldText(
             "operationplan__operation__type",

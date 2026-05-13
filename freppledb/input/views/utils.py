@@ -1691,7 +1691,6 @@ class PathReport(GridReport):
                             encoding="utf-8", errors="ignore"
                         )
                         request.data = json.loads(request.data)
-                        print("done with svc")
 
                         # post-process results to calculate leaf field
                         parents = [i["parent"] for i in request.data if i["parent"]]
@@ -1712,7 +1711,6 @@ class PathReport(GridReport):
             except Exception as e:
                 print("Error calling webservice: %s" % e)
         # Fallback to the old method of using database queries
-        print("Using database queries")
         return super().data_query(request, *args, fields=fields, page=page, **kwargs)
 
     @classmethod
@@ -1871,39 +1869,6 @@ class PathReport(GridReport):
                 i["parentoper"] and i["parentoper"] in alternate_ops
             ):
                 i["alternate"] = "true"
-
-        def normalize(item):
-            """Recursively converts tuples to lists for comparison."""
-            if isinstance(item, (list, tuple)):
-                return [normalize(i) for i in item]
-            return item
-
-        if hasattr(request, "data"):
-            from datetime import timedelta
-
-            print("------------------------------------")
-            for db_item, svc_item in zip(
-                sorted(results, key=lambda x: (x["depth"], x["operation"])),
-                sorted(request.data, key=lambda x: (x["depth"], x["operation"])),
-            ):
-                if svc_item["duration_per"] is not None:
-                    svc_item["duration_per"] = timedelta(
-                        seconds=svc_item["duration_per"]
-                    )
-                if svc_item["duration"] is not None:
-                    svc_item["duration"] = timedelta(seconds=svc_item["duration"])
-                if db_item == svc_item:
-                    print(f"Match: {db_item}")
-                else:
-                    print(f"Mismatch: {db_item}")
-                    for key in set(db_item.keys()) | set(svc_item.keys()):
-                        val_db = normalize(db_item.get(key, "N/A in db"))
-                        val_svc = normalize(svc_item.get(key, "N/A in svc"))
-
-                        if val_db != val_svc:
-                            print(f"  - Key '{key}':")
-                            print(f"      DB:  {val_db}")
-                            print(f"      SVC: {val_svc}")
 
         yield from results
 

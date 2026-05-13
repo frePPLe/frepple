@@ -3257,7 +3257,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
     '</p>';
   if (isDragnDropUploadCapable()) {
     modalcontent += '' +
-      '<div class="box" style="outline: 2px dashed black; outline-offset: -1em">' +
+      '<div class="box" style="outline: 2px dashed var(--bs-body-color); outline-offset: -1em">' +
       '<div class=text-center box__input" style="text-align: center; padding: 20px;">' +
       '<input class="box__file d-none" type="file" id="csv_file" name="csv_file" data-multiple-caption="{count} ' + gettext("files selected") + '" multiple/>' +
       '<label class="d-block p-3" id="uploadlabel" for="csv_file">' +
@@ -3276,7 +3276,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
   modalcontent += '' +
     '<br></form>' +
     '<div style="margin: 5px 0">' +
-    '<div id="uploadResponse" style="height: 50vh; resize: vertical; display: none; background-color: inherit; border: none; overflow: auto;"></div>' +
+    '<div id="uploadResponse" class="scrollbar" style="height: 50vh; resize: vertical; display: none; background-color: inherit; border: none; overflow: auto;"></div>' +
     '</div>' +
     '</div>' +
     '<div class="modal-footer justify-content-between">' +
@@ -3310,10 +3310,10 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
       e.stopPropagation();
     })
       .on('dragover dragenter', function () {
-        $('.box').removeClass('bg-warning').addClass('bg-warning');
+        $('.box').removeClass('bg-secondary').addClass('bg-secondary');
       })
       .on('dragleave dragend drop', function () {
-        $('.box').removeClass('bg-warning');
+        $('.box').removeClass('bg-secondary');
       })
       .on('drop', function (e) {
         if (multiple)

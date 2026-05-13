@@ -498,15 +498,7 @@ class SupplyPathSvc(AsyncHttpConsumer):
                     else (
                         op.origin.item.name
                         if isinstance(op, frepple.operation_itemdistribution)
-                        else (
-                            op.item.name
-                            if op.item
-                            else (
-                                op.owner.item.name
-                                if op.owner and op.owner.item
-                                else None
-                            )
-                        )
+                        else (op.item.name if op.item else None)
                     )
                 ),
                 "description": (
@@ -552,7 +544,11 @@ class SupplyPathSvc(AsyncHttpConsumer):
                 "suboperation": (
                     suboperation_index if op.owner and not op.owner.hidden else 0
                 ),
-                "duration": self.format_seconds(getattr(op, "duration", None)),
+                "duration": self.format_seconds(
+                    op.itemdistribution.leadtime
+                    if isinstance(op, frepple.operation_itemdistribution)
+                    else getattr(op, "duration", None)
+                ),
                 "duration_per": self.format_seconds(getattr(op, "duration_per", None)),
                 "quantity": quantity,
                 "buffers": sorted((fl.buffer.name, fl.quantity) for fl in op.flows)
@@ -750,6 +746,19 @@ class SupplyPathSvc(AsyncHttpConsumer):
             }
             for o in operations:
                 self.recurseOperations(o, 0, 0, 1.0, results, upstream, None)
+
+            # Post-process results to calculate leaf field
+            parents = [i["parent"] for i in results if i["parent"]]
+            for i in results:
+                if i["type"] in [
+                    "time_per",
+                    "fixed_time",
+                    "purchase",
+                    "distribution",
+                ]:
+                    i["leaf"] = "true" if i["id"] not in parents else "false"
+                else:
+                    i["leaf"] = "false"
 
             # Return the result
             self.scope["response_headers"].append(

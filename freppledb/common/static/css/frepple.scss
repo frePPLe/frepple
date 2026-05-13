@@ -10,6 +10,7 @@
 @import "../../../../node_modules/bootstrap/scss/functions";
 
 // 2. Include frePPLe theme-specific definitions
+$theme-name: theme-name();
 @import "theme";
 
 $btn-close-color: $body-color;
@@ -56,10 +57,6 @@ $btn-close-color: $body-color;
 
 @import "../../../../node_modules/bootstrap/scss/utilities/api";
 
-:root {
-  --bs-card-cap-bg: #{$card-cap-bg};
-}
-
 // 5. frepple generic definitions
 
 .breadcrumb-item a {
@@ -79,7 +76,6 @@ $btn-close-color: $body-color;
     border-right: none;
   }
 }
-
 
 #nav-menu-header {
   .navbar-brand img {
@@ -561,7 +557,6 @@ h1 small {
   }
 
   .badge input {
-    color: $gray-600;
     padding-left: 0.25rem;
     padding-right: 0.25rem;
     padding-top: 0;
@@ -1015,4 +1010,8 @@ svg text {
   --bs-btn-hover-bg: transparent;
   --bs-btn-hover-border-color: var(--bs-body-color);
   --bs-btn-active-bg: rgba(var(--bs-body-color-rgb), 0.1);
+}
+
+@if $theme-name =="dark" {
+  @include table-variant("success", $gray-600);
 }

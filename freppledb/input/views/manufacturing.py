@@ -2991,6 +2991,12 @@ class WorkOrderList(OperationPlanMixin):
             title=_("quantity"),
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
+        GridFieldChoice(
+            "status",
+            title=_("status"),
+            choices=OperationPlan.orderstatus,
+            editable=not settings.ERP_CONNECTOR,
+        ),
         GridFieldNumber(
             "quantity_completed",
             title=_("completed quantity"),
@@ -3021,12 +3027,6 @@ class WorkOrderList(OperationPlanMixin):
             search=False,
             initially_hidden=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
-        ),
-        GridFieldChoice(
-            "status",
-            title=_("status"),
-            choices=OperationPlan.orderstatus,
-            editable=not settings.ERP_CONNECTOR,
         ),
         GridFieldNumber(
             "criticality",

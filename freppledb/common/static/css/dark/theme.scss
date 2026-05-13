@@ -106,12 +106,13 @@ $card-cap-color: $body-color;
 // You probably don't need to update the variables below this line.
 // These updates are normally generic for all frepple themes (with the exception of the dark theme)
 $accordion-bg: $card-bg;
-$accordion-btn-focus-border-color: $primary;
+$accordion-btn-focus-border-color: #555555;
 $accordion-button-active-bg: $secondary;
 $accordion-button-active-color: $body-color;
 $accordion-button-bg: $secondary;
 $accordion-button-color: $body-color;
 $accordion-button-padding-y: 0.5rem;
+$accordion-border-color: #555555;
 $breadcrumb-divider-color: $body-color;
 $breadcrumb-divider: "\00a0\00a0\F0DA\00a0\00a0";
 $breadcrumb-item-padding-x: 0.2rem;

@@ -1014,4 +1014,9 @@ svg text {
 
 @if $theme-name =="dark" {
   @include table-variant("success", $gray-600);
+
+  .navbar-nav .nav-link.active,
+  .navbar-nav .nav-link.show {
+    --bs-navbar-active-color: $body-color;
+  }
 }

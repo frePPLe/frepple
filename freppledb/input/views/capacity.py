@@ -74,8 +74,7 @@ class SetupMatrixList(GridReport):
     model = SetupMatrix
     frozenColumns = 1
     help_url = "model-reference/setup-matrices.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define setup matrices</h3>
         <br>
         A setup matrix defines the time and cost of setup conversions on a resource.<br><br>
@@ -85,8 +84,7 @@ class SetupMatrixList(GridReport):
         <a href="{{request.prefix}}/data/input/setupmatrix/add/" class="btn btn-primary">Add a setup matrix</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     rows = (
         GridFieldText(
@@ -107,8 +105,7 @@ class SetupRuleList(GridReport):
     model = SetupRule
     frozenColumns = 1
     help_url = "model-reference/setup-matrices.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define setup matrix rules</h3>
         <br>
         A setup matrix rule defines the changeover cost and duration.<br>
@@ -117,8 +114,7 @@ class SetupRuleList(GridReport):
         <a href="{{request.prefix}}/data/input/setuprule/add/" class="btn btn-primary">Add a setup matrix rule</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     rows = (
         GridFieldInteger(
@@ -159,8 +155,7 @@ class ResourceList(GridReport):
     model = Resource
     frozenColumns = 1
     help_url = "modeling-wizard/manufacturing-capacity/resources.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define resources</h3>
         <br>
         Resources represent capacity.<br>
@@ -172,8 +167,7 @@ class ResourceList(GridReport):
         <a href="{{request.prefix}}/wizard/load/production/?currentstep=8" class="btn btn-primary">Wizard to upload resources<br>from a spreadsheet</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     rows = (
         GridFieldText(
@@ -301,8 +295,7 @@ class SkillList(GridReport):
     model = Skill
     frozenColumns = 1
     help_url = "model-reference/skills.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define skills</h3>
         <br>
         A skill defines a certain property that can be assigned to resources.<br><br>
@@ -313,8 +306,7 @@ class SkillList(GridReport):
         <a href="{{request.prefix}}/data/input/skill/add/" class="btn btn-primary">Create a skill</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     rows = (
         GridFieldText(
@@ -335,8 +327,7 @@ class ResourceSkillList(GridReport):
     model = ResourceSkill
     frozenColumns = 1
     help_url = "model-reference/resource-skills.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define resource skills</h3>
         <br>
         The table defines all skills a resource has.<br>
@@ -345,8 +336,7 @@ class ResourceSkillList(GridReport):
         <a href="{{request.prefix}}/data/input/resourceskill/add/" class="btn btn-primary">Create a resource skill</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     rows = (
         GridFieldInteger(
@@ -502,15 +492,13 @@ class ResourceDetail(OperationPlanMixin):
     multiselect = True
     height = 250
     help_url = "user-interface/plan-analysis/resource-detail-report.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Resource detail</h3>
         <br>
         This table has a list of all manufacturing orders assigned to a certain certain resource.<br><br>
         The planning algorithm will populate this table, and as a user you normally don't need to create records in this table.<br>
         <br>
-        """
-    )
+        """)
 
     @classmethod
     def _generate_gantt_data(cls, request, *args, **kwargs):

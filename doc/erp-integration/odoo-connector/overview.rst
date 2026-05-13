@@ -5,12 +5,19 @@ Before going into the technical details, you might want to take one step back an
 `what Odoo cannot do for planners <https://frepple.com/blog/five_things_odoo_mrp_doesnt_do/>`_
 and why advanced planning is required for complex environments.
 
-.. image:: _images/odoo_planning_complexity.png
+.. image:: odoo-connectors/_images/odoo_planning_complexity.png
    :alt: Import data from Odoo
    :scale: 50%
 
 
-The connector provides the following functionality:
+The connector can be downloaded from the `Odoo apps store <https://apps.odoo.com/apps/modules/19.0/frepple>`_.
+The connector is available for the last 3 versions of Odoo (currently the 17, 18 and 19).
+
+There are 2 ways to use the connector, either **with a dedicated frePPLe instance**
+or **without a dedicated frePPLe instance** using the Advanced Planning and Scheduling Service.
+
+
+**With a dedicated frePPLe instance**, the connector provides the following functionality:
 
 * | Two-way integration.
   | The connector retrieves all master and transactional data required for planning from Odoo.
@@ -33,6 +40,21 @@ The connector provides the following functionality:
 
 * | The integration has been developed and tested with the latest versions of Odoo.
   | We support the last 3 versions of Odoo connectors (currently the 17 and 18 and 19).
+
+
+**Without a dedicated frePPLe instance** using the Advanced Planning and Scheduling Service:
+
+* | The connector sends all master and transactional data required for planning from Odoo to
+    the Advanced Planning and Scheduling Service.
+  | The Advanced Planning and Scheduling Service publishes the resulting plan back to Odoo
+    as recommendations.
+
+  | The planner can review the recommendations in Odoo and either accept or reject them.
+    The accepted recommendations are generating draft purchase orders or manufacturing orders.
+    Recommendations also provide information on the sales order planned delivery dates.
+
+  | No interface integration is available with frePPLe.
+
 
 Below are the slides presented during the Odoo user conference in October 2022 where we describe how frePPLe
 solves Odoo customer business cases.

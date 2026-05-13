@@ -422,7 +422,6 @@ rect.opplan {
   function displayongrid(reference, id, columnid, value) {
     if (!columnid) return;
     var grid = jQuery("#grid");
-    console.log(425, reference, id, columnid, value, grid.jqGrid('getGridParam', 'colModel'));
     // Resolve row id from reference when id is not provided
     if (!id) {
       var rowids = grid.jqGrid('getDataIDs');

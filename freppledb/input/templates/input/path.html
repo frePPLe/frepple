@@ -1239,7 +1239,7 @@ function drawGraph(jsondata)
     .style('stroke-width', '1.5')
     .on('click', function(d) { clickedLevelCollapseControl(d, 'upstream'); })
     .append('svg:title')
-    .text(function(d) { return 'Collapse/expand upstream for level ' + d.level; });
+    .text(function(d) { return 'Collapse/expand upstream'; });
 
   level_controls.append('svg:line')
     .attr('class', 'collapse-control collapse-control-icon level-upstream-horizontal')
@@ -1270,7 +1270,7 @@ function drawGraph(jsondata)
     .style('stroke-width', '1.5')
     .on('click', function(d) { clickedLevelCollapseControl(d, 'downstream'); })
     .append('svg:title')
-    .text(function(d) { return 'Collapse/expand downstream for level ' + d.level; });
+    .text(function(d) { return 'Collapse/expand downstream'; });
 
   level_controls.append('svg:line')
     .attr('class', 'collapse-control collapse-control-icon level-downstream-horizontal')

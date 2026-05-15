@@ -344,7 +344,7 @@ void SolverCreate::SolverData::commit() {
     } else if (solver->getAlgorithm() == "heuristic_2") {
       // Create a delivery operationplan for all demands
       if (solver->getCreateDeliveries()) {
-        constrainedPlanning = false;
+        constrainedPlanning = true;
         setPropagate(false);
         createDeliveries();
       }
@@ -352,7 +352,7 @@ void SolverCreate::SolverData::commit() {
       // Backward sweep
       if (solver->getLogLevel() > 0)
         logger << "PLANNING STEP " << ++step << ": backward sweep\n";
-      constrainedPlanning = false;
+      constrainedPlanning = (solver->getPlanType() == 1);
       setPropagate(false);
       buffer_solve_shortages_only = false;
       setBatchGrouping((solver->getPlanType() == 1) ? false : true);
@@ -384,7 +384,7 @@ void SolverCreate::SolverData::commit() {
             logger << "PLANNING STEP " << ++step << ": second backward sweep\n";
           buffer_solve_shortages_only = false;
           setBatchGrouping(true);
-          constrainedPlanning = false;
+          constrainedPlanning = true;
           backward_sweep();
         }
 

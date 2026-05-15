@@ -508,6 +508,353 @@
       </itemsuppliers>
     </item>
   </items>
+
+  <!-- 4. Same as 3, and adding a capacity constraint and a second item -->
+  <locations>
+    <location name="4. factory">
+      <available name="4. Working Days">
+        <default>1</default>
+      </available>
+    </location>
+  </locations>
+  <resources>
+    <resource name="4. Resource">
+      <maximum>1</maximum>
+      <location name="4. factory" />
+    </resource>
+  </resources>
+  <demands>
+    <demand name="4. Demand-X 1">
+      <customer name="Average Joe" />
+      <location name="4. factory" />
+      <quantity>100</quantity>
+      <minshipment>1</minshipment>
+      <item name="4. X level 0" />
+      <due>2027-01-01T00:00:00</due>
+      <priority>1</priority>
+    </demand>
+    <demand name="4. Demand-X 2">
+      <customer name="Average Joe" />
+      <location name="4. factory" />
+      <quantity>100</quantity>
+      <minshipment>1</minshipment>
+      <item name="4. X level 0" />
+      <due>2027-01-05T00:00:00</due>
+      <priority>1</priority>
+    </demand>
+    <demand name="4. Demand-X 3">
+      <customer name="Average Joe" />
+      <location name="4. factory" />
+      <quantity>30</quantity>
+      <minshipment>1</minshipment>
+      <item name="4. X level 0" />
+      <due>2027-04-01T00:00:00</due>
+      <priority>1</priority>
+    </demand>
+    <demand name="4. Demand-X 4">
+      <customer name="Average Joe" />
+      <location name="4. factory" />
+      <quantity>30</quantity>
+      <minshipment>1</minshipment>
+      <item name="4. X level 0" />
+      <due>2027-04-07T00:00:00</due>
+      <priority>1</priority>
+    </demand>
+    <demand name="4. Demand-X 5">
+      <customer name="Average Joe" />
+      <location name="4. factory" />
+      <quantity>30</quantity>
+      <minshipment>1</minshipment>
+      <item name="4. X level 0" />
+      <due>2027-04-15T00:00:00</due>
+      <priority>1</priority>
+    </demand>
+    <demand name="4. Demand-Y 1">
+      <customer name="Average Joe" />
+      <location name="4. factory" />
+      <quantity>100</quantity>
+      <minshipment>1</minshipment>
+      <item name="4. Y level 0" />
+      <due>2027-01-01T00:00:00</due>
+      <priority>1</priority>
+    </demand>
+    <demand name="4. Demand-Y 2">
+      <customer name="Average Joe" />
+      <location name="4. factory" />
+      <quantity>100</quantity>
+      <minshipment>1</minshipment>
+      <item name="4. Y level 0" />
+      <due>2027-01-05T00:00:00</due>
+      <priority>1</priority>
+    </demand>
+    <demand name="4. Demand-Y 3">
+      <customer name="Average Joe" />
+      <location name="4. factory" />
+      <quantity>30</quantity>
+      <minshipment>1</minshipment>
+      <item name="4. Y level 0" />
+      <due>2027-04-01T00:00:00</due>
+      <priority>1</priority>
+    </demand>
+    <demand name="4. Demand-Y 4">
+      <customer name="Average Joe" />
+      <location name="4. factory" />
+      <quantity>30</quantity>
+      <minshipment>1</minshipment>
+      <item name="4. Y level 0" />
+      <due>2027-04-07T00:00:00</due>
+      <priority>1</priority>
+    </demand>
+    <demand name="4. Demand-Y 5">
+      <customer name="Average Joe" />
+      <location name="4. factory" />
+      <quantity>30</quantity>
+      <minshipment>1</minshipment>
+      <item name="4. Y level 0" />
+      <due>2027-04-15T00:00:00</due>
+      <priority>1</priority>
+    </demand>
+  </demands>
+  <operations>
+    <operation name="4. Make X level 0" xsi:type="operation_time_per">
+      <item name="4. X level 0" />
+      <location name="4. factory" />
+      <batchwindow>P10D</batchwindow>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="4. X level 0" />
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="4. X level 1a" />
+          <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="4. X level 1b" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <duration>P1D</duration>
+      <duration_per>PT1H</duration_per>
+    </operation>
+    <operation name="4. Make X level 1a" xsi:type="operation_time_per">
+      <item name="4. X level 1a" />
+      <location name="4. factory" />
+      <batchwindow>P10D</batchwindow>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="4. X level 1a" />
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="4. X level 2a" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="4. Resource" />
+        </load>
+      </loads>
+      <duration>P1D</duration>
+      <duration_per>PT1H</duration_per>
+    </operation>
+    <operation name="4. Make X level 1b" xsi:type="operation_time_per">
+      <item name="4. X level 1b" />
+      <location name="4. factory" />
+      <batchwindow>P10D</batchwindow>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="4. X level 1b" />
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="4. X level 2b" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <duration>P5D</duration>
+      <duration_per>PT1H</duration_per>
+    </operation>
+    <operation name="4. Make X level 2b" xsi:type="operation_time_per">
+      <item name="4. X level 2b" />
+      <location name="4. factory" />
+      <batchwindow>P10D</batchwindow>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="4. X  level 2b" />
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="4. X level 3b" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <duration>P1D</duration>
+      <duration_per>PT1H</duration_per>
+    </operation>
+    <operation name="4. Make X level 3b" xsi:type="operation_time_per">
+      <item name="4. X level 3b" />
+      <location name="4. factory" />
+      <batchwindow>P10D</batchwindow>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="4. X level 3b" />
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="4. X level 4b" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <duration>P1D</duration>
+      <duration_per>PT1H</duration_per>
+    </operation>
+    <operation name="4. Make X level 4b" xsi:type="operation_time_per">
+      <item name="4. X level 4b" />
+      <location name="4. factory" />
+      <batchwindow>P200D</batchwindow>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="4. X level 4b" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+      <duration>P4D</duration>
+      <duration_per>PT1H</duration_per>
+    </operation>
+    <operation name="4. Make Y level 0" xsi:type="operation_time_per">
+      <item name="4. Y level 0" />
+      <location name="4. factory" />
+      <batchwindow>P10D</batchwindow>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="4. Y level 0" />
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="4. Y level 1a" />
+          <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="4. Y level 1b" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <duration>P1D</duration>
+      <duration_per>PT1H</duration_per>
+    </operation>
+    <operation name="4. Make Y level 1a" xsi:type="operation_time_per">
+      <item name="4. Y level 1a" />
+      <location name="4. factory" />
+      <batchwindow>P10D</batchwindow>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="4. Y level 1a" />
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="4. Y level 2a" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="4. Resource" />
+        </load>
+      </loads>
+      <duration>P1D</duration>
+      <duration_per>PT1H</duration_per>
+    </operation>
+    <operation name="4. Make Y level 1b" xsi:type="operation_time_per">
+      <item name="4. Y level 1b" />
+      <location name="4. factory" />
+      <batchwindow>P10D</batchwindow>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="4. Y level 1b" />
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="4. Y level 2b" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <duration>P5D</duration>
+      <duration_per>PT1H</duration_per>
+    </operation>
+    <operation name="4. Make Y level 2b" xsi:type="operation_time_per">
+      <item name="4. Y level 2b" />
+      <location name="4. factory" />
+      <batchwindow>P10D</batchwindow>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="4. Y level 2b" />
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="4. Y level 3b" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <duration>P1D</duration>
+      <duration_per>PT1H</duration_per>
+    </operation>
+    <operation name="4. Make Y level 3b" xsi:type="operation_time_per">
+      <item name="4. Y level 3b" />
+      <location name="4. factory" />
+      <batchwindow>P10D</batchwindow>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="4. Y level 3b" />
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="4. Y level 4b" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <duration>P1D</duration>
+      <duration_per>PT1H</duration_per>
+    </operation>
+    <operation name="4. Make Y level 4b" xsi:type="operation_time_per">
+      <item name="4. Y level 4b" />
+      <location name="4. factory" />
+      <batchwindow>P200D</batchwindow>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="4. Y level 4b" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+      <duration>P4D</duration>
+      <duration_per>PT1H</duration_per>
+    </operation>
+  </operations>
+  <items>
+    <item name="4. X level 2a">
+      <itemsuppliers>
+        <itemsupplier>
+          <batchwindow>P10D</batchwindow>
+          <supplier name="MySupplier" />
+          <location name="4. factory" />
+          <leadtime>P7D</leadtime>
+          <priority>1</priority>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="4. Y level 2a">
+      <itemsuppliers>
+        <itemsupplier>
+          <batchwindow>P10D</batchwindow>
+          <supplier name="MySupplier" />
+          <location name="4. factory" />
+          <leadtime>P7D</leadtime>
+          <priority>1</priority>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+  </items>
   <?python
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, algorithm="heuristic_2").solve()

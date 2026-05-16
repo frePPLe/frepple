@@ -31,25 +31,25 @@ showinventorygraphDrv.$inject = ['$window', '$filter', 'gettextCatalog', 'd3serv
 
 function showinventorygraphDrv($window, $filter, gettextCatalog) {
   return {
-    restrict: 'EA', scope: {operationplan: '=data'}, link: linkfunc
+    restrict: 'EA', scope: { operationplan: '=data' }, link: linkfunc
   };
 
   function linkfunc(scope, elem, attrs, d3service) {
     scope.$watchGroup(['operationplan.id', 'operationplan.inventoryreport.length'], function (newValue, oldValue) {
       angular.element(document).find('#attributes-inventorygraph').empty().append(
         [
-        '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_inventorygraph" aria-expanded="false" aria-controls="widget_inventorygraph">',
-        '<h5 class="card-title text-capitalize fs-5 me-auto">' + gettextCatalog.getString("inventory") +
-        '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>',
-        '<div class="card-body collapse overflow-hidden' +
-        (scope.$parent.widget[1]["collapsed"] ? '' : ' show') +
-        '" id="widget_inventorygraph">',
-        '<table class="table table-sm table-borderless">',
-        '<tbody><tr><td role="gridcell" aria-describedby="grid_graph">',
-        '<div class="graph" style="height:'+ $("#attributes-operationplan .card-body").height() +'"></div>',
-        '</td></tr></tbody>',
-        '</table>',
-        '</div>'
+          '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_inventorygraph" aria-expanded="false" aria-controls="widget_inventorygraph">',
+          '<h5 class="card-title text-capitalize fs-5 me-auto">' + gettextCatalog.getString("inventory") +
+          '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>',
+          '<div class="card-body collapse overflow-hidden' +
+          (scope.$parent.widget[1]["collapsed"] ? '' : ' show') +
+          '" id="widget_inventorygraph">',
+          '<table class="table table-sm table-borderless">',
+          '<tbody><tr><td role="gridcell" aria-describedby="grid_graph">',
+          '<div class="graph" style="height:' + $("#attributes-operationplan .card-body").height() + '"></div>',
+          '</td></tr></tbody>',
+          '</table>',
+          '</div>'
         ].join("\n"));
       let domain_x = [];
 
@@ -57,7 +57,7 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
         if (scope.operationplan.hasOwnProperty('inventoryreport')) {
           const timebuckets = scope.operationplan.inventoryreport;
 
-          let margin = {top: 10, right: 10, bottom: 30, left: 40};
+          let margin = { top: 10, right: 10, bottom: 30, left: 40 };
           let width = Math.max($("#attributes-operationplan .card-body").width() - margin.left - margin.right, 0);
           let height = $("#attributes-operationplan .card-body").height() - margin.top - margin.bottom;
 
@@ -88,7 +88,7 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
               'produced_proposed': bctk[10],
               'produced_confirmed': bctk[11],
               'endinv': bctk[12],
-              });
+            });
 
             //slice the first 4 strings from array to determine min and max
             let slicedbucket = bctk.slice(4 - bctk.length);
@@ -135,13 +135,13 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
                   .attr("height", y_zero - y_top_low)
                   .attr("x", x_width / 2)
                   .attr("y", y_top_low)
-                  .style("fill", "#113C5E");
+                  .style("fill", 'var(--frepple-color-produced-confirmed, #113C5E)');
                 if (d['produced_proposed'] > 0) bucket.append("rect")
                   .attr("width", x_width / 2)
                   .attr("height", y_top_low - y_top)
                   .attr("x", x_width / 2)
                   .attr("y", y_top)
-                  .style("fill", "#2B95EC");
+                  .style("fill", 'var(--frepple-color-produced, #2B95EC)');
               }
               if (d['consumed_total'] > 0) {
                 y_top = y(d['consumed_total']);
@@ -150,12 +150,12 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
                   .attr("width", x_width / 2)
                   .attr("height", y_zero - y_top_low)
                   .attr("y", y_top_low)
-                  .style("fill", "#7B5E08");
+                  .style("fill", 'var(--frepple-color-consumed-confirmed, #7B5E08)');
                 if (d['consumed_proposed'] > 0) bucket.append("rect")
                   .attr("width", x_width / 2)
                   .attr("height", y_top_low - y_top)
                   .attr("y", y_top)
-                  .style("fill", "#F6BD0F");
+                  .style("fill", 'var(--frepple-color-consumed, #F6BD0F)');
               }
               bucket.append("rect")
                 .attr("height", height)
@@ -289,20 +289,20 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
 
           // Draw startoh line
           var line = d3.svg.line()
-            .x(function(d) { return x(d['bucket']) + x_width / 2; })
-            .y(function(d) { return y(d['startinv']); });
+            .x(function (d) { return x(d['bucket']) + x_width / 2; })
+            .y(function (d) { return y(d['startinv']); });
           svg.append("svg:path")
             .attr('class', 'graphline')
-            .attr("stroke","#8BBA00")
+            .attr("stroke", 'var(--frepple-color-inventory, #8BBA00)')
             .attr("d", line(data));
 
           // Draw safety stock line
           var line = d3.svg.line()
-            .x(function(d) { return x(d['bucket']) + x_width / 2; })
-            .y(function(d) { return y(d['safetystock']); });
+            .x(function (d) { return x(d['bucket']) + x_width / 2; })
+            .y(function (d) { return y(d['safetystock']); });
           svg.append("svg:path")
             .attr('class', 'graphline')
-            .attr("stroke","#FF0000")
+            .attr("stroke", 'var(--frepple-color-safetystock, #FF0000)')
             .attr("d", line(data));
 
           var nth = Math.ceil(timebuckets.length / width * bucketnamelength * 10);
@@ -321,8 +321,8 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
             .call(xAxis);
 
           angular.element(elem).find('.collapse')
-             .on("shown.bs.collapse", grid.saveColumnConfiguration)
-             .on("hidden.bs.collapse", grid.saveColumnConfiguration);
+            .on("shown.bs.collapse", grid.saveColumnConfiguration)
+            .on("hidden.bs.collapse", grid.saveColumnConfiguration);
 
           let widgetTooltipTriggerList = document.querySelectorAll('#attributegraph [data-bs-toggle="tooltip"]');
           let widgetTooltipList = [...widgetTooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));

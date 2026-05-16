@@ -136,7 +136,7 @@ function drawGraphs(jsondata)
             .attr("x", barnum[0] * x_width / numbars)
             .attr("y", top)
             .attr("height", y(0) - top)
-            .style("fill","#113C5E")
+            .style("fill",'var(--frepple-color-produced-confirmed, #113C5E)')
             .on("click", function(d) {
                 if (d3.event.defaultPrevented || d['total_start'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
@@ -159,7 +159,7 @@ function drawGraphs(jsondata)
             .attr("x", barnum[0] * x_width / numbars)
             .attr("y", newtop)
             .attr("height", top - newtop)
-            .style("fill","#2B95EC")
+            .style("fill",'var(--frepple-color-produced, #2B95EC)')
             .on("click", function(d) {
                 if (d3.event.defaultPrevented || d['total_start'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
@@ -207,7 +207,7 @@ function drawGraphs(jsondata)
             .attr("x", barnum[1] * x_width / numbars)
             .attr("y", newtop)
             .attr("height", top - newtop)
-            .style("fill","#8BBA00")
+            .style("fill",'var(--frepple-color-inventory, #8BBA00)')
             .on("click", function(d) {
                 if (d3.event.defaultPrevented || d['total_production'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
@@ -231,7 +231,7 @@ function drawGraphs(jsondata)
             .attr("x", barnum[2] * x_width / numbars)
             .attr("y", top)
             .attr("height", y(0) - top)
-            .style("fill","#7B5E08")
+            .style("fill",'var(--frepple-color-consumed-confirmed, #7B5E08)')
             .on("click", function(d) {
                 if (d3.event.defaultPrevented || d['total_end'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
@@ -254,7 +254,7 @@ function drawGraphs(jsondata)
             .attr("x", barnum[2] * x_width / numbars)
             .attr("y", newtop)
             .attr("height", top - newtop)
-            .style("fill","#F6BD0F")
+            .style("fill",'var(--frepple-color-consumed, #F6BD0F)')
             .on("click", function(d) {
                 if (d3.event.defaultPrevented || d['total_end'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
@@ -341,12 +341,12 @@ function drawGraphs(jsondata)
     // Display legend
     var legend = svg.append("g");
     var codes = [
-      ["{{_('approved and confirmed starts')|capfirst}}", "#113C5E"],
-      ["{{_('proposed starts')|capfirst}}", "#2B95EC"],
-      ["{{_('approved and confirmed ends')|capfirst}}", "#7B5E08"],
-      ["{{_('proposed ends')|capfirst}}", "#F6BD0F"],
+      ["{{_('approved and confirmed starts')|capfirst}}", 'var(--frepple-color-produced-confirmed, #113C5E)'],
+      ["{{_('proposed starts')|capfirst}}", 'var(--frepple-color-produced, #2B95EC)'],
+      ["{{_('approved and confirmed ends')|capfirst}}", 'var(--frepple-color-consumed-confirmed, #7B5E08)'],
+      ["{{_('proposed ends')|capfirst}}", 'var(--frepple-color-consumed, #F6BD0F)'],
       ["{{_('approved and confirmed production')|capfirst}}", "#0C3B00"],
-      ["{{_('proposed production')|capfirst}}", "#8BBA00"],
+      ["{{_('proposed production')|capfirst}}", 'var(--frepple-color-inventory, #8BBA00)'],
       ];
     for (var i in cross_idx)
     {

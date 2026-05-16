@@ -176,7 +176,7 @@ function drawContextGraph() {
       if (e[3] < min_y) min_y = e[3];
       if (e[3] > max_y) max_y = e[3];
       if (e[5] < min_y) min_y = e[5];
-      if (e[5] > max_y) max_y = e[5];      
+      if (e[5] > max_y) max_y = e[5];
     }
     var x = d3.scale.linear().rangeRound([50, width]).domain([min_x, max_x]);
     var y = d3.scale.linear().rangeRound([0, height]).domain([max_y, min_y]);
@@ -205,8 +205,8 @@ function drawContextGraph() {
         .x(function(d) { return d[0]; })
         .y(function(d) { return d[1]; });
     svg.append("svg:path")
-        .attr("stroke","#8BBA00")
-        .attr("fill","#8BBA00")
+        .attr("stroke",'var(--frepple-color-inventory, #8BBA00)')
+        .attr("fill",'var(--frepple-color-inventory, #8BBA00)')
         .attr("stroke-width", 0)
         .attr("d", line(linedata));
 
@@ -292,7 +292,7 @@ function drawFocusGraph() {
     svg.append("svg:path")
         .attr("stroke","#E68BBA00")
         .attr("stroke-width", 0)
-        .attr("fill","#8BBA00")
+        .attr("fill",'var(--frepple-color-inventory, #8BBA00)')
         .attr("clip-path", "url(#clip)")
         .attr("d", line(linedata));
 

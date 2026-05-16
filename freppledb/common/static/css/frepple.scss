@@ -1020,3 +1020,32 @@ svg text {
     --bs-navbar-active-color: $body-color;
   }
 }
+
+// Colors for the frepple graphs
+:root {
+  --frepple-color-backlog: #{$frepple-color-backlog};
+  --frepple-color-capacity-available: #{$frepple-color-capacity-available};
+  --frepple-color-capacity-confirmed: #{$frepple-color-capacity-confirmed};
+  --frepple-color-capacity-load: #{$frepple-color-capacity-load};
+  --frepple-color-capacity-overload: #{$frepple-color-capacity-overload};
+  --frepple-color-capacity-setup: #{$frepple-color-capacity-setup};
+  --frepple-color-capacity-unavailable: #{$frepple-color-capacity-unavailable};
+  --frepple-color-closed-orders: #{$frepple-color-closed-orders};
+  --frepple-color-consumed: #{$frepple-color-consumed};
+  --frepple-color-consumed-confirmed: #{$frepple-color-consumed-confirmed};
+  --frepple-color-demand-dependent: #{$frepple-color-demand-dependent};
+  --frepple-color-demand-local: #{$frepple-color-demand-local};
+  --frepple-color-expiring: #{$frepple-color-expiring};
+  --frepple-color-forecast: #{$frepple-color-forecast};
+  --frepple-color-forecast-past: #{$frepple-color-forecast-past};
+  --frepple-color-forecast-planned: #{$frepple-color-forecast-planned};
+  --frepple-color-inventory: #{$frepple-color-inventory};
+  --frepple-color-orders-open: #{$frepple-color-orders-open};
+  --frepple-color-orders-overdue: #{$frepple-color-orders-overdue};
+  --frepple-color-orders-planned: #{$frepple-color-orders-planned};
+  --frepple-color-produced: #{$frepple-color-produced};
+  --frepple-color-produced-confirmed: #{$frepple-color-produced-confirmed};
+  --frepple-color-reorder-quantity: #{$frepple-color-reorder-quantity};
+  --frepple-color-safetystock: #{$frepple-color-safetystock};
+  --frepple-color-orders-total: #{$frepple-color-orders-total};
+}

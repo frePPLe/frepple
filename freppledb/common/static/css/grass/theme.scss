@@ -40,10 +40,8 @@ $navbar-brand-height: 3rem;
 
 // Fonts
 $font-size-base: 0.8rem;
-$font-family-sans-serif:
-  "FontAwesome", "Open sans", Helvetica, Verdana, Arial, sans-serif;
-$font-family-monospace:
-  "FontAwesome", Menlo, Monaco, Consolas, "Courier New", monospace;
+$font-family-sans-serif: "FontAwesome", "Open sans", Helvetica, Verdana, Arial, sans-serif;
+$font-family-monospace: "FontAwesome", Menlo, Monaco, Consolas, "Courier New", monospace;
 $body-color: #333333;
 
 // Grid breakpoints
@@ -105,3 +103,30 @@ $nav-tabs-border-color: $light;
 $nav-tabs-border-radius: 0;
 $spacer: 1rem;
 $jqgrid-header-bg: #e5e5e5;
+
+// Colors for the frepple graphs
+$frepple-color-backlog: #000000;
+$frepple-color-capacity-available: #8BBA00;
+$frepple-color-capacity-confirmed: #113C5E;
+$frepple-color-capacity-load: #AFD8F8;
+$frepple-color-capacity-overload: #FF0000;
+$frepple-color-capacity-setup: #2B95EC;
+$frepple-color-capacity-unavailable: #F6BD0F;
+$frepple-color-closed-orders: #828915;
+$frepple-color-consumed: #F6BD0F;
+$frepple-color-consumed-confirmed: #7B5E08;
+$frepple-color-demand-dependent: #7B5E08;
+$frepple-color-demand-local: #F6BD0F;
+$frepple-color-expiring: #000000;
+$frepple-color-forecast: #FF0000;
+$frepple-color-forecast-past: #FF7B00;
+$frepple-color-forecast-planned: #F6BD0F;
+$frepple-color-inventory: #8BBA00;
+$frepple-color-orders-open: #2B95EC;
+$frepple-color-orders-overdue: #FFC000;
+$frepple-color-orders-planned: #7B5E08;
+$frepple-color-produced: #2B95EC;
+$frepple-color-produced-confirmed: #113C5E;
+$frepple-color-reorder-quantity: #f47a00;
+$frepple-color-safetystock: #FF0000;
+$frepple-color-orders-total: #8BBA00;

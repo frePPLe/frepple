@@ -171,14 +171,14 @@ function drawGraphs(jsondata)
               .attr("height", y_zero - y_top_low)
               .attr("x", x_width/2)
               .attr("y", y_top_low)
-              .style("fill","#113C5E");
+              .style("fill",'var(--frepple-color-produced-confirmed, #113C5E)');
           if (d['produced_proposed'] > 0)
             bucket.append("rect")
               .attr("width", x_width/2)
               .attr("height", y_top_low - y_top)
               .attr("x", x_width/2)
               .attr("y", y_top)
-              .style("fill","#2B95EC");
+              .style("fill",'var(--frepple-color-produced, #2B95EC)');
         }
         if (d['consumed'] > 0 && fields.has('consumed'))
         {
@@ -189,13 +189,13 @@ function drawGraphs(jsondata)
               .attr("width", x_width/2)
               .attr("height", y_zero - y_top_low)
               .attr("y", y_top_low)
-              .style("fill","#7B5E08");
+              .style("fill",'var(--frepple-color-consumed-confirmed, #7B5E08)');
           if (d['consumed_proposed'] > 0)
             bucket.append("rect")
               .attr("width", x_width/2)
               .attr("height", y_top_low - y_top)
               .attr("y", y_top)
-              .style("fill","#F6BD0F");
+              .style("fill",'var(--frepple-color-consumed, #F6BD0F)');
         }
         // Invisible rectangle for the tooltip
       	bucket.append("rect")
@@ -356,7 +356,7 @@ function drawGraphs(jsondata)
         .y(function(d) { return y(d['total_backlog']); });
       svg.append("svg:path")
         .attr('class', 'graphline')
-        .attr("stroke","#000000")
+        .attr("stroke",'var(--frepple-color-backlog, #000000)')
         .attr("d", line(data));
     }
     if (fields.has('safetystock'))
@@ -366,7 +366,7 @@ function drawGraphs(jsondata)
         .y(function(d) { return y(d['safetystock']); });
       svg.append("svg:path")
         .attr('class', 'graphline')
-        .attr("stroke","#FF0000")
+        .attr("stroke",'var(--frepple-color-safetystock, #FF0000)')
         .attr("d", line(data));
     }
     if (fields.has('startoh'))  // Drawn last to be on top
@@ -376,7 +376,7 @@ function drawGraphs(jsondata)
         .y(function(d) { return y(d['startinv']); });
       svg.append("svg:path")
         .attr('class', 'graphline')
-        .attr("stroke","#8BBA00")
+        .attr("stroke",'var(--frepple-color-inventory, #8BBA00)')
         .attr("d", line(data));
     }
     else if (fields.has('endoh')) // Drawn last to be on top
@@ -386,7 +386,7 @@ function drawGraphs(jsondata)
         .y(function(d) { return y(d['endinv']); });
       svg.append("svg:path")
         .attr('class', 'graphline')
-        .attr("stroke","#8BBA00")
+        .attr("stroke",'var(--frepple-color-inventory, #8BBA00)')
         .attr("d", line(data));
     }
 
@@ -432,17 +432,17 @@ function drawGraphs(jsondata)
     // Define legend
     var code_legend = [];
     if (cross_idx.includes(parseInt(id_by_field["startoh"])))
-       code_legend.push(['{{_('start inventory')|capfirst}}',"#8BBA00"]);
+       code_legend.push(['{{_('start inventory')|capfirst}}','var(--frepple-color-inventory, #8BBA00)']);
     else if (cross_idx.includes(parseInt(id_by_field["endoh"])))
-       code_legend.push(['{{_('end inventory')|capfirst}}',"#8BBA00"]);
+       code_legend.push(['{{_('end inventory')|capfirst}}','var(--frepple-color-inventory, #8BBA00)']);
     if (cross_idx.includes(parseInt(id_by_field["safetystock"])))
-       code_legend.push(['{{_('safety stock')|capfirst}}',"#FF0000"]);
-    code_legend.push(['{{_('consumed')|capfirst}}',"#F6BD0F"]);
-    code_legend.push(['{{_('consumed confirmed')|capfirst}}',"#7B5E08"]);
-    code_legend.push(['{{_('produced')|capfirst}}',"#2B95EC"]);
-    code_legend.push(['{{_('produced confirmed')|capfirst}}',"#113C5E"]);
+       code_legend.push(['{{_('safety stock')|capfirst}}','var(--frepple-color-safetystock, #FF0000)']);
+    code_legend.push(['{{_('consumed')|capfirst}}','var(--frepple-color-consumed, #F6BD0F)']);
+    code_legend.push(['{{_('consumed confirmed')|capfirst}}','var(--frepple-color-consumed-confirmed, #7B5E08)']);
+    code_legend.push(['{{_('produced')|capfirst}}','var(--frepple-color-produced, #2B95EC)']);
+    code_legend.push(['{{_('produced confirmed')|capfirst}}','var(--frepple-color-produced-confirmed, #113C5E)']);
     if (cross_idx.includes(parseInt(id_by_field["total_backlog"])))
-      code_legend.push(['{{_('total backlog')|capfirst}}',"#000000"]);
+      code_legend.push(['{{_('total backlog')|capfirst}}','var(--frepple-color-backlog, #000000)']);
 
     // Display legend
     var legend = svg.append("g");

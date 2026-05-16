@@ -1902,7 +1902,7 @@ class InventoryEvolutionWidget(Widget):
       svg.append("svg:path")
         .attr("transform", "translate(" + margin_y + ", 10 )")
         .attr("class", "graphline")
-        .attr("stroke", segment.type === 1 ? "#FF0000" : "#8BBA00")
+        .attr("stroke", segment.type === 1 ? 'var(--frepple-color-forecast, #FF0000)' : 'var(--frepple-color-inventory, #8BBA00)')
         .attr("fill", "none")
         .attr("d", line(segment.values));
     });

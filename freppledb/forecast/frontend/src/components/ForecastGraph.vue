@@ -236,7 +236,7 @@ const render = () => {
           .attr("height", Yzero - myY)
           .attr("x", xWidth / 2)
           .attr("y", myY)
-          .style("fill", "#2B95EC");
+          .style("fill", 'var(--frepple-color-orders-open, #2B95EC)');
       }
 
       // Draw hovering tooltip
@@ -278,7 +278,7 @@ const render = () => {
 
   svg.append("svg:path")
     .attr('class', 'graphline')
-    .attr("stroke", "#8BBA00")
+    .attr("stroke", 'var(--frepple-color-orders-total, #8BBA00)')
     .attr("d", line(filteredGraphData));
 
   // Create D3 lines - total forecast
@@ -288,7 +288,7 @@ const render = () => {
 
   svg.append("svg:path")
     .attr('class', 'graphline')
-    .attr("stroke", "#FF0000")
+    .attr("stroke", 'var(--frepple-color-forecast, #FF0000)')
     .attr("d", line(filteredGraphData));
 
   // Create D3 lines - past forecast
@@ -298,7 +298,7 @@ const render = () => {
 
   svg.append("svg:path")
     .attr('class', 'graphline')
-    .attr("stroke", "#FF7B00")
+    .attr("stroke", 'var(--frepple-color-forecast-past, #FF7B00)')
     .attr("d", line(filteredGraphData));
 
   // Display Y-Axis
@@ -334,10 +334,10 @@ const render = () => {
   // Display legend
   const legend = svg.append("g");
   const codes = [
-    [ttt("open orders"), "#2B95EC", 1],
-    [ttt("total orders"), "#8BBA00", 0],
-    [ttt("forecast total"), "#FF0000", 5],
-    [ttt("past forecast"), "#FF7B00", 6]
+    [ttt("open orders"), 'var(--frepple-color-orders-open, #2B95EC)', 1],
+    [ttt("total orders"), 'var(--frepple-color-orders-total, #8BBA00)', 0],
+    [ttt("forecast total"), 'var(--frepple-color-forecast, #FF0000)', 5],
+    [ttt("past forecast"), 'var(--frepple-color-forecast-past, #FF7B00)', 6]
   ];
 
   let visible = 0;

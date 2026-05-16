@@ -158,7 +158,7 @@ function drawGraphs(jsondata)
             .attr("height", y_zero - my_y)
             .attr("x", x_width/2)
             .attr("y", my_y)
-            .style("fill","#2B95EC");
+            .style("fill",'var(--frepple-color-orders-open, #2B95EC)');
         }
         if (d['ordersplanned'] > 0
           && ('ordersplanned' in fields || 'ordersplannedvalue' in fields))
@@ -168,7 +168,7 @@ function drawGraphs(jsondata)
             .attr("width", x_width/2)
             .attr("y", top)
             .attr("height", y_zero - top)
-            .style("fill","#7B5E08");
+            .style("fill",'var(--frepple-color-orders-planned, #7B5E08)');
         }
         if (d['forecastplanned'] > 0
           && ('forecastplanned' in fields || 'forecastplannedvalue' in fields))
@@ -177,7 +177,7 @@ function drawGraphs(jsondata)
             .attr("width", x_width/2)
             .attr("y", y(d['forecastplanned'] + d['ordersplanned']))
             .attr("height", y(d['ordersplanned']) - y(d['forecastplanned'] + d['ordersplanned']))
-            .style("fill","#F6BD0F");
+            .style("fill",'var(--frepple-color-forecast-planned, #F6BD0F)');
         }
 
 		// Draw hoover tooltip
@@ -228,7 +228,7 @@ function drawGraphs(jsondata)
         .y(function(d) { return y(d['orderstotal']); });
       svg.append("svg:path")
         .attr('class', 'graphline')
-        .attr("stroke","#8BBA00")
+        .attr("stroke",'var(--frepple-color-orders-total, #8BBA00)')
         .attr("d", line(data));
     }
     if ('forecasttotal' in fields || 'forecasttotalvalue' in fields || 'forecastoverride' in fields || 'forecastoverridevalue' in fields)
@@ -238,7 +238,7 @@ function drawGraphs(jsondata)
         .y(function(d) { return y(d['future'] == 1 ? d['forecasttotal'] : 0); });
       svg.append("svg:path")
         .attr('class', 'graphline')
-        .attr("stroke","#FF0000")
+        .attr("stroke",'var(--frepple-color-forecast, #FF0000)')
         .attr("d", line(data));
 
       line = d3.svg.line()
@@ -246,7 +246,7 @@ function drawGraphs(jsondata)
         .y(function(d) { return y(d['future'] != 1 ? d['forecasttotal'] : 0); });
       svg.append("svg:path")
         .attr('class', 'graphline')
-        .attr("stroke","#FF7B00")
+        .attr("stroke",'var(--frepple-color-forecast-past, #FF7B00)')
         .attr("d", line(data));
     }
     if ('backlog' in fields || 'backlogvalue' in fields)
@@ -291,13 +291,13 @@ function drawGraphs(jsondata)
     // Display legend
     var legend = svg.append("g");
     var codes = [
-      ["{{_('open orders')|capfirst}}", "#2B95EC", 'ordersopen'],
-      ["{{_('total orders')|capfirst}}", "#8BBA00", 'orderstotal'],
-      ["{{_('forecast total')|capfirst}}", "#FF0000", 'forecasttotal'],
-      ["{{_('planned orders')|capfirst}}", "#7B5E08", 'ordersplanned'],
-      ["{{_('planned net forecast')|capfirst}}", "#F6BD0F", 'forecastplanned'],
-      ["{{_('past forecast')|capfirst}}", "#FF7B00", 'forecasttotal'],
-      ["{{_('backlog')|capfirst}}", "#090808", 'backlog']
+      ["{{_('open orders')|capfirst}}", 'var(--frepple-color-orders-open, #2B95EC)', 'ordersopen'],
+      ["{{_('total orders')|capfirst}}", 'var(--frepple-color-orders-total, #8BBA00)', 'orderstotal'],
+      ["{{_('forecast total')|capfirst}}", 'var(--frepple-color-forecast, #FF0000)', 'forecasttotal'],
+      ["{{_('planned orders')|capfirst}}", 'var(--frepple-color-orders-planned, #7B5E08)', 'ordersplanned'],
+      ["{{_('planned net forecast')|capfirst}}", 'var(--frepple-color-forecast-planned, #F6BD0F)', 'forecastplanned'],
+      ["{{_('past forecast')|capfirst}}", 'var(--frepple-color-forecast-past, #FF7B00)', 'forecasttotal'],
+      ["{{_('backlog')|capfirst}}", 'var(--frepple-color-backlog, #090808)', 'backlog']
       ];
     var visible = 0;
     for (var i in codes)

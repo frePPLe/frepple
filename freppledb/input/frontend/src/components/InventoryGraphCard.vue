@@ -152,7 +152,7 @@ function drawGraph() {
                 .attr('height', y_zero - y_top_low)
                 .attr('x', x_width / 2)
                 .attr('y', y_top_low)
-                .style('fill', '#113C5E');
+                .style('fill', 'var(--frepple-color-produced-confirmed, #113C5E)');
           }
 
           if (d.produced_proposed > 0) {
@@ -161,7 +161,7 @@ function drawGraph() {
                 .attr('height', y_top_low - y_top)
                 .attr('x', x_width / 2)
                 .attr('y', y_top)
-                .style('fill', '#2B95EC');
+                .style('fill', 'var(--frepple-color-produced, #2B95EC)');
           }
         }
 
@@ -175,7 +175,7 @@ function drawGraph() {
                 .attr('width', x_width / 2)
                 .attr('height', y_zero - y_top_low)
                 .attr('y', y_top_low)
-                .style('fill', '#7B5E08');
+                .style('fill', 'var(--frepple-color-consumed-confirmed, #7B5E08)');
           }
 
           if (d.consumed_proposed > 0) {
@@ -183,7 +183,7 @@ function drawGraph() {
                 .attr('width', x_width / 2)
                 .attr('height', y_top_low - y_top)
                 .attr('y', y_top)
-                .style('fill', '#F6BD0F');
+                .style('fill', 'var(--frepple-color-consumed, #F6BD0F)');
           }
         }
 
@@ -296,7 +296,7 @@ function drawGraph() {
       .y(d => y(d.startinv));
   svg.append('path')
       .attr('class', 'graphline')
-      .attr('stroke', '#8BBA00')
+      .attr('stroke', 'var(--frepple-color-inventory, #8BBA00)')
       .attr('d', line(data));
 
   // Draw safety stock line
@@ -305,7 +305,7 @@ function drawGraph() {
       .y(d => y(d.safetystock));
   svg.append('path')
       .attr('class', 'graphline')
-      .attr('stroke', '#FF0000')
+      .attr('stroke', 'var(--frepple-color-safetystock, #FF0000)')
       .attr('d', safetyLine(data));
 
   // Draw X-axis

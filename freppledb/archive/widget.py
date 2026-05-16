@@ -41,7 +41,7 @@ class ArchivedDemandWidget(Widget):
     title = _("Demand history")
     tooltip = _("Show the evolution of the open sales orders")
     asynchronous = True
-    size = 'lg'
+    size = "lg"
     history = 12
 
     def args(self):
@@ -97,7 +97,7 @@ class ArchivedDemandWidget(Widget):
       .attr("height", function(d) {return y_zero - y(d[4]);})
       .attr("rx","1")
       .attr("width", x_width - 2)
-      .style("fill", "#FFC000");
+      .style("fill", "var(--frepple-color-orders-overdue, #FFC000)");
 
     // Draw invisible rectangles for the hoverings
     bar.append("rect")
@@ -148,7 +148,7 @@ class ArchivedDemandWidget(Widget):
     svg.append("svg:path")
       .attr("transform", "translate(" + margin_y + ", 10 )")
       .attr('class', 'graphline')
-      .attr("stroke","#8BBA00")
+      .attr("stroke",'var(--frepple-color-orders-total, #8BBA00)')
       .attr("d", line(data));
     """
 
@@ -209,7 +209,7 @@ class ArchivedPurchaseOrderWidget(Widget):
     title = _("Purchase order history")
     tooltip = _("Show the evolution of the open purchase orders")
     asynchronous = True
-    size = 'lg'
+    size = "lg"
     history = 12
 
     def args(self):
@@ -265,7 +265,7 @@ class ArchivedPurchaseOrderWidget(Widget):
       .attr("height", function(d) {return y_zero - y(d[4]);})
       .attr("rx","1")
       .attr("width", x_width - 2)
-      .style("fill", "#FFC000");
+      .style("fill", "var(--frepple-color-orders-overdue, #FFC000)");
 
     // Draw invisible rectangles for the hoverings
     bar.append("rect")
@@ -316,7 +316,7 @@ class ArchivedPurchaseOrderWidget(Widget):
     svg.append("svg:path")
       .attr("transform", "translate(" + margin_y + ", 10 )")
       .attr('class', 'graphline')
-      .attr("stroke","#8BBA00")
+      .attr("stroke",'var(--frepple-color-orders-total, #8BBA00)')
       .attr("d", line(data));
     """
 

@@ -105,7 +105,7 @@ function drawGraphs(jsondata)
             .attr("x", barnum[0] * x_width / numbars)
             .attr("y", top)
             .attr("height", y(0) - top)
-            .style("fill","#113C5E")
+            .style("fill",'var(--frepple-color-produced-confirmed, #113C5E)')
             .on("click", function(d) {
                 if (d3.event.defaultPrevented || d['total_start'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
@@ -128,7 +128,7 @@ function drawGraphs(jsondata)
             .attr("x", barnum[0] * x_width / numbars)
             .attr("y", newtop)
             .attr("height", top - newtop)
-            .style("fill","#2B95EC")
+            .style("fill",'var(--frepple-color-produced, #2B95EC)')
             .on("click", function(d) {
                 if (d3.event.defaultPrevented || d['total_start'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
@@ -152,7 +152,7 @@ function drawGraphs(jsondata)
             .attr("x", barnum[1] * x_width / numbars)
             .attr("y", top)
             .attr("height", y(0) - top)
-            .style("fill","#7B5E08")
+            .style("fill",'var(--frepple-color-consumed-confirmed, #7B5E08)')
             .on("click", function(d) {
                 if (d3.event.defaultPrevented || d['total_end'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
@@ -175,7 +175,7 @@ function drawGraphs(jsondata)
             .attr("x", barnum[1] * x_width / numbars)
             .attr("y", newtop)
             .attr("height", top - newtop)
-            .style("fill","#F6BD0F")
+            .style("fill",'var(--frepple-color-consumed, #F6BD0F)')
             .on("click", function(d) {
                 if (d3.event.defaultPrevented || d['total_end'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
@@ -239,7 +239,7 @@ function drawGraphs(jsondata)
         .y(function(d) { return y(d['total_in_transit']); });
       svg.append("svg:path")
         .attr('class', 'graphline')
-        .attr("stroke","#8BBA00")
+        .attr("stroke",'var(--frepple-color-inventory, #8BBA00)')
         .attr("d", line(data));
     }
 

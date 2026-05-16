@@ -124,7 +124,7 @@ function drawGraphs(jsondata)
         var newtop = 0;
         var top = 0;
         var load = d['load'];
-        var free = d['available'] - d['setup'] - load;        
+        var free = d['available'] - d['setup'] - load;
         var overload = 0;
         if (free < 0)
         {
@@ -139,7 +139,7 @@ function drawGraphs(jsondata)
             .attr("width", x_width)
             .attr("y", y(newtop))
             .attr("height", y(top) - y(newtop))
-            .style("fill","#F6BD0F");
+            .style("fill",'var(--frepple-color-capacity-unavailable, #F6BD0F)');
           top = newtop;
         }
         if (d['setup'] > 0 && 2 in fields)
@@ -149,7 +149,7 @@ function drawGraphs(jsondata)
             .attr("width", x_width)
             .attr("y", y(newtop))
             .attr("height", y(top) - y(newtop))
-            .style("fill","#2B95EC");
+            .style("fill",'var(--frepple-color-capacity-setup, #2B95EC)');
           top = newtop;
         }
         if (d['load_confirmed'] > 0 && 5 in fields) {
@@ -158,7 +158,7 @@ function drawGraphs(jsondata)
             .attr("width", x_width)
             .attr("y", y(newtop))
             .attr("height", y(top) - y(newtop))
-            .style("fill","#113C5E");
+            .style("fill",'var(--frepple-color-capacity-confirmed, #113C5E)');
           top = newtop;
         }
         if (load > 0 && 3 in fields)
@@ -169,7 +169,7 @@ function drawGraphs(jsondata)
             .attr("width", x_width)
             .attr("y", y(newtop))
             .attr("height", y(top) - y(newtop))
-            .style("fill","#AFD8F8");
+            .style("fill",'var(--frepple-color-capacity-load, #AFD8F8)');
           top = newtop;
         }
         if (overload > 0)
@@ -179,7 +179,7 @@ function drawGraphs(jsondata)
             .attr("width", x_width)
             .attr("y", y(newtop))
             .attr("height", y(top) - y(newtop))
-            .style("fill","#FF0000");
+            .style("fill",'var(--frepple-color-capacity-overload, #FF0000)');
         }
 
         // Build line points
@@ -239,7 +239,7 @@ function drawGraphs(jsondata)
 	           + '</td></tr><tr><td>{{_('load')|capfirst}}</td><td style="text-align:center">'
 	           + grid.formatNumber(d['load'])
 	           + '</td></tr><tr><td>{{_('load confirmed')|capfirst}}</td><td style="text-align:center">'
-	           + grid.formatNumber(d['load_confirmed'])             
+	           + grid.formatNumber(d['load_confirmed'])
 	           + '</td></tr></table>'
 	           );
 	        })
@@ -255,7 +255,7 @@ function drawGraphs(jsondata)
         .y(function(d) { return d[1]; });
       svg.append("svg:path")
         .attr('class', 'graphline')
-        .attr("stroke","#8BBA00")
+        .attr("stroke",'var(--frepple-color-capacity-available, #8BBA00)')
         .attr("d", line(linedata));
     }
 
@@ -290,13 +290,13 @@ function drawGraphs(jsondata)
     // Display legend
     var legend = svg.append("g");
     var codes = [
-      ["{{_('available')|capfirst}}", "#8BBA00", 0],
-      ["{{_('unavailable')|capfirst}}", "#F6BD0F", 1],
-      ["{{_('setup')|capfirst}}", "#2B95EC", 2],
-      ["{{_('load')|capfirst}}", "#AFD8F8", 3],
-      ["{{_('load confirmed')|capfirst}}", "#113C5E", 4],
+      ["{{_('available')|capfirst}}", 'var(--frepple-color-capacity-available, #8BBA00)', 0],
+      ["{{_('unavailable')|capfirst}}", 'var(--frepple-color-capacity-unavailable, #F6BD0F)', 1],
+      ["{{_('setup')|capfirst}}", 'var(--frepple-color-capacity-setup, #2B95EC)', 2],
+      ["{{_('load')|capfirst}}", 'var(--frepple-color-capacity-load, #AFD8F8)', 3],
+      ["{{_('load confirmed')|capfirst}}", 'var(--frepple-color-capacity-confirmed, #113C5E)', 4],
       ["{{_('free')|capfirst}}", "#000000", -1],
-      ["{{_('overload')|capfirst}}", "#FF0000", -2]
+      ["{{_('overload')|capfirst}}", 'var(--frepple-color-capacity-overload, #FF0000)', -2]
       ];
     var visible = 0;
     for (var i in codes)

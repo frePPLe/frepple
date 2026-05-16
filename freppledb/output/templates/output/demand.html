@@ -114,7 +114,7 @@ function drawGraphs(jsondata)
             .attr("height", y_zero - my_y)
             .attr("x", x_width/2)
             .attr("y", my_y)
-            .style("fill","#F6BD0F");
+            .style("fill",'var(--frepple-color-consumed, #F6BD0F)');
         }
         if (d['supply'] > 0 && 1 in fields)
         {
@@ -123,7 +123,7 @@ function drawGraphs(jsondata)
             .attr("width", x_width/2)
             .attr("height", y_zero - my_y)
             .attr("y", my_y)
-            .style("fill","#2B95EC");
+            .style("fill",'var(--frepple-color-produced, #2B95EC)');
         }
         // Invisible rectangle for the tooltip
       	bucket.append("rect")
@@ -176,7 +176,7 @@ function drawGraphs(jsondata)
         .y(function(d) { return y(d['backlog']); });
       svg.append("svg:path")
         .attr('class', 'graphline')
-        .attr("stroke","#000000")
+        .attr("stroke",'var(--frepple-color-backlog, #000000)')
         .attr("d", line(data));
     }
 
@@ -211,9 +211,9 @@ function drawGraphs(jsondata)
     // Display legend
     var legend = svg.append("g");
     var codes = [
-      [1, "{{_('sales orders')|capfirst}}", "#F6BD0F"],
-      [2, "{{_('supply')|capfirst}}", "#2B95EC"],
-      [3, "{{_('backlog')|capfirst}}", "#000000"]
+      [1, "{{_('sales orders')|capfirst}}", 'var(--frepple-color-consumed, #F6BD0F)'],
+      [2, "{{_('supply')|capfirst}}", 'var(--frepple-color-produced, #2B95EC)'],
+      [3, "{{_('backlog')|capfirst}}", 'var(--frepple-color-backlog, #000000)']
       ];
     var visible = 0;
     for (var i in codes)

@@ -47,13 +47,11 @@ text.id {
   text-anchor: middle;
   fill: #ffffff !important;
   font-weight: 600;
-  font-size: 10px;
 }
 
 g.node-routing text, g.node-alternate text, g.node-split text {
   fill: #ffffff !important;
   font-weight: 700;
-  font-size: 11px;
   paint-order: stroke;
   stroke: rgba(15, 23, 42, 0.55);
   stroke-width: 2.5px;
@@ -74,11 +72,6 @@ g.node-routing text, g.node-alternate text, g.node-split text {
 
 #buffer-tooltip {
   position: fixed;
-  background: var(--bs-tooltip-bg);
-  color: var(--bs-tooltip-color);
-  padding: 4px 8px;
-  border-radius: 5px;
-  border: 1px solid #cccccc;
   pointer-events: none;
   white-space: pre;
   z-index: 9999;
@@ -2361,7 +2354,7 @@ ExpandColClick: true,
 {% block tabs %}{% tabs model %}{% endblock %}
 
 {% block before_table %}
-<div id="buffer-tooltip"></div>
+<div id="buffer-tooltip" class="card p-2"></div>
 <div class="row" id="graphrow" style="min-height: 100px; text-align: center;">
 <div id="graph" class="col-md-12" style="min-height: 100px; clear: both; height: 345px; overflow: hidden;">
 <svg id="svggraph" width="100%" preserveAspectRatio="xMinYMin meet" style="cursor: move;">

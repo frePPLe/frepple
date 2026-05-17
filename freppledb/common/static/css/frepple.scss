@@ -1021,8 +1021,8 @@ svg text {
   }
 }
 
-// Colors for the frepple graphs
 :root {
+  // Colors for the graphs
   --frepple-color-backlog: #{$frepple-color-backlog};
   --frepple-color-capacity-available: #{$frepple-color-capacity-available};
   --frepple-color-capacity-confirmed: #{$frepple-color-capacity-confirmed};
@@ -1048,4 +1048,20 @@ svg text {
   --frepple-color-reorder-quantity: #{$frepple-color-reorder-quantity};
   --frepple-color-safetystock: #{$frepple-color-safetystock};
   --frepple-color-orders-total: #{$frepple-color-orders-total};
+
+  // Colors for the supply path
+  --frepple-color-alternate-itemdistribution: #{$frepple-color-alternate-itemdistribution};
+  --frepple-color-alternate-operation: #{$frepple-color-alternate-operation};
+  --frepple-color-alternate-stroke: #{$frepple-color-alternate-stroke};
+  --frepple-color-buffer: #{$frepple-color-buffer};
+  --frepple-color-flow: #{$frepple-color-flow};
+  --frepple-color-itemdistribution: #{$frepple-color-itemdistribution};
+  --frepple-color-itemsupplier: #{$frepple-color-itemsupplier};
+  --frepple-color-load: #{$frepple-color-load};
+  --frepple-color-operation: #{$frepple-color-operation};
+  --frepple-color-resource: #{$frepple-color-resource};
+  --frepple-color-routing: #{$frepple-color-routing};
+  --frepple-color-routing-stroke: #{$frepple-color-routing-stroke};
+  --frepple-color-split: #{$frepple-color-split};
+  --frepple-color-split-stroke: #{$frepple-color-split-stroke};
 }

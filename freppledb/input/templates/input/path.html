@@ -15,7 +15,7 @@
 
 path.flow {
   fill: none;
-  stroke: #475569;
+  stroke: var(--frepple-color-flow, #475569);
   stroke-width: 1.5px;
   cursor: default;
   marker-mid: url(#arrow);
@@ -23,7 +23,7 @@ path.flow {
 
 path.load {
   fill: none;
-  stroke: #94a3b8;
+  stroke: var(--frepple-color-load, #94a3b8);
   stroke-width: 1.2px;
   cursor: default;
   stroke-dasharray: 5,4;
@@ -31,14 +31,13 @@ path.load {
 
 path.depends {
   fill: none;
-  stroke: #475569;
+  stroke: var(--frepple-color-flow, #475569);
   stroke-width: 1.5px;
   cursor: default;
   marker-mid: url(#dependsmarker);
 }
 
 text {
-  font: 10px 'Inter', 'Segoe UI', sans-serif;
   pointer-events: none;
   fill: #1e293b;
   letter-spacing: 0.01em;
@@ -77,7 +76,6 @@ g.node-routing text, g.node-alternate text, g.node-split text {
   position: fixed;
   background: var(--bs-tooltip-bg);
   color: var(--bs-tooltip-color);
-  font: 11px 'Inter', 'Segoe UI', sans-serif;
   padding: 4px 8px;
   border-radius: 5px;
   border: 1px solid #cccccc;
@@ -88,7 +86,6 @@ g.node-routing text, g.node-alternate text, g.node-split text {
 }
 
 .collapse-control-label {
-  font: 11px 'Inter', 'Segoe UI', sans-serif;
   font-weight: 700;
   text-anchor: middle;
   dominant-baseline: middle;
@@ -886,7 +883,6 @@ function drawGraph(jsondata)
     operations[jsondata['rows'][oper]['operation']] = nodes[operindex].id;
 
     // Check if a blocking/blockedby operation exists
-
     if (jsondata['rows'][oper]['blockedby'] != null)
       for (var i = 0; i < jsondata['rows'][oper]['blockedby'].length; i++) {
           if (jsondata['rows'][oper]['blockedby'][i][0] in operations) {
@@ -899,8 +895,6 @@ function drawGraph(jsondata)
           links.push({source: nodes[operindex], target: nodes[operations[jsondata['rows'][oper]['blocking'][i][0]]], type: 'depends'});
         }
     }
-
-
 
     // Add nodes for the resources and load links
     for (var res in jsondata['rows'][oper]['resources'])
@@ -1135,20 +1129,22 @@ function drawGraph(jsondata)
    .attr('height', 26)
    .attr('width', 104)          // default; will be resized after text measurement
    .attr('x', -52).attr('y', -13)
-  .style('cursor', function(d) { return isNonClickableOperationType(d.type) ? 'default' : 'pointer'; })
+   .style('cursor', function(d) {
+    return isNonClickableOperationType(d.type) ? 'default' : 'pointer';
+   })
    .style('fill', function(d) {
-      if (d.type === 'operation') return '#2563eb';
-      if (d.type === 'operation_alternate') return '#60a5fa';
-      if (d.type === 'itemsupplier') return '#0d9488';
-      if (d.type === 'itemdistribution') return '#0ea5e9';
-      if (d.type === 'itemdistribution_alternate') return '#06b6d4';
-    if (d.type === 'routing') return '#93c5fd';
-      if (d.type === 'alternate' || d.type === 'split') return '#0f172a';
-      return '#2563eb';
+      if (d.type === 'operation') return 'var(--frepple-color-operation, #2563eb)';
+      if (d.type === 'operation_alternate') return 'var(--frepple-color-alternate-operation, #60a5fa)';
+      if (d.type === 'itemsupplier') return 'var(--frepple-color-itemsupplier, #0d9488)';
+      if (d.type === 'itemdistribution') return 'var(--frepple-color-itemdistribution, #0ea5e9)';
+      if (d.type === 'itemdistribution_alternate') return 'var(--frepple-color-alternate-itemdistribution, #06b6d4)';
+      if (d.type === 'routing') return 'var(--frepple-color-routing, #93c5fd)';
+      if (d.type === 'alternate' || d.type === 'split') return 'var(--frepple-color-alternate, #0f172a)';
+      return 'var(--frepple-color-operation, #2563eb)';
    })
    .style('stroke', function(d) {
-      if (d.type === 'routing') return '#64748b';
-      if (d.type === 'alternate' || d.type === 'split') return '#475569';
+      if (d.type === 'routing') return 'var(--frepple-color-routing-stroke, #64748b)';
+      if (d.type === 'alternate' || d.type === 'split') return 'var(--frepple-color-alternate-stroke, #475569)';
       return 'none';
    })
    .style('stroke-width', function(d) {
@@ -1191,7 +1187,7 @@ function drawGraph(jsondata)
    .attr('rx', 22)
    .attr('ry', 14)
    .style('cursor', 'pointer')
-   .style('fill', '#f97316')
+   .style('fill', 'var(--frepple-color-resource, #f97316)')
    .style('filter', 'url(#glowfilter)')
    .style('opacity', function(d) { return (d.suboperindex > 0) ? 0.75 : 1; });
 
@@ -2379,13 +2375,13 @@ ExpandColClick: true,
     <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#ff8c3a55"/>
   </filter>
 
-  <!-- Arrow markers — slightly softer -->
+  <!-- Arrow markers -->
   <marker id="arrow" viewBox="0 -5 10 10" refX="6" markerWidth="5" markerHeight="5" orient="auto">
-    <polygon points="0,-4 10,0 0,4" style="fill: #475569;">
+    <polygon points="0,-4 10,0 0,4" style="fill: var(--frepple-color-flow, #475569) ;">
     </polygon>
   </marker>
   <marker id="dependsmarker" viewBox="0 -5 10 10" refX="6" markerWidth="5" markerHeight="5" orient="auto">
-    <polygon points="0,-4 10,0 0,4 5,0" style="fill: #475569;">
+    <polygon points="0,-4 10,0 0,4 5,0" style="fill: var(--frepple-color-flow, #475569) ;">
     </polygon>
   </marker>
 
@@ -2398,7 +2394,6 @@ ExpandColClick: true,
     <line x1="-43" y1="3.5" x2="-32" y2="3.5" style="stroke: #ffffff; stroke-width: 1.1; stroke-linecap: round;"></line>
     <circle cx="-40.5" cy="6.5" r="1.8" style="fill: #ffffff;"></circle>
     <circle cx="-34" cy="6.5" r="1.8" style="fill: #ffffff;"></circle>
-    <line x1="-28" y1="-8" x2="-28" y2="8" style="stroke: #ffffff; stroke-width: 1; stroke-opacity: 0.45; stroke-linecap: round;"></line>
   </g>
   <g id="icon-itemdistribution">
     <path d="M-47,-2.5 h12 v-3.5 h5.5 l4,4 v6 h-2.5"
@@ -2410,7 +2405,6 @@ ExpandColClick: true,
     <line x1="-30.5" y1="-5.5" x2="-27.5" y2="-2.5" style="stroke: #ffffff; stroke-width: 1.1; stroke-linecap: round;"></line>
     <circle cx="-40.5" cy="5" r="2.1" style="fill: #ffffff;"></circle>
     <circle cx="-30.5" cy="5" r="2.1" style="fill: #ffffff;"></circle>
-    <line x1="-20" y1="-8" x2="-20" y2="8" style="stroke: #ffffff; stroke-width: 1; stroke-opacity: 0.45; stroke-linecap: round;"></line>
   </g>
   <g id="icon-itemdistribution_alternate">
     <path d="M-47,-2.5 h12 v-3.5 h5.5 l4,4 v6 h-2.5"
@@ -2422,18 +2416,17 @@ ExpandColClick: true,
     <line x1="-30.5" y1="-5.5" x2="-27.5" y2="-2.5" style="stroke: #ffffff; stroke-width: 1.1; stroke-linecap: round;"></line>
     <circle cx="-40.5" cy="5" r="2.1" style="fill: #ffffff;"></circle>
     <circle cx="-30.5" cy="5" r="2.1" style="fill: #ffffff;"></circle>
-    <line x1="-20" y1="-8" x2="-20" y2="8" style="stroke: #ffffff; stroke-width: 1; stroke-opacity: 0.45; stroke-linecap: round;"></line>
   </g>
 
-  <!-- Operation: pill-shaped, rich blue with shadow -->
+  <!-- Operation: pill-shaped -->
   <rect id="operation" class="operation" width="104" height="26" x="-52" y="-13" rx="13" ry="13"
-    style="cursor: pointer; fill: #2563eb; filter: url(#dropshadow);">
+    style="cursor: pointer; filter: url(#dropshadow);">
   </rect>
 
   <!-- itemsupplier: pill rect with shopping cart icon on the left -->
   <g id="itemsupplier" class="itemsupplier" style="cursor: pointer;">
     <rect width="104" height="26" x="-52" y="-13" rx="13" ry="13"
-      style="fill: #0d9488; filter: url(#dropshadow);">
+      style="fill: var(--frepple-color-itemsupplier, #0d9488); filter: url(#dropshadow);">
     </rect>
     <!-- cart body -->
     <path d="M-44,-5 h2 l2.5,7 h7 l2,-5 h-9.5"
@@ -2450,15 +2443,12 @@ ExpandColClick: true,
     <!-- wheels -->
     <circle cx="-40.5" cy="6.5" r="1.8" style="fill: #ffffff;"></circle>
     <circle cx="-34" cy="6.5" r="1.8" style="fill: #ffffff;"></circle>
-    <!-- vertical separator -->
-    <line x1="-28" y1="-8" x2="-28" y2="8"
-      style="stroke: #ffffff; stroke-width: 1; stroke-opacity: 0.45; stroke-linecap: round;"></line>
   </g>
 
   <!-- itemdistribution: pill rect with truck icon on the left -->
   <g id="itemdistribution" class="itemdistribution" style="cursor: pointer;">
     <rect width="104" height="26" x="-52" y="-13" rx="13" ry="13"
-      style="fill: #7c3aed; filter: url(#dropshadow);">
+      style="fill: var(--frepple-color-itemdistribution, #0ea5e9); filter: url(#dropshadow);">
     </rect>
     <!-- truck outline -->
     <path d="M-47,-2.5 h12 v-3.5 h5.5 l4,4 v6 h-2.5"
@@ -2481,20 +2471,17 @@ ExpandColClick: true,
       style="fill: #ffffff;"></circle>
     <circle cx="-30.5" cy="5" r="2.1"
       style="fill: #ffffff;"></circle>
-    <!-- vertical separator -->
-    <line x1="-20" y1="-8" x2="-20" y2="8"
-      style="stroke: #ffffff; stroke-width: 1; stroke-opacity: 0.45; stroke-linecap: round;"></line>
   </g>
 
   <!-- operation_alternate: pill-shaped, mid blue (distinct from routing #93c5fd) -->
   <rect id="operation_alternate" class="operation_alternate" width="104" height="26" x="-52" y="-13" rx="13" ry="13"
-    style="cursor: pointer; fill: #60a5fa; filter: url(#dropshadow);">
+    style="cursor: pointer; fill: var(--frepple-color-operation-alternate, #60a5fa); filter: url(#dropshadow);">
   </rect>
 
   <!-- itemdistribution_alternate: same pill + truck, lighter purple -->
   <g id="itemdistribution_alternate" class="itemdistribution_alternate" style="cursor: pointer;">
     <rect width="104" height="26" x="-52" y="-13" rx="13" ry="13"
-      style="fill: #a78bfa; filter: url(#dropshadow);">
+      style="fill: var(--frepple-color-alternate-itemdistribution, #06b6d4); filter: url(#dropshadow);">
     </rect>
     <!-- truck outline -->
     <path d="M-47,-2.5 h12 v-3.5 h5.5 l4,4 v6 h-2.5"
@@ -2517,34 +2504,31 @@ ExpandColClick: true,
       style="fill: #ffffff;"></circle>
     <circle cx="-30.5" cy="5" r="2.1"
       style="fill: #ffffff;"></circle>
-    <!-- vertical separator -->
-    <line x1="-20" y1="-8" x2="-20" y2="8"
-      style="stroke: #ffffff; stroke-width: 1; stroke-opacity: 0.45; stroke-linecap: round;"></line>
   </g>
 
-  <!-- routing: rounded rect, light blue with subtle border -->
+  <!-- routing: rounded rect -->
   <rect id="routing" class="routing" width="114" height="26" x="-57" y="-13" rx="13" ry="13"
-    style="cursor: pointer; fill: #93c5fd; stroke: #60a5fa; stroke-width: 1.5; filter: url(#dropshadow); vector-effect: non-scaling-stroke;">
+    style="cursor: pointer; fill: var(--frepple-color-routing, #93c5fd); stroke: var(--frepple-color-routing-stroke, #60a5fa); stroke-width: 1.5; filter: url(#dropshadow); vector-effect: non-scaling-stroke;">
   </rect>
 
-  <!-- alternate: rounded rect, dark -->
+  <!-- alternate: rounded rect -->
   <rect id="alternate" class="alternate" width="114" height="26" x="-57" y="-13" rx="13" ry="13"
-    style="cursor: pointer; fill: #0f172a; stroke: #475569; stroke-width: 1.5; filter: url(#dropshadow); vector-effect: non-scaling-stroke;">
+    style="cursor: pointer; fill: var(--frepple-color-alternate, #0f172a); stroke: var(--frepple-color-alternate-stroke, #475569); stroke-width: 1.5; filter: url(#dropshadow); vector-effect: non-scaling-stroke;">
   </rect>
 
-  <!-- split: rounded rect, dark -->
+  <!-- split: rounded rect -->
   <rect id="split" class="split" width="114" height="26" x="-57" y="-13" rx="13" ry="13"
-    style="cursor: pointer; fill: #0f172a; stroke: #475569; stroke-width: 1.5; filter: url(#dropshadow); vector-effect: non-scaling-stroke;">
+    style="cursor: pointer; fill: var(--frepple-color-split, #0f172a); stroke: var(--frepple-color-split-stroke, #475569); stroke-width: 1.5; filter: url(#dropshadow); vector-effect: non-scaling-stroke;">
   </rect>
 
   <!-- buffer: diamond shape — standard supply chain inventory symbol -->
   <polygon id="buffer" class="buffer" points="0,-14 16,0 0,14 -16,0"
-    style="cursor: pointer; fill: #059669; filter: url(#dropshadow);">
+    style="cursor: pointer; fill: var(--frepple-color-buffer, #059669); filter: url(#dropshadow);">
   </polygon>
 
   <!-- resource: oval fallback symbol -->
   <ellipse id="resource" class="resource" cx="0" cy="0" rx="22" ry="14"
-    style="cursor: pointer; fill: #f97316; filter: url(#glowfilter);">
+    style="cursor: pointer; fill: var(--frepple-color-resource, #f97316); filter: url(#glowfilter);">
   </ellipse>
 </defs>
 </svg>

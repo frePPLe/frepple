@@ -916,6 +916,7 @@ function drawGraph(jsondata)
     for (var buf in jsondata['rows'][oper]['buffers'])
     {
       var producer = jsondata['rows'][oper]['buffers'][buf][1] > 0;
+      var isInfinite = jsondata['rows'][oper]['buffers'][buf][2] === 'infinite';
       var buflevel = producer ? level - 0.5 : level + 0.5;
       if (buflevel < minlevel) minlevel = buflevel;
       if (buflevel > maxlevel) maxlevel = buflevel;
@@ -923,6 +924,8 @@ function drawGraph(jsondata)
       {
         if (nodes[buffers[jsondata['rows'][oper]['buffers'][buf][0]]]['level'] < buflevel)
           nodes[buffers[jsondata['rows'][oper]['buffers'][buf][0]]]['level'] = buflevel;
+        if (isInfinite)
+          nodes[buffers[jsondata['rows'][oper]['buffers'][buf][0]]]['infinite'] = true;
         if (producer)
           links.push({source: nodes[operindex], target: nodes[buffers[jsondata['rows'][oper]['buffers'][buf][0]]], type: 'flow'});
         else
@@ -937,6 +940,7 @@ function drawGraph(jsondata)
           name: jsondata['rows'][oper]['buffers'][buf][0],
           weight:1,
           type: 'buffer',
+          infinite: isInfinite,
           numsuboperations: 0,
           y: 1050,
           charge: -200
@@ -1156,20 +1160,36 @@ function drawGraph(jsondata)
 
   // Buffer keeps original icon-only <use>
   g.filter(function(d) { return d.type === 'buffer'; })
-   .append("svg:use")
-   .attr("xlink:href", function(d) { return "#" + d.type; })
-   .style("opacity", function(d) { return (d.suboperindex > 0) ? 0.75 : 1; })
-   .attr("transform", function(d) {
-      if (d.numsuboperations)
-      {
-        if (d.type == 'alternate' || d.type == 'split')
-          return "scale(1,"+ (2+d.numsuboperations) +")";
-        else
-          return "scale(1,1.4)";
-      }
-      else
-        return '';
-      });
+   .each(function(d) {
+     var el = d3.select(this);
+     el.append("svg:use")
+       .attr("xlink:href", "#buffer")
+       .style("opacity", (d.suboperindex > 0) ? 0.75 : 1)
+       .attr("transform", d.numsuboperations
+         ? ((d.type == 'alternate' || d.type == 'split')
+            ? "scale(1,"+ (2+d.numsuboperations) +")"
+            : "scale(1,1.4)")
+         : '');
+     if (d.infinite) {
+       // Draw infinity symbol as two overlapping circles (figure-eight)
+       el.append('svg:circle')
+         .attr('cx', -4)
+         .attr('cy', 0)
+         .attr('r', 4)
+         .attr('fill', 'none')
+         .attr('stroke', '#ffffff')
+         .attr('stroke-width', '1.5')
+         .style('pointer-events', 'none');
+       el.append('svg:circle')
+         .attr('cx', 4)
+         .attr('cy', 0)
+         .attr('r', 4)
+         .attr('fill', 'none')
+         .attr('stroke', '#ffffff')
+         .attr('stroke-width', '1.5')
+         .style('pointer-events', 'none');
+     }
+   });
 
   // Resource nodes use a dedicated oval that we resize to fit the label.
   g.filter(function(d) { return d.type === 'resource'; })
@@ -2271,58 +2291,65 @@ $(window).resize(function() {
 });
 
 // Highlight graph node when hovering over a table row
+var _rowHoverTimer = null;
 $(document).on('mouseenter', '#grid tr.jqgrow', function() {
-  var rowId = $(this).attr('id');
-  var rowData = $("#grid").jqGrid('getRowData', rowId);
-  if (rowData && rowData.operation) {
-    var opText = $('<div>').html(rowData.operation).text().trim();
-    if (opText && opText in operations) {
-      var nodeId = operations[opText];
+  var row = this;
+  if (_rowHoverTimer) clearTimeout(_rowHoverTimer);
+  _rowHoverTimer = setTimeout(function() {
+    _rowHoverTimer = null;
+    var rowId = $(row).attr('id');
+    var rowData = $("#grid").jqGrid('getRowData', rowId);
+    if (rowData && rowData.operation) {
+      var opText = $('<div>').html(rowData.operation).text().trim();
+      if (opText && opText in operations) {
+        var nodeId = operations[opText];
 
-      // Pan graph to show node if outside visible area
-      var targetNode = null;
-      for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].id === nodeId) {
-          targetNode = nodes[i];
-          break;
-        }
-      }
-      if (targetNode && graphZoom) {
-        var svgEl = document.getElementById('svggraph');
-        var vbAttr = svgEl.getAttribute('viewBox');
-        if (vbAttr) {
-          var vb = vbAttr.split(/[\s,]+/).map(Number);
-          var vb_x = vb[0], vb_y = vb[1], vb_w = vb[2], vb_h = vb[3];
-          var t = graphZoom.translate();
-          var s = graphZoom.scale();
-          var nx = targetNode.x * s + t[0];
-          var ny = targetNode.y * s + t[1];
-          var margin = 60;
-          if (nx < vb_x + margin || nx > vb_x + vb_w - margin ||
-              ny < vb_y + margin || ny > vb_y + vb_h - margin) {
-            var new_tx = vb_x + vb_w / 2 - targetNode.x * s;
-            var new_ty = vb_y + vb_h / 2 - targetNode.y * s;
-            graphZoom.translate([new_tx, new_ty]);
-            d3.selectAll('#svggraph > g')
-              .transition().duration(300)
-              .attr('transform', 'translate(' + new_tx + ',' + new_ty + ') scale(' + s + ')');
+        // Pan graph to show node if outside visible area
+        var targetNode = null;
+        for (var i = 0; i < nodes.length; i++) {
+          if (nodes[i].id === nodeId) {
+            targetNode = nodes[i];
+            break;
           }
         }
-      }
-
-      d3.selectAll('#svggraph g[class^="node-"]').each(function(d) {
-        if (d.id === nodeId || (d.operationNames && d.operationNames.indexOf(opText) >= 0)) {
-          var el = d3.select(this);
-          // Store current transform for the animation
-          var curTransform = el.attr('transform') || 'translate(0,0)';
-          this.style.setProperty('--node-translate', curTransform);
-          el.classed('path-node-highlight', true);
+        if (targetNode && graphZoom) {
+          var svgEl = document.getElementById('svggraph');
+          var vbAttr = svgEl.getAttribute('viewBox');
+          if (vbAttr) {
+            var vb = vbAttr.split(/[\s,]+/).map(Number);
+            var vb_x = vb[0], vb_y = vb[1], vb_w = vb[2], vb_h = vb[3];
+            var t = graphZoom.translate();
+            var s = graphZoom.scale();
+            var nx = targetNode.x * s + t[0];
+            var ny = targetNode.y * s + t[1];
+            var margin = 60;
+            if (nx < vb_x + margin || nx > vb_x + vb_w - margin ||
+                ny < vb_y + margin || ny > vb_y + vb_h - margin) {
+              var new_tx = vb_x + vb_w / 2 - targetNode.x * s;
+              var new_ty = vb_y + vb_h / 2 - targetNode.y * s;
+              graphZoom.translate([new_tx, new_ty]);
+              d3.selectAll('#svggraph > g')
+                .transition().duration(300)
+                .attr('transform', 'translate(' + new_tx + ',' + new_ty + ') scale(' + s + ')');
+            }
+          }
         }
-      });
+
+        d3.selectAll('#svggraph g[class^="node-"]').each(function(d) {
+          if (d.id === nodeId || (d.operationNames && d.operationNames.indexOf(opText) >= 0)) {
+            var el = d3.select(this);
+            // Store current transform for the animation
+            var curTransform = el.attr('transform') || 'translate(0,0)';
+            this.style.setProperty('--node-translate', curTransform);
+            el.classed('path-node-highlight', true);
+          }
+        });
+      }
     }
-  }
+  }, 1000);
 });
 $(document).on('mouseleave', '#grid tr.jqgrow', function() {
+  if (_rowHoverTimer) { clearTimeout(_rowHoverTimer); _rowHoverTimer = null; }
   d3.selectAll('#svggraph g.path-node-highlight')
     .classed('path-node-highlight', false);
 });

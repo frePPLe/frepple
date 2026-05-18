@@ -551,7 +551,18 @@ class SupplyPathSvc(AsyncHttpConsumer):
                 ),
                 "duration_per": self.format_seconds(getattr(op, "duration_per", None)),
                 "quantity": quantity,
-                "buffers": sorted((fl.buffer.name, fl.quantity) for fl in op.flows)
+                "buffers": sorted(
+                    (
+                        fl.buffer.name,
+                        fl.quantity,
+                        (
+                            "infinite"
+                            if isinstance(fl.buffer, frepple.buffer_infinite)
+                            else "default"
+                        ),
+                    )
+                    for fl in op.flows
+                )
                 or None,
                 "parent": parent_id,
                 "leaf": "false" if op.owner else None,

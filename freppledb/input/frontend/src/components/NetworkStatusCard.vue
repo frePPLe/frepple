@@ -68,7 +68,7 @@ function buildDistributionOrderUrl(item, location) {
 }
 
 function buildManufacturingOrderUrl(item, location) {
-  return `${buildBufferUrl(item, location)}?noautofilter&operationplan__status__in=approved,confirmed&operationplan__type=MO&quantity__gt=0`;
+  return `${buildBufferUrl(item, location)}?noautofilter&operationplan__status__in=approved,confirmed&operationplan__type__in=WO,MO&quantity__gt=0`;
 }
 
 function buildOverdueSalesOrderUrl(item, location, dueDate) {

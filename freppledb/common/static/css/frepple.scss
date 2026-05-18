@@ -469,6 +469,7 @@ div.tt-dataset.tt-dataset-search {
     @extend .d-flex;
     @extend .align-items-center;
     @extend .justify-content-center;
+    color: if(lightness($gray-900) < lightness($body-color), $gray-900, $body-color);
   }
 
   td input {

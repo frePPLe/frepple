@@ -92,8 +92,7 @@ class checkBuckets(CheckTask):
         import frepple
 
         with connections[database].cursor() as cursor:
-            cursor.execute(
-                """
+            cursor.execute("""
                 WITH problems AS (
                   (
                     SELECT bucket_id, enddate AS date, 'enddate not matching next bucket startdate' AS message FROM common_bucketdetail
@@ -112,8 +111,7 @@ class checkBuckets(CheckTask):
                 FROM common_bucketdetail
                 RIGHT OUTER JOIN problems ON problems.bucket_id = common_bucketdetail.bucket_id AND (common_bucketdetail.startdate = problems.date OR common_bucketdetail.enddate = problems.date)
                 INNER JOIN maxenddate ON maxenddate.bucket_id = common_bucketdetail.bucket_id
-                """
-            )
+                """)
             errors = 0
             empty = True
             for rec in cursor:
@@ -153,15 +151,13 @@ class checkBuckets(CheckTask):
                 raise ValueError("Invalid reporting time buckets")
 
             # Check if partial indexes exist
-            cursor.execute(
-                """
+            cursor.execute("""
                 select name from common_bucket
                 except
                 select description from pg_description
                 inner join pg_class on pg_class.oid = pg_description.objoid
                 inner join pg_indexes on pg_indexes.indexname = pg_class.relname and pg_indexes.tablename = 'common_bucketdetail'
-                """
-            )
+                """)
             queries = []
             for rec in cursor:
                 indexName = "common_bucketdetail_" + str(uuid.uuid4())[:8]
@@ -190,8 +186,7 @@ class checkDatabaseHealth(CheckTask):
         with connections[database].cursor() as cursor:
 
             # check 1: make sure the max(id) is less than the sequence value
-            cursor.execute(
-                """
+            cursor.execute("""
                 select
                     s.relname as sequencename,
                     t.relname as tablename,
@@ -207,18 +202,15 @@ class checkDatabaseHealth(CheckTask):
                   and n.nspname = 'public'
                   and has_table_privilege(current_user, format('%I.%I', n.nspname, t.relname), 'select')
                   and has_sequence_privilege(current_user, format('%I.%I', n.nspname, s.relname), 'update')
-                """
-            )
+                """)
             sequences = [i for i in cursor]
             for sequencename, tablename, columnname, last_value in sequences:
                 cursor.execute(f"select max({columnname}) from {tablename}")
                 max_id = cursor.fetchone()[0]
                 if max_id and max_id > (last_value or 0):
-                    cursor.execute(
-                        f"""
+                    cursor.execute(f"""
                         SELECT setval('{sequencename}', (SELECT max({columnname}) FROM {tablename}));
-                        """
-                    )
+                        """)
                     logger.info(
                         f"Updated sequence {sequencename} for table {tablename}: nexval too low"
                     )
@@ -226,8 +218,7 @@ class checkDatabaseHealth(CheckTask):
             # check 2: make sure the sequence has not reached 90% of the max value
 
             # identify all the foreign keys
-            cursor.execute(
-                """
+            cursor.execute("""
                 select rel_kcu.table_name as primary_table,
                 rel_kcu.column_name as primary_column
                 from information_schema.table_constraints tco
@@ -242,12 +233,10 @@ class checkDatabaseHealth(CheckTask):
                     and rco.unique_constraint_name = rel_kcu.constraint_name
                     and kcu.ordinal_position = rel_kcu.ordinal_position
                 where tco.constraint_type = 'FOREIGN KEY'
-                """
-            )
+                """)
             foreign_key_exists = [i for i in cursor]
 
-            cursor.execute(
-                """
+            cursor.execute("""
                 with cte as (
                 select sequencename from pg_sequences
                 where schemaname='public'
@@ -265,8 +254,7 @@ class checkDatabaseHealth(CheckTask):
                   and n.nspname = 'public'
                   and has_table_privilege(current_user, format('%I.%I', n.nspname, t.relname), 'select')
                   and has_sequence_privilege(current_user, format('%I.%I', n.nspname, sequencename), 'update')
-                """
-            )
+                """)
             sequences = [i for i in cursor]
             for sequencename, tablename, columnname in sequences:
 
@@ -277,8 +265,7 @@ class checkDatabaseHealth(CheckTask):
                     )
                     continue
 
-                cursor.execute(
-                    f"""
+                cursor.execute(f"""
                     WITH numbered_rows AS (
                     SELECT {columnname}, ROW_NUMBER() OVER (ORDER BY {columnname}) AS new_id
                     FROM {tablename}
@@ -288,8 +275,7 @@ class checkDatabaseHealth(CheckTask):
                     FROM numbered_rows
                     WHERE {tablename}.{columnname} = numbered_rows.{columnname};
                     SELECT setval('{sequencename}', (SELECT max({columnname}) FROM {tablename}));
-                    """
-                )
+                    """)
                 logger.info(
                     f"Updated sequence {sequencename} for table {tablename}: reaching max value"
                 )
@@ -363,29 +349,25 @@ class checkBrokenSupplyPath(CheckTask):
                 with connections[database].cursor() as cursor:
                     if not param:
                         logger.info("skipping search of broken supply")
-                        cursor.execute(
-                            """
+                        cursor.execute("""
                             delete from itemsupplier where supplier_id = 'Unknown supplier';
                             delete from operationplan where supplier_id = 'Unknown supplier';
                             delete from supplier where name = 'Unknown supplier';
-                            """
-                        )
+                            """)
                         return
 
                     # Setting a max run time to protect against bad data
                     cursor.execute("set local statement_timeout = '300s'")
 
                     # cleaning previous records
-                    cursor.execute(
-                        """
+                    cursor.execute("""
                         delete from itemsupplier where supplier_id = 'Unknown supplier';
                         insert into supplier (name, description)
                         values
                         ('Unknown supplier', 'automatically created to resolve broken supply paths')
                         on conflict (name)
                         do nothing;
-                        """
-                    )
+                        """)
 
                     # inserting combinations with no replenishment
                     cursor.execute(
@@ -394,9 +376,11 @@ class checkBrokenSupplyPath(CheckTask):
                         select 'Unknown supplier' as supplier_id, item_id, location_id from demand where status in ('open','quote')
                         union
                         select 'Unknown supplier', operationmaterial.item_id,
-                        coalesce(operationmaterial.location_id, operation.location_id) from operationmaterial
+                        coalesce(operationmaterial.location_id, operation.location_id)
+                        from operationmaterial
                         inner join operation on operation.name = operationmaterial.operation_id
-                        where operationmaterial.quantity < 0
+                        left outer join buffer on buffer.item_id = operationmaterial.item_id and buffer.location_id = coalesce(operationmaterial.location_id, operation.location_id)
+                        where operationmaterial.quantity < 0 and coalesce(buffer.type, 'default') != 'infinite'
                         %s
                         )
                         insert into itemsupplier (supplier_id, item_id, location_id)
@@ -459,12 +443,10 @@ class checkBrokenSupplyPath(CheckTask):
 
                     if cursor.rowcount == 0:
                         # removing unknown supplier if no invalid record has been found
-                        cursor.execute(
-                            """
+                        cursor.execute("""
                             update operationplan set supplier_id = null where supplier_id = 'Unknown supplier';
                             delete from supplier where name = 'Unknown supplier';
-                            """
-                        )
+                            """)
                         logger.info("No broken supply path detected")
                     else:
                         logger.info(
@@ -487,8 +469,7 @@ class loadParameter(LoadTask):
             frepple.settings.timezone = settings.TIME_ZONE
         with transaction.atomic(using=database):
             with connections[database].chunked_cursor() as cursor:
-                cursor.execute(
-                    """
+                cursor.execute("""
                     SELECT name, trim(value)
                     FROM common_parameter
                     where name in (
@@ -499,8 +480,7 @@ class loadParameter(LoadTask):
                        'plan.move_approved_early',
                        'plan.shortage_tolerance'
                        )
-                    """
-                )
+                    """)
                 current_date = None
                 last_current_date = None
                 for rec in cursor:
@@ -527,7 +507,7 @@ class loadParameter(LoadTask):
                     elif rec[0] == "plan.move_approved_early":
                         frepple.settings.moveApprovedEarly = int(rec[1])
                     elif rec[0] == "plan.shortage_tolerance":
-                         frepple.settings.shortage_tolerance = float(rec[1]) * 86400
+                        frepple.settings.shortage_tolerance = float(rec[1]) * 86400
                 current_set = False
                 if "loadplan" in os.environ and last_current_date:
                     try:
@@ -585,14 +565,11 @@ class loadLocations(LoadTask):
                 else:
                     attrsql = ""
 
-                cursor.execute(
-                    """
+                cursor.execute("""
                     SELECT
                     name, description, owner_id, available_id, category, subcategory, source %s
                     FROM location %s
-                    """
-                    % (attrsql, filter_where)
-                )
+                    """ % (attrsql, filter_where))
 
                 for i in cursor:
                     cnt += 1
@@ -642,17 +619,14 @@ class loadCalendars(LoadTask):
                 cnt = 0
                 starttime = time()
                 if kwargs.get("skipLoad", False):
-                    cursor.execute(
-                        """
+                    cursor.execute("""
                         select
                         name, 0, 'common_bucket', 1 hidden
                         FROM common_bucket
                         order by name asc
-                        """
-                    )
+                        """)
                 else:
-                    cursor.execute(
-                        """
+                    cursor.execute("""
                         select
                         name, defaultvalue, source, 0 hidden
                         FROM calendar %s
@@ -661,9 +635,7 @@ class loadCalendars(LoadTask):
                         name, 0, 'common_bucket', 1 hidden
                         FROM common_bucket
                         order by name asc
-                        """
-                        % filter_where
-                    )
+                        """ % filter_where)
                 for i in cursor:
                     cnt += 1
                     try:
@@ -700,19 +672,16 @@ class loadCalendarBuckets(LoadTask):
                 cnt = 0
                 starttime = time()
                 if kwargs.get("skipLoad", False):
-                    cursor.execute(
-                        """
+                    cursor.execute("""
                         SELECT
                         bucket_id calendar_id, startdate, enddate, 10 priority , 0 as value,
                         't' sunday,'t' monday,'t' tuesday,'t' wednesday,'t' thurday,'t' friday,'t' saturday,
                         time '00:00:00' starttime, time '23:59:59' endtime, 'common_bucketdetail' source, lower(name)
                         FROM common_bucketdetail
                         ORDER BY calendar_id, startdate desc
-                        """
-                    )
+                        """)
                 else:
-                    cursor.execute(
-                        """
+                    cursor.execute("""
                         SELECT
                         calendar_id, startdate, enddate, priority, value,
                         sunday, monday, tuesday, wednesday, thursday, friday, saturday,
@@ -726,9 +695,7 @@ class loadCalendarBuckets(LoadTask):
                         time '00:00:00' starttime, time '23:59:59' endtime, 'common_bucketdetail' source, lower(name)
                         FROM common_bucketdetail
                         ORDER BY calendar_id, startdate desc
-                        """
-                        % filter_where
-                    )
+                        """ % filter_where)
                 prevcal = None
                 for i in cursor:
                     cnt += 1
@@ -800,14 +767,11 @@ class loadCustomers(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
-                cursor.execute(
-                    """
+                cursor.execute("""
                 SELECT
                   name, description, owner_id, category, subcategory, source
                 FROM customer %s
-                """
-                    % filter_where
-                )
+                """ % filter_where)
                 for i in cursor:
                     cnt += 1
                     try:
@@ -849,14 +813,11 @@ class loadSuppliers(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
-                cursor.execute(
-                    """
+                cursor.execute("""
                 SELECT
                   name, description, owner_id, category, subcategory, source, available_id
                 FROM supplier %s
-                """
-                    % filter_where
-                )
+                """ % filter_where)
                 for i in cursor:
                     cnt += 1
                     try:
@@ -913,8 +874,7 @@ class loadOperations(LoadTask):
             # Preprocessing step
             # Make sure any routing has the produced item of its last step populated in the operation table
             # Old style
-            cursor.execute(
-                """
+            cursor.execute("""
                 update operation
                 set item_id = t.item_id
                 from (
@@ -931,11 +891,9 @@ class loadOperations(LoadTask):
                      ) t
                 where operation.type = 'routing'
                   and operation.name = t.operation_id
-                """
-            )
+                """)
             # New style
-            cursor.execute(
-                """
+            cursor.execute("""
                 update operation
                 set item_id = t.item_id
                 from (
@@ -952,16 +910,14 @@ class loadOperations(LoadTask):
                      ) t
                 where operation.type = 'routing'
                   and operation.name = t.operation_id
-                """
-            )
+                """)
 
             # Preprocessing step
             # Make sure any regular operation (i.e. that has no suboperation and is not a suboperation)
             # has its item_id field populated
             # That should cover 90% of the cases
             # Old style
-            cursor.execute(
-                """
+            cursor.execute("""
                 update operation
                 set item_id = t.item_id
                 from (
@@ -983,34 +939,28 @@ class loadOperations(LoadTask):
                      ) t
                 where operation.type not in ('routing', 'alternate', 'split')
                   and t.operation_id = operation.name
-                """
-            )
+                """)
 
             # Preprocessing step
             # Operations that are suboperation of a parent operation shouldn't have
             # the item field set. It is the parent operation that should have it set.
-            cursor.execute(
-                """
+            cursor.execute("""
                 update operation
                 set item_id = null
                 from suboperation
                 where operation.name = suboperation.suboperation_id
                 and operation.item_id is not null
-                """
-            )
-            cursor.execute(
-                """
+                """)
+            cursor.execute("""
                 update operation
                 set item_id = null
                 where owner_id is not null
                 and operation.item_id is not null
-                """
-            )
+                """)
 
         with transaction.atomic(using=database):
             with connections[database].chunked_cursor() as cursor:
-                cursor.execute(
-                    """
+                cursor.execute("""
                     SELECT
                     name, fence, posttime, sizeminimum, sizemultiple, sizemaximum,
                     type, duration, duration_per, location_id, cost, search, description,
@@ -1019,9 +969,7 @@ class loadOperations(LoadTask):
                     (select type from item where item.name = operation.item_id),
                     batchwindow %s
                     FROM operation %s
-                    """
-                    % (attrsql, filter_where)
-                )
+                    """ % (attrsql, filter_where))
                 for i in cursor:
                     cnt += 1
                     try:
@@ -1149,8 +1097,7 @@ class loadSuboperations(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
-                cursor.execute(
-                    """
+                cursor.execute("""
                 select
                   operation_id, suboperation_id, priority, effective_start, effective_end
                 from (
@@ -1169,9 +1116,7 @@ class loadSuboperations(LoadTask):
                     where owner_id is not null and priority >= 0 %s
                     ) suboperations
                 order by operation_id, priority, suboperation_id
-                """
-                    % (filter_and, filter_and)
-                )
+                """ % (filter_and, filter_and))
                 curopername = None
                 for i in cursor:
                     cnt += 1
@@ -1218,16 +1163,13 @@ class loadOperationDependencies(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
-                cursor.execute(
-                    """
+                cursor.execute("""
                     select
                       operation_id, blockedby_id, quantity, safety_leadtime, hard_safety_leadtime
                     from operation_dependency
                     %s
                     order by operation_id, blockedby_id
-                    """
-                    % filter_where
-                )
+                    """ % filter_where)
                 for i in cursor:
                     cnt += 1
                     try:
@@ -1280,16 +1222,13 @@ class loadItems(LoadTask):
                     attrsql = ", %s" % ", ".join(attrs)
                 else:
                     attrsql = ""
-                cursor.execute(
-                    """
+                cursor.execute("""
                 select
                   name, description, owner_id,
                   cost, category, subcategory, source, type,
                   (select type from item p_item where item.owner_id = p_item.name) %s
                 from item %s
-                """
-                    % (attrsql, filter_where)
-                )
+                """ % (attrsql, filter_where))
                 for i in cursor:
                     cnt += 1
                     try:
@@ -1349,8 +1288,7 @@ class loadItemSuppliers(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
-                cursor.execute(
-                    """
+                cursor.execute("""
                     SELECT
                     supplier_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
                     cost, priority, effective_start, effective_end, source, leadtime,
@@ -1358,9 +1296,7 @@ class loadItemSuppliers(LoadTask):
                     hard_safety_leadtime
                     FROM itemsupplier %s
                     ORDER BY supplier_id, item_id, location_id, priority desc
-                    """
-                    % filter_where
-                )
+                    """ % filter_where)
                 cursuppliername = None
                 curitemname = None
                 for i in cursor:
@@ -1431,17 +1367,14 @@ class loadItemDistributions(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
-                cursor.execute(
-                    """
+                cursor.execute("""
                 SELECT
                   origin_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
                   cost, priority, effective_start, effective_end, source,
                   leadtime, resource_id, resource_qty, fence, batchwindow
                 FROM itemdistribution %s
                 ORDER BY origin_id, item_id, location_id, priority desc
-                """
-                    % filter_where
-                )
+                """ % filter_where)
                 curoriginname = None
                 curitemname = None
                 for i in cursor:
@@ -1522,8 +1455,7 @@ class loadBuffers(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
-                cursor.execute(
-                    """
+                cursor.execute("""
                 select
                   case
                   when batch is not null
@@ -1556,9 +1488,7 @@ class loadBuffers(LoadTask):
                   else
                     item_id ||' @ '||location_id
                   end
-                """
-                    % filter_where
-                )
+                """ % filter_where)
                 for i in cursor:
                     cnt += 1
                     if i[7] == "infinite":
@@ -1695,14 +1625,11 @@ class loadSetupMatrices(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
-                cursor.execute(
-                    """
+                cursor.execute("""
                 SELECT name, source
                 FROM setupmatrix %s
                 ORDER BY name
-                """
-                    % filter_where
-                )
+                """ % filter_where)
                 for i in cursor:
                     cnt += 1
                     try:
@@ -1718,16 +1645,13 @@ class loadSetupMatrices(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
-                cursor.execute(
-                    """
+                cursor.execute("""
                 SELECT
                   setupmatrix_id, priority, fromsetup, tosetup, duration,
                   cost, source, resource_id
                 FROM setuprule %s
                 ORDER BY setupmatrix_id, priority DESC
-                """
-                    % filter_where
-                )
+                """ % filter_where)
                 for i in cursor:
                     cnt += 1
                     try:
@@ -1782,8 +1706,7 @@ class loadResources(LoadTask):
                 cnt = 0
                 starttime = time()
                 Resource.rebuildHierarchy(database=database)
-                cursor.execute(
-                    """
+                cursor.execute("""
                 SELECT
                   name, description, maximum, maximum_calendar_id, location_id, type,
                   cost, maxearly, setup, setupmatrix_id, category, subcategory,
@@ -1791,9 +1714,7 @@ class loadResources(LoadTask):
                   coalesce(constrained, true) %s
                 FROM resource %s
                 ORDER BY lvl ASC, name
-                """
-                    % (attrsql, filter_where)
-                )
+                """ % (attrsql, filter_where))
                 for i in cursor:
                     cnt += 1
                     try:
@@ -1891,15 +1812,12 @@ class loadResourceSkills(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
-                cursor.execute(
-                    """
+                cursor.execute("""
                 SELECT
                   resource_id, skill_id, effective_start, effective_end, priority, source
                 FROM resourceskill %s
                 ORDER BY skill_id, priority, resource_id
-                """
-                    % filter_where
-                )
+                """ % filter_where)
                 for i in cursor:
                     cnt += 1
                     try:
@@ -1945,16 +1863,13 @@ class loadOperationMaterials(LoadTask):
                 starttime = time()
                 # Note: The sorting of the flows is not really necessary, but helps to make
                 # the planning progress consistent across runs and database engines.
-                cursor.execute(
-                    """
+                cursor.execute("""
                 SELECT
                   operation_id, item_id, quantity, type, effective_start, effective_end,
                   name, priority, search, source, transferbatch, quantity_fixed, "offset", location_id
                 FROM operationmaterial %s
                 ORDER BY operation_id, priority, item_id
-                """
-                    % filter_where
-                )
+                """ % filter_where)
                 for i in cursor:
                     cnt += 1
                     try:
@@ -2042,16 +1957,13 @@ class loadOperationResources(LoadTask):
                 starttime = time()
                 # Note: The sorting of the loads is not really necessary, but helps to make
                 # the planning progress consistent across runs and database engines.
-                cursor.execute(
-                    """
+                cursor.execute("""
                 SELECT
                   operation_id, resource_id, quantity, effective_start, effective_end, name,
                   priority, setup, search, skill_id, source, quantity_fixed
                 FROM operationresource %s
                 ORDER BY operation_id, priority, resource_id
-                """
-                    % filter_where
-                )
+                """ % filter_where)
                 for i in cursor:
                     cnt += 1
                     try:
@@ -2148,8 +2060,7 @@ class loadDemand(LoadTask):
                     batch, description, policy %s
                     FROM demand
                     WHERE (status IS NULL OR status in ('open', 'quote', 'inquiry') or (status = 'closed' and due >= %%s)) %s
-                    """
-                    % (attrsql, filter_and),
+                    """ % (attrsql, filter_and),
                     (fcst_start_date,),
                 )
                 for i in cursor:
@@ -2267,8 +2178,7 @@ class loadOperationPlans(LoadTask):
                     attrsql = ""
 
                 starttime = time()
-                cursor.execute(
-                    f"""
+                cursor.execute(f"""
                     SELECT
                     operationplan.operation_id, operationplan.reference, operationplan.quantity,
                     case when operationplan.plan ? 'setupend'
@@ -2304,8 +2214,7 @@ class loadOperationPlans(LoadTask):
                     and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
                     and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
                     ORDER BY operationplan.reference ASC
-                    """
-                )
+                    """)
                 for i in cursor:
                     try:
                         if i[17]:
@@ -2440,8 +2349,7 @@ class loadOperationPlans(LoadTask):
                         logger.error("**** %s ****" % e)
         with transaction.atomic(using=database):
             with connections[database].chunked_cursor() as cursor:
-                cursor.execute(
-                    f"""
+                cursor.execute(f"""
                     SELECT
                     operationplan.operation_id, operationplan.reference, operationplan.quantity,
                     case when operationplan.plan ? 'setupend'
@@ -2483,8 +2391,7 @@ class loadOperationPlans(LoadTask):
                     and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
                     and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
                     ORDER BY operationplan.reference ASC
-                    """
-                )
+                    """)
                 for i in cursor:
                     try:
                         cnt_mo += 1
@@ -2543,25 +2450,21 @@ class loadOperationPlans(LoadTask):
             # By limiting the number of digits in the query we enforce reusing numbers at some point.
             if "supply" in os.environ:
                 # Allow reusing references of proposed operationplans
-                cursor.execute(
-                    """
+                cursor.execute("""
                     select coalesce(max(reference::bigint), 0) as max_reference
                     from operationplan
                     where status <> 'proposed'
                     and reference ~ '^[0-9]*$'
                     and char_length(reference) <= 9
-                    """
-                )
+                    """)
             else:
                 # Don't reuse any references
-                cursor.execute(
-                    """
+                cursor.execute("""
                     select coalesce(max(reference::bigint), 0) as max_reference
                     from operationplan
                     where reference ~ '^[0-9]*$'
                     and char_length(reference) <= 9
-                    """
-                )
+                    """)
             d = cursor.fetchone()
             frepple.settings.id = d[0] + 1
 
@@ -2571,15 +2474,12 @@ class loadOperationPlans(LoadTask):
         # order we read in the operationplans.
         with transaction.atomic(using=database):
             with connections[database].chunked_cursor() as cursor:
-                cursor.execute(
-                    """
+                cursor.execute("""
                     select name, setupmatrix_id
                     from resource
                     where setupmatrix_id is not null %s
                     order by name
-                    """
-                    % filter_and
-                )
+                    """ % filter_and)
                 for i in cursor:
                     frepple.resource(name=i[0]).setupmatrix = frepple.setupmatrix(
                         name=i[1]

@@ -2846,7 +2846,11 @@ class OperationPlanDetail(View):
                                     settings.DATETIME_INPUT_FORMATS[0]
                                 ),  # d.enddate,
                                 row[3],  # d.history
-                                row[4]["onhand"] or 0,  # startoh
+                                (
+                                    row[4]["onhand"]
+                                    if row[4] and row[4]["onhand"]
+                                    else 0
+                                ),  # startoh
                                 float(row[6] or 0),  # safety stock
                                 (0 if row[3] else row[5]["consumed_proposed"])
                                 + (
@@ -2860,7 +2864,11 @@ class OperationPlanDetail(View):
                                 ),  # total produced
                                 0 if row[3] else row[5]["produced_proposed"],
                                 0 if row[3] else row[5]["produced_confirmed"],
-                                (row[4]["onhand"] or 0)
+                                (
+                                    row[4]["onhand"]
+                                    if row[4] and row[4]["onhand"]
+                                    else 0
+                                )
                                 + (0 if row[3] else row[5]["produced_proposed"])
                                 + (0 if row[3] else row[5]["produced_confirmed"])
                                 - (0 if row[3] else row[5]["consumed_proposed"])

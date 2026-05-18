@@ -82,22 +82,22 @@ const filteredUpstream = computed(() => {
           &nbsp;{{peg[0]}}</td>
 
         <td v-if="peg[2] === 'MO'">{{peg[1]}}
-          <a :href="'/data/input/manufacturingorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
+          <a :href="'/data/input/manufacturingorder/?noautofilter&parentreference=' + peg[1]">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
         <td v-if="peg[2] === 'WO'">{{peg[1]}}
-          <a :href="'/data/input/workorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
+          <a :href="'/data/input/workorder/?noautofilter&parentreference=' + peg[1]">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
         <td v-if="peg[2] === 'DO'">{{peg[1]}}
-          <a :href="'/data/input/distributionorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
+          <a :href="'/data/input/distributionorder/?noautofilter&parentreference=' + peg[1]">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
         <td v-if="peg[2] === 'PO'">{{peg[1]}}
-          <a :href="'/data/input/purchaseorder/?noautofilter&parentreference=' + peg[1]" @click="opendetail(event)">
+          <a :href="'/data/input/purchaseorder/?noautofilter&parentreference=' + peg[1]">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
@@ -106,7 +106,7 @@ const filteredUpstream = computed(() => {
         <td>{{peg[2]}}</td>
 
         <td v-if="['MO', 'WO'].includes(peg[2])">{{peg[3]}}
-          <a href="/detail/input/operation/key/" role="input/operation" @click="opendetail(event)">
+          <a :href="'/detail/input/operation/' + peg[3] + '/'" role="input/operation">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
@@ -115,13 +115,13 @@ const filteredUpstream = computed(() => {
         <td>{{peg[4]}}</td>
 
         <td>{{peg[5]}}
-          <a v-if="peg[5]" href="/detail/input/item/key/" role="input/item" @click="store.opendetail(event)">
+          <a v-if="peg[5]" :href="'/detail/input/item/' + peg[5] + '/'" role="input/item" @click="store.opendetail(event)">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
 
         <td>{{peg[6]}}
-          <a v-if="peg[6]" href="/detail/input/location/key/" role="input/location" @click="store.opendetail(event)">
+          <a v-if="peg[6]" :href="'/detail/input/location/' + peg[6] + '/'" role="input/location" @click="store.opendetail(event)">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>

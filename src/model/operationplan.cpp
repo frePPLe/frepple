@@ -2861,6 +2861,9 @@ void OperationPlan::setResetResources(bool b) {
 }
 
 void OperationPlan::appendInfo(const string& s) {
+  if (getProposed())
+    // Info is not relevant for proposed operationplans
+    return;
   if (info.empty())
     info = s;
   else if (!info.contains(s))

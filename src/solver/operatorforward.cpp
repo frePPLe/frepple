@@ -284,10 +284,6 @@ void OperatorForward::solve(OperationPlan* opplan, void*) {
   auto subopplaniter = opplan->getSubOperationPlans();
   while (auto subopplan = subopplaniter.next()) solve(subopplan, nullptr);
 
-  // Apply to the super-operationplan
-  // TODO if (opplan->getOwner())
-  //  solve(opplan->getOwner(), nullptr);
-
   // Restore solver state to original situation
   curFlowPlan = tmp_flowplan;
   curLoadPlan = tmp_loadplan;

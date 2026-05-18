@@ -134,6 +134,7 @@ SolverCreate::SolverData::SolverData(SolverCreate* s, int c, deque<Demand*>* d)
   batchgrouping = sol->getBatchGrouping();
   operator_delete = new OperatorDelete();
   operator_forward = new OperatorForward(this, c, mgr);
+  operator_backward = new OperatorBackward(this, c, mgr);
   operator_delete->setLogLevel(s->getLogLevel());
 }
 
@@ -207,6 +208,7 @@ void SolverCreate::SolverData::createDeliveries() {
 SolverCreate::SolverData::~SolverData() {
   delete operator_delete;
   delete operator_forward;
+  delete operator_backward;
 };
 
 bool SolverCreate::isLeadTimeConstrained(const Operation* oper) const {

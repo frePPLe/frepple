@@ -71,6 +71,7 @@ add_library(solver STATIC
   "solver/solverplan.cpp"
   "solver/solverresource.cpp"
   "solver/operatorforward.cpp"
+  "solver/operatorbackward.cpp"
   "${CMAKE_SOURCE_DIR}/include/frepple/solver.h"
 )
 add_dependencies(solver model)

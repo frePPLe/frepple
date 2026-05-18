@@ -36,6 +36,7 @@ namespace frepple {
 
 // Forward declarations
 class OperatorForward;
+class OperatorBackward;
 
 /* A solver class to remove excess material.
  *
@@ -1075,6 +1076,8 @@ class SolverCreate : public Solver {
 
     OperatorForward* operator_forward = nullptr;
 
+    OperatorBackward* operator_backward = nullptr;
+
    public:
     /* Pointer to the current solver status. */
     State* state;
@@ -1300,6 +1303,128 @@ class OperatorForward : public Solver, public NonCopyable {
 
   /* OperationPlan currently being propagated. */
   OperationPlan* curOperationPlan = nullptr;
+};
+
+class OperatorBackward : public Solver, public NonCopyable {
+ public:
+  using Solver::solve;
+
+  OperatorBackward(SolverCreate::SolverData* d, int c = -1,
+                   CommandManager* mgr = nullptr)
+      : cmds(mgr), cluster(c), data(d) {
+    // We'll never use this class from Python, but still need to do a dummy
+    // initialization.
+    PyObject_INIT(this, &PyBaseObject_Type);
+    if (d)
+      setLogLevel(d->getLogLevel());
+    else
+      throw LogicException("SolverData must be provided");
+  }
+
+  CommandManager* getCommandManager() const { return cmds; }
+
+  /* Keeps track of previous moves. This is used to maintain stability during
+   * moves. */
+  map<OperationPlan*, Date> original_dates;
+
+  /* Add a command to move the start date of the operationplan. */
+  void addMoveStartDate(OperationPlan* op, Date d) {
+    auto i = original_dates.lower_bound(op);
+    if (i != original_dates.end() && i->first != op)
+      original_dates.insert(i, make_pair(op, op->getEnd()));
+    if (data->getSolver()->getAutocommit())
+      op->setStart(d);
+    else
+      cmds->add(new CommandMoveOperationPlan(op, d, Date::infinitePast));
+  }
+
+  /* Add a command to move the end date of the operationplan. */
+  void addMoveEndDate(OperationPlan* op, Date d) {
+    auto i = original_dates.lower_bound(op);
+    if (i != original_dates.end() && i->first != op)
+      original_dates.insert(i, make_pair(op, op->getEnd()));
+    if (data->getSolver()->getAutocommit())
+      op->setEnd(d);
+    else
+      cmds->add(new CommandMoveOperationPlan(op, Date::infinitePast, d));
+  }
+
+  void addResize(FlowPlan* flplan, double qty) {
+    flplan->setQuantity(qty);
+    if (!data->getSolver()->getAutocommit())
+      throw LogicException("Warning: can't undo this flowplan resize");
+  }
+
+  /* An identifier of the cluster being planned. */
+  int cluster;
+
+  direction excess_scanner = direction::both;
+
+  bool getPropagate() const { return propagate; }
+
+  void setPropagate(bool b) { propagate = b; }
+
+  void solve(const Resource*, void* = nullptr) override;
+
+  void solve(const ResourceBuckets*, void* = nullptr) override;
+
+  void solve(const ResourceInfinite*, void* = nullptr) override {}
+
+  void solve(OperationPlan*, void* = nullptr);
+
+  /* Add a operationplan to the tabu list. Operationplans in this list can't
+   * be touched by the move solver.
+   */
+  void addTabu(OperationPlan* o, double weight = DBL_MAX) {
+    if (o) tabu[o] = weight;
+  }
+
+  /* Empty the list of tabu operationplans. */
+  void resetTabu() { tabu.clear(); }
+
+  bool getAcceptTabuCandidate() const { return acceptTabuCandidate; }
+
+  void setAcceptTabuCandidate(bool b) { acceptTabuCandidate = b; }
+
+ private:
+  CommandManager* cmds;
+
+  SolverCreate::SolverData* data = nullptr;
+  /* Flag whether a candidate on the tabu list is acceptable as candidate
+   * or not. */
+  bool acceptTabuCandidate = false;
+
+  /* Compare candidate operationplans. */
+  bool compareCandidates(OperationPlan*, OperationPlan*,
+                         Date = Date::infinitePast) const;
+
+  static bool compare_loadplans(const LoadPlan*&, const LoadPlan*&);
+
+  struct compareLoadPlans {
+    OperatorBackward* data = nullptr;
+    compareLoadPlans(OperatorBackward* d) : data(d) {}
+    bool operator()(const LoadPlan*&, const LoadPlan*&);
+  };
+
+  /* Only candidates passing this function are acceptable. */
+  bool isValidCandidate(OperationPlan* opplan) const;
+
+  /* A list of (almost) untouchable operationplans. */
+  map<OperationPlan*, double> tabu;
+
+  bool propagate = true;
+
+  /* Flowplan currently being propagated. */
+  FlowPlan* curFlowPlan = nullptr;
+
+  /* Loadplan currently being propagated. */
+  LoadPlan* curLoadPlan = nullptr;
+
+  /* OperationPlan currently being propagated. */
+  OperationPlan* curOperationPlan = nullptr;
+
+  /* Used internally to avoid infinite loops. */
+  static constexpr unsigned short MAX_LOOP = 5000;
 };
 
 class SolverPropagateStatus : public Solver {

@@ -103,6 +103,12 @@ $card-cap-color: $body-color;
   background-image: none !important;
 }
 
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+  // Disable striping
+  --bs-table-color-type: initial !important;
+  --bs-table-bg-type: transparent !important;
+}
+
 // You probably don't need to update the variables below this line.
 // These updates are normally generic for all frepple themes (with the exception of the dark theme)
 $accordion-bg: $card-bg;

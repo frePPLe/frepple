@@ -159,7 +159,7 @@ function ganttcell(cellvalue, options, rowdata) {
     `<line x1="${rowdata.due}" y1="${gantt.rowsize}" x2="${rowdata.due}" y2="-${laneRight.length * gantt.rowsize}" vector-effect="non-scaling-stroke" stroke="red" stroke-width="1" />`
   );
   result.push(
-    `<line x1="${rowdata.current}" y1="${gantt.rowsize}" x2="${rowdata.current}" y2="-${laneRight.length * gantt.rowsize}" vector-effect="non-scaling-stroke" stroke="black" stroke-width="1" />`
+    `<line x1="${rowdata.current}" y1="${gantt.rowsize}" x2="${rowdata.current}" y2="-${laneRight.length * gantt.rowsize}" vector-effect="non-scaling-stroke" stroke="var(--bs-body-color, black)" stroke-width="1" />`
   );
 
   // Render SVG with horizontal scale
@@ -318,11 +318,7 @@ loadComplete: function(data) {
       html: true,
       container: 'body',
       offset: [0, 7],
-      template: `
-         <div class="tooltip opacity-100" role="tooltip">
-           <div class="tooltip-arrow"></div>
-           <div class="tooltip-inner text-start text-body fs-6 p-3"></div>
-         </div>`
+      customClass: 'opacity-100'
     });
   });
 },

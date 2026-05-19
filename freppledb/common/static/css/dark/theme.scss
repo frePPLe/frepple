@@ -92,6 +92,10 @@ $card-cap-color: $body-color;
   color-scheme: dark;
 }
 
+input[type="file"]::file-selector-button {
+  background-color: $input-group-addon-bg;
+}
+
 .related-lookup {
   background-color: $body-color;
   -webkit-mask-image: url(/static/admin/img/search.svg);

@@ -92,6 +92,10 @@ $card-cap-color: $body-color;
   color-scheme: dark;
 }
 
+input[type="text"].form-control:disabled {
+  background-color: $input-group-addon-bg;
+}
+
 input[type="file"]::file-selector-button {
   background-color: $input-group-addon-bg;
 }
@@ -123,6 +127,7 @@ $accordion-button-bg: $secondary;
 $accordion-button-color: $body-color;
 $accordion-button-padding-y: 0.5rem;
 $accordion-border-color: #555555;
+$accordion-icon-active-color: $body-color;
 $breadcrumb-divider-color: $body-color;
 $breadcrumb-divider: "\00a0\00a0\F0DA\00a0\00a0";
 $breadcrumb-item-padding-x: 0.2rem;

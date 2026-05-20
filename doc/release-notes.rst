@@ -57,6 +57,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 | No breaking changes in this release.
 
+| Going forward we'll communicate compatibility-breaking changes with a separate email.
+| This section in the release notes will thus disappear.
+
 9.15.0 (2026-04-10)
 ===================
 

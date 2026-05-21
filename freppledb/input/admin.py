@@ -507,7 +507,6 @@ class Operation_admin(MultiDBModelAdmin):
 
         # Hide manufacturing orders tab when the operation has an owner of type 'routing'
         is_suboperation = op and op.owner and op.owner.type == "routing"
-        print(f"Operation '{obj}' is a suboperation: {is_suboperation}")
 
         if not is_suboperation:
             tabs.append(

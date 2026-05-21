@@ -354,10 +354,10 @@ div.tt-dataset.tt-dataset-search {
   // TODO padding: $padding-base-vertical $padding-base-horizontal;
 
   .custom-dlg-header {
-    background-color: $table-bg;
     background-color: $modal-content-bg;
     border-top-left-radius: $border-radius-lg;
     border-top-right-radius: $border-radius-lg;
+    color: $modal-content-color;
   }
 
   .searchFilter .form-control {
@@ -376,7 +376,8 @@ div.tt-dataset.tt-dataset-search {
     border-left: 0 none;
     border-right: 0 none;
     border-top: 0 none;
-    background-color: inherit !important;
+    background: $card-bg !important;
+    color: $modal-content-color;
   }
 
   .custom-dlg-header {
@@ -395,11 +396,16 @@ div.tt-dataset.tt-dataset-search {
 
 .ui-jqdialog-content {
   border: 0;
-  background: $modal-content-bg;
+  background: $card-bg !important;
   height: auto;
 
   .CaptionTD {
     padding: $modal-inner-padding;
+  }
+
+  .modal-footer {
+    background: $card-bg !important;
+    color: $modal-content-color;
   }
 }
 

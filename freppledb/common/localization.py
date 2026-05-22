@@ -58,7 +58,11 @@ def parseLocalizedDateTime(data):
             settings.DATE_INPUT_FORMATS,
         ):
             try:
-                return datetime.strptime(data, format)
+                return (
+                    datetime.strptime(data, format)
+                    if settings.DATE_STYLE_WITH_HOURS
+                    else datetime.strptime(data, format).date()
+                )
             except (ValueError, TypeError):
                 continue
         raise Exception(_("Invalid date format"))

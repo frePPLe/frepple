@@ -2847,7 +2847,11 @@ class GridReport(View):
             )
         elif isinstance(reportrow, GridFieldDateTime):
             return ~models.Q(
-                **{"%s__exact" % reportrow.field_name: parseLocalizedDateTime(data)}
+                **{
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}exact": parseLocalizedDateTime(
+                        data
+                    )
+                }
             )
         elif isinstance(reportrow, GridFieldDate):
             return ~models.Q(
@@ -2980,7 +2984,11 @@ class GridReport(View):
             )
         elif isinstance(reportrow, GridFieldDateTime):
             return models.Q(
-                **{"%s__exact" % reportrow.field_name: parseLocalizedDateTime(data)}
+                **{
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}exact": parseLocalizedDateTime(
+                        data
+                    )
+                }
             )
         elif isinstance(reportrow, GridFieldDate):
             return models.Q(
@@ -3014,16 +3022,30 @@ class GridReport(View):
     def _filter_gt(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(reportrow, GridFieldDateTime):
             data = parseLocalizedDateTime(data)
+            return models.Q(
+                **{
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}gt": smart_str(
+                        data
+                    ).strip()
+                }
+            )
         elif isinstance(reportrow, GridFieldDate):
             data = parseLocalizedDate(data)
         elif isinstance(reportrow, GridFieldDuration):
             data = parseInterval(data)
-        return models.Q(**{"%s__gt" % reportrow.field_name: smart_str(data).strip()})
+        return models.Q(**{f"{reportrow.field_name}__gt": smart_str(data).strip()})
 
     @staticmethod
     def _filter_gte(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(reportrow, GridFieldDateTime):
             data = parseLocalizedDateTime(data)
+            return models.Q(
+                **{
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}gte": smart_str(
+                        data
+                    ).strip()
+                }
+            )
         elif isinstance(reportrow, GridFieldDate):
             data = parseLocalizedDate(data)
         elif isinstance(reportrow, GridFieldDuration):
@@ -3036,6 +3058,13 @@ class GridReport(View):
             data = parseLocalizedDateTime(data)
         elif isinstance(reportrow, GridFieldDate):
             data = parseLocalizedDate(data)
+            return models.Q(
+                **{
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}lt": smart_str(
+                        data
+                    ).strip()
+                }
+            )
         elif isinstance(reportrow, GridFieldDuration):
             data = parseInterval(data)
         return models.Q(**{"%s__lt" % reportrow.field_name: smart_str(data).strip()})
@@ -3044,6 +3073,13 @@ class GridReport(View):
     def _filter_lte(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(reportrow, GridFieldDateTime):
             data = parseLocalizedDateTime(data)
+            return models.Q(
+                **{
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}lte": smart_str(
+                        data
+                    ).strip()
+                }
+            )
         elif isinstance(reportrow, GridFieldDate):
             data = parseLocalizedDate(data)
         elif isinstance(reportrow, GridFieldDuration):

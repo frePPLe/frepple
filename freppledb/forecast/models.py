@@ -312,16 +312,14 @@ class ForecastPlan(models.Model):
                     Measure.standard_measures(), Measure.objects.using(request.database)
                 )
             },
-            where=[
-                """
+            where=["""
                 exists (
                 select 1
                 from forecast
                 where forecastplan.item_id = forecast.item_id
                 and forecastplan.customer_id = forecast.customer_id
                 and forecastplan.location_id = forecast.location_id)
-                """
-            ],
+                """],
         ).order_by("item", "location", "customer", "startdate")
 
     # The forecast plan model also depends on the bucket detail table.
@@ -505,7 +503,7 @@ class ForecastPlan(models.Model):
                 processed_header = True
                 colnum = 1
                 for col in rowWrapper.values():
-                    if isinstance(col, datetime):
+                    if isinstance(col, (date, datetime)):
                         col = col.strftime("%Y-%m-%dT%H:%M:%S")
                     else:
                         col = str(col).strip().strip("#").lower() if col else ""
@@ -773,7 +771,7 @@ class ForecastPlan(models.Model):
                             "bucket",
                         ):
                             t = rowWrapper.get(f, None)
-                            if isinstance(t, datetime):
+                            if isinstance(t, (date, datetime)):
                                 t = t.strftime("%Y-%m-%dT%H:%M:%S")
                             if t:
                                 r[f] = t
@@ -804,59 +802,48 @@ class ForecastPlan(models.Model):
         if populateForecastTable:
             with connections[database].cursor() as cursor:
                 # create a temp table to process a possible new forecast combination
-                cursor.execute(
-                    """
+                cursor.execute("""
                             create temporary table forecast_combinations as
                             select item_id, location_id, customer_id from forecast where false;
                             create unique index on forecast_combinations (item_id, location_id, customer_id);
-                            """
-                )
+                            """)
                 # insert all combinations found in the file
                 cursor.executemany(
                     "insert into forecast_combinations values (%s,%s,%s)",
                     forecast_combinations,
                 )
                 # delete invalid combinations
-                cursor.execute(
-                    """
+                cursor.execute("""
                             delete from forecast_combinations
                             where item_id is null
                             or location_id is null
                             or customer_id is null;
-                            """
-                )
+                            """)
                 # delete combinations where the forecast record exists
-                cursor.execute(
-                    """
+                cursor.execute("""
                             delete from forecast_combinations
                             where exists (select 1 from forecasthierarchy
                                                 where item_id = forecast_combinations.item_id
                                                 and location_id = forecast_combinations.location_id
                                                 and customer_id = forecast_combinations.customer_id);
-                            """
-                )
+                            """)
                 # delete any non-leaf combinations
-                cursor.execute(
-                    """
+                cursor.execute("""
                     delete from forecast_combinations where
                     item_id not in (select name from item where lft = rght-1)
                     or location_id not in (select name from location where lft = rght-1)
                     or customer_id not in (select name from customer where lft = rght-1);
-                    """
-                )
+                    """)
 
                 # insert the new forecast records
-                cursor.execute(
-                    """
+                cursor.execute("""
                         insert into forecast (name, item_id, location_id, customer_id, discrete, priority, method, planned)
                         select item_id||' @ '||location_id||' @ '||customer_id,
                         item_id, location_id, customer_id, true, 20, 'automatic', true from forecast_combinations
                         on conflict (name) do nothing;
-                                    """
-                )
+                                    """)
                 # update the forecasthierarchy table
-                cursor.execute(
-                    """
+                cursor.execute("""
                 with cte as (
                     select item_parent.name as item_id,
                         location_parent.name as location_id,
@@ -870,8 +857,7 @@ class ForecastPlan(models.Model):
                     )
                     insert into forecasthierarchy
                     select * from cte on conflict (item_id, location_id, customer_id) do nothing;
-                    """
-                )
+                    """)
 
         if session:
             Forecast.flush(session, mode="auto", database=database, token=token)
@@ -916,16 +902,14 @@ class ForecastPlan(models.Model):
         # Check the forecastplan table
         modified = False
         with connections[database].cursor() as cursor:
-            cursor.execute(
-                """
+            cursor.execute("""
                 select column_name
                 from information_schema.columns
                 where table_name = 'forecastplan'
                 and column_name not in (
                     'item_id', 'location_id', 'customer_id', 'startdate', 'enddate'
                     )
-                """
-            )
+                """)
             columns = [c[0] for c in cursor.fetchall()]
             for m in expected_columns:
                 if m not in columns:

@@ -112,8 +112,7 @@ class ReportList(GridReport):
     title = _("my reports")
     model = SQLReport
     help_url = "user-interface/report-manager.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>You didn't find the exact report you need? Do not despair!</h3>
         <br>
         You can add custom reports by writing a SQL query.<br>
@@ -124,8 +123,7 @@ class ReportList(GridReport):
         <br><br>
         <a href="{{request.prefix}}/data/reportmanager/sqlreport/add/" class="btn btn-primary">Add custom report</a>
         <br>
-        """
-    )
+        """)
     frozenColumns = 1
     rows = (
         GridFieldInteger(
@@ -232,7 +230,10 @@ class ReportManager(GridReport):
         ):
             return ('"%s" is distinct from %%s' % field, [smart_str(data).strip()])
         elif isinstance(reportrow, GridFieldDateTime):
-            return ('"%s" is distinct from %%s' % field, [parseLocalizedDateTime(data)])
+            return (
+                f'"{field}"{"::date" if not settings.DATE_STYLE_WITH_HOURS else ""} is distinct from %s',
+                [parseLocalizedDateTime(data)],
+            )
         elif isinstance(reportrow, GridFieldDate):
             return ('"%s" is distinct from %%s' % field, [parseLocalizedDate(data)])
         else:
@@ -280,7 +281,10 @@ class ReportManager(GridReport):
         ):
             return ('"%s" = %%s' % field, [smart_str(data).strip()])
         elif isinstance(reportrow, GridFieldDateTime):
-            return ('"%s" = %%s' % field, [parseLocalizedDateTime(data)])
+            return (
+                f'"{field}"{"::date" if not settings.DATE_STYLE_WITH_HOURS else ""} = %s',
+                [parseLocalizedDateTime(data)],
+            )
         elif isinstance(reportrow, GridFieldDate):
             return ('"%s" = %%s' % field, [parseLocalizedDate(data)])
         else:
@@ -296,7 +300,10 @@ class ReportManager(GridReport):
     @staticmethod
     def _filter_gt(reportrow, field, data):
         if isinstance(reportrow, GridFieldDateTime):
-            return ('"%s" > %%s' % field, [parseLocalizedDateTime(data)])
+            return (
+                f'"{field}"{"::date" if not settings.DATE_STYLE_WITH_HOURS else ""} > %s',
+                [parseLocalizedDateTime(data)],
+            )
         elif isinstance(reportrow, GridFieldDate):
             return ('"%s" > %%s' % field, [parseLocalizedDate(data)])
         else:
@@ -305,7 +312,10 @@ class ReportManager(GridReport):
     @staticmethod
     def _filter_gte(reportrow, field, data):
         if isinstance(reportrow, GridFieldDateTime):
-            return ('"%s" >= %%s' % field, [parseLocalizedDateTime(data)])
+            return (
+                f'"{field}"{"::date" if not settings.DATE_STYLE_WITH_HOURS else ""} >= %s',
+                [parseLocalizedDateTime(data)],
+            )
         elif isinstance(reportrow, GridFieldDate):
             return ('"%s" >= %%s' % field, [parseLocalizedDate(data)])
         else:
@@ -314,7 +324,10 @@ class ReportManager(GridReport):
     @staticmethod
     def _filter_lt(reportrow, field, data):
         if isinstance(reportrow, GridFieldDateTime):
-            return ('"%s" < %%s' % field, [parseLocalizedDateTime(data)])
+            return (
+                f'"{field}"{"::date" if not settings.DATE_STYLE_WITH_HOURS else ""} < %s',
+                [parseLocalizedDateTime(data)],
+            )
         elif isinstance(reportrow, GridFieldDate):
             return ('"%s" < %%s' % field, [parseLocalizedDate(data)])
         else:
@@ -323,7 +336,10 @@ class ReportManager(GridReport):
     @staticmethod
     def _filter_lte(reportrow, field, data):
         if isinstance(reportrow, GridFieldDateTime):
-            return ('"%s" <= %%s' % field, [parseLocalizedDateTime(data)])
+            return (
+                f'"{field}"{"::date" if not settings.DATE_STYLE_WITH_HOURS else ""} <= %s',
+                [parseLocalizedDateTime(data)],
+            )
         elif isinstance(reportrow, GridFieldDate):
             return ('"%s" <= %%s' % field, [parseLocalizedDate(data)])
         else:

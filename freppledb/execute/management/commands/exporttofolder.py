@@ -25,6 +25,7 @@ import os
 import errno
 import gzip
 import importlib
+import json
 import logging
 
 from datetime import datetime
@@ -211,6 +212,10 @@ class Command(BaseCommand):
             help="Nominates a specific database to load the data into",
         )
         parser.add_argument(
+            "--files",
+            help="Comma-separated list of export file names to export (default: all)",
+        )
+        parser.add_argument(
             "--task",
             type=int,
             help="Task identifier (generated automatically if not provided)",
@@ -280,12 +285,9 @@ class Command(BaseCommand):
         if maxstorage:
             storageUsage = round(getStorageUsage() / 1024 / 1024)
             if storageUsage > maxstorage:
-                raise CommandError(
-                    """
+                raise CommandError("""
                     Storage quota exceeded: %sMB <a href="/" class="text-decoration-underline">used out</a> of %sMB available. Please free some disk space and try again
-                    """
-                    % (storageUsage, maxstorage)
-                )
+                    """ % (storageUsage, maxstorage))
 
         task = None
         errors = 0
@@ -322,7 +324,9 @@ class Command(BaseCommand):
                     user=self.user,
                     logfile=logfile,
                 )
-            task.arguments = " ".join('"%s"' % i for i in args)
+            task.arguments = (
+                f"--files={options.get("files")}" if options.get("files") else ""
+            )
             task.processid = os.getpid()
             task.save(using=self.database)
 
@@ -357,6 +361,17 @@ class Command(BaseCommand):
 
                 i = 0
                 exports = self.getExports(self.database)
+                requested_files = options.get("files")
+                if requested_files:
+                    requested_files = {
+                        f.strip() for f in requested_files.split(",") if f.strip()
+                    }
+                    exports = [cfg for cfg in exports if cfg.name in requested_files]
+                    if not exports:
+                        raise CommandError(
+                            "No matching exports found for --files=%s"
+                            % options.get("files")
+                        )
                 cnt = len(exports)
 
                 for cfg in exports:
@@ -467,37 +482,103 @@ class Command(BaseCommand):
                                         if isinstance(r, str)
                                         else r
                                     )
+                            elif cfg.name.lower().endswith((".json", ".json.gz")):
+                                # limit the number of rows
+                                request.pagesize = 999999
+                                reportclass.crosses = getattr(
+                                    reportclass, "crosses", []
+                                )
+                                in_rows = False
+                                for r in reportclass._generate_json_data(
+                                    request,
+                                    *args,
+                                    **(cfg.arguments or {}),
+                                ):
+                                    if not in_rows:
+                                        if '"rows":[\n' in r:
+                                            in_rows = True
+                                            datafile.write(b"[\n")
+                                    elif r == "\n]}\n":
+                                        datafile.write(b"\n]")
+                                    else:
+                                        if reportclass.crosses:
+                                            logger.info(reportclass.crosses)
+                                        datafile.write(
+                                            r.encode("utf-8")
+                                            if isinstance(r, str)
+                                            else r
+                                        )
                             else:
                                 raise Exception(
                                     "Unknown output format for %s" % cfg.name
                                 )
                         elif cfg.sql:
                             # Exporting using SQL
-                            if cfg.name.lower().endswith(".csv.gz"):
-                                datafile = gzip.open(filename, "wb")
-                            elif cfg.name.lower().endswith(".csv"):
-                                datafile = open(filename, "wb")
-                            else:
-                                raise Exception(
-                                    "Exports based on an SQL query can only be created in .csv or .csv.gz format"
+
+                            if cfg.name.lower().endswith(
+                                ".csv.gz"
+                            ) or cfg.name.lower().endswith(".csv"):
+                                datafile = (
+                                    gzip.open(filename, "wb")
+                                    if cfg.name.lower().endswith(".csv.gz")
+                                    else open(filename, "wb")
                                 )
 
-                            with connections[
-                                (
-                                    self.database
-                                    if f"{self.database}_report"
-                                    not in get_databases(True)
-                                    else f"{self.database}_report"
-                                )
-                            ].cursor() as cursor:
-                                cursor.copy_expert(
+                                with connections[
                                     (
-                                        cfg.sql
-                                        if getattr(cfg, "no_wrapper", False)
-                                        else f"COPY(select * from ({cfg.sql}) as t) TO STDOUT WITH CSV HEADER DELIMITER '{delimiter}'"
-                                    ),
-                                    datafile,
+                                        self.database
+                                        if f"{self.database}_report"
+                                        not in get_databases(True)
+                                        else f"{self.database}_report"
+                                    )
+                                ].cursor() as cursor:
+                                    cursor.copy_expert(
+                                        (
+                                            cfg.sql
+                                            if getattr(cfg, "no_wrapper", False)
+                                            else f"COPY(select * from ({cfg.sql}) as t) TO STDOUT WITH CSV HEADER DELIMITER '{delimiter}'"
+                                        ),
+                                        datafile,
+                                    )
+
+                            elif cfg.name.lower().endswith(
+                                ".json.gz"
+                            ) or cfg.name.lower().endswith(".json"):
+                                datafile = (
+                                    gzip.open(filename, "wb")
+                                    if cfg.name.lower().endswith(".json.gz")
+                                    else open(filename, "wb")
                                 )
+
+                                with connections[
+                                    (
+                                        self.database
+                                        if f"{self.database}_report"
+                                        not in get_databases(True)
+                                        else f"{self.database}_report"
+                                    )
+                                ].cursor() as cursor:
+                                    cursor.execute(cfg.sql)
+                                    columns = [desc[0] for desc in cursor.description]
+                                    datafile.write(b"[\n")
+                                    first = True
+                                    for row in cursor:
+                                        if first:
+                                            first = False
+                                        else:
+                                            datafile.write(b",\n")
+                                        datafile.write(
+                                            json.dumps(
+                                                dict(zip(columns, row)),
+                                                default=str,
+                                            ).encode("utf-8")
+                                        )
+                                    datafile.write(b"\n]")
+                            else:
+                                raise Exception(
+                                    "Exports based on an SQL query can only be created in .csv, .csv.gz, .json or .json.gz format"
+                                )
+
                         else:
                             logger.error(f"Skipping export of {cfg.name}: Unknown type")
                             continue
@@ -506,17 +587,19 @@ class Command(BaseCommand):
                         logger.info(
                             f"Finished export of {cfg.name} ({os.stat(filename).st_size} bytes) in {timesince(starting)}"
                         )
-                    except (ImportError, AttributeError):
+                    except (ImportError, AttributeError) as e:
                         # The export configuration can refer to non-existing reports.
                         # For instance after an app is uninstalled.
                         errors += 1
                         logger.error(
-                            f"Failed to export {cfg.name}: Unknown report {cfg.report}"
+                            f"Failed to export {cfg.name}: Unknown report {cfg.report} {e}",
+                            exc_info=True,
                         )
                     except Exception as e:
                         errors += 1
                         logger.error(
-                            f"Failed to export {cfg.name} after {timesince(starting)}: {e}"
+                            f"Failed to export {cfg.name} after {timesince(starting)}: {e}",
+                            exc_info=True,
                         )
                         if task:
                             task.message = "Failed to export %s" % cfg.name

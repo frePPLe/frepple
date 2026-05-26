@@ -1050,6 +1050,25 @@ class FileManager:
             return HttpResponseNotAllowed(
                 ["get"], content="Only GET request method is allowed"
             )
+
+        # Optionally generate export files before downloading from the export folder.
+        # use ?generate in the URL.
+        generate = "generate" in request.GET
+        if generate and foldercode == "1":
+            try:
+                kwargs = {
+                    "database": request.database,
+                    "user": request.user.username,
+                }
+                if filename:
+                    kwargs["files"] = filename
+                call_command("exporttofolder", **kwargs)
+            except Exception as e:
+                logger.error("Failed generating exports before download: %s" % e)
+                return HttpResponseServerError(
+                    force_str(_("Error generating export file(s)"))
+                )
+
         folder, extensions = FileManager.getFolderInfo(request, foldercode)
         if not extensions:
             extensions = FileManager.all_extensions
@@ -1634,11 +1653,22 @@ def exports(request):
                     )
                 except FileNotFoundError:
                     pass
-        elif data.get("name", None) in (None, ".xlsx", ".csv", ".csv.gz"):
+        elif data.get("name", None) in (
+            None,
+            ".xlsx",
+            ".csv",
+            ".csv.gz",
+            ".json",
+            ".json.gz",
+        ):
             errors.append("Name can't be blank<br>")
         else:
-            if not data["name"].endswith((".xlsx", ".csv", ".csv.gz")):
-                errors.append("Export must end with .xlsx, .csv or .csv.gz<br>")
+            if not data["name"].endswith(
+                (".xlsx", ".csv", ".csv.gz", ".json", ".json.gz")
+            ):
+                errors.append(
+                    "Export must end with .xlsx, .csv, .csv.gz, .json or .json.gz<br>"
+                )
             elif (
                 data["name"] != curname
                 and DataExport.objects.using(request.database)

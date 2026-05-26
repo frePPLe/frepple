@@ -314,6 +314,10 @@ class DataExport(models.Model):
             return self.name[:-4]
         elif self.name.endswith(".csv.gz"):
             return self.name[:-7]
+        elif self.name.endswith(".json"):
+            return self.name[:-5]
+        elif self.name.endswith(".json.gz"):
+            return self.name[:-8]
         else:
             return self.name
 
@@ -324,6 +328,10 @@ class DataExport(models.Model):
             return ".csv"
         elif self.name.endswith(".csv.gz"):
             return ".csv.gz"
+        elif self.name.endswith(".json"):
+            return ".json"
+        elif self.name.endswith(".json.gz"):
+            return ".json.gz"
         else:
             return ""
 
@@ -355,8 +363,12 @@ class DataExport(models.Model):
             name_lower.endswith(".xlsx")
             or name_lower.endswith(".csv.gz")
             or name_lower.endswith(".csv")
+            or name_lower.endswith(".json")
+            or name_lower.endswith(".json.gz")
         ):
-            raise Exception("Exports must end with .xlsx, .csv or .csv.gz")
+            raise Exception(
+                "Exports must end with .xlsx, .csv, .csv.gz, .json or .json.gz"
+            )
         if os.sep in self.name:
             raise Exception("Export names can't contain %s" % os.sep)
         super().save(*args, **kwargs)

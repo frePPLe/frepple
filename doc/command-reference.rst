@@ -242,8 +242,14 @@ HTTP(S) web interface.
         # Retrieve one of the exported files:
         GET /execute/downloadfromfolder/1/<filename>/
 
+        # Retrieve one of the exported files after generating it:
+        GET /execute/downloadfromfolder/1/<filename>/?generate
+
         # Retrieve all exported files:
         GET /execute/downloadfromfolder/1/
+
+        # Retrieve all exported files after generating them:
+        GET /execute/downloadfromfolder/1/?generate
 
         # Retrieve the list of all available files, with their size and timestamp
         GET /execute/uploadtofolder/1/

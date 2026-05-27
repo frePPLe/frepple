@@ -7,6 +7,11 @@ Release notes
 This release is scheduled for the end of June 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: User interface
+
+- | The Export Plan Results task now has an extra option to export the plan results
+    in JSON.
+
 9.16.0 (2026-05-22)
 ===================
 

@@ -96,6 +96,10 @@ input[type="text"].form-control:disabled {
   background-color: $input-group-addon-bg;
 }
 
+.dropdown-toggle.form-control:disabled {
+  background-color: $input-group-addon-bg;
+}
+
 input[type="file"]::file-selector-button {
   background-color: $input-group-addon-bg;
 }

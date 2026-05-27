@@ -1851,6 +1851,7 @@ var grid = {
       if (i.oper == operand) return i.text;
     if (operand == "ico") return gettext("is child of");
     if (operand == "isnull") return gettext("is null");
+    if (operand == "win") return gettext("within days");
     return operand;
   },
 

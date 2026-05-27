@@ -123,7 +123,7 @@ The image can be extended and customized using the following:
 * The **entry point** of the container can be customized by placing files in the folder
   /etc/frepple/entrypoint.d
 
-* Custom code can be added (:doc:`advanced/custom-aoo`_) to the container by **inheriting from this image**. A section
+* Custom code can be added to the container by **inheriting from this image**. A section
   below illustrates how this is done.
 
 .. code-block:: bash

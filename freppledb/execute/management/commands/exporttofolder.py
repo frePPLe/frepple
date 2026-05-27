@@ -297,24 +297,27 @@ class Command(BaseCommand):
             # Initialize the task
             setattr(_thread_locals, "database", self.database)
             if options["task"]:
-                try:
-                    task = (
-                        Task.objects.all().using(self.database).get(pk=options["task"])
-                    )
-                except Exception:
-                    raise CommandError("Task identifier not found")
-                if (
-                    task.started
-                    or task.finished
-                    or task.status != "Waiting"
-                    or task.name not in ("frepple_exporttofolder", "exporttofolder")
-                ):
-                    raise CommandError("Invalid task identifier")
-                task.status = "0%"
-                task.started = now
-                task.logfile = logfile
-                if not self.user and task.user:
-                    self.user = task.user
+                if options["task"] > 0:
+                    try:
+                        task = (
+                            Task.objects.all()
+                            .using(self.database)
+                            .get(pk=options["task"])
+                        )
+                    except Exception:
+                        raise CommandError("Task identifier not found")
+                    if (
+                        task.started
+                        or task.finished
+                        or task.status != "Waiting"
+                        or task.name not in ("frepple_exporttofolder", "exporttofolder")
+                    ):
+                        raise CommandError("Invalid task identifier")
+                    task.status = "0%"
+                    task.started = now
+                    task.logfile = logfile
+                    if not self.user and task.user:
+                        self.user = task.user
             else:
                 task = Task(
                     name="exporttofolder",
@@ -324,11 +327,12 @@ class Command(BaseCommand):
                     user=self.user,
                     logfile=logfile,
                 )
-            task.arguments = (
-                f"--files={options.get("files")}" if options.get("files") else ""
-            )
-            task.processid = os.getpid()
-            task.save(using=self.database)
+            if task:
+                task.arguments = (
+                    f"--files={options.get("files")}" if options.get("files") else ""
+                )
+                task.processid = os.getpid()
+                task.save(using=self.database)
 
             # Try to create the upload if doesn't exist yet
             if not os.path.isdir(get_databases()[self.database]["FILEUPLOADFOLDER"]):
@@ -356,8 +360,9 @@ class Command(BaseCommand):
                             raise
 
                 logger.info("Started export to folder")
-                task.status = "0%"
-                task.save(using=self.database)
+                if task:
+                    task.status = "0%"
+                    task.save(using=self.database)
 
                 i = 0
                 exports = self.getExports(self.database)
@@ -482,32 +487,6 @@ class Command(BaseCommand):
                                         if isinstance(r, str)
                                         else r
                                     )
-                            elif cfg.name.lower().endswith((".json", ".json.gz")):
-                                # limit the number of rows
-                                request.pagesize = 999999
-                                reportclass.crosses = getattr(
-                                    reportclass, "crosses", []
-                                )
-                                in_rows = False
-                                for r in reportclass._generate_json_data(
-                                    request,
-                                    *args,
-                                    **(cfg.arguments or {}),
-                                ):
-                                    if not in_rows:
-                                        if '"rows":[\n' in r:
-                                            in_rows = True
-                                            datafile.write(b"[\n")
-                                    elif r == "\n]}\n":
-                                        datafile.write(b"\n]")
-                                    else:
-                                        if reportclass.crosses:
-                                            logger.info(reportclass.crosses)
-                                        datafile.write(
-                                            r.encode("utf-8")
-                                            if isinstance(r, str)
-                                            else r
-                                        )
                             else:
                                 raise Exception(
                                     "Unknown output format for %s" % cfg.name
@@ -603,17 +582,18 @@ class Command(BaseCommand):
                         )
                         if task:
                             task.message = "Failed to export %s" % cfg.name
-
-                    task.status = str(int(i / cnt * 100)) + "%"
-                    task.save(using=self.database)
+                    if task:
+                        task.status = str(int(i / cnt * 100)) + "%"
+                        task.save(using=self.database)
 
                 logger.info("Exported %s files" % (cnt - errors))
 
             else:
                 errors += 1
                 logger.error("Failed, folder does not exist")
-                task.message = "Destination folder does not exist"
-                task.save(using=self.database)
+                if task:
+                    task.message = "Destination folder does not exist"
+                    task.save(using=self.database)
 
         except Exception as e:
             logger.error("Failed to export: %s" % e)

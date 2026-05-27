@@ -66,11 +66,11 @@
                 <input type="text" class="form-control add-export-name" data-field="name" value="{{j.basename}}" placeholder="Unique name">
                 <button class="btn btn-outline-primary dropdown-toggle add-export-extension" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{j.extension}}</button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                  <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.csv')">.csv</a></li>
-                  <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.csv.gz')">.csv.gz</a></li>
-                  <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.xlsx')">.xlsx</a></li>
-                  <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.json')">.json</a></li>
-                  <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.json.gz')">.json.gz</a></li>
+                  <li><a class="dropdown-item" onclick="setExportExtension(event.target, '.csv')">.csv</a></li>
+                  <li><a class="dropdown-item" onclick="setExportExtension(event.target, '.csv.gz')">.csv.gz</a></li>
+                  <li><a class="dropdown-item" onclick="setExportExtension(event.target, '.xlsx')">.xlsx</a></li>
+                  <li><a class="dropdown-item" onclick="setExportExtension(event.target, '.json')">.json</a></li>
+                  <li><a class="dropdown-item" onclick="setExportExtension(event.target, '.json.gz')">.json.gz</a></li>
                 </ul>
             </div>
           </div>
@@ -170,11 +170,11 @@
                 <input type="text" class="form-control add-export-name" data-field="name" value="" placeholder="Unique name">
                 <button class="btn btn-outline-primary dropdown-toggle add-export-extension" type="button" data-bs-toggle="dropdown" aria-expanded="false">.csv</button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                  <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.csv')">.csv</a></li>
-                  <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.csv.gz')">.csv.gz</a></li>
-                  <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.xlsx')">.xlsx</a></li>
-                  <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.json')">.json</a></li>
-                  <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.json.gz')">.json.gz</a></li>
+                  <li><a class="dropdown-item" onclick="setExportExtension(event.target, '.csv')">.csv</a></li>
+                  <li><a class="dropdown-item" onclick="setExportExtension(event.target, '.csv.gz')">.csv.gz</a></li>
+                  <li><a class="dropdown-item" onclick="setExportExtension(event.target, '.xlsx')">.xlsx</a></li>
+                  <li><a class="dropdown-item" onclick="setExportExtension(event.target, '.json')">.json</a></li>
+                  <li><a class="dropdown-item" onclick="setExportExtension(event.target, '.json.gz')">.json.gz</a></li>
                 </ul>
             </div>
           </div>
@@ -330,6 +330,25 @@ function toggleAddExport(show, el) {
   root.find("[data-file='" + name + "']").toggleClass("d-none");
 }
 
+function updateExportTypeOptions(myform) {
+  var extension = myform.find(".add-export-extension").first().text().trim();
+  var typeSelect = myform.find(".add-export-type").first();
+  var reportOption = typeSelect.find("option[value='report']");
+  var hideReport = extension === ".json" || extension === ".json.gz";
+
+  reportOption.prop("hidden", hideReport);
+  if (hideReport && typeSelect.val() === "report") {
+    typeSelect.val("sql");
+    changeExportType(typeSelect.get(0));
+  }
+}
+
+function setExportExtension(el, extension) {
+  var myform = $(el).closest(".col");
+  myform.find(".add-export-extension").first().text(extension);
+  updateExportTypeOptions(myform);
+}
+
 function saveExport(el) {
   var myform = $(el).closest(".row");
   var data = {
@@ -407,5 +426,11 @@ function changeExportType(el) {
   myform.find(".optional[data-type!=" + t + "]").addClass("d-none");
   myform.find(".optional[data-type=" + t + "]").removeClass("d-none");
 }
+
+$(function() {
+  $(".add-export-extension").each(function() {
+    updateExportTypeOptions($(this).closest(".col"));
+  });
+});
 
 </script>

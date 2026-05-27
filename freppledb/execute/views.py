@@ -1059,6 +1059,7 @@ class FileManager:
                 kwargs = {
                     "database": request.database,
                     "user": request.user.username,
+                    "task": -1,
                 }
                 if filename:
                     kwargs["files"] = filename

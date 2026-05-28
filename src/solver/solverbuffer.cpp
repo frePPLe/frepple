@@ -242,11 +242,14 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                            << "  Moving approved routing supply early: " << sub
                            << '\n';
                   auto orig_quantity = opplan_to_move->getQuantity();
-                  data->push(opplan_to_move->getQuantity(), newDate);
                   data->state->keepAssignments =
                       Plan::instance().getMoveApprovedEarly() == 1 ? sub
                                                                    : nullptr;
                   OperationPlanState beforeMove(sub);
+                  sub->setOperationPlanParameters(orig_quantity,
+                                                  Date::infinitePast, newDate,
+                                                  true, true, false);
+                  data->push(opplan_to_move->getQuantity(), sub->getEnd());
                   checkOperation(sub, *data);
                   data->pop(true);
                   if (data->state->a_qty <= ROUNDING_ERROR) {

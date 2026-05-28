@@ -7,10 +7,19 @@ Release notes
 This release is scheduled for the end of June 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Production planning
+
+- | Bug fix: The solver feature to move approved supply early could result
+    in the work order sequence not to be respected within a routing manufacturing order.
+
 .. rubric:: User interface
 
-- | The Export Plan Results task now has an extra option to export the plan results
+- | The "Export Plan Results" task now has an extra option to export the plan results
     in JSON.
+
+- | The API for the "Export Plan Results" task also provides a new option to generate the
+    export data on the fly.
+  | Until now you had to run the export task separately and then download the file.
 
 9.16.0 (2026-05-22)
 ===================

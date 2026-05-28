@@ -54,6 +54,14 @@ spec:
               value: frepple
             - name: POSTGRES_DBNAME
               value: freppledb
+            # A pod's /etc/frepple is ephemeral, so without a fixed key the
+            # entrypoint would mint a new SECRET_KEY on every restart — logging
+            # everyone out and rotating the Odoo SSO token. Supply a stable key.
+            - name: DJANGO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: frepple-secret
+                  key: DJANGO_SECRET_KEY
           image: ghcr.io/frepple/frepple-community:latest
           name: frepple-webserver
           ports:
@@ -93,3 +101,16 @@ spec:
     app: frepple
 status:
   loadBalancer: {}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: frepple-secret
+type: Opaque
+stringData:
+  # Django secret key. Replace this example value before any real deployment —
+  # it signs sessions and CSRF tokens (and SECRET_WEBTOKEN_KEY, the Odoo SSO
+  # bridge). Generate a unique one, eg:
+  #   kubectl create secret generic frepple-secret \
+  #     --from-literal=DJANGO_SECRET_KEY="$(openssl rand -base64 48)"
+  DJANGO_SECRET_KEY: "change-me-to-a-unique-random-50-or-more-character-string"

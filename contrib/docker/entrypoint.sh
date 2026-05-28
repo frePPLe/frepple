@@ -1,8 +1,34 @@
 #!/bin/bash
 set -e
 
-# Configure /etc/frepple/djangosettings
-sed -i "s/SECRET_KEY.*mzit.*i8b.*6oev96=.*/SECRET_KEY = \"$(mktemp -u XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX)\"/g" /etc/frepple/djangosettings.py
+# Configure /etc/frepple/djangosettings — stamp the Django SECRET_KEY.
+#
+# Honor an externally supplied key (DJANGO_SECRET_KEY environment variable) so
+# that deployments which do not persist /etc/frepple keep a stable key across
+# restarts. This matters on Kubernetes (see contrib/kubernetes): unlike a Docker
+# named volume — which is seeded from the image — a pod's /etc/frepple lives in
+# the ephemeral container layer, so it resets to the shipped placeholder on every
+# (re)start and the key would otherwise be regenerated each time, invalidating all
+# sessions and rotating SECRET_WEBTOKEN_KEY (the Odoo SSO bridge).
+#
+# When DJANGO_SECRET_KEY is unset, fall back to a random one-time key, as before.
+# The substitution only matches the placeholder shipped in the image, so a key
+# that has already been stamped (eg on a persisted /etc/frepple) is never touched.
+python3 - <<'PYEOF'
+import os, re, secrets
+
+path = "/etc/frepple/djangosettings.py"
+key = os.environ.get("DJANGO_SECRET_KEY") or secrets.token_urlsafe(50)
+with open(path) as f:
+    content = f.read()
+content = re.sub(
+    r"SECRET_KEY.*mzit.*i8b.*6oev96=.*",
+    "SECRET_KEY = " + repr(key),
+    content,
+)
+with open(path, "w") as f:
+    f.write(content)
+PYEOF
 
 # Djangosettings must be writeable by the web server to support installing&uninstalling apps
 chmod g+w /etc/frepple/djangosettings.py

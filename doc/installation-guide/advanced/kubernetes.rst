@@ -23,3 +23,22 @@ The following resources are then defined in your cluster:
   and the postgresql data (1GB).
 
 - A network policy to keep the connection between frepple and its postgres database private.
+
+- A secret ``frepple-secret`` holding the Django ``DJANGO_SECRET_KEY``.
+
+Secret key
+----------
+
+A pod's ``/etc/frepple`` is not persisted, so the Django secret key cannot be
+stored there — it would be regenerated on every restart, invalidating all
+sessions and rotating the Odoo single-sign-on token. ``frepple-deployment.yaml``
+therefore reads ``DJANGO_SECRET_KEY`` from the ``frepple-secret`` secret, which
+keeps it stable across restarts.
+
+The sample file ships a placeholder value. Replace it with a unique key before
+deploying, for example:
+
+.. code-block:: bash
+
+   kubectl create secret generic frepple-secret \
+     --from-literal=DJANGO_SECRET_KEY="$(openssl rand -base64 48)"

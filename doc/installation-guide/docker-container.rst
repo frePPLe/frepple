@@ -105,6 +105,14 @@ The image can be extended and customized using the following:
       | The default database names are "frepple", "scenario1", "scenario2", "scenario3".
       | If this argument is passed as "X", the database names will be "X0", "X1", "X2" and "X3".
 
+* The **DJANGO_SECRET_KEY** environment variable sets the Django secret key, used to
+  sign sessions and CSRF tokens (and SECRET_WEBTOKEN_KEY, the Odoo single-sign-on
+  token). When left unset a random key is generated each time the container starts.
+  Persist /etc/frepple (see the volumes below) or set DJANGO_SECRET_KEY explicitly to
+  keep the key stable across restarts. This matters on Kubernetes, where the container
+  filesystem is ephemeral: without a fixed key it is regenerated on every pod restart,
+  logging all users out.
+
 * The following **volumes** let you access all logs, configuration and license files:
 
     * | /etc/frepple:
@@ -148,6 +156,7 @@ The following environment variables can be set to configure your container:
         POSTGRES_PORT: 5432
         POSTGRES_USER: "frepple"
         POSTGRES_PASSWORD: "frepple"
+        DJANGO_SECRET_KEY: ""  # random per start when empty; set it (or persist /etc/frepple) to keep sessions across restarts
         FREPPLE_DATE_STYLE: "year-month-day"
         FREPPLE_DATE_STYLE_WITH_HOURS: "false"
         FREPPLE_TIME_ZONE: "UTC"

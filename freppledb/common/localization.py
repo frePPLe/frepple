@@ -79,6 +79,11 @@ def parseInterval(interval):
     # Case 2 & 3: Input is a string
     if isinstance(interval, str):
         s = interval.strip()
+
+        # If the string ends with a 'd' treat is as days (e.g. "2d" for 2 days)
+        if re.match(r"^\d+(\.\d+)?d$", s):
+            return timedelta(days=float(s[:-1]))
+
         # If the string is composed only of digits (or a float), treat it as seconds
         if re.match(r"^\d+(\.\d+)?$", s):
             return timedelta(seconds=float(s))

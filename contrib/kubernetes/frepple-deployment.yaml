@@ -23,6 +23,18 @@ spec:
       storage: 50Mi
 status: {}
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: config-frepple
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Mi
+status: {}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -42,6 +54,26 @@ spec:
       labels:
         app: frepple
     spec:
+      initContainers:
+        # Seed /etc/frepple from the image on the first start only. The volume is
+        # mounted here at /mnt/config (not /etc/frepple) so the image's own copy
+        # stays visible to copy from; on later starts the file already exists and
+        # the copy is skipped, preserving runtime changes to djangosettings.py.
+        # Runs as root: the freshly provisioned volume root is root-owned, so a
+        # non-root user can't populate it, and cp -a can't preserve the image's
+        # root-owned files unless it runs as root. This replicates the image's
+        # ownership/modes (/etc/frepple is group-writable by the frepple group).
+        - name: seed-config
+          image: ghcr.io/frepple/frepple-community:latest
+          securityContext:
+            runAsUser: 0
+          command:
+            - sh
+            - -c
+            - test -f /mnt/config/djangosettings.py || cp -a /etc/frepple/. /mnt/config/
+          volumeMounts:
+            - mountPath: /mnt/config
+              name: config-frepple
       containers:
         - env:
             - name: POSTGRES_HOST
@@ -66,12 +98,17 @@ spec:
               cpu: 250m
               memory: "4294967296"
           volumeMounts:
+            - mountPath: /etc/frepple
+              name: config-frepple
             - mountPath: /var/log/apache2
               name: log-apache
             - mountPath: /var/log/frepple
               name: log-frepple
       restartPolicy: Always
       volumes:
+        - name: config-frepple
+          persistentVolumeClaim:
+            claimName: config-frepple
         - name: log-apache
           persistentVolumeClaim:
             claimName: log-apache

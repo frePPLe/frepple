@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from datetime import date
+from datetime import date, datetime
 import itertools
 import json
 
@@ -856,8 +856,7 @@ class OverviewReport(GridPivot):
         currentdate = getCurrentDate(request.database, lastplan=True)
 
         # Collect backlog information
-        query = (
-            """
+        query = """
             select
                 fcst.name,
                 coalesce(sum(forecastplan.ordersopen), 0)
@@ -879,9 +878,7 @@ class OverviewReport(GridPivot):
                 where bucket_id = %%s and enddate > %%s and startdate < %%s
                 )
             group by fcst.name
-            """
-            % basesql
-        )
+            """ % basesql
         cursor.execute(
             query,
             baseparams
@@ -1478,11 +1475,11 @@ class PeggingReport(pegging.ReportByDemand):
         reportclass.startdate = request.GET.get("startdate")
         if reportclass.startdate:
             try:
-                reportclass.startdate = parseLocalizedDateTime(
-                    reportclass.startdate
+                reportclass.startdate = datetime.strptime(
+                    reportclass.startdate, "%Y-%m-%d"
                 ).date()
             except Exception:
-                pass
+                reportclass.startdate = None
         if not reportclass.startdate:
             reportclass.startdate = getCurrentDate(
                 request.database, lastplan=True
@@ -1490,9 +1487,11 @@ class PeggingReport(pegging.ReportByDemand):
         reportclass.enddate = request.GET.get("enddate")
         if reportclass.enddate:
             try:
-                reportclass.enddate = parseLocalizedDateTime(reportclass.enddate).date()
+                reportclass.enddate = datetime.strptime(
+                    reportclass.enddate, "%Y-%m-%d"
+                ).date()
             except Exception:
-                pass
+                reportclass.enddate = None
         if not reportclass.enddate:
             with connections[request.database].cursor() as cursor:
                 cursor.execute(
@@ -2444,14 +2443,12 @@ class ForecastEditor:
 
         # Find allowed time bucket list
         cursor = connections[request.database].cursor()
-        cursor.execute(
-            """
+        cursor.execute("""
             select level from common_bucket
             inner join common_parameter
               on common_parameter.name = 'forecast.calendar'
             where common_bucket.name = common_parameter.value
-            """
-        )
+            """)
         singleRecord = cursor.fetchone()
         minbucketLevel = singleRecord[0] if singleRecord else 4
         bucketlevels = (

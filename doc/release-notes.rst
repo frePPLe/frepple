@@ -21,6 +21,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     export data on the fly.
   | Until now you had to run the export task separately and then download the file.
 
+.. rubric:: Odoo integration
+
+- | 18, 19: Corrected handling of customer returns and returns to suppliers.
+  | Until now, these were not properly accounted for in the available inventory.
+
 9.16.0 (2026-05-22)
 ===================
 

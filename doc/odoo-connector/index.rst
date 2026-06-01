@@ -2,16 +2,19 @@
 Odoo integration
 ================
 
-.. raw:: html
-
-   <iframe width="640" height="360" src="https://www.youtube.com/embed/6f7pU1NNqNY" frameborder="0" allowfullscreen=""></iframe>
-
 FrePPLe provides an integration with `Odoo <https://www.odoo.com>`_, a leading open source business management suite.
 
 .. toctree::
    :maxdepth: 2
 
    overview
+
+..
+
+.. toctree::
+   :maxdepth: 2
+
+   getting-started
 
 ..
 
@@ -33,5 +36,3 @@ FrePPLe provides an integration with `Odoo <https://www.odoo.com>`_, a leading o
    :maxdepth: 2
 
    legacy-connectors/index.rst
-
-

@@ -105,6 +105,7 @@ frePPLe |release| documentation
    a-day-in-the-life/index
    modeling-wizard/index
    examples/index
+   odoo-connector/index
    user-interface/index
    model-reference/index
    command-reference

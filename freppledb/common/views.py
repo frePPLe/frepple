@@ -484,6 +484,40 @@ class PreferencesForm(forms.Form):
 @csrf_protect
 def preferences(request):
     if request.method == "POST":
+        # Check if this is an AJAX auto-save request
+        is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+        if is_ajax:
+            # Handle auto-save for simple fields
+            try:
+                data = json.loads(
+                    request.body.decode(request.encoding or settings.DEFAULT_CHARSET)
+                )
+
+                if "language" in data:
+                    request.user.language = data["language"]
+                if "theme" in data:
+                    request.user.theme = data["theme"]
+                if "pagesize" in data:
+                    try:
+                        pagesize = int(data["pagesize"])
+                        if 25 <= pagesize <= 10000:
+                            request.user.pagesize = pagesize
+                    except (ValueError, TypeError):
+                        pass
+                if "default_scenario" in data and data["default_scenario"]:
+                    request.user.default_scenario = data["default_scenario"]
+                if "personalization" in data and data["personalization"]:
+                    tmp = data["personalization"].split("-", 1)
+                    if len(tmp) == 2:
+                        request.user.intializePersonalization(tmp[0], tmp[1])
+
+                request.user.save()
+                return HttpResponse(content="OK", content_type="text/plain")
+            except Exception as e:
+                logger.error("Failure updating preferences via AJAX: %s" % e)
+                return HttpResponseServerError("Error updating preferences")
+
         form = PreferencesForm(request.POST, request.FILES)
         form.user = request.user
         if form.is_valid():
@@ -500,7 +534,8 @@ def preferences(request):
                     and newdata["default_scenario"] != "None"
                 ):
                     request.user.default_scenario = newdata["default_scenario"]
-                if newdata["cur_password"]:
+                password_changed = bool(newdata["cur_password"])
+                if password_changed:
                     request.user.set_password(newdata["new_password1"])
                     # Updating the password logs out all other sessions for the user
                     # except the current one if
@@ -522,11 +557,16 @@ def preferences(request):
                 if translation.get_language() != newdata["language"]:
                     translation.activate(newdata["language"])
                     request.LANGUAGE_CODE = translation.get_language()
-                messages.add_message(
-                    request,
-                    messages.INFO,
-                    force_str(_("Successfully updated preferences")),
-                )
+                # Show success message only when password is changed
+                if password_changed:
+                    messages.add_message(
+                        request,
+                        messages.INFO,
+                        force_str(_("Successfully updated your password")),
+                    )
+                    # Redirect to clear POST data and prevent validation errors on next submission
+                    # update_session_auth_hash keeps the user logged in
+                    return HttpResponseRedirect(request.path)
                 # Update the personalization
                 if newdata["personalization"]:
                     tmp = newdata["personalization"].split("-", 1)
@@ -827,8 +867,7 @@ class FollowerList(GridReport):
     model = Follower
     frozenColumns = 0
     template = "common/follower.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>You are not following any objects yet</h3>
         <br>
         All reports where you edit or review an object have a follow button in the upper right corner.<br>
@@ -837,8 +876,7 @@ class FollowerList(GridReport):
         <br>
         <img style="border-radius: 10px; max-width: 180px" src="/static/img/inbox_and_following.png">
         <br>
-        """
-    )
+        """)
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
@@ -972,8 +1010,7 @@ class AttributeList(GridReport):
     model = Attribute
     frozenColumns = 1
     help_url = "model-reference/attributes.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Extend frePPLe with your own attributes</h3>
         <br>
         Every business uses specific attributes on items, sales orders, suppliers...<br>
@@ -981,8 +1018,7 @@ class AttributeList(GridReport):
         <br><br>
         <a href="{{request.prefix}}/data/common/attribute/add/" class="btn btn-primary">Add attribute</a>
         <br>
-        """
-    )
+        """)
 
     rows = (
         GridFieldInteger(
@@ -1320,8 +1356,7 @@ class APIKeyList(GridReport):
     model = APIKey
     frozenColumns = 1
     help_url = "model-reference/apikeys.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>API Keys</h3>
         <br>
         API Keys are used to connect to frepple from external applications.<br>
@@ -1329,8 +1364,7 @@ class APIKeyList(GridReport):
         <br><br>
         <a href="{{request.prefix}}/data/common/apikey/add/" class="btn btn-primary">Add API key</a>
         <br>
-        """
-    )
+        """)
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):

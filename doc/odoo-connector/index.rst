@@ -36,3 +36,10 @@ FrePPLe provides an integration with `Odoo <https://www.odoo.com>`_, a leading o
    :maxdepth: 2
 
    legacy-connectors/index.rst
+
+..
+
+.. toctree::
+   :maxdepth: 2
+
+   read-more.rst

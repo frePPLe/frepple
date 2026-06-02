@@ -117,3 +117,4 @@ frePPLe |release| documentation
    license
    branding-guidelines
    release-notes
+   release-archive

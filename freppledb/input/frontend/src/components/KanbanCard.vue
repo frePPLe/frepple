@@ -42,7 +42,7 @@ export default defineComponent({
     watch(
       () => [props.opplan?.quantity, props.opplan?.operationplan__quantity],
       () => { cardVersion.value++; },
-      { deep: false }
+      { deep: true }
     );
 
     const mode = window.mode;

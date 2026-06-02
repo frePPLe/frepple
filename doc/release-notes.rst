@@ -26,6 +26,16 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 18, 19: Corrected handling of customer returns and returns to suppliers.
   | Until now, these were not properly accounted for in the available inventory.
 
+- | Improved protection against duplicate exports.
+  | In some cases, the same frepple proposal could be exported twice to Odoo.
+    We now lock the proposal during the export to prevent this from happening.
+
+.. rubric:: Docker images
+
+- | The docker image is now available as a multi-arch image, supporting both
+    AMD64 and ARM64 architectures.
+  | Thanks
+
 9.16.0 (2026-05-22)
 ===================
 

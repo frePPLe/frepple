@@ -489,7 +489,6 @@ def Upload(request):
                         f"Internal server error on Odoo side:<pre>{msg}</pre>"
                     )
             for i in obj:
-                print(request, i.reference, i.status)
                 if i.status == "proposed":
                     i.status = "approved"
                     i.source = "odoo_1"

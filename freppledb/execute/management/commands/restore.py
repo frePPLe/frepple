@@ -137,3 +137,9 @@ class Command(BaseCommand):
 
         # Assure the common_scenario table is valid
         Scenario.syncWithSettings()
+        Scenario.objects.all().using(DEFAULT_DB_ALIAS).exclude(
+            name__in=(DEFAULT_DB_ALIAS, database)
+        ).update(status="Free")
+        Scenario.objects.all().using(DEFAULT_DB_ALIAS).filter(name=database).update(
+            status="In use"
+        )

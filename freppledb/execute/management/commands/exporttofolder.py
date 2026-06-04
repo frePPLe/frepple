@@ -487,6 +487,35 @@ class Command(BaseCommand):
                                         if isinstance(r, str)
                                         else r
                                     )
+                            elif cfg.name.lower().endswith((".json", ".json.gz")):
+                                if n[0] != "freppledb.reportmanager.models.SQLReport":
+                                    raise Exception(
+                                        "JSON export is only supported for custom reports, not standard reports"
+                                    )
+                                with connections[
+                                    (
+                                        self.database
+                                        if f"{self.database}_report"
+                                        not in get_databases(True)
+                                        else f"{self.database}_report"
+                                    )
+                                ].cursor() as cursor:
+                                    cursor.execute(report.sql)
+                                    columns = [desc[0] for desc in cursor.description]
+                                    datafile.write(b"[\n")
+                                    first = True
+                                    for row in cursor:
+                                        if first:
+                                            first = False
+                                        else:
+                                            datafile.write(b",\n")
+                                        datafile.write(
+                                            json.dumps(
+                                                dict(zip(columns, row)),
+                                                default=str,
+                                            ).encode("utf-8")
+                                        )
+                                    datafile.write(b"\n]")
                             else:
                                 raise Exception(
                                     "Unknown output format for %s" % cfg.name

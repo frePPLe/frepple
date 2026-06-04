@@ -21,6 +21,12 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     export data on the fly.
   | Until now you had to run the export task separately and then download the file.
 
+.. rubric:: System administration
+
+  - | One-time password (OTP) authentication is now available as an extension app.
+    | When enabled, it adds mandatory two-factor authentication (2FA) to all user accounts.
+    | This applies to Enterprise and Cloud Editions only.
+
 .. rubric:: Odoo integration
 
 - | 18, 19: Corrected handling of customer returns and returns to suppliers.

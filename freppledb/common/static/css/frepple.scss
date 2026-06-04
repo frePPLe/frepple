@@ -1072,3 +1072,8 @@ svg text {
   --frepple-color-split: #{$frepple-color-split};
   --frepple-color-split-stroke: #{$frepple-color-split-stroke};
 }
+
+.alert-success a {
+  color: $success-text-emphasis;
+  font-weight: bold;
+}

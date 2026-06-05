@@ -1504,7 +1504,7 @@ var grid = {
         '<div class="modal-content">' +
         '<div class="modal-header">' +
         '<h5 class="modal-title text-capitalize-first">' + gettext('Delete data') + '</h5>' +
-        '<button type="button" class="btn-close" data-bs-dismiss="modal"></span></button>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' + gettext("Close") + '"></button>' +
         '</div>' +
         '<div class="modal-body">' +
         '<p>' + interpolate(gettext('You are about to delete %s objects AND ALL RELATED RECORDS!'), [sel.length], false) + '</p>' +

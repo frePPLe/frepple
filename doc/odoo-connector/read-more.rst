@@ -1,6 +1,6 @@
-================================
-More on frepple's Odoo connector
-================================
+=========
+Read more
+=========
 
 Over the years, we've published a lot of content about our Odoo connector.
 

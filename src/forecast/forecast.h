@@ -836,6 +836,8 @@ class ForecastData {
 
   void clearDirty() const;
 
+  void markDirty();
+
   size_t getSize() const;
 
   recursive_mutex* getLock() { return &lock; }

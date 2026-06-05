@@ -1148,6 +1148,11 @@ ForecastData::ForecastData(const ForecastBase* f) {
 
         // We need to reset the dirty flag on all buckets:
         clearDirty();
+        if (!totalRows) {
+          // If no record was read from the database, we set the dirty flag to
+          // force this combination to be created in the database.
+          markDirty();
+        }
       }
 
       // Successfully completed
@@ -1162,6 +1167,11 @@ ForecastData::ForecastData(const ForecastBase* f) {
 void ForecastData::clearDirty() const {
   for (const auto& bucket : buckets) bucket.clearDirty();
   if (!buckets.empty()) buckets[0].getForecast()->clearDirty();
+}
+
+void ForecastData::markDirty() {
+  for (auto& bucket : buckets) bucket.markDirty();
+  if (!buckets.empty()) buckets[0].getForecast()->markDirty();
 }
 
 size_t ForecastData::getSize() const {

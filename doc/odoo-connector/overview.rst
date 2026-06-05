@@ -1,6 +1,6 @@
-========
-Overview
-========
+=================================
+Overview frepple-odoo integration
+=================================
 
 FrePPLe is an advanced planning and scheduling (APS) software.
 

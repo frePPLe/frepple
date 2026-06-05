@@ -40,7 +40,15 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | The docker image is now available as a multi-arch image, supporting both
     AMD64 and ARM64 architectures.
-  | Thanks
+  | Thanks to Pim Zandbergen.
+
+.. rubric:: Documentation
+
+- | So far, all documentation was stored on the frepple website.
+  | From now onwards, the documentation pages are included in the frepple application
+    itself.
+  | The frepple website will still host the latest version of the documentation.
+
 
 9.16.0 (2026-05-22)
 ===================

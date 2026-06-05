@@ -45,16 +45,6 @@ class WelcomeWidget(Widget):
     @staticmethod
     def render(request):
         try:
-            versionnumber = __version__.split(".", 2)
-            docurl = "%s/docs/%s.%s/index.html" % (
-                settings.DOCUMENTATION_URL,
-                versionnumber[0],
-                versionnumber[1],
-            )
-        except Exception:
-            docurl = "%s/docs/current/index.html" % (settings.DOCUMENTATION_URL,)
-
-        try:
             db = request.database
             if not db or db == DEFAULT_DB_ALIAS:
                 prefix = ""
@@ -67,13 +57,13 @@ class WelcomeWidget(Widget):
                 """Welcome to the world's leading open source production planning tool!<br><br>
 How to get started?
 <ol>
-<li>Check out the <span class="text-decoration-underline"><a href="%(docurl)s" target="_blank" rel="noopener">documentation</a></span></li>
+<li>Check out the <span class="text-decoration-underline"><a href="/static/doc/index.html" target="_blank" rel="noopener">documentation</a></span></li>
 <li>Visit and join the <span class="text-decoration-underline"><a href="https://github.com/frePPLe/frepple/discussions" target="_blank" rel="noopener">user community</a></span></li>
 <li><span class="text-decoration-underline"><a href="https://frepple.com/company/#contact" target="_blank" rel="noopener">Contact us</a></span></li>
 </ol>
 """
             )
-            % {"docurl": docurl, "prefix": prefix}
+            % {"prefix": prefix}
         )
 
 

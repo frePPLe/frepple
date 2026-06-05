@@ -1693,9 +1693,9 @@ class GridReport(View):
                 if storageUsage > maxstorage:
                     return HttpResponseForbidden("""
                         Storage quota exceeded: %sMB used out of %sMB available.<br>
-                        Please <a class="text-decoration-underline" href="%s/docs/current/doc/installation-guide/setting-disk-space-quotas.html" target="_blank">free some disk space</a>
+                        Please <a class="text-decoration-underline" href="/static/doc/installation-guide/setting-disk-space-quotas.html" target="_blank">free some disk space</a>
                         and try again.
-                        """ % (storageUsage, maxstorage, settings.DOCUMENTATION_URL))
+                        """ % (storageUsage, maxstorage))
 
             # Note: the detection of the type of uploaded file depends on the
             # browser setting the right mime type of the file.

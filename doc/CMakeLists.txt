@@ -14,4 +14,5 @@ add_custom_target(
   -D "version=current" -D "release=${PROJECT_VERSION}"
   -D "html_baseurl=https://your-site.com/docs/"
   COMMAND tar "cf" "${CMAKE_BINARY_DIR}/frepple-doc-${PROJECT_VERSION}.tgz" -C ${CMAKE_CURRENT_BINARY_DIR}/_build -- html
+  COMMAND ln -sf "${CMAKE_CURRENT_BINARY_DIR}/_build/html" "${CMAKE_SOURCE_DIR}/freppledb/common/static/doc"
 )

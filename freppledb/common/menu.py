@@ -144,19 +144,10 @@ menu.addItem(
 )
 
 # Help menu
-try:
-    versionnumber = __version__.split(".", 2)
-    docurl = "%s/docs/%s.%s/index.html" % (
-        settings.DOCUMENTATION_URL,
-        versionnumber[0],
-        versionnumber[1],
-    )
-except Exception:
-    docurl = "%s/docs/current/index.html" % (settings.DOCUMENTATION_URL,)
 menu.addItem(
     "help",
     "documentation",
-    url=docurl,
+    url="/static/doc/index.html",
     label=_("Documentation"),
     window=True,
     prefix=False,

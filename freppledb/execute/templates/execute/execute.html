@@ -119,13 +119,13 @@
   }
 
   $(function() {
-    if(location.hash != null && location.hash != "") {      
+    if(location.hash != null && location.hash != "") {
         $("#commandlist .collapse.show").removeClass('show');
         $("#commandlist").find('.collapse[data-task="' + location.hash + '"]').addClass("show");
     }
 
     widget.init(grid.saveColumnConfiguration);
-    
+
     $('#commandlist .collapse')
       .on("shown.bs.collapse", grid.saveColumnConfiguration)
       .on("hidden.bs.collapse", grid.saveColumnConfiguration);
@@ -154,7 +154,7 @@
     });
 
   });
-  var models = {% getModelDependencies %};      
+  var models = {% getModelDependencies %};
 </script>
 
 <style>
@@ -242,9 +242,9 @@ loadComplete : function(data) {
         <div class="card-header d-flex align-items-center" id="Heading1-{{ forloop.counter }}" data-bs-toggle="collapse" data-bs-target="#Accord1-{{ forloop.counter }}" aria-expanded="true" aria-controls="Accord1-{{ forloop.counter }}">
           <h5 class="fs-5 me-auto card-title">
               {{ cmd.command.title|capfirst }}
-          </h5>          
+          </h5>
           {% if cmd.command.help_url %}
-            <span class='fa fa-question align-middle w-auto me-2' onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{ cmd.command.help_url }}')"></span>
+            <span class='fa fa-question align-middle w-auto me-2' onclick="window.open('/static/doc/{{ cmd.command.help_url }}')"></span>
           {% endif %}
           <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
         </div>
@@ -260,18 +260,18 @@ loadComplete : function(data) {
         <div class="card-header d-flex align-items-center" id="Heading2-{{ forloop.counter }}" data-bs-toggle="collapse" data-bs-target="#Accord2-{{ forloop.counter }}" aria-expanded="true" aria-controls="Accord2-{{ forloop.counter }}">
           <h5 class="fs-5 me-auto card-title">
               {{ cmd.command.title|capfirst }}
-          </h5>          
+          </h5>
           {% if cmd.command.help_url %}
-            <span class='fa fa-question align-middle w-auto me-2' onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{ cmd.command.help_url }}')"></span>
+            <span class='fa fa-question align-middle w-auto me-2' onclick="window.open('/static/doc/{{ cmd.command.help_url }}')"></span>
           {% endif %}
           <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
         </div>
-        <div id="Accord2-{{ forloop.counter }}" data-task="#{{ cmd.command.name }}" data-bs-parent="#tasks" class="card-body collapse{% if not cmd.options.collapsed %} show{% endif %}" aria-labelledby="Heading2-{{ forloop.counter }}">            
+        <div id="Accord2-{{ forloop.counter }}" data-task="#{{ cmd.command.name }}" data-bs-parent="#tasks" class="card-body collapse{% if not cmd.options.collapsed %} show{% endif %}" aria-labelledby="Heading2-{{ forloop.counter }}">
           {{ cmd.html }}
         </div>
       </div>
     {% endfor %}
-    </div>    
+    </div>
 	{% else %}
   <div class="col-12">
 	{% trans "Sorry, You don't have any execute permissions..." %}

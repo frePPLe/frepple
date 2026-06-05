@@ -13,11 +13,11 @@
 {% if adminform.model_admin.help_url %}
 <div class="col-auto align-items-center d-flex">
     <h1 class="mb-0">
-      <a href="{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{adminform.model_admin.help_url}}" 
+      <a href="/static/doc/{{adminform.model_admin.help_url}}"
         target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,7" data-bs-title="{% trans 'help'|capfirst|force_escape %}">
         <span class="fa fa-question">
       </span></a>
-    </h1>    
+    </h1>
 </div>
 {% endif %}
 </div>

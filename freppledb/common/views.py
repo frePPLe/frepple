@@ -159,7 +159,6 @@ def AboutView(request):
                 .order_by("sort_key", "name")
             },
             "apps": apps,
-            "website": settings.DOCUMENTATION_URL,
         }
     )
 

@@ -87,17 +87,8 @@ def parseDuration(v):
 
 
 def getWizardSteps(request, mode):
-    try:
-        versionnumber = __version__.split(".", 2)
-        docurl = "%s/docs/%s.%s" % (
-            settings.DOCUMENTATION_URL,
-            versionnumber[0],
-            versionnumber[1],
-        )
-    except Exception:
-        docurl = "%s/docs/current" % settings.DOCUMENTATION_URL
     context = {
-        "docroot": docurl,
+        "docroot": "/static/doc",
         "prefix": request.prefix,
         "label_data": '<span class="badge bg-primary">Data entry</span>',
         "label_config": '<span class="badge bg-primary">Configuration</span>',

@@ -161,10 +161,6 @@ install(
   FILES djangosettings.py
   DESTINATION "${CMAKE_INSTALL_SYSCONFDIR}/frepple"
 )
-install(
-  FILES requirements.txt
-  DESTINATION "${CMAKE_INSTALL_DATADIR}/frepple"
-)
 
 # Packaging of the django app: Python module in a virtual environment
 # Note that we use \$ to delay the evaluation till install time
@@ -188,6 +184,10 @@ install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADI
 
 # Packaging of the static files
 install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E env FREPPLE_STATIC=\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/frepple/static ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/frepplectl.py collectstatic --noinput --clear --ignore '*.less' --verbosity=0)")
+
+# Build and install the documentation
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target doc)")
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/doc/_build/html \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/frepple/static/doc)")
 
 # Generic packaging
 set(CPACK_PACKAGE_VENDOR "frePPLe")

@@ -292,6 +292,7 @@ class TaskReport(GridReport):
 
 
 @csrf_exempt
+@staff_member_required
 def APITask(request, action):
     try:
         if action == "status":

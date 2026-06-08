@@ -1,10 +1,11 @@
+==============================
 Using the connector in frePPLe
-------------------------------
+==============================
 
-The Odoo integration brings new functionality to the user interface.
+The Odoo integration brings new functionality to the frePPLe user interface.
 
 * | **Plan generation options to "import Odoo data" and "send recommendations to odoo"**
-  | These options are used to assure the frepple is based on the latest Odoo data, and
+  | These options are used to assure the frePPLe is based on the latest Odoo data, and
     will publish a list of recommendations to odoo.
 
   .. image:: _images/plan_generation.png

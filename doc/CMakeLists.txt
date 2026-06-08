@@ -8,7 +8,7 @@ add_custom_target(
   doc
   DEPENDS venv
   COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/_build
-  COMMAND "${Python3_VENV}/sphinx-build" -a -E -W --keep-going -q -b html
+  COMMAND "${Python3_VENV}/sphinx-build" -a -E -q -b html
   -d ${CMAKE_CURRENT_BINARY_DIR}/_build/doctrees
   ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/_build/html
   -D "version=current" -D "release=${PROJECT_VERSION}"

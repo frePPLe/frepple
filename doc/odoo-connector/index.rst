@@ -9,8 +9,10 @@ FrePPLe provides an integration with `Odoo <https://www.odoo.com>`_, a leading o
 
    overview
    getting-started
-   installation-and-configuration-in-odoo
-   installation-and-configuration-in-frepple
+   recommendations-in-odoo
+   quoting-in-odoo
+   using-the-connector-in-frepple
+   installation-and-configuration
    extensions-to-the-odoo-data-model
    data-mapping
    read-more

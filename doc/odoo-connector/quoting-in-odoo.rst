@@ -1,42 +1,6 @@
-Addition of menus in Odoo
--------------------------
-
-After installation, users find the following additional features in odoo:
-
-* | The menu bar in the sales, purchase, inventory and manufacturing apps
-    get 1) a link to open the frepple user interface and 2) a link
-    to the recommendation list.
-
-  .. image:: _images/odoo-menu-bar.png
-   :alt: Frepple
-
-Addition of extra views and fields in Odoo
-------------------------------------------
-
-* | A new table has been added to Odoo with **frepple recommendations** on your plan.
-
-  | The frepple recommendations represent a list of actionable activities relevant for the
-    short term plan in Odoo.
-
-  * | Purchase orders to be placed within the new 2 weeks.
-    | When accepting the recommendation, a RFQ is created in Odoo.
-
-  * | Manufacturing orders to be created within the next week.
-    | When accepting the recommendation, a draft Manufacturing order is created in Odoo.
-
-  * | Manufacturing orders to be rescheduled to a new date.
-    | When accepting the recommendation, the scheduled start of the manufacturing order and its
-      work orders are updated to the start date computed by frePPLe.
-
-  * | Sales order delay recommendations inform the Odoo users about sales orders where
-      the promised delivery date is infeasible.
-    | This is an information-only recommendation.
-
-     .. image:: _images/recommendations.png
-      :alt: Recommendations view in odoo
-
-Quoting capabilities
---------------------
+===============
+Quoting in Odoo
+===============
 
 Starting from Odoo 17, the connectors also allow the planner to use the frePPLe quoting
 module from Odoo.

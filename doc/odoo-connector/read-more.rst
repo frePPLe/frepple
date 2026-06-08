@@ -6,7 +6,7 @@ Over the years, we've published a lot of content about our Odoo connector.
 
 This page provides links to this content. Some of this is a bit dusty and shows our age...
 
-* A presentation on `connector refactoring with odoo 19 <_images/frepple_odoo_connector_what_changes_with_odoo_19.pdf>`_
+* A presentation on :download:`connector refactoring with odoo 19 <_images/frepple_odoo_connector_what_changes_with_odoo_19.pdf>`
 
 * A `short overview <https://www.youtube.com/embed/6f7pU1NNqNY>`_ youtube video
 

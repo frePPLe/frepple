@@ -28,5 +28,5 @@ frepple_app = {
         <p>This app adds a number of item attributes that make it easy to
         identify critical items.</p>
         """,
-    "documentation_url": "https://frepple.com/docs/current/apps/metrics.html",
+    "documentation_url": "/apps/metrics.html",
 }

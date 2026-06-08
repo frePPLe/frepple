@@ -30,5 +30,5 @@ frepple_app = {
         sorting, filtering and export features available in the standard
         frePPLe reports.</p>
         """,
-    "documentation_url": "https://frepple.com/docs/current/apps/reportmanager.html",
+    "documentation_url": "/apps/reportmanager.html",
 }

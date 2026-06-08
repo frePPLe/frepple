@@ -27,5 +27,5 @@ frepple_app = {
     "description": """
         <p>This app allows superusers to view the web server log file.</p>
         """,
-    "documentation_url": "https://frepple.com/docs/current/apps/debugreport.html",
+    "documentation_url": "/apps/debugreport.html",
 }

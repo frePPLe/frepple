@@ -33,6 +33,6 @@ frepple_app = {
         with your custom ERP system.</p>
         <p>Clone and customize this app to suit your needs.</p>
         """,
-    "documentation_url": "https://frepple.com/docs/current/apps/erpconnection.html",
+    "documentation_url": "/apps/erpconnection.html",
     "ERP_integration": True,
 }

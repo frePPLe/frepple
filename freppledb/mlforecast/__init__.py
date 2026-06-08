@@ -29,5 +29,5 @@ frepple_app = {
          <p>This app is still in beta-testing and would require the frePPLe team to
     help to make it production ready.</p>
         """,
-    "documentation_url": "https://frepple.com/docs/current/apps/mlforecast.html",
+    "documentation_url": "/apps/mlforecast.html",
 }

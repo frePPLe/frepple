@@ -28,5 +28,5 @@ frepple_app = {
         <p>This app provides interactive wizards to guide users in loading
         their first data in frepple.</p>
         """,
-    "documentation_url": "https://frepple.com/docs/current/apps/wizard.html",
+    "documentation_url": "/apps/wizard.html",
 }

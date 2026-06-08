@@ -9,17 +9,17 @@ FrePPLe provides an integration with `Odoo <https://www.odoo.com>`_, a leading o
 
    overview
    getting-started
+   installation-and-configuration-in-odoo
+   installation-and-configuration-in-frepple
    extensions-to-the-odoo-data-model
    data-mapping
-   read-more.rst
+   read-more
 
 .. TO ADD
 
 ..    recommendations
 ..    quoting
 ..    using in frepple / tasks & exports
-..    advanced configuration odoo
-..    advanced configuration frepple
 
 .. TO REMOVE
 

@@ -2,7 +2,7 @@ Release notes
 -------------
 
 9.17.0 (Upcoming release)
-========================
+=========================
 
 This release is scheduled for the end of June 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
@@ -23,9 +23,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: System administration
 
-  - | One-time password (OTP) authentication is now available as an extension app.
-    | When enabled, it adds mandatory two-factor authentication (2FA) to all user accounts.
-    | This applies to Enterprise and Cloud Editions only.
+- | One-time password (OTP) authentication is now available as an extension app.
+  | When enabled, it adds mandatory two-factor authentication (2FA) to all user accounts.
+  | This applies to Enterprise and Cloud Editions only.
 
 .. rubric:: Odoo integration
 

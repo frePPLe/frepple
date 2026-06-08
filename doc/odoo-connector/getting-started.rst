@@ -54,14 +54,14 @@ Getting started
     Use the "generate recommendations" button in the Odoo interface to send your data to the
     frepple cloud service.
 
-    .. image:: odoo-connectors-with-aps/_images/odoo-menu-bar.png
+    .. image:: _images/odoo-menu-bar.png
       :alt: Frepple in the odoo menu bar.
 
   - Collecting all odoo data, sending them to the frepple cloud service, and letting frepple process the data
     can take 5 to 10 minutes.
     Once it's finished you get a set of actions to take in odoo.
 
-    .. image:: odoo-connectors-with-aps/_images/recommendations.png
+    .. image:: _images/recommendations.png
       :alt: Frepple recommended actions in Odoo.
 
     You can directly take actions on these recommendations:

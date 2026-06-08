@@ -25,6 +25,7 @@ or `developed by yourself <../developer-guide/creating-an-extension-app.html>`_.
    wizard
    debugreport
    erpconnection
+   otp_authentication
 
 .. image:: ../user-interface/_images/apps.png
    :alt: Extension apps

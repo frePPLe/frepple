@@ -26,9 +26,9 @@ authentication becomes mandatory for all users:
   enter their 6-digit authentication code after providing their username
   and password.
 
-- **External authentication (SSO):** Users authenticating via an external
-  identity provider (allauth/OAuth/SAML) bypass the TOTP requirement, as
-  the SSO provider is trusted to handle its own multi-factor authentication.
+- **External authentication:** Users authenticating via an external
+  identity provider (login with Google, login with Microsoft...) bypass the TOTP requirement,
+  as the SSO provider is trusted to handle its own multi-factor authentication.
 
 - **API access:** Basic authentication is blocked when this app is enabled.
   Use JWT webtokens or API keys instead.
@@ -38,21 +38,9 @@ Resetting a user's 2FA
 -----------------------
 
 If a user loses access to their authenticator app, an administrator can
-reset their 2FA enrollment by deleting their TOTP device from the database.
-The user will be prompted to re-enroll at their next login.
+reset their 2FA enrollment by resetting the 2FA secret key in the user form.
 
-This can be done with a management command:
+.. image:: _images/otp_reset.png
+	 :alt: Reset 2FA secret key
 
-::
-
-    frepplectl shell -c "
-    from django_otp.plugins.otp_totp.models import TOTPDevice
-    TOTPDevice.objects.filter(user__username='the_username').delete()
-    "
-
-Or directly with a SQL command on the database:
-
-::
-
-    delete from otp_totp_totpdevice
-    where user_id = (select id from common_user where username = 'the_username');
+This will require the user to go through the enrollment process again on their next login.

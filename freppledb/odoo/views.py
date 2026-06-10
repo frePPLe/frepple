@@ -33,7 +33,7 @@ from xml.sax.saxutils import quoteattr
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.db import transaction
+from django.db import connections, transaction
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseNotAllowed
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
@@ -488,12 +488,67 @@ def Upload(request):
                     return HttpResponseServerError(
                         f"Internal server error on Odoo side:<pre>{msg}</pre>"
                     )
+            # Parse the Odoo response to get created references
+            reference_mapping = {}
+            try:
+                odoo_response = json.loads(msg)
+                for po in odoo_response.get("created_purchase_orders", []):
+                    odoo_ref = po["reference"]
+                    frepple_refs = po.get("frepple_references", [])
+                    if len(frepple_refs) == 1:
+                        reference_mapping[frepple_refs[0]] = odoo_ref
+                    else:
+                        for idx, fref in enumerate(frepple_refs, start=1):
+                            reference_mapping[fref] = "%s-%d" % (odoo_ref, idx)
+                for mo in odoo_response.get("created_manufacturing_orders", []):
+                    reference_mapping[mo["frepple_reference"]] = mo["reference"]
+            except (json.JSONDecodeError, KeyError, TypeError):
+                # Old inbound.py returns plain text, no reference mapping available
+                pass
+
             for i in obj:
                 if i.status == "proposed":
+                    old_reference = i.reference
                     i.status = "approved"
                     i.source = "odoo_1"
-                    i.save(using=request.database)
-            return HttpResponse("OK")
+                    if old_reference in reference_mapping:
+                        new_reference = reference_mapping[old_reference]
+                        with connections[request.database].cursor() as cursor:
+                            cursor.execute("SET CONSTRAINTS ALL DEFERRED")
+                            OperationPlan.objects.using(request.database).filter(
+                                reference=old_reference
+                            ).update(
+                                reference=new_reference,
+                                status="approved",
+                                source="odoo_1",
+                            )
+                            cursor.execute(
+                                """
+                                UPDATE operationplanmaterial
+                                SET operationplan_id = %s
+                                WHERE operationplan_id = %s
+                                """,
+                                [new_reference, old_reference],
+                            )
+                            cursor.execute(
+                                """
+                                UPDATE operationplanresource
+                                SET operationplan_id = %s
+                                WHERE operationplan_id = %s
+                                """,
+                                [new_reference, old_reference],
+                            )
+                            cursor.execute(
+                                """
+                                UPDATE operationplan
+                                SET owner_id = %s
+                                WHERE owner_id = %s
+                                """,
+                                [new_reference, old_reference],
+                            )
+                    else:
+                        i.save(using=request.database)
+            return HttpResponse(content=msg, content_type="application/json")
 
     except HTTPError as e:
         odoo_data = e.read()

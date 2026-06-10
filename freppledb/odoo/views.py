@@ -548,7 +548,7 @@ def Upload(request):
                             )
                     else:
                         i.save(using=request.database)
-            return HttpResponse(content=msg, content_type="application/json")
+            return HttpResponse("OK")
 
     except HTTPError as e:
         odoo_data = e.read()

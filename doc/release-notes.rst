@@ -21,6 +21,14 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     export data on the fly.
   | Until now you had to run the export task separately and then download the file.
 
+.. rubric:: Demand forecasting
+
+- | Bug fix: Initializing a new forecast that has no demand history was tricky
+    and complex. We've corrected this and now simply creating a record in the
+    forecast table is sufficient.
+  | This applies only to configurations where the parameter forecast.populateForecastTable
+    is false.
+
 .. rubric:: System administration
 
 - | One-time password (OTP) authentication is now available as an extension app.

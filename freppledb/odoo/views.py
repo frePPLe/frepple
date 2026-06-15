@@ -492,14 +492,10 @@ def Upload(request):
             reference_mapping = {}
             try:
                 odoo_response = json.loads(msg)
+                print(odoo_response.get("created_purchase_orders", []))
                 for po in odoo_response.get("created_purchase_orders", []):
-                    odoo_ref = po["reference"]
-                    frepple_refs = po.get("frepple_references", [])
-                    if len(frepple_refs) == 1:
-                        reference_mapping[frepple_refs[0]] = odoo_ref
-                    else:
-                        for idx, fref in enumerate(frepple_refs, start=1):
-                            reference_mapping[fref] = "%s-%d" % (odoo_ref, idx)
+                    for frepple_po in po["frepple_references"]:
+                        reference_mapping[frepple_po] = po["reference"]
                 for mo in odoo_response.get("created_manufacturing_orders", []):
                     reference_mapping[mo["frepple_reference"]] = mo["reference"]
             except (json.JSONDecodeError, KeyError, TypeError):
@@ -513,6 +509,7 @@ def Upload(request):
                     i.source = "odoo_1"
                     if old_reference in reference_mapping:
                         new_reference = reference_mapping[old_reference]
+                        new_reference = f"{old_reference} exported as {new_reference}"
                         with connections[request.database].cursor() as cursor:
                             cursor.execute("SET CONSTRAINTS ALL DEFERRED")
                             OperationPlan.objects.using(request.database).filter(
@@ -548,7 +545,11 @@ def Upload(request):
                             )
                     else:
                         i.save(using=request.database)
-            return HttpResponse("OK")
+            # Return the Odoo response with created references for UI updates
+            try:
+                return HttpResponse(content=msg, content_type="application/json")
+            except:
+                return HttpResponse("OK")
 
     except HTTPError as e:
         odoo_data = e.read()

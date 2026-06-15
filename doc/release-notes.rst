@@ -44,6 +44,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | In some cases, the same frepple proposal could be exported twice to Odoo.
     We now lock the proposal during the export to prevent this from happening.
 
+- | 17, 18, 19: enhanced information when exporting POs and MOs to Odoo.
+  | The reference is updated to include the Odoo created PO/MO reference, if any.
+  | The number of created/updated POs and MOs is displayed in the export dialog.
+
 .. rubric:: Docker images
 
 - | The docker image is now available as a multi-arch image, supporting both

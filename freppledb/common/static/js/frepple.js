@@ -2474,42 +2474,42 @@ var ERPconnection = {
             $('#popup .modal-body p').html(gettext("No valid records selected"));
             return;
           }
-          var parsedResponseData = responseData;
-          if (typeof responseData === 'string') {
-            var trimmedResponse = responseData.trim();
-            if (trimmedResponse && (trimmedResponse.startsWith('{') || trimmedResponse.startsWith('['))) {
-              try {
-                parsedResponseData = JSON.parse(trimmedResponse);
-              } catch (e) {
-                parsedResponseData = responseData;
-              }
+          var rowdata = [];
+          var parsedResponse = null;
+          if (responseData && typeof responseData === 'object') {
+            parsedResponse = responseData;
+          } else if (typeof responseData === 'string') {
+            try {
+              parsedResponse = JSON.parse(responseData);
+            } catch (e) {
+              parsedResponse = null;
             }
           }
-          var rowdata = [];
           var erpMessage = '';
-          if (typeof parsedResponseData === 'string') {
-            erpMessage = parsedResponseData;
-          } else if (parsedResponseData && typeof parsedResponseData === 'object') {
-            if (typeof parsedResponseData.message === 'string') {
-              erpMessage = parsedResponseData.message;
-            } else if (typeof parsedResponseData.detail === 'string') {
-              erpMessage = parsedResponseData.detail;
-            } else if (Array.isArray(parsedResponseData.messages)) {
-              erpMessage = parsedResponseData.messages.join('\n');
+          if (parsedResponse && typeof parsedResponse === 'object') {
+            if (typeof parsedResponse.message === 'string') {
+              erpMessage = parsedResponse.message;
+            } else if (typeof parsedResponse.detail === 'string') {
+              erpMessage = parsedResponse.detail;
+            } else if (Array.isArray(parsedResponse.messages)) {
+              erpMessage = parsedResponse.messages
+                .map(function (message) { return String(message).replace(/[\r\n]+$/g, ''); })
+                .join('\n');
             } else if (
-              Array.isArray(parsedResponseData.value)
-              && parsedResponseData.value.length
-              && Array.isArray(parsedResponseData.value[0].messages)
+              Array.isArray(parsedResponse.value)
+              && parsedResponse.value.length
+              && Array.isArray(parsedResponse.value[0].messages)
             ) {
-              erpMessage = parsedResponseData.value[0].messages.join('\n');
+              erpMessage = parsedResponse.value[0].messages
+                .map(function (message) { return String(message).replace(/[\r\n]+$/g, ''); })
+                .join('\n');
             }
           }
 
           // Mark selected rows as "approved" if the original status was "proposed".
           var popupMessage = '<p>' + gettext("Export successful") + '</p>';
           if (erpMessage && erpMessage !== 'OK') {
-            var erpMessageWithBreaks = $('<div/>').text(erpMessage).html().replace(/(?:\\n|\r\n|\r|\n)/g, '<br>');
-            popupMessage += '<div class="mb-0 mt-2 text-wrap">' + erpMessageWithBreaks + '</div>';
+            popupMessage += '<pre class="mb-0 mt-2" style="white-space: pre-wrap; overflow-wrap: anywhere;">' + $('<div/>').text(erpMessage).html() + '</pre>';
           }
           $('#popup .modal-body').html(popupMessage);
 

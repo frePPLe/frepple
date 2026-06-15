@@ -230,7 +230,11 @@ HTTP(S) web interface.
 
       .. code-block:: bash
 
+        # Export all planning result files:
         frepplectl exporttofolder
+
+        # Export some planning result files:
+        frepplectl exporttofolder --files=file1,file2,file3
 
    .. tab:: Web API
 
@@ -238,6 +242,9 @@ HTTP(S) web interface.
 
         # Export the planning result files:
         POST /execute/api/exporttofolder/
+
+        # Export some planning result files:
+        POST /execute/api/exporttofolder/?files=file1,file2,file3
 
         # Retrieve one of the exported files:
         GET /execute/downloadfromfolder/1/<filename>/
@@ -402,7 +409,11 @@ access to the files restricted.
 
       .. code-block:: bash
 
+        # import all files:
         frepplectl importfromfolder
+
+        # import some files:
+        frepplectl importfromfolder --files=file1,file2,file3
 
    .. tab:: Web API
 
@@ -425,6 +436,9 @@ access to the files restricted.
 
         # Import the data files:
         POST /execute/api/importfromfolder/
+
+        # Import some data files:
+        POST /execute/api/importfromfolder/?files=file1,file2,file3
 
 .. _runwebservice:
 

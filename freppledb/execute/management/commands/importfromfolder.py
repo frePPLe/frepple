@@ -77,6 +77,10 @@ class Command(BaseCommand):
             type=int,
             help="Task identifier (generated automatically if not provided)",
         )
+        parser.add_argument(
+            "--files",
+            help="Comma-separated list of file names to import (default: all)",
+        )
 
     def get_version(self):
         return __version__
@@ -146,6 +150,9 @@ class Command(BaseCommand):
                     user=self.user,
                     logfile=logfile,
                 )
+            task.arguments = (
+                f"--files={options.get('files')}" if options.get("files") else ""
+            )
             task.processid = os.getpid()
             task.save(using=self.database)
 
@@ -179,10 +186,27 @@ class Command(BaseCommand):
                     for ct in ContentType.objects.all()
                     if ct.model_class()
                 ]
+                selected_files = (
+                    {
+                        filename.strip().lower()
+                        for filename in options["files"].split(",")
+                        if filename.strip()
+                    }
+                    if options.get("files")
+                    else None
+                )
+                found_selected_files = set()
                 models = []
                 for ifile in os.listdir(
                     get_databases()[self.database]["FILEUPLOADFOLDER"]
                 ):
+                    if (
+                        selected_files is not None
+                        and ifile.lower() not in selected_files
+                    ):
+                        continue
+                    if selected_files is not None:
+                        found_selected_files.add(ifile.lower())
                     if not ifile.lower().endswith(
                         (
                             ".sql",
@@ -222,6 +246,13 @@ class Command(BaseCommand):
                         GridReport.dependent_models(model, deps)
 
                         models.append((ifile, model, contenttype_id, deps))
+
+                if selected_files is not None:
+                    for missing_file in sorted(selected_files - found_selected_files):
+                        logger.warning(
+                            "File specified in --files option not found in import folder: %s"
+                            % missing_file
+                        )
 
                 # Sort the list of models, based on dependencies between models
                 models = GridReport.sort_models(models)

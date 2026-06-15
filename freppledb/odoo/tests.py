@@ -500,13 +500,17 @@ except ImportError:
             )
 
             # Check new status
-            approved_mo = ManufacturingOrder.objects.get(pk=proposed_mo.reference)
+            approved_mo = ManufacturingOrder.objects.filter(
+                pk__startswith=f"{proposed_mo.reference} exported as"
+            )[0]
             self.assertEqual(
                 approved_mo.status,
                 "approved",
                 "the manufacturing order should have been approved after uploading it",
             )
-            approved_po = PurchaseOrder.objects.get(pk=proposed_po.reference)
+            approved_po = PurchaseOrder.objects.filter(
+                pk__startswith=f"{proposed_po.reference} exported as"
+            )[0]
             self.assertEqual(
                 approved_po.status,
                 "approved",

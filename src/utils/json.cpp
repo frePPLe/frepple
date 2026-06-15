@@ -802,7 +802,7 @@ long JSONData::getLong() const {
     case JSON_DOUBLE:
       if (data_double > LONG_MAX)
         return LONG_MAX;
-      else if (data_double > LONG_MIN)
+      else if (data_double < LONG_MIN)
         return LONG_MIN;
       else
         return static_cast<long>(data_double);
@@ -877,7 +877,7 @@ int JSONData::getInt() const {
     case JSON_DOUBLE:
       if (data_double > INT_MAX)
         return INT_MAX;
-      else if (data_double > INT_MIN)
+      else if (data_double < INT_MIN)
         return INT_MIN;
       else
         return static_cast<int>(data_double);

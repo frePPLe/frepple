@@ -2464,7 +2464,8 @@ var ERPconnection = {
         data: JSON.stringify(data),
         type: "POST",
         contentType: "application/json",
-        success: function (data, stat, result) {
+        dataType: "text",
+        success: function (responseData, stat, result) {
           $('#cancelbutton').addClass("invisible");
           $('#button_export').val(gettext('Close'));
           if (result.status == 204) {
@@ -2473,9 +2474,44 @@ var ERPconnection = {
             $('#popup .modal-body p').html(gettext("No valid records selected"));
             return;
           }
+          var parsedResponseData = responseData;
+          if (typeof responseData === 'string') {
+            var trimmedResponse = responseData.trim();
+            if (trimmedResponse && (trimmedResponse.startsWith('{') || trimmedResponse.startsWith('['))) {
+              try {
+                parsedResponseData = JSON.parse(trimmedResponse);
+              } catch (e) {
+                parsedResponseData = responseData;
+              }
+            }
+          }
           var rowdata = [];
+          var erpMessage = '';
+          if (typeof parsedResponseData === 'string') {
+            erpMessage = parsedResponseData;
+          } else if (parsedResponseData && typeof parsedResponseData === 'object') {
+            if (typeof parsedResponseData.message === 'string') {
+              erpMessage = parsedResponseData.message;
+            } else if (typeof parsedResponseData.detail === 'string') {
+              erpMessage = parsedResponseData.detail;
+            } else if (Array.isArray(parsedResponseData.messages)) {
+              erpMessage = parsedResponseData.messages.join('\n');
+            } else if (
+              Array.isArray(parsedResponseData.value)
+              && parsedResponseData.value.length
+              && Array.isArray(parsedResponseData.value[0].messages)
+            ) {
+              erpMessage = parsedResponseData.value[0].messages.join('\n');
+            }
+          }
+
           // Mark selected rows as "approved" if the original status was "proposed".
-          $('#popup .modal-body p').html(gettext("Export successful"));
+          var popupMessage = '<p>' + gettext("Export successful") + '</p>';
+          if (erpMessage && erpMessage !== 'OK') {
+            var erpMessageWithBreaks = $('<div/>').text(erpMessage).html().replace(/(?:\\n|\r\n|\r|\n)/g, '<br>');
+            popupMessage += '<div class="mb-0 mt-2 text-wrap">' + erpMessageWithBreaks + '</div>';
+          }
+          $('#popup .modal-body').html(popupMessage);
 
           // update both cell value and grid data
           for (var i in sel) {

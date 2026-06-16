@@ -492,7 +492,6 @@ def Upload(request):
             reference_mapping = {}
             try:
                 odoo_response = json.loads(msg)
-                print(odoo_response.get("created_purchase_orders", []))
                 for po in odoo_response.get("created_purchase_orders", []):
                     for frepple_po in po["frepple_references"]:
                         reference_mapping[frepple_po] = po["reference"]

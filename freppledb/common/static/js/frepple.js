@@ -2507,6 +2507,31 @@ var ERPconnection = {
           }
 
           // Mark selected rows as "approved" if the original status was "proposed".
+
+          // Check if the answer contains the created POs and MOs:
+          var isNewStyleResponse = !!(
+            parsedResponse
+            && typeof parsedResponse === 'object'
+            && (
+              Object.prototype.hasOwnProperty.call(parsedResponse, 'created_purchase_orders')
+              || Object.prototype.hasOwnProperty.call(parsedResponse, 'created_manufacturing_orders')
+            )
+          );
+
+          // Build a flat array of all frePPLe references found in the response.
+          // These are the ones that need to be approved
+          var renamedFreppleReferences = [];
+          if (isNewStyleResponse) {
+            (parsedResponse.created_purchase_orders || []).forEach(function (po) {
+              (po.frepple_references || []).forEach(function (ref) {
+                if (ref) renamedFreppleReferences.push(String(ref));
+              });
+            });
+            (parsedResponse.created_manufacturing_orders || []).forEach(function (mo) {
+              if (mo.frepple_reference) renamedFreppleReferences.push(String(mo.frepple_reference));
+            });
+          }
+
           var popupMessage = '<p>' + gettext("Export successful") + '</p>';
           if (erpMessage && erpMessage !== 'OK') {
             popupMessage += '<pre class="mb-0 mt-2" style="white-space: pre-wrap; overflow-wrap: anywhere;">' + $('<div/>').text(erpMessage).html() + '</pre>';
@@ -2515,6 +2540,11 @@ var ERPconnection = {
 
           // update both cell value and grid data
           for (var i in sel) {
+            // For new-style responses, only update rows whose reference was renamed by the backend.
+            if (isNewStyleResponse) {
+              var rowRef = grid.jqGrid('getCell', sel[i], 'operationplan__reference') || grid.jqGrid('getCell', sel[i], 'reference');
+              if (!rowRef || renamedFreppleReferences.indexOf(String(rowRef)) === -1) continue;
+            }
 
             var cur = grid.jqGrid('getCell', sel[i], 'operationplan__status');
             // Case 1: Exporting from Inventory detail

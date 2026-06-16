@@ -14,6 +14,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: User interface
 
+- | The quick search box in the menu bar only searches in a much smaller list
+    of objects now.
+  | This provides a better user experience by avoiding irrelevant search results.
+    It also improves the search speed in large datasets.
+
 - | The "Export Plan Results" task now has an extra option to export the plan results
     in JSON.
 

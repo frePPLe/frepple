@@ -82,8 +82,8 @@ def search(request):
 
     # Loop over all models in the data_site
     # We are interested in models satisfying these criteria:
-    #  - primary key is of type text
-    #  - user has change permissions
+    #  - quick_search attribute is set on the model class
+    #  - user has view permissions
     with_forecast = "freppledb.forecast" in settings.INSTALLED_APPS
     if with_forecast:
         from freppledb.forecast.models import Forecast
@@ -125,7 +125,7 @@ def search(request):
     for cls, admn in data_site._registry.items():
         if request.user.has_perm(
             "%s.view_%s" % (cls._meta.app_label, cls._meta.object_name.lower())
-        ) and isinstance(cls._meta.pk, CharField):
+        ) and getattr(cls, "quick_search", False):
             descriptionExists = True
             try:
                 cls._meta.get_field("description")

@@ -722,6 +722,8 @@ class DeliveryOrder(OperationPlan):
 
 
 class DistributionOrder(OperationPlan):
+    quick_search = True
+
     shipping_date = AliasDateTimeField(
         db_column="startdate", verbose_name=_("shipping date"), null=True, blank=True
     )
@@ -763,6 +765,8 @@ class DistributionOrder(OperationPlan):
 
 
 class PurchaseOrder(OperationPlan):
+    quick_search = True
+
     ordering_date = AliasDateTimeField(
         db_column="startdate", verbose_name=_("ordering date"), null=True, blank=True
     )
@@ -805,6 +809,7 @@ class PurchaseOrder(OperationPlan):
 
 
 class ManufacturingOrder(OperationPlan):
+    quick_search = True
     extra_dependencies = [OperationResource]
 
     class ManufacturingOrderManager(OperationPlan.Manager):
@@ -1352,6 +1357,7 @@ class ManufacturingOrder(OperationPlan):
 
 
 class WorkOrder(OperationPlan):
+    quick_search = True
     extra_dependencies = [ManufacturingOrder, OperationResource]
 
     class WorkOrderManager(OperationPlan.Manager):

@@ -32,6 +32,7 @@ class Item(AuditModel, HierarchyModel):
         ("make to stock", _("make to stock")),
         ("make to order", _("make to order")),
     )
+    quick_search = True
 
     # Database fields
     description = models.CharField(_("description"), null=True, blank=True)

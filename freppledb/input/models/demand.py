@@ -33,6 +33,7 @@ from .operation import Operation
 
 
 class Demand(AuditModel):
+    quick_search = True
     # Status
     demandstatus = (
         ("inquiry", _("inquiry")),

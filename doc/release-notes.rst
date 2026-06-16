@@ -17,9 +17,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | The "Export Plan Results" task now has an extra option to export the plan results
     in JSON.
 
-- | The API for the "Export Plan Results" task also provides a new option to generate the
-    export data on the fly.
-  | Until now you had to run the export task separately and then download the file.
+- | The API for the "Export Plan Results" and "Import data files" tasks also provides
+    a new option to export or import a subset of the data files.
+  | Until now you only could run the complete task.
 
 .. rubric:: Demand forecasting
 

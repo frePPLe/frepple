@@ -1219,7 +1219,7 @@ var grid = {
         '<label class="form-check-label" for="csvlist">' + gettext("CSV list") + '</label>' +
         '</div>' +
         '<p class="fw-bold mt-3">' + gettext("Data source URL") + '&nbsp;&nbsp;' +
-        '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
+        '<a href="/static/doc/user-interface/getting-around/exporting-data.html" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
         gettext("Using this link external applications can pull data from frePPLe") + '">' +
         '<span class="fa fa-question-circle"></span>' +
         '</a><p>' +

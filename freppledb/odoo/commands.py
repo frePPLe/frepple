@@ -257,14 +257,12 @@ class OdooReadData(PlanTask):
                 loglevel = 0
 
             with connections[database].cursor() as cursor:
-                cursor.execute(
-                    """
+                cursor.execute("""
                     select coalesce(max(reference::bigint), 0) as max_reference
                     from operationplan
                     where reference ~ '^[0-9]*$'
                     and char_length(reference) <= 9
-                    """
-                )
+                    """)
                 d = cursor.fetchone()
                 frepple.settings.id = d[0] + 1
 
@@ -765,7 +763,9 @@ class OdooSendRecommendations(PlanTask):
                     )
                     reschedule = (
                         j.status == "approved"
-                        and j.info
+                        and (
+                            j.info or [c.info for c in j.operationplans if c and c.info]
+                        )
                         and (
                             not j.owner
                             or not isinstance(

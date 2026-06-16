@@ -2623,7 +2623,7 @@ class ForecastSolver : public Solver {
 
     // Initialize the smape weight array
     weight[0] = 1.0;
-    for (int i = 0; i < 299; ++i)
+    for (int i = 0; i < MAXBUCKETS - 1; ++i)
       weight[i + 1] = weight[i] * Forecast_SmapeAlfa;
   }
 

@@ -2518,17 +2518,17 @@ var ERPconnection = {
             )
           );
 
-          // Build a flat array of all frePPLe references found in the response.
-          // These are the ones that need to be approved
-          var renamedFreppleReferences = [];
+          // Build a map of frePPLe reference -> new reference.
+          // These are the ones that need to be approved and their reference changed
+          var renamedReferenceMap = {};
           if (isNewStyleResponse) {
             (parsedResponse.created_purchase_orders || []).forEach(function (po) {
               (po.frepple_references || []).forEach(function (ref) {
-                if (ref) renamedFreppleReferences.push(String(ref));
+                if (ref) renamedReferenceMap[String(ref)] = po.reference;
               });
             });
             (parsedResponse.created_manufacturing_orders || []).forEach(function (mo) {
-              if (mo.frepple_reference) renamedFreppleReferences.push(String(mo.frepple_reference));
+              if (mo.frepple_reference) renamedReferenceMap[String(mo.frepple_reference)] = mo.reference;
             });
           }
 
@@ -2540,10 +2540,15 @@ var ERPconnection = {
 
           // update both cell value and grid data
           for (var i in sel) {
+            var newRef = null;
             // For new-style responses, only update rows whose reference was renamed by the backend.
             if (isNewStyleResponse) {
-              var rowRef = grid.jqGrid('getCell', sel[i], 'operationplan__reference') || grid.jqGrid('getCell', sel[i], 'reference');
-              if (!rowRef || renamedFreppleReferences.indexOf(String(rowRef)) === -1) continue;
+              var refField = grid.jqGrid('getGridParam', 'colModel').some(function (c) { return c.name === 'operationplan__reference'; })
+                ? 'operationplan__reference'
+                : 'reference';
+              var rowRef = grid.jqGrid('getCell', sel[i], refField);
+              if (!rowRef || !Object.prototype.hasOwnProperty.call(renamedReferenceMap, String(rowRef))) continue;
+              newRef = renamedReferenceMap[String(rowRef)];
             }
 
             var cur = grid.jqGrid('getCell', sel[i], 'operationplan__status');
@@ -2554,6 +2559,10 @@ var ERPconnection = {
                 grid.jqGrid('setCell', sel[i], 'operationplan__status', 'approved');
                 rowdata = grid.jqGrid('getRowData', sel[i]);
                 rowdata.operationplan__status = 'approved';
+                if (newRef) {
+                  grid.jqGrid('setCell', sel[i], 'operationplan__reference', rowdata.operationplan__reference + " exported as " +newRef);
+                  rowdata.operationplan__reference = newRef;
+                }
               }
             }
             // Case 2: Exporting from MO/PO/DO screen
@@ -2563,6 +2572,10 @@ var ERPconnection = {
                 grid.jqGrid('setCell', sel[i], 'status', 'approved');
                 rowdata = grid.jqGrid('getRowData', sel[i]);
                 rowdata.status = 'approved';
+                if (newRef) {
+                  grid.jqGrid('setCell', sel[i], 'reference', rowdata.reference + " exported as " +newRef);
+                  rowdata.reference = newRef;
+                }
               }
             }
           };

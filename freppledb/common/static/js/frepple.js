@@ -2820,8 +2820,47 @@ var ERPconnection = {
             data: JSON.stringify(exportData),
             type: "POST",
             contentType: "application/json",
-            success: function () {
-              $('#popup .modal-body').html(gettext("Export successful"));
+            dataType: "text",
+            success: function (responseData) {
+              var parsedResponse = null;
+              if (responseData && typeof responseData === 'object') {
+                parsedResponse = responseData;
+              } else if (typeof responseData === 'string') {
+                try {
+                  parsedResponse = JSON.parse(responseData);
+                } catch (e) {
+                  parsedResponse = null;
+                }
+              }
+              var erpMessage = '';
+              if (parsedResponse && typeof parsedResponse === 'object') {
+                if (typeof parsedResponse.message === 'string') {
+                  erpMessage = parsedResponse.message;
+                } else if (typeof parsedResponse.detail === 'string') {
+                  erpMessage = parsedResponse.detail;
+                } else if (Array.isArray(parsedResponse.messages)) {
+                  erpMessage = parsedResponse.messages
+                    .map(function (message) { return String(message).replace(/[\r\n]+$/g, ''); })
+                    .join('\n');
+                } else if (
+                  Array.isArray(parsedResponse.value)
+                  && parsedResponse.value.length
+                  && Array.isArray(parsedResponse.value[0].messages)
+                ) {
+                  erpMessage = parsedResponse.value[0].messages
+                    .map(function (message) { return String(message).replace(/[\r\n]+$/g, ''); })
+                    .join('\n');
+                }
+              }
+
+              // Same popup size/markup as IncrementalExport's success dialog.
+              $('#popup .modal-dialog').removeClass('modal-xl');
+              var popupMessage = '<p>' + gettext("Export successful") + '</p>';
+              if (erpMessage && erpMessage !== 'OK') {
+                popupMessage += '<pre class="mb-0 mt-2" style="white-space: pre-wrap; overflow-wrap: anywhere;">' + $('<div/>').text(erpMessage).html() + '</pre>';
+              }
+              $('#popup .modal-body').css({ 'overflow-y': '' }).html(popupMessage);
+
               $('#cancelbutton').val(gettext('Close'));
               $('#button_export').prop('disabled', true);
               // Mark selected rows as "approved" if the original status was "proposed".

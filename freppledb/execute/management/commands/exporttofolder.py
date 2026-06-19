@@ -373,6 +373,7 @@ class Command(BaseCommand):
                     }
                     exports = [cfg for cfg in exports if cfg.name in requested_files]
                     if not exports:
+                        cnt = 1
                         raise CommandError(
                             "No matching exports found for --files=%s"
                             % options.get("files")

@@ -1606,7 +1606,13 @@ class ForecastEditor:
         query = """
             with all_recs as (
               select d.startdate, item.name as item_id, item.description, d.name,
-              coalesce(sum(%s),0) val, item.rght-item.lft>1 flag, item.lvl
+              coalesce(sum(%s),0) val,
+               exists (select 1 from forecasthierarchy
+                  cross join item i_child
+                  where item_id = i_child.name
+                  and location_id = location.name
+                  and customer_id = customer.name
+                  and item.name = i_child.owner_id) flag, item.lvl
                 from (
                   select name, startdate, enddate
                   from common_bucketdetail
@@ -1639,7 +1645,12 @@ class ForecastEditor:
                     and location_id = location.name
                     and customer_id = customer.name
                 )
-                group by item.name, item.description, d.name, d.startdate, item.lvl, item.rght-item.lft>1
+                group by item.name, item.description, d.name, d.startdate, item.lvl, exists (select 1 from forecasthierarchy
+                  cross join item i_child
+                  where item_id = i_child.name
+                  and location_id = location.name
+                  and customer_id = customer.name
+                  and item.name = i_child.owner_id)
                 )
                 select all_recs.item_id, name, val, flag, lvl, description
                 from all_recs
@@ -1738,7 +1749,14 @@ class ForecastEditor:
         query = """
           with all_recs as (
           select d.startdate, location.name lname, d.name bname,
-          coalesce(sum(%s),0) val, location.rght-location.lft>1 flag, location.lvl, location.description
+          coalesce(sum(%s),0) val,
+           exists (select 1 from forecasthierarchy
+                  cross join location l_child
+                  where item_id = item.name
+                  and location_id = l_child.name
+                  and customer_id = customer.name
+                  and location.name = l_child.owner_id) flag,
+                  location.lvl, location.description
             from (
               select name, startdate, enddate
               from common_bucketdetail
@@ -1771,7 +1789,12 @@ class ForecastEditor:
                 and location_id = location.name
                 and customer_id = customer.name
                 )
-            group by location.name, d.name, d.startdate, location.lvl, location.rght-location.lft>1, location.description
+            group by location.name, d.name, d.startdate, location.lvl, exists (select 1 from forecasthierarchy
+                  cross join location l_child
+                  where item_id = item.name
+                  and location_id = l_child.name
+                  and customer_id = customer.name
+                  and location.name = l_child.owner_id), location.description
           )
           select all_recs.lname, bname, val, flag, lvl, description
             from all_recs
@@ -1869,7 +1892,14 @@ class ForecastEditor:
         query = """
           with all_recs as (
           select d.startdate, customer.name cname, d.name bname,
-          coalesce(sum(%s),0) val, customer.rght-customer.lft>1 flag, customer.lvl,
+          coalesce(sum(%s),0) val,
+          exists (select 1 from forecasthierarchy
+                  cross join customer c_child
+                  where item_id = item.name
+                  and location_id = location.name
+                  and customer_id = c_child.name
+                  and customer.name = c_child.owner_id) flag,
+                  customer.lvl,
           customer.description
             from (
               select name, startdate, enddate
@@ -1903,7 +1933,12 @@ class ForecastEditor:
                 and location_id = location.name
                 and customer_id = customer.name
                 )
-            group by customer.name, d.name, d.startdate, customer.lvl, customer.rght-customer.lft>1,
+            group by customer.name, d.name, d.startdate, customer.lvl, exists (select 1 from forecasthierarchy
+                  cross join customer c_child
+                  where item_id = item.name
+                  and location_id = location.name
+                  and customer_id = c_child.name
+                  and customer.name = c_child.owner_id),
             customer.description
           )
           select all_recs.cname, bname, val, flag, lvl, description

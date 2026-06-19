@@ -61,7 +61,7 @@
       </span>
     </p>
     <p
-      v-if="opplan.item__description || opplan.operationplan__item__description"
+      v-if="(opplan.item__description || opplan.operationplan__item__description) && editable && isSelected(opplan.reference)"
     >
       <span
         v-if="store.isChanged(opplan.reference, null)  && !isSelected(opplan.reference)"
@@ -69,8 +69,11 @@
       >
         class="badge bg-danger float-end"> {{ttt('unsaved')}}
       </span>
-      {{ opplan.item__description || opplan.operationplan__item__description
-      }}&nbsp;
+      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="opplan.item__description || opplan.operationplan__item__description">
+        {{ opplan.item__description || opplan.operationplan__item__description }}
+      </span>&nbsp;
     </p>
     <p>
       {{ opplan.location }}&nbsp;
@@ -82,8 +85,12 @@
       </a>
     </p>
     <p>
-      {{ opplan.operationplan__supplier || opplan.supplier ||
-      opplan.operationplan__supplier__name }}&nbsp;
+      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="opplan.operationplan__supplier || opplan.supplier || opplan.operationplan__supplier__name">
+        {{ opplan.operationplan__supplier || opplan.supplier ||
+        opplan.operationplan__supplier__name }}
+      </span>&nbsp;
       <a
         @click.stop=""
         :href="urlPrefix + '/detail/input/supplier/' + adminEscape(opplan.operationplan__supplier || opplan.supplier || opplan.operationplan__supplier__name) + '/'"
@@ -94,130 +101,157 @@
     <p
       :class="(opplan.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal'))?'dirty': ''"
     >
-      <span v-if="!editable || !isSelected(opplan.reference)"
-        >{{ numberFormat(opplan.operationplan__quantity || opplan.quantity)
-        }}</span
-      >
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'quantity') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            opplan.hasOwnProperty('quantity')
-          "
-        type="number"
-        step="0"
-        min="0"
-        @focus="oldValue = opplan.quantity"
-        v-model="opplan.quantity"
-        @input="changeCard(opplan, 'quantity', oldValue, opplan.quantity)"
-      />
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'operationplan__quantity') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            opplan.hasOwnProperty('operationplan__quantity')
-          "
-        type="number"
-        step="0"
-        min="0"
-        @focus="oldValue = opplan.operationplan__quantity"
-        v-model="opplan.operationplan__quantity"
-        @input="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)"
-      />
+      <div class="row gx-2">
+        <div class="col">
+          <span v-if="!editable || !isSelected(opplan.reference)"
+                data-bs-toggle="tooltip" data-bs-html="true"
+                :title="ttt('Quantity')"
+            >{{ numberFormat(opplan.operationplan__quantity || opplan.quantity)
+            }}</span
+          >
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('Quantity')"
+            :class="store.isChanged(opplan.reference, 'quantity') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                opplan.hasOwnProperty('quantity')
+              "
+            type="number"
+            step="0"
+            min="0"
+            @focus="oldValue = opplan.quantity"
+            v-model="opplan.quantity"
+            @input="changeCard(opplan, 'quantity', oldValue, opplan.quantity)"
+          />
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('Quantity')"
+            :class="store.isChanged(opplan.reference, 'operationplan__quantity') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                opplan.hasOwnProperty('operationplan__quantity')
+              "
+            type="number"
+            step="0"
+            min="0"
+            @focus="oldValue = opplan.operationplan__quantity"
+            v-model="opplan.operationplan__quantity"
+            @input="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)"
+          />
+        </div>
+        <div class="col">
+        </div>
+      </div>
     </p>
     <p
       :class="
-          opplan.hasOwnProperty('startdateOriginal') ||
-          opplan.hasOwnProperty('operationplan__startdateOriginal')
+          (
+            opplan.hasOwnProperty('startdateOriginal') ||
+            opplan.hasOwnProperty('operationplan__startdateOriginal') ||
+            opplan.hasOwnProperty('enddateOriginal') ||
+            opplan.hasOwnProperty('operationplan__enddateOriginal')
+          )
             ? 'dirty'
             : ''
         "
     >
-      <span v-if="!editable || !isSelected(opplan.reference)"
-        >{{ dateFormat(opplan.operationplan__startdate || opplan.startdate)
-        }}</span
-      >
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'startdate') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            !opplan.hasOwnProperty('operationplan__startdate')
-          "
-        type="datetime-local"
-        @focus="oldValue = opplan.startdate"
-        v-model="opplan.startdate"
-        @input="changeCard(opplan, 'startdate', oldValue, opplan.startdate)"
-      />
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'operationplan__startdate') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            opplan.hasOwnProperty('operationplan__startdate')
-          "
-        type="datetime-local"
-        @focus="oldValue = opplan.operationplan__startdate"
-        v-model="opplan.operationplan__startdate"
-        @input="
-            changeCard(
-              opplan,
-              'operationplan__startdate',
-              oldValue,
-              opplan.operationplan__startdate
-            )
-          "
-      />
+      <div class="row gx-2">
+        <div class="col">
+          <span v-if="!editable || !isSelected(opplan.reference)"
+                data-bs-toggle="tooltip" data-bs-html="true"
+                :title="ttt('Start date')">
+            {{ dateFormat(opplan.operationplan__startdate || opplan.startdate) }}
+          </span>
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('Start date')"
+            :class="store.isChanged(opplan.reference, 'startdate') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                !opplan.hasOwnProperty('operationplan__startdate')
+              "
+            type="datetime-local"
+            @focus="oldValue = opplan.startdate"
+            v-model="opplan.startdate"
+            @input="changeCard(opplan, 'startdate', oldValue, opplan.startdate)"
+          />
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('Start date')"
+            :class="store.isChanged(opplan.reference, 'operationplan__startdate') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                opplan.hasOwnProperty('operationplan__startdate')
+              "
+            type="datetime-local"
+            @focus="oldValue = opplan.operationplan__startdate"
+            v-model="opplan.operationplan__startdate"
+            @input="
+                changeCard(
+                  opplan,
+                  'operationplan__startdate',
+                  oldValue,
+                  opplan.operationplan__startdate
+                )
+              "
+          />
+        </div>
+        <div class="col">
+          <span v-if="!editable || !isSelected(opplan.reference)"
+                data-bs-toggle="tooltip" data-bs-html="true"
+                :title="ttt('End date')">
+            {{ dateFormat(opplan.operationplan__enddate || opplan.enddate) }}
+          </span>
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('End date')"
+            :class="store.isChanged(opplan.reference, 'enddate') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                !opplan.hasOwnProperty('operationplan__enddate')
+              "
+            type="datetime-local"
+            @focus="oldValue = opplan.enddate"
+            v-model="opplan.enddate"
+            @input="changeCard(opplan, 'enddate', oldValue, opplan.enddate)"
+          />
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('End date')"
+            :class="store.isChanged(opplan.reference, 'operationplan__enddate') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                opplan.hasOwnProperty('operationplan__enddate')
+              "
+            type="datetime-local"
+            @focus="oldValue = opplan.operationplan__enddate"
+            v-model="opplan.operationplan__enddate"
+            @input="
+                changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)
+              "
+          />
+        </div>
+      </div>
     </p>
-    <p
-      :class="
-          opplan.hasOwnProperty('enddateOriginal') ||
-          opplan.hasOwnProperty('operationplan__enddateOriginal')
-            ? 'dirty'
-            : ''
-        "
-    >
+    <p v-if="(opplan.remark || opplan.operationplan__remark) && editable && isSelected(opplan.reference)">
       <span v-if="!editable || !isSelected(opplan.reference)"
-        >{{ dateFormat(opplan.operationplan__enddate || opplan.enddate) }}</span
-      >
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'enddate') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            !opplan.hasOwnProperty('operationplan__enddate')
-          "
-        type="datetime-local"
-        @focus="oldValue = opplan.enddate"
-        v-model="opplan.enddate"
-        @input="changeCard(opplan, 'enddate', oldValue, opplan.enddate)"
-      />
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'operationplan__enddate') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            opplan.hasOwnProperty('operationplan__enddate')
-          "
-        type="datetime-local"
-        @focus="oldValue = opplan.operationplan__enddate"
-        v-model="opplan.operationplan__enddate"
-        @input="
-            changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)
-          "
-      />
-    </p>
-    <p v-if="opplan.remark || opplan.operationplan__remark">
-      <span v-if="!editable || !isSelected(opplan.reference)"
-        >{{ opplan.remark || opplan.operationplan__remark }}</span
+        class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+        data-bs-toggle="tooltip" data-bs-html="true"
+        :title="opplan.remark || opplan.operationplan__remark"
+      >{{ opplan.remark || opplan.operationplan__remark }}</span
       >
       <input
         class="form-control"
@@ -333,7 +367,11 @@
       </span>
     </p>
     <p>
-      {{ opplan.item__name || opplan.item }}&nbsp;
+      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="opplan.item__name || opplan.item">
+        {{ opplan.item__name || opplan.item }}
+      </span>&nbsp;
       <a
         @click.stop=""
         :href="
@@ -347,10 +385,13 @@
       </a>
     </p>
     <p
-      v-if="opplan.item__description || opplan.operationplan__item__description"
+      v-if="(opplan.item__description || opplan.operationplan__item__description) && editable && isSelected(opplan.reference)"
     >
-      {{ opplan.item__description || opplan.operationplan__item__description
-      }}&nbsp;
+      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="opplan.item__description || opplan.operationplan__item__description">
+        {{ opplan.item__description || opplan.operationplan__item__description }}
+      </span>&nbsp;
     </p>
     <p>
       {{ opplan.operationplan__origin || opplan.origin }}&nbsp;
@@ -394,131 +435,157 @@
             : ''
         "
     >
-      <span v-if="!editable || !isSelected(opplan.reference)"
-        >{{ numberFormat(opplan.operationplan__quantity || opplan.quantity)
-        }}</span
-      >
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'quantity') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            !opplan.hasOwnProperty('operationplan__quantity')
-          "
-        type="number"
-        step="0"
-        min="0"
-        @focus="oldValue = opplan.quantity"
-        v-model="opplan.quantity"
-        @input="changeCard(opplan, 'quantity', oldValue, opplan.quantity)"
-      />
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'operationplan__quantity') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            opplan.hasOwnProperty('operationplan__quantity')
-          "
-        type="number"
-        step="0"
-        min="0"
-        @focus="oldValue = opplan.operationplan__quantity"
-        v-model="opplan.operationplan__quantity"
-        @input="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)"
-      />
+      <div class="row gx-2">
+        <div class="col">
+          <span v-if="!editable || !isSelected(opplan.reference)"
+                data-bs-toggle="tooltip" data-bs-html="true"
+                :title="ttt('Quantity')"
+            >{{ numberFormat(opplan.operationplan__quantity || opplan.quantity)
+            }}</span
+          >
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('Quantity')"
+            :class="store.isChanged(opplan.reference, 'quantity') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                !opplan.hasOwnProperty('operationplan__quantity')
+              "
+            type="number"
+            step="0"
+            min="0"
+            @focus="oldValue = opplan.quantity"
+            v-model="opplan.quantity"
+            @input="changeCard(opplan, 'quantity', oldValue, opplan.quantity)"
+          />
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('Quantity')"
+            :class="store.isChanged(opplan.reference, 'operationplan__quantity') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                opplan.hasOwnProperty('operationplan__quantity')
+              "
+            type="number"
+            step="0"
+            min="0"
+            @focus="oldValue = opplan.operationplan__quantity"
+            v-model="opplan.operationplan__quantity"
+            @input="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)"
+          />
+        </div>
+        <div class="col">
+        </div>
+      </div>
     </p>
     <p
       :class="
-          opplan.hasOwnProperty('startdateOriginal') ||
-          opplan.hasOwnProperty('operationplan__startdateOriginal')
+          (
+            opplan.hasOwnProperty('startdateOriginal') ||
+            opplan.hasOwnProperty('operationplan__startdateOriginal') ||
+            opplan.hasOwnProperty('enddateOriginal') ||
+            opplan.hasOwnProperty('operationplan__enddateOriginal')
+          )
             ? 'dirty'
             : ''
         "
     >
-      <span v-if="!editable || !isSelected(opplan.reference)"
-        >{{ dateFormat(opplan.operationplan__startdate || opplan.startdate)
-        }}</span
-      >
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'startdate') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            !opplan.hasOwnProperty('operationplan__startdate')
-          "
-        type="datetime-local"
-        @focus="oldValue = opplan.startdate"
-        v-model="opplan.startdate"
-        @input="changeCard(opplan, 'startdate', oldValue, opplan.startdate)"
-      />
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'operationplan__startdate') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            opplan.hasOwnProperty('operationplan__startdate')
-          "
-        type="datetime-local"
-        @focus="oldValue = opplan.operationplan__startdate"
-        v-model="opplan.operationplan__startdate"
-        @input="
-            changeCard(
-              opplan,
-              'operationplan__startdate',
-              oldValue,
-              opplan.operationplan__startdate
-            )
-          "
-      />
+      <div class="row gx-2">
+        <div class="col">
+          <span v-if="!editable || !isSelected(opplan.reference)"
+                data-bs-toggle="tooltip" data-bs-html="true"
+                :title="ttt('Start date')">
+            {{ dateFormat(opplan.operationplan__startdate || opplan.startdate) }}
+          </span>
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('Start date')"
+            :class="store.isChanged(opplan.reference, 'startdate') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                !opplan.hasOwnProperty('operationplan__startdate')
+              "
+            type="datetime-local"
+            @focus="oldValue = opplan.startdate"
+            v-model="opplan.startdate"
+            @input="changeCard(opplan, 'startdate', oldValue, opplan.startdate)"
+          />
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('Start date')"
+            :class="store.isChanged(opplan.reference, 'operationplan__startdate') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                opplan.hasOwnProperty('operationplan__startdate')
+              "
+            type="datetime-local"
+            @focus="oldValue = opplan.operationplan__startdate"
+            v-model="opplan.operationplan__startdate"
+            @input="
+                changeCard(
+                  opplan,
+                  'operationplan__startdate',
+                  oldValue,
+                  opplan.operationplan__startdate
+                )
+              "
+          />
+        </div>
+        <div class="col">
+          <span v-if="!editable || !isSelected(opplan.reference)"
+                data-bs-toggle="tooltip" data-bs-html="true"
+                :title="ttt('End date')">
+            {{ dateTimeFormat(opplan.operationplan__enddate || opplan.enddate) }}
+          </span>
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('End date')"
+            :class="store.isChanged(opplan.reference, 'enddate') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                !opplan.hasOwnProperty('operationplan__enddate')
+              "
+            type="datetime-local"
+            @focus="oldValue = opplan.enddate"
+            v-model="opplan.enddate"
+            @input="changeCard(opplan, 'enddate', oldValue, opplan.enddate)"
+          />
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('End date')"
+            :class="store.isChanged(opplan.reference, 'operationplan__enddate') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                opplan.hasOwnProperty('operationplan__enddate')
+              "
+            type="datetime-local"
+            @focus="oldValue = opplan.operationplan__enddate"
+            v-model="opplan.operationplan__enddate"
+            @input="
+                changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)
+              "
+          />
+        </div>
+      </div>
     </p>
-    <p
-      :class="
-          opplan.hasOwnProperty('enddateOriginal') ||
-          opplan.hasOwnProperty('operationplan__enddateOriginal')
-            ? 'dirty'
-            : ''
-        "
-    >
+    <p v-if="(opplan.remark || opplan.operationplan__remark) && editable && isSelected(opplan.reference)">
       <span v-if="!editable || !isSelected(opplan.reference)"
-        >{{ dateTimeFormat(opplan.operationplan__enddate || opplan.enddate)
-        }}</span
-      >
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'enddate') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            !opplan.hasOwnProperty('operationplan__enddate')
-          "
-        type="datetime-local"
-        @focus="oldValue = opplan.enddate"
-        v-model="opplan.enddate"
-        @input="changeCard(opplan, 'enddate', oldValue, opplan.enddate)"
-      />
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'operationplan__enddate') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            opplan.hasOwnProperty('operationplan__enddate')
-          "
-        type="datetime-local"
-        @focus="oldValue = opplan.operationplan__enddate"
-        v-model="opplan.operationplan__enddate"
-        @input="
-            changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)
-          "
-      />
-    </p>
-    <p v-if="opplan.remark || opplan.operationplan__remark">
-      <span v-if="!editable || !isSelected(opplan.reference)"
-        >{{ opplan.remark || opplan.operationplan__remark }}</span
+        class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+        data-bs-toggle="tooltip" data-bs-html="true"
+        :title="opplan.remark || opplan.operationplan__remark"
+      >{{ opplan.remark || opplan.operationplan__remark }}</span
       >
       <input
         class="form-control"
@@ -595,8 +662,11 @@
     <p
       v-if="opplan.item__name || opplan.operationplan__item__name || opplan.item"
     >
-      {{ opplan.item__name || opplan.operationplan__item__name || opplan.item
-      }}&nbsp;
+      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="opplan.item__name || opplan.operationplan__item__name || opplan.item">
+        {{ opplan.item__name || opplan.operationplan__item__name || opplan.item }}
+      </span>&nbsp;
       <a
         @click.stop=""
         :href="urlPrefix + '/detail/input/item/' + adminEscape(opplan.item__name || opplan.operationplan__item__name || opplan.item) + '/'"
@@ -605,14 +675,21 @@
       </a>
     </p>
     <p
-      v-if="opplan.item__description || opplan.operationplan__item__description"
+      v-if="(opplan.item__description || opplan.operationplan__item__description) && editable && isSelected(opplan.reference)"
     >
-      {{ opplan.item__description || opplan.operationplan__item__description
-      }}&nbsp;
+      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="opplan.item__description || opplan.operationplan__item__description">
+        {{ opplan.item__description || opplan.operationplan__item__description }}
+      </span>&nbsp;
     </p>
     <p>
-      {{ opplan.operationplan__name || opplan.operationplan__operation__name ||
-      opplan.operation }}&nbsp;
+      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation">
+        {{ opplan.operationplan__name || opplan.operationplan__operation__name ||
+        opplan.operation }}
+      </span>&nbsp;
       <a
         @click.stop=""
         :href="urlPrefix + '/detail/input/operation/' + adminEscape(opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation) + '/'"
@@ -621,180 +698,209 @@
       </a>
     </p>
     <p
-      v-if="opplan.operation__description || opplan.operationplan__operation__description"
+      v-if="(opplan.operation__description || opplan.operationplan__operation__description) && editable && isSelected(opplan.reference)"
     >
-      {{ opplan.operation__description ||
-      opplan.operationplan__operation__description }}&nbsp;
+      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="opplan.operation__description || opplan.operationplan__operation__description">
+        {{ opplan.operation__description ||
+        opplan.operationplan__operation__description }}
+      </span>&nbsp;
     </p>
     <p
-      :class="
-          opplan.hasOwnProperty('quantityOriginal') ||
-          opplan.hasOwnProperty('operationplan__quantityOriginal')
-            ? 'dirty'
-            : ''
-        "
+      :class="(opplan.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal') || opplan.hasOwnProperty('quantity_completedOriginal') || opplan.hasOwnProperty('operationplan__quantity_completedOriginal'))?'dirty':''"
     >
-      <span v-if="!editable || !isSelected(opplan.reference)"
-        >{{ numberFormat(opplan.operationplan__quantity || opplan.quantity)
-        }}</span
-      >
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'operationplan__quantity') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            opplan.hasOwnProperty('operationplan__quantity') &&
-            !['ManufacturingOrderList', 'WorkOrderList'].includes(reportKey)
-          "
-        type="number"
-        step="0"
-        min="0"
-        @focus="oldValue = opplan.operationplan__quantity"
-        v-model="opplan.operationplan__quantity"
-        @input="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)"
-      />
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'quantity') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            opplan.hasOwnProperty('quantity') &&
-            ['ManufacturingOrderList', 'WorkOrderList'].includes(reportKey)
-          "
-        type="number"
-        step="0"
-        min="0"
-        @focus="oldValue = opplan.quantity"
-        v-model="opplan.quantity"
-        @input="changeCard(opplan, 'quantity', oldValue, opplan.quantity)"
-      />
+      <div class="row gx-2">
+        <div class="col">
+          <span v-if="!editable || !isSelected(opplan.reference)"
+                data-bs-toggle="tooltip" data-bs-html="true"
+                :title="ttt('Quantity')"
+            >{{ numberFormat(opplan.operationplan__quantity || opplan.quantity)
+            }}</span
+          >
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('Quantity')"
+            :class="store.isChanged(opplan.reference, 'operationplan__quantity') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                opplan.hasOwnProperty('operationplan__quantity') &&
+                !['ManufacturingOrderList', 'WorkOrderList'].includes(reportKey)
+              "
+            type="number"
+            step="0"
+            min="0"
+            @focus="oldValue = opplan.operationplan__quantity"
+            v-model="opplan.operationplan__quantity"
+            @input="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)"
+          />
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('Quantity')"
+            :class="store.isChanged(opplan.reference, 'quantity') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                opplan.hasOwnProperty('quantity') &&
+                ['ManufacturingOrderList', 'WorkOrderList'].includes(reportKey)
+              "
+            type="number"
+            step="0"
+            min="0"
+            @focus="oldValue = opplan.quantity"
+            v-model="opplan.quantity"
+            @input="changeCard(opplan, 'quantity', oldValue, opplan.quantity)"
+          />
+        </div>
+        <div class="col">
+          <span v-if="!editable || !isSelected(opplan.reference)"
+                data-bs-toggle="tooltip" data-bs-html="true"
+                :title="ttt('Completed quantity')"
+            >{{ numberFormat( opplan.operationplan__quantity_completed ||
+            opplan.quantity_completed || 0 ) }}</span
+          >
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('Completed quantity')"
+            :class="store.isChanged(opplan.reference, 'operationplan__quantity_completed') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                opplan.hasOwnProperty('operationplan__quantity')
+              "
+            type="number"
+            step="0"
+            min="0"
+            @focus="oldValue = opplan.operationplan__quantity_completed || 0"
+            v-model="opplan.operationplan__quantity_completed"
+            @input="
+                changeCard(
+                  opplan,
+                  'operationplan__quantity_completed',
+                  oldValue,
+                  opplan.operationplan__quantity_completed
+                )
+              "
+          />
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('Completed quantity')"
+            :class="store.isChanged(opplan.reference, 'quantity_completed') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                !opplan.hasOwnProperty('operationplan__quantity')
+              "
+            type="number"
+            step="0"
+            min="0"
+            @focus="oldValue = opplan.quantity_completed || 0"
+            v-model="opplan.quantity_completed"
+            @input="changeCard(opplan, 'quantity_completed', oldValue, opplan.quantity_completed)"
+          />
+        </div>
+      </div>
     </p>
     <p
-      :class="(opplan.hasOwnProperty('quantity_completedOriginal') || opplan.hasOwnProperty('operationplan__quantity_completedOriginal'))?'dirty':''"
+      :class="(opplan.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal') || opplan.hasOwnProperty('enddateOriginal') || opplan.hasOwnProperty('operationplan__enddateOriginal'))?'dirty':''"
     >
-      <span v-if="!editable || !isSelected(opplan.reference)"
-        >{{ numberFormat( opplan.operationplan__quantity_completed ||
-        opplan.quantity_completed || 0 ) }}</span
-      >
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'operationplan__quantity_completed') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            opplan.hasOwnProperty('operationplan__quantity')
-          "
-        type="number"
-        step="0"
-        min="0"
-        @focus="oldValue = opplan.operationplan__quantity_completed || 0"
-        v-model="opplan.operationplan__quantity_completed"
-        @input="
-            changeCard(
-              opplan,
-              'operationplan__quantity_completed',
-              oldValue,
-              opplan.operationplan__quantity_completed
-            )
-          "
-      />
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'quantity_completed') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            !opplan.hasOwnProperty('operationplan__quantity')
-          "
-        type="number"
-        step="0"
-        min="0"
-        @focus="oldValue = opplan.quantity_completed || 0"
-        v-model="opplan.quantity_completed"
-        @input="changeCard(opplan, 'quantity_completed', oldValue, opplan.quantity_completed)"
-      />
+      <div class="row gx-2">
+        <div class="col">
+          <span v-if="!editable || !isSelected(opplan.reference)"
+                data-bs-toggle="tooltip" data-bs-html="true"
+                :title="ttt('Start date')">
+            {{ dateFormat(opplan.operationplan__startdate || opplan.startdate) }}
+          </span>
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('Start date')"
+            :class="store.isChanged(opplan.reference, 'startdate') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                !opplan.hasOwnProperty('operationplan__startdate')
+              "
+            type="datetime-local"
+            @focus="oldValue = opplan.startdate"
+            v-model="opplan.startdate"
+            @input="changeCard(opplan, 'startdate', oldValue, opplan.startdate)"
+          />
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('Start date')"
+            :class="store.isChanged(opplan.reference, 'operationplan__startdate') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                opplan.hasOwnProperty('operationplan__startdate')
+              "
+            type="datetime-local"
+            @focus="oldValue = opplan.operationplan__startdate"
+            v-model="opplan.operationplan__startdate"
+            @input="
+                changeCard(
+                  opplan,
+                  'operationplan__startdate',
+                  oldValue,
+                  opplan.operationplan__startdate
+                )
+              "
+          />
+        </div>
+        <div class="col">
+          <span v-if="!editable || !isSelected(opplan.reference)"
+                data-bs-toggle="tooltip" data-bs-html="true"
+                :title="ttt('End date')">
+            {{ dateFormat(opplan.operationplan__enddate || opplan.enddate) }}
+          </span>
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('End date')"
+            :class="store.isChanged(opplan.reference, 'enddate') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                !opplan.hasOwnProperty('operationplan__enddate')
+              "
+            type="datetime-local"
+            @focus="oldValue = opplan.enddate"
+            v-model="opplan.enddate"
+            @input="changeCard(opplan, 'enddate', oldValue, opplan.enddate)"
+          />
+          <input
+            class="form-control form-control-sm"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="ttt('End date')"
+            :class="store.isChanged(opplan.reference, 'operationplan__enddate') ? 'ng-dirty' : ''"
+            v-if="
+                editable &&
+                isSelected(opplan.reference) &&
+                opplan.hasOwnProperty('operationplan__enddate')
+              "
+            type="datetime-local"
+            @focus="oldValue = opplan.operationplan__enddate"
+            v-model="opplan.operationplan__enddate"
+            @input="
+                changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)
+              "
+          />
+        </div>
+      </div>
     </p>
-    <p
-      :class="(opplan.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal'))?'dirty':''"
-    >
+    <p v-if="(opplan.remark || opplan.operationplan__remark) && editable && isSelected(opplan.reference)">
       <span v-if="!editable || !isSelected(opplan.reference)"
-        >{{ dateFormat(opplan.operationplan__startdate || opplan.startdate)
-        }}</span
-      >
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'startdate') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            !opplan.hasOwnProperty('operationplan__startdate')
-          "
-        type="datetime-local"
-        @focus="oldValue = opplan.startdate"
-        v-model="opplan.startdate"
-        @input="changeCard(opplan, 'startdate', oldValue, opplan.startdate)"
-      />
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'operationplan__startdate') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            opplan.hasOwnProperty('operationplan__startdate')
-          "
-        type="datetime-local"
-        @focus="oldValue = opplan.operationplan__startdate"
-        v-model="opplan.operationplan__startdate"
-        @input="
-            changeCard(
-              opplan,
-              'operationplan__startdate',
-              oldValue,
-              opplan.operationplan__startdate
-            )
-          "
-      />
-    </p>
-    <p
-      :class="(opplan.hasOwnProperty('enddateOriginal') || opplan.hasOwnProperty('operationplan__enddateOriginal'))?'dirty':''"
-    >
-      <span v-if="!editable || !isSelected(opplan.reference)"
-        >{{ dateFormat(opplan.operationplan__enddate || opplan.enddate) }}</span
-      >
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'enddate') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            !opplan.hasOwnProperty('operationplan__enddate')
-          "
-        type="datetime-local"
-        @focus="oldValue = opplan.enddate"
-        v-model="opplan.enddate"
-        @input="changeCard(opplan, 'enddate', oldValue, opplan.enddate)"
-      />
-      <input
-        class="form-control"
-        :class="store.isChanged(opplan.reference, 'operationplan__enddate') ? 'ng-dirty' : ''"
-        v-if="
-            editable &&
-            isSelected(opplan.reference) &&
-            opplan.hasOwnProperty('operationplan__enddate')
-          "
-        type="datetime-local"
-        @focus="oldValue = opplan.operationplan__enddate"
-        v-model="opplan.operationplan__enddate"
-        @input="
-            changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)
-          "
-      />
-    </p>
-    <p v-if="opplan.remark || opplan.operationplan__remark">
-      <span v-if="!editable || !isSelected(opplan.reference)"
-        >{{ opplan.remark || opplan.operationplan__remark }}</span
+        class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+        data-bs-toggle="tooltip" data-bs-html="true"
+        :title="opplan.remark || opplan.operationplan__remark"
+      >{{ opplan.remark || opplan.operationplan__remark }}</span
       >
       <input
         class="form-control"
@@ -840,7 +946,11 @@
       ></i
       >&nbsp;
       <strong>
-        {{ opplan.item__name || opplan.item }} @ {{ opplan.location }}</strong
+        <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+              data-bs-toggle="tooltip" data-bs-html="true"
+              :title="(opplan.item__name || opplan.item) + ' @ ' + opplan.location">
+          {{ opplan.item__name || opplan.item }} @ {{ opplan.location }}
+        </span></strong
       >&nbsp;
       <a
         @click.stop=""
@@ -852,10 +962,13 @@
     <p
       v-if="opplan.item__description || opplan.operationplan__item__description"
     >
-      {{ opplan.item__description || opplan.operationplan__item__description
-      }}&nbsp;
+      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="opplan.item__description || opplan.operationplan__item__description">
+        {{ opplan.item__description || opplan.operationplan__item__description }}
+      </span>&nbsp;
     </p>
-    <p>{{ numberFormat(opplan.operationplan__quantity || opplan.quantity) }}</p>
+    <p><span data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('Quantity')">{{ numberFormat(opplan.operationplan__quantity || opplan.quantity) }}</span></p>
   </div>
   <div data-no-drag v-if="opplan.type === 'DLVR'">
     <p>
@@ -875,7 +988,11 @@
       <strong>{{ opplan.demands[0][1] }}</strong>
     </p>
     <p v-if="opplan.item__name">
-      {{ opplan.item }}&nbsp;
+      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="opplan.item">
+        {{ opplan.item }}
+      </span>&nbsp;
       <a
         @click.stop=""
         :href="urlPrefix + '/detail/input/item/' + adminEscape(opplan.item__name) + '/'"
@@ -886,8 +1003,11 @@
     <p
       v-if="opplan.item__description || opplan.operationplan__item__description"
     >
-      {{ opplan.item__description || opplan.operationplan__item__description
-      }}&nbsp;
+      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="opplan.item__description || opplan.operationplan__item__description">
+        {{ opplan.item__description || opplan.operationplan__item__description }}
+      </span>&nbsp;
     </p>
     <p>
       {{ opplan.location }}&nbsp;
@@ -898,8 +1018,8 @@
         <i class="fa fa-caret-right"></i>
       </a>
     </p>
-    <p>{{ dateFormat(opplan.operationplan__enddate || opplan.enddate) }}</p>
-    <p>{{ numberFormat(opplan.operationplan__quantity || opplan.quantity) }}</p>
+    <p><span data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('End date')">{{ dateFormat(opplan.operationplan__enddate || opplan.enddate) }}</span></p>
+    <p><span data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('Quantity')">{{ numberFormat(opplan.operationplan__quantity || opplan.quantity) }}</span></p>
   </div>
 </div>
 <!--{% endverbatim %}-->

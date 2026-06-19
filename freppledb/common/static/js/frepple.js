@@ -1806,6 +1806,7 @@ var grid = {
     let l = $('<span id="filterfield" class="list-group dropdown-menu">');
     let cnt = 15;  // Limits the number fields to choose from
     for (var col of $("#grid").jqGrid('getGridParam', 'colModel')) {
+      if (col.hidden) continue;
       var searchoptions = col.searchoptions;
       if (searchoptions && searchoptions.sopt) {
         if (el.id == "addsearch")
@@ -2560,7 +2561,7 @@ var ERPconnection = {
                 rowdata = grid.jqGrid('getRowData', sel[i]);
                 rowdata.operationplan__status = 'approved';
                 if (newRef) {
-                  grid.jqGrid('setCell', sel[i], 'operationplan__reference', rowdata.operationplan__reference + " exported as " +newRef);
+                  grid.jqGrid('setCell', sel[i], 'operationplan__reference', rowdata.operationplan__reference + " exported as " + newRef);
                   rowdata.operationplan__reference = newRef;
                 }
               }
@@ -2573,7 +2574,7 @@ var ERPconnection = {
                 rowdata = grid.jqGrid('getRowData', sel[i]);
                 rowdata.status = 'approved';
                 if (newRef) {
-                  grid.jqGrid('setCell', sel[i], 'reference', rowdata.reference + " exported as " +newRef);
+                  grid.jqGrid('setCell', sel[i], 'reference', rowdata.reference + " exported as " + newRef);
                   rowdata.reference = newRef;
                 }
               }

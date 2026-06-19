@@ -711,12 +711,10 @@ class OdooSendRecommendations(PlanTask):
                         ):
                             forecast.append(p.demand.name)
                         else:
-                            sales_orders.append(p.demand.name)
+                            sales_orders.append(p.demand.name.split(" ")[0])
                     recommendation = ""
                     if sales_orders:
-                        recommendation = (
-                            f"Required for sales orders {",".join(sales_orders)}"
-                        )
+                        recommendation = f"Required for sales order{'s' if len(sales_orders) > 1 else ''} {",".join(sales_orders)}"
                     if forecast:
                         recommendation = f"{recommendation}{"\n" if sales_orders else ""}Required for forecast {",".join(forecast)}"
                     po_products.append(i.itemsupplier.item.name)
@@ -791,12 +789,10 @@ class OdooSendRecommendations(PlanTask):
                         ):
                             forecast.append(p.demand.name)
                         else:
-                            sales_orders.append(p.demand.name)
+                            sales_orders.append(p.demand.name.split(" ")[0])
                     recommendation = ""
                     if sales_orders:
-                        recommendation = (
-                            f"Required for sales orders {",".join(sales_orders)}"
-                        )
+                        recommendation = f"Required for sales order{'s' if len(sales_orders) > 1 else ''} {",".join(sales_orders)}"
                     if forecast:
                         recommendation = f"{recommendation}{"\n" if sales_orders else ""}Required for forecast {",".join(forecast)}"
                     mo_count += 1

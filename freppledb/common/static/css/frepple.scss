@@ -1073,6 +1073,16 @@ svg text {
   --frepple-color-split-stroke: #{$frepple-color-split-stroke};
 }
 
+::selection {
+  background-color: rgba($primary, 0.3);
+  color: $body-color;
+}
+
+::-moz-selection {
+  background-color: rgba($primary, 0.3);
+  color: $body-color;
+}
+
 .alert-success a {
   color: $success-text-emphasis;
   font-weight: bold;

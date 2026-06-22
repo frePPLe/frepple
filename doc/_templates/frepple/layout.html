@@ -2,7 +2,6 @@
 
 {%- block extrahead %}
 <link rel="stylesheet" href="{{ pathto('_static/jquery.modal.min.css', 1) }}" />
-<link rel="canonical" href="https://frepple.com/docs/current/{{ pagename }}.php" />
 <script src="{{ pathto('_static/jquery.modal.min.js', 1) }}"></script>
 <script>
 $(function() {
@@ -19,7 +18,7 @@ $(function() {
 {% endblock %}
 
 {%- block relbar1 %}<div id="banner">
-<div id="site-title" role="banner"><a href="https://frepple.com/" title="frePPLe" rel="home">
+<div id="site-title" role="banner"><a href="/static/doc/index.html" title="frePPLe" rel="home">
 <img src="{{ pathto('_static/frepple.svg', 1) }}" height="40" alt="frePPLe"></a>
 </div>
 <div id="site-name">Community Edition {{ release }}</div>

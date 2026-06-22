@@ -1,15 +1,15 @@
 =================================
-Overview frepple-odoo integration
+Overview frePPLe-Odoo integration
 =================================
 
 FrePPLe is an advanced planning and scheduling (APS) software.
 
-When the planning problem is simple, odoo's built-in MRP is sufficient to plan
+When the planning problem is simple, Odoo's built-in MRP is sufficient to plan
 the purchase and manufacturing orders.
 
 When the planning problem becomes more complex, you'll quickly notice that planners
-use Excel spreadsheets in parallel with odoo. They don't sufficiently recognize their
-deicision making process reflected in the transactional system of odoo (or any ERP system
+use Excel spreadsheets in parallel with Odoo. They don't sufficiently recognize their
+decision-making process reflected in the transactional system of Odoo (or any ERP system
 for that matter).
 
 And when the planning problem grows even more complex, planners need to use a dedicated
@@ -20,21 +20,21 @@ It is designed to help businesses improve their operational efficiency, reduce c
 enhance customer satisfaction.
 
 You might want to take one step back and understand
-`what Odoo cannot do for planners <https://frepple.com/blog/five_things_odoo_mrp_doesnt_do/>`_
+`what Odoo cannot do for planners <https://frepple.com/blog/five_things_Odoo_mrp_doesnt_do/>`_
 and why advanced planning is required for complex environments.
 
 .. image:: _images/odoo_planning_complexity.png
    :alt: Import data from Odoo
    :scale: 50%
 
-FrePPLe has a long history of working with odoo. Our odoo integration provides:
+FrePPLe has a long history of working with Odoo. Our Odoo integration provides:
 
 - | All master data and transactions are managed by Odoo.
   | The frepple connector brings synchronizes all planning data to frePPLe to
     assure your plan is always based on the latest information.
 
 - | Publish the plan easily back to Odoo.
-  | Frepple proposes new purchase orders and new manufacturing order, and reschedules
+  | FrePPLe proposes new purchase orders and new manufacturing order, and reschedules
     work orders.
   | After review by the planner, this plan can easily be published back to Odoo.
 
@@ -44,7 +44,7 @@ FrePPLe has a long history of working with odoo. Our odoo integration provides:
 
 - | Open source software.
   | The connector is open source, allowing you to customize and extend its functionality to
-    meet your specific odoo customizations and planning requirements.
+    meet your specific Odoo customizations and planning requirements.
 
-The connector can be downloaded from the `Odoo apps store <https://apps.odoo.com/apps/modules/19.0/frepple>`_.
+The connector can be downloaded from the `Odoo apps store <https://apps.Odoo.com/apps/modules/19.0/frepple>`_.
 The connector is available for the last 3 versions of Odoo (currently the 17, 18 and 19).

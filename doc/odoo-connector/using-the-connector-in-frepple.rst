@@ -12,11 +12,11 @@ The Odoo integration brings new functionality to the frePPLe user interface.
    :alt: Plan generation
 
 * | **Task "Import data from Odoo"**
-  | The execute screen has an *import data from odoo* command that
+  | The execute screen has an *import data from Odoo* command that
     allows to import the Odoo data in frePPLe database.
 
   .. image:: _images/odoo_import.png
-   :alt: Import data from odoo
+   :alt: Import data from Odoo
 
   | We no longer recommend using this task. Instead, you use the "import Odoo data"
     checkbox in the plan generation task to achieve the same result.

@@ -473,6 +473,7 @@ export const useForecastsStore = defineStore('forecasts', {
 
       if (!isExpanded) {
         this.treeExpansion[model][lvl].delete(objectName);
+        await this.getForecastDetails(childrenParameters['item'], childrenParameters['location'], childrenParameters['customer']);
         return;
       }
 

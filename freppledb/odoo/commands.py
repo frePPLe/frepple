@@ -762,16 +762,13 @@ class OdooSendRecommendations(PlanTask):
                     reschedule = (
                         j.status == "approved"
                         and (
-                            j.info or [c.info for c in j.operationplans if c and c.info]
+                            j.info or any(c.info for c in j.operationplans)
                         )
                         and (
                             not j.owner
-                            or not isinstance(
-                                j.owner.operation, frepple.operation_alternate
-                            )
+                            or isinstance( j.owner.operation, frepple.operation_alternate)
                         )
                     )
-
                     if not new_mo and not reschedule:
                         continue
 

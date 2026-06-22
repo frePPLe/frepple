@@ -9,5 +9,5 @@ RUN apt-get -y -q update && \
   psmisc libxerces-c3.2 libxerces-c-dev openssl libssl-dev \
   postgresql-client libpq5 libpq-dev locales \
   nodejs npm && \
-  npm i -g pnpm vue && \
+  npm i -g pnpm@10 vue && \
   rm -rf /var/lib/apt/lists/*

@@ -2535,7 +2535,7 @@ var ERPconnection = {
 
           var popupMessage = '<p>' + gettext("Export successful") + '</p>';
           if (erpMessage && erpMessage !== 'OK') {
-            popupMessage += '<pre class="mb-0 mt-2" style="white-space: pre-wrap; overflow-wrap: anywhere;">' + $('<div/>').text(erpMessage).html() + '</pre>';
+            popupMessage += '<p class="mb-0 mt-2 mb-2" style="white-space: pre-wrap; overflow-wrap: anywhere;">' + $('<div/>').text(erpMessage).html() + '</p>';
           }
           $('#popup .modal-body').html(popupMessage);
 
@@ -2858,7 +2858,7 @@ var ERPconnection = {
               $('#popup .modal-dialog').removeClass('modal-xl');
               var popupMessage = '<p>' + gettext("Export successful") + '</p>';
               if (erpMessage && erpMessage !== 'OK') {
-                popupMessage += '<pre class="mb-0 mt-2" style="white-space: pre-wrap; overflow-wrap: anywhere;">' + $('<div/>').text(erpMessage).html() + '</pre>';
+                popupMessage += '<p class="mb-0 mt-2 mb-2" style="white-space: pre-wrap; overflow-wrap: anywhere;">' + $('<div/>').text(erpMessage).html() + '</p>';
               }
               $('#popup .modal-body').css({ 'overflow-y': '' }).html(popupMessage);
 
@@ -2876,9 +2876,14 @@ var ERPconnection = {
                 location.reload();
                 return;
               }
-              $('#popup .modal-title').html(gettext("Error during export"));
+              $('#popup .modal-title').html(gettext("Error"));
               $('#popup .modal-header').addClass('bg-danger');
-              $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
+              $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html(
+                '<div style="overflow-y:auto; height: 300px; resize: vertical">' +
+                gettext("Internal server error on Odoo side:") +
+                '<p id="odoo-error-message" class="mb-0 mt-2 mb-2" style="white-space: pre-wrap; overflow-wrap: anywhere"></p>' +
+                '</div>');
+              $('#popup #odoo-error-message').text(result.responseText);
               $('#button_export').val(gettext('Retry'));
               $('#popup .modal-dialog').css({ 'visibility': 'visible' })
               $('#popup').modal('show');
@@ -2897,9 +2902,14 @@ var ERPconnection = {
           location.reload();
           return;
         }
-        $('#popup .modal-title').html(gettext("Error"));
+        $('#popup .modal-title').html(gettext("Error222"));
         $('#popup .modal-header').addClass('bg-danger');
-        $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
+        $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html(
+          '<div style="overflow-y:auto; height: 300px; resize: vertical">' +
+          gettext("Internal server error on Odoo side:") +
+          '<p id="odoo-error-message" class="mb-0 mt-2 mb-2" style="white-space: pre-wrap; overflow-wrap: anywhere"></p>' +
+          '</div>');
+        $('#popup #odoo-error-message').text(result.responseText);
         $('#button_export').val(gettext('Retry'));
         $('#popup .modal-dialog').css({ 'visibility': 'visible' })
         $('#popup').modal('show');

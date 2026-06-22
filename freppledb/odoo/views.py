@@ -143,7 +143,7 @@ def Upload(request):
                         "reference", rec.get("operationplan__reference", None)
                     )
                     type = rec.get("operationplan__type", rec.get("type", None))
-                    if not reference or not rec["quantity"]:
+                    if not reference or not rec["quantity"] or "exported as" in reference:
                         continue
 
                     # Check if some records were updated by the user.
@@ -485,9 +485,7 @@ def Upload(request):
                 msg = f.read().decode("utf-8")
                 logger.debug("Odoo response: %s" % msg)
                 if "Exception" in msg:
-                    return HttpResponseServerError(
-                        f"Internal server error on Odoo side:<pre>{msg}</pre>"
-                    )
+                    return HttpResponseServerError(msg)
             # Parse the Odoo response to get created references
             reference_mapping = {}
             try:

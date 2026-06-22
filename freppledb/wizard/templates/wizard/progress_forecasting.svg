@@ -13,6 +13,7 @@ rect.border {
 
 text {
    font-size: 1em;
+   fill: var(--bs-card-cap-color) !important;
 }
 
 text.border {

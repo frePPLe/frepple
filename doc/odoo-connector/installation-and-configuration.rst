@@ -52,7 +52,6 @@ The section below describes the installation and configuration of these.
 
     * | Frepple server:
       | URL of your frepple server.
-      | Do not include a slash at the end of the URL.
 
     * | Respect reservations:
       | When this flag is checked, frepple fully respects the material

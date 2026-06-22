@@ -10,6 +10,11 @@ Getting started
 
   | Make sure to install the branch corresponding to your Odoo version.
 
+  | If your Odoo instance is running in multi-database mode you need to
+    add the frePPLe addon as a server wide module. This is achieved by updating an
+    option in the Odoo configuration file odoo.conf: "server_wide_modules = web,frepple"
+  | You can skip this step for single-database Odoo configurations.
+
 - **STEP 2: Choose how you will run frepple**
 
   .. image:: _images/options_to_run_frepple.png
@@ -47,7 +52,7 @@ Getting started
 
 - **STEP 3: Follow the instructions for your chosen option**
 
-- **Option 1: Using the frepple APS cloud service**
+- **OPTION 1: Using the frepple APS cloud service**
 
   - After installing the connector addon in Odoo, you can immediately send your odoo data to the frepple
     cloud service.
@@ -70,22 +75,50 @@ Getting started
       - Draft a new manufacturing order
       - Reschedule an existing manufacturing order
 
-- **Option 2: Using the frepple cloud with a trial account**
+- **OPTION 2: Using the frepple cloud with a trial account**
 
-  - Register for a 15-day free trial on the `frepple cloud <https://cloud.frepple.com>`_.
-    It takes only a minute to fill out the form and wait for the confirmation email that your
-    environment is ready.
+  - | Register for a 15-day free trial on the `frepple cloud <https://cloud.frepple.com>`_.
+    | It takes only a minute to fill out the form and wait for the confirmation email that your
+      environment is ready.
 
-  - Next, login to your frepple instance. And use the "connect to Odoo" button
-    on the home screen to link your odoo and frepple instances.
+  - | Configure the odoo addon
+    | The module adds some configuration on the company. You can edit these
+      from the company edit form or from the settings.
+    | Edit these parameters, and leave the other parameters at their default values:
 
-- **Option 3: Installing frePPLe on your own infrastructure**
+    * | Webtoken key:
+      | A secret random string used to sign web tokens for a single signon between
+        the Odoo and frePPLe web applications. Choose a string that is long enough,
+        random and contains a mix of lower case characters, upper case characters
+        and numbers.
+
+    * | Manufacturing warehouse:
+      | The connector assumes each company has only a single manufacturing
+        location.
+      | All bills of materials are modeled there.
+
+    * | Frepple server:
+      | URL of your frepple server.
+
+    .. image:: _images/odoo-settings.png
+       :alt: Configuring the Odoo add-on.
+
+  - | Configure frepple
+
+    | A wizard on the home screen guides you through the steps to connect to your odoo
+      instance. Test the connection and save the configuration.
+
+    .. image:: _images/odoo-connection-wizard-1.png
+       :alt: Opening the Odoo connection wizard.
+
+    .. image:: _images/odoo-connection-wizard-2.png
+       :alt: Configuring the Odoo connection.
+
+- **OPTION 3: Installing frePPLe on your own infrastructure**
 
     - You will need knowledge of Linux, Docker and PostgreSQL to complete the installation.
 
     - Follow the instructions in the `frepple installation guide <https://docs.frepple.com/installation/>`_ to
       install and configure your own frepple instance.
 
-    - Next, login to your frepple instance. And use the "connect to Odoo" button
-      on the home screen to link your odoo and frepple instances.
-
+    - Use the same configuration steps as in option 2 to connect your Odoo instance to your frepple instance.

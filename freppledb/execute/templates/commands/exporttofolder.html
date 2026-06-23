@@ -78,12 +78,16 @@
         <div class="row mb-3">
           <div class="col-3">{% trans "type"|capfirst %}</div>
           <div class="col-9">
-             <select class="form-select add-export-type" aria-label="Select export type" onchange="changeExportType(this)">
-               <option disabled value>{% trans "Select export type" %}</option>
-               <option{% if j.exporttype == "sql" %} selected{% endif %} value="sql">SQL query</option>
-               <option{% if j.exporttype == "report" %} selected{% endif %} value="report">Report</option>
-               <option{% if j.exporttype == "customreport" %} selected{% endif %} value="customreport">Custom report</option>
-             </select>
+             <div class="dropdown">
+               <button class="btn btn-outline-secondary btn-text-outline dropdown-toggle w-100 text-start add-export-type" type="button" data-bs-toggle="dropdown" data-value="{% firstof j.exporttype '' %}">
+                 {% if j.exporttype == "sql" %}SQL query{% elif j.exporttype == "report" %}Report{% elif j.exporttype == "customreport" %}Custom report{% else %}{% trans "Select export type" %}{% endif %}
+               </button>
+               <ul class="dropdown-menu w-100">
+                 <li><a class="dropdown-item" href="#" data-value="sql" onclick="setExportType(this, event)">SQL query</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="report" onclick="setExportType(this, event)">Report</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="customreport" onclick="setExportType(this, event)">Custom report</a></li>
+               </ul>
+             </div>
           </div>
         </div>
         <div class="{% if j.exporttype != "sql" %}d-none {% endif %}row mb-3 optional" data-type="sql">
@@ -97,44 +101,62 @@
         <div class="{% if j.exporttype != "customreport" %}d-none {% endif %}row mb-3 optional" data-type="customreport">
           <div class="col-3 text-nowrap">{% trans "custom report"|capfirst%}</div>
           <div class="col-9">
-             <select class="form-select add-export-customreport" aria-label="Select custom report">
-               <option disabled value>{% trans "Select report" %}</option>
-               {% for r in customreports %}<option {% if j.reportid == r.1 %}selected {% endif %}value="{{r.1}}">{{r.0}}</option>{% endfor %}
-             </select>
+             <div class="dropdown">
+               <button class="btn btn-outline-secondary btn-text-outline dropdown-toggle w-100 text-start add-export-customreport" type="button" data-bs-toggle="dropdown" data-value="{% firstof j.reportid '' %}">
+                 {% if j.reportid %}{% for r in customreports %}{% if j.reportid == r.1 %}{{r.0}}{% endif %}{% endfor %}{% else %}{% trans "Select report" %}{% endif %}
+               </button>
+               <ul class="dropdown-menu w-100">
+                 {% for r in customreports %}<li><a class="dropdown-item" href="#" data-value="{{r.1}}" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">{{r.0}}</a></li>{% endfor %}
+               </ul>
+             </div>
           </div>
         </div>
         <div class="{% if j.exporttype != "report" %}d-none {% endif %}row mb-3 optional" data-type="report">
           <div class="col-3">{% trans "report"|capfirst %}</div>
           <div class="col-9">
-             <select class="form-select add-export-report">
-               <option disabled selected value>{% trans "Select report" %}</option>
-               {% for r in reports %}<option {% if j.report == r.1 %}selected {% endif %}value="{{r.1}}">{{r.0}}</option>{% endfor %}
-             </select>
+             <div class="dropdown">
+               <button class="btn btn-outline-secondary btn-text-outline dropdown-toggle w-100 text-start add-export-report" type="button" data-bs-toggle="dropdown" data-value="{% firstof j.report '' %}">
+                 {% if j.report %}{% for r in reports %}{% if j.report == r.1 %}{{r.0}}{% endif %}{% endfor %}{% else %}{% trans "Select report" %}{% endif %}
+               </button>
+               <ul class="dropdown-menu w-100">
+                 {% for r in reports %}<li><a class="dropdown-item" href="#" data-value="{{r.1}}" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">{{r.0}}</a></li>{% endfor %}
+               </ul>
+             </div>
           </div>
         </div>
         <div class="{% if j.exporttype != "report" %}d-none {% endif %}row mb-3 optional" data-type="report">
           <div class="col-3">{% trans "bucket size"|capfirst %}</div>
           <div class="col-9">
-             <select class="form-select w-auto add-export-bucket">
-               <option{% if j.arguments.buckets == "day" %} selected{% endif %} value="day">day</option>
-               <option{% if j.arguments.buckets == "week" %} selected{% endif %}  value="week">week</option>
-               <option{% if j.arguments.buckets == "month" %} selected{% endif %}  value="month">month</option>
-               <option{% if j.arguments.buckets == "quarter" %} selected{% endif %}  value="quarter">quarter</option>
-               <option{% if j.arguments.buckets == "year" %} selected{% endif %}  value="year">year</option>
-             </select>
+             <div class="dropdown d-inline-block">
+               <button class="btn btn-outline-secondary btn-text-outline dropdown-toggle w-auto add-export-bucket" type="button" data-bs-toggle="dropdown" data-value="{% firstof j.arguments.buckets 'week' %}">
+                 {% firstof j.arguments.buckets 'week' %}
+               </button>
+               <ul class="dropdown-menu">
+                 <li><a class="dropdown-item" href="#" data-value="day" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">day</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="week" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">week</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="month" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">month</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="quarter" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">quarter</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="year" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">year</a></li>
+               </ul>
+             </div>
           </div>
         </div>
         <div class="{% if j.exporttype != "report" %}d-none {% endif %}row mb-3 optional" data-type="report">
           <div class="col-3">{% trans "horizon"|capfirst %}</div>
           <div class="col-9">
              <input style="width:4.5em" type="number" class="form-control d-inline arrows add-export-horizon" min="0" max="99" value="{{j.arguments.horizonlength}}">
-             <select class="form-select d-inline w-auto add-export-horizonbucket">
-               <option{% if j.arguments.horizonunit == "day" %} selected{% endif %} value="day">day</option>
-               <option{% if j.arguments.horizonunit == "week" %} selected{% endif %} value="week" selected>week</option>
-               <option{% if j.arguments.horizonunit == "month" %} selected{% endif %} value="month">month</option>
-               <option{% if j.arguments.horizonunit == "quarter" %} selected{% endif %} value="quarter">quarter</option>
-               <option{% if j.arguments.horizonunit == "year" %} selected{% endif %} value="year">year</option>
-             </select>
+             <div class="dropdown d-inline-block">
+               <button class="btn btn-outline-secondary btn-text-outline dropdown-toggle w-auto add-export-horizonbucket" type="button" data-bs-toggle="dropdown" data-value="{% firstof j.arguments.horizonunit 'week' %}">
+                 {% firstof j.arguments.horizonunit 'week' %}
+               </button>
+               <ul class="dropdown-menu">
+                 <li><a class="dropdown-item" href="#" data-value="day" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">day</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="week" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">week</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="month" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">month</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="quarter" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">quarter</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="year" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">year</a></li>
+               </ul>
+             </div>
           </div>
         </div>
   </div>
@@ -182,12 +204,16 @@
         <div class="row mb-3">
           <div class="col-3">{% trans "type"|capfirst %}</div>
           <div class="col-9">
-             <select class="form-select add-export-type" aria-label="Select export type" onchange="changeExportType(this)">
-               <option disabled selected value>{% trans "Select export type" %}</option>
-               <option value="sql">SQL query</option>
-               <option value="report">Report</option>
-               <option value="customreport">Custom report</option>
-             </select>
+             <div class="dropdown">
+               <button class="btn btn-outline-secondary btn-text-outline dropdown-toggle w-100 text-start add-export-type" type="button" data-bs-toggle="dropdown" data-value="">
+                 {% trans "Select export type" %}
+               </button>
+               <ul class="dropdown-menu w-100">
+                 <li><a class="dropdown-item" href="#" data-value="sql" onclick="setExportType(this, event)">SQL query</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="report" onclick="setExportType(this, event)">Report</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="customreport" onclick="setExportType(this, event)">Custom report</a></li>
+               </ul>
+             </div>
           </div>
         </div>
         <div class="row mb-3 d-none optional" data-type="sql">
@@ -201,44 +227,62 @@
         <div class="row mb-3 d-none optional" data-type="customreport">
           <div class="col-3 text-nowrap">{% trans "custom report"|capfirst%}</div>
           <div class="col-9">
-             <select class="form-select add-export-customreport" aria-label="Select custom report">
-               <option disabled selected value>{% trans "Select report" %}</option>
-               {% for r in customreports %}<option value="{{r.1}}">{{r.0}}</option>{% endfor %}
-             </select>
+             <div class="dropdown">
+               <button class="btn btn-outline-secondary btn-text-outline dropdown-toggle w-100 text-start add-export-customreport" type="button" data-bs-toggle="dropdown" data-value="">
+                 {% trans "Select report" %}
+               </button>
+               <ul class="dropdown-menu w-100">
+                 {% for r in customreports %}<li><a class="dropdown-item" href="#" data-value="{{r.1}}" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">{{r.0}}</a></li>{% endfor %}
+               </ul>
+             </div>
           </div>
         </div>
         <div class="row mb-3 d-none optional" data-type="report">
           <div class="col-3">{% trans "report"|capfirst %}</div>
           <div class="col-9">
-             <select class="form-select add-export-report">
-               <option disabled selected value>{% trans "Select report" %}</option>
-               {% for r in reports %}<option value="{{r.1}}">{{r.0}}</option>{% endfor %}
-             </select>
+             <div class="dropdown">
+               <button class="btn btn-outline-secondary btn-text-outline dropdown-toggle w-100 text-start add-export-report" type="button" data-bs-toggle="dropdown" data-value="">
+                 {% trans "Select report" %}
+               </button>
+               <ul class="dropdown-menu w-100">
+                 {% for r in reports %}<li><a class="dropdown-item" href="#" data-value="{{r.1}}" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">{{r.0}}</a></li>{% endfor %}
+               </ul>
+             </div>
           </div>
         </div>
         <div class="row mb-3 d-none optional" data-type="report">
           <div class="col-3">{% trans "bucket size"|capfirst %}</div>
           <div class="col-9">
-             <select class="form-select w-auto add-export-bucket">
-               <option value="day">day</option>
-               <option value="week" selected>week</option>
-               <option value="month">month</option>
-               <option value="quarter">quarter</option>
-               <option value="year">year</option>
-             </select>
+             <div class="dropdown d-inline-block">
+               <button class="btn btn-outline-secondary btn-text-outline dropdown-toggle w-auto add-export-bucket" type="button" data-bs-toggle="dropdown" data-value="week">
+                 week
+               </button>
+               <ul class="dropdown-menu">
+                 <li><a class="dropdown-item" href="#" data-value="day" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">day</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="week" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">week</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="month" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">month</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="quarter" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">quarter</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="year" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">year</a></li>
+               </ul>
+             </div>
           </div>
         </div>
         <div class="row mb-3 d-none optional" data-type="report">
           <div class="col-3">{% trans "horizon"|capfirst %}</div>
           <div class="col-9">
              <input style="width:4.5em" type="number" class="form-control d-inline arrows add-export-horizon" min="0" max="99" value="12">
-             <select class="form-select d-inline w-auto add-export-horizonbucket">
-               <option value="day">day</option>
-               <option value="week" selected>week</option>
-               <option value="month">month</option>
-               <option value="quarter">quarter</option>
-               <option value="year">year</option>
-             </select>
+             <div class="dropdown d-inline-block">
+               <button class="btn btn-outline-secondary btn-text-outline dropdown-toggle w-auto add-export-horizonbucket" type="button" data-bs-toggle="dropdown" data-value="week">
+                 week
+               </button>
+               <ul class="dropdown-menu">
+                 <li><a class="dropdown-item" href="#" data-value="day" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">day</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="week" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">week</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="month" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">month</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="quarter" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">quarter</a></li>
+                 <li><a class="dropdown-item" href="#" data-value="year" onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">year</a></li>
+               </ul>
+             </div>
           </div>
         </div>
   </div>
@@ -332,15 +376,22 @@ function toggleAddExport(show, el) {
 
 function updateExportTypeOptions(myform) {
   var extension = myform.find(".add-export-extension").first().text().trim();
-  var typeSelect = myform.find(".add-export-type").first();
-  var reportOption = typeSelect.find("option[value='report']");
+  var typeBtn = myform.find(".add-export-type").first();
   var hideReport = extension === ".json" || extension === ".json.gz";
+  var reportItem = typeBtn.next(".dropdown-menu").find("[data-value='report']").parent();
 
-  reportOption.prop("hidden", hideReport);
-  if (hideReport && typeSelect.val() === "report") {
-    typeSelect.val("sql");
-    changeExportType(typeSelect.get(0));
+  reportItem.toggleClass("d-none", hideReport);
+  if (hideReport && typeBtn.attr("data-value") === "report") {
+    typeBtn.text("SQL query").attr("data-value", "sql");
+    changeExportType(typeBtn.get(0));
   }
+}
+
+function setExportType(el, event) {
+  var btn = $(el).closest('.dropdown').find('.dropdown-toggle');
+  btn.text($(el).text()).attr('data-value', $(el).attr('data-value'));
+  changeExportType(btn.get(0));
+  event.preventDefault();
 }
 
 function setExportExtension(el, extension) {
@@ -351,10 +402,14 @@ function setExportExtension(el, extension) {
 
 function saveExport(el) {
   var myform = $(el).closest(".row");
+  var getBtnVal = function(cls) {
+    var btn = myform.find(cls).first();
+    return btn.length ? btn.attr("data-value") : null;
+  };
   var data = {
       "name": myform.find(".add-export-name").first().val()
          + myform.find(".add-export-extension").first().html(),
-      "type": myform.find(".add-export-type").first().val()
+      "type": getBtnVal(".add-export-type")
       };
   if (myform.attr("data-file") != "adding-a-new-export") {
     data["currentname"] = myform.attr("data-file");
@@ -362,12 +417,12 @@ function saveExport(el) {
   if (data["type"]  == "sql") {
     data["sql"] = myform.find(".add-export-sql").first().val();
   } else if (data["type"]  == "report") {
-    data["report"] = myform.find(".add-export-report").first().val();
-    data["bucket"] = myform.find(".add-export-bucket").first().val();
+    data["report"] = getBtnVal(".add-export-report");
+    data["bucket"] = getBtnVal(".add-export-bucket");
     data["horizon"] = myform.find(".add-export-horizon").first().val();
-    data["horizonbucket"] = myform.find(".add-export-horizonbucket").first().val();
+    data["horizonbucket"] = getBtnVal(".add-export-horizonbucket");
   } else if (data["type"] == "customreport") {
-    data["report"] = myform.find(".add-export-customreport").first().val();
+    data["report"] = getBtnVal(".add-export-customreport");
   }
   $.ajax({
     url: "{{request.prefix}}/execute/exports/",
@@ -421,7 +476,7 @@ function deleteExport(el) {
 }
 
 function changeExportType(el) {
-  var t = $(el).val();
+  var t = $(el).attr("data-value");
   var myform = $(el).closest(".col");
   myform.find(".optional[data-type!=" + t + "]").addClass("d-none");
   myform.find(".optional[data-type=" + t + "]").removeClass("d-none");

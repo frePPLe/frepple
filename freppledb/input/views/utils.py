@@ -78,6 +78,9 @@ logger = logging.getLogger(__name__)
 @staff_member_required
 def search(request):
     term = request.GET.get("term").strip()
+    models = request.GET.get("models", None)
+    if models:
+        models = models.split(",")
     result = []
 
     # Loop over all models in the data_site
@@ -85,7 +88,7 @@ def search(request):
     #  - quick_search attribute is set on the model class
     #  - user has view permissions
     with_forecast = "freppledb.forecast" in settings.INSTALLED_APPS
-    if with_forecast:
+    if with_forecast and (not models or "item" in models):
         from freppledb.forecast.models import Forecast
 
         query = (
@@ -123,9 +126,11 @@ def search(request):
                 ]
             )
     for cls, admn in data_site._registry.items():
-        if request.user.has_perm(
-            "%s.view_%s" % (cls._meta.app_label, cls._meta.object_name.lower())
-        ) and getattr(cls, "quick_search", False):
+        modelname = cls._meta.object_name.lower()
+        if request.user.has_perm("%s.view_%s" % (cls._meta.app_label, modelname)) and (
+            (models and modelname in models)
+            or (not models and getattr(cls, "quick_search", False))
+        ):
             descriptionExists = True
             try:
                 cls._meta.get_field("description")
@@ -169,7 +174,7 @@ def search(request):
                                 if issubclass(cls, OperationPlan)
                                 else "/detail/%s/%s/"
                             )
-                            % (cls._meta.app_label, cls._meta.object_name.lower()),
+                            % (cls._meta.app_label, modelname),
                             "removeTrailingSlash": (
                                 True if issubclass(cls, OperationPlan) else False
                             ),
@@ -2864,11 +2869,7 @@ class OperationPlanDetail(View):
                                 ),  # total produced
                                 0 if row[3] else row[5]["produced_proposed"],
                                 0 if row[3] else row[5]["produced_confirmed"],
-                                (
-                                    row[4]["onhand"]
-                                    if row[4] and row[4]["onhand"]
-                                    else 0
-                                )
+                                (row[4]["onhand"] if row[4] and row[4]["onhand"] else 0)
                                 + (0 if row[3] else row[5]["produced_proposed"])
                                 + (0 if row[3] else row[5]["produced_confirmed"])
                                 - (0 if row[3] else row[5]["consumed_proposed"])

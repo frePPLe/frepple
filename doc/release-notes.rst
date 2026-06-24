@@ -53,6 +53,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | The reference is updated to include the Odoo created PO/MO reference, if any.
   | The number of created/updated POs and MOs is displayed in the export dialog.
 
+- | 18, 19: bug fix for work orders when multiple operation in an odoo
+    bill of material have the same name.
+
 .. rubric:: Docker images
 
 - | The docker image is now available as a multi-arch image, supporting both

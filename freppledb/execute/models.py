@@ -141,14 +141,16 @@ class Task(models.Model):
                     pass
                 child_task.message = "Canceled process"
                 child_task.processid = None
+                if child_task.status != "Waiting":
+                    child_task.finished = datetime.now()
                 child_task.status = "Canceled"
-                child_task.finished = datetime.now()
                 child_task.save(using=database)
         elif self.status != "Waiting":
             return
         self.processid = None
+        if self.status != "Waiting":
+            self.finished = datetime.now()
         self.status = "Canceled"
-        self.finished = datetime.now()
         self.save(using=database)
 
 

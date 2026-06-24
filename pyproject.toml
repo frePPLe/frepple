@@ -36,3 +36,6 @@ include-package-data = false
 
 [tool.setuptools.exclude-package-data]
 "*" = ["frontend/**", "*/frontend/**"]
+
+[tool.black]
+target-version = ['py312']

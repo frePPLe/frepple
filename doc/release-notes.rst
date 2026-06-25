@@ -502,7 +502,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | This is useful in configurations where different business units work indepently in different
     scenarios, and the default scenario had to be left unused.
 
-- | Planners can now add `extra scenarios <user-interface/what-if-scenarios.php#scenario-management>`_
+- | Planners can now add `extra scenarios <user-interface/what-if-scenarios.html#scenario-management>`_
     directly in the user interface.
   | In previous release this required a change in the backend configuration file.
   | The maximum number of scenarios depends on the frepple version (community, enterprise, cloud, cloud plus).

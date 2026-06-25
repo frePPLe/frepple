@@ -26,6 +26,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     a new option to export or import a subset of the data files.
   | Until now you only could run the complete task.
 
+- | The "demands" and "materials" grid fields on a purchase order or manufacturing order
+    were limited show only the top 10. This limit has been removed to improve
+    filtering on these fields.
+
 .. rubric:: Demand forecasting
 
 - | Bug fix: Initializing a new forecast that has no demand history was tricky

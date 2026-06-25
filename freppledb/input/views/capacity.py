@@ -556,7 +556,7 @@ class ResourceDetail(OperationPlanMixin):
             setup_duration=RawSQL("(operationplan.plan->>'setup')", []),
             setup_override=RawSQL("(operationplan.plan->>'setupoverride')", []),
             resources=RawSQL(
-                "(select json_agg(json_build_array(resource_id, quantity)) from (select resource_id, round(quantity,2) quantity from operationplanresource opplanres2 where operationplan.reference = opplanres2.operationplan_id  order by quantity desc limit 10) res)",
+                "(select json_agg(json_build_array(resource_id, quantity)) from (select resource_id, round(quantity,2) quantity from operationplanresource opplanres2 where operationplan.reference = opplanres2.operationplan_id  order by quantity desc) res)",
                 [],
             ),
             feasible=RawSQL(

@@ -7,6 +7,7 @@
 /localsettings*
 /test/*/output.*.xml
 .vs
+.pnpm-store
 /freppledb/common/static/doc
 
 .*Zone.Identifier

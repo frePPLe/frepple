@@ -31,7 +31,7 @@ Safety stock                   The safety stock at the start of the time bucket.
 
 Inventory status               | Represents the delay for unprotected buffers (community version or
                                  buffers without inventory policy) otherwise represents the buffer
-                                 `inventory status <https://frepple.com/docs/current/user-interface/plan-analysis/inventory-status.php>`_
+                                 `inventory status </static/doc/user-interface/plan-analysis/inventory-status.html>`_
 
 Total produced                 | Quantity replenished into the buffer during the time bucket.
                                | A drill down menu is available to see the detail of the supplying operations,

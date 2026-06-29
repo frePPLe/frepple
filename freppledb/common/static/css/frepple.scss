@@ -292,7 +292,8 @@ div.tt-dataset.tt-dataset-search {
     }
   }
 
-  li.tt-suggestion.tt-selectable a {
+  li.tt-suggestion.tt-selectable a,
+  span.tt-suggestion.tt-selectable p {
     display: block;
     white-space: nowrap;
     overflow: hidden;

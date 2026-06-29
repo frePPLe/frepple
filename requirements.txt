@@ -18,6 +18,7 @@ psycopg2-binary == 2.9.9
 setuptools
 setuptools-rust == 0.12.1
 paramiko == 4.0.0
+autobahn == 25.12.2
 channels == 4.0.0
 attrs == 23.1.0
 daphne == 4.0.0

@@ -41,6 +41,11 @@
                     "description": "Enable pretty-printing for gdb",
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
+                },
+                {
+                    "description": "Disable debuginfod hanging behavior",
+                    "text": "set debuginfod enabled off",
+                    "ignoreFailures": true
                 }
             ],
             "environment": [
@@ -87,6 +92,10 @@
                 {
                     "name": "debugpy",
                     "value": "1"
+                },
+                {
+                    "name": "DEBUGINFOD_URLS",
+                    "value": ""
                 }
             ]
         }

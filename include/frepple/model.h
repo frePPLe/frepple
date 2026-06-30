@@ -9576,6 +9576,8 @@ class CommandDeleteOperationPlan : public Command {
 
   ~CommandDeleteOperationPlan() override { rollback(); }
 
+  OperationPlan* getOperationPlan() const { return opplan; }
+
   short getType() const override { return 6; }
 
  private:

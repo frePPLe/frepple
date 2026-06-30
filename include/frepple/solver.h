@@ -1311,7 +1311,7 @@ class OperatorBackward : public Solver, public NonCopyable {
 
   OperatorBackward(SolverCreate::SolverData* d, int c = -1,
                    CommandManager* mgr = nullptr)
-      : cmds(mgr), cluster(c), data(d) {
+      : cluster(c), cmds(mgr), data(d) {
     // We'll never use this class from Python, but still need to do a dummy
     // initialization.
     PyObject_INIT(this, &PyBaseObject_Type);

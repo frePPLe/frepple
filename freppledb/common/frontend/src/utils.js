@@ -113,7 +113,7 @@ const numberFormat = (nData, maxdecimals = 6) => {
   if (typeof (nData) === 'undefined' || nData === '')
     return '';
 
-  const isNumber = isNumeric(nData);
+  const isNumber = nData !== '' && nData !== null && !isNaN(nData) && isFinite(nData);
 
   if (isNumber) {
     nData *= 1;

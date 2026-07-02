@@ -122,19 +122,19 @@ const numberFormat = (nData, maxdecimals = 6) => {
     let sOutput = 0.0;
 
     if (absData > 100000 || maxdecimals <= 0)
-      sOutput = String(parseFloat(nData.toFixed()));
+      sOutput = String(parseFloat(absData.toFixed()));
     else if (absData > 10000 || maxdecimals <= 1)
-      sOutput = String(parseFloat(nData.toFixed(1)));
+      sOutput = String(parseFloat(absData.toFixed(1)));
     else if (absData > 1000 || maxdecimals <= 2)
-      sOutput = String(parseFloat(nData.toFixed(2)));
+      sOutput = String(parseFloat(absData.toFixed(2)));
     else if (absData > 100 || maxdecimals <= 3)
-      sOutput = String(parseFloat(nData.toFixed(3)));
+      sOutput = String(parseFloat(absData.toFixed(3)));
     else if (absData > 10 || maxdecimals <= 4)
-      sOutput = String(parseFloat(nData.toFixed(4)));
+      sOutput = String(parseFloat(absData.toFixed(4)));
     else if (absData > 1 || maxdecimals <= 5)
-      sOutput = String(parseFloat(nData.toFixed(5)));
+      sOutput = String(parseFloat(absData.toFixed(5)));
     else
-      sOutput = String(parseFloat(nData.toFixed(maxdecimals)));
+      sOutput = String(parseFloat(absData.toFixed(maxdecimals)));
 
     sOutput = (bNegative ? "-" : "") + sOutput;
 
@@ -159,9 +159,9 @@ const numberFormat = (nData, maxdecimals = 6) => {
       }
       sOutput = sNewOutput;
     }
-    return sOutput.replace('--', '-');
+    return sOutput;
   }
-  return nData?.toLocaleString() || '0';
+  return (nData ? nData.toLocaleString() : null) || '0';
 }
 
 // Simple debounce function

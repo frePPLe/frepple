@@ -40,6 +40,7 @@ from freppledb.input.models import (
     Item,
     OperationPlan,
 )
+from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.common.report import (
     GridReport,
     GridFieldLastModified,
@@ -64,8 +65,7 @@ class LocationList(GridReport):
     model = Location
     frozenColumns = 1
     help_url = "modeling-wizard/master-data/locations.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define locations</h3>
         <br>
         A basic piece of master data is the list of locations where production is happening or inventory is kept.<br>
@@ -75,8 +75,7 @@ class LocationList(GridReport):
         <a href="{{request.prefix}}/wizard/load/production/?currentstep=1" class="btn btn-primary">Wizard to upload locations<br>from a spreadsheet</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     rows = (
         GridFieldHierarchicalText(
@@ -115,8 +114,7 @@ class CustomerList(GridReport):
     model = Customer
     frozenColumns = 1
     help_url = "modeling-wizard/master-data/customers.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define customers</h3>
         <br>
         A basic piece of master data is the customers buying items from us.<br>
@@ -126,8 +124,7 @@ class CustomerList(GridReport):
         <a href="{{request.prefix}}/wizard/load/production/?currentstep=1" class="btn btn-primary">Wizard to upload customers<br>from a spreadsheet</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     rows = (
         GridFieldHierarchicalText(
@@ -160,8 +157,7 @@ class ItemList(GridReport):
     frozenColumns = 1
     editable = True
     help_url = "modeling-wizard/master-data/items.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define items</h3>
         <br>
         A basic piece of master data is the list of items to plan.<br>
@@ -172,8 +168,7 @@ class ItemList(GridReport):
         <a href="{{request.prefix}}/wizard/load/production/?currentstep=1" class="btn btn-primary">Wizard to upload items<br>from a spreadsheet</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     rows = (
         GridFieldHierarchicalText(
@@ -215,8 +210,7 @@ class DemandList(GridReport):
     model = Demand
     frozenColumns = 1
     help_url = "modeling-wizard/master-data/sales-orders.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define sales orders</h3>
         <br>
         The sales orders table contains all the orders placed by your customers.<br><br>
@@ -229,8 +223,7 @@ class DemandList(GridReport):
         <a href="{{request.prefix}}/wizard/load/production/?currentstep=2" class="btn btn-primary">Wizard to upload sale orders<br>from a spreadsheet</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     @classmethod
     def initialize(reportclass, request):
@@ -959,8 +952,8 @@ class DeliveryOrderList(GridReport):
                 return q.filter(
                     item__name=args[0],
                     location__name=args[1],
-                    enddate__gte=args[2],
-                    enddate__lt=args[3],
+                    enddate__gte=parseLocalizedDateTime(args[2]),
+                    enddate__lt=parseLocalizedDateTime(args[3]),
                 )
             else:
                 try:

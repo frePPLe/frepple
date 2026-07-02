@@ -770,8 +770,8 @@ def google_analytics():
             "<script>\n"
             "window.dataLayer = window.dataLayer || [];\n"
             "function gtag(){dataLayer.push(arguments);}\n"
-            "gtag('js', new Date())\n;"
-            "gtag('config', '%s')\n;"
+            "gtag('js', new Date());\n"
+            "gtag('config', '%s');\n"
             "</script>\n" % (settings.GOOGLE_ANALYTICS, settings.GOOGLE_ANALYTICS)
         )
     else:

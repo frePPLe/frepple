@@ -104,7 +104,6 @@ check_function_exists(dup2 HAVE_DUP2)
 check_function_exists(memset HAVE_MEMSET)
 check_function_exists(strncasecmp HAVE_STRNCASECMP)
 check_function_exists(strnicmp HAVE_STRNICMP)
-check_function_exists(strptime HAVE_STRPTIME)
 check_function_exists(prctl HAVE_PRCTL)
 
 # Verify third party header files

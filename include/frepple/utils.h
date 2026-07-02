@@ -602,7 +602,8 @@ class Date {
    * The default date format is %Y-%m-%dT%H:%M:%S, which is the standard
    * format defined in the XML Schema standard.
    */
-  static constexpr string_view format = "%Y-%m-%dT%H:%M:%S";
+  static constexpr string_view format1 = "%Y-%m-%dT%H:%M:%S";
+  static constexpr string_view format2 = "%Y-%m-%d %H:%M:%S";
 
   /* The internal representation of a date is a single long value. */
   time_t lval;
@@ -643,8 +644,8 @@ class Date {
   Date() : lval(infinitePast.lval) {}
 
   /* Constructor initialized with a string and an optional format string. */
-  Date(const char* s, const char* f = format.data()) {
-    parse(s, f);
+  Date(const char* s) {
+    parse(s);
     checkFinite(lval);
   }
 
@@ -726,7 +727,7 @@ class Date {
   time_t getTicks() const { return lval; }
 
   /* Function that parses a string according to the format string. */
-  void parse(const char*, const char* = format.data());
+  void parse(const char*);
 
   /* A constant representing the infinite past, i.e. the earliest time which
    * we can represent.
@@ -741,11 +742,6 @@ class Date {
   static const Date infiniteFuture;
 
   string toString(const char* fmt) const;
-
-#ifndef HAVE_STRPTIME
- private:
-  char* strptime(const char*, const char*, struct tm*);
-#endif
 };
 
 /* Auxilary class that allows calculations on dates.
@@ -810,7 +806,7 @@ class DateDetail {
 
   inline size_t toCharBuffer(char* str) const {
     if (val < 0) normalize();
-    return strftime(str, 30, Date::format.data(), &time_info);
+    return strftime(str, 30, Date::format1.data(), &time_info);
   }
 
   string toString(const char* fmt) const {

@@ -519,7 +519,7 @@ class DatabaseResult : public NonCopyable {
 
   /* Get a field value converted to a date. */
   Date getValueDate(int i, int j) const {
-    return Date(PQgetvalue(res, i, j), "%Y-%m-%d %H:%M:%S");
+    return Date(PQgetvalue(res, i, j));
   }
 
   /* Get a field value converted to a string. */

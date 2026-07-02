@@ -8,7 +8,6 @@
 #cmakedefine HAVE_MEMSET 1
 #cmakedefine HAVE_STRNCASECMP 1
 #cmakedefine HAVE_STRNICMP 1
-#cmakedefine HAVE_STRPTIME 1
 #cmakedefine HAVE_PRCTL 1
 #cmakedefine HAVE_ERRNO_H 1
 #cmakedefine HAVE_UNISTD_H 1

@@ -44,6 +44,7 @@ from freppledb.input.models import (
     OperationPlan,
     OperationPlanMaterial,
 )
+from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.common.report import (
     GridReport,
     GridFieldBool,
@@ -833,7 +834,9 @@ class DistributionOrderList(OperationPlanMixin):
             paths = request.path.split("/")
             if paths[4] == "operationplanmaterial":
                 q = q.filter(Q(origin=args[1]) | Q(destination=args[1])).filter(
-                    item__name=args[0], startdate__lt=args[2], enddate__gte=args[2]
+                    item__name=args[0],
+                    startdate__lt=parseLocalizedDateTime(args[2]),
+                    enddate__gte=parseLocalizedDateTime(args[2]),
                 )
             elif paths[4] == "item":
                 q = q.filter(item__name=args[0])
@@ -841,15 +844,15 @@ class DistributionOrderList(OperationPlanMixin):
                 q = q.filter(
                     destination__name=args[1],
                     item__name=args[0],
-                    enddate__gte=args[2],
-                    enddate__lt=args[3],
+                    enddate__gte=parseLocalizedDateTime(args[2]),
+                    enddate__lt=parseLocalizedDateTime(args[3]),
                 )
             elif paths[4] == "consumed":
                 q = q.filter(
                     origin__name=args[1],
                     item__name=args[0],
-                    startdate__gte=args[2],
-                    startdate__lt=args[3],
+                    startdate__gte=parseLocalizedDateTime(args[2]),
+                    startdate__lt=parseLocalizedDateTime(args[3]),
                 )
             elif paths[4] == "location":
                 path = paths[-2]

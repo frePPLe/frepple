@@ -50,6 +50,7 @@ from freppledb.input.models import (
     searchmode,
     OperationPlan,
 )
+from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.common.report import (
     GridReport,
     GridFieldBool,
@@ -1945,7 +1946,12 @@ class ManufacturingOrderList(OperationPlanMixin):
                           and operationplan.startdate < %s and operationplan.enddate >= %s
                         where operationplan.type = 'MO'
                         """,
-                        (args[0], args[1], args[2], args[2]),
+                        (
+                            args[0],
+                            args[1],
+                            parseLocalizedDateTime(args[2]),
+                            parseLocalizedDateTime(args[2]),
+                        ),
                     )
                 )
             elif path == "produced":

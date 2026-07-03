@@ -50,6 +50,8 @@ function drawGraphs(jsondata)
   for (var i in cross_idx)
     fields[cross_idx[i]] = 0;
 
+  var date_style_with_hours = "{{request.DATE_STYLE_WITH_HOURS}}" === "True";
+
   // Define X-axis
   var domain_x = [];
   var bucketnamelength = 0;
@@ -221,7 +223,7 @@ function drawGraphs(jsondata)
 	            + "/?noautofilter&operationplan__startdate__lt=" + timebuckets[d['bucket']]['enddate']
 	            + (typeof d['type'] !== 'undefined' && d['type'].includes('bucket') ?
 	               "&operationplan__startdate__gte=" :
-	               "&operationplan__enddate__gt=")
+	               (date_style_with_hours ? "&operationplan__enddate__gt=" : "&operationplan__enddate__gte="))
 	            + timebuckets[d['bucket']]['startdate'];
 	          d3.event.stopPropagation();
 	        })
@@ -327,6 +329,7 @@ function drawGraphs(jsondata)
 function crosses (cellvalue, options, rowdata)
 {
   var result = '';
+  var date_style_with_hours = "{{request.DATE_STYLE_WITH_HOURS}}" === "True";
   for (var i in cross_idx)
     switch(cross_idx[i])
     {
@@ -337,7 +340,8 @@ function crosses (cellvalue, options, rowdata)
             admin_escape(rowdata['resource']) +
             '/?noautofilter&amp;operationplan__startdate__lt=' + options['colModel']['enddate'] +
             (typeof rowdata['type'] !== 'undefined' && rowdata['type'].includes('bucket') ?
-            '&amp;operationplan__startdate__gte=' : '&amp;operationplan__enddate__gt=') +
+            '&amp;operationplan__startdate__gte=' :
+            (date_style_with_hours ? '&amp;operationplan__enddate__gt=' : '&amp;operationplan__enddate__gte=')) +
             options['colModel']['startdate'] +
             '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else

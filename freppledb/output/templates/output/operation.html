@@ -43,6 +43,7 @@ function drawGraphs(jsondata)
   // Define X-axis
   var domain_x = [];
   var bucketnamelength = 0;
+  var date_style_with_hours = "{{request.DATE_STYLE_WITH_HOURS}}" === "True";
   for (var i in timebuckets)
   {
     domain_x.push(timebuckets[i]['name']);
@@ -192,8 +193,8 @@ function drawGraphs(jsondata)
 			          window.location = "{{ request.prefix }}"
 			            +"/data/input/manufacturingorder/"
 			            +"?noautofilter&operation__name="+admin_escape(d['operation'])
-			            +"&startdate__lte="+timebuckets[d['bucket']]['enddate']
-			            +"&enddate__gt="+timebuckets[d['bucket']]['startdate'];
+			            +"&startdate__" + (date_style_with_hours ? 'lte=' : 'lt=') + timebuckets[d['bucket']]['enddate']
+			            +"&enddate__" + (date_style_with_hours ? 'gt=' : 'gte=') + timebuckets[d['bucket']]['startdate'];
 
                 var coord = d3.mouse(document.body);
                 d3.event.stopPropagation();
@@ -371,6 +372,7 @@ function drawGraphs(jsondata)
 function crosses (cellvalue, options, rowdata)
 {
   var result = '';
+  var date_style_with_hours = "{{request.DATE_STYLE_WITH_HOURS}}" === "True";
   for (var i in cross_idx)
     switch(cross_idx[i])
     {
@@ -423,8 +425,8 @@ function crosses (cellvalue, options, rowdata)
           result += grid.formatNumber(cellvalue[4]) +
             '<a href="{{ request.prefix }}/data/input/manufacturingorder/?noautofilter' +
             '&amp;operation__name=' + admin_escape(rowdata['operation']) +
-            '&amp;startdate__lte=' + options['colModel']['enddate'] +
-            '&amp;enddate__gt=' + options['colModel']['startdate'] +
+            '&amp;startdate__' + (date_style_with_hours ? 'lte=' : 'lt=') + options['colModel']['enddate'] +
+            '&amp;enddate__' + (date_style_with_hours ? 'gt=' : 'gte=') + options['colModel']['startdate'] +
             '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';
@@ -434,8 +436,8 @@ function crosses (cellvalue, options, rowdata)
           result += grid.formatNumber(cellvalue[5]) +
             '<a href="{{ request.prefix }}/data/input/manufacturingorder/?noautofilter&amp;' +
             'operation__name=' + admin_escape(rowdata['operation']) +
-            '&amp;startdate__lte=' + options['colModel']['enddate'] +
-            '&amp;enddate__gt=' + options['colModel']['startdate'] +
+            '&amp;startdate__' + (date_style_with_hours ? 'lte=' : 'lt=') + options['colModel']['enddate'] +
+            '&amp;enddate__' + (date_style_with_hours ? 'gt=' : 'gte=') + options['colModel']['startdate'] +
             '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';

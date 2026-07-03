@@ -848,6 +848,11 @@ class GridReport(View):
             except DatabaseError:
                 pass
 
+        # Set the DATE_STYLE_WITH_HOURS parameter at request level
+        # This is required to build report urls.
+
+        request.DATE_STYLE_WITH_HOURS = settings.DATE_STYLE_WITH_HOURS
+
         # Get the report horizon
         current, start, end = getHorizon(
             request, future_only=cls.showOnlyFutureTimeBuckets

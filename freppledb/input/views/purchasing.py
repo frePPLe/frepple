@@ -33,6 +33,7 @@ from django.utils.text import format_lazy
 
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import Location, Item, Supplier, ItemSupplier, PurchaseOrder
+from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.common.report import (
     GridReport,
     GridFieldBool,
@@ -61,8 +62,7 @@ class SupplierList(GridReport):
     model = Supplier
     frozenColumns = 1
     help_url = "modeling-wizard/purchasing/suppliers.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define suppliers</h3>
         <br>
         This table contains all suppliers you are purchasing items from.<br>
@@ -72,8 +72,7 @@ class SupplierList(GridReport):
         <a href="{{request.prefix}}/wizard/load/production/?currentstep=4" class="btn btn-primary">Wizard to upload suppliers<br>from a spreadsheet</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     rows = (
         GridFieldText(
@@ -113,8 +112,7 @@ class ItemSupplierList(GridReport):
     model = ItemSupplier
     frozenColumns = 1
     help_url = "modeling-wizard/purchasing/item-suppliers.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define item suppliers</h3>
         <br>
         This table defines which items can be procured from which supplier.<br>
@@ -124,8 +122,7 @@ class ItemSupplierList(GridReport):
         <a href="{{request.prefix}}/wizard/load/production/?currentstep=4" class="btn btn-primary">Wizard to upload item suppliers<br>from a spreadsheet</a>
         </div>
         <br>
-        """
-    )
+        """)
 
     rows = (
         GridFieldInteger(
@@ -403,8 +400,7 @@ class PurchaseOrderList(OperationPlanMixin):
     editable = True
     height = 250
     help_url = "modeling-wizard/purchasing/purchase-orders.html"
-    message_when_empty = Template(
-        """
+    message_when_empty = Template("""
         <h3>Define purchase orders</h3>
         <br>
         This table defines ongoing and proposed purchase orders.<br><br>
@@ -416,8 +412,7 @@ class PurchaseOrderList(OperationPlanMixin):
         <a href="{{request.prefix}}/wizard/load/production/?currentstep=7" onclick="window.location = $(event.target).attr('href')" class="btn btn-primary">Wizard to upload purchase orders<br>from a spreadsheet</a>
         </div>
         <br>
-        """
-    )
+        """)
     calendarmode = "start_end"
 
     @classmethod
@@ -572,8 +567,8 @@ class PurchaseOrderList(OperationPlanMixin):
                 q = q.filter(
                     location__name=args[1],
                     item__name=args[0],
-                    startdate__lt=args[2],
-                    enddate__gte=args[2],
+                    startdate__lt=parseLocalizedDateTime(args[2]),
+                    enddate__gte=parseLocalizedDateTime(args[2]),
                 )
             elif path == "produced":
                 q = q.filter(

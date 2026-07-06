@@ -50,6 +50,12 @@ const filteredDownstream = computed(() => {
   return store.operationplan.downstreamoperationplans.filter(peg => peg[11] != 2);
 });
 
+const urlPrefix = computed(() => window.url_prefix || '');
+
+function buildPrefixedUrl(path) {
+  return `${urlPrefix.value}${path}`;
+}
+
 </script>
 
 <template>
@@ -82,27 +88,27 @@ const filteredDownstream = computed(() => {
         </td>
 
         <td v-if="peg[2] === 'MO'">{{peg[1]}}
-          <a :href="'/data/input/manufacturingorder/?noautofilter&parentreference=' + peg[1]">
+          <a :href="buildPrefixedUrl(`/data/input/manufacturingorder/?noautofilter&parentreference=${peg[1]}`)">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
         <td v-if="peg[2] === 'WO'">{{peg[1]}}
-          <a :href="'/data/input/workorder/?noautofilter&parentreference=' + peg[1]">
+          <a :href="buildPrefixedUrl(`/data/input/workorder/?noautofilter&parentreference=${peg[1]}`)">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
         <td v-if="peg[2] === 'DO'">{{peg[1]}}
-          <a :href="'/data/input/distributionorder/?noautofilter&parentreference=' + peg[1]">
+          <a :href="buildPrefixedUrl(`/data/input/distributionorder/?noautofilter&parentreference=${peg[1]}`)">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
         <td v-if="peg[2] === 'PO'">{{peg[1]}}
-          <a :href="'/data/input/purchaseorder/?noautofilter&parentreference=' + peg[1]">
+          <a :href="buildPrefixedUrl(`/data/input/purchaseorder/?noautofilter&parentreference=${peg[1]}`)">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
         <td v-if="peg[2] === 'DLVR'">{{peg[1]}}
-          <a :href="'/data/input/deliveryorder/?noautofilter&parentreference=' + peg[1]">
+          <a :href="buildPrefixedUrl(`/data/input/deliveryorder/?noautofilter&parentreference=${peg[1]}`)">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
@@ -111,19 +117,19 @@ const filteredDownstream = computed(() => {
         <td>{{peg[2]}}</td>
 
         <td v-if="['MO', 'WO'].includes(peg[2])">{{peg[3]}}
-          <a :href="'/detail/input/operation/' + peg[3] + '/'" role="input/operation">
+          <a :href="buildPrefixedUrl(`/detail/input/operation/${peg[3]}/`)" role="input/operation">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
         <td v-if="!['MO', 'WO'].includes(peg[2])">{{peg[3]}}</td>
         <td>{{peg[4]}}</td>
         <td>{{peg[5]}}
-          <a v-if="peg[5]" :href="'/detail/input/item/' + peg[5] + '/'" role="input/item">
+          <a v-if="peg[5]" :href="buildPrefixedUrl(`/detail/input/item/${peg[5]}/`)" role="input/item">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
         <td>{{peg[6]}}
-          <a v-if="peg[6]" :href="'/detail/input/location/' + peg[6] + '/'" role="input/location">
+          <a v-if="peg[6]" :href="buildPrefixedUrl(`/detail/input/location/${peg[6]}/`)" role="input/location">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>

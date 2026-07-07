@@ -31,7 +31,6 @@ import site
 import logging
 from threading import Thread
 
-
 if __name__ == "__main__":
     # Autodetect Python virtual enviroment
     venv = os.environ.get("VIRTUAL_ENV", None)
@@ -215,7 +214,7 @@ class PlanTaskSequence(PlanTask):
                 total += s.weight
         return total
 
-    def run(self, database=DEFAULT_DB_ALIAS, **kwargs):
+    def run(self, database=DEFAULT_DB_ALIAS, export=False, **kwargs):
         # Collect the list of tasks
         task_weight = self.getWeight(**PlanTaskRegistry.getArguments())
         if not task_weight:
@@ -229,7 +228,7 @@ class PlanTaskSequence(PlanTask):
                     continue
 
                 # Update status and message
-                if self.task:
+                if self.task and not export:
                     self.task.status = "%d%%" % int(progress * 100.0 / task_weight)
                     self.task.message = step.description
                     self.task.save(using=database)
@@ -266,14 +265,14 @@ class PlanTaskSequence(PlanTask):
                 progress += step.weight
 
             # Final task status
-            if self.task:
+            if self.task and not export:
                 if not self.task.finished:
                     self.task.finished = datetime.now()
                 self.task.status = "Done"
                 self.task.message = ""
                 self.task.save(using=database)
         except Exception as e:
-            if self.task:
+            if self.task and not export:
                 self.task.finished = datetime.now()
                 self.task.status = "Failed"
                 self.task.message = str(e)

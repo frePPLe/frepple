@@ -150,40 +150,43 @@ class ReportByDemand(GridReport):
             """
             with cte as (
                 with recursive cte as
-                    (
-                        select 1 as level,
-                        (coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
-                        operationplan.reference::text as reference,
-                        0::numeric as pegged_x,
-                        operationplan.quantity::numeric as pegged_y
-                        from operationplan
-                        inner join demand on demand.name = %s
-                            inner join lateral
-                            (select t->>'opplan' as reference,
-                            (t->>'quantity')::numeric as quantity from jsonb_array_elements(demand.plan->'pegging') t) t on true
-                            where operationplan.reference = t.reference
-                        union all
-                        select cte.level+1,
-                        cte.path||'/'||coalesce(upstream_opplan.item_id,'')||'/'||upstream_opplan.reference,
-                        t1.upstream_reference::text,
-                        greatest(t1.x, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x)) as pegged_x,
-                        least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y
-                        from operationplan
-                        inner join cte on cte.reference = operationplan.reference
-                        inner join lateral
-                        (select t->>0 upstream_reference,
-                        (t->>1)::numeric + (t->>2)::numeric as y,
-                        (t->>2)::numeric as x from jsonb_array_elements(operationplan.plan->'upstream_opplans') t) t1 on true
-                        inner join operationplan upstream_opplan on upstream_opplan.reference = t1.upstream_reference
-                        inner join lateral
-                        (select t->>0 downstream_reference,
-                        (t->>1)::numeric+(t->>2)::numeric as y,
-                        (t->>2)::numeric as x from jsonb_array_elements(upstream_opplan.plan->'downstream_opplans') t) t2
-                            on t2.downstream_reference = operationplan.reference and numrange(t2.x,t2.y) && numrange(cte.pegged_x,cte.pegged_y)
-                    )
-                select reference from cte
+                (
+                select 1 as level,
+                (coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
+                operationplan.reference::text,
+                0::numeric as pegged_x,
+                operationplan.quantity::numeric as pegged_y,
+                operationplan.owner_id
+                from operationplan
+                inner join demand on demand.name = %s
+                    inner join lateral
+                    (select t->>'opplan' as reference,
+                    (t->>'quantity')::numeric as quantity from jsonb_array_elements(demand.plan->'pegging') t) t on true
+                    where operationplan.reference = t.reference
+                union all
+                select case when upstream_opplan.owner_id = cte.owner_id then cte.level else cte.level+1 end,
+                cte.path||'/'||coalesce(upstream_opplan.item_id,'')||'/'||upstream_opplan.reference,
+                t1.upstream_reference::text,
+                greatest(t1.x, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x)) as pegged_x,
+                least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y,
+                upstream_opplan.owner_id
+                from operationplan
+                inner join cte on cte.reference = operationplan.reference
+                inner join lateral
+                (select t->>0 upstream_reference,
+                (t->>1)::numeric + (t->>2)::numeric as y,
+                (t->>2)::numeric as x from jsonb_array_elements(operationplan.plan->'upstream_opplans') t) t1 on true
+                inner join operationplan upstream_opplan on upstream_opplan.reference = t1.upstream_reference
+                inner join lateral
+                (select t->>0 downstream_reference,
+                (t->>1)::numeric+(t->>2)::numeric as y,
+                (t->>2)::numeric as x from jsonb_array_elements(upstream_opplan.plan->'downstream_opplans') t) t2
+                    on t2.downstream_reference = operationplan.reference   -- overlap condition removed here
+                )
+                select reference
+                from cte
                 where level < 25
-                order by path,level desc
+                order by path, level desc
                 )
                     select
                     (select due from demand where name = %s),
@@ -208,7 +211,7 @@ class ReportByDemand(GridReport):
         query, arguments = reportclass.getBucketsQuery(*args)
         cursor.execute(query, arguments)
         x = cursor.fetchone()
-        (due, start, end, requires_grouping) = x
+        due, start, end, requires_grouping = x
         if not due:
             # This demand is unplanned
             request.report_startdate = datetime.now().replace(
@@ -279,11 +282,13 @@ class ReportByDemand(GridReport):
                 (select t->>0 downstream_reference,
                 (t->>1)::numeric+(t->>2)::numeric as y,
                 (t->>2)::numeric as x from jsonb_array_elements(upstream_opplan.plan->'downstream_opplans') t) t2
-                    on t2.downstream_reference = operationplan.reference and numrange(t2.x,t2.y) && numrange(cte.pegged_x,cte.pegged_y)
+                    on t2.downstream_reference = operationplan.reference   -- overlap condition removed here
                 )
-                select level, reference, (pegged_y-pegged_x) as quantity, path from cte
+                select level, reference, pegged_x, pegged_y, greatest(0,(pegged_y-pegged_x)) as quantity, path,
+                    (pegged_y > pegged_x) as in_original_path
+                from cte
                 where level < 25
-                order by path,level desc
+                order by path, level desc
           ),
            pegging_0 as (
             select

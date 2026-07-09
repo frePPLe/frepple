@@ -27,7 +27,6 @@
 
 namespace frepple {
 
-Plan* Plan::thePlan;
 const MetaClass* Plan::metadata;
 const MetaCategory* Plan::metacategory;
 
@@ -48,12 +47,6 @@ int Plan::initialize() {
               "specifies a Python base class to use for the engine objects");
   int tmp = x.typeReady();
   metadata->setPythonClass(x);
-
-  // Create a singleton plan object
-  // Since we can count on the initialization being executed only once, also
-  // in a multi-threaded configuration, we don't need a more advanced mechanism
-  // to protect the singleton plan.
-  thePlan = new Plan();
 
   // Add access to the information with a global attribute.
   PythonInterpreter::registerGlobalObject("settings", &Plan::instance());
@@ -81,9 +74,6 @@ PyObject* Plan::setBaseClass(PyObject*, PyObject* args) {
 Plan::~Plan() {
   // Closing the logfile
   Environment::setLogFile("");
-
-  // Clear the pointer to this singleton object
-  thePlan = nullptr;
 }
 
 void Plan::setFcstCurrent(Date l) { fcst_cur_Date = l; }
@@ -120,6 +110,13 @@ void Plan::erase(const string& e) {
   // setupmatrixrule...
   else
     throw DataException("erase operation not supported");
+}
+
+void Plan::clearDeactivated() {
+  for (auto opplan : deactivated) {
+    if (!opplan->getOwner()) delete opplan;
+  }
+  deactivated.clear();
 }
 
 void Plan::setSuppressFlowplanCreation(bool b) {

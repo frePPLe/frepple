@@ -2101,12 +2101,7 @@ class OperationPlan final : public Object,
   /* Update the status to CLOSED, or back to APPROVED. */
   void setClosed(bool b);
 
-  void setActivated(bool b) {
-    if (b)
-      flags |= ACTIVATED;
-    else
-      flags &= ~ACTIVATED;
-  }
+  void setActivated(bool b);
 
   void setForcedUpdate(bool b) {
     if (b)
@@ -7583,8 +7578,11 @@ class Demand : public HasHierarchy<Demand>, public Plannable {
 
    public:
     /* Constructor. */
-    DeliveryIterator(const Demand* d)
-        : cur(d->getDelivery().begin()), end(d->getDelivery().end()) {}
+    DeliveryIterator(const Demand* d) {
+      const auto& delivery = d->getDelivery();
+      cur = delivery.begin();
+      end = delivery.end();
+    }
 
     /* Return current value and advance the iterator. */
     OperationPlan* next() {
@@ -8746,8 +8744,7 @@ class Plan : public Plannable, public Object {
 
   string timezone;
 
-  /* Pointer to the singleton plan object. */
-  static Plan* thePlan;
+  set<OperationPlan*> deactivated;
 
   /* The only constructor of this class is made private. An object of this
    * class is created by the instance() member function.
@@ -8761,7 +8758,10 @@ class Plan : public Plannable, public Object {
    * The singleton object is created during the initialization of the
    * library.
    */
-  static Plan& instance() { return *thePlan; }
+  static Plan& instance() {
+    static Plan p;
+    return p;
+  }
 
   /* Destructor.
    * @warning In multi threaded applications, the destructor is never called
@@ -8917,6 +8917,14 @@ class Plan : public Plannable, public Object {
   static const MetaCategory* metacategory;
 
   void erase(const string& e);
+
+  void addDeactivated(OperationPlan* opplan) {
+    static mutex m;
+    lock_guard<mutex> lock(m);
+    deactivated.insert(opplan);
+  }
+
+  void clearDeactivated();
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {

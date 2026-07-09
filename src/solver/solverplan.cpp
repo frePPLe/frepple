@@ -548,7 +548,7 @@ void SolverCreate::SolverData::commit() {
   }
 
   unmaskTemporaryShortages();
-
+  
   // Message
   if (solver->getLogLevel() > 0)
     logger << "End solving cluster " << cluster << '\n';
@@ -856,6 +856,9 @@ void SolverCreate::solve(void*) {
   }
   // Run the planning command threads and wait for them to exit
   threads.execute();
+
+  // Clean up
+  Plan::instance().clearDeactivated();
 }
 
 PyObject* SolverCreate::solve(PyObject* self, PyObject* args,
@@ -928,6 +931,7 @@ PyObject* SolverCreate::commit(PyObject* self, PyObject*) {
     assert(me->commands.getCommandManager());
     me->scanExcess(me->commands.getCommandManager());
     me->commands.getCommandManager()->commit();
+    Plan::instance().clearDeactivated();
   } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();

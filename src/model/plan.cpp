@@ -72,8 +72,13 @@ PyObject* Plan::setBaseClass(PyObject*, PyObject* args) {
 }
 
 Plan::~Plan() {
-  // Closing the logfile
+  resetReferenceCount();
   Environment::setLogFile("");
+}
+
+Plan& Plan::instance() {
+  static Plan p;
+  return p;
 }
 
 void Plan::setFcstCurrent(Date l) { fcst_cur_Date = l; }

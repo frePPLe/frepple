@@ -8758,10 +8758,7 @@ class Plan : public Plannable, public Object {
    * The singleton object is created during the initialization of the
    * library.
    */
-  static Plan& instance() {
-    static Plan p;
-    return p;
-  }
+  static Plan& instance();
 
   /* Destructor.
    * @warning In multi threaded applications, the destructor is never called

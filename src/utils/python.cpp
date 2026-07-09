@@ -335,7 +335,8 @@ void PythonInterpreter::registerGlobalObject(const char* name, PyObject* obj,
   PyGILState_STATE pythonstate;
   if (lock) pythonstate = PyGILState_Ensure();
   PyModule_AddObject(module, name, obj);
-  if (lock) PyGILState_Release(pythonstate);
+  Py_INCREF(obj);
+   if (lock) PyGILState_Release(pythonstate);
 }
 
 PyObject* PythonInterpreter::python_log(PyObject*, PyObject* args) {

@@ -8749,7 +8749,7 @@ class Plan : public Plannable, public Object {
 
   string timezone;
 
-  bool allowMergingOperationPlans = true;µ
+  bool allowMergingOperationPlans = true;
 
   /* The only constructor of this class is made private. An object of this
    * class is created by the instance() member function.

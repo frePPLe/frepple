@@ -30,6 +30,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     were limited show only the top 10. This limit has been removed to improve
     filtering on these fields.
 
+- | The `demand gantt report <user-interface/plan-analysis/demand-gantt-report.html>`_ was updated
+    to display all the upstream operations (even if there is no direct pegging with the demand).
+  | It makes it easier to understand the different constraints that are impacting the demand.
+
 .. rubric:: Demand forecasting
 
 - | Bug fix: Initializing a new forecast that has no demand history was tricky

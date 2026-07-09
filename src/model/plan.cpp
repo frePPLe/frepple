@@ -117,13 +117,6 @@ void Plan::erase(const string& e) {
     throw DataException("erase operation not supported");
 }
 
-void Plan::clearDeactivated() {
-  for (auto opplan : deactivated) {
-    if (!opplan->getOwner()) delete opplan;
-  }
-  deactivated.clear();
-}
-
 void Plan::setSuppressFlowplanCreation(bool b) {
   suppress_flowplan_creation = b;
 

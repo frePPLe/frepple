@@ -169,9 +169,10 @@ class TruncatePlan(PlanTask):
                 cursor.execute(
                     """
                     delete from operationplan
-                    where reference in any(%s)
+                    where reference = any(%s)
+                    or owner_id = any(%s)
                     """,
-                    (deleted_opplans),
+                    (deleted_opplans, deleted_opplans),
                 )
             if resources:
                 resnames = [r.name for r in resources]

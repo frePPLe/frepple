@@ -34,6 +34,7 @@ class Tags {
   static const Keyword action;
   static const Keyword algorithm;
   static const Keyword allmembers;
+  static const Keyword allowMergingOperationPlans;
   static const Keyword alternate;
   static const Keyword alternates;
   static const Keyword alternate_name;

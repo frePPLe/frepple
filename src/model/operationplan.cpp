@@ -837,7 +837,7 @@ bool OperationPlan::activate(bool createsubopplans, bool use_start) {
   if (getQuantity() < 0.0 ||
       !oper->extraInstantiate(this, createsubopplans, use_start) ||
       (getQuantity() == 0.0 && getProposed() && !getOwner())) {
-    setActivated(false);
+    delete this;
     return false;
   }
 
@@ -851,7 +851,7 @@ bool OperationPlan::activate(bool createsubopplans, bool use_start) {
     }
     x = OperationPlan::iterator(this);
     if (x == end()) {
-      setActivated(false);
+      delete this;
       return false;
     }
   }
@@ -1344,7 +1344,8 @@ bool OperationPlan::mergeIfPossible() {
   //   - demand of both operationplans are the same
   //   - maximum operation size is not exceeded
   //   - alternate flowplans need to be on the same alternate
-  if (!getProposed()) return false;
+  if (!getProposed() || !Plan::instance().getAllowMergingOperationPlans())
+    return false;
 
   if (!oper->hasType<OperationFixedTime, OperationItemDistribution,
                      OperationItemSupplier>())
@@ -1404,7 +1405,7 @@ bool OperationPlan::mergeIfPossible() {
     // All checks passed, we can merge!
     x->setQuantity(x->getQuantity() + getQuantity());
     if (getOwner()) setOwner(nullptr);
-    setActivated(false);
+    delete this;
     return true;
   }
   return false;
@@ -1787,17 +1788,6 @@ void OperationPlan::setClosed(bool b) {
   for (auto x = firstsubopplan; x; x = x->nextsubopplan) x->setClosed(b);
   update();
   propagateStatus();
-}
-
-void OperationPlan::setActivated(bool b) {
-  if (b)
-    flags |= ACTIVATED;
-  else {
-    setQuantity(0.0, true, true, true);
-    if (getDemand()) getDemand()->removeDelivery(this);
-    Plan::instance().addDeactivated(this);
-    flags &= ~ACTIVATED;
-  }
 }
 
 void OperationPlan::propagateStatus(bool log) {

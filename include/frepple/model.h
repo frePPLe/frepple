@@ -2101,7 +2101,12 @@ class OperationPlan final : public Object,
   /* Update the status to CLOSED, or back to APPROVED. */
   void setClosed(bool b);
 
-  void setActivated(bool b);
+  void setActivated(bool b) {
+    if (b)
+      flags |= ACTIVATED;
+    else
+      flags &= ~ACTIVATED;
+  }
 
   void setForcedUpdate(bool b) {
     if (b)
@@ -8744,7 +8749,7 @@ class Plan : public Plannable, public Object {
 
   string timezone;
 
-  set<OperationPlan*> deactivated;
+  bool allowMergingOperationPlans = true;µ
 
   /* The only constructor of this class is made private. An object of this
    * class is created by the instance() member function.
@@ -8767,6 +8772,12 @@ class Plan : public Plannable, public Object {
    * the static plan variable is deleted.
    */
   ~Plan() override;
+
+  void setAllowMergingOperationPlans(bool b) { allowMergingOperationPlans = b; }
+
+  bool getAllowMergingOperationPlans() const {
+    return allowMergingOperationPlans;
+  }
 
   /* Returns the plan name. */
   const string& getName() const { return name; }
@@ -8915,14 +8926,6 @@ class Plan : public Plannable, public Object {
 
   void erase(const string& e);
 
-  void addDeactivated(OperationPlan* opplan) {
-    static mutex m;
-    lock_guard<mutex> lock(m);
-    deactivated.insert(opplan);
-  }
-
-  void clearDeactivated();
-
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
     m->addStringRefField<Plan>(Tags::name, &Plan::getName, &Plan::setName);
@@ -9014,6 +9017,9 @@ class Plan : public Plannable, public Object {
     m->addIteratorField<Cls, Problem::iterator, Problem>(
         Tags::problems, Tags::problem, &Plan::getProblems, DONT_SERIALIZE);
     m->addCommandField<Cls>(Tags::erase, &Plan::erase);
+    m->addBoolField<Cls>(
+        Tags::allowMergingOperationPlans, &Cls::getAllowMergingOperationPlans,
+        &Cls::setAllowMergingOperationPlans, BOOL_TRUE, DONT_SERIALIZE);
   }
 };
 

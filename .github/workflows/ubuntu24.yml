@@ -94,11 +94,6 @@ jobs:
           path: logs
           retention-days: 1
 
-      - uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: Grunt to compile and minify css and javascript files
-          file_pattern: "*.min.* *main.js"
-
       - name: Get the version
         if: startsWith(github.ref, 'refs/tags/') && github.repository == 'frePPLe/frepple'
         working-directory: ${{github.workspace}}/build

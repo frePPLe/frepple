@@ -1,11 +1,14 @@
 Release notes
 -------------
 
-9.17.0 (Upcoming release)
+9.18.0 (Upcoming release)
 =========================
 
-This release is scheduled for the end of June 2026.
+This release is scheduled for the end of August 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+9.17.0 (2026-07-10)
+===================
 
 .. rubric:: Production planning
 
@@ -76,7 +79,6 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | From now onwards, the documentation pages are included in the frepple application
     itself.
   | The frepple website will still host the latest version of the documentation.
-
 
 9.16.0 (2026-05-22)
 ===================

@@ -12,7 +12,7 @@
           ? 'active '
           : store.isChanged(opplan.reference, null) ? 'dirty' : ''
         "
-  :style="{ 'overflow-y': 'hidden', 'background-color': opplan.color }"
+  :style="{ 'overflow-y': 'hidden', 'overflow-x': 'hidden', 'min-width': '0', 'background-color': opplan.color }"
   :data-index="props.opplan_index"
   :data-reference="opplan.id || opplan.reference"
 >
@@ -69,7 +69,7 @@
       >
         class="badge bg-danger float-end"> {{ttt('unsaved')}}
       </span>
-      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+      <span class="text-truncate d-block"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.item__description || opplan.operationplan__item__description">
         {{ opplan.item__description || opplan.operationplan__item__description }}
@@ -85,7 +85,7 @@
       </a>
     </p>
     <p>
-      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+      <span class="text-truncate d-block"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.operationplan__supplier || opplan.supplier || opplan.operationplan__supplier__name">
         {{ opplan.operationplan__supplier || opplan.supplier ||
@@ -248,7 +248,7 @@
     </p>
     <p v-if="isSelected(opplan.reference) || (opplan.remark || opplan.operationplan__remark)">
       <span v-if="(!editable || !isSelected(opplan.reference)) && ((opplan.remark && opplan.remark.length > 0) || (opplan.operationplan__remark && opplan.operationplan__remark.length > 0))"
-        class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+        class="text-truncate d-block"
         data-bs-toggle="tooltip" data-bs-html="true"
         :title="opplan.remark || opplan.operationplan__remark"
       >{{ opplan.remark || opplan.operationplan__remark }}</span
@@ -371,7 +371,7 @@
       </span>
     </p>
     <p>
-      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+      <span class="text-truncate d-block"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.item__name || opplan.item">
         {{ opplan.item__name || opplan.item }}
@@ -391,7 +391,7 @@
     <p
       v-if="(opplan.item__description || opplan.operationplan__item__description) && editable && isSelected(opplan.reference)"
     >
-      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+      <span class="text-truncate d-block"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.item__description || opplan.operationplan__item__description">
         {{ opplan.item__description || opplan.operationplan__item__description }}
@@ -586,7 +586,7 @@
     </p>
     <p v-if="isSelected(opplan.reference) || (opplan.remark || opplan.operationplan__remark)">
       <span v-if="(!editable || !isSelected(opplan.reference)) && ((opplan.remark && opplan.remark.length > 0) || (opplan.operationplan__remark && opplan.operationplan__remark.length > 0))"
-        class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+        class="text-truncate d-block"
         data-bs-toggle="tooltip" data-bs-html="true"
         :title="opplan.remark || opplan.operationplan__remark"
       >{{ opplan.remark || opplan.operationplan__remark }}</span
@@ -670,7 +670,7 @@
     <p
       v-if="opplan.item__name || opplan.operationplan__item__name || opplan.item"
     >
-      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+      <span class="text-truncate d-block"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.item__name || opplan.operationplan__item__name || opplan.item">
         {{ opplan.item__name || opplan.operationplan__item__name || opplan.item }}
@@ -685,14 +685,14 @@
     <p
       v-if="(opplan.item__description || opplan.operationplan__item__description) && editable && isSelected(opplan.reference)"
     >
-      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+      <span class="text-truncate d-block"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.item__description || opplan.operationplan__item__description">
         {{ opplan.item__description || opplan.operationplan__item__description }}
       </span>&nbsp;
     </p>
     <p>
-      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+      <span class="text-truncate d-block"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation">
         {{ opplan.operationplan__name || opplan.operationplan__operation__name ||
@@ -708,7 +708,7 @@
     <p
       v-if="(opplan.operation__description || opplan.operationplan__operation__description) && editable && isSelected(opplan.reference)"
     >
-      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+      <span class="text-truncate d-block"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.operation__description || opplan.operationplan__operation__description">
         {{ opplan.operation__description ||
@@ -905,7 +905,7 @@
     </p>
     <p v-if="isSelected(opplan.reference) || (opplan.remark || opplan.operationplan__remark)">
       <span v-if="(!editable || !isSelected(opplan.reference)) && ((opplan.remark && opplan.remark.length > 0) || (opplan.operationplan__remark && opplan.operationplan__remark.length > 0))"
-        class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+        class="text-truncate d-block"
         data-bs-toggle="tooltip" data-bs-html="true"
         :title="opplan.remark || opplan.operationplan__remark"
       >{{ opplan.remark || opplan.operationplan__remark }}</span
@@ -958,7 +958,7 @@
       ></i
       >&nbsp;
       <strong>
-        <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+        <span class="text-truncate d-block"
               data-bs-toggle="tooltip" data-bs-html="true"
               :title="(opplan.item__name || opplan.item) + ' @ ' + opplan.location">
           {{ opplan.item__name || opplan.item }} @ {{ opplan.location }}
@@ -974,7 +974,7 @@
     <p
       v-if="opplan.item__description || opplan.operationplan__item__description"
     >
-      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+      <span class="text-truncate d-block"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.item__description || opplan.operationplan__item__description">
         {{ opplan.item__description || opplan.operationplan__item__description }}
@@ -1000,7 +1000,7 @@
       <strong>{{ opplan.demands[0][1] }}</strong>
     </p>
     <p v-if="opplan.item__name">
-      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+      <span class="text-truncate d-block"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.item">
         {{ opplan.item }}
@@ -1015,7 +1015,7 @@
     <p
       v-if="opplan.item__description || opplan.operationplan__item__description"
     >
-      <span class="text-truncate d-inline-block" style="max-width: 180px; vertical-align: middle;"
+      <span class="text-truncate d-block"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.item__description || opplan.operationplan__item__description">
         {{ opplan.item__description || opplan.operationplan__item__description }}

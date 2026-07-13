@@ -30,8 +30,14 @@ rect.opplan {
 }
 
 /* Equal-width kanban columns */
+.kanban-columns {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  align-items: flex-start;
+}
+
 .kanban-col {
-  min-width: 0;
+  min-width: 250px;
 }
 </style>
 {% endblock %}

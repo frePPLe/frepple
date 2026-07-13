@@ -103,11 +103,17 @@ a task</a> to simplify running the sequence and avoid mistakes.</p>
         {% for t in schedule.data.tasks %}
         <div class="row mb-2 data-task">
           <div class="col-auto">
-            <select class="form-select" aria-label="select task" data-field="task-name">
-                {% for c in commands %}
-                <option value="{{ c }}"{% if c ==  t.name %} selected{% endif %}>{{c}}</option>
-                {% endfor %}
-            </select>
+            <div class="dropdown">
+              <button class="btn btn-outline-secondary btn-text-outline dropdown-toggle" type="button"
+                      data-bs-toggle="dropdown" data-field="task-name"
+                      data-value="{% firstof t.name '' %}">
+                {% if t.name %}{{ t.name }}{% else %}{% trans "Select task" %}{% endif %}
+              </button>
+              <ul class="dropdown-menu">
+                {% for c in commands %}<li><a class="dropdown-item" href="#" data-value="{{ c }}"
+                   onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">{{ c }}</a></li>{% endfor %}
+              </ul>
+            </div>
           </div>
           <div class="col px-0">
             <input data-field="task-arguments" class="form-control" type="text" placeholder="{% trans "arguments"|capfirst %}" value="{{ t.arguments }}">
@@ -223,11 +229,16 @@ a task</a> to simplify running the sequence and avoid mistakes.</p>
 </div>
 <div id="scheduledtask_tasktemplate" class="d-none row mb-2 data-task">
   <div class="col-auto">
-    <select class="form-select" aria-label="select task" data-field="task-name">
-        {% for c in commands %}
-        <option value="{{ c }}">{{c}}</option>
-        {% endfor %}
-    </select>
+    <div class="dropdown">
+      <button class="btn btn-outline-secondary btn-text-outline dropdown-toggle" type="button"
+              data-bs-toggle="dropdown" data-field="task-name" data-value="">
+        {% trans "Select task" %}
+      </button>
+      <ul class="dropdown-menu">
+        {% for c in commands %}<li><a class="dropdown-item" href="#" data-value="{{ c }}"
+           onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">{{ c }}</a></li>{% endfor %}
+      </ul>
+    </div>
   </div>
   <div class="col px-0">
     <input data-field="task-arguments" class="form-control" type="text" placeholder="{% trans "arguments"|capfirst %}">
@@ -326,7 +337,7 @@ function saveScheduledTask(el, event) {
   var tasks = [];
   form.find(".data-task").each(function(i, el){
   	var t = $(this);
-  	var n = t.find("[data-field='task-name']").val();
+  	var n = t.find("[data-field='task-name']").attr("data-value");
   	if (n)
   	  tasks.push({
   		  "name": n,

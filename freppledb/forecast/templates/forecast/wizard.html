@@ -164,10 +164,18 @@
                                         <input type="radio" data-ng-model="edit_mode" name="fcsttradio" value="2" data-ng-change="changeEdit()">
                                         Increase by
                                         <input type="number" data-ng-change="changeEdit()" data-ng-focus="edit_mode=2" data-ng-model="edit_inc_perc" style="width:5em; background:transparent !important">
-                                            <select name="unitspercent" id="unitspercent">
-                                                <option value="units">units</option>
-                                                <option value="percent">percent</option>
-                                        </select>
+                                            <div class="dropdown d-inline-block">
+                                              <button class="btn btn-outline-secondary btn-text-outline dropdown-toggle" type="button"
+                                                      name="unitspercent" id="unitspercent" data-bs-toggle="dropdown" data-value="units">
+                                                units
+                                              </button>
+                                              <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#" data-value="units"
+                                                       onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">units</a></li>
+                                                <li><a class="dropdown-item" href="#" data-value="percent"
+                                                       onclick="var btn=$(this).closest('.dropdown').find('.dropdown-toggle');btn.text($(this).text()).attr('data-value',$(this).attr('data-value'));event.preventDefault();">percent</a></li>
+                                              </ul>
+                                            </div>
                                         </label>
                                     </div>
                                     <div class="radio">

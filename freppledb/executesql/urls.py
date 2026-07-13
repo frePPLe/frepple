@@ -20,7 +20,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-from django.urls import re_path
+from django.urls import path
 
 from freppledb import mode
 
@@ -31,5 +31,5 @@ if mode == "WSGI":
     from . import views
 
     urlpatterns = [
-        re_path(r"^executesql/$", views.ExecuteSQL.as_view(), name="executesql")
+        path("executesql/", views.ExecuteSQL.as_view(), name="executesql")
     ]

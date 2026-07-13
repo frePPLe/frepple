@@ -12,9 +12,9 @@
 <fieldset class="module mt-3 container-fluid" id="fieldset-{% if stacked_prefix %}{{ stacked_prefix }}-{% endif %}{{ forloop.counter }}" style="background:transparent">
     <div class="row">
             {% for line in fieldset %}
-            <div class="col-lg-6 col-md-12 control-group {% if line.fields|length_is:'1' and line.errors %}error {% endif %}{% for field in line %}{% if field.field.name %}field-{{ field.field.name }} {% endif %}{% if not line.has_visible_field %}hidden{% endif %}{% endfor %}">
+            <div class="col-lg-6 col-md-12 control-group {% if line.fields|length == 1 and line.errors %}error {% endif %}{% for field in line %}{% if field.field.name %}field-{{ field.field.name }} {% endif %}{% if not line.has_visible_field %}hidden{% endif %}{% endfor %}">
                 {% for field in line %}
-                    <div class="row mb-3 {% if not line.fields|length_is:'1' %} field-box{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if not field.is_readonly and field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}{% endif %}">
+                    <div class="row mb-3 {% if not line.fields|length == 1 %} field-box{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if not field.is_readonly and field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}{% endif %}">
                         <div class="align-items-center flex-row-reverse d-flex col-3">
                             {% if field.field.help_text %}
                             <span class="text-end" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right" data-bs-offset="0,10"

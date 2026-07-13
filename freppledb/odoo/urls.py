@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django.urls import re_path
+from django.urls import path
 
 from freppledb import mode
 
@@ -32,6 +32,6 @@ if mode == "WSGI":
     from . import views
 
     urlpatterns = [
-        re_path(r"^erp/upload/$", views.Upload, name="erp_upload"),
-        re_path(r"^odoo/submit/$", views.SubmittedFromOdoo, name="odoo_submitted"),
+        path("erp/upload/", views.Upload, name="erp_upload"),
+        path("odoo/submit/", views.SubmittedFromOdoo, name="odoo_submitted"),
     ]

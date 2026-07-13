@@ -93,7 +93,7 @@ class ResetPasswordRequestView(FormView):
                     ),
                     user=user.username,
                     url=f"{"https" if request.is_secure() else "http"}://"
-                    f"{request.META["HTTP_HOST"]}",
+                    f"{request.headers["host"]}",
                     uid=urlsafe_base64_encode(force_bytes(user.pk)),
                     token=default_token_generator.make_token(user),
                 )

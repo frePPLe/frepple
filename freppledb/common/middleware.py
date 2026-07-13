@@ -189,7 +189,7 @@ class MultiDBMiddleware:
                 pass
 
         # Authentication through the header
-        auth_header = request.META.get("HTTP_AUTHORIZATION", None)
+        auth_header = request.headers.get("authorization", None)
         webtoken = request.GET.get("webtoken", None)
         respect_scenario_preference = False
         if auth_header or webtoken:

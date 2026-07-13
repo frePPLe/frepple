@@ -1,17 +1,18 @@
-portend == 2.5
-djangorestframework == 3.15.2
+portend == 3.2.1
+djangorestframework == 3.17.1
 djangorestframework-bulk == 0.2.1
 djangorestframework-filters == 0.10.2
-django-bootstrap3 == 15.0.0
-django-filter == 2.4.0
+django-bootstrap3 == 26.1
+django-filter == 25.2
 html5lib == 1.1
 jdcal == 1.4.1
 openpyxl == 3.0.9
 lxml == 6.1.0
 PyJWT == 2.13.0
 urllib3 < 2
-requests == 2.32.4
-python-dateutil == 2.8.1
+requests
+# == 2.32.4
+python-dateutil == 2.9.0
 pillow >= 8.4.0
 psutil == 5.9.6
 psycopg2-binary == 2.9.9
@@ -19,9 +20,9 @@ setuptools
 setuptools-rust == 0.12.1
 paramiko == 4.0.0
 autobahn == 25.12.2
-channels == 4.0.0
-attrs == 23.1.0
-daphne == 4.0.0
+channels == 4.3.2
+attrs == 26.1.0
+daphne == 4.2.2
 Twisted[tls,http2]
-https://github.com/frePPLe/django/tarball/frepple_9.9
-django-allauth == 65.4.1 ; python_version >= '3.11'
+git+https://github.com/frePPLe/django.git@frepple-9.18
+django-allauth == 65.4.1

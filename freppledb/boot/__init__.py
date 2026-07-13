@@ -29,11 +29,13 @@ and defining attribute fields.
 This app is very closely inspired on http://mezzanine.jupo.org/
 and its handling of injected extra fields.
 """
+
 import copy
 import os
 from importlib import import_module
 from itertools import chain
 import sys
+import warnings
 
 from django.conf import settings
 from django.db import models
@@ -312,6 +314,14 @@ def getAttributeFields(
     return result
 
 
+# Suppress the "Accessing the database during app initialization" warning from Django
+warnings.filterwarnings(
+    "ignore",
+    category=RuntimeWarning,
+    message=r"Accessing the database during app initialization.*",
+)
+
+
 def addAttributesFromDatabase():
     """
     This method updates the database schema with the attribute fields.
@@ -340,13 +350,11 @@ def addAttributesFromDatabase():
 
     try:
         with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
-            cursor.execute(
-                """
+            cursor.execute("""
                 select
                   model, name, label, type, editable, initially_hidden
                 from common_attribute
-                """
-            )
+                """)
             attributes = {}
             for x in cursor.fetchall():
                 table = x[0]
@@ -379,8 +387,7 @@ def addAttributesFromDatabase():
                     attr_list = copy.deepcopy(attributes)
 
                     # Pick up all existing attribute fields
-                    cursor2.execute(
-                        """
+                    cursor2.execute("""
                         select
                           tbl.relname, col.attname, pg_type.typname
                         from pg_catalog.pg_description pgd
@@ -391,8 +398,7 @@ def addAttributesFromDatabase():
                         inner join pg_type
                           on col.atttypid = pg_type.oid
                         where pgd.description = 'Custom attribute'
-                        """
-                    )
+                        """)
                     attr_existing = {}
                     for m, c, t in cursor2.fetchall():
                         if m not in attr_existing:
@@ -422,8 +428,7 @@ def addAttributesFromDatabase():
                                 )
 
                     # Pick up all database fields
-                    cursor2.execute(
-                        """
+                    cursor2.execute("""
                         select table_name, column_name
                         from information_schema.columns cols
                         where table_schema = 'public'
@@ -432,8 +437,7 @@ def addAttributesFromDatabase():
                         from information_schema.tables
                         where table_schema = 'public' and table_type = 'BASE TABLE'
                         )
-                        """
-                    )
+                        """)
                     model_fields = {}
                     for m, c in cursor2.fetchall():
                         if m in model_fields:

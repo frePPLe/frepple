@@ -610,11 +610,11 @@ class OverviewReport(GridPivot):
 
         backlog_fcst = f"""
             union all
-          select opm.item_id, opm.location_id, '' as batch, 0::numeric qty_orders, coalesce(sum(forecastplan.forecastnet),0) qty_forecast
+          select opm.item, opm.location, '' as batch, 0::numeric qty_orders, coalesce(sum(forecastplan.forecastnet),0) qty_forecast
           from forecastplan
           left outer join common_parameter cp on cp.name = 'forecast.DueWithinBucket'
-          inner join (%s) opm on forecastplan.item_id = opm.item_id
-          and forecastplan.location_id = opm.location_id
+          inner join (%s) opm on forecastplan.item_id = opm.item
+          and forecastplan.location_id = opm.location
           inner join common_bucketdetail cb on cb.bucket_id = '{request.report_bucket}' and cb.startdate <= '{request.report_startdate}' and cb.enddate > '{request.report_startdate}'
           where forecastplan.customer_id = (select name from customer where lvl=0)
           and case when coalesce(cp.value, 'start') = 'start' then forecastplan.startdate
@@ -624,10 +624,8 @@ class OverviewReport(GridPivot):
           and cb.startdate > case when coalesce(cp.value, 'start') = 'start' then forecastplan.startdate
                    when coalesce(cp.value, 'start') = 'end' then forecastplan.enddate - interval '1 second'
                    when coalesce(cp.value, 'start') = 'middle' then forecastplan.startdate + age(forecastplan.enddate, forecastplan.startdate)/2 end
-          group by opm.item_id, opm.location_id
-        """ % (
-            basesql,
-        )
+          group by opm.item, opm.location
+        """ % (basesql,)
 
         deliveries_no_fcst = """
             select opm.item_id,
@@ -638,18 +636,16 @@ class OverviewReport(GridPivot):
             sum(case when operationplan.demand_id is not null then opm.quantity end) qty_orders,
             0 qty_forecast
             from (%s) opm2
-            inner join operationplanmaterial opm on opm.item_id = opm2.item_id and opm.location_id = opm2.location_id
+            inner join operationplanmaterial opm on opm.item_id = opm2.item and opm.location_id = opm2.location
             inner join item on item.name = opm.item_id
             inner join operationplan on operationplan.reference = opm.operationplan_id
                 and operationplan.demand_id is not null
                 and operationplan.enddate < %%s
                 and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opm2.opplan_batch)
-            group by opm.item_id, opm.location_id, case when item.type is distinct from 'make to order' then ''
+            group by opm.item, opm.location, case when item.type is distinct from 'make to order' then ''
             else operationplan.batch
             end
-        """ % (
-            basesql,
-        )
+        """ % (basesql,)
 
         deliveries_fcst = """
             select opm.item_id, opm.location_id,
@@ -659,7 +655,7 @@ class OverviewReport(GridPivot):
             sum(case when operationplan.demand_id is not null then opm.quantity end) qty_orders,
             sum(case when operationplan.forecast is not null then opm.quantity end) qty_forecast
           from (%s) opm2
-          inner join operationplanmaterial opm on opm.item_id = opm2.item_id and opm.location_id = opm2.location_id
+          inner join operationplanmaterial opm on opm.item_id = opm2.item and opm.location_id = opm2.location
           inner join item on item.name = opm.item_id
           inner join operationplan on operationplan.reference = opm.operationplan_id
           and (operationplan.demand_id is not null or operationplan.forecast is not null)
@@ -669,25 +665,23 @@ class OverviewReport(GridPivot):
             case when item.type is distinct from 'make to order' then ''
             else operationplan.batch
             end
-        """ % (
-            basesql,
-        )
+        """ % (basesql,)
 
         query = """
           select item_id, location_id, batch, sum(qty_orders), sum(qty_forecast) from
           (
-          select opm.item_id, opm.location_id,
+          select opm.item as item_id, opm.location as location_id,
           case when item.type is distinct from 'make to order' then ''
           else demand.batch
           end as batch,
           sum(demand.quantity) qty_orders, 0::numeric qty_forecast
           from (%s) opm
-          inner join demand on demand.item_id = opm.item_id
+          inner join demand on demand.item_id = opm.item
           inner join item on item.name = demand.item_id
-          and demand.location_id = opm.location_id
+          and demand.location_id = opm.location
           and demand.status in ('open','quote') and demand.due < %%s
           and (item.type is distinct from 'make to order' or demand.batch = opm.opplan_batch)
-          group by opm.item_id, opm.location_id, case when item.type is distinct from 'make to order' then ''
+          group by opm.item, opm.location, case when item.type is distinct from 'make to order' then ''
           else demand.batch
           end
           %s
@@ -991,8 +985,8 @@ class OverviewReport(GridPivot):
            from
            (%s) opplanmat
            cross join arguments
-           inner join item on item.name = opplanmat.item_id
-           inner join location on location.name = opplanmat.location_id
+           inner join item on item.name = opplanmat.item
+           inner join location on location.name = opplanmat.location
            -- Multiply with buckets
            cross join (
              select name as bucket, startdate, enddate,
@@ -1012,8 +1006,8 @@ class OverviewReport(GridPivot):
            -- join with the archive data
            left outer join ax_buffer
              on ax_buffer.snapshot_date_id = d.snapshot_date
-             and ax_buffer.item =  opplanmat.item_id
-             and ax_buffer.location =  opplanmat.location_id
+             and ax_buffer.item =  opplanmat.item
+             and ax_buffer.location = opplanmat.location
              and (ax_buffer.batch = opplanmat.opplan_batch or ax_buffer.batch is null or ax_buffer.batch = '')
           group by
            opplanmat.buffer,

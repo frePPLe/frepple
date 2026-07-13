@@ -41,7 +41,7 @@ $(function() {
   <b>HTTP {{ response.status_code }} {{ response.status_text }}</b><br>
   {% autoescape off %}
   {% for key, val in response_headers.items %}<b>{{ key }}:&nbsp;&nbsp;</b>
-  {{ val|break_long_headers|urlize }}<br>
+  {{ val|urlize }}<br>
   {% endfor %}
   </div>
   </div>
@@ -105,8 +105,6 @@ $(function() {
     </div>
   </div>
 {% endif %}
-
-
 {% if display_edit_forms %}
 {% if post_form or raw_data_post_form %}
 {% if post_form %}
@@ -122,7 +120,7 @@ $(function() {
         <form action="{{request.prefix}}{{ request.get_full_path }}" method="POST" enctype="multipart/form-data" novalidate>
 	        {% csrf_token %}
           {{ post_form }}
-	        <div class="form-actions">
+	        <div class="form-actions mt-3">
 	          <button  class="btn btn-primary" role="button" type="submit"
 	             value="{% blocktrans with http_method='POST' %}{{ http_method }} request{% endblocktrans %}">
 	             {% blocktrans with http_method='POST' %}{{ http_method }} request{% endblocktrans %}
@@ -146,7 +144,7 @@ $(function() {
         {% with form=raw_data_post_form %}
        <form action="{{request.prefix}}{{ request.get_full_path }}" method="POST" class="form-horizontal">
         {% include "rest_framework/raw_data_form.html" %}
-        <div class="form-actions">
+        <div class="form-actions mt-3">
           <button  class="btn btn-primary" role="button" type="submit"
             value="{% blocktrans with http_method='POST' %}{{ http_method }} request{% endblocktrans %}">
             {% blocktrans with http_method='POST' %}{{ http_method }} request{% endblocktrans %}
@@ -169,7 +167,7 @@ $(function() {
       <div class="accordion-body">
 	      <form action="{{request.prefix}}{{ request.get_full_path }}" data-method="PUT" enctype="multipart/form-data" class="form-horizontal" novalidate>
           {{ put_form }}
-	        <div class="form-actions">
+	        <div class="form-actions mt-3">
 	          <button  class="btn btn-primary" role="button" type="submit"
 	           value="{% blocktrans with http_method='PUT' %}{{ http_method }} request{% endblocktrans %}">
 	           {% blocktrans with http_method='PUT' %}{{ http_method }} request{% endblocktrans %}
@@ -192,7 +190,7 @@ $(function() {
     {% with form=raw_data_put_or_patch_form %}
 	      <form action="{{request.prefix}}{{ request.get_full_path }}" data-method="PUT" class="form-horizontal">
 	    {% include "rest_framework/raw_data_form.html" %}
-	        <div class="form-actions">
+	        <div class="form-actions mt-3">
 	      {% if raw_data_put_form %}
 	            <button  class="btn btn-primary" role="button" type="submit"
 	               value="{% blocktrans with http_method='PUT' %}{{ http_method }} request{% endblocktrans %}">

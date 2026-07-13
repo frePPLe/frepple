@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django.urls import re_path
+from django.urls import path, re_path
 
 from freppledb import mode
 
@@ -32,8 +32,8 @@ if mode == "WSGI":
     from . import views
 
     urlpatterns = [
-        re_path(
-            r"^reportmanager/schema/$",
+        path(
+            "reportmanager/schema/",
             views.getSchema,
             name="reportmanager_schema",
         ),
@@ -42,16 +42,16 @@ if mode == "WSGI":
             views.ReportManager.as_view(),
             name="reportmanager_id",
         ),
-        re_path(
-            r"^reportmanager/$",
+        path(
+            "reportmanager/",
             views.ReportManager.as_view(),
         ),
-        re_path(
-            r"^data/reportmanager/sqlreport/add/$",
+        path(
+            "data/reportmanager/sqlreport/add/",
             views.ReportManager.as_view(),
         ),
-        re_path(
-            r"^data/reportmanager/sqlreport/$",
+        path(
+            "data/reportmanager/sqlreport/",
             views.ReportList.as_view(),
         ),
     ]

@@ -22,7 +22,7 @@
 #
 
 from django.conf import settings
-from django.urls import re_path, path, include
+from django.urls import path, include
 from django.views.generic.base import RedirectView
 
 from freppledb import mode
@@ -35,7 +35,7 @@ if mode == "WSGI":
 
     if "allauth" in settings.INSTALLED_APPS:
         urlpatterns = [
-            re_path(r"^data/logout/$", RedirectView.as_view(url="/accounts/logout/")),
-            re_path(r"^data/login/$", login, name="user_login"),
+            path("data/logout/", RedirectView.as_view(url="/accounts/logout/")),
+            path("data/login/", login, name="user_login"),
             path("accounts/", include("allauth.urls")),
         ]

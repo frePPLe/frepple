@@ -28,6 +28,7 @@ It is recommended not to edit this file!
 Instead put all your settings in the file FREPPLE_CONFDIR/djangosettings.py.
 
 """
+
 import locale
 import os
 import sys
@@ -38,7 +39,6 @@ import pathlib
 from django.contrib import messages
 import django.contrib.admindocs
 from django.utils.translation import gettext_lazy as _
-
 
 # FREPPLE_APP directory
 if "FREPPLE_APP" in os.environ:

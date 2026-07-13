@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django.urls import re_path
+from django.urls import path
 
 from freppledb import mode
 
@@ -32,8 +32,8 @@ if mode == "WSGI":
     from . import views
 
     urlpatterns = [
-        re_path(
-            r"^debugreport/logapache/$",
+        path(
+            "debugreport/logapache/",
             views.logapache,
             name="execute_view_logapache",
         ),

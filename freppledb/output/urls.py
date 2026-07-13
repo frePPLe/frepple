@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django.urls import re_path
+from django.urls import path, re_path
 
 from freppledb import mode
 
@@ -48,18 +48,18 @@ if mode == "WSGI":
             freppledb.output.views.buffer.OverviewReport.as_view(),
             name="output_buffer_plandetail",
         ),
-        re_path(
-            r"^buffer/$",
+        path(
+            "buffer/",
             freppledb.output.views.buffer.OverviewReport.as_view(),
             name="output_buffer_plan",
         ),
-        re_path(
-            r"^demand/operationplans/$",
+        path(
+            "demand/operationplans/",
             freppledb.output.views.demand.OperationPlans,
             name="output_demand_operationplans",
         ),
-        re_path(
-            r"^demand/$",
+        path(
+            "demand/",
             freppledb.output.views.demand.OverviewReport.as_view(),
             name="output_demand_plan",
         ),
@@ -68,8 +68,8 @@ if mode == "WSGI":
             freppledb.output.views.resource.OverviewReport.as_view(),
             name="output_resource_plandetail",
         ),
-        re_path(
-            r"^resource/$",
+        path(
+            "resource/",
             freppledb.output.views.resource.OverviewReport.as_view(),
             name="output_resource_plan",
         ),
@@ -78,18 +78,18 @@ if mode == "WSGI":
             freppledb.output.views.operation.OverviewReport.as_view(),
             name="output_operation_plandetail",
         ),
-        re_path(
-            r"^operation/$",
+        path(
+            "operation/",
             freppledb.output.views.operation.OverviewReport.as_view(),
             name="output_operation_plan",
         ),
-        re_path(
-            r"^purchase/$",
+        path(
+            "purchase/",
             freppledb.output.views.operation.PurchaseReport.as_view(),
             name="output_purchase",
         ),
-        re_path(
-            r"^distribution/$",
+        path(
+            "distribution/",
             freppledb.output.views.operation.DistributionReport.as_view(),
             name="output_distribution",
         ),
@@ -98,13 +98,13 @@ if mode == "WSGI":
             freppledb.output.views.pegging.ReportByDemand.as_view(),
             name="output_demand_pegging",
         ),
-        re_path(
-            r"^problem/$",
+        path(
+            "problem/",
             freppledb.output.views.problem.Report.as_view(),
             name="output_problem",
         ),
-        re_path(
-            r"^constraint/$",
+        path(
+            "constraint/",
             freppledb.output.views.constraint.BaseReport.as_view(),
             name="output_constraint",
         ),

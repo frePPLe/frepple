@@ -32,9 +32,9 @@ if mode == "ASGI":
     from . import services
 
     svcpatterns = [
-        re_path(r"^forecast/detail/$", services.ForecastService.as_asgi()),
-        re_path(r"^flush/manual/$", services.FlushService.as_asgi()),
-        re_path(r"^flush/auto/$", services.FlushService.as_asgi()),
+        path("forecast/detail/", services.ForecastService.as_asgi()),
+        path("flush/manual/", services.FlushService.as_asgi()),
+        path("flush/auto/", services.FlushService.as_asgi()),
     ]
 
 else:

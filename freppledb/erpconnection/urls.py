@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django.urls import re_path
+from django.urls import path
 
 from freppledb import mode
 
@@ -33,5 +33,5 @@ if mode == "WSGI":
 
     rlpatterns = [
         # Model list reports, which override standard admin screens
-        re_path(r"^erp/upload/$", views.Upload, name="erp_upload")
+        path("erp/upload/", views.Upload, name="erp_upload")
     ]

@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django.urls import re_path
+from django.urls import path, re_path
 
 from freppledb import mode
 
@@ -32,7 +32,7 @@ if mode == "WSGI":
     from . import views
 
     urlpatterns = [
-        re_path(r"^execute/$", views.TaskReport.as_view(), name="execute"),
+        path("execute/", views.TaskReport.as_view(), name="execute"),
         re_path(
             r"^execute/logfrepple/(.+)/$",
             views.logfile,
@@ -79,23 +79,23 @@ if mode == "WSGI":
             views.FileManager.deleteFilefromFolder,
             name="delete_file_from_folder",
         ),
-        re_path(
-            r"^execute/exports/$",
+        path(
+            "execute/exports/",
             views.exports,
             name="exports",
         ),
-        re_path(
-            r"^execute/scheduletasks/$",
+        path(
+            "execute/scheduletasks/",
             views.scheduletasks,
             name="scheduletasks",
         ),
-        re_path(
-            r"^execute/scenario_add/$",
+        path(
+            "execute/scenario_add/",
             views.scenario_add,
             name="scenario_add",
         ),
-        re_path(
-            r"^execute/scenario_delete/$",
+        path(
+            "execute/scenario_delete/",
             views.scenario_delete,
             name="scenario_delete",
         ),

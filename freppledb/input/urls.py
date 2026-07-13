@@ -35,56 +35,56 @@ if mode == "WSGI":
 
     urlpatterns = [
         # Overridable card for kanban and calendar views
-        re_path(
-            r"^input/kanbancard.html$",
+        path(
+            "input/kanbancard.html",
             TemplateView.as_view(template_name="input/kanbancard.html"),
         ),
-        re_path(
-            r"^input/card.html$", TemplateView.as_view(template_name="input/card.html")
+        path(
+            "input/card.html", TemplateView.as_view(template_name="input/card.html")
         ),
         # Model list reports, which override standard admin screens
-        re_path(
-            r"^data/input/buffer/$",
+        path(
+            "data/input/buffer/",
             views.BufferList.as_view(),
             name="input_buffer_changelist",
         ),
-        re_path(
-            r"^data/input/resource/$",
+        path(
+            "data/input/resource/",
             views.ResourceList.as_view(),
             name="input_resource_changelist",
         ),
-        re_path(
-            r"^data/input/location/$",
+        path(
+            "data/input/location/",
             views.LocationList.as_view(),
             name="input_location_changelist",
         ),
-        re_path(
-            r"^data/input/customer/$",
+        path(
+            "data/input/customer/",
             views.CustomerList.as_view(),
             name="input_customer_changelist",
         ),
-        re_path(
-            r"^data/input/demand/$",
+        path(
+            "data/input/demand/",
             views.DemandList.as_view(),
             name="input_demand_changelist",
         ),
-        re_path(
-            r"^data/input/item/$",
+        path(
+            "data/input/item/",
             views.ItemList.as_view(),
             name="input_item_changelist",
         ),
-        re_path(
-            r"^data/input/operationresource/$",
+        path(
+            "data/input/operationresource/",
             views.OperationResourceList.as_view(),
             name="input_operationresource_changelist",
         ),
-        re_path(
-            r"^data/input/operationmaterial/$",
+        path(
+            "data/input/operationmaterial/",
             views.OperationMaterialList.as_view(),
             name="input_operationmaterial_changelist",
         ),
-        re_path(
-            r"^data/input/calendar/$",
+        path(
+            "data/input/calendar/",
             views.CalendarList.as_view(),
             name="input_calendar_changelist",
         ),
@@ -93,38 +93,38 @@ if mode == "WSGI":
             views.manufacturing.CalendarDetail.as_view(),
             name="input_calendardetail",
         ),
-        re_path(
-            r"^data/input/calendarbucket/$",
+        path(
+            "data/input/calendarbucket/",
             views.CalendarBucketList.as_view(),
             name="input_calendarbucket_changelist",
         ),
-        re_path(
-            r"^data/input/operation/$",
+        path(
+            "data/input/operation/",
             views.OperationList.as_view(),
             name="input_operation_changelist",
         ),
-        re_path(
-            r"^data/input/setupmatrix/$",
+        path(
+            "data/input/setupmatrix/",
             views.SetupMatrixList.as_view(),
             name="input_setupmatrix_changelist",
         ),
-        re_path(
-            r"^data/input/setuprule/$",
+        path(
+            "data/input/setuprule/",
             views.SetupRuleList.as_view(),
             name="input_setuprule_changelist",
         ),
-        re_path(
-            r"^data/input/suboperation/$",
+        path(
+            "data/input/suboperation/",
             views.SubOperationList.as_view(),
             name="input_suboperation_changelist",
         ),
-        re_path(
-            r"^data/input/operationdependency/$",
+        path(
+            "data/input/operationdependency/",
             views.OperationDependencyList.as_view(),
             name="input_operationdepency_changelist",
         ),
-        re_path(
-            r"^data/input/workorder/$",
+        path(
+            "data/input/workorder/",
             views.WorkOrderList.as_view(),
             name="input_workorder_changelist",
         ),
@@ -158,8 +158,8 @@ if mode == "WSGI":
             views.WorkOrderList.as_view(),
             name="input_workorder_by_consumed",
         ),
-        re_path(
-            r"^data/input/manufacturingorder/$",
+        path(
+            "data/input/manufacturingorder/",
             views.ManufacturingOrderList.as_view(),
             name="input_manufacturingorder_changelist",
         ),
@@ -193,8 +193,8 @@ if mode == "WSGI":
             views.ManufacturingOrderList.as_view(),
             name="input_manufacturingorder_by_consumed",
         ),
-        re_path(
-            r"^data/input/purchaseorder/$",
+        path(
+            "data/input/purchaseorder/",
             views.PurchaseOrderList.as_view(),
             name="input_purchaseorder_changelist",
         ),
@@ -223,8 +223,8 @@ if mode == "WSGI":
             views.PurchaseOrderList.as_view(),
             name="input_purchaseorder_by_produced",
         ),
-        re_path(
-            r"^data/input/distributionorder/$",
+        path(
+            "data/input/distributionorder/",
             views.DistributionOrderList.as_view(),
             name="input_distributionorder_changelist",
         ),
@@ -258,28 +258,28 @@ if mode == "WSGI":
             views.DistributionOrderList.as_view(),
             name="input_distributionorder_by_consumed",
         ),
-        re_path(
-            r"^data/input/skill/$",
+        path(
+            "data/input/skill/",
             views.SkillList.as_view(),
             name="input_skill_changelist",
         ),
-        re_path(
-            r"^data/input/resourceskill/$",
+        path(
+            "data/input/resourceskill/",
             views.ResourceSkillList.as_view(),
             name="input_resourceskill_changelist",
         ),
-        re_path(
-            r"^data/input/supplier/$",
+        path(
+            "data/input/supplier/",
             views.SupplierList.as_view(),
             name="input_supplier_changelist",
         ),
-        re_path(
-            r"^data/input/itemsupplier/$",
+        path(
+            "data/input/itemsupplier/",
             views.ItemSupplierList.as_view(),
             name="input_itemsupplier_changelist",
         ),
-        re_path(
-            r"^data/input/itemdistribution/$",
+        path(
+            "data/input/itemdistribution/",
             views.ItemDistributionList.as_view(),
             name="input_itemdistribution_changelist",
         ),
@@ -293,8 +293,8 @@ if mode == "WSGI":
             views.DeliveryOrderList.as_view(),
             name="input_deliveryorder_by_consumed",
         ),
-        re_path(
-            r"^data/input/deliveryorder/$",
+        path(
+            "data/input/deliveryorder/",
             views.DeliveryOrderList.as_view(),
             name="input_deliveryorder_changelist",
         ),
@@ -308,8 +308,8 @@ if mode == "WSGI":
             views.InventoryDetail.as_view(),
             name="input_operationplanmaterial_plandetail_by_buffer",
         ),
-        re_path(
-            r"^data/input/operationplanmaterial/$",
+        path(
+            "data/input/operationplanmaterial/",
             views.InventoryDetail.as_view(),
             name="input_operationplanmaterial_plan",
         ),
@@ -318,8 +318,8 @@ if mode == "WSGI":
             views.ResourceDetail.as_view(),
             name="input_operationplanresource_plandetail",
         ),
-        re_path(
-            r"^data/input/operationplanresource/$",
+        path(
+            "data/input/operationplanresource/",
             views.ResourceDetail.as_view(),
             name="input_operationplanresource_plan",
         ),
@@ -374,86 +374,86 @@ if mode == "WSGI":
             views.DownstreamOperationPath.as_view(),
             name="whereused_operation",
         ),
-        re_path(r"^search/$", views.search, name="search"),
-        re_path(
-            r"^operationplan/$",
+        path("search/", views.search, name="search"),
+        path(
+            "operationplan/",
             views.OperationPlanDetail.as_view(),
             name="operationplandetail",
         ),
         # REST API framework
-        re_path(r"^api/input/buffer/$", serializers.BufferAPI.as_view()),
-        re_path(r"^api/input/resource/$", serializers.ResourceAPI.as_view()),
-        re_path(r"^api/input/location/$", serializers.LocationAPI.as_view()),
-        re_path(r"^api/input/customer/$", serializers.CustomerAPI.as_view()),
-        re_path(r"^api/input/demand/$", serializers.DemandAPI.as_view()),
-        re_path(r"^api/input/item/$", serializers.ItemAPI.as_view()),
-        re_path(
-            r"^api/input/operationresource/$",
+        path("api/input/buffer/", serializers.BufferAPI.as_view()),
+        path("api/input/resource/", serializers.ResourceAPI.as_view()),
+        path("api/input/location/", serializers.LocationAPI.as_view()),
+        path("api/input/customer/", serializers.CustomerAPI.as_view()),
+        path("api/input/demand/", serializers.DemandAPI.as_view()),
+        path("api/input/item/", serializers.ItemAPI.as_view()),
+        path(
+            "api/input/operationresource/",
             serializers.OperationResourceAPI.as_view(),
         ),
-        re_path(
-            r"^api/input/operationmaterial/$",
+        path(
+            "api/input/operationmaterial/",
             serializers.OperationMaterialAPI.as_view(),
         ),
-        re_path(
-            r"^api/input/operationplanresource/$",
+        path(
+            "api/input/operationplanresource/",
             serializers.OperationPlanResourceAPI.as_view(),
         ),
-        re_path(
-            r"^api/input/operationplanmaterial/$",
+        path(
+            "api/input/operationplanmaterial/",
             serializers.OperationPlanMaterialAPI.as_view(),
         ),
-        re_path(r"^api/input/calendar/$", serializers.CalendarAPI.as_view()),
-        re_path(
-            r"^api/input/calendarbucket/$",
+        path("api/input/calendar/", serializers.CalendarAPI.as_view()),
+        path(
+            "api/input/calendarbucket/",
             serializers.CalendarBucketAPI.as_view(),
         ),
-        re_path(r"^api/input/operation/$", serializers.OperationAPI.as_view()),
-        re_path(
-            r"^api/input/setupmatrix/$",
+        path("api/input/operation/", serializers.OperationAPI.as_view()),
+        path(
+            "api/input/setupmatrix/",
             serializers.SetupMatrixAPI.as_view(),
         ),
-        re_path(r"^api/input/setuprule/$", serializers.SetupRuleAPI.as_view()),
-        re_path(
-            r"^api/input/suboperation/$",
+        path("api/input/setuprule/", serializers.SetupRuleAPI.as_view()),
+        path(
+            "api/input/suboperation/",
             serializers.SubOperationAPI.as_view(),
         ),
-        re_path(
-            r"^api/input/operationdependency/$",
+        path(
+            "api/input/operationdependency/",
             serializers.OperationDependencyAPI.as_view(),
         ),
-        re_path(
-            r"^api/input/manufacturingorder/$",
+        path(
+            "api/input/manufacturingorder/",
             serializers.ManufacturingOrderAPI.as_view(),
         ),
-        re_path(
-            r"^api/input/workorder/$",
+        path(
+            "api/input/workorder/",
             serializers.WorkOrderAPI.as_view(),
         ),
-        re_path(
-            r"^api/input/purchaseorder/$",
+        path(
+            "api/input/purchaseorder/",
             serializers.PurchaseOrderAPI.as_view(),
         ),
-        re_path(
-            r"^api/input/distributionorder/$",
+        path(
+            "api/input/distributionorder/",
             serializers.DistributionOrderAPI.as_view(),
         ),
-        re_path(
-            r"^api/input/deliveryorder/$",
+        path(
+            "api/input/deliveryorder/",
             serializers.DeliveryOrderAPI.as_view(),
         ),
-        re_path(r"^api/input/skill/$", serializers.SkillAPI.as_view()),
-        re_path(
-            r"^api/input/resourceskill/$",
+        path("api/input/skill/", serializers.SkillAPI.as_view()),
+        path(
+            "api/input/resourceskill/",
             serializers.ResourceSkillAPI.as_view(),
         ),
-        re_path(r"^api/input/supplier/$", serializers.SupplierAPI.as_view()),
-        re_path(
-            r"^api/input/itemsupplier/$",
+        path("api/input/supplier/", serializers.SupplierAPI.as_view()),
+        path(
+            "api/input/itemsupplier/",
             serializers.ItemSupplierAPI.as_view(),
         ),
-        re_path(
-            r"^api/input/itemdistribution/$",
+        path(
+            "api/input/itemdistribution/",
             serializers.ItemDistributionAPI.as_view(),
         ),
         re_path(
@@ -570,7 +570,7 @@ else:
     from . import services
 
     svcpatterns = [
-        re_path(r"^operationplan/$", services.OperationplanService.as_asgi()),
+        path("operationplan/", services.OperationplanService.as_asgi()),
         path("supplypath/<str:model>/<str:name>/", services.SupplyPathSvc.as_asgi()),
         path("whereused/<str:model>/<str:name>/", services.SupplyPathSvc.as_asgi()),
     ]

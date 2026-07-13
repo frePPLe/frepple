@@ -36,10 +36,6 @@ class Command(StdCommand):
 
     def add_arguments(self, parser):
         super().add_arguments(parser)
-        parser.add_argument(
-            "--database",
-            help="Nominates a database to synchronize. Defaults to all scenarios that are in use.",
-        )
 
     def handle(self, *args, **options):
         db = options["database"]

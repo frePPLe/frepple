@@ -28,6 +28,7 @@ from django.http import HttpResponse
 from django.utils.html import escape
 from django.utils.text import capfirst
 from django.utils.encoding import force_str
+from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.dashboard import Dashboard, Widget
@@ -498,7 +499,7 @@ class OutliersWidget(Widget):
     query = """
         select
           forecast.item_id, forecast.location_id, forecast.customer_id,
-          date(startdate), weight, forecast.name
+          date(startdate)
         from out_problem
         inner join forecast on forecast.name = (regexp_split_to_array(out_problem.owner, E' - '))[1]
         where out_problem.entity = 'forecast' and out_problem.name = 'outlier' limit %s
@@ -513,32 +514,28 @@ class OutliersWidget(Widget):
         cursor = connections[request.database].cursor()
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
-            '<thead><tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr></thead>'
+            '<thead><tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("item"))),
                 capfirst(force_str(_("location"))),
                 capfirst(force_str(_("customer"))),
                 capfirst(force_str(_("date"))),
-                capfirst(force_str(_("quantity"))),
             ),
         ]
-        alt = False
         cursor.execute(cls.query % limit)
         for rec in cursor.fetchall():
             result.append(
-                '<tr%s><td class="alignleft">%s</td><td class="alignleft">%s</td><td class="alignleft">%s</td><td class="alignleft">%s</td><td class="text-decoration-underline"><a href="%s/forecast/editor/%s/">%s</a></td></tr>'
-                % (
-                    alt and ' class="altRow"' or "",
-                    escape(rec[0]),
-                    escape(rec[1]),
-                    escape(rec[2]),
-                    rec[3],
-                    request.prefix,
-                    quote(rec[0], safe="/"),
-                    int(rec[4]),
-                )
+                "<tr>"
+                f'<td class="alignleft text-decoration-underline">'
+                f'<a href="{request.prefix}/forecast/editor/{quote(rec[0], safe="/")}/">'
+                f"{escape(rec[0])}"
+                "</a>"
+                "</td>"
+                f'<td class="alignleft">{escape(rec[1])}</td>'
+                f'<td class="alignleft">{escape(rec[2])}</td>'
+                f'<td>{date_format(rec[3], format="DATE_FORMAT", use_l10n=False)}</td>'
+                "</tr>"
             )
-            alt = not alt
         result.append("</table></div>")
         return HttpResponse("\n".join(result))
 

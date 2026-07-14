@@ -25,4 +25,4 @@ attrs == 26.1.0
 daphne == 4.2.2
 Twisted[tls,http2]
 https://github.com/frePPLe/django/archive/refs/tags/frepple-9.18.tar.gz
-django-allauth == 65.4.1
+django-allauth == 65.14.1

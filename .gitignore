@@ -2,7 +2,7 @@
 /static
 /build*
 /logs
-/node_modules
+node_modules/
 /.pnpm-store
 /localsettings*
 /test/*/output.*.xml
@@ -44,5 +44,3 @@ venv
 *.tar.gz
 *.tgz
 *.egg-info
-/freppledb/forecast/frontend/node_modules
-/freppledb/common/frontend/node_modules

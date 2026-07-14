@@ -213,7 +213,7 @@ function shouldShowWidget(widgetName) {
     inventorydata: () => store.operationplan.inventoryreport !== undefined,
     operationproblems: () =>
       store.operationplan.problems !== undefined || store.operationplan.info !== undefined,
-    operationresources: () => store.operationplan.loadplans !== undefined,
+    operationresources: () => store.operationplan.loadplans !== undefined && store.operationplan.loadplans.length > 0,
     operationflowplans: () => store.operationplan.flowplans !== undefined,
     operationdemandpegging: () => store.operationplan.pegging_demand !== undefined,
     networkstatus: () => store.operationplan.network !== undefined,
@@ -319,7 +319,7 @@ onMounted(() => {
       store.undo();
       return;
     }
-    const ids = detail.selectedRows || [];
+    const ids = detail.rowids || detail.selectedRows || [];
     const selectiondata = [];
     try {
       for (const id of ids) {

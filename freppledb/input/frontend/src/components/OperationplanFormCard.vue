@@ -343,14 +343,14 @@ const formatDuration = window.formatDuration;
             <td>
               <input
                 v-if="isMultipleOrNone && store.operationplan.startdate"
-                class="form-control border-0 bg-white"
+                class="form-control border-0"
                 type="datetime-local"
                 v-model="store.operationplan.startdate"
                 readonly
               />
               <input
                 v-if="isMultipleOrNone && !store.operationplan.startdate"
-                class="form-control border-0 bg-white"
+                class="form-control border-0"
                 type="datetime-local"
                 v-model="store.operationplan.start"
                 readonly
@@ -429,14 +429,14 @@ const formatDuration = window.formatDuration;
             <td>
               <input
                 v-if="isMultipleOrNone && store.operationplan.enddate"
-                class="form-control border-0 bg-white"
+                class="form-control border-0"
                 type="datetime-local"
                 v-model="store.operationplan.enddate"
                 readonly
               />
               <input
                 v-if="isMultipleOrNone && !store.operationplan.enddate"
-                class="form-control border-0 bg-white"
+                class="form-control border-0"
                 type="datetime-local"
                 v-model="store.operationplan.end"
                 readonly

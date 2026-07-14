@@ -564,18 +564,18 @@ onSelectRow: function(rowid, status) {
   const rowData = jQuery("#grid").getRowData(rowid);
   const reference = rowData.operationplan__reference ? rowData.operationplan__reference : rowid;
 
-  const references = jQuery("#grid").jqGrid('getGridParam', 'selarrrow')
-    .filter(rowid => rowid !== 'cb')
-    .map(rowid => {
-      const cell = jQuery("#grid").jqGrid('getCell', rowid, 'operationplan__reference');
-      return (cell && String(cell).length) ? cell : rowid;
-    });
+  const rowids = jQuery("#grid").jqGrid('getGridParam', 'selarrrow').filter(id => id !== 'cb');
+  const references = rowids.map(rowid => {
+    const cell = jQuery("#grid").jqGrid('getCell', rowid, 'operationplan__reference');
+    return (cell && String(cell).length) ? cell : rowid;
+  });
   const event = new CustomEvent("singleSelect", {
     detail: {
       execute: 'displayInfo',
       reference: reference,
       status: status,
       selectedRows: references,
+      rowids: rowids,
     }
   });
   document.getElementById('app').dispatchEvent(event);
@@ -589,11 +589,17 @@ onSelectRow: function(rowid, status) {
   ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=jQuery(s); if (el.length) el.prop('disabled', !hasVisible); });
 },
 onSelectAll: function(aRowids, status){
+  const rowids = (aRowids || []).filter(id => id !== 'cb');
+  const references = rowids.map(rowid => {
+    const cell = jQuery("#grid").jqGrid('getCell', rowid, 'operationplan__reference');
+    return (cell && String(cell).length) ? cell : rowid;
+  });
   const event = new CustomEvent('allSelect', {
     detail: {
       execute: 'displayInfo',
       status: status,
-      selectedRows: aRowids,
+      selectedRows: references,
+      rowids: rowids,
     }
   });
   document.getElementById('app').dispatchEvent(event);

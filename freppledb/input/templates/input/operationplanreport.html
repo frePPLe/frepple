@@ -564,7 +564,12 @@ onSelectRow: function(rowid, status) {
   const rowData = jQuery("#grid").getRowData(rowid);
   const reference = rowData.operationplan__reference ? rowData.operationplan__reference : rowid;
 
-  const references = jQuery("#grid").jqGrid('getGridParam', 'selarrrow').filter(x => x.id !== 'cb').map(x => x.operationplan__reference ? x.operationplan__reference : x);
+  const references = jQuery("#grid").jqGrid('getGridParam', 'selarrrow')
+    .filter(rowid => rowid !== 'cb')
+    .map(rowid => {
+      const cell = jQuery("#grid").jqGrid('getCell', rowid, 'operationplan__reference');
+      return (cell && String(cell).length) ? cell : rowid;
+    });
   const event = new CustomEvent("singleSelect", {
     detail: {
       execute: 'displayInfo',
@@ -644,8 +649,12 @@ loadComplete: function(data) {
     jQuery("#grid").jqGrid('setSelection', op, false);
   })
 
-  const references = jQuery("#grid").jqGrid('getGridParam', 'selarrrow').filter(x => x.id !== 'cb').map(x => x.operationplan__reference ? x.operationplan__reference : x);
-
+  const references = jQuery("#grid").jqGrid('getGridParam', 'selarrrow')
+    .filter(rowid => rowid !== 'cb')
+    .map(rowid => {
+      const cell = jQuery("#grid").jqGrid('getCell', rowid, 'operationplan__reference');
+      return (cell && String(cell).length) ? cell : rowid;
+    });
   if (getVisibleSelectedIds().length === 1) {
     let event = new CustomEvent('displayonpanel', jQuery("#grid").getRowData(getVisibleSelectedIds()[0]));
     document.getElementById('app').dispatchEvent(event);

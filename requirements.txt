@@ -15,7 +15,7 @@ requests
 python-dateutil == 2.9.0
 pillow >= 8.4.0
 psutil == 5.9.6
-psycopg2-binary == 2.9.9
+psycopg2-binary == 2.9.12
 setuptools
 setuptools-rust == 0.12.1
 paramiko == 4.0.0

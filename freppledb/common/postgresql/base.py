@@ -29,9 +29,60 @@ from django.db.backends.postgresql.base import (
 )
 
 from psycopg2 import InterfaceError
+import psycopg2.extensions
 
 
 class DatabaseWrapper(BuiltinPostgresDatabaseWrapper):
+
+    # Default psycopg2 casting functions
+    DATE_PARSER = psycopg2.extensions.string_types.get(1082)
+    TIMESTAMP_PARSER = psycopg2.extensions.string_types.get(1114)
+    TIMESTAMPTZ_PARSER = psycopg2.extensions.string_types.get(1184)
+
+    @classmethod
+    def cast_date_safely(cls, value, cur):
+        try:
+            return cls.DATE_PARSER(value, cur)
+        except ValueError:
+            # Postgres supports a wider range of dates than Python
+            return None
+
+    @classmethod
+    def cast_timestamp_safely(cls, value, cur):
+        try:
+            return cls.TIMESTAMP_PARSER(value, cur)
+        except ValueError:
+            # Postgres supports a wider range of timestamps than Python
+            return None
+
+    @classmethod
+    def cast_timestamptz_safely(cls, value, cur):
+        try:
+            return cls.TIMESTAMPTZ_PARSER(value, cur)
+        except ValueError:
+            # Postgres supports a wider range of timestamptz than Python
+            return None
+
+    def get_new_connection(self, conn_params):
+        connection = super().get_new_connection(conn_params)
+        psycopg2.extensions.register_type(
+            psycopg2.extensions.new_type((1082,), "SAFE_DATE", self.cast_date_safely),
+            connection,
+        )
+        psycopg2.extensions.register_type(
+            psycopg2.extensions.new_type(
+                (1114,), "SAFE_TIMESTAMP", self.cast_timestamp_safely
+            ),
+            connection,
+        )
+        psycopg2.extensions.register_type(
+            psycopg2.extensions.new_type(
+                (1184,), "SAFE_TIMESTAMPTZ", self.cast_timestamptz_safely
+            ),
+            connection,
+        )
+        return connection
+
     def create_cursor(self, name=None):
         try:
             return super().create_cursor(name=name)

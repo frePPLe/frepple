@@ -122,12 +122,38 @@ size_t Object::getSize() const {
   // ... plus the size of a custom Python attributes
   if (dict) {
     auto pythonstate = PyGILState_Ensure();
+    static PyObject* getsizeof = nullptr;
+    if (!getsizeof) {
+      PyObject* sysmod = PyImport_ImportModule("sys");
+      if (sysmod) {
+        getsizeof = PyObject_GetAttrString(sysmod, "getsizeof");
+        Py_DECREF(sysmod);
+      } else
+        PyErr_Clear();
+    }
+
+    auto sizeof_pyobject = [&](PyObject* obj) -> size_t {
+      if (!getsizeof) return 0;
+      PyObject* sizeobj = PyObject_CallFunctionObjArgs(getsizeof, obj, nullptr);
+      if (!sizeobj) {
+        PyErr_Clear();
+        return 0;
+      }
+      size_t sz = PyLong_AsSize_t(sizeobj);
+      Py_DECREF(sizeobj);
+      if (sz == static_cast<size_t>(-1) && PyErr_Occurred()) {
+        PyErr_Clear();
+        return 0;
+      }
+      return sz;
+    };
+
     PyObject *key, *value;
     Py_ssize_t pos = 0;
-    tmp += _PySys_GetSizeOf(dict);
+    tmp += sizeof_pyobject(dict);
     while (PyDict_Next(dict, &pos, &key, &value)) {
-      tmp += _PySys_GetSizeOf(key);
-      tmp += _PySys_GetSizeOf(value);
+      tmp += sizeof_pyobject(key);
+      tmp += sizeof_pyobject(value);
     }
     PyGILState_Release(pythonstate);
   }

@@ -1114,16 +1114,14 @@ class Comment(models.Model):
         """
         body_text = "%s --- %s" % (url, self.comment)
         if url:
-            body_html = [
-                """
+            body_html = ["""
                 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
                 <html>
                 <head>
                 <meta http-equiv="content-type" content="text/html; charset=utf-8">
                 </head>
                 <body>
-                """
-            ]
+                """]
             if self.type != "delete":
                 body_html.append(
                     "<button><a href='%s%s%s'>View</a></button><br><br>"
@@ -1458,7 +1456,7 @@ class NotificationFactory:
                                                         user=flw.user,
                                                         type=flw.type,
                                                         follower=flw,
-                                                    ).save(database)
+                                                    ).save(using=database)
                                                     if (
                                                         flw.type == "M"
                                                         and flw.user.email

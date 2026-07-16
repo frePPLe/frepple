@@ -52,8 +52,15 @@ const filteredUpstream = computed(() => {
 
 const urlPrefix = computed(() => window.url_prefix || '');
 
-function buildPrefixedUrl(path) {
-  return `${urlPrefix.value}${path}`;
+function buildPrefixedUrl(url, reference = null) {
+  if (reference === null || reference === undefined || reference === '') {
+    return `${urlPrefix.value}${url}`;
+  }
+
+  const encodedReference = encodeURIComponent(reference);
+  const suffix = url.endsWith('/') && !url.includes('?') ? '/' : '';
+
+  return `${urlPrefix.value}${url}${encodedReference}${suffix}`;
 }
 
 </script>
@@ -88,22 +95,22 @@ function buildPrefixedUrl(path) {
           &nbsp;{{peg[0]}}</td>
 
         <td v-if="peg[2] === 'MO'">{{peg[1]}}
-          <a :href="buildPrefixedUrl(`/data/input/manufacturingorder/?noautofilter&parentreference=${peg[1]}`)">
+          <a :href="buildPrefixedUrl('/data/input/manufacturingorder/?noautofilter&parentreference=', peg[1])">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
         <td v-if="peg[2] === 'WO'">{{peg[1]}}
-          <a :href="buildPrefixedUrl(`/data/input/workorder/?noautofilter&parentreference=${peg[1]}`)">
+          <a :href="buildPrefixedUrl('/data/input/workorder/?noautofilter&parentreference=', peg[1])">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
         <td v-if="peg[2] === 'DO'">{{peg[1]}}
-          <a :href="buildPrefixedUrl(`/data/input/distributionorder/?noautofilter&parentreference=${peg[1]}`)">
+          <a :href="buildPrefixedUrl('/data/input/distributionorder/?noautofilter&parentreference=', peg[1])">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
         <td v-if="peg[2] === 'PO'">{{peg[1]}}
-          <a :href="buildPrefixedUrl(`/data/input/purchaseorder/?noautofilter&parentreference=${peg[1]}`)">
+          <a :href="buildPrefixedUrl('/data/input/purchaseorder/?noautofilter&parentreference=', peg[1])">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
@@ -112,7 +119,7 @@ function buildPrefixedUrl(path) {
         <td>{{peg[2]}}</td>
 
         <td v-if="['MO', 'WO'].includes(peg[2])">{{peg[3]}}
-          <a :href="buildPrefixedUrl(`/detail/input/operation/${peg[3]}/`)" role="input/operation">
+          <a :href="buildPrefixedUrl('/detail/input/operation/', peg[3])" role="input/operation">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
@@ -121,13 +128,13 @@ function buildPrefixedUrl(path) {
         <td>{{peg[4]}}</td>
 
         <td>{{peg[5]}}
-          <a v-if="peg[5]" :href="buildPrefixedUrl(`/detail/input/item/${peg[5]}/`)" role="input/item" @click="store.opendetail(event)">
+          <a v-if="peg[5]" :href="buildPrefixedUrl('/detail/input/item/', peg[5])" role="input/item" @click="store.opendetail(event)">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
 
         <td>{{peg[6]}}
-          <a v-if="peg[6]" :href="buildPrefixedUrl(`/detail/input/location/${peg[6]}/`)" role="input/location" @click="store.opendetail(event)">
+          <a v-if="peg[6]" :href="buildPrefixedUrl('/detail/input/location/', peg[6])" role="input/location" @click="store.opendetail(event)">
             <span class="fa fa-caret-right"></span>
           </a>
         </td>

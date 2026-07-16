@@ -217,7 +217,9 @@ class AppsView(View):
                 "title": _("apps"),
                 "edition": "%s %s" % (edition, __version__),
                 "reportkey": cls.reportkey,
-                "apps": apps.values(),
+                "apps": sorted(
+                    apps.values(), key=lambda x: x.get("summary", "").lower()
+                ),
                 "superuser": request.user.is_superuser,
             },
         )

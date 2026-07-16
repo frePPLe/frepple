@@ -24,6 +24,8 @@
 import os
 import subprocess
 from datetime import datetime
+from threading import Thread
+
 
 from django.db.models import Case, When, Value, IntegerField
 from django.db.models.functions import Cast, Substr, Length
@@ -40,6 +42,7 @@ from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Scenario, Parameter
 from freppledb.common.utils import getStorageUsage, get_databases, getPostgresVersion
 from freppledb.input.models import Item
+from freppledb.webservice.utils import useWebService
 from freppledb import __version__
 
 
@@ -284,13 +287,11 @@ class Command(BaseCommand):
 
                 if destination == DEFAULT_DB_ALIAS or quick_drop_failed:
                     # drop tables
-                    cursor.execute(
-                        """
+                    cursor.execute("""
                         select tablename
                         FROM pg_catalog.pg_tables
                         WHERE schemaname='public'
-                        """
-                    )
+                        """)
                     tables = [
                         connections[destination].ops.quote_name(i[0])
                         for i in cursor
@@ -300,14 +301,12 @@ class Command(BaseCommand):
                         cursor.execute("drop table %s cascade" % (",".join(tables)))
 
                     # drop any remaining type
-                    cursor.execute(
-                        """
+                    cursor.execute("""
                         SELECT typname
                         from pg_type
                         inner join pg_namespace on pg_namespace.oid = typnamespace
                         where nspname = 'public';
-                        """
-                    )
+                        """)
                     types = [i[0] for i in cursor]
                     for i in types:
                         try:
@@ -320,14 +319,12 @@ class Command(BaseCommand):
                             pass
 
                     # drop materialzed views
-                    cursor.execute(
-                        """
+                    cursor.execute("""
                         select
                         matviewname
                         from pg_matviews
                         where schemaname = 'public'
-                        """
-                    )
+                        """)
                     matviews = [i[0] for i in cursor]
                     for i in matviews:
                         cursor.execute(
@@ -336,13 +333,11 @@ class Command(BaseCommand):
                         )
 
                     # drop routines
-                    cursor.execute(
-                        """
+                    cursor.execute("""
                         SELECT routines.routine_name
                         FROM information_schema.routines
                         WHERE routines.specific_schema='public'
-                        """
-                    )
+                        """)
                     routines = [i[0] for i in cursor]
                     for i in routines:
                         cursor.execute(
@@ -351,12 +346,10 @@ class Command(BaseCommand):
                         )
 
                     # drop triggers
-                    cursor.execute(
-                        """
+                    cursor.execute("""
                         SELECT trigger_name
                         FROM information_schema.triggers
-                        """
-                    )
+                        """)
                     triggers = [i[0] for i in cursor]
                     for i in triggers:
                         cursor.execute(
@@ -365,11 +358,9 @@ class Command(BaseCommand):
                         )
 
                     # drop views
-                    cursor.execute(
-                        """
+                    cursor.execute("""
                         select table_name from INFORMATION_SCHEMA.views WHERE table_schema = 'public'
-                        """
-                    )
+                        """)
                     views = [i[0] for i in cursor]
                     for i in views:
                         cursor.execute(
@@ -514,8 +505,7 @@ class Command(BaseCommand):
 
             # Assure the identity sequences are bigger than the id values
             with connections[destination].cursor() as cursor:
-                cursor.execute(
-                    """
+                cursor.execute("""
                     with cte as (
                         select 'common_user_id_seq' as seq,
                         (select last_value from common_user_id_seq) as last_val,
@@ -568,8 +558,7 @@ class Command(BaseCommand):
                     select setval(seq, max_id, true), seq
                     from cte
                     where last_val < max_id
-                    """
-                )
+                    """)
 
             # Check the permissions after restoring a backup.
             if (
@@ -710,6 +699,14 @@ class Command(BaseCommand):
                 setattr(_thread_locals, "database", destination)
                 call_command("migrate", database=destination)
                 delattr(_thread_locals, "database")
+
+            # Start the web service in the new scenario
+            if useWebService(destination):
+                try:
+                    call_command("runwebservice", database=destination, daemon=True)
+                except Exception as e:
+                    raise Exception("Failed to start web service")
+
         except Exception as e:
             if task:
                 task.status = "Failed"

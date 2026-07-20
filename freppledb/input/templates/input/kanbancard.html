@@ -75,23 +75,24 @@
         {{ opplan.item__description || opplan.operationplan__item__description }}
       </span>&nbsp;
     </p>
-    <p>
-      {{ opplan.location }}&nbsp;
-      <a
+    <p class="d-flex align-items-baseline">
+      <span class="text-truncate" style="min-width:0">{{ opplan.location }}</span><a
+        class="flex-shrink-0 ps-1"
         @click.stop=""
         :href="urlPrefix + '/detail/input/location/' + adminEscape(opplan.location) + '/'"
       >
         <i class="fa fa-caret-right"></i>
       </a>
     </p>
-    <p>
-      <span class="text-truncate d-block"
+    <p class="d-flex align-items-baseline">
+      <span class="text-truncate"
+            style="min-width:0"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.operationplan__supplier || opplan.supplier || opplan.operationplan__supplier__name">
         {{ opplan.operationplan__supplier || opplan.supplier ||
         opplan.operationplan__supplier__name }}
-      </span>&nbsp;
-      <a
+      </span><a
+        class="flex-shrink-0 ps-1"
         @click.stop=""
         :href="urlPrefix + '/detail/input/supplier/' + adminEscape(opplan.operationplan__supplier || opplan.supplier || opplan.operationplan__supplier__name) + '/'"
       >
@@ -370,13 +371,14 @@
         </button>
       </span>
     </p>
-    <p>
-      <span class="text-truncate d-block"
+    <p class="d-flex align-items-baseline">
+      <span class="text-truncate"
+            style="min-width:0"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.item__name || opplan.item">
         {{ opplan.item__name || opplan.item }}
-      </span>&nbsp;
-      <a
+      </span><a
+        class="flex-shrink-0 ps-1"
         @click.stop=""
         :href="
             urlPrefix +
@@ -397,9 +399,9 @@
         {{ opplan.item__description || opplan.operationplan__item__description }}
       </span>&nbsp;
     </p>
-    <p>
-      {{ opplan.operationplan__origin || opplan.origin }}&nbsp;
-      <a
+    <p class="d-flex align-items-baseline">
+      <span class="text-truncate" style="min-width:0">{{ opplan.operationplan__origin || opplan.origin }}</span><a
+        class="flex-shrink-0 ps-1"
         @click.stop=""
         :href="
             urlPrefix +
@@ -411,10 +413,10 @@
         <i class="fa fa-caret-right"></i>
       </a>
     </p>
-    <p>
-      {{ opplan.destination || opplan.operationplan__destination ||
-      opplan.operationplan__location || opplan.location }}&nbsp;
-      <a
+    <p class="d-flex align-items-baseline">
+      <span class="text-truncate" style="min-width:0">{{ opplan.destination || opplan.operationplan__destination ||
+      opplan.operationplan__location || opplan.location }}</span><a
+        class="flex-shrink-0 ps-1"
         @click.stop=""
         :href="
             urlPrefix +
@@ -669,13 +671,15 @@
     </p>
     <p
       v-if="opplan.item__name || opplan.operationplan__item__name || opplan.item"
+      class="d-flex align-items-baseline"
     >
-      <span class="text-truncate d-block"
+      <span class="text-truncate"
+            style="min-width:0"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.item__name || opplan.operationplan__item__name || opplan.item">
         {{ opplan.item__name || opplan.operationplan__item__name || opplan.item }}
-      </span>&nbsp;
-      <a
+      </span><a
+        class="flex-shrink-0 ps-1"
         @click.stop=""
         :href="urlPrefix + '/detail/input/item/' + adminEscape(opplan.item__name || opplan.operationplan__item__name || opplan.item) + '/'"
       >
@@ -691,14 +695,15 @@
         {{ opplan.item__description || opplan.operationplan__item__description }}
       </span>&nbsp;
     </p>
-    <p>
-      <span class="text-truncate d-block"
+    <p class="d-flex align-items-baseline">
+      <span class="text-truncate"
+            style="min-width:0"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation">
         {{ opplan.operationplan__name || opplan.operationplan__operation__name ||
         opplan.operation }}
-      </span>&nbsp;
-      <a
+      </span><a
+        class="flex-shrink-0 ps-1"
         @click.stop=""
         :href="urlPrefix + '/detail/input/operation/' + adminEscape(opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation) + '/'"
       >
@@ -957,14 +962,13 @@
         :title="ttt('Stock')"
       ></i
       >&nbsp;
-      <strong>
-        <span class="text-truncate d-block"
-              data-bs-toggle="tooltip" data-bs-html="true"
-              :title="(opplan.item__name || opplan.item) + ' @ ' + opplan.location">
-          {{ opplan.item__name || opplan.item }} @ {{ opplan.location }}
-        </span></strong
-      >&nbsp;
-      <a
+      <strong class="text-truncate d-inline-block"
+            style="min-width:0;max-width:calc(100% - 2em);vertical-align:baseline"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            :title="(opplan.item__name || opplan.item) + ' @ ' + opplan.location">
+        {{ opplan.item__name || opplan.item }} @ {{ opplan.location }}
+      </strong><a
+        class="flex-shrink-0 ps-1"
         @click.stop=""
         :href="urlPrefix + '/detail/input/buffer/' + adminEscape((opplan.item__name || opplan.item) + ' @ ' + opplan.location ) + '/'"
       >
@@ -999,13 +1003,14 @@
       >&nbsp;
       <strong>{{ opplan.demands[0][1] }}</strong>
     </p>
-    <p v-if="opplan.item__name">
-      <span class="text-truncate d-block"
+    <p v-if="opplan.item__name" class="d-flex align-items-baseline">
+      <span class="text-truncate"
+            style="min-width:0"
             data-bs-toggle="tooltip" data-bs-html="true"
             :title="opplan.item">
         {{ opplan.item }}
-      </span>&nbsp;
-      <a
+      </span><a
+        class="flex-shrink-0 ps-1"
         @click.stop=""
         :href="urlPrefix + '/detail/input/item/' + adminEscape(opplan.item__name) + '/'"
       >
@@ -1021,9 +1026,9 @@
         {{ opplan.item__description || opplan.operationplan__item__description }}
       </span>&nbsp;
     </p>
-    <p>
-      {{ opplan.location }}&nbsp;
-      <a
+    <p class="d-flex align-items-baseline">
+      <span class="text-truncate" style="min-width:0">{{ opplan.location }}</span><a
+        class="flex-shrink-0 ps-1"
         @click.stop=""
         :href="urlPrefix + '/detail/input/location/' + adminEscape(opplan.location) + '/'"
       >

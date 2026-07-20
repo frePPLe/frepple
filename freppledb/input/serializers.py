@@ -22,7 +22,7 @@
 #
 
 from rest_framework.serializers import SerializerMethodField
-from rest_framework_bulk.drf3.serializers import BulkListSerializer, BulkSerializerMixin
+from django_bulk_drf import BulkModelSerializer
 
 from freppledb.common.api.views import (
     frePPleListCreateAPIView,
@@ -60,7 +60,7 @@ class CalendarFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class CalendarSerializer(BulkSerializerMixin, ModelSerializer):
+class CalendarSerializer(BulkModelSerializer):
     class Meta:
         model = models.Calendar
         fields = (
@@ -75,9 +75,6 @@ class CalendarSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.Calendar
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "name"
-        partial = True
 
 
 class CalendarAPI(frePPleListCreateAPIView):
@@ -86,6 +83,8 @@ class CalendarAPI(frePPleListCreateAPIView):
 
     serializer_class = CalendarSerializer
     filter_class = CalendarFilter
+
+    unique_fields = ["name"]
 
 
 class CalendardetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -123,7 +122,7 @@ class CalendarBucketFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class CalendarBucketSerializer(BulkSerializerMixin, ModelSerializer):
+class CalendarBucketSerializer(BulkModelSerializer):
     class Meta:
         model = models.CalendarBucket
         fields = (
@@ -148,9 +147,6 @@ class CalendarBucketSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.CalendarBucket
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "id"
-        partial = True
 
 
 class CalendarBucketAPI(frePPleListCreateAPIView):
@@ -178,6 +174,7 @@ class CalendarBucketAPI(frePPleListCreateAPIView):
     )
     serializer_class = CalendarBucketSerializer
     filter_class = CalendarBucketFilter
+    unique_fields = ["id"]
 
 
 class CalendarBucketdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -206,7 +203,7 @@ class LocationFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class LocationSerializer(BulkSerializerMixin, ModelSerializer):
+class LocationSerializer(BulkModelSerializer):
     class Meta:
         model = models.Location
         fields = (
@@ -222,9 +219,6 @@ class LocationSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.Location
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "name"
-        partial = True
 
 
 class LocationAPI(frePPleListCreateAPIView):
@@ -234,6 +228,7 @@ class LocationAPI(frePPleListCreateAPIView):
     serializer_class = LocationSerializer
     filter_class = LocationFilter
 
+    unique_fields = ["name"]
 
 class LocationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
@@ -260,7 +255,7 @@ class CustomerFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class CustomerSerializer(BulkSerializerMixin, ModelSerializer):
+class CustomerSerializer(BulkModelSerializer):
     class Meta:
         model = models.Customer
         fields = (
@@ -275,9 +270,6 @@ class CustomerSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.Customer
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "name"
-        partial = True
 
 
 class CustomerAPI(frePPleListCreateAPIView):
@@ -286,6 +278,8 @@ class CustomerAPI(frePPleListCreateAPIView):
 
     serializer_class = CustomerSerializer
     filter_class = CustomerFilter
+
+    unique_field = "name"
 
 
 class CustomerdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -319,7 +313,7 @@ class ItemFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class ItemSerializer(BulkSerializerMixin, ModelSerializer):
+class ItemSerializer(BulkModelSerializer):
     class Meta:
         model = models.Item
         fields = (
@@ -341,9 +335,6 @@ class ItemSerializer(BulkSerializerMixin, ModelSerializer):
             "lastmodified",
             "periodofcover",
         ) + getAttributeAPIReadOnlyFields(models.Item)
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "name"
-        partial = True
 
 
 class ItemAPI(frePPleListCreateAPIView):
@@ -352,6 +343,8 @@ class ItemAPI(frePPleListCreateAPIView):
 
     serializer_class = ItemSerializer
     filter_class = ItemFilter
+
+    unique_fields = ["name"]
 
 
 class ItemdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -380,7 +373,7 @@ class SupplierFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class SupplierSerializer(BulkSerializerMixin, ModelSerializer):
+class SupplierSerializer(BulkModelSerializer):
     class Meta:
         model = models.Supplier
         fields = (
@@ -396,9 +389,6 @@ class SupplierSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.Supplier
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "name"
-        partial = True
 
 
 class SupplierAPI(frePPleListCreateAPIView):
@@ -408,6 +398,7 @@ class SupplierAPI(frePPleListCreateAPIView):
     serializer_class = SupplierSerializer
     filter_class = SupplierFilter
 
+    unique_fields = ["name"]
 
 class SupplierdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
@@ -444,7 +435,7 @@ class ItemSupplierFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class ItemSupplierSerializer(BulkSerializerMixin, ModelSerializer):
+class ItemSupplierSerializer(BulkModelSerializer):
     class Meta:
         model = models.ItemSupplier
         fields = (
@@ -469,9 +460,6 @@ class ItemSupplierSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.ItemSupplier
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "id"
-        partial = True
 
 
 class ItemSupplierAPI(frePPleListCreateAPIView):
@@ -481,6 +469,7 @@ class ItemSupplierAPI(frePPleListCreateAPIView):
     serializer_class = ItemSupplierSerializer
     filter_class = ItemSupplierFilter
 
+    unique_fields = ["id"]
 
 class ItemSupplierdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
@@ -515,7 +504,7 @@ class ItemDistributionFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class ItemDistributionSerializer(BulkSerializerMixin, ModelSerializer):
+class ItemDistributionSerializer(BulkModelSerializer):
     class Meta:
         model = models.ItemDistribution
         fields = (
@@ -538,9 +527,6 @@ class ItemDistributionSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.ItemDistribution
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "id"
-        partial = True
 
 
 class ItemDistributionAPI(frePPleListCreateAPIView):
@@ -549,6 +535,8 @@ class ItemDistributionAPI(frePPleListCreateAPIView):
 
     serializer_class = ItemDistributionSerializer
     filter_class = ItemDistributionFilter
+
+    unique_fields = ["id"]
 
 
 class ItemDistributiondetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -592,7 +580,7 @@ class OperationFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class OperationSerializer(BulkSerializerMixin, ModelSerializer):
+class OperationSerializer(BulkModelSerializer):
     class Meta:
         model = models.Operation
         fields = (
@@ -624,9 +612,6 @@ class OperationSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.Operation
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "name"
-        partial = True
 
 
 class OperationAPI(frePPleListCreateAPIView):
@@ -635,6 +620,8 @@ class OperationAPI(frePPleListCreateAPIView):
 
     serializer_class = OperationSerializer
     filter_class = OperationFilter
+
+    unique_fields = ["name"]
 
 
 class OperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -663,7 +650,7 @@ class SubOperationFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class SubOperationSerializer(BulkSerializerMixin, ModelSerializer):
+class SubOperationSerializer(BulkModelSerializer):
     class Meta:
         model = models.SubOperation
         fields = (
@@ -679,9 +666,6 @@ class SubOperationSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.SubOperation
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "id"
-        partial = True
 
 
 class SubOperationAPI(frePPleListCreateAPIView):
@@ -691,6 +675,7 @@ class SubOperationAPI(frePPleListCreateAPIView):
     serializer_class = SubOperationSerializer
     filter_class = SubOperationFilter
 
+    unique_fields = ["id"]
 
 class SubOperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
@@ -718,7 +703,7 @@ class OperationDependencyFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class OperationDependencySerializer(BulkSerializerMixin, ModelSerializer):
+class OperationDependencySerializer(BulkModelSerializer):
     class Meta:
         model = models.OperationDependency
         fields = (
@@ -734,9 +719,6 @@ class OperationDependencySerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.OperationDependency
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "id"
-        partial = True
 
 
 class OperationDependencyAPI(frePPleListCreateAPIView):
@@ -745,6 +727,8 @@ class OperationDependencyAPI(frePPleListCreateAPIView):
 
     serializer_class = OperationDependencySerializer
     filter_class = OperationDependencyFilter
+
+    unique_fields = ["id"]
 
 
 class OperationDependencydetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -780,7 +764,7 @@ class BufferFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class BufferSerializer(BulkSerializerMixin, ModelSerializer):
+class BufferSerializer(BulkModelSerializer):
     class Meta:
         model = models.Buffer
         fields = (
@@ -804,9 +788,6 @@ class BufferSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.Buffer
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "id"
-        partial = True
 
 
 class BufferAPI(frePPleListCreateAPIView):
@@ -815,6 +796,8 @@ class BufferAPI(frePPleListCreateAPIView):
 
     serializer_class = BufferSerializer
     filter_class = BufferFilter
+
+    unique_fields = ["id"]
 
 
 class BufferdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -838,7 +821,7 @@ class SetupMatrixFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class SetupMatrixSerializer(BulkSerializerMixin, ModelSerializer):
+class SetupMatrixSerializer(BulkModelSerializer):
     class Meta:
         model = models.SetupMatrix
         fields = ("name", "source", "lastmodified") + getAttributeAPIFields(
@@ -847,9 +830,6 @@ class SetupMatrixSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.SetupMatrix
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "name"
-        partial = True
 
 
 class SetupMatrixAPI(frePPleListCreateAPIView):
@@ -859,6 +839,7 @@ class SetupMatrixAPI(frePPleListCreateAPIView):
     serializer_class = SetupMatrixSerializer
     filter_class = SetupMatrixFilter
 
+    unique_fields = ["name"]
 
 class SetupMatrixdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
@@ -886,7 +867,7 @@ class SetupRuleFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class SetupRuleSerializer(BulkSerializerMixin, ModelSerializer):
+class SetupRuleSerializer(BulkModelSerializer):
     class Meta:
         model = models.SetupRule
         fields = (
@@ -902,9 +883,6 @@ class SetupRuleSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.SetupRule
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "setupmatrix"
-        partial = True
 
 
 class SetupRuleAPI(frePPleListCreateAPIView):
@@ -913,6 +891,8 @@ class SetupRuleAPI(frePPleListCreateAPIView):
 
     serializer_class = SetupRuleSerializer
     filter_class = SetupRuleFilter
+
+    unique_fields = ["id"]
 
 
 class SetupRuledetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -951,7 +931,7 @@ class ResourceFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class ResourceSerializer(BulkSerializerMixin, ModelSerializer):
+class ResourceSerializer(BulkModelSerializer):
     class Meta:
         model = models.Resource
         fields = (
@@ -978,9 +958,6 @@ class ResourceSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.Resource
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "name"
-        partial = True
 
 
 class ResourceAPI(frePPleListCreateAPIView):
@@ -989,6 +966,8 @@ class ResourceAPI(frePPleListCreateAPIView):
 
     serializer_class = ResourceSerializer
     filter_class = ResourceFilter
+
+    unique_fields = ["name"]
 
 
 class ResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -1012,7 +991,7 @@ class SkillFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class SkillSerializer(BulkSerializerMixin, ModelSerializer):
+class SkillSerializer(BulkModelSerializer):
     class Meta:
         model = models.Skill
         fields = ("name", "source", "lastmodified") + getAttributeAPIFields(
@@ -1021,9 +1000,6 @@ class SkillSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.Skill
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "name"
-        partial = True
 
 
 class SkillAPI(frePPleListCreateAPIView):
@@ -1032,6 +1008,8 @@ class SkillAPI(frePPleListCreateAPIView):
 
     serializer_class = SkillSerializer
     filter_class = SkillFilter
+
+    unique_fields = ["name"]
 
 
 class SkilldetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -1060,7 +1038,7 @@ class ResourceSkillFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class ResourceSkillSerializer(BulkSerializerMixin, ModelSerializer):
+class ResourceSkillSerializer(BulkModelSerializer):
     class Meta:
         model = models.ResourceSkill
         fields = (
@@ -1076,9 +1054,6 @@ class ResourceSkillSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.ResourceSkill
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "id"
-        partial = True
 
 
 class ResourceSkillAPI(frePPleListCreateAPIView):
@@ -1087,6 +1062,8 @@ class ResourceSkillAPI(frePPleListCreateAPIView):
 
     serializer_class = ResourceSkillSerializer
     filter_class = ResourceSkillFilter
+
+    unique_fields = ["id"]
 
 
 class ResourceSkilldetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -1123,7 +1100,7 @@ class OperationMaterialFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class OperationMaterialSerializer(BulkSerializerMixin, ModelSerializer):
+class OperationMaterialSerializer(BulkModelSerializer):
     class Meta:
         model = models.OperationMaterial
         fields = (
@@ -1147,9 +1124,6 @@ class OperationMaterialSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.OperationMaterial
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "id"
-        partial = True
 
 
 class OperationMaterialAPI(frePPleListCreateAPIView):
@@ -1158,6 +1132,8 @@ class OperationMaterialAPI(frePPleListCreateAPIView):
 
     serializer_class = OperationMaterialSerializer
     filter_class = OperationMaterialFilter
+
+    unique_fields = ["id"]
 
 
 class OperationMaterialdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -1188,7 +1164,7 @@ class OperationPlanMaterialFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class OperationPlanMaterialSerializer(BulkSerializerMixin, ModelSerializer):
+class OperationPlanMaterialSerializer(BulkModelSerializer):
     class Meta:
         model = models.OperationPlanMaterial
         fields = (
@@ -1206,9 +1182,6 @@ class OperationPlanMaterialSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.OperationPlanMaterial
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "id"
-        partial = True
 
 
 class OperationPlanMaterialAPI(frePPleListCreateAPIView):
@@ -1217,6 +1190,8 @@ class OperationPlanMaterialAPI(frePPleListCreateAPIView):
 
     serializer_class = OperationPlanMaterialSerializer
     filter_class = OperationPlanMaterialFilter
+
+    unique_fields = ["id"]
 
 
 class OperationPlanMaterialdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -1250,7 +1225,7 @@ class OperationResourceFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class OperationResourceSerializer(BulkSerializerMixin, ModelSerializer):
+class OperationResourceSerializer(BulkModelSerializer):
     class Meta:
         model = models.OperationResource
         fields = (
@@ -1272,9 +1247,6 @@ class OperationResourceSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.OperationResource
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "id"
-        partial = True
 
 
 class OperationResourceAPI(frePPleListCreateAPIView):
@@ -1283,6 +1255,8 @@ class OperationResourceAPI(frePPleListCreateAPIView):
 
     serializer_class = OperationResourceSerializer
     filter_class = OperationResourceFilter
+
+    unique_fields = ["id"]
 
 
 class OperationResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -1311,7 +1285,7 @@ class OperationPlanResourceFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class OperationPlanResourceSerializer(BulkSerializerMixin, ModelSerializer):
+class OperationPlanResourceSerializer(BulkModelSerializer):
     startdate = SerializerMethodField()
     enddate = SerializerMethodField()
 
@@ -1338,9 +1312,6 @@ class OperationPlanResourceSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.OperationPlanResource
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "id"
-        partial = True
 
 
 class OperationPlanResourceAPI(frePPleListCreateAPIView):
@@ -1349,6 +1320,8 @@ class OperationPlanResourceAPI(frePPleListCreateAPIView):
 
     serializer_class = OperationPlanResourceSerializer
     filter_class = OperationPlanResourceFilter
+
+    unique_fields = ["id"]
 
 
 class OperationPlanResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -1384,20 +1357,16 @@ class ManufacturingOrderFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
-    class OperationPlanResourceNestedSerializer(BulkSerializerMixin, ModelSerializer):
+class ManufacturingOrderSerializer(BulkModelSerializer):
+    class OperationPlanResourceNestedSerializer(BulkModelSerializer):
         class Meta:
             model = models.OperationPlanResource
             fields = ("resource", "quantity", "setup")
-            list_serializer_class = BulkListSerializer
-            partial = True
 
-    class OperationPlanMaterialNestedSerializer(BulkSerializerMixin, ModelSerializer):
+    class OperationPlanMaterialNestedSerializer(BulkModelSerializer):
         class Meta:
             model = models.OperationPlanMaterial
             fields = ("item", "quantity", "flowdate")
-            list_serializer_class = BulkListSerializer
-            partial = True
 
     resources = OperationPlanResourceNestedSerializer(many=True, required=False)
     materials = OperationPlanMaterialNestedSerializer(many=True, required=False)
@@ -1565,9 +1534,6 @@ class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.OperationPlan
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "reference"
-        partial = True
 
 
 class ManufacturingOrderAPI(frePPleListCreateAPIView):
@@ -1577,6 +1543,7 @@ class ManufacturingOrderAPI(frePPleListCreateAPIView):
     serializer_class = ManufacturingOrderSerializer
     filter_class = ManufacturingOrderFilter
 
+    unique_fields = ["reference"]
 
 class ManufacturingOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
@@ -1611,20 +1578,16 @@ class WorkOrderFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class WorkOrderSerializer(BulkSerializerMixin, ModelSerializer):
-    class OperationPlanResourceNestedSerializer(BulkSerializerMixin, ModelSerializer):
+class WorkOrderSerializer(BulkModelSerializer):
+    class OperationPlanResourceNestedSerializer(BulkModelSerializer):
         class Meta:
             model = models.OperationPlanResource
             fields = ("resource", "quantity", "setup")
-            list_serializer_class = BulkListSerializer
-            partial = True
 
-    class OperationPlanMaterialNestedSerializer(BulkSerializerMixin, ModelSerializer):
+    class OperationPlanMaterialNestedSerializer(BulkModelSerializer):
         class Meta:
             model = models.OperationPlanMaterial
             fields = ("item", "quantity", "flowdate")
-            list_serializer_class = BulkListSerializer
-            partial = True
 
     resources = OperationPlanResourceNestedSerializer(many=True, required=False)
     materials = OperationPlanMaterialNestedSerializer(many=True, required=False)
@@ -1792,9 +1755,6 @@ class WorkOrderSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.OperationPlan
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "reference"
-        partial = True
 
 
 class WorkOrderAPI(frePPleListCreateAPIView):
@@ -1803,6 +1763,8 @@ class WorkOrderAPI(frePPleListCreateAPIView):
 
     serializer_class = WorkOrderSerializer
     filter_class = WorkOrderFilter
+
+    unique_fields = ["reference"]
 
 
 class WorkOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -1837,7 +1799,7 @@ class DistributionOrderFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class DistributionOrderSerializer(BulkSerializerMixin, ModelSerializer):
+class DistributionOrderSerializer(BulkModelSerializer):
     class Meta:
         model = models.DistributionOrder
         fields = (
@@ -1859,9 +1821,6 @@ class DistributionOrderSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.OperationPlan
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "reference"
-        partial = True
 
 
 class DistributionOrderAPI(frePPleListCreateAPIView):
@@ -1870,6 +1829,8 @@ class DistributionOrderAPI(frePPleListCreateAPIView):
 
     serializer_class = DistributionOrderSerializer
     filter_class = DistributionOrderFilter
+
+    unique_fields = ["reference"]
 
 
 class DistributionOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -1904,7 +1865,7 @@ class PurchaseOrderFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class PurchaseOrderSerializer(BulkSerializerMixin, ModelSerializer):
+class PurchaseOrderSerializer(BulkModelSerializer):
     class Meta:
         model = models.PurchaseOrder
         fields = (
@@ -1927,9 +1888,6 @@ class PurchaseOrderSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.OperationPlan
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "reference"
-        partial = True
 
 
 class PurchaseOrderAPI(frePPleListCreateAPIView):
@@ -1938,6 +1896,8 @@ class PurchaseOrderAPI(frePPleListCreateAPIView):
 
     serializer_class = PurchaseOrderSerializer
     filter_class = PurchaseOrderFilter
+
+    unique_fields = ["reference"]
 
 
 class PurchaseOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -1972,7 +1932,7 @@ class DeliveryOrderFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class DeliveryOrderSerializer(BulkSerializerMixin, ModelSerializer):
+class DeliveryOrderSerializer(BulkModelSerializer):
     class Meta:
         model = models.DeliveryOrder
         fields = (
@@ -1994,9 +1954,6 @@ class DeliveryOrderSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.OperationPlan
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "reference"
-        partial = True
 
 
 class DeliveryOrderAPI(frePPleListCreateAPIView):
@@ -2005,6 +1962,8 @@ class DeliveryOrderAPI(frePPleListCreateAPIView):
 
     serializer_class = DeliveryOrderSerializer
     filter_class = DeliveryOrderFilter
+
+    unique_fields = ["reference"]
 
 
 class DeliveryOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -2045,7 +2004,7 @@ class DemandFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class DemandSerializer(BulkSerializerMixin, ModelSerializer):
+class DemandSerializer(BulkModelSerializer):
     class Meta:
         model = models.Demand
         fields = (
@@ -2074,9 +2033,6 @@ class DemandSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.Demand
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "name"
-        partial = True
 
 
 class DemandAPI(frePPleListCreateAPIView):
@@ -2085,6 +2041,8 @@ class DemandAPI(frePPleListCreateAPIView):
 
     serializer_class = DemandSerializer
     filter_class = DemandFilter
+
+    unique_fields = ["name"]
 
 
 class DemanddetailAPI(frePPleRetrieveUpdateDestroyAPIView):

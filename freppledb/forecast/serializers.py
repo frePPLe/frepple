@@ -26,7 +26,7 @@ from dateutil.parser import parse
 
 
 from rest_framework import serializers
-from rest_framework_bulk.drf3.serializers import BulkListSerializer, BulkSerializerMixin
+from django_bulk_drf import BulkModelSerializer
 
 from freppledb.common.api.filters import FilterSet
 from freppledb.common.api.serializers import (
@@ -72,7 +72,7 @@ class ForecastFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class ForecastSerializer(BulkSerializerMixin, ModelSerializer):
+class ForecastSerializer(BulkModelSerializer):
     class Meta:
         model = Forecast
         fields = (
@@ -97,9 +97,6 @@ class ForecastSerializer(BulkSerializerMixin, ModelSerializer):
             "lastmodified",
         ) + getAttributeAPIFields(Forecast)
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(Forecast)
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "name"
-        partial = True
 
 
 class ForecastAPI(frePPleListCreateAPIView):
@@ -109,6 +106,8 @@ class ForecastAPI(frePPleListCreateAPIView):
     serializer_class = ForecastSerializer
     filter_class = ForecastFilter
 
+    unique_fields = ["name"]
+
 
 class ForecastdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
@@ -117,14 +116,11 @@ class ForecastdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = ForecastSerializer
 
 
-class ForecastPlanSerializer(BulkSerializerMixin, ModelSerializer):
+class ForecastPlanSerializer(BulkModelSerializer):
     class Meta:
         model = ForecastPlan
         fields = ("item", "location", "customer", "startdate", "enddate", "value")
         read_only_fields = None
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "id"
-        partial = True
 
 
 class ForecastPlanFilter(FilterSet):
@@ -139,8 +135,7 @@ class ForecastPlanAPI(frePPleListCreateAPIView):
             )
         except Exception:
             parameter_currentdate = datetime.now()
-        return ForecastPlan.objects.using(self.request.database).raw(
-            """
+        return ForecastPlan.objects.using(self.request.database).raw("""
             select forecastplan.item_id||' @ '||
             forecastplan.location_id||' @ '||
             forecastplan.customer_id||' @ '||
@@ -161,12 +156,12 @@ class ForecastPlanAPI(frePPleListCreateAPIView):
             and forecast.planned = true
             where
             forecastplan.enddate > to_date('%s','YYYY-MM-DD HH24:MI:SS')
-            """
-            % (parameter_currentdate.strftime("%Y-%m-%d %H:%M:%S"),)
-        )
+            """ % (parameter_currentdate.strftime("%Y-%m-%d %H:%M:%S"),))
 
     serializer_class = ForecastPlanSerializer
     filter_class = None
+
+    unique_fields = ["id"]
 
 
 class MeasureFilter(FilterSet):
@@ -189,7 +184,7 @@ class MeasureFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class MeasureSerializer(BulkSerializerMixin, ModelSerializer):
+class MeasureSerializer(BulkModelSerializer):
     def validate_name(self, value):
         if value and not value.isalnum():
             raise serializers.ValidationError("Measure name can only be alphanumeric")
@@ -211,9 +206,6 @@ class MeasureSerializer(BulkSerializerMixin, ModelSerializer):
             "source",
             "lastmodified",
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "name"
-        partial = True
 
 
 class MeasureAPI(frePPleListCreateAPIView):
@@ -222,6 +214,8 @@ class MeasureAPI(frePPleListCreateAPIView):
 
     serializer_class = MeasureSerializer
     filter_class = MeasureFilter
+
+    unique_fields = ["name"]
 
 
 class MeasuredetailAPI(frePPleRetrieveUpdateDestroyAPIView):

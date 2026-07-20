@@ -1,7 +1,6 @@
 portend == 3.2.1
 djangorestframework == 3.17.1
-djangorestframework-bulk == 0.2.1
-djangorestframework-filters == 0.10.2
+django-bulk-drf == 0.2.91
 django-bootstrap3 == 26.1
 django-filter == 25.2
 html5lib == 1.1

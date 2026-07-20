@@ -20,7 +20,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-from rest_framework_bulk.serializers import BulkListSerializer, BulkSerializerMixin
+from django_bulk_drf import BulkModelSerializer
 
 from freppledb.common.api.filters import FilterSet
 from freppledb.common.api.serializers import (
@@ -49,7 +49,7 @@ class BucketFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class BucketSerializer(BulkSerializerMixin, ModelSerializer):
+class BucketSerializer(BulkModelSerializer):
     class Meta:
         model = models.Bucket
         fields = (
@@ -62,9 +62,6 @@ class BucketSerializer(BulkSerializerMixin, ModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.Bucket
         )
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "name"
-        partial = True
 
 
 class BucketAPI(frePPleListCreateAPIView):
@@ -73,6 +70,8 @@ class BucketAPI(frePPleListCreateAPIView):
 
     serializer_class = BucketSerializer
     filter_class = BucketFilter
+
+    unique_fields = ["name"]
 
 
 class BucketDetailFilter(FilterSet):
@@ -97,7 +96,7 @@ class BucketdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     filter_class = BucketFilter
 
 
-class BucketDetailSerializer(BulkSerializerMixin, ModelSerializer):
+class BucketDetailSerializer(BulkModelSerializer):
     class Meta:
         model = models.BucketDetail
         fields = (
@@ -147,7 +146,7 @@ class AttributeFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class AttributeSerializer(BulkSerializerMixin, ModelSerializer):
+class AttributeSerializer(BulkModelSerializer):
     class Meta:
         model = models.Attribute
         fields = (
@@ -193,7 +192,7 @@ class CommentFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class CommentSerializer(BulkSerializerMixin, ModelSerializer):
+class CommentSerializer(BulkModelSerializer):
     class Meta:
         model = models.Comment
         fields = (
@@ -206,9 +205,6 @@ class CommentSerializer(BulkSerializerMixin, ModelSerializer):
             "type",
         )
         read_only_fields = ("lastmodified",)
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "id"
-        partial = True
 
 
 class CommentAPI(frePPleListCreateAPIView):
@@ -218,6 +214,7 @@ class CommentAPI(frePPleListCreateAPIView):
     serializer_class = CommentSerializer
     filter_class = CommentFilter
 
+    unique_fields = ["id"]
 
 class CommentdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
@@ -240,14 +237,11 @@ class ParameterFilter(FilterSet):
         filter_fields = fields.keys()
 
 
-class ParameterSerializer(BulkSerializerMixin, ModelSerializer):
+class ParameterSerializer(BulkModelSerializer):
     class Meta:
         model = models.Parameter
         fields = ("name", "source", "lastmodified", "value", "description")
         read_only_fields = ("lastmodified",)
-        list_serializer_class = BulkListSerializer
-        update_lookup_field = "name"
-        partial = True
 
 
 class ParameterAPI(frePPleListCreateAPIView):
@@ -256,6 +250,8 @@ class ParameterAPI(frePPleListCreateAPIView):
 
     serializer_class = ParameterSerializer
     filter_class = ParameterFilter
+
+    unique_fields = ["name"]
 
 
 class ParameterdetailAPI(frePPleRetrieveUpdateDestroyAPIView):

@@ -443,6 +443,7 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
         "freppledb.common.api.renderers.freppleBrowsableAPI",
     ),
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
 
 # Bootstrap

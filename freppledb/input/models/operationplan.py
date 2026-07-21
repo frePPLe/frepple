@@ -421,7 +421,16 @@ class OperationPlan(AuditModel):
                                         break
 
     def save(self, *args, **kwargs):
-
+        # New proxy instances often have an explicit primary key (reference).
+        # On recent Django versions, forcing INSERT avoids an UPDATE-first
+        # path that can raise when no row exists yet.
+        if (
+            self._state.adding
+            and not kwargs.get("force_insert")
+            and not kwargs.get("force_update")
+            and kwargs.get("update_fields") is None
+        ):
+            kwargs["force_insert"] = True
         self.propagateStatus()
         # Call the real save() method
         super().save(*args, **kwargs)
@@ -429,12 +438,9 @@ class OperationPlan(AuditModel):
     @classmethod
     def getDeleteStatements(cls):
         stmts = []
-        stmts.append(
-            """
+        stmts.append("""
             delete from operationplan where type = '%s'
-            """
-            % cls.getType()
-        )
+            """ % cls.getType())
         return stmts
 
     class Meta(AuditModel.Meta):

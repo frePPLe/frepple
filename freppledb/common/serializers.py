@@ -24,12 +24,11 @@ from django_bulk_drf import BulkModelSerializer
 
 from freppledb.common.api.filters import FilterSet
 from freppledb.common.api.serializers import (
-    ModelSerializer,
     getAttributeAPIFields,
     getAttributeAPIReadOnlyFields,
 )
 from freppledb.common.api.views import (
-    frePPleListCreateAPIView,
+    frePPleBulkModelViewSet,
     frePPleRetrieveUpdateDestroyAPIView,
 )
 
@@ -46,7 +45,6 @@ class BucketFilter(FilterSet):
             "source": ["exact", "in"],
             "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
         }
-        filter_fields = fields.keys()
 
 
 class BucketSerializer(BulkModelSerializer):
@@ -64,12 +62,12 @@ class BucketSerializer(BulkModelSerializer):
         )
 
 
-class BucketAPI(frePPleListCreateAPIView):
+class BucketAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.Bucket.objects.using(self.request.database).all()
 
     serializer_class = BucketSerializer
-    filter_class = BucketFilter
+    filterset_class = BucketFilter
 
     unique_fields = ["name"]
 
@@ -85,7 +83,6 @@ class BucketDetailFilter(FilterSet):
             "source": ["exact", "in"],
             "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
         }
-        filter_fields = fields.keys()
 
 
 class BucketdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -93,7 +90,7 @@ class BucketdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
         return models.Bucket.objects.using(self.request.database).all()
 
     serializer_class = BucketSerializer
-    filter_class = BucketFilter
+    filterset_class = BucketFilter
 
 
 class BucketDetailSerializer(BulkModelSerializer):
@@ -112,12 +109,12 @@ class BucketDetailSerializer(BulkModelSerializer):
         )
 
 
-class BucketDetailAPI(frePPleListCreateAPIView):
+class BucketDetailAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.BucketDetail.objects.using(self.request.database).all()
 
     serializer_class = BucketDetailSerializer
-    filter_class = BucketDetailFilter
+    filterset_class = BucketDetailFilter
 
 
 class BucketDetaildetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -125,7 +122,7 @@ class BucketDetaildetailAPI(frePPleRetrieveUpdateDestroyAPIView):
         return models.BucketDetail.objects.using(self.request.database).all()
 
     serializer_class = BucketDetailSerializer
-    filter_class = BucketDetailFilter
+    filterset_class = BucketDetailFilter
 
 
 class AttributeFilter(FilterSet):
@@ -143,7 +140,6 @@ class AttributeFilter(FilterSet):
             "source": ["exact", "in"],
             "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
         }
-        filter_fields = fields.keys()
 
 
 class AttributeSerializer(BulkModelSerializer):
@@ -161,12 +157,12 @@ class AttributeSerializer(BulkModelSerializer):
         read_only_fields = ("lastmodified",)
 
 
-class AttributeAPI(frePPleListCreateAPIView):
+class AttributeAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.Attribute.objects.all()
 
     serializer_class = AttributeSerializer
-    filter_class = AttributeFilter
+    filterset_class = AttributeFilter
 
 
 class AttributedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -174,7 +170,7 @@ class AttributedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
         return models.Attribute.objects.all()
 
     serializer_class = AttributeSerializer
-    filter_class = AttributeFilter
+    filterset_class = AttributeFilter
 
 
 class CommentFilter(FilterSet):
@@ -189,7 +185,6 @@ class CommentFilter(FilterSet):
             "content_type": ["exact", "gt", "gte", "lt", "lte"],
             "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
         }
-        filter_fields = fields.keys()
 
 
 class CommentSerializer(BulkModelSerializer):
@@ -207,21 +202,22 @@ class CommentSerializer(BulkModelSerializer):
         read_only_fields = ("lastmodified",)
 
 
-class CommentAPI(frePPleListCreateAPIView):
+class CommentAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.Comment.objects.using(self.request.database).all()
 
     serializer_class = CommentSerializer
-    filter_class = CommentFilter
+    filterset_class = CommentFilter
 
     unique_fields = ["id"]
+
 
 class CommentdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return models.Comment.objects.using(self.request.database).all()
 
     serializer_class = CommentSerializer
-    filter_class = CommentFilter
+    filterset_class = CommentFilter
 
 
 class ParameterFilter(FilterSet):
@@ -234,7 +230,6 @@ class ParameterFilter(FilterSet):
             "source": ["exact", "in"],
             "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
         }
-        filter_fields = fields.keys()
 
 
 class ParameterSerializer(BulkModelSerializer):
@@ -244,12 +239,12 @@ class ParameterSerializer(BulkModelSerializer):
         read_only_fields = ("lastmodified",)
 
 
-class ParameterAPI(frePPleListCreateAPIView):
+class ParameterAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.Parameter.objects.using(self.request.database).all()
 
     serializer_class = ParameterSerializer
-    filter_class = ParameterFilter
+    filterset_class = ParameterFilter
 
     unique_fields = ["name"]
 
@@ -259,4 +254,4 @@ class ParameterdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
         return models.Parameter.objects.using(self.request.database).all()
 
     serializer_class = ParameterSerializer
-    filter_class = ParameterFilter
+    filterset_class = ParameterFilter

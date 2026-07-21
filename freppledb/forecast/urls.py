@@ -40,6 +40,7 @@ if mode == "ASGI":
 else:
     from . import views
     from . import serializers
+    from freppledb.common.api.router import rest_api_router
 
     urlpatterns = [
         # Forecast editor screen
@@ -71,16 +72,17 @@ else:
             views.PeggingReport.as_view(),
             name="forecast_plandetail",
         ),
-        # REST API framework
-        path("api/forecast/forecast/", serializers.ForecastAPI.as_view()),
-        path("api/forecast/forecastplan/", serializers.ForecastPlanAPI.as_view()),
-        re_path(
-            r"^api/forecast/forecast/(?P<pk>(.+))/$",
-            serializers.ForecastdetailAPI.as_view(),
-        ),
-        path("api/forecast/measure/", serializers.MeasureAPI.as_view()),
-        re_path(
-            r"^api/forecast/measure/(?P<pk>(.+))/$",
-            serializers.MeasuredetailAPI.as_view(),
-        ),
     ]
+
+    rest_api_router.register(
+        "forecast", "forecast", serializers.ForecastAPI, serializers.ForecastdetailAPI
+    )
+    rest_api_router.register(
+        "forecast",
+        "forecastplan",
+        serializers.ForecastPlanAPI,
+        serializers.ForecastPlanAPI,
+    )
+    rest_api_router.register(
+        "forecast", "measure", serializers.MeasureAPI, serializers.MeasuredetailAPI
+    )

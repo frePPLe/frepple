@@ -21,7 +21,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django.db import connections
 from django.urls import path, re_path
 from django.views.generic.base import RedirectView
 
@@ -31,9 +30,8 @@ from freppledb import mode
 autodiscover = True
 
 if mode == "WSGI":
-    import freppledb.common.views
-    import freppledb.common.serializers
-    import freppledb.common.dashboard
+    from . import views, serializers, dashboard
+    from freppledb.common.api.router import rest_api_router
 
     from freppledb.common.api.views import APIIndexView
     from freppledb.common.registration.views import (
@@ -42,65 +40,63 @@ if mode == "WSGI":
     )
 
     urlpatterns = [
-        re_path(r"^uploads/(.+)$", freppledb.common.views.uploads, name="uploads"),
-        path("inbox/", freppledb.common.views.inbox, name="inbox"),
-        path("follow/", freppledb.common.views.follow, name="follow"),
-        path("", freppledb.common.views.cockpit, name="cockpit"),
-        path(
-            "preferences/", freppledb.common.views.preferences, name="preferences"
-        ),
-        path("horizon/", freppledb.common.views.horizon, name="horizon"),
-        path("settings/", freppledb.common.views.saveSettings),
+        re_path(r"^uploads/(.+)$", views.uploads, name="uploads"),
+        path("inbox/", views.inbox, name="inbox"),
+        path("follow/", views.follow, name="follow"),
+        path("", views.cockpit, name="cockpit"),
+        path("preferences/", views.preferences, name="preferences"),
+        path("horizon/", views.horizon, name="horizon"),
+        path("settings/", views.saveSettings),
         re_path(
             r"^widget/(.+)/",
-            freppledb.common.dashboard.Dashboard.dispatch,
+            dashboard.Dashboard.dispatch,
             name="dashboard",
         ),
         # Model list reports, which override standard admin screens
-        path("data/login/", freppledb.common.views.login),
+        path("data/login/", views.login),
         path(
             "data/auth/group/",
-            freppledb.common.views.GroupList.as_view(),
+            views.GroupList.as_view(),
             name="auth_group_changelist",
         ),
         path(
             "data/common/user/",
-            freppledb.common.views.UserList.as_view(),
+            views.UserList.as_view(),
             name="common_user_changelist",
         ),
         path(
             "data/common/follower/",
-            freppledb.common.views.FollowerList.as_view(),
+            views.FollowerList.as_view(),
             name="common_follower_changelist",
         ),
         path(
             "data/common/bucket/",
-            freppledb.common.views.BucketList.as_view(),
+            views.BucketList.as_view(),
             name="common_bucket_changelist",
         ),
         path(
             "data/common/bucketdetail/",
-            freppledb.common.views.BucketDetailList.as_view(),
+            views.BucketDetailList.as_view(),
             name="common_bucketdetail_changelist",
         ),
         path(
             "data/common/parameter/",
-            freppledb.common.views.ParameterList.as_view(),
+            views.ParameterList.as_view(),
             name="common_parameter_changelist",
         ),
         path(
             "data/common/attribute/",
-            freppledb.common.views.AttributeList.as_view(),
+            views.AttributeList.as_view(),
             name="common_attribute_changelist",
         ),
         path(
             "data/common/apikey/",
-            freppledb.common.views.APIKeyList.as_view(),
+            views.APIKeyList.as_view(),
             name="common_apikey_changelist",
         ),
         path(
             "data/common/comment/",
-            freppledb.common.views.CommentList.as_view(),
+            views.CommentList.as_view(),
             name="common_comment_changelist",
         ),
         # Special case of the next line for user password changes in the user edit screen
@@ -109,54 +105,11 @@ if mode == "WSGI":
             RedirectView.as_view(url="/data/common/user/%(id)s/password/"),
         ),
         # Detail URL for an object, which internally redirects to the view for the last opened tab
-        re_path(r"^detail/([^/]+)/([^/]+)/(.+)/$", freppledb.common.views.detail),
-        # REST API framework
-        path(
-            "api/common/bucket/", freppledb.common.serializers.BucketAPI.as_view()
-        ),
-        path(
-            "api/common/bucketdetail/",
-            freppledb.common.serializers.BucketDetailAPI.as_view(),
-        ),
-        path(
-            "api/common/bucketdetail/",
-            freppledb.common.serializers.BucketDetailAPI.as_view(),
-        ),
-        path(
-            "api/common/parameter/",
-            freppledb.common.serializers.ParameterAPI.as_view(),
-        ),
-        path(
-            "api/common/attribute/",
-            freppledb.common.serializers.AttributeAPI.as_view(),
-        ),
-        path(
-            "api/common/comment/", freppledb.common.serializers.CommentAPI.as_view()
-        ),
-        re_path(
-            r"^api/common/bucket/(?P<pk>(.+))/$",
-            freppledb.common.serializers.BucketdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/common/bucketdetail/(?P<pk>(.+))/$",
-            freppledb.common.serializers.BucketDetaildetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/common/parameter/(?P<pk>(.+))/$",
-            freppledb.common.serializers.ParameterdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/common/attribute/(?P<pk>(.+))/$",
-            freppledb.common.serializers.AttributedetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/common/comment/(?P<pk>(.+))/$",
-            freppledb.common.serializers.CommentdetailAPI.as_view(),
-        ),
+        re_path(r"^detail/([^/]+)/([^/]+)/(.+)/$", views.detail),
         path("api/", APIIndexView),
-        path("apps/", freppledb.common.views.AppsView.as_view(), name="apps"),
-        path("about/", freppledb.common.views.AboutView, name="about"),
-        path("scenarios/", freppledb.common.views.ScenarioView, name="scenarios"),
+        path("apps/", views.AppsView.as_view(), name="apps"),
+        path("about/", views.AboutView, name="about"),
+        path("scenarios/", views.ScenarioView, name="scenarios"),
         # Forgotten password
         re_path(
             r"^reset_password_confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$",
@@ -170,14 +123,27 @@ if mode == "WSGI":
         ),
     ]
 
-
-# Monkeypatching to work around a DRF inefficiency
-def _drf_set_rollback():
-    for db in connections.all(initialized_only=True):
-        if db.settings_dict["ATOMIC_REQUESTS"] and db.in_atomic_block:
-            db.set_rollback(True)
-
-
-from rest_framework import views
-
-views.set_rollback = _drf_set_rollback
+    rest_api_router.register(
+        "common", "bucket", serializers.BucketAPI, serializers.BucketdetailAPI
+    )
+    rest_api_router.register(
+        "common",
+        "bucketdetail",
+        serializers.BucketDetailAPI,
+        serializers.BucketDetaildetailAPI,
+    )
+    rest_api_router.register(
+        "common",
+        "parameter",
+        serializers.ParameterAPI,
+        serializers.ParameterdetailAPI,
+    )
+    rest_api_router.register(
+        "common",
+        "attribute",
+        serializers.AttributeAPI,
+        serializers.AttributedetailAPI,
+    )
+    rest_api_router.register(
+        "common", "comment", serializers.CommentAPI, serializers.CommentdetailAPI
+    )

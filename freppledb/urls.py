@@ -29,6 +29,7 @@ from django.views.generic.base import RedirectView
 from django.views.i18n import JavaScriptCatalog
 
 from freppledb.admin import data_site
+from freppledb.common.api.router import rest_api_router
 
 urlpatterns = [
     # Redirect admin index page /data/ to /
@@ -72,3 +73,4 @@ urlpatterns += [
     path("data/", data_site.urls),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
 ]
+urlpatterns += rest_api_router.urls

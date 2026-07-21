@@ -30,13 +30,12 @@ from django_bulk_drf import BulkModelSerializer
 
 from freppledb.common.api.filters import FilterSet
 from freppledb.common.api.serializers import (
-    ModelSerializer,
     getAttributeAPIFilterDefinition,
     getAttributeAPIFields,
     getAttributeAPIReadOnlyFields,
 )
 from freppledb.common.api.views import (
-    frePPleListCreateAPIView,
+    frePPleBulkModelViewSet,
     frePPleRetrieveUpdateDestroyAPIView,
 )
 from freppledb.common.models import Parameter
@@ -69,7 +68,6 @@ class ForecastFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(Forecast),
         )
-        filter_fields = fields.keys()
 
 
 class ForecastSerializer(BulkModelSerializer):
@@ -99,12 +97,12 @@ class ForecastSerializer(BulkModelSerializer):
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(Forecast)
 
 
-class ForecastAPI(frePPleListCreateAPIView):
+class ForecastAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return Forecast.objects.using(self.request.database).all()
 
     serializer_class = ForecastSerializer
-    filter_class = ForecastFilter
+    filterset_class = ForecastFilter
 
     unique_fields = ["name"]
 
@@ -127,7 +125,7 @@ class ForecastPlanFilter(FilterSet):
     pass
 
 
-class ForecastPlanAPI(frePPleListCreateAPIView):
+class ForecastPlanAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         try:
             parameter_currentdate = parse(
@@ -159,7 +157,7 @@ class ForecastPlanAPI(frePPleListCreateAPIView):
             """ % (parameter_currentdate.strftime("%Y-%m-%d %H:%M:%S"),))
 
     serializer_class = ForecastPlanSerializer
-    filter_class = None
+    filterset_class = None
 
     unique_fields = ["id"]
 
@@ -181,7 +179,6 @@ class MeasureFilter(FilterSet):
             "source": ["exact", "in"],
             "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
         }
-        filter_fields = fields.keys()
 
 
 class MeasureSerializer(BulkModelSerializer):
@@ -208,12 +205,12 @@ class MeasureSerializer(BulkModelSerializer):
         )
 
 
-class MeasureAPI(frePPleListCreateAPIView):
+class MeasureAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return Measure.objects.using(self.request.database).all()
 
     serializer_class = MeasureSerializer
-    filter_class = MeasureFilter
+    filterset_class = MeasureFilter
 
     unique_fields = ["name"]
 

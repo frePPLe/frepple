@@ -32,6 +32,7 @@ autodiscover = True
 if mode == "WSGI":
     from . import views
     from . import serializers
+    from freppledb.common.api.router import rest_api_router
 
     urlpatterns = [
         # Overridable card for kanban and calendar views
@@ -39,9 +40,7 @@ if mode == "WSGI":
             "input/kanbancard.html",
             TemplateView.as_view(template_name="input/kanbancard.html"),
         ),
-        path(
-            "input/card.html", TemplateView.as_view(template_name="input/card.html")
-        ),
+        path("input/card.html", TemplateView.as_view(template_name="input/card.html")),
         # Model list reports, which override standard admin screens
         path(
             "data/input/buffer/",
@@ -380,191 +379,134 @@ if mode == "WSGI":
             views.OperationPlanDetail.as_view(),
             name="operationplandetail",
         ),
-        # REST API framework
-        path("api/input/buffer/", serializers.BufferAPI.as_view()),
-        path("api/input/resource/", serializers.ResourceAPI.as_view()),
-        path("api/input/location/", serializers.LocationAPI.as_view()),
-        path("api/input/customer/", serializers.CustomerAPI.as_view()),
-        path("api/input/demand/", serializers.DemandAPI.as_view()),
-        path("api/input/item/", serializers.ItemAPI.as_view()),
-        path(
-            "api/input/operationresource/",
-            serializers.OperationResourceAPI.as_view(),
-        ),
-        path(
-            "api/input/operationmaterial/",
-            serializers.OperationMaterialAPI.as_view(),
-        ),
-        path(
-            "api/input/operationplanresource/",
-            serializers.OperationPlanResourceAPI.as_view(),
-        ),
-        path(
-            "api/input/operationplanmaterial/",
-            serializers.OperationPlanMaterialAPI.as_view(),
-        ),
-        path("api/input/calendar/", serializers.CalendarAPI.as_view()),
-        path(
-            "api/input/calendarbucket/",
-            serializers.CalendarBucketAPI.as_view(),
-        ),
-        path("api/input/operation/", serializers.OperationAPI.as_view()),
-        path(
-            "api/input/setupmatrix/",
-            serializers.SetupMatrixAPI.as_view(),
-        ),
-        path("api/input/setuprule/", serializers.SetupRuleAPI.as_view()),
-        path(
-            "api/input/suboperation/",
-            serializers.SubOperationAPI.as_view(),
-        ),
-        path(
-            "api/input/operationdependency/",
-            serializers.OperationDependencyAPI.as_view(),
-        ),
-        path(
-            "api/input/manufacturingorder/",
-            serializers.ManufacturingOrderAPI.as_view(),
-        ),
-        path(
-            "api/input/workorder/",
-            serializers.WorkOrderAPI.as_view(),
-        ),
-        path(
-            "api/input/purchaseorder/",
-            serializers.PurchaseOrderAPI.as_view(),
-        ),
-        path(
-            "api/input/distributionorder/",
-            serializers.DistributionOrderAPI.as_view(),
-        ),
-        path(
-            "api/input/deliveryorder/",
-            serializers.DeliveryOrderAPI.as_view(),
-        ),
-        path("api/input/skill/", serializers.SkillAPI.as_view()),
-        path(
-            "api/input/resourceskill/",
-            serializers.ResourceSkillAPI.as_view(),
-        ),
-        path("api/input/supplier/", serializers.SupplierAPI.as_view()),
-        path(
-            "api/input/itemsupplier/",
-            serializers.ItemSupplierAPI.as_view(),
-        ),
-        path(
-            "api/input/itemdistribution/",
-            serializers.ItemDistributionAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/buffer/(?P<pk>(.+))/$",
-            serializers.BufferdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/resource/(?P<pk>(.+))/$",
-            serializers.ResourcedetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/location/(?P<pk>(.+))/$",
-            serializers.LocationdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/customer/(?P<pk>(.+))/$",
-            serializers.CustomerdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/demand/(?P<pk>(.+))/$",
-            serializers.DemanddetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/item/(?P<pk>(.+))/$",
-            serializers.ItemdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/operationresource/(?P<pk>(.+))/$",
-            serializers.OperationResourcedetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/operationmaterial/(?P<pk>(.+))/$",
-            serializers.OperationMaterialdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/operationplanresource/(?P<pk>(.+))/$",
-            serializers.OperationPlanResourcedetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/operationplanmaterial/(?P<pk>(.+))/$",
-            serializers.OperationPlanMaterialdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/calendar/(?P<pk>(.+))/$",
-            serializers.CalendardetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/calendarbucket/(?P<pk>(.+))/$",
-            serializers.CalendarBucketdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/operation/(?P<pk>(.+))/$",
-            serializers.OperationdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/setupmatrix/(?P<pk>(.+))/$",
-            serializers.SetupMatrixdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/setuprule/(?P<pk>(.+))/$",
-            serializers.SetupRuledetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/suboperation/(?P<pk>(.+))/$",
-            serializers.SubOperationdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/operationdependency/(?P<pk>(.+))/$",
-            serializers.OperationDependencydetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/manufacturingorder/(?P<pk>(.+))/$",
-            serializers.ManufacturingOrderdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/workorder/(?P<pk>(.+))/$",
-            serializers.WorkOrderdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/purchaseorder/(?P<pk>(.+))/$",
-            serializers.PurchaseOrderdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/distributionorder/(?P<pk>(.+))/$",
-            serializers.DistributionOrderdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/deliveryorder/(?P<pk>(.+))/$",
-            serializers.DeliveryOrderdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/skill/(?P<pk>(.+))/$",
-            serializers.SkilldetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/resourceskill/(?P<pk>(.+))/$",
-            serializers.ResourceSkilldetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/supplier/(?P<pk>(.+))/$",
-            serializers.SupplierdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/itemsupplier/(?P<pk>(.+))/$",
-            serializers.ItemSupplierdetailAPI.as_view(),
-        ),
-        re_path(
-            r"^api/input/itemdistribution/(?P<pk>(.+))/$",
-            serializers.ItemDistributiondetailAPI.as_view(),
-        ),
     ]
+
+    rest_api_router.register(
+        "input", "buffer", serializers.BufferAPI, serializers.BufferdetailAPI
+    )
+    rest_api_router.register(
+        "input", "resource", serializers.ResourceAPI, serializers.ResourcedetailAPI
+    )
+    rest_api_router.register(
+        "input", "location", serializers.LocationAPI, serializers.LocationdetailAPI
+    )
+    rest_api_router.register(
+        "input", "customer", serializers.CustomerAPI, serializers.CustomerdetailAPI
+    )
+    rest_api_router.register(
+        "input", "demand", serializers.DemandAPI, serializers.DemanddetailAPI
+    )
+    rest_api_router.register(
+        "input", "item", serializers.ItemAPI, serializers.ItemdetailAPI
+    )
+    rest_api_router.register(
+        "input",
+        "operationresource",
+        serializers.OperationResourceAPI,
+        serializers.OperationResourcedetailAPI,
+    )
+    rest_api_router.register(
+        "input",
+        "operationmaterial",
+        serializers.OperationMaterialAPI,
+        serializers.OperationMaterialdetailAPI,
+    )
+    rest_api_router.register(
+        "input",
+        "operationplanresource",
+        serializers.OperationPlanResourceAPI,
+        serializers.OperationPlanResourcedetailAPI,
+    )
+    rest_api_router.register(
+        "input",
+        "operationplanmaterial",
+        serializers.OperationPlanMaterialAPI,
+        serializers.OperationPlanMaterialdetailAPI,
+    )
+    rest_api_router.register(
+        "input", "calendar", serializers.CalendarAPI, serializers.CalendardetailAPI
+    )
+    rest_api_router.register(
+        "input",
+        "calendarbucket",
+        serializers.CalendarBucketAPI,
+        serializers.CalendarBucketdetailAPI,
+    )
+    rest_api_router.register(
+        "input", "operation", serializers.OperationAPI, serializers.OperationdetailAPI
+    )
+    rest_api_router.register(
+        "input",
+        "setupmatrix",
+        serializers.SetupMatrixAPI,
+        serializers.SetupMatrixdetailAPI,
+    )
+    rest_api_router.register(
+        "input", "setuprule", serializers.SetupRuleAPI, serializers.SetupRuledetailAPI
+    )
+    rest_api_router.register(
+        "input",
+        "suboperation",
+        serializers.SubOperationAPI,
+        serializers.SubOperationdetailAPI,
+    )
+    rest_api_router.register(
+        "input",
+        "operationdependency",
+        serializers.OperationDependencyAPI,
+        serializers.OperationDependencydetailAPI,
+    )
+    rest_api_router.register(
+        "input",
+        "manufacturingorder",
+        serializers.ManufacturingOrderAPI,
+        serializers.ManufacturingOrderdetailAPI,
+    )
+    rest_api_router.register(
+        "input", "workorder", serializers.WorkOrderAPI, serializers.WorkOrderdetailAPI
+    )
+    rest_api_router.register(
+        "input",
+        "purchaseorder",
+        serializers.PurchaseOrderAPI,
+        serializers.PurchaseOrderdetailAPI,
+    )
+    rest_api_router.register(
+        "input",
+        "distributionorder",
+        serializers.DistributionOrderAPI,
+        serializers.DistributionOrderdetailAPI,
+    )
+    rest_api_router.register(
+        "input",
+        "deliveryorder",
+        serializers.DeliveryOrderAPI,
+        serializers.DeliveryOrderdetailAPI,
+    )
+    rest_api_router.register(
+        "input", "skill", serializers.SkillAPI, serializers.SkilldetailAPI
+    )
+    rest_api_router.register(
+        "input",
+        "resourceskill",
+        serializers.ResourceSkillAPI,
+        serializers.ResourceSkilldetailAPI,
+    )
+    rest_api_router.register(
+        "input", "supplier", serializers.SupplierAPI, serializers.SupplierdetailAPI
+    )
+    rest_api_router.register(
+        "input",
+        "itemsupplier",
+        serializers.ItemSupplierAPI,
+        serializers.ItemSupplierdetailAPI,
+    )
+    rest_api_router.register(
+        "input",
+        "itemdistribution",
+        serializers.ItemDistributionAPI,
+        serializers.ItemDistributiondetailAPI,
+    )
 
 else:
     from . import services

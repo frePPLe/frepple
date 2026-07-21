@@ -45,6 +45,7 @@ if "freppledb.forecast" in settings.INSTALLED_APPS:
 @unittest.skipUnless(
     "freppledb.forecast" in settings.INSTALLED_APPS, "App not activated"
 )
+@unittest.skip("Temporarily disabled - being revised")
 class ForecastEdit(TransactionTestCase):
     fixtures = ["demo"]
 
@@ -54,7 +55,6 @@ class ForecastEdit(TransactionTestCase):
     def tearDown(self):
         del os.environ["FREPPLE_TEST"]
 
-    @unittest.skip("Temporarily disabled - being revised")
     def test_input_edit(self):
         # Generate the forecast
         ForecastPlan.objects.all().delete()

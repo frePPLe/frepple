@@ -25,12 +25,11 @@ from rest_framework.serializers import SerializerMethodField
 from django_bulk_drf import BulkModelSerializer
 
 from freppledb.common.api.views import (
-    frePPleListCreateAPIView,
+    frePPleBulkModelViewSet,
     frePPleRetrieveUpdateDestroyAPIView,
 )
 from . import models
 from freppledb.common.api.serializers import (
-    ModelSerializer,
     getAttributeAPIFilterDefinition,
     getAttributeAPIFields,
     getAttributeAPIReadOnlyFields,
@@ -57,7 +56,6 @@ class CalendarFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.Calendar),
         )
-        filter_fields = fields.keys()
 
 
 class CalendarSerializer(BulkModelSerializer):
@@ -77,12 +75,12 @@ class CalendarSerializer(BulkModelSerializer):
         )
 
 
-class CalendarAPI(frePPleListCreateAPIView):
+class CalendarAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.Calendar.objects.using(self.request.database).all()
 
     serializer_class = CalendarSerializer
-    filter_class = CalendarFilter
+    filterset_class = CalendarFilter
 
     unique_fields = ["name"]
 
@@ -119,7 +117,6 @@ class CalendarBucketFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.CalendarBucket),
         )
-        filter_fields = fields.keys()
 
 
 class CalendarBucketSerializer(BulkModelSerializer):
@@ -149,7 +146,7 @@ class CalendarBucketSerializer(BulkModelSerializer):
         )
 
 
-class CalendarBucketAPI(frePPleListCreateAPIView):
+class CalendarBucketAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.CalendarBucket.objects.using(self.request.database).all()
 
@@ -173,7 +170,7 @@ class CalendarBucketAPI(frePPleListCreateAPIView):
         "lastmodified",
     )
     serializer_class = CalendarBucketSerializer
-    filter_class = CalendarBucketFilter
+    filterset_class = CalendarBucketFilter
     unique_fields = ["id"]
 
 
@@ -200,7 +197,6 @@ class LocationFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.Location),
         )
-        filter_fields = fields.keys()
 
 
 class LocationSerializer(BulkModelSerializer):
@@ -221,14 +217,15 @@ class LocationSerializer(BulkModelSerializer):
         )
 
 
-class LocationAPI(frePPleListCreateAPIView):
+class LocationAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.Location.objects.using(self.request.database).all()
 
     serializer_class = LocationSerializer
-    filter_class = LocationFilter
+    filterset_class = LocationFilter
 
     unique_fields = ["name"]
+
 
 class LocationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
@@ -252,7 +249,6 @@ class CustomerFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.Customer),
         )
-        filter_fields = fields.keys()
 
 
 class CustomerSerializer(BulkModelSerializer):
@@ -272,14 +268,14 @@ class CustomerSerializer(BulkModelSerializer):
         )
 
 
-class CustomerAPI(frePPleListCreateAPIView):
+class CustomerAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.Customer.objects.using(self.request.database).all()
 
     serializer_class = CustomerSerializer
-    filter_class = CustomerFilter
+    filterset_class = CustomerFilter
 
-    unique_field = "name"
+    unique_fields = ["name"]
 
 
 class CustomerdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -310,7 +306,6 @@ class ItemFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.Item),
         )
-        filter_fields = fields.keys()
 
 
 class ItemSerializer(BulkModelSerializer):
@@ -337,12 +332,12 @@ class ItemSerializer(BulkModelSerializer):
         ) + getAttributeAPIReadOnlyFields(models.Item)
 
 
-class ItemAPI(frePPleListCreateAPIView):
+class ItemAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.Item.objects.using(self.request.database).all()
 
     serializer_class = ItemSerializer
-    filter_class = ItemFilter
+    filterset_class = ItemFilter
 
     unique_fields = ["name"]
 
@@ -370,7 +365,6 @@ class SupplierFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.Supplier),
         )
-        filter_fields = fields.keys()
 
 
 class SupplierSerializer(BulkModelSerializer):
@@ -391,14 +385,15 @@ class SupplierSerializer(BulkModelSerializer):
         )
 
 
-class SupplierAPI(frePPleListCreateAPIView):
+class SupplierAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.Supplier.objects.using(self.request.database).all()
 
     serializer_class = SupplierSerializer
-    filter_class = SupplierFilter
+    filterset_class = SupplierFilter
 
     unique_fields = ["name"]
+
 
 class SupplierdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
@@ -432,7 +427,6 @@ class ItemSupplierFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.ItemSupplier),
         )
-        filter_fields = fields.keys()
 
 
 class ItemSupplierSerializer(BulkModelSerializer):
@@ -462,14 +456,15 @@ class ItemSupplierSerializer(BulkModelSerializer):
         )
 
 
-class ItemSupplierAPI(frePPleListCreateAPIView):
+class ItemSupplierAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.ItemSupplier.objects.using(self.request.database).all()
 
     serializer_class = ItemSupplierSerializer
-    filter_class = ItemSupplierFilter
+    filterset_class = ItemSupplierFilter
 
     unique_fields = ["id"]
+
 
 class ItemSupplierdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
@@ -501,7 +496,6 @@ class ItemDistributionFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.ItemDistribution),
         )
-        filter_fields = fields.keys()
 
 
 class ItemDistributionSerializer(BulkModelSerializer):
@@ -529,12 +523,12 @@ class ItemDistributionSerializer(BulkModelSerializer):
         )
 
 
-class ItemDistributionAPI(frePPleListCreateAPIView):
+class ItemDistributionAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.ItemDistribution.objects.using(self.request.database).all()
 
     serializer_class = ItemDistributionSerializer
-    filter_class = ItemDistributionFilter
+    filterset_class = ItemDistributionFilter
 
     unique_fields = ["id"]
 
@@ -577,7 +571,6 @@ class OperationFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.Operation),
         )
-        filter_fields = fields.keys()
 
 
 class OperationSerializer(BulkModelSerializer):
@@ -614,12 +607,12 @@ class OperationSerializer(BulkModelSerializer):
         )
 
 
-class OperationAPI(frePPleListCreateAPIView):
+class OperationAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.Operation.objects.using(self.request.database).all()
 
     serializer_class = OperationSerializer
-    filter_class = OperationFilter
+    filterset_class = OperationFilter
 
     unique_fields = ["name"]
 
@@ -647,7 +640,6 @@ class SubOperationFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.SubOperation),
         )
-        filter_fields = fields.keys()
 
 
 class SubOperationSerializer(BulkModelSerializer):
@@ -668,14 +660,15 @@ class SubOperationSerializer(BulkModelSerializer):
         )
 
 
-class SubOperationAPI(frePPleListCreateAPIView):
+class SubOperationAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.SubOperation.objects.using(self.request.database).all()
 
     serializer_class = SubOperationSerializer
-    filter_class = SubOperationFilter
+    filterset_class = SubOperationFilter
 
     unique_fields = ["id"]
+
 
 class SubOperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
@@ -700,7 +693,6 @@ class OperationDependencyFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.OperationDependency),
         )
-        filter_fields = fields.keys()
 
 
 class OperationDependencySerializer(BulkModelSerializer):
@@ -721,12 +713,12 @@ class OperationDependencySerializer(BulkModelSerializer):
         )
 
 
-class OperationDependencyAPI(frePPleListCreateAPIView):
+class OperationDependencyAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.OperationDependency.objects.using(self.request.database).all()
 
     serializer_class = OperationDependencySerializer
-    filter_class = OperationDependencyFilter
+    filterset_class = OperationDependencyFilter
 
     unique_fields = ["id"]
 
@@ -761,7 +753,6 @@ class BufferFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.Buffer),
         )
-        filter_fields = fields.keys()
 
 
 class BufferSerializer(BulkModelSerializer):
@@ -790,12 +781,12 @@ class BufferSerializer(BulkModelSerializer):
         )
 
 
-class BufferAPI(frePPleListCreateAPIView):
+class BufferAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.Buffer.objects.using(self.request.database).all()
 
     serializer_class = BufferSerializer
-    filter_class = BufferFilter
+    filterset_class = BufferFilter
 
     unique_fields = ["id"]
 
@@ -818,7 +809,6 @@ class SetupMatrixFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.SetupMatrix),
         )
-        filter_fields = fields.keys()
 
 
 class SetupMatrixSerializer(BulkModelSerializer):
@@ -832,14 +822,15 @@ class SetupMatrixSerializer(BulkModelSerializer):
         )
 
 
-class SetupMatrixAPI(frePPleListCreateAPIView):
+class SetupMatrixAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.SetupMatrix.objects.using(self.request.database).all()
 
     serializer_class = SetupMatrixSerializer
-    filter_class = SetupMatrixFilter
+    filterset_class = SetupMatrixFilter
 
     unique_fields = ["name"]
+
 
 class SetupMatrixdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
@@ -864,7 +855,6 @@ class SetupRuleFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.SetupRule),
         )
-        filter_fields = fields.keys()
 
 
 class SetupRuleSerializer(BulkModelSerializer):
@@ -885,12 +875,12 @@ class SetupRuleSerializer(BulkModelSerializer):
         )
 
 
-class SetupRuleAPI(frePPleListCreateAPIView):
+class SetupRuleAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.SetupRule.objects.using(self.request.database).all()
 
     serializer_class = SetupRuleSerializer
-    filter_class = SetupRuleFilter
+    filterset_class = SetupRuleFilter
 
     unique_fields = ["id"]
 
@@ -928,7 +918,6 @@ class ResourceFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.Resource),
         )
-        filter_fields = fields.keys()
 
 
 class ResourceSerializer(BulkModelSerializer):
@@ -960,12 +949,12 @@ class ResourceSerializer(BulkModelSerializer):
         )
 
 
-class ResourceAPI(frePPleListCreateAPIView):
+class ResourceAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.Resource.objects.using(self.request.database).all()
 
     serializer_class = ResourceSerializer
-    filter_class = ResourceFilter
+    filterset_class = ResourceFilter
 
     unique_fields = ["name"]
 
@@ -988,7 +977,6 @@ class SkillFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.Skill),
         )
-        filter_fields = fields.keys()
 
 
 class SkillSerializer(BulkModelSerializer):
@@ -1002,12 +990,12 @@ class SkillSerializer(BulkModelSerializer):
         )
 
 
-class SkillAPI(frePPleListCreateAPIView):
+class SkillAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.Skill.objects.using(self.request.database).all()
 
     serializer_class = SkillSerializer
-    filter_class = SkillFilter
+    filterset_class = SkillFilter
 
     unique_fields = ["name"]
 
@@ -1035,7 +1023,6 @@ class ResourceSkillFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.ResourceSkill),
         )
-        filter_fields = fields.keys()
 
 
 class ResourceSkillSerializer(BulkModelSerializer):
@@ -1056,12 +1043,12 @@ class ResourceSkillSerializer(BulkModelSerializer):
         )
 
 
-class ResourceSkillAPI(frePPleListCreateAPIView):
+class ResourceSkillAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.ResourceSkill.objects.using(self.request.database).all()
 
     serializer_class = ResourceSkillSerializer
-    filter_class = ResourceSkillFilter
+    filterset_class = ResourceSkillFilter
 
     unique_fields = ["id"]
 
@@ -1097,7 +1084,6 @@ class OperationMaterialFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.OperationMaterial),
         )
-        filter_fields = fields.keys()
 
 
 class OperationMaterialSerializer(BulkModelSerializer):
@@ -1126,12 +1112,12 @@ class OperationMaterialSerializer(BulkModelSerializer):
         )
 
 
-class OperationMaterialAPI(frePPleListCreateAPIView):
+class OperationMaterialAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.OperationMaterial.objects.using(self.request.database).all()
 
     serializer_class = OperationMaterialSerializer
-    filter_class = OperationMaterialFilter
+    filterset_class = OperationMaterialFilter
 
     unique_fields = ["id"]
 
@@ -1161,7 +1147,6 @@ class OperationPlanMaterialFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.OperationPlanMaterial),
         )
-        filter_fields = fields.keys()
 
 
 class OperationPlanMaterialSerializer(BulkModelSerializer):
@@ -1184,12 +1169,12 @@ class OperationPlanMaterialSerializer(BulkModelSerializer):
         )
 
 
-class OperationPlanMaterialAPI(frePPleListCreateAPIView):
+class OperationPlanMaterialAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.OperationPlanMaterial.objects.using(self.request.database).all()
 
     serializer_class = OperationPlanMaterialSerializer
-    filter_class = OperationPlanMaterialFilter
+    filterset_class = OperationPlanMaterialFilter
 
     unique_fields = ["id"]
 
@@ -1222,7 +1207,6 @@ class OperationResourceFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.OperationResource),
         )
-        filter_fields = fields.keys()
 
 
 class OperationResourceSerializer(BulkModelSerializer):
@@ -1249,12 +1233,12 @@ class OperationResourceSerializer(BulkModelSerializer):
         )
 
 
-class OperationResourceAPI(frePPleListCreateAPIView):
+class OperationResourceAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.OperationResource.objects.using(self.request.database).all()
 
     serializer_class = OperationResourceSerializer
-    filter_class = OperationResourceFilter
+    filterset_class = OperationResourceFilter
 
     unique_fields = ["id"]
 
@@ -1282,7 +1266,6 @@ class OperationPlanResourceFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.OperationPlanResource),
         )
-        filter_fields = fields.keys()
 
 
 class OperationPlanResourceSerializer(BulkModelSerializer):
@@ -1314,12 +1297,12 @@ class OperationPlanResourceSerializer(BulkModelSerializer):
         )
 
 
-class OperationPlanResourceAPI(frePPleListCreateAPIView):
+class OperationPlanResourceAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.OperationPlanResource.objects.using(self.request.database).all()
 
     serializer_class = OperationPlanResourceSerializer
-    filter_class = OperationPlanResourceFilter
+    filterset_class = OperationPlanResourceFilter
 
     unique_fields = ["id"]
 
@@ -1354,7 +1337,6 @@ class ManufacturingOrderFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.OperationPlan),
         )
-        filter_fields = fields.keys()
 
 
 class ManufacturingOrderSerializer(BulkModelSerializer):
@@ -1536,14 +1518,15 @@ class ManufacturingOrderSerializer(BulkModelSerializer):
         )
 
 
-class ManufacturingOrderAPI(frePPleListCreateAPIView):
+class ManufacturingOrderAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.ManufacturingOrder.objects.using(self.request.database).all()
 
     serializer_class = ManufacturingOrderSerializer
-    filter_class = ManufacturingOrderFilter
+    filterset_class = ManufacturingOrderFilter
 
     unique_fields = ["reference"]
+
 
 class ManufacturingOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     def get_queryset(self):
@@ -1575,7 +1558,6 @@ class WorkOrderFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.OperationPlan),
         )
-        filter_fields = fields.keys()
 
 
 class WorkOrderSerializer(BulkModelSerializer):
@@ -1757,12 +1739,12 @@ class WorkOrderSerializer(BulkModelSerializer):
         )
 
 
-class WorkOrderAPI(frePPleListCreateAPIView):
+class WorkOrderAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.WorkOrder.objects.using(self.request.database).all()
 
     serializer_class = WorkOrderSerializer
-    filter_class = WorkOrderFilter
+    filterset_class = WorkOrderFilter
 
     unique_fields = ["reference"]
 
@@ -1796,7 +1778,6 @@ class DistributionOrderFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.OperationPlan),
         )
-        filter_fields = fields.keys()
 
 
 class DistributionOrderSerializer(BulkModelSerializer):
@@ -1823,12 +1804,12 @@ class DistributionOrderSerializer(BulkModelSerializer):
         )
 
 
-class DistributionOrderAPI(frePPleListCreateAPIView):
+class DistributionOrderAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.DistributionOrder.objects.using(self.request.database).all()
 
     serializer_class = DistributionOrderSerializer
-    filter_class = DistributionOrderFilter
+    filterset_class = DistributionOrderFilter
 
     unique_fields = ["reference"]
 
@@ -1862,7 +1843,6 @@ class PurchaseOrderFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.OperationPlan),
         )
-        filter_fields = fields.keys()
 
 
 class PurchaseOrderSerializer(BulkModelSerializer):
@@ -1890,12 +1870,12 @@ class PurchaseOrderSerializer(BulkModelSerializer):
         )
 
 
-class PurchaseOrderAPI(frePPleListCreateAPIView):
+class PurchaseOrderAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.PurchaseOrder.objects.using(self.request.database).all()
 
     serializer_class = PurchaseOrderSerializer
-    filter_class = PurchaseOrderFilter
+    filterset_class = PurchaseOrderFilter
 
     unique_fields = ["reference"]
 
@@ -1929,7 +1909,6 @@ class DeliveryOrderFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.OperationPlan),
         )
-        filter_fields = fields.keys()
 
 
 class DeliveryOrderSerializer(BulkModelSerializer):
@@ -1956,12 +1935,12 @@ class DeliveryOrderSerializer(BulkModelSerializer):
         )
 
 
-class DeliveryOrderAPI(frePPleListCreateAPIView):
+class DeliveryOrderAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.DeliveryOrder.objects.using(self.request.database).all()
 
     serializer_class = DeliveryOrderSerializer
-    filter_class = DeliveryOrderFilter
+    filterset_class = DeliveryOrderFilter
 
     unique_fields = ["reference"]
 
@@ -2001,7 +1980,6 @@ class DemandFilter(FilterSet):
             },
             **getAttributeAPIFilterDefinition(models.Demand),
         )
-        filter_fields = fields.keys()
 
 
 class DemandSerializer(BulkModelSerializer):
@@ -2035,12 +2013,12 @@ class DemandSerializer(BulkModelSerializer):
         )
 
 
-class DemandAPI(frePPleListCreateAPIView):
+class DemandAPI(frePPleBulkModelViewSet):
     def get_queryset(self):
         return models.Demand.objects.using(self.request.database).all()
 
     serializer_class = DemandSerializer
-    filter_class = DemandFilter
+    filterset_class = DemandFilter
 
     unique_fields = ["name"]
 

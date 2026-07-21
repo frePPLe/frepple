@@ -21,15 +21,16 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 
-from rest_framework import generics
-from rest_framework_bulk import ListBulkCreateUpdateDestroyAPIView
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+from django_bulk_drf import BulkModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import permissions
 
 from freppledb.common.models import User
 from freppledb.common.auth import getWebserviceAuthorization
@@ -84,15 +85,31 @@ class frepplePermissionClass(permissions.DjangoModelPermissions):
         return super().has_permission(request, view)
 
 
-class frePPleListCreateAPIView(ListBulkCreateUpdateDestroyAPIView):
+class frePPleBulkModelViewSet(BulkModelViewSet):
     """
-    Customized API view for the REST framework.:
-        - support for request-specific scenario database
-        - add 'title' to the context of the html view
+    Customized API view for the REST framework:
+        - Bulk operations via django-bulk-drf
+        - Support for request-specific scenario database (.using(self.request.database))
+        - Backward compatibility for query-parameter bulk DELETEs
+        - Safety check preventing unintended full-table drops
     """
 
     filter_backends = (DjangoFilterBackend,)
     permission_classes = (frepplePermissionClass,)
+
+    DEFAULT_ACTIONS = {
+        "get": "list",
+        "post": "create",
+        "put": "update",
+        "patch": "partial_update",
+        "delete": "bulk_destroy",
+    }
+
+    @classmethod
+    def as_view(cls, actions=None, **initkwargs):
+        if actions is None:
+            actions = cls.DEFAULT_ACTIONS
+        return super().as_view(actions=actions, **initkwargs)
 
     def get_queryset(self):
         queryset = super().get_queryset().using(self.request.database)
@@ -104,12 +121,46 @@ class frePPleListCreateAPIView(ListBulkCreateUpdateDestroyAPIView):
 
     def allow_bulk_destroy(self, qs, filtered):
         # Safety check to prevent deleting all records in the database table
-        if qs.count() > filtered.count():
-            return True
-        # default checks if the qs was filtered
-        # qs comes from self.get_queryset()
-        # filtered comes from self.filter_queryset(qs)
-        return False
+        return qs.count() > filtered.count()
+
+    def bulk_destroy(self, request, *args, **kwargs):
+        if request.query_params:
+            # Delete based on query parameters
+            qs = self.get_queryset()
+            filtered = self.filter_queryset(qs)
+            if not self.allow_bulk_destroy(qs, filtered):
+                return Response(
+                    {
+                        "detail": "Bulk delete rejected: query filter matched all records or no items filtered."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            filtered.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            # Payload body based delete
+            return super().bulk_destroy(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Handle PUT/PATCH on collection routes:
+        If request data is a list, execute bulk update via super().
+        If request data is a single object, wrap it in a list so bulk update processes it
+        without requiring a 'pk' in the URL string.
+        """
+        if not isinstance(request.data, list):
+            request._full_data = (
+                [request.data] if hasattr(request, "_full_data") else request.data
+            )
+            # Standardizing input data as list for collection-level update
+            if isinstance(request.data, dict):
+                kwargs["many"] = True
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        """Pass partial=True to update method."""
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
 
 
 class frePPleRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):

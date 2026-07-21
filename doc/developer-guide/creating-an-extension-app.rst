@@ -301,7 +301,6 @@ the menu "help/REST API help".
                "source": ["exact", "in"],
                "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
            }
-           filter_fields = ("name", "charfield", "booleanfield", "decimalfield")
 
 
    class MyModelSerializer(BulkModelSerializer):
@@ -313,7 +312,7 @@ the menu "help/REST API help".
    class MyModelSerializerAPI(frePPleListCreateAPIView):
        queryset = My_Model.objects.all()
        serializer_class = MyModelSerializer
-       filter_class = MyModelFilter
+       filterset_class = MyModelFilter
        unique_fields = ["name"]
 
 You can find all details on creating REST APIs on https://www.django-rest-framework.org/

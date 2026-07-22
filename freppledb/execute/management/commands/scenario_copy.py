@@ -22,9 +22,9 @@
 #
 
 import os
+import shutil
 import subprocess
 from datetime import datetime
-from threading import Thread
 
 
 from django.db.models import Case, When, Value, IntegerField
@@ -453,15 +453,16 @@ class Command(BaseCommand):
             with subprocess.Popen(
                 commandline,
                 shell=True,
+                executable=shutil.which("bash") or "/bin/sh",
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.PIPE,
                 env=env,
             ) as p:
                 error_message = None
                 try:
-                    res = p.communicate()
                     task.processid = p.pid
                     task.save(using=source)
+                    res = p.communicate()
                     p.wait()
                     error_message = res[1].decode().partition("\n")[0]
                     if p.returncode != 0 or "error" in error_message.lower():
@@ -503,8 +504,8 @@ class Command(BaseCommand):
                         )
                     raise Exception(e or "Database copy failed")
 
-            # Assure the identity sequences are bigger than the id values
             with connections[destination].cursor() as cursor:
+                # Assure the identity sequences are bigger than the id values
                 cursor.execute("""
                     with cte as (
                         select 'common_user_id_seq' as seq,
@@ -559,6 +560,13 @@ class Command(BaseCommand):
                     from cte
                     where last_val < max_id
                     """)
+                # Assure no running tasks are inherited from the source
+                cursor.execute("""
+                    update execute_log
+                    set processid = null
+                    where processid is not null
+                    and name != 'scenario_copy'
+                    """)
 
             # Check the permissions after restoring a backup.
             if (
@@ -574,7 +582,7 @@ class Command(BaseCommand):
                 )
 
             # Shut down the web service in the destination
-            if "freppledb.webservice" in get_databases():
+            if "freppledb.webservice" in settings.INSTALLED_APPS:
                 call_command("stopwebservice", database=destination, force=True)
 
             # Update the scenario table
@@ -703,8 +711,13 @@ class Command(BaseCommand):
             # Start the web service in the new scenario
             if useWebService(destination):
                 try:
-                    call_command("runwebservice", database=destination, daemon=True)
-                except Exception as e:
+                    call_command(
+                        "runwebservice",
+                        database=destination,
+                        daemon=True,
+                        forcerestart=True,
+                    )
+                except Exception:
                     raise Exception("Failed to start web service")
 
         except Exception as e:

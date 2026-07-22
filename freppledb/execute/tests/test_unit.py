@@ -225,7 +225,9 @@ class execute_multidb(TransactionTestCase):
         self.assertTrue(dumpfile)
         management.call_command("scenario_release", database=db2)
         with self._allow_report_databases():
-            management.call_command("scenario_copy", "--dumpfile=%s" % dumpfile, db1, db2)
+            management.call_command(
+                "scenario_copy", "--dumpfile=%s" % dumpfile, db1, db2
+            )
         self.assertEqual(
             input.models.PurchaseOrder.objects.all().using(db1).count(),
             input.models.PurchaseOrder.objects.all().using(db2).count(),

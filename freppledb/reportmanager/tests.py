@@ -22,6 +22,7 @@
 #
 
 import json
+from contextlib import contextmanager
 from urllib.parse import quote
 from unittest import skipUnless
 
@@ -30,12 +31,30 @@ from django.test import TransactionTestCase
 
 from freppledb.common.models import User
 from freppledb.common.tests import checkResponse
+from freppledb.common.utils import get_databases
 from .models import SQLReport, SQLColumn
 
 
 @skipUnless("freppledb.reportmanager" in settings.INSTALLED_APPS, "App not activated")
 class ReportManagerTest(TransactionTestCase):
     fixtures = ["demo"]
+
+    @contextmanager
+    def _allow_report_databases(self):
+        # Django test suite is picky about which database connections are allowed
+        # Reporting database aren't included by default
+        cls = type(self)
+        original_databases = cls.databases
+        extra_databases = tuple(
+            alias
+            for alias in get_databases(True).keys()
+            if alias.endswith("_report") and alias not in original_databases
+        )
+        cls.databases = tuple(original_databases) + extra_databases
+        try:
+            yield
+        finally:
+            cls.databases = original_databases
 
     def setUp(self):
         # Login
@@ -45,101 +64,104 @@ class ReportManagerTest(TransactionTestCase):
         super()._remove_databases_failures()
 
     def test_create_and_edit(self):
-        # Create a report
-        self.assertEqual(SQLReport.objects.all().count(), 0)
-        response = self.client.get("/reportmanager/schema/")
-        checkResponse(self, response)
-        response = self.client.post(
-            "/reportmanager/",
-            {
-                "sql": "select name, cost, description from item",
-                "save": "true",
-                "name": "test report",
-                "public": "false",
-                "description": "my description",
-            },
-            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
-        )
-        checkResponse(self, response)
-        self.assertEqual(SQLReport.objects.all().count(), 1)
-        self.assertEqual(SQLColumn.objects.all().count(), 3)
-        report = SQLReport.objects.all()[0]
-        self.assertEqual(report.name, "test report")
-        self.assertEqual(report.sql, "select name, cost, description from item")
-        self.assertEqual(report.description, "my description")
-        self.assertEqual(report.public, False)
-
-        # Retrieve report data
-        response = self.client.get("/reportmanager/%s/" % report.id)
-        checkResponse(self, response)
-        response = self.client.get("/reportmanager/%s/?format=json" % report.id)
-        self.assertContains(response, '"records":7,')
-        response = self.client.get("/reportmanager/%s/?format=csv" % report.id)
-        checkResponse(self, response)
-        response = self.client.get("/reportmanager/%s/?format=spreadsheet" % report.id)
-        checkResponse(self, response)
-
-        # Retrieve filtered and sorted report data
-        response = self.client.get("/reportmanager/%s/" % report.id)
-        checkResponse(self, response)
-        fltr = quote(
-            json.dumps(
+        with self._allow_report_databases():
+            # Create a report
+            self.assertEqual(SQLReport.objects.all().count(), 0)
+            response = self.client.get("/reportmanager/schema/")
+            checkResponse(self, response)
+            response = self.client.post(
+                "/reportmanager/",
                 {
-                    "groupOp": "AND",
-                    "rules": [{"field": "name", "op": "cn", "data": "e"}],
-                }
+                    "sql": "select name, cost, description from item",
+                    "save": "true",
+                    "name": "test report",
+                    "public": "false",
+                    "description": "my description",
+                },
+                HTTP_X_REQUESTED_WITH="XMLHttpRequest",
             )
-        )
-        response = self.client.get(
-            "/reportmanager/%s/?format=json&_search=true&filters=%s&searchField=&searchString=&searchOper="
-            % (report.id, fltr)
-        )
-        self.assertContains(response, '"records":1,')
-        response = self.client.get(
-            "/reportmanager/%s/?format=csv&name__cn=a" % (report.id)
-        )
-        cnt = 0
-        for _ in response:
-            cnt += 1
-        self.assertEqual(cnt, 5)
+            checkResponse(self, response)
+            self.assertEqual(SQLReport.objects.all().count(), 1)
+            self.assertEqual(SQLColumn.objects.all().count(), 3)
+            report = SQLReport.objects.all()[0]
+            self.assertEqual(report.name, "test report")
+            self.assertEqual(report.sql, "select name, cost, description from item")
+            self.assertEqual(report.description, "my description")
+            self.assertEqual(report.public, False)
 
-        # Edit report
-        response = self.client.post(
-            "/reportmanager/%s/" % report.id,
-            {
-                "id": report.id,
-                "save": "true",
-                "sql": "select name, category, subcategory, cost, description from item",
-                "name": report.name,
-                "public": report.public,
-            },
-            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
-        )
-        answer = json.loads(response.content.decode("utf-8"))
-        self.assertEqual(answer["status"], "ok")
-        response = self.client.post(
-            "/reportmanager/%s/" % report.id,
-            {
-                "id": report.id,
-                "save": "true",
-                "sql": "a very bad SQL statement",
-                "name": report.name,
-                "public": report.public,
-            },
-            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
-        )
-        answer = json.loads(response.content.decode("utf-8"))
-        self.assertNotEqual(answer["status"], "ok")
+            # Retrieve report data
+            response = self.client.get("/reportmanager/%s/" % report.id)
+            checkResponse(self, response)
+            response = self.client.get("/reportmanager/%s/?format=json" % report.id)
+            self.assertContains(response, '"records":7,')
+            response = self.client.get("/reportmanager/%s/?format=csv" % report.id)
+            checkResponse(self, response)
+            response = self.client.get(
+                "/reportmanager/%s/?format=spreadsheet" % report.id
+            )
+            checkResponse(self, response)
 
-        # Delete a report
-        response = self.client.post(
-            "/reportmanager/",
-            {"id": report.id, "delete": "true"},
-            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
-        )
-        checkResponse(self, response)
-        self.assertEqual(SQLReport.objects.all().count(), 0)
-        self.assertEqual(SQLColumn.objects.all().count(), 0)
+            # Retrieve filtered and sorted report data
+            response = self.client.get("/reportmanager/%s/" % report.id)
+            checkResponse(self, response)
+            fltr = quote(
+                json.dumps(
+                    {
+                        "groupOp": "AND",
+                        "rules": [{"field": "name", "op": "cn", "data": "e"}],
+                    }
+                )
+            )
+            response = self.client.get(
+                "/reportmanager/%s/?format=json&_search=true&filters=%s&searchField=&searchString=&searchOper="
+                % (report.id, fltr)
+            )
+            self.assertContains(response, '"records":1,')
+            response = self.client.get(
+                "/reportmanager/%s/?format=csv&name__cn=a" % (report.id)
+            )
+            cnt = 0
+            for _ in response:
+                cnt += 1
+            self.assertEqual(cnt, 5)
+
+            # Edit report
+            response = self.client.post(
+                "/reportmanager/%s/" % report.id,
+                {
+                    "id": report.id,
+                    "save": "true",
+                    "sql": "select name, category, subcategory, cost, description from item",
+                    "name": report.name,
+                    "public": report.public,
+                },
+                HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+            )
+            answer = json.loads(response.content.decode("utf-8"))
+            self.assertEqual(answer["status"], "ok")
+            response = self.client.post(
+                "/reportmanager/%s/" % report.id,
+                {
+                    "id": report.id,
+                    "save": "true",
+                    "sql": "a very bad SQL statement",
+                    "name": report.name,
+                    "public": report.public,
+                },
+                HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+            )
+            answer = json.loads(response.content.decode("utf-8"))
+            self.assertNotEqual(answer["status"], "ok")
+
+            # Delete a report
+            response = self.client.post(
+                "/reportmanager/",
+                {"id": report.id, "delete": "true"},
+                HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+            )
+            checkResponse(self, response)
+            self.assertEqual(SQLReport.objects.all().count(), 0)
+            self.assertEqual(SQLColumn.objects.all().count(), 0)
 
     def tearDown(self):
         super()._add_databases_failures()

@@ -22,6 +22,7 @@
 #
 
 import base64
+from contextlib import contextmanager
 import json
 import os
 from time import sleep
@@ -118,6 +119,22 @@ class execute_multidb(TransactionTestCase):
 
     databases = get_databases().keys()
 
+    @contextmanager
+    def _allow_report_databases(self):
+        # Django test suite is picky about which database connections are allowed
+        cls = type(self)
+        original_databases = cls.databases
+        extra_databases = tuple(
+            alias
+            for alias in get_databases(True).keys()
+            if alias.endswith("_report") and alias not in original_databases
+        )
+        cls.databases = tuple(original_databases) + extra_databases
+        try:
+            yield
+        finally:
+            cls.databases = original_databases
+
     def setUp(self):
         os.environ["FREPPLE_TEST"] = "YES"
         param = Parameter.objects.all().get_or_create(pk="plan.webservice")[0]
@@ -162,7 +179,8 @@ class execute_multidb(TransactionTestCase):
         # We need to close the transactions, since they can block the copy
         transaction.commit(using=db1)
         transaction.commit(using=db2)
-        management.call_command("scenario_copy", db1, db2)
+        with self._allow_report_databases():
+            management.call_command("scenario_copy", db1, db2)
         count1 = (
             input.models.OperationPlan.objects.all()
             .filter(type="PO")
@@ -206,7 +224,8 @@ class execute_multidb(TransactionTestCase):
         dumpfile = Task.objects.filter(name="backup").first().logfile
         self.assertTrue(dumpfile)
         management.call_command("scenario_release", database=db2)
-        management.call_command("scenario_copy", "--dumpfile=%s" % dumpfile, db1, db2)
+        with self._allow_report_databases():
+            management.call_command("scenario_copy", "--dumpfile=%s" % dumpfile, db1, db2)
         self.assertEqual(
             input.models.PurchaseOrder.objects.all().using(db1).count(),
             input.models.PurchaseOrder.objects.all().using(db2).count(),

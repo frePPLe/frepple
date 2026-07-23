@@ -204,8 +204,9 @@ void HasLevel::computeLevels() {
             opstack.emplace(i->getOperation(), -1);
             i->getOperation()->cluster = cur_cluster;
           }
-          // else: no search required
+          if (cur_oper->hasType<OperationRouting>()) ++cur_level;
         }
+        if (cur_oper->hasType<OperationRouting>()) cur_oper->lvl = cur_level;
 
         // Push super operations on the stack
         if (cur_oper->getOwner()) {
@@ -219,7 +220,6 @@ void HasLevel::computeLevels() {
             opstack.emplace(cur_oper->getOwner(), -1);
             cur_oper->getOwner()->cluster = cur_cluster;
           }
-          // else: no search required
         }
 
         // Push dependencies on the stack
@@ -236,7 +236,6 @@ void HasLevel::computeLevels() {
             opstack.emplace(new_oper, -1);
             new_oper->cluster = cur_cluster;
           }
-          // else: no search required
         }
 
         // Update level of resources linked to current operation

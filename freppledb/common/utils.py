@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+
 from email.mime.image import MIMEImage
 from importlib.util import find_spec
 from io import StringIO
@@ -28,7 +29,6 @@ import math
 import os
 from pathlib import Path
 import tokenize
-
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives

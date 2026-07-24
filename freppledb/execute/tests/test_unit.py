@@ -33,6 +33,7 @@ from django.db import DEFAULT_DB_ALIAS, transaction
 from django.db.models import Sum, Count, Q
 from django.test import TransactionTestCase
 
+from freppledb.common.tests import TransactionTestCaseWithReportDatabases
 from freppledb.execute.models import Task
 import freppledb.output as output
 import freppledb.input as input
@@ -42,7 +43,7 @@ from freppledb.common.models import APIKey, Parameter, User, Notification
 from freppledb.common.utils import get_databases
 
 
-class execute_with_commands(TransactionTestCase):
+class execute_with_commands(TransactionTestCaseWithReportDatabases):
     fixtures = ["demo", "initial"]
 
     def setUp(self):
@@ -101,7 +102,8 @@ class execute_with_commands(TransactionTestCase):
             for file in os.listdir(outfolder):
                 if file.endswith(".csv.gz"):
                     os.remove(os.path.join(outfolder, file))
-        management.call_command("exporttofolder", verbosity="0")
+        with self._allow_report_databases():
+            management.call_command("exporttofolder", verbosity="0")
         self.assertEqual(
             Task.objects.filter(name="exporttofolder").first().status, "100%"
         )
@@ -114,26 +116,10 @@ class execute_with_commands(TransactionTestCase):
         self.assertGreaterEqual(count, 8)
 
 
-class execute_multidb(TransactionTestCase):
+class execute_multidb(TransactionTestCaseWithReportDatabases):
     fixtures = ["demo"]
 
     databases = get_databases().keys()
-
-    @contextmanager
-    def _allow_report_databases(self):
-        # Django test suite is picky about which database connections are allowed
-        cls = type(self)
-        original_databases = cls.databases
-        extra_databases = tuple(
-            alias
-            for alias in get_databases(True).keys()
-            if alias.endswith("_report") and alias not in original_databases
-        )
-        cls.databases = tuple(original_databases) + extra_databases
-        try:
-            yield
-        finally:
-            cls.databases = original_databases
 
     def setUp(self):
         os.environ["FREPPLE_TEST"] = "YES"

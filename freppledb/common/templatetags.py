@@ -45,6 +45,7 @@ from django.contrib.admin.widgets import (
 from django.db import models, connections
 from django.forms import FileInput, CheckboxInput, RadioSelect, CheckboxSelectMultiple
 from django.template import Library, Node, Variable, TemplateSyntaxError
+from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import iri_to_uri, force_str
 from django.utils.html import escape
@@ -60,6 +61,17 @@ register = Library()
 variable_title = Variable("title")
 variable_request = Variable("request")
 variable_popup = Variable("is_popup")
+
+
+@register.filter
+def date(value, arg="DATE_FORMAT"):
+    """
+    Override the django default 'date' filter.
+    By default Django localizes the output, which we don't want.
+    """
+    if value is None or value == "":
+        return ""
+    return date_format(value, arg, use_l10n=False)
 
 
 #

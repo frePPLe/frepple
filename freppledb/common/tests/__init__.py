@@ -21,4 +21,28 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+from contextlib import contextmanager
+
+from django.test import TransactionTestCase
+
 from .tests import checkResponse
+from ..utils import get_databases
+
+
+class TransactionTestCaseWithReportDatabases(TransactionTestCase):
+
+    @contextmanager
+    def _allow_report_databases(self):
+        # Django test suite is picky about which database connections are allowed
+        cls = type(self)
+        original_databases = cls.databases
+        extra_databases = tuple(
+            alias
+            for alias in get_databases(True).keys()
+            if alias.endswith("_report") and alias not in original_databases
+        )
+        cls.databases = tuple(original_databases) + extra_databases
+        try:
+            yield
+        finally:
+            cls.databases = original_databases

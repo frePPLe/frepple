@@ -22,39 +22,19 @@
 #
 
 import json
-from contextlib import contextmanager
 from urllib.parse import quote
 from unittest import skipUnless
 
 from django.conf import settings
-from django.test import TransactionTestCase
 
 from freppledb.common.models import User
-from freppledb.common.tests import checkResponse
-from freppledb.common.utils import get_databases
+from freppledb.common.tests import checkResponse, TransactionTestCaseWithReportDatabases
 from .models import SQLReport, SQLColumn
 
 
 @skipUnless("freppledb.reportmanager" in settings.INSTALLED_APPS, "App not activated")
-class ReportManagerTest(TransactionTestCase):
+class ReportManagerTest(TransactionTestCaseWithReportDatabases):
     fixtures = ["demo"]
-
-    @contextmanager
-    def _allow_report_databases(self):
-        # Django test suite is picky about which database connections are allowed
-        # Reporting database aren't included by default
-        cls = type(self)
-        original_databases = cls.databases
-        extra_databases = tuple(
-            alias
-            for alias in get_databases(True).keys()
-            if alias.endswith("_report") and alias not in original_databases
-        )
-        cls.databases = tuple(original_databases) + extra_databases
-        try:
-            yield
-        finally:
-            cls.databases = original_databases
 
     def setUp(self):
         # Login

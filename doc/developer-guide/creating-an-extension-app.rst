@@ -309,7 +309,7 @@ the menu "help/REST API help".
            fields = ("name", "charfield", "booleanfield", "decimalfield")
 
 
-   class MyModelSerializerAPI(frePPleListCreateAPIView):
+   class MyModelSerializerAPI(frePPleBulkModelViewSet):
        queryset = My_Model.objects.all()
        serializer_class = MyModelSerializer
        filterset_class = MyModelFilter

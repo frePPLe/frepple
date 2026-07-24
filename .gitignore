@@ -44,3 +44,4 @@ venv
 *.tar.gz
 *.tgz
 *.egg-info
+*vue-messages.pot

@@ -2621,7 +2621,9 @@ class ForecastSolver : public Solver {
     }
     Forecast_SmapeAlfa = t;
 
-    // Initialize the smape weight array
+    // Initialize the smape weight array.
+    // Must fill the full array (matching ForecastSolver::initialize), otherwise
+    // entries above the old hardcoded bound stay stale when this setter runs.
     weight[0] = 1.0;
     for (int i = 0; i < MAXBUCKETS - 1; ++i)
       weight[i + 1] = weight[i] * Forecast_SmapeAlfa;
@@ -3040,6 +3042,17 @@ class ForecastSolver : public Solver {
 
   /* An array with weights for history buckets. */
   static double weight[MAXBUCKETS];
+
+  /* Bounds-safe accessor for the smape weight array.
+   * The number of history buckets can exceed MAXBUCKETS (e.g. weekly or daily
+   * buckets over the default 10-year horizon). Because the weights decay
+   * exponentially, weight[>= MAXBUCKETS] is numerically ~0, so clamping the
+   * index is behavior-preserving and avoids an out-of-bounds read. */
+  static inline double smapeWeight(long idx) {
+    if (idx < 0) idx = 0;
+    if (idx >= MAXBUCKETS) idx = MAXBUCKETS - 1;
+    return weight[idx];
+  }
 
   /* Number of warmup periods.
    * These periods are used for the initialization of the algorithm

@@ -15,7 +15,7 @@
 {% if reportclass.filterable and not args.0 %}{% include "common/snippet_favorites.html" with search=True %}{% endif %}
 </div>
 <div class="align-middle d-inline-flex" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,5"
-  data-bs-title="{% trans 'reset filters'|capfirst|force_escape %}">
+  data-bs-title="{% trans 'clear filters'|capfirst|force_escape %}">
   <div>
     <i id="resetfilter" onclick="grid.resetFilter()" class="fa fa-times fs-6" ></i>
   </div>

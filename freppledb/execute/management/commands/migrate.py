@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django.conf import settings
+from django.core.management.base import CommandError
 from django.core.management.commands.migrate import Command as StdCommand
 from django.db import connections
 from django.db.utils import DEFAULT_DB_ALIAS
@@ -38,10 +38,19 @@ class Command(StdCommand):
         super().add_arguments(parser)
 
     def handle(self, *args, **options):
+        def run_migrate():
+            try:
+                super(Command, self).handle(*args, **options)
+            except CommandError as e:
+                if "does not have migrations." in str(e):
+                    # An app without migrations can be migrated and unmigrated without errors
+                    return
+                raise
+
         db = options["database"]
         if db:
             # Database was specified
-            super().handle(*args, **options)
+            run_migrate()
             return
 
         Scenario.syncWithSettings()
@@ -59,10 +68,10 @@ class Command(StdCommand):
                     try:
                         print("Start migrating database %s" % i[0].upper())
                         options["database"] = i[0]
-                        super().handle(*args, **options)
+                        run_migrate()
                         print("Successfully migrated database %s" % i[0].upper())
                     except Exception as e:
                         print("ERROR migrating database %s: %s" % (i[0].upper(), e))
         except Exception:
             options["database"] = DEFAULT_DB_ALIAS
-            super().handle(*args, **options)
+            run_migrate()

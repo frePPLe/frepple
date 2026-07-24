@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <description>Test model for cluster and level computation</description>
   <current>2009-01-01T00:00:00</current>
@@ -24,7 +24,7 @@
       </suboperations>
     </operation>
   </operations>
-  <demands>
+    <demands>
     <demand name="order for item 1">
       <quantity>10</quantity>
       <due>2009-01-10T00:00:00</due>
@@ -66,10 +66,10 @@
       <due>2009-01-10T00:00:00</due>
       <priority>1</priority>
       <item name="item 5" />
-      <operation name="Delivery 5 : 2 : 2" xsi:type="operation_routing">
+      <operation name="Delivery 5 : 0 : 2" xsi:type="operation_routing">
         <suboperations>
           <suboperation>
-            <operation name="Delivery 5 step1 : 1 : 2" xsi:type="operation_fixed_time">
+            <operation name="Delivery 5 step1 : 0 : 2" xsi:type="operation_fixed_time">
               <duration>PT10S</duration>
             </operation>
           </suboperation>
@@ -108,21 +108,21 @@
         <duration>PT10S</duration>
       </producing>
     </buffer>
+    <buffer name="buffer item 5 : 1 : 2">
+      <item name="item 5" />
+      <producing name="Make 5 : 1 : 2" xsi:type="operation_fixed_time">
+        <duration>PT10S</duration>
+      </producing>
+    </buffer>
+    <buffer name="buffer item 5 : 2 : 2">
+      <item name="item 5" />
+      <producing name="Make 5 : 2 : 2" xsi:type="operation_fixed_time">
+        <duration>PT10S</duration>
+      </producing>
+    </buffer>
     <buffer name="buffer item 5 : 3 : 2">
       <item name="item 5" />
       <producing name="Make 5 : 3 : 2" xsi:type="operation_fixed_time">
-        <duration>PT10S</duration>
-      </producing>
-    </buffer>
-    <buffer name="buffer item 5 : 4 : 2">
-      <item name="item 5" />
-      <producing name="Make 5 : 4 : 2" xsi:type="operation_fixed_time">
-        <duration>PT10S</duration>
-      </producing>
-    </buffer>
-    <buffer name="buffer item 5 : 5 : 2">
-      <item name="item 5" />
-      <producing name="Make 5 : 5 : 2" xsi:type="operation_fixed_time">
         <duration>PT10S</duration>
       </producing>
     </buffer>
@@ -171,8 +171,8 @@
       <quantity>-1</quantity>
     </flow>
     <flow xsi:type="flow_start">
-      <operation name="Delivery 5 : 2 : 2" />
-      <buffer name="buffer item 5 : 3 : 2" />
+      <operation name="Delivery 5 : 0 : 2" />
+      <buffer name="buffer item 5 : 1 : 2" />
       <quantity>-1</quantity>
     </flow>
     <flow xsi:type="flow_start">
@@ -181,34 +181,34 @@
       <quantity>-1</quantity>
     </flow>
     <flow xsi:type="flow_end">
+      <operation name="Make 5 : 1 : 2" />
+      <buffer name="buffer item 5 : 1 : 2" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="Make 5 : 1 : 2" />
+      <buffer name="buffer item 5 : 2 : 2" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="Make 5 : 2 : 2" />
+      <buffer name="buffer item 5 : 2 : 2" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="Make 5 : 2 : 2" />
+      <buffer name="buffer item 5 : 3 : 2" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
       <operation name="Make 5 : 3 : 2" />
       <buffer name="buffer item 5 : 3 : 2" />
       <quantity>1</quantity>
     </flow>
-    <flow xsi:type="flow_start">
-      <operation name="Make 5 : 3 : 2" />
-      <buffer name="buffer item 5 : 4 : 2" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="Make 5 : 4 : 2" />
-      <buffer name="buffer item 5 : 4 : 2" />
-      <quantity>1</quantity>
-    </flow>
-    <flow xsi:type="flow_start">
-      <operation name="Make 5 : 4 : 2" />
-      <buffer name="buffer item 5 : 5 : 2" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="Make 5 : 5 : 2" />
-      <buffer name="buffer item 5 : 5 : 2" />
-      <quantity>1</quantity>
-    </flow>
     <!--   LOOP IN THE SUPPLY CHAIN
       <flow xsi:type="flow_start">
-      <operation name="Make 5 : 5 : 2"/>
-      <buffer name="buffer item 5 : 3 : 2"/>
+      <operation name="Make 5 : 3 : 2"/>
+      <buffer name="buffer item 5 : 1 : 2"/>
       <quantity>-1</quantity>
       </flow>
     -->
@@ -271,7 +271,7 @@
       <operation name="Make 1b : 1 : 1" />
       <buffer name="buffer item 1 : 1 : 1" />
       <quantity>1</quantity>
-    </flow>
+    </flow>    
   </flows>
   <resources>
     <resource name="RES2&amp;3 : 1 : 1">
@@ -286,7 +286,8 @@
     </resource>
     <resource name="Dangling resource : -1 : 0" />
   </resources>
-  <?python
+
+<?python
 actual_to_expected = {}
 expected_to_actual = {}
 output = open("output.1.xml","wt")
@@ -304,7 +305,7 @@ def verifyOne(i):
 
   # Check the level
   if expectedlevel != i.level:
-    print("%s: incorrect level. Expected %d, got %d" % (i.name, expectedlevel, i.level), file=output)
+    print("%s: incorrect level. Expected %d, got %d" % (name, expectedlevel, i.level), file=output)
     ok = False
 
   # Check the cluster.
@@ -314,7 +315,7 @@ def verifyOne(i):
   if i.cluster in actual_to_expected:
     if expectedcluster != actual_to_expected[i.cluster]:
       # Exists and is different!
-      print("%s: incorrect cluster. Expected %s, got %d" % (i.name, expected_to_actual.get(expectedcluster), i.cluster), file=output)
+      print("%s: incorrect cluster. Expected %s, got %d" % (name, expected_to_actual.get(expectedcluster), i.cluster), file=output)
       ok = False
   else:
     if expectedcluster in expected_to_actual:
@@ -337,5 +338,7 @@ for i in frepple.resources():
   verifyOne(i)
 for i in frepple.buffers():
   verifyOne(i)
-output.flush()?>
+output.flush()
+
+?>
 </plan>

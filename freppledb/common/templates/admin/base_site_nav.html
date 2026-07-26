@@ -43,7 +43,12 @@ $(function() {
 						</a>
 					</div>
 					<div>
-  				        <a href="/data/logout/" class="nav-link"><i style="font-size: 1.5em" class="fa fa-sign-out"></i></a>
+				        <form method="post" action="/data/logout/" class="d-inline">
+				          {% csrf_token %}
+				          <button type="submit" class="nav-link border-0 bg-transparent p-0">
+				            <i style="font-size: 1.5em" class="fa fa-sign-out"></i>
+				          </button>
+				        </form>
 					</div>
 				</div>
 			<form class="navbar-form me-start mt-3 mb-3" role="search">
@@ -119,7 +124,12 @@ $(function() {
         </a>
 				<ul class="dropdown-menu dropdown-menu-end" style="right: 0 !important; left: auto !important">
 				  <li><a class="dropdown-item" href="{{request.prefix}}/preferences/">{% trans 'preferences'|capfirst %}</a></li>
-				  <li><a class="dropdown-item" href="/data/logout/">{% trans 'Log out'|capfirst %}</a></li>
+				  <li>
+				    <form method="post" action="/data/logout/" class="m-0">
+				      {% csrf_token %}
+				      <button type="submit" class="dropdown-item">{% trans 'Log out'|capfirst %}</button>
+				    </form>
+				  </li>
 				</ul>
 			  </li>
       </ul>

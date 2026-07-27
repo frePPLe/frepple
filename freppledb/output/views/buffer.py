@@ -642,7 +642,7 @@ class OverviewReport(GridPivot):
                 and operationplan.demand_id is not null
                 and operationplan.enddate < %%s
                 and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opm2.opplan_batch)
-            group by opm.item, opm.location, case when item.type is distinct from 'make to order' then ''
+            group by opm.item_id, opm.location_id, case when item.type is distinct from 'make to order' then ''
             else operationplan.batch
             end
         """ % (basesql,)

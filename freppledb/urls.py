@@ -72,5 +72,5 @@ urlpatterns += [
     ),
     path("data/", data_site.urls),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    path("api/", include(rest_api_router.urls)),
 ]
-urlpatterns += rest_api_router.urls

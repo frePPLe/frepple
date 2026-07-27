@@ -32,7 +32,9 @@ class freppleBrowsableAPI(BrowsableAPIRenderer):
 
     def get_context(self, data, accepted_media_type, renderer_context):
         ctx = super().get_context(data, accepted_media_type, renderer_context)
-        ctx["name"] = ctx["view"].serializer_class.Meta.model._meta.model_name
+        serializer_class = getattr(ctx["view"], "serializer_class", None)
+        if serializer_class:
+            ctx["name"] = serializer_class.Meta.model._meta.model_name
         if hasattr(ctx["view"], "list"):
             ctx["title"] = "List API for %s" % ctx["name"]
         else:

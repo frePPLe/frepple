@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 from django_bulk_drf import BulkModelSerializer
+from rest_framework import serializers
 
 from freppledb.common.api.filters import FilterSet
 from freppledb.common.api.serializers import (
@@ -188,6 +189,8 @@ class CommentFilter(FilterSet):
 
 
 class CommentSerializer(BulkModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = models.Comment
         fields = (

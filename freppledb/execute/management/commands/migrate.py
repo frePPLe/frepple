@@ -42,8 +42,15 @@ class Command(StdCommand):
             try:
                 super(Command, self).handle(*args, **options)
             except CommandError as e:
-                if "does not have migrations." in str(e):
-                    # An app without migrations can be migrated and unmigrated without errors
+                msg = str(e)
+                if any(
+                    t in msg
+                    for t in (
+                        "does not have migrations.",
+                        "No installed app with label",
+                    )
+                ):
+                    # Safe to ignore these zero-operation migrations
                     return
                 raise
 

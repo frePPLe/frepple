@@ -600,7 +600,6 @@ void Calendar::buildEventList(Date includedate) {
           while ((b->days & (1 << ref_weekday)) &&
                  tmp != Date::infiniteFuture) {
             if (++ref_weekday > 6) ref_weekday = 0;
-            tmp_detail = tmp;
             tmp_detail.addDays(1);
             tmp = tmp_detail;
           }
@@ -635,7 +634,6 @@ void Calendar::buildEventList(Date includedate) {
         while (!(b->days & (1 << ref_weekday)) && tmp != Date::infiniteFuture &&
                tmp <= b->enddate) {
           if (++ref_weekday > 6) ref_weekday = 0;
-          tmp_detail = tmp;
           tmp_detail.addDays(1);
           tmp = tmp_detail;
         }

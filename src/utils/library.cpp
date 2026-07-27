@@ -88,6 +88,7 @@ void LibraryUtils::initialize() {
   // Initialize Xerces parser
   xercesc::XMLPlatformUtils::Initialize();
   PythonInterpreter::initialize();
+  Date::detectUTC(tzname[0]);
   if (CommandManager::initialize())
     throw RuntimeException("Error registering command manager");
 }

@@ -30,6 +30,8 @@
 
 namespace frepple::utils {
 
+bool Date::is_utc = false;
+
 /* This is the earliest date that we can represent. This not the
  * traditional epoch start, but a year later. 1/1/1970 gave troubles
  * when using a timezone with positive offset to GMT.
@@ -349,12 +351,17 @@ void Date::parse(const char* s) {
   }
   struct tm p;
   memset(&p, 0, sizeof(struct tm));
-  auto ok = strptime(
-      s, (strchr(s, 'T') != nullptr ? format1 : format2).data(), &p);
+  auto ok =
+      strptime(s, (strchr(s, 'T') != nullptr ? format1 : format2).data(), &p);
   if (!ok) throw DataException("Error parsing date");
-  // No clue whether daylight saving time is in effect...
-  p.tm_isdst = -1;
-  lval = mktime(&p);
+  if (is_utc) {
+    p.tm_isdst = 0;
+    lval = timegm(&p);
+  } else {
+    // No clue whether daylight saving time is in effect...
+    p.tm_isdst = -1;
+    lval = mktime(&p);
+  }
 }
 
 }  // namespace frepple::utils

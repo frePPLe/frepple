@@ -2584,38 +2584,3 @@ class ForecastEditor:
             context=ctx,
         )
 
-
-class ForecastWizard(View):
-    title = _("forecast wizard")
-
-    help_url = "modeling-wizard/master-data/sales-orders.html"  # TODO
-
-    @classmethod
-    def has_permission(cls, user):
-        return user.has_perm("auth.view_forecast_report")
-
-    @staticmethod
-    @staff_member_required
-    def get(request):
-        # Check permissions
-        if not request.user.has_perm("auth.view_forecast_report"):
-            return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
-        return render(
-            request,
-            "forecast/wizard.html",
-            context={
-                "title": _("forecast wizard"),
-                "reportkey": "freppledb.forecast.wizard",
-                "preferences": request.user.getPreference(
-                    "freppledb.forecast.wizard", database=request.database
-                ),
-            },
-        )
-
-    @staticmethod
-    def post(request):
-        # Check permissions
-        if not request.user.has_perm("forecast.add_forecastplan"):
-            return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
-
-        return HttpResponse(content="OK")

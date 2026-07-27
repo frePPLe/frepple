@@ -24,14 +24,8 @@
 from django.utils.translation import gettext_lazy as _
 from freppledb.menu import menu
 from freppledb.forecast.models import Forecast, ForecastPlan, Measure
-from freppledb.forecast.views import (
-    OverviewReport,
-    ForecastList,
-    MeasureList,
-    ForecastWizard,
-)
+from freppledb.forecast.views import OverviewReport, ForecastList, MeasureList
 from freppledb.input.models import Item, Location, Customer
-
 
 # Adding reports. We use an index value to keep the same order of the entries in all languages.
 menu.addItem(
@@ -52,16 +46,6 @@ menu.addItem(
     permission="auth.view_forecast_report",
     dependencies=[Forecast],
 )
-# TODO Not ready
-# menu.addItem(
-#     "sales",
-#     "forecast wizard",
-#     url="/forecast/wizard/",
-#     report=ForecastWizard,
-#     index=112,
-#     permission="auth.view_forecast_report",
-#     dependencies=[Item, Location, Customer],
-# )
 menu.addItem(
     "sales",
     "forecast",

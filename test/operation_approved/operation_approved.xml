@@ -8,7 +8,7 @@
         <supplier name="1. Supplier">
             <itemsuppliers>
                 <itemsupplier>
-                    <item name="1. item"/>
+                    <item name="1. item" />
                     <leadtime>P7D</leadtime>
                     <priority>2</priority>
                 </itemsupplier>
@@ -21,16 +21,17 @@
             <minshipment>20</minshipment>
             <due>2026-02-01T00:00:00</due>
             <priority>1</priority>
-            <item name="1. item"/>
-            <location name="factory"/>
+            <item name="1. item" />
+            <location name="factory" />
             <status>open</status>
         </demand>
     </demands>
     <operationplans>
-        <operationplan ordertype="PO" end="2026-08-01T00:00:00" reference="PO #1" quantity="100" status="approved">
-            <item name="1. item"/>
-            <location name="factory"/>
-            <supplier name="1. Supplier"/>
+        <operationplan ordertype="PO" end="2026-08-01T00:00:00" reference="PO #1" quantity="100"
+            status="approved">
+            <item name="1. item" />
+            <location name="factory" />
+            <supplier name="1. Supplier" />
         </operationplan>
     </operationplans>
 
@@ -39,7 +40,7 @@
         <supplier name="2. Supplier">
             <itemsuppliers>
                 <itemsupplier>
-                    <item name="2. item"/>
+                    <item name="2. item" />
                     <leadtime>P7D</leadtime>
                     <priority>2</priority>
                 </itemsupplier>
@@ -52,16 +53,17 @@
             <minshipment>20</minshipment>
             <due>2026-01-01T00:00:00</due>
             <priority>1</priority>
-            <item name="2. item"/>
-            <location name="factory"/>
+            <item name="2. item" />
+            <location name="factory" />
             <status>open</status>
         </demand>
     </demands>
     <operationplans>
-        <operationplan ordertype="PO" end="2026-08-01T00:00:00" reference="PO #2" quantity="100" status="approved">
-            <item name="2. item"/>
-            <location name="factory"/>
-            <supplier name="2. Supplier"/>
+        <operationplan ordertype="PO" end="2026-08-01T00:00:00" reference="PO #2" quantity="100"
+            status="approved">
+            <item name="2. item" />
+            <location name="factory" />
+            <supplier name="2. Supplier" />
         </operationplan>
     </operationplans>
 
@@ -70,7 +72,7 @@
         <supplier name="3. Supplier">
             <itemsuppliers>
                 <itemsupplier>
-                    <item name="3. component"/>
+                    <item name="3. component" />
                     <leadtime>P7D</leadtime>
                     <priority>2</priority>
                 </itemsupplier>
@@ -83,29 +85,29 @@
             <minshipment>20</minshipment>
             <due>2026-02-01T00:00:00</due>
             <priority>1</priority>
-            <item name="3. item"/>
-            <location name="factory"/>
+            <item name="3. item" />
+            <location name="factory" />
             <status>open</status>
         </demand>
     </demands>
     <operations>
         <operation name="3. Make item" xsi:type="operation_fixed_time">
-            <item name="3. item"/>
-            <location name="factory"/>
+            <item name="3. item" />
+            <location name="factory" />
             <flows>
                 <flow xsi:type="flow_start">
-                    <item name="3. item subassembly"/>
+                    <item name="3. item subassembly" />
                     <quantity>-1</quantity>
                 </flow>
             </flows>
             <duration>P3D</duration>
         </operation>
         <operation name="3. Make item subassembly" xsi:type="operation_fixed_time">
-            <item name="3. item subassembly"/>
-            <location name="factory"/>
+            <item name="3. item subassembly" />
+            <location name="factory" />
             <flows>
                 <flow xsi:type="flow_start">
-                    <item name="3. component"/>
+                    <item name="3. component" />
                     <quantity>-1</quantity>
                 </flow>
             </flows>
@@ -113,16 +115,19 @@
         </operation>
     </operations>
     <operationplans>
-        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #3" quantity="100" status="approved">
-            <item name="3. component"/>
-            <location name="factory"/>
-            <supplier name="3. Supplier"/>
+        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #3" quantity="100"
+            status="approved">
+            <item name="3. component" />
+            <location name="factory" />
+            <supplier name="3. Supplier" />
         </operationplan>
-        <operationplan ordertype="MO" end="2026-07-20T00:00:00" reference="MO #3" quantity="100" status="approved">
-            <operation name="3. Make item subassembly"/>
+        <operationplan ordertype="MO" end="2026-07-20T00:00:00" reference="MO #3" quantity="100"
+            status="approved">
+            <operation name="3. Make item subassembly" />
         </operationplan>
-        <operationplan ordertype="MO" end="2026-08-03T00:00:00" reference="MO #3 sub" quantity="100" status="approved">
-            <operation name="3. Make item"/>
+        <operationplan ordertype="MO" end="2026-08-03T00:00:00" reference="MO #3 sub" quantity="100"
+            status="approved">
+            <operation name="3. Make item" />
         </operationplan>
     </operationplans>
 
@@ -131,7 +136,7 @@
         <supplier name="4. Supplier">
             <itemsuppliers>
                 <itemsupplier>
-                    <item name="4. component"/>
+                    <item name="4. component" />
                     <leadtime>P7D</leadtime>
                     <priority>2</priority>
                 </itemsupplier>
@@ -144,15 +149,15 @@
             <minshipment>20</minshipment>
             <due>2026-01-01T00:00:00</due>
             <priority>1</priority>
-            <item name="4. item"/>
-            <location name="factory"/>
+            <item name="4. item" />
+            <location name="factory" />
             <status>open</status>
         </demand>
     </demands>
     <resources>
         <resource name="4. Resource A">
-            <owner name="4. Resource"/>
-            <location name="factory"/>
+            <owner name="4. Resource" />
+            <location name="factory" />
             <maximum_calendar name="4. Capacity A">
                 <buckets>
                     <bucket start="2026-03-01T00:00:00">
@@ -162,8 +167,8 @@
             </maximum_calendar>
         </resource>
         <resource name="4. Resource B">
-            <owner name="4. Resource"/>
-            <location name="factory"/>
+            <owner name="4. Resource" />
+            <location name="factory" />
             <maximum_calendar name="4. Capacity B">
                 <buckets>
                     <bucket start="2026-03-01T00:00:00">
@@ -173,8 +178,8 @@
             </maximum_calendar>
         </resource>
         <resource name="4. Resource C">
-            <owner name="4. Resource"/>
-            <location name="factory"/>
+            <owner name="4. Resource" />
+            <location name="factory" />
             <maximum_calendar name="4. Capacity C">
                 <buckets>
                     <bucket start="2026-03-01T00:00:00">
@@ -184,8 +189,8 @@
             </maximum_calendar>
         </resource>
         <resource name="4. Resource D">
-            <owner name="4. Resource"/>
-            <location name="factory"/>
+            <owner name="4. Resource" />
+            <location name="factory" />
             <maximum_calendar name="4. Capacity D">
                 <buckets>
                     <bucket start="2026-03-01T00:00:00">
@@ -197,22 +202,22 @@
     </resources>
     <operations>
         <operation name="4. Make item" xsi:type="operation_fixed_time">
-            <item name="4. item"/>
-            <location name="factory"/>
+            <item name="4. item" />
+            <location name="factory" />
             <flows>
                 <flow xsi:type="flow_start">
-                    <item name="4. item subassembly"/>
+                    <item name="4. item subassembly" />
                     <quantity>-1</quantity>
                 </flow>
             </flows>
             <duration>P3D</duration>
         </operation>
         <operation name="4. Make item subassembly" xsi:type="operation_fixed_time">
-            <item name="4. item subassembly"/>
-            <location name="factory"/>
+            <item name="4. item subassembly" />
+            <location name="factory" />
             <flows>
                 <flow xsi:type="flow_start">
-                    <item name="4. component"/>
+                    <item name="4. component" />
                     <quantity>-1</quantity>
                 </flow>
             </flows>
@@ -227,16 +232,19 @@
         </operation>
     </operations>
     <operationplans>
-        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #4" quantity="100" status="approved">
-            <item name="4. component"/>
-            <location name="factory"/>
-            <supplier name="4. Supplier"/>
+        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #4" quantity="100"
+            status="approved">
+            <item name="4. component" />
+            <location name="factory" />
+            <supplier name="4. Supplier" />
         </operationplan>
-        <operationplan ordertype="MO" end="2026-07-20T00:00:00" reference="MO #4" quantity="100" status="approved">
-            <operation name="4. Make item subassembly"/>
+        <operationplan ordertype="MO" end="2026-07-20T00:00:00" reference="MO #4" quantity="100"
+            status="approved">
+            <operation name="4. Make item subassembly" />
         </operationplan>
-        <operationplan ordertype="MO" end="2026-08-03T00:00:00" reference="MO #4 sub" quantity="100" status="approved">
-            <operation name="4. Make item"/>
+        <operationplan ordertype="MO" end="2026-08-03T00:00:00" reference="MO #4 sub" quantity="100"
+            status="approved">
+            <operation name="4. Make item" />
         </operationplan>
     </operationplans>
 
@@ -245,7 +253,7 @@
         <supplier name="5. Supplier">
             <itemsuppliers>
                 <itemsupplier>
-                    <item name="5. component"/>
+                    <item name="5. component" />
                     <leadtime>P7D</leadtime>
                     <priority>2</priority>
                 </itemsupplier>
@@ -258,29 +266,29 @@
             <minshipment>20</minshipment>
             <due>2026-01-01T00:00:00</due>
             <priority>1</priority>
-            <item name="5. item"/>
-            <location name="factory"/>
+            <item name="5. item" />
+            <location name="factory" />
             <status>open</status>
         </demand>
     </demands>
     <operations>
         <operation name="5. Make item" xsi:type="operation_fixed_time">
-            <item name="5. item"/>
-            <location name="factory"/>
+            <item name="5. item" />
+            <location name="factory" />
             <flows>
                 <flow xsi:type="flow_start">
-                    <item name="5. item subassembly"/>
+                    <item name="5. item subassembly" />
                     <quantity>-1</quantity>
                 </flow>
             </flows>
             <duration>P3D</duration>
         </operation>
         <operation name="5. Make item subassembly" xsi:type="operation_fixed_time">
-            <item name="5. item subassembly"/>
-            <location name="factory"/>
+            <item name="5. item subassembly" />
+            <location name="factory" />
             <flows>
                 <flow xsi:type="flow_start">
-                    <item name="5. component"/>
+                    <item name="5. component" />
                     <quantity>-1</quantity>
                 </flow>
             </flows>
@@ -288,25 +296,28 @@
         </operation>
     </operations>
     <operationplans>
-        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #5" quantity="100" status="approved">
-            <item name="5. component"/>
-            <location name="factory"/>
-            <supplier name="5. Supplier"/>
+        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #5" quantity="100"
+            status="approved">
+            <item name="5. component" />
+            <location name="factory" />
+            <supplier name="5. Supplier" />
         </operationplan>
-        <operationplan ordertype="MO" end="2026-07-20T00:00:00" reference="MO #5" quantity="100" status="approved">
-            <operation name="5. Make item subassembly"/>
+        <operationplan ordertype="MO" end="2026-07-20T00:00:00" reference="MO #5" quantity="100"
+            status="approved">
+            <operation name="5. Make item subassembly" />
         </operationplan>
-        <operationplan ordertype="MO" end="2026-08-03T00:00:00" reference="MO #5 sub" quantity="100" status="approved">
-            <operation name="5. Make item"/>
+        <operationplan ordertype="MO" end="2026-08-03T00:00:00" reference="MO #5 sub" quantity="100"
+            status="approved">
+            <operation name="5. Make item" />
         </operationplan>
     </operationplans>
 
-   <!-- case 6: MO's and PO's don't cover the full quantity. -->
+    <!-- case 6: MO's and PO's don't cover the full quantity. -->
     <suppliers>
         <supplier name="6. Supplier">
             <itemsuppliers>
                 <itemsupplier>
-                    <item name="6. component"/>
+                    <item name="6. component" />
                     <leadtime>P7D</leadtime>
                     <priority>2</priority>
                 </itemsupplier>
@@ -319,29 +330,29 @@
             <minshipment>120</minshipment>
             <due>2026-01-01T00:00:00</due>
             <priority>1</priority>
-            <item name="6. item"/>
-            <location name="factory"/>
+            <item name="6. item" />
+            <location name="factory" />
             <status>open</status>
         </demand>
     </demands>
     <operations>
         <operation name="6. Make item" xsi:type="operation_fixed_time">
-            <item name="6. item"/>
-            <location name="factory"/>
+            <item name="6. item" />
+            <location name="factory" />
             <flows>
                 <flow xsi:type="flow_start">
-                    <item name="6. item subassembly"/>
+                    <item name="6. item subassembly" />
                     <quantity>-1</quantity>
                 </flow>
             </flows>
             <duration>P3D</duration>
         </operation>
         <operation name="6. Make item subassembly" xsi:type="operation_fixed_time">
-            <item name="6. item subassembly"/>
-            <location name="factory"/>
+            <item name="6. item subassembly" />
+            <location name="factory" />
             <flows>
                 <flow xsi:type="flow_start">
-                    <item name="6. component"/>
+                    <item name="6. component" />
                     <quantity>-1</quantity>
                 </flow>
             </flows>
@@ -362,16 +373,19 @@
         </operation>
     </operations>
     <operationplans>
-        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #6" quantity="30" status="approved">
-            <item name="6. component"/>
-            <location name="factory"/>
-            <supplier name="6. Supplier"/>
+        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #6" quantity="30"
+            status="approved">
+            <item name="6. component" />
+            <location name="factory" />
+            <supplier name="6. Supplier" />
         </operationplan>
-        <operationplan ordertype="MO" end="2026-07-20T00:00:00" reference="MO #6" quantity="100" status="approved">
-            <operation name="6. Make item subassembly"/>
+        <operationplan ordertype="MO" end="2026-07-20T00:00:00" reference="MO #6" quantity="100"
+            status="approved">
+            <operation name="6. Make item subassembly" />
         </operationplan>
-        <operationplan ordertype="MO" end="2026-08-03T00:00:00" reference="MO #6 sub" quantity="100" status="approved">
-            <operation name="6. Make item"/>
+        <operationplan ordertype="MO" end="2026-08-03T00:00:00" reference="MO #6 sub" quantity="100"
+            status="approved">
+            <operation name="6. Make item" />
         </operationplan>
     </operationplans>
 
@@ -382,28 +396,31 @@
             <minshipment>100</minshipment>
             <due>2026-02-01T00:00:00</due>
             <priority>1</priority>
-            <item name="7. item"/>
-            <location name="factory"/>
+            <item name="7. item" />
+            <location name="factory" />
             <status>open</status>
             <operation name="7. project X" xsi:type="operation_fixed_time" duration="P10D">
-                <location name="factory"/>
+                <location name="factory" />
                 <dependencies>
                     <dependency>
                         <blockedby name="7. task X1" xsi:type="operation_fixed_time" duration="P5D">
-                            <location name="factory"/>
+                            <location name="factory" />
                         </blockedby>
                     </dependency>
                     <dependency>
-                        <blockedby name="7. task X2 step 3" xsi:type="operation_fixed_time" duration="P7D">
-                            <location name="factory"/>
+                        <blockedby name="7. task X2 step 3" xsi:type="operation_fixed_time"
+                            duration="P7D">
+                            <location name="factory" />
                             <dependencies>
                                 <dependency>
-                                    <blockedby name="7. task X2 step 2" xsi:type="operation_fixed_time" duration="P7D">
-                                        <location name="factory"/>
+                                    <blockedby name="7. task X2 step 2"
+                                        xsi:type="operation_fixed_time" duration="P7D">
+                                        <location name="factory" />
                                         <dependencies>
                                             <dependency>
-                                                <blockedby name="7. task X2 step 1" xsi:type="operation_fixed_time" duration="P5D">
-                                                    <location name="factory"/>
+                                                <blockedby name="7. task X2 step 1"
+                                                    xsi:type="operation_fixed_time" duration="P5D">
+                                                    <location name="factory" />
                                                 </blockedby>
                                             </dependency>
                                         </dependencies>
@@ -417,17 +434,22 @@
         </demand>
     </demands>
     <operationplans>
-        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X1" quantity="20" status="approved">
-            <operation name="7. task X1"/>
+        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X1" quantity="20"
+            status="approved">
+            <operation name="7. task X1" />
         </operationplan>
-        <!--operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X2 step 3" quantity="100" status="approved">
+        <!--operationplan
+        ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X2 step 3" quantity="100"
+        status="approved">
             <operation name="7. task X2 step 3"/>
         </operationplan-->
-        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X2 step 2" quantity="100" status="approved">
-            <operation name="7. task X2 step 2"/>
+        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="7. task X2 step 2"
+            quantity="100" status="approved">
+            <operation name="7. task X2 step 2" />
         </operationplan>
-        <operationplan ordertype="MO" end="2026-07-26T00:00:00" reference="7. task X2 step 1" quantity="100" status="approved">
-            <operation name="7. task X2 step 1"/>
+        <operationplan ordertype="MO" end="2026-07-26T00:00:00" reference="7. task X2 step 1"
+            quantity="100" status="approved">
+            <operation name="7. task X2 step 1" />
         </operationplan>
     </operationplans>
 
@@ -438,28 +460,31 @@
             <minshipment>100</minshipment>
             <due>2026-01-01T00:00:00</due>
             <priority>1</priority>
-            <item name="8. item"/>
-            <location name="factory"/>
+            <item name="8. item" />
+            <location name="factory" />
             <status>open</status>
             <operation name="8. project X" xsi:type="operation_fixed_time" duration="P10D">
-                <location name="factory"/>
+                <location name="factory" />
                 <dependencies>
                     <dependency>
                         <blockedby name="8. task X1" xsi:type="operation_fixed_time" duration="P5D">
-                            <location name="factory"/>
+                            <location name="factory" />
                         </blockedby>
                     </dependency>
                     <dependency>
-                        <blockedby name="8. task X2 step 3" xsi:type="operation_fixed_time" duration="P7D">
-                            <location name="factory"/>
+                        <blockedby name="8. task X2 step 3" xsi:type="operation_fixed_time"
+                            duration="P7D">
+                            <location name="factory" />
                             <dependencies>
                                 <dependency>
-                                    <blockedby name="8. task X2 step 2" xsi:type="operation_fixed_time" duration="P7D">
-                                        <location name="factory"/>
+                                    <blockedby name="8. task X2 step 2"
+                                        xsi:type="operation_fixed_time" duration="P7D">
+                                        <location name="factory" />
                                         <dependencies>
                                             <dependency>
-                                                <blockedby name="8. task X2 step 1" xsi:type="operation_fixed_time" duration="P5D">
-                                                    <location name="factory"/>
+                                                <blockedby name="8. task X2 step 1"
+                                                    xsi:type="operation_fixed_time" duration="P5D">
+                                                    <location name="factory" />
                                                 </blockedby>
                                             </dependency>
                                         </dependencies>
@@ -473,16 +498,22 @@
         </demand>
     </demands>
     <operationplans>
-        <!--operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="8. task X1" quantity="100" status="approved">
+        <!--operationplan
+        ordertype="MO" end="2026-08-01T00:00:00" reference="8. task X1" quantity="100"
+        status="approved">
             <operation name="8. task X1"/>
         </operationplan>
-        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="8. task X2 step 3" quantity="100" status="approved">
+        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="8. task X2 step 3"
+        quantity="100" status="approved">
             <operation name="8. task X2 step 3"/>
         </operationplan-->
-        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="8. task X2 step 2" quantity="100" status="approved">
-            <operation name="8. task X2 step 2"/>
+        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="8. task X2 step 2"
+            quantity="100" status="approved">
+            <operation name="8. task X2 step 2" />
         </operationplan>
-        <!--operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="8. task X2 step 1" quantity="100" status="approved">
+        <!--operationplan
+        ordertype="MO" end="2026-08-01T00:00:00" reference="8. task X2 step 1" quantity="100"
+        status="approved">
             <operation name="8. task X2 step 1"/>
         </operationplan-->
     </operationplans>
@@ -495,28 +526,31 @@
             <minshipment>100</minshipment>
             <due>2026-01-01T00:00:00</due>
             <priority>1</priority>
-            <item name="9. item"/>
-            <location name="factory"/>
+            <item name="9. item" />
+            <location name="factory" />
             <status>open</status>
             <operation name="9. project X" xsi:type="operation_fixed_time" duration="P10D">
-                <location name="factory"/>
+                <location name="factory" />
                 <dependencies>
                     <dependency>
                         <blockedby name="9. task X1" xsi:type="operation_fixed_time" duration="P5D">
-                            <location name="factory"/>
+                            <location name="factory" />
                         </blockedby>
                     </dependency>
                     <dependency>
-                        <blockedby name="9. task X2 step 3" xsi:type="operation_fixed_time" duration="P7D">
-                            <location name="factory"/>
+                        <blockedby name="9. task X2 step 3" xsi:type="operation_fixed_time"
+                            duration="P7D">
+                            <location name="factory" />
                             <dependencies>
                                 <dependency>
-                                    <blockedby name="9. task X2 step 2" xsi:type="operation_fixed_time" duration="P7D">
-                                        <location name="factory"/>
+                                    <blockedby name="9. task X2 step 2"
+                                        xsi:type="operation_fixed_time" duration="P7D">
+                                        <location name="factory" />
                                         <dependencies>
                                             <dependency>
-                                                <blockedby name="9. task X2 step 1" xsi:type="operation_fixed_time" duration="P5D">
-                                                    <location name="factory"/>
+                                                <blockedby name="9. task X2 step 1"
+                                                    xsi:type="operation_fixed_time" duration="P5D">
+                                                    <location name="factory" />
                                                 </blockedby>
                                             </dependency>
                                         </dependencies>
@@ -530,16 +564,22 @@
         </demand>
     </demands>
     <operationplans>
-        <operationplan ordertype="MO" end="2026-09-01T00:00:00" reference="9. task X1" quantity="100" status="approved">
-            <operation name="9. task X1"/>
+        <operationplan ordertype="MO" end="2026-09-01T00:00:00" reference="9. task X1"
+            quantity="100" status="approved">
+            <operation name="9. task X1" />
         </operationplan>
-        <!--operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="9. task X2 step 3" quantity="100" status="approved">
+        <!--operationplan
+        ordertype="MO" end="2026-08-01T00:00:00" reference="9. task X2 step 3" quantity="100"
+        status="approved">
             <operation name="9. task X2 step 3"/>
         </operationplan-->
-        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="9. task X2 step 2" quantity="90" status="confirmed">
-            <operation name="9. task X2 step 2"/>
+        <operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="9. task X2 step 2"
+            quantity="90" status="confirmed">
+            <operation name="9. task X2 step 2" />
         </operationplan>
-        <!--operationplan ordertype="MO" end="2026-08-01T00:00:00" reference="9. task X2 step 1" quantity="100" status="approved">
+        <!--operationplan
+        ordertype="MO" end="2026-08-01T00:00:00" reference="9. task X2 step 1" quantity="100"
+        status="approved">
             <operation name="9. task X2 step 1"/>
         </operationplan-->
     </operationplans>
@@ -549,7 +589,7 @@
         <supplier name="10. Supplier">
             <itemsuppliers>
                 <itemsupplier>
-                    <item name="10. item"/>
+                    <item name="10. item" />
                     <leadtime>P7D</leadtime>
                     <priority>2</priority>
                 </itemsupplier>
@@ -562,26 +602,29 @@
             <minshipment>20</minshipment>
             <due>2026-01-01T00:00:00</due>
             <priority>1</priority>
-            <item name="10. item"/>
-            <location name="factory"/>
+            <item name="10. item" />
+            <location name="factory" />
             <status>open</status>
         </demand>
     </demands>
     <operationplans>
-        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #10-1" quantity="5" status="approved">
-            <item name="10. item"/>
-            <location name="factory"/>
-            <supplier name="10. Supplier"/>
+        <operationplan ordertype="PO" end="2026-07-01T00:00:00" reference="PO #10-1" quantity="5"
+            status="approved">
+            <item name="10. item" />
+            <location name="factory" />
+            <supplier name="10. Supplier" />
         </operationplan>
-        <operationplan ordertype="PO" end="2026-08-01T00:00:00" reference="PO #10-2" quantity="4" status="approved">
-            <item name="10. item"/>
-            <location name="factory"/>
-            <supplier name="10. Supplier"/>
+        <operationplan ordertype="PO" end="2026-08-01T00:00:00" reference="PO #10-2" quantity="4"
+            status="approved">
+            <item name="10. item" />
+            <location name="factory" />
+            <supplier name="10. Supplier" />
         </operationplan>
-		<operationplan ordertype="PO" end="2026-09-01T00:00:00" reference="PO #10-3" quantity="3" status="approved">
-            <item name="10. item"/>
-            <location name="factory"/>
-            <supplier name="10. Supplier"/>
+        <operationplan ordertype="PO" end="2026-09-01T00:00:00" reference="PO #10-3" quantity="3"
+            status="approved">
+            <item name="10. item" />
+            <location name="factory" />
+            <supplier name="10. Supplier" />
         </operationplan>
     </operationplans>
 
@@ -590,7 +633,7 @@
         <supplier name="11. Supplier">
             <itemsuppliers>
                 <itemsupplier>
-                    <item name="11. component"/>
+                    <item name="11. component" />
                     <leadtime>P70D</leadtime>
                 </itemsupplier>
             </itemsuppliers>
@@ -602,25 +645,27 @@
             <minshipment>15</minshipment>
             <due>2026-01-01T00:00:00</due>
             <priority>1</priority>
-            <item name="11. item"/>
-            <location name="factory"/>
+            <item name="11. item" />
+            <location name="factory" />
             <status>open</status>
         </demand>
     </demands>
     <operations>
         <operation name="11. assemble product" xsi:type="operation_routing">
-            <item name="11. item"/>
-            <location name="factory"/>
+            <item name="11. item" />
+            <location name="factory" />
             <suboperations>
                 <suboperation>
-                    <operation name="11. assemble product step A" xsi:type="operation_fixed_time" duration="P1D">
-                        <location name="factory"/>
+                    <operation name="11. assemble product step A" xsi:type="operation_fixed_time"
+                        duration="P1D">
+                        <location name="factory" />
                     </operation>
                     <priority>1</priority>
                 </suboperation>
                 <suboperation>
-                    <operation name="11. assemble product step B" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
-                        <location name="factory"/>
+                    <operation name="11. assemble product step B" xsi:type="operation_time_per"
+                        duration="P1D" duration_per="P1D">
+                        <location name="factory" />
                         <flows>
                             <flow xsi:type="flow_start">
                                 <item name="11. component" />
@@ -631,8 +676,9 @@
                     <priority>2</priority>
                 </suboperation>
                 <suboperation>
-                    <operation name="11. assemble product step C" xsi:type="operation_fixed_time" duration="P1D">
-                        <location name="factory"/>
+                    <operation name="11. assemble product step C" xsi:type="operation_fixed_time"
+                        duration="P1D">
+                        <location name="factory" />
                         <flows>
                             <flow xsi:type="flow_end">
                                 <item name="11. item" />
@@ -646,25 +692,29 @@
         </operation>
     </operations>
     <operationplans>
-        <operationplan ordertype="PO" end="2026-01-25T00:00:00" reference="PO #11" quantity="100" status="confirmed">
-            <item name="11. component"/>
-            <location name="factory"/>
-            <supplier name="11. Supplier"/>
+        <operationplan ordertype="PO" end="2026-01-25T00:00:00" reference="PO #11" quantity="100"
+            status="confirmed">
+            <item name="11. component" />
+            <location name="factory" />
+            <supplier name="11. Supplier" />
         </operationplan>
         <operationplan end="2026-03-02T00:00:00" reference="MO #11" quantity="10" status="approved">
-            <operation name="11. assemble product"/>
+            <operation name="11. assemble product" />
         </operationplan>
-        <operationplan end="2026-02-18T00:00:00" reference="MO #11 A" quantity="10" status="approved">
-            <operation name="11. assemble product step A"/>
-            <owner reference="MO #11"/>
+        <operationplan end="2026-02-18T00:00:00" reference="MO #11 A" quantity="10"
+            status="approved">
+            <operation name="11. assemble product step A" />
+            <owner reference="MO #11" />
         </operationplan>
-        <operationplan end="2026-03-01T00:00:00" reference="MO #11 B" quantity="10" status="approved">
-            <operation name="11. assemble product step B"/>
-            <owner reference="MO #11"/>
+        <operationplan end="2026-03-01T00:00:00" reference="MO #11 B" quantity="10"
+            status="approved">
+            <operation name="11. assemble product step B" />
+            <owner reference="MO #11" />
         </operationplan>
-        <operationplan end="2026-03-02T00:00:00" reference="MO #11 C" quantity="10" status="approved">
-            <operation name="11. assemble product step C"/>
-            <owner reference="MO #11"/>
+        <operationplan end="2026-03-02T00:00:00" reference="MO #11 C" quantity="10"
+            status="approved">
+            <operation name="11. assemble product step C" />
+            <owner reference="MO #11" />
         </operationplan>
     </operationplans>
 
@@ -673,7 +723,7 @@
         <supplier name="12. Supplier">
             <itemsuppliers>
                 <itemsupplier>
-                    <item name="12. component"/>
+                    <item name="12. component" />
                     <leadtime>P70D</leadtime>
                 </itemsupplier>
             </itemsuppliers>
@@ -685,25 +735,27 @@
             <minshipment>15</minshipment>
             <due>2026-01-01T00:00:00</due>
             <priority>1</priority>
-            <item name="12. item"/>
-            <location name="factory"/>
+            <item name="12. item" />
+            <location name="factory" />
             <status>open</status>
         </demand>
     </demands>
     <operations>
         <operation name="12. assemble product" xsi:type="operation_routing">
-            <item name="12. item"/>
-            <location name="factory"/>
+            <item name="12. item" />
+            <location name="factory" />
             <suboperations>
                 <suboperation>
-                    <operation name="12. assemble product step A" xsi:type="operation_fixed_time" duration="P1D">
-                        <location name="factory"/>
+                    <operation name="12. assemble product step A" xsi:type="operation_fixed_time"
+                        duration="P1D">
+                        <location name="factory" />
                     </operation>
                     <priority>1</priority>
                 </suboperation>
                 <suboperation>
-                    <operation name="12. assemble product step B" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
-                        <location name="factory"/>
+                    <operation name="12. assemble product step B" xsi:type="operation_time_per"
+                        duration="P1D" duration_per="P1D">
+                        <location name="factory" />
                         <flows>
                             <flow xsi:type="flow_start">
                                 <item name="12. component" />
@@ -714,8 +766,9 @@
                     <priority>2</priority>
                 </suboperation>
                 <suboperation>
-                    <operation name="12. assemble product step C" xsi:type="operation_fixed_time" duration="P1D">
-                        <location name="factory"/>
+                    <operation name="12. assemble product step C" xsi:type="operation_fixed_time"
+                        duration="P1D">
+                        <location name="factory" />
                         <flows>
                             <flow xsi:type="flow_end">
                                 <item name="12. item" />
@@ -729,25 +782,29 @@
         </operation>
     </operations>
     <operationplans>
-        <operationplan ordertype="PO" end="2026-01-25T00:00:00" reference="PO #12" quantity="100" status="confirmed">
-            <item name="12. component"/>
-            <location name="factory"/>
-            <supplier name="12. Supplier"/>
+        <operationplan ordertype="PO" end="2026-01-25T00:00:00" reference="PO #12" quantity="100"
+            status="confirmed">
+            <item name="12. component" />
+            <location name="factory" />
+            <supplier name="12. Supplier" />
         </operationplan>
         <operationplan end="2026-03-02T00:00:00" reference="MO #12" quantity="10" status="approved">
-            <operation name="12. assemble product"/>
+            <operation name="12. assemble product" />
         </operationplan>
-        <operationplan end="2026-01-28T00:00:00" reference="MO #12 A" quantity="10" status="confirmed">
-            <operation name="12. assemble product step A"/>
-            <owner reference="MO #12"/>
+        <operationplan end="2026-01-28T00:00:00" reference="MO #12 A" quantity="10"
+            status="confirmed">
+            <operation name="12. assemble product step A" />
+            <owner reference="MO #12" />
         </operationplan>
-        <operationplan end="2026-03-01T00:00:00" reference="MO #12 B" quantity="10" status="approved">
-            <operation name="12. assemble product step B"/>
-            <owner reference="MO #12"/>
+        <operationplan end="2026-03-01T00:00:00" reference="MO #12 B" quantity="10"
+            status="approved">
+            <operation name="12. assemble product step B" />
+            <owner reference="MO #12" />
         </operationplan>
-        <operationplan end="2026-03-02T00:00:00" reference="MO #12 C" quantity="10" status="approved">
-            <operation name="12. assemble product step C"/>
-            <owner reference="MO #12"/>
+        <operationplan end="2026-03-02T00:00:00" reference="MO #12 C" quantity="10"
+            status="approved">
+            <operation name="12. assemble product step C" />
+            <owner reference="MO #12" />
         </operationplan>
     </operationplans>
 
@@ -756,7 +813,7 @@
         <supplier name="13. Supplier">
             <itemsuppliers>
                 <itemsupplier>
-                    <item name="13. component"/>
+                    <item name="13. component" />
                     <leadtime>P70D</leadtime>
                 </itemsupplier>
             </itemsuppliers>
@@ -768,19 +825,20 @@
             <minshipment>15</minshipment>
             <due>2026-01-01T00:00:00</due>
             <priority>1</priority>
-            <item name="13. item"/>
-            <location name="factory"/>
+            <item name="13. item" />
+            <location name="factory" />
             <status>open</status>
         </demand>
     </demands>
     <operations>
         <operation name="13. assemble product" xsi:type="operation_routing">
-            <item name="13. item"/>
-            <location name="factory"/>
+            <item name="13. item" />
+            <location name="factory" />
             <suboperations>
                 <suboperation>
-                    <operation name="13. assemble product step A" xsi:type="operation_fixed_time" duration="P1D">
-                        <location name="factory"/>
+                    <operation name="13. assemble product step A" xsi:type="operation_fixed_time"
+                        duration="P1D">
+                        <location name="factory" />
                         <loads>
                             <load xsi:type="load">
                                 <resource name="13. resource">
@@ -801,8 +859,9 @@
                     <priority>1</priority>
                 </suboperation>
                 <suboperation>
-                    <operation name="13. assemble product step B" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
-                        <location name="factory"/>
+                    <operation name="13. assemble product step B" xsi:type="operation_time_per"
+                        duration="P1D" duration_per="P1D">
+                        <location name="factory" />
                         <flows>
                             <flow xsi:type="flow_start">
                                 <item name="13. component" />
@@ -813,8 +872,9 @@
                     <priority>2</priority>
                 </suboperation>
                 <suboperation>
-                    <operation name="13. assemble product step C" xsi:type="operation_fixed_time" duration="P1D">
-                        <location name="factory"/>
+                    <operation name="13. assemble product step C" xsi:type="operation_fixed_time"
+                        duration="P1D">
+                        <location name="factory" />
                         <flows>
                             <flow xsi:type="flow_end">
                                 <item name="13. item" />
@@ -828,29 +888,108 @@
         </operation>
     </operations>
     <operationplans>
-        <operationplan ordertype="PO" end="2026-01-25T00:00:00" reference="PO #13" quantity="100" status="confirmed">
-            <item name="13. component"/>
-            <location name="factory"/>
-            <supplier name="13. Supplier"/>
+        <operationplan ordertype="PO" end="2026-01-25T00:00:00" reference="PO #13" quantity="100"
+            status="confirmed">
+            <item name="13. component" />
+            <location name="factory" />
+            <supplier name="13. Supplier" />
         </operationplan>
         <operationplan end="2026-04-02T00:00:00" reference="MO #13" quantity="10" status="approved">
-            <operation name="13. assemble product"/>
+            <operation name="13. assemble product" />
         </operationplan>
-        <operationplan end="2026-04-20T00:00:00" reference="MO #13 A" quantity="10" status="approved">
-            <operation name="13. assemble product step A"/>
-            <owner reference="MO #13"/>
+        <operationplan end="2026-04-20T00:00:00" reference="MO #13 A" quantity="10"
+            status="approved">
+            <operation name="13. assemble product step A" />
+            <owner reference="MO #13" />
         </operationplan>
-        <operationplan end="2026-04-01T00:00:00" reference="MO #13 B" quantity="10" status="approved">
-            <operation name="13. assemble product step B"/>
-            <owner reference="MO #13"/>
+        <operationplan end="2026-04-01T00:00:00" reference="MO #13 B" quantity="10"
+            status="approved">
+            <operation name="13. assemble product step B" />
+            <owner reference="MO #13" />
         </operationplan>
-        <operationplan end="2026-04-02T00:00:00" reference="MO #13 C" quantity="10" status="approved">
-            <operation name="13. assemble product step C"/>
-            <owner reference="MO #13"/>
+        <operationplan end="2026-04-02T00:00:00" reference="MO #13 C" quantity="10"
+            status="approved">
+            <operation name="13. assemble product step C" />
+            <owner reference="MO #13" />
         </operationplan>
     </operationplans>
 
-<?python
+    <!-- case 14: Partially feasible move early that should be rejected. -->
+    <buffers>
+        <buffer name="14. component">
+            <item name="14. component" />
+            <location name="factory" />
+            <onhand>5</onhand>
+        </buffer>
+    </buffers>
+    <suppliers>
+        <supplier name="14. Supplier">
+            <itemsuppliers>
+                <itemsupplier>
+                    <item name="14. component" />
+                    <leadtime>P70D</leadtime>
+                </itemsupplier>
+            </itemsuppliers>
+        </supplier>
+    </suppliers>
+    <demands>
+        <demand name="14. sales order">
+            <quantity>20</quantity>
+            <minshipment>20</minshipment>
+            <due>2026-01-01T00:00:00</due>
+            <priority>1</priority>
+            <item name="14. item" />
+            <location name="factory" />
+            <status>open</status>
+        </demand>
+    </demands>
+    <operations>
+        <operation name="14. assemble product" xsi:type="operation_time_per" duration="P1D"
+            duration_per="PT1H">
+            <item name="14. item" />
+            <location name="factory" />
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="14. subassembly" />
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+        </operation>
+        <operation name="14. make subassembly" xsi:type="operation_time_per" duration="P1D"
+            duration_per="PT1H">
+            <item name="14. subassembly" />
+            <location name="factory" />
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="14. component" />
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+        </operation>
+    </operations>
+    <operationplans>
+        <operationplan ordertype="PO" end="2026-02-01T00:00:00" reference="PO #14 1" quantity="10"
+            status="confirmed">
+            <item name="14. component" />
+            <location name="factory" />
+            <supplier name="14. Supplier" />
+        </operationplan>
+        <operationplan ordertype="PO" end="2026-03-01T00:00:00" reference="PO #14 2" quantity="20"
+            status="confirmed">
+            <item name="14. component" />
+            <location name="factory" />
+            <supplier name="14. Supplier" />
+        </operationplan>
+        <operationplan start="2026-04-02T00:00:00" reference="MO #14 item" quantity="20"
+            status="approved">
+            <operation name="14. assemble product" />
+        </operationplan>
+        <operationplan end="2026-04-02T00:00:00" reference="MO #14 subassembly" quantity="30"
+            status="approved">
+            <operation name="14. make subassembly" />
+        </operationplan>
+    </operationplans>
+    <?python
 
 remember = []
 for opplan in frepple.operationplans():
@@ -914,6 +1053,5 @@ frepple.saveplan("output.9.xml")
 
 print("CREATING FULLY UNCONSTRAINED PLAN - 0")
 frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
-frepple.saveplan("output.10.xml")
-?>
+frepple.saveplan("output.10.xml")?>
 </plan>

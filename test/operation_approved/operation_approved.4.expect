@@ -24,6 +24,9 @@
 			<name>13. Supplier</name>
 		</supplier>
 		<supplier>
+			<name>14. Supplier</name>
+		</supplier>
+		<supplier>
 			<name>2. Supplier</name>
 		</supplier>
 		<supplier>
@@ -228,6 +231,23 @@
 			<name>13. item</name>
 		</item>
 		<item>
+			<name>14. component</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>14. Supplier</name>
+					</supplier>
+					<leadtime>P70D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>14. item</name>
+		</item>
+		<item>
+			<name>14. subassembly</name>
+		</item>
+		<item>
 			<name>2. item</name>
 			<itemsuppliers>
 				<itemsupplier>
@@ -398,6 +418,40 @@
 			</producing>
 			<item>
 				<name>13. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>14. component</name>
+			<item>
+				<name>14. component</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<onhand>5</onhand>
+		</buffer>
+		<buffer>
+			<name>14. item @ factory</name>
+			<producing xsi:type="operation_time_per">
+				<name>14. assemble product</name>
+			</producing>
+			<item>
+				<name>14. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>14. subassembly @ factory</name>
+			<producing xsi:type="operation_time_per">
+				<name>14. make subassembly</name>
+			</producing>
+			<item>
+				<name>14. subassembly</name>
 			</item>
 			<location>
 				<name>factory</name>
@@ -750,6 +804,56 @@
 				</flow>
 			</flows>
 			<duration>P1D</duration>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>14. assemble product</name>
+			<item>
+				<name>14. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>14. subassembly</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>14. item</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+			<duration_per>PT1H</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>14. make subassembly</name>
+			<item>
+				<name>14. subassembly</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>14. component</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>14. subassembly</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+			<duration_per>PT1H</duration_per>
 		</operation>
 		<operation>
 			<name>3. Make item</name>
@@ -1208,6 +1312,19 @@
 			<minshipment>15</minshipment>
 		</demand>
 		<demand>
+			<name>14. sales order</name>
+			<quantity>20</quantity>
+			<item>
+				<name>14. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2026-01-01T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>20</minshipment>
+		</demand>
+		<demand>
 			<name>2. sales order</name>
 			<quantity>20</quantity>
 			<item>
@@ -1618,6 +1735,29 @@
 			<owner>
 				<reference>18</reference>
 			</owner>
+		</operationplan>
+		<operationplan>
+			<reference>MO #14 item</reference>
+			<operation xsi:type="operation_time_per">
+				<name>14. assemble product</name>
+			</operation>
+			<start>2025-12-30T04:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>20</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>MO #14 subassembly</reference>
+			<operation xsi:type="operation_time_per">
+				<name>14. make subassembly</name>
+			</operation>
+			<start>2025-12-27T22:00:00</start>
+			<end>2025-12-30T04:00:00</end>
+			<quantity>30</quantity>
+			<info>Moved early to meet earlier requirement</info>
+			<status>approved</status>
 		</operationplan>
 		<operationplan>
 			<reference>MO #3 sub</reference>
@@ -2119,6 +2259,66 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
+			<reference>38</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase 14. component from 14. Supplier</name>
+			</operation>
+			<start>2025-10-18T22:00:00</start>
+			<end>2025-12-27T22:00:00</end>
+			<quantity>25</quantity>
+			<feasible>false</feasible>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>14. component</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>14. Supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>PO #14 1</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase 14. component from 14. Supplier</name>
+			</operation>
+			<start>2025-11-23T00:00:00</start>
+			<end>2026-02-01T00:00:00</end>
+			<quantity>10</quantity>
+			<status>confirmed</status>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>14. component</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>14. Supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>PO #14 2</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase 14. component from 14. Supplier</name>
+			</operation>
+			<start>2025-12-21T00:00:00</start>
+			<end>2026-03-01T00:00:00</end>
+			<quantity>20</quantity>
+			<status>confirmed</status>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>14. component</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>14. Supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
 			<reference>PO #2</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase 2. item @ factory from 2. Supplier</name>
@@ -2203,7 +2403,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<reference>38</reference>
+			<reference>39</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase 6. component @ factory from 6. Supplier</name>
 			</operation>
@@ -2244,7 +2444,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<reference>39</reference>
+			<reference>40</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship 1. item @ factory</name>
 				<buffer>
@@ -2272,7 +2472,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<reference>40</reference>
+			<reference>41</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship 10. item @ factory</name>
 				<buffer>
@@ -2300,7 +2500,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<reference>41</reference>
+			<reference>42</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship 11. item @ factory</name>
 				<buffer>
@@ -2328,7 +2528,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<reference>42</reference>
+			<reference>43</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship 12. item @ factory</name>
 				<buffer>
@@ -2356,7 +2556,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<reference>43</reference>
+			<reference>44</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship 13. item @ factory</name>
 				<buffer>
@@ -2384,7 +2584,35 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<reference>44</reference>
+			<reference>45</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship 14. item @ factory</name>
+				<buffer>
+					<name>14. item @ factory</name>
+					<item>
+						<name>14. item</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>14. sales order</name>
+			</demand>
+			<start>2026-01-01T00:00:00</start>
+			<end>2026-01-01T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>14. item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>46</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship 2. item @ factory</name>
 				<buffer>
@@ -2412,7 +2640,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<reference>45</reference>
+			<reference>47</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship 3. item @ factory</name>
 				<buffer>
@@ -2440,7 +2668,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<reference>46</reference>
+			<reference>48</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship 4. item @ factory</name>
 				<buffer>
@@ -2468,7 +2696,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<reference>47</reference>
+			<reference>49</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship 5. item @ factory</name>
 				<buffer>
@@ -2496,7 +2724,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<reference>48</reference>
+			<reference>50</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship 6. item @ factory</name>
 				<buffer>

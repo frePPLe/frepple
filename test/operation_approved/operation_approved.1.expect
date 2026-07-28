@@ -23,6 +23,14 @@ BUFFER	13. component @ factory	2026-02-05T00:00:00	-5	85
 BUFFER	13. item @ factory	2026-02-12T00:00:00	10	10
 BUFFER	13. item @ factory	2026-02-12T00:00:00	5	15
 BUFFER	13. item @ factory	2026-02-12T00:00:00	-15	0
+BUFFER	14. component	1971-01-01T00:00:00	5	5
+BUFFER	14. component	2026-02-01T00:00:00	10	15
+BUFFER	14. component	2026-03-01T00:00:00	20	35
+BUFFER	14. component	2026-03-01T00:00:00	-30	5
+BUFFER	14. item @ factory	2026-03-05T02:00:00	20	20
+BUFFER	14. item @ factory	2026-03-05T02:00:00	-20	0
+BUFFER	14. subassembly @ factory	2026-03-03T06:00:00	30	30
+BUFFER	14. subassembly @ factory	2026-03-03T06:00:00	-20	10
 BUFFER	2. item @ factory	2026-01-08T00:00:00	100	100
 BUFFER	2. item @ factory	2026-01-08T00:00:00	-20	80
 BUFFER	3. component @ factory	2026-01-26T00:00:00	100	100
@@ -59,6 +67,7 @@ DEMAND	10. sales order	2026-01-08T00:00:00	20	later than 2026-01-01T00:00:00
 DEMAND	11. sales order	2026-02-06T00:00:00	15	later than 2026-01-01T00:00:00
 DEMAND	12. sales order	2026-02-09T00:00:00	15	later than 2026-01-01T00:00:00
 DEMAND	13. sales order	2026-02-12T00:00:00	15	later than 2026-01-01T00:00:00
+DEMAND	14. sales order	2026-03-05T02:00:00	20	later than 2026-01-01T00:00:00
 DEMAND	2. sales order	2026-01-08T00:00:00	20	later than 2026-01-01T00:00:00
 DEMAND	3. sales order	2026-02-01T00:00:00	20
 DEMAND	4. sales order	2026-03-07T00:00:00	20	later than 2026-01-01T00:00:00
@@ -101,6 +110,8 @@ OPERATION	13. assemble product step B	2026-01-31T00:00:00	2026-02-11T00:00:00	10
 OPERATION	13. assemble product step B	2026-02-05T00:00:00	2026-02-11T00:00:00	5
 OPERATION	13. assemble product step C	2026-02-11T00:00:00	2026-02-12T00:00:00	10	approved
 OPERATION	13. assemble product step C	2026-02-11T00:00:00	2026-02-12T00:00:00	5
+OPERATION	14. assemble product	2026-03-03T06:00:00	2026-03-05T02:00:00	20	approved
+OPERATION	14. make subassembly	2026-03-01T00:00:00	2026-03-03T06:00:00	30	approved
 OPERATION	3. Make item	2026-01-29T00:00:00	2026-02-01T00:00:00	100	approved
 OPERATION	3. Make item subassembly	2026-01-26T00:00:00	2026-01-29T00:00:00	100	approved
 OPERATION	4. Make item	2026-03-04T00:00:00	2026-03-07T00:00:00	100	approved
@@ -136,6 +147,8 @@ OPERATION	Purchase 10. item @ factory from 10. Supplier	2026-01-01T00:00:00	2026
 OPERATION	Purchase 11. component @ factory from 11. Supplier	2025-11-16T00:00:00	2026-01-25T00:00:00	100	confirmed
 OPERATION	Purchase 12. component @ factory from 12. Supplier	2025-11-16T00:00:00	2026-01-25T00:00:00	100	confirmed
 OPERATION	Purchase 13. component @ factory from 13. Supplier	2025-11-16T00:00:00	2026-01-25T00:00:00	100	confirmed
+OPERATION	Purchase 14. component from 14. Supplier	2025-11-23T00:00:00	2026-02-01T00:00:00	10	confirmed
+OPERATION	Purchase 14. component from 14. Supplier	2025-12-21T00:00:00	2026-03-01T00:00:00	20	confirmed
 OPERATION	Purchase 2. item @ factory from 2. Supplier	2026-01-01T00:00:00	2026-01-08T00:00:00	100	approved
 OPERATION	Purchase 3. component @ factory from 3. Supplier	2026-01-19T00:00:00	2026-01-26T00:00:00	100	approved
 OPERATION	Purchase 4. component @ factory from 4. Supplier	2026-02-22T00:00:00	2026-03-01T00:00:00	100	approved

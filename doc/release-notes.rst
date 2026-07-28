@@ -7,6 +7,11 @@ Release notes
 This release is scheduled for the end of August 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Production planning
+
+- | Bug fix: Non-zero values of the parameter plan.move_approved_early could result
+    in approved manufacturing orders unintentionally changing size.
+
 9.17.0 (2026-07-10)
 ===================
 

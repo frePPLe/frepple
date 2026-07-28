@@ -797,6 +797,8 @@ class SolverCreate : public Solver {
      */
     bool forceLate = false;
 
+    bool requireFull = false;
+
     PooledString curBatch;
 
     /* This is the quantity we are asking for. */

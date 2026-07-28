@@ -273,6 +273,7 @@ void SolverCreate::SolverData::push(double q, Date d, bool full) {
     state->curBuffer = prevstate->curBuffer;
     state->q_qty_min = prevstate->q_qty_min;
     state->forceLate = prevstate->forceLate;
+    state->requireFull = prevstate->requireFull;
     state->a_cost = prevstate->a_cost;
     state->a_penalty = prevstate->a_penalty;
     state->curBatch = prevstate->curBatch;
@@ -290,6 +291,7 @@ void SolverCreate::SolverData::push(double q, Date d, bool full) {
     state->curBuffer = nullptr;
     state->q_qty_min = 1.0;
     state->forceLate = false;
+    state->requireFull = prevstate->requireFull;
     state->a_cost = 0.0;
     state->a_penalty = 0.0;
     state->curBatch = PooledString::emptystring;
@@ -309,6 +311,7 @@ void SolverCreate::SolverData::pop(bool copy_answer) {
     prevstate->a_penalty = state->a_penalty;
     prevstate->a_cost = state->a_cost;
     prevstate->forceAccept = state->forceAccept;
+    prevstate->requireFull = state->requireFull;
   }
   --state;
   --prevstate;

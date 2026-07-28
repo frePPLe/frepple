@@ -239,7 +239,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                   }
                   if (getLogLevel() > 1 && firstmsg1)
                     logger << indentlevel
-                           << "  Moving approved routing supply early: " << sub
+                           << "Moving approved routing supply early: " << sub
                            << '\n';
                   auto orig_quantity = opplan_to_move->getQuantity();
                   data->state->keepAssignments =
@@ -249,9 +249,12 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                   sub->setOperationPlanParameters(orig_quantity,
                                                   Date::infinitePast, newDate,
                                                   true, true, false);
+                  auto requireFull = data->state->requireFull;
+                  data->state->requireFull = true;
                   data->push(opplan_to_move->getQuantity(), sub->getEnd());
                   checkOperation(sub, *data);
                   data->pop(true);
+                  data->state->requireFull = requireFull;
                   if (data->state->a_qty <= ROUNDING_ERROR) {
                     // convert data->state->a_date to the complete routing
                     OperationPlan::iterator x(opplan_to_move, true, sub);
@@ -272,10 +275,12 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 // Check parent operation only
                 if (getLogLevel() > 1 && firstmsg1) {
                   logger << indentlevel
-                         << "  Moving approved supply early: " << opplan_to_move
+                         << "Moving approved supply early: " << opplan_to_move
                          << '\n';
                   firstmsg1 = false;
                 }
+                auto requireFull = data->state->requireFull;
+                data->state->requireFull = true;
                 data->push(opplan_to_move->getQuantity(), newDate);
                 data->state->keepAssignments =
                     Plan::instance().getMoveApprovedEarly() == 1
@@ -283,6 +288,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                         : nullptr;
                 checkOperation(opplan_to_move, *data);
                 data->pop(true);
+                data->state->requireFull = requireFull;
               }
               if (data->state->a_qty <= ROUNDING_ERROR) {
                 // Move wasn't feasible. Need to disallow new replenishments.
@@ -688,7 +694,9 @@ void SolverCreate::solve(const Buffer* b, void* v) {
        (getConstraints() & (MFG_LEADTIME + PO_LEADTIME)) > 0)) {
     // Use the constrained planning result
     data->state->a_qty = requested_qty - shortage - initial_shortage;
-    if (data->state->a_qty < ROUNDING_ERROR) {
+    if (data->state->a_qty < ROUNDING_ERROR ||
+        (requested_qty - data->state->a_qty > ROUNDING_ERROR &&
+         data->state->requireFull)) {
       data->getCommandManager()->rollback(topcommand);
       data->state->a_qty = 0.0;
     }

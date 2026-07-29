@@ -12,6 +12,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Bug fix: Non-zero values of the parameter plan.move_approved_early could result
     in approved manufacturing orders unintentionally changing size.
 
+- | Performance improvements on models with complex calendars (typically for bucketized
+    capacity) and when running in UTC timezone.
+
 .. rubric:: Third party components
 
 - | Frepple upgraded from using django 4.2 to 5.2, and a number of other third party python

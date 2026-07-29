@@ -846,10 +846,6 @@ class DateDetail {
    * these limits.
    */
   void normalize() const {
-    static unsigned long count = 0;
-    if (++count % 1000000 == 0) {
-      logger << "DateDetail::getWeekDay() called " << count << " times" << endl;
-    }
     if (Date::isUTC()) {
       const_cast<struct tm*>(&time_info)->tm_isdst = 0;
       const_cast<DateDetail*>(this)->val =

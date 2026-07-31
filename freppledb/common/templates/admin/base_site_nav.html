@@ -69,7 +69,7 @@ $(function() {
 					</a>
 					<ul class="dropdown-menu dropdown-menu-end">
 					{% for sc in user.scenarios|sortList %}<li>
-					  <a class="dropdown-item" data-database="{{ sc.name }}" onclick="selectDatabase(event.target)">{{ sc.description }}
+					  <a class="dropdown-item" data-database="{{ sc.name }}" onclick="selectDatabase(event.target)">{{ sc.tag }}
 					  {% if sc.help_url %}
 					  <span onclick="window.open('{{sc.help_url|safe}}'); event.stopPropagation()" style="float:right" class="fa fa-question-circle"></span>
 					  {% endif %}</a>

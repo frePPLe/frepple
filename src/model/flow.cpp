@@ -223,7 +223,7 @@ Object* Flow::finder(const DataValueDict& d) {
   const DataValue* hasName = d.get(Tags::name);
   string name;
   if (hasName) name = hasName->getString();
-  for (const auto & fl : oper->getFlows()) {
+  for (const auto& fl : oper->getFlows()) {
     if (fl.getBuffer() != buf) continue;
     if (hasEffectiveStart && fl.getEffectiveStart() != effective_start)
       continue;
@@ -244,10 +244,15 @@ pair<Date, double> FlowStart::getFlowplanDateQuantity(
         fl->getOperationPlan(), dt, offset, true, nullptr, offset > 0L);
     dt = offset > 0L ? d.getEnd() : d.getStart();
   }
+  auto* oper = fl->getOperation();
+  const bool is_correction_fixedtime =
+      oper->hasType<OperationFixedTime>() &&
+      oper->getName().starts_with("Correction for ");
+
   if (fl->getOperationPlan()->getConfirmed() &&
       !fl->getOperationPlan()->getCompleted() &&
       dt < Plan::instance().getCurrent() &&
-      !fl->getOperation()->hasType<OperationInventory>())
+      !oper->hasType<OperationInventory>() && !is_correction_fixedtime)
     // Confirmed material production and consumption is always in the future
     dt = Plan::instance().getCurrent() + Duration(1L);
   if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
@@ -279,10 +284,14 @@ pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const {
         fl->getOperationPlan(), dt, offset, true, nullptr, offset < 0L);
     dt = offset > 0L ? d.getEnd() : d.getStart();
   }
+  auto* oper = fl->getOperation();
+  const bool is_correction_fixedtime =
+      oper->hasType<OperationFixedTime>() &&
+      oper->getName().starts_with("Correction for ");
   if (fl->getOperationPlan()->getConfirmed() &&
       !fl->getOperationPlan()->getCompleted() &&
       dt < Plan::instance().getCurrent() &&
-      !fl->getOperation()->hasType<OperationInventory>())
+      !oper->hasType<OperationInventory>() && !is_correction_fixedtime)
     // Confirmed material production and consumption is always in the future
     dt = Plan::instance().getCurrent() + Duration(1L);
   if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
@@ -314,10 +323,14 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(
     // Default to a simple flowplan at the start or end
     auto dt = isConsumer() ? fl->getOperationPlan()->getSetupEnd()
                            : fl->getOperationPlan()->getEnd();
+    auto* oper = fl->getOperation();
+    const bool is_correction_fixedtime =
+        oper->hasType<OperationFixedTime>() &&
+        oper->getName().starts_with("Correction for ");
     if (fl->getOperationPlan()->getConfirmed() &&
         !fl->getOperationPlan()->getCompleted() &&
         dt < Plan::instance().getCurrent() &&
-        !fl->getOperation()->hasType<OperationInventory>())
+        !oper->hasType<OperationInventory>() && !is_correction_fixedtime)
       // Confirmed material production and consumption is always in the future
       dt = Plan::instance().getCurrent() + Duration(1L);
     if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())

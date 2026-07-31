@@ -231,11 +231,19 @@ def vacuumAnalyze(cursor):
     """
     This method runs vacuum analyze on all tables in the public schema.
     """
-    cursor.execute(
-        """
-        select schemaname || '.' || tablename
-        from pg_tables
+    cursor.execute("""
+        select
+            schemaname || '.' || relname as table_name
+        from pg_stat_user_tables
         where schemaname = 'public'
-        """
-    )
+        and (
+            -- Either planner stats out-of-date or never collected
+            (last_analyze is null and last_autoanalyze is null)
+            or (n_mod_since_analyze > n_live_tup * 0.1 and n_mod_since_analyze > 100)
+
+            -- Either physical bloat threshold
+            or (n_dead_tup > n_live_tup * 0.1 and n_dead_tup > 100)
+            or (last_vacuum is null and last_autovacuum is null)
+            )
+        """)
     cursor.execute(f"vacuum analyze {", ".join(t[0] for t in cursor)}")

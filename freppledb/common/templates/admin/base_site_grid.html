@@ -344,6 +344,9 @@ function displayGrid(load) {
       }});
   }
   {% endif %}
+  new ResizeObserver(function() {
+    $("#grid").setGridWidth($('#content-main').width())
+  }).observe(document.getElementById('content-main'));
 });
 </script>
 {% endblock %}

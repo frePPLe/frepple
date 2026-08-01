@@ -362,7 +362,7 @@ void PythonInterpreter::registerGlobalObject(const char* name, PyObject* obj,
   if (lock) pythonstate = PyGILState_Ensure();
   PyModule_AddObject(module, name, obj);
   Py_INCREF(obj);
-   if (lock) PyGILState_Release(pythonstate);
+  if (lock) PyGILState_Release(pythonstate);
 }
 
 PyObject* PythonInterpreter::python_log(PyObject*, PyObject* args) {
@@ -393,9 +393,13 @@ const PyTypeObject PythonType::PyTypeObjectTemplate = {
     0,                                     /* tp_as_number */
     0,                                     /* tp_as_sequence */
     0,                                     /* tp_as_mapping */
+#if PY_VERSION_HEX >= 0x030E0000
+    PyObject_GenericHash, /* tp_hash */
+#else
     reinterpret_cast<hashfunc>(_Py_HashPointer), /* tp_hash */
-    0,                                           /* CAN BE UPDATED tp_call */
-    0,                                           /* CAN BE UPDATED tp_str */
+#endif
+    0,                                        /* CAN BE UPDATED tp_call */
+    0,                                        /* CAN BE UPDATED tp_str */
     0,                                        /* CAN BE UPDATED tp_getattro */
     0,                                        /* CAN BE UPDATED tp_setattro */
     0,                                        /* tp_as_buffer */

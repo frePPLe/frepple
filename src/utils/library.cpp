@@ -94,11 +94,7 @@ void LibraryUtils::initialize() {
 }
 
 string Environment::searchFile(const string& filename) {
-#ifdef _MSC_VER
-  static char pathseperator = '\\';
-#else
   static char pathseperator = '/';
-#endif
 
   // First: check the current directory
   struct stat stat_p;

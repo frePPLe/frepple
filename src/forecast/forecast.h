@@ -367,6 +367,8 @@ class ForecastMeasureComputed : public ForecastMeasureAggregated {
   friend ForecastMeasure;
 
  public:
+  using ForecastMeasure::update;
+
   explicit ForecastMeasureComputed() { initType(metadata); }
 
   explicit ForecastMeasureComputed(const char* n, const string& expr,
@@ -1647,7 +1649,7 @@ class Forecast : public Demand, public ForecastBase {
   void setPriority(int) override;
 
   /* Updates the due date of the demand. */
-  virtual void setDue(const Date&) {
+  void setDue(Date) override {
     throw DataException("Can't set due date of a forecast");
   }
 

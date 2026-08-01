@@ -926,8 +926,6 @@ class DateDetail {
       time_info.tm_sec = sec - time_info.tm_min * 60 - time_info.tm_hour * 3600;
       val += sec - oldsec;
     } else {
-      int oldsec =
-          time_info.tm_hour * 3600 + time_info.tm_min * 60 + time_info.tm_sec;
       time_info.tm_hour = sec / 3600;
       time_info.tm_min = (sec - time_info.tm_hour * 3600) / 60;
       time_info.tm_sec = sec - time_info.tm_min * 60 - time_info.tm_hour * 3600;

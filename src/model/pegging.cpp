@@ -79,9 +79,9 @@ PeggingIterator& PeggingIterator::operator=(const PeggingIterator& c) {
 PeggingIterator::PeggingIterator(const Demand* d, short maxLvl)
     : states(PeggingIterator::peggingpool),
       states_sorted(PeggingIterator::peggingpool),
+      first(false),
       downstream(false),
       firstIteration(true),
-      first(false),
       second_pass(false),
       maxlevel(maxLvl) {
   initType(metadata);
@@ -125,9 +125,9 @@ PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b,
                                  short maxlevel)
     : states(PeggingIterator::peggingpool),
       states_sorted(PeggingIterator::peggingpool),
+      first(false),
       downstream(b),
       firstIteration(true),
-      first(false),
       second_pass(false),
       maxlevel(maxlevel) {
   initType(metadata);
@@ -143,9 +143,9 @@ PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b,
 PeggingIterator::PeggingIterator(const FlowPlan* fp, bool b)
     : states(PeggingIterator::peggingpool),
       states_sorted(PeggingIterator::peggingpool),
+      first(false),
       downstream(b),
       firstIteration(true),
-      first(false),
       second_pass(false),
       maxlevel(-1) {
   initType(metadata);
@@ -161,9 +161,9 @@ PeggingIterator::PeggingIterator(const FlowPlan* fp, bool b)
 PeggingIterator::PeggingIterator(LoadPlan* lp, bool b)
     : states(PeggingIterator::peggingpool),
       states_sorted(PeggingIterator::peggingpool),
+      first(false),
       downstream(b),
       firstIteration(true),
-      first(false),
       second_pass(false),
       maxlevel(-1) {
   initType(metadata);

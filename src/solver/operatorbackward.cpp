@@ -28,7 +28,7 @@
 
 namespace frepple {
 
-void OperatorBackward::solve(const ResourceBuckets* res, void* v) {
+void OperatorBackward::solve(const ResourceBuckets* res, void*) {
   auto& indentlevel = data->getSolver()->indentlevel;
   // No propagation on unconstrained resources
   if (!res->getConstrained() || !data->getSolver()->isCapacityConstrained())
@@ -149,7 +149,7 @@ bool OperatorBackward::compareLoadPlans::operator()(const LoadPlan*& a,
   }
 }
 
-void OperatorBackward::solve(const Resource* res, void* v) {
+void OperatorBackward::solve(const Resource* res, void*) {
   auto& indentlevel = data->getSolver()->indentlevel;
   // No propagation on unconstrained resources
   if (!res->getConstrained() || !data->getSolver()->isCapacityConstrained())

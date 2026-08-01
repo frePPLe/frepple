@@ -287,9 +287,9 @@ PyObject* ForecastMeasure::updatePlannedForecastPython(PyObject*, PyObject*) {
       lock_guard<recursive_mutex> exclusive(fcstdata->lock);
       for (auto& bckt : fcstdata->getBuckets()) {
         auto tmp = bckt.getOrdersPlanned();
-        if (tmp) Measures::ordersplanned->update(bckt, tmp);
+        if (tmp != 0.0) Measures::ordersplanned->update(bckt, tmp);
         tmp = bckt.getForecastPlanned();
-        if (tmp) Measures::forecastplanned->update(bckt, tmp);
+        if (tmp != 0.0) Measures::forecastplanned->update(bckt, tmp);
       }
     }
   } catch (...) {
@@ -316,7 +316,7 @@ void ForecastBucketData::setValue(bool propagate, CommandManager* mgr,
     // data structures
     if (getForecast()->getPlanned()) {
       auto b1 = getForecastBucket();
-      if (val || b1) {
+      if (val != 0.0 || b1) {
         auto tmp = getOrCreateForecastBucket();
         auto current_quantity = tmp->getQuantity();
         if (current_quantity > val + ROUNDING_ERROR)
@@ -346,7 +346,7 @@ void ForecastBucketData::setValue(bool propagate, CommandManager* mgr,
     }
   } else {
     auto delta = val - t->getValue();
-    if (fabs(delta) > ROUNDING_ERROR || key->getDefault()) {
+    if (fabs(delta) > ROUNDING_ERROR || key->getDefault() != 0.0) {
       if (val != key->getDefault())
         // Updating an existing key
         t->setValue(val);
@@ -368,7 +368,7 @@ void ForecastBucketData::setValue(bool propagate, CommandManager* mgr,
 
 void ForecastBucketData::propagateValue(const ForecastMeasure* key,
                                         double val) {
-  if (!key || !key->isAggregate() || !val) return;
+  if (!key || !key->isAggregate() || val == 0.0) return;
   auto index = getIndex();
   for (auto p = getForecast()->getParents(); p; ++p) {
     auto parentfcstdata = p->getData();
@@ -380,14 +380,14 @@ void ForecastBucketData::propagateValue(const ForecastMeasure* key,
 template <>
 void ForecastBucketData::incValue(bool propagate, CommandManager* mgr,
                                   const ForecastMeasure* key, double val) {
-  if (!key || (!val && !key->getDefault())) return;
+  if (!key || ((val == 0.0) && (key->getDefault() == 0.0))) return;
   if (key == Measures::forecastnet &&
       getEnd() > Plan::instance().getFcstCurrent()) {
     // This is the connection between the supply chain and the forecast
     // data structures
     if (getForecast()->getPlanned()) {
       auto b1 = getForecastBucket();
-      if ((b1 ? b1->getQuantity() + val : val) || b1) {
+      if (((b1 ? b1->getQuantity() + val : val) != 0.0) || b1) {
         auto tmp = getOrCreateForecastBucket();
         tmp->setQuantity(tmp->getQuantity() + val);
       }
@@ -590,7 +590,7 @@ double ForecastMeasureAggregated::disaggregate(ForecastBucketData& bckt,
   else {
     // Handling of parent forecasts
     auto currentvalue = getValue(fcstdata->getBuckets()[bckt.getIndex()]);
-    if (currentvalue) {
+    if (currentvalue != 0.0) {
       // Proportionally scale all child forecasts
       double factor = val / currentvalue;
       for (auto ch = fcst->getLeaves(false, this); ch; ++ch)
@@ -645,7 +645,7 @@ double ForecastMeasureAggregated::disaggregate(ForecastBase* fcst,
   // TODO the leaf and parent logic can be combined
   if (isLeaf(fcst)) {
     //  Handling of leaf forecasts
-    if (multiply || currentvalue) {
+    if (multiply || currentvalue != 0.0) {
       if (!multiply) val /= currentvalue;
       // Proportionally scale all buckets
       for (auto& bckt : fcstdata->getBuckets()) {
@@ -676,7 +676,7 @@ double ForecastMeasureAggregated::disaggregate(ForecastBase* fcst,
     }
   } else {
     // Handling of parent forecasts
-    if (currentvalue) {
+    if (currentvalue != 0.0) {
       // Proportionally scale all child forecasts
       double factor = val / currentvalue;
       for (auto ch = fcst->getLeaves(false, this); ch; ++ch)
@@ -733,10 +733,10 @@ double ForecastMeasureAggregated::disaggregateOverride(
     // Mode 0: Remove the overrides on the children
     mode = 0;
     arg = -1.0;
-  } else if (count_override) {
+  } else if (count_override != 0u) {
     if (current_override > val ||
         fabs(current_override - current_total) < ROUNDING_ERROR) {
-      if (current_override) {
+      if (current_override != 0.0) {
         // Mode 1: scale the existing overrides and set others expliclitly to
         // 0.
         mode = 1;
@@ -747,7 +747,7 @@ double ForecastMeasureAggregated::disaggregateOverride(
         arg = val / count_override;
       }
     } else {
-      if (current_total) {
+      if (current_total != 0.0) {
         // Scale non-overriden values to sum up correctly.
         // Existing overridden values are left untouched.
         mode = 3;
@@ -758,11 +758,11 @@ double ForecastMeasureAggregated::disaggregateOverride(
         arg = val / count_no_override;
       }
     }
-  } else if (current_base) {
+  } else if (current_base != 0.0) {
     // Mode 3: Scale all existing records proportional to the base.
     mode = 3;
     arg = val / current_base;
-  } else if (count_no_override) {
+  } else if (count_no_override != 0u) {
     // Mode 4: Divide the quantity evenly over all existing leafs.
     mode = 4;
     arg = val / count_no_override;
@@ -864,11 +864,11 @@ double ForecastMeasureAggregated::disaggregateOverride(
     // Mode 0: Remove the overrides on the children
     mode = 0;
     arg = -1.0;
-  } else if (count_override) {
+  } else if (count_override != 0u) {
     // Some overrides already exist
     if (current_override > val || !count_no_override) {
       // Scale existing overrides
-      if (current_override) {
+      if (current_override != 0.0) {
         // Mode 1: scale the existing overrides and set others expliclitly to
         // 0.
         mode = 1;
@@ -880,7 +880,7 @@ double ForecastMeasureAggregated::disaggregateOverride(
       }
     } else {
       // Update non-overriden entries
-      if (current_no_override) {
+      if (current_no_override != 0.0) {
         // Scale non-overriden values to sum up correctly.
         // Existing overridden values are left untouched.
         mode = 3;
@@ -891,11 +891,11 @@ double ForecastMeasureAggregated::disaggregateOverride(
         arg = (val - current_override) / count_no_override;
       }
     }
-  } else if (current_base) {
+  } else if (current_base != 0.0) {
     // Mode 3: Scale all existing records proportional to the base.
     mode = 3;
     arg = val / current_base;
-  } else if (count_no_override) {
+  } else if (count_no_override != 0u) {
     // Mode 4: Divide the quantity evenly over all existing leafs.
     mode = 4;
     arg = val / count_no_override;
@@ -1387,7 +1387,8 @@ pair<double, double> MeasurePagePool::check(const string& msg) {
          << count_temp_used << " pairs in use and " << count_temp_free
          << " free pairs.\n";
   double util = count_free + count_used + count_temp_free + count_temp_used;
-  util = util ? round(100.0 * (count_used + count_temp_used) / util) : 0.0;
+  util = (util != 0.0) ? round(100.0 * (count_used + count_temp_used) / util)
+                       : 0.0;
   logger << "   " << util << "% average utilization\n";
   logger << "   " << count_pages_free << " empty pages, "
          << count_pages_temp_free << " free temporary pages.\n";

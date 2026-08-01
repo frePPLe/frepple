@@ -542,13 +542,13 @@ void ForecastBase::setFields(DateRange& d, const DataValueDict& in,
   if (fcstOverrideElement) {
     double total = fcstOverrideElement->getDouble();
     // Expect to find at least one non-zero weight...
-    if (!weights && total) {
+    if (weights == 0.0 && total != 0.0) {
       ostringstream o;
       o << "No valid forecast date in range " << d << " of forecast '"
         << getForecastItem() << "', '" << getForecastLocation() << "', '"
         << getForecastCustomer() << "'";
       throw DataException(o.str());
-    } else if (weights)
+    } else if (weights != 0.0)
       total /= weights;
     double carryover = 0.0;
     for (auto& x : data->getBuckets()) {
@@ -560,7 +560,7 @@ void ForecastBase::setFields(DateRange& d, const DataValueDict& in,
           // Rounding to discrete numbers
           carryover += total * percent;
           auto intdelta = ceil(carryover - 0.5);
-          if (!intdelta)
+          if (intdelta == 0.0)
             // Little trick to avoid "-0" as forecast override
             intdelta = 0.0;
           carryover -= intdelta;
@@ -1136,7 +1136,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
           if (bckiter->getEnd() > Plan::instance().getFcstCurrent() &&
               f->getPlanned()) {
             auto tmp = Measures::forecastnet->getValue(*bckiter);
-            if (tmp)
+            if (tmp != 0.0)
               bckiter->getOrCreateForecastBucket()->setQuantity(tmp);
             else {
               auto fcstbckt = bckiter->getOrCreateForecastBucket();
@@ -1296,8 +1296,8 @@ void ForecastData::flush() {
         // start a transaction
         DatabaseResult(db, stmt_begin);
         bool first = true;
-        int argcount = -1;
-        auto argmax = stmt.getArgs();
+        short argcount = -1;
+        const short argmax = static_cast<short>(stmt.getArgs());
         for (auto& i : buckets) {
           if (!i.isDirty()) continue;
           if (first) {

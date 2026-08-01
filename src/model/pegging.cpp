@@ -233,7 +233,7 @@ PeggingIterator& PeggingIterator::operator++() {
 void PeggingIterator::followPegging(const OperationPlan* op, double qty,
                                     double offset, short lvl) {
   // Zero quantity operationplans don't have further pegging
-  if (!op->getQuantity()) return;
+  if (op->getQuantity() == 0.0) return;
 
   // Did we reach the maximum depth we want to visit
   // If the operation is hidden, we allow one more level
@@ -245,13 +245,13 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
     for (auto i = op->beginFlowPlans(); i != op->endFlowPlans(); ++i) {
       if (i->getQuantity() > ROUNDING_ERROR)  // Producing flowplan
         i->getFlow()->getBuffer()->followPegging(*this, &*i, qty, offset,
-                                                 lvl + 1);
+                                                 static_cast<short>(lvl + 1));
     }
   else
     for (auto i = op->beginFlowPlans(); i != op->endFlowPlans(); ++i) {
       if (i->getQuantity() < -ROUNDING_ERROR)  // Consuming flowplan
         i->getFlow()->getBuffer()->followPegging(*this, &*i, qty, offset,
-                                                 lvl + 1);
+                                                 static_cast<short>(lvl + 1));
     }
 
   // Push child operationplans on the stack.
@@ -266,7 +266,8 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
         if (op->getOperation()->hasType<OperationRouting>()) {
           for (OperationPlan::iterator j(op); j != OperationPlan::end(); ++j) {
             updateStack(&*j, qty * j->getQuantity() / op->getQuantity(),
-                        offset * j->getQuantity() / op->getQuantity(), lvl + 1,
+                        offset * j->getQuantity() / op->getQuantity(),
+                        static_cast<short>(lvl + 1),
                         0L);
             break;
           }
@@ -281,7 +282,7 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
               qty * op->getNextSubOpplan()->getQuantity() / op->getQuantity(),
               offset * op->getNextSubOpplan()->getQuantity() /
                   op->getQuantity(),
-              lvl + 1, 0L);
+              static_cast<short>(lvl + 1), 0L);
         }
       } else {
         // UPSTREAM
@@ -295,7 +296,7 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
             updateStack(opplan_last,
                         qty * opplan_last->getQuantity() / op->getQuantity(),
                         offset * opplan_last->getQuantity() / op->getQuantity(),
-                        lvl + 1, 0L);
+                        static_cast<short>(lvl + 1), 0L);
         }
 
         // In upstream, a routing suboperation will send the previous
@@ -308,14 +309,15 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
               qty * op->getPrevSubOpplan()->getQuantity() / op->getQuantity(),
               offset * op->getPrevSubOpplan()->getQuantity() /
                   op->getQuantity(),
-              lvl + 1, 0L);
+              static_cast<short>(lvl + 1), 0L);
         }
       }
     }
   } else {
     for (OperationPlan::iterator j(op); j != OperationPlan::end(); ++j) {
       updateStack(&*j, qty * j->getQuantity() / op->getQuantity(),
-                  offset * j->getQuantity() / op->getQuantity(), lvl + 1, 0L);
+                  offset * j->getQuantity() / op->getQuantity(),
+                  static_cast<short>(lvl + 1), 0L);
     }
   }
 
@@ -329,13 +331,13 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
       updateStack(d->getSecond(),
                   qty * d->getSecond()->getQuantity() / op->getQuantity(),
                   offset * d->getSecond()->getQuantity() / op->getQuantity(),
-                  lvl + 1, 0L);
+                  static_cast<short>(lvl + 1), 0L);
     else if (!downstream && d->getSecond() == op &&
              (maxlevel == -1 || lvl < maxlevel))
       updateStack(d->getFirst(),
                   qty * d->getFirst()->getQuantity() / op->getQuantity(),
                   offset * d->getFirst()->getQuantity() / op->getQuantity(),
-                  lvl + 1, 0L);
+                  static_cast<short>(lvl + 1), 0L);
   }
 }
 

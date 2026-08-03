@@ -97,7 +97,6 @@ class setDatabaseConnection(PlanTask):
             res.append("port=%s" % get_databases()[database]["PORT"])
         frepple.settings.dbconnection = " ".join(res)
         frepple.settings.database = database
-        frepple.settings.dbchannel = "frepple"
 
         # Cache settings
         frepple.cache.maximum = settings.CACHE_MAXIMUM

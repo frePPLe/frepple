@@ -463,6 +463,88 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
   // Note that we allow the complete post-operation time to be eaten
   OperationPlanState original(opplan);
 
+  // The lead time varies depending on the chosen resources:
+  // - There can be more efficient resources
+  // - Other resources can have a lower setup time
+  // - Availability calendars can be different
+  vector<pair<LoadPlan*, vector<Resource*>>> pool_members;
+  if (extra && data.state->keepAssignments != opplan) {
+    // Loop over the cartesian product of all resources in the pools.
+    for (auto ldplan = opplan->beginLoadPlans();
+         ldplan != opplan->endLoadPlans(); ++ldplan) {
+      if (ldplan->getQuantity() >= 0.0 || !ldplan->getLoad() ||
+          !ldplan->getLoad()->getResource()->isGroup())
+        continue;
+
+      vector<Resource*> members;
+      stack<Resource*> res_stack;
+      res_stack.push(ldplan->getLoad()->getResource());
+      while (!res_stack.empty()) {
+        auto* res = res_stack.top();
+        res_stack.pop();
+        if (res->isGroup()) {
+          for (auto x = res->getMembers(); x != Resource::end(); ++x)
+            res_stack.push(&*x);
+        } else {
+          if (ldplan->getLoad()->getSkill() &&
+              !res->hasSkill(ldplan->getLoad()->getSkill(), threshold,
+                             threshold))
+            continue;
+
+          // Efficiency must be higher than 0
+          auto my_eff =
+              res->getEfficiencyCalendar()
+                  ? res->getEfficiencyCalendar()->getValue(original.start)
+                  : res->getEfficiency();
+          if (my_eff <= 0.0) continue;
+          members.push_back(res);
+        }
+      }
+      if (!members.empty()) pool_members.emplace_back(&*ldplan, members);
+    }
+  }
+
+  // Switching to an alternate resource may still allow to meet the expected end
+  // date
+  if (!pool_members.empty()) {
+    vector<size_t> idx(pool_members.size(), 0);
+    while (true) {
+      opplan->clearSetupEvent();
+      opplan->setStartEndAndQuantity(original.start, original.end,
+                                     original.quantity);
+      auto idx_iter = idx.begin();
+      for (auto pool_iter = pool_members.begin();
+           pool_iter != pool_members.end(); ++pool_iter, ++idx_iter) {
+        auto* res = pool_iter->second[*idx_iter];
+        if (pool_iter->first->getResource() != res)
+          pool_iter->first->setResource(res, false, false);
+      }
+      opplan->setEnd(data.state->q_date);
+      if (opplan->getStart() >= threshold) {
+        // There is no problem
+        if (getLogLevel() > 1)
+          logger << ++indentlevel << "  Operation '" << opplan->getOperation()
+                 << "' switches to resources ";
+        idx_iter = idx.begin();
+        for (auto pool_iter = pool_members.begin();
+             pool_iter != pool_members.end(); ++pool_iter, ++idx_iter) {
+          if (idx_iter != idx.begin()) logger << ", ";
+          logger << pool_iter->second[*idx_iter];
+        }
+        logger << " to start after " << threshold << '\n';
+        return true;
+      }
+      int pos = static_cast<int>(idx.size()) - 1;
+      while (pos >= 0) {
+        ++idx[pos];
+        if (idx[pos] < pool_members[pos].second.size()) break;
+        idx[pos] = 0;
+        --pos;
+      }
+      if (pos < 0) break;
+    }
+  }
+
   // This operation doesn't fit at all within the constrained window.
   data.state->a_qty = 0.0;
   // Resize to the minimum quantity
@@ -472,66 +554,32 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
   if (opplan->getQuantity() + ROUNDING_ERROR < min_q)
     opplan->setQuantity(min_q, false);
 
-  // The earliest date may not be achieved on the current resource if the
-  // operation loads a pool:
-  // - There can be more efficient resources in the pool
-  // - Other resources in the pool can have a lower setup time
-  LoadPlan* setuploadplan = nullptr;
-  if (extra && data.state->keepAssignments != opplan) {
-    // First, switch all pools to their most efficient resource
-    for (auto ldplan = opplan->beginLoadPlans();
-         ldplan != opplan->endLoadPlans(); ++ldplan) {
-      if (ldplan->getQuantity() < 0.0 && ldplan->getLoad() &&
-          ldplan->getLoad()->getResource()->isGroup()) {
-        auto most_efficient = ldplan->getLoad()->findPreferredResource(
-            opplan->getStart(), opplan);
-        if (!ldplan->getLoad()->getSetup().empty())
-          setuploadplan = &*ldplan;
-        else if (ldplan->getResource() != most_efficient)
-          ldplan->setResource(most_efficient, false, false);
-      }
-    }
-  }
-  if (setuploadplan) {
-    // Try out resources in the pool if setups are involved
+  if (!pool_members.empty()) {
+    // Loop over all qualified possible resource member combinations
     Date earliest_date = Date::infiniteFuture;
-
-    // Loop over all qualified possible resources
-    stack<Resource*> res_stack;
-    res_stack.push(setuploadplan->getLoad()->getResource());
-    while (!res_stack.empty()) {
-      // Pick next resource
-      Resource* res = res_stack.top();
-      res_stack.pop();
-
-      // If it's an aggregate, push it's members on the stack
-      if (res->isGroup()) {
-        for (auto x = res->getMembers(); x != Resource::end(); ++x)
-          res_stack.push(&*x);
-        continue;
+    vector<size_t> idx(pool_members.size(), 0);
+    while (true) {
+      opplan->clearSetupEvent();
+      opplan->setStartEndAndQuantity(original.start, original.end,
+                                     original.quantity);
+      auto idx_iter = idx.begin();
+      for (auto pool_iter = pool_members.begin();
+           pool_iter != pool_members.end(); ++pool_iter, ++idx_iter) {
+        auto* res = pool_iter->second[*idx_iter];
+        if (pool_iter->first->getResource() != res)
+          pool_iter->first->setResource(res, false, false);
       }
 
-      // Check if the resource has the right skill
-      if (setuploadplan->getLoad()->getSkill() &&
-          !res->hasSkill(setuploadplan->getLoad()->getSkill(), threshold,
-                         threshold))
-        continue;
-
-      // Efficiency must be higher than 0
-      auto my_eff = res->getEfficiencyCalendar()
-                        ? res->getEfficiencyCalendar()->getValue(original.start)
-                        : res->getEfficiency();
-      if (my_eff <= 0.0) continue;
-
-      // Try this resource
-      if (setuploadplan->getResource() != res) {
-        opplan->clearSetupEvent();
-        opplan->setStartEndAndQuantity(original.start, original.end,
-                                       original.quantity);
-        setuploadplan->setResource(res, false, false);
-      }
       opplan->setStart(threshold, false, false);
       if (opplan->getEnd() < earliest_date) earliest_date = opplan->getEnd();
+      int pos = static_cast<int>(idx.size()) - 1;
+      while (pos >= 0) {
+        ++idx[pos];
+        if (idx[pos] < pool_members[pos].second.size()) break;
+        idx[pos] = 0;
+        --pos;
+      }
+      if (pos < 0) break;
     }
 
     // Pick up the earliest date of all qualified resources

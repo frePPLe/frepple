@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <current>2026-08-01T00:00:00</current>
+    <resources>
+        <resource name="op1">
+            <owner name="operators" />
+            <available name="op1 calendar"
+                default="1">
+                <buckets>
+                    <bucket start="2026-04-30T00:00:00" end="2026-08-03T00:00:00" value="0" />
+                </buckets>
+            </available>
+            <cost>
+                1</cost>
+        </resource>
+        <resource name="op2">
+            <owner name="operators" />
+            <cost>2</cost>
+        </resource>
+        <resource name="op3">
+            <owner name="operators" />
+            <cost>3</cost>
+        </resource>
+        <resource name="op4">
+            <owner name="operators" />
+            <cost>2</cost>
+            <description>Resource misses the required skill</description>
+        </resource>
+        <resource name="X - 50%">
+            <owner name="pool X" />
+            <efficiency>50</efficiency>
+        </resource>
+        <resource name="X - 100%">
+            <owner name="pool X" />
+            <efficiency>100</efficiency>
+        </resource>
+        <resource name="X - 80%">
+            <owner name="pool X" />
+            <efficiency>80</efficiency>
+        </resource>
+    </resources>
+    <operations>
+        <operation name="operation">
+            <item name="item" />
+            <location name="location" />
+            <loads>
+                <load>
+                    <resource name="operators" />
+                    <search>PRIORITY</search>
+                    <skill name="skill" />
+                </load>
+                <load>
+                    <resource name="pool X" />
+                </load>
+            </loads>
+            <duration>PT1H</duration>
+        </operation>
+    </operations>
+    <demands>
+        <demand name="sales order" quantity="1" due="2026-07-28T00:00:00" priority="10">
+            <item name="item" />
+            <location name="location" />
+            <customer name="customer" />
+        </demand>
+    </demands>
+    <skills>
+        <skill>
+            <name>skill</name>
+            <resourceskills>
+                <resourceskill>
+                    <resource name="op1" />
+                    <priority>2</priority>
+                </resourceskill>
+                <resourceskill>
+                    <resource name="op2" />
+                    <priority>2</priority>
+                </resourceskill>
+                <resourceskill>
+                    <resource name="op3" />
+                    <priority>3</priority>
+                </resourceskill>
+            </resourceskills>
+        </skill>
+    </skills>
+    <?python
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")?>
+</plan>

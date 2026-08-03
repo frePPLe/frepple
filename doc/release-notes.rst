@@ -12,6 +12,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Bug fix: Non-zero values of the parameter plan.move_approved_early could result
     in approved manufacturing orders unintentionally changing size.
 
+- | Bug fix: The solver didn't always choose the correct resource from
+    a pool to minimize delays cause by lead times.
+  | Now the algorithm correctly evaluates all pool resources before concluding
+    there is a lead time constraint.
+
 - | Performance improvements on models with complex calendars (typically for bucketized
     capacity) and when running in UTC timezone.
 

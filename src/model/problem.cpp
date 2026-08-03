@@ -701,7 +701,7 @@ void Problem::List::clean(Demand* d) const {
     if (lvl <= lvl_prev && lvl_prev >= 0) {
       bool in_critical_path = false;
       for (auto lvl_cnt = lvl_prev; lvl_cnt >= 0; --lvl_cnt) {
-        if (!opplans[lvl_cnt] || !opplans[lvl_cnt]->getOperation()) continue;
+        if (!opplans[lvl_cnt]) continue;
         if (!in_critical_path) {
           for (auto cstrt = constraints.begin();
                cstrt != constraints.end() && !in_critical_path; ++cstrt) {
@@ -754,6 +754,9 @@ void Problem::List::clean(Demand* d) const {
     if (static_cast<std::size_t>(lvl) >= opplans.size())
       opplans.resize(lvl + 5);
     opplans[lvl] = p.getOperationPlan();
+    
+    // Clear stale entries from deeper levels when backtracking
+    for (short c = lvl + 1; c <= lvl_prev; ++c) opplans[c] = nullptr;
     lvl_prev = lvl;
   }
 

@@ -24,18 +24,13 @@
 from datetime import datetime
 from importlib import import_module
 import os
-from random import uniform
 import re
-from psycopg2.errors import SerializationFailure
-from threading import Lock, Timer
-import time
 import zoneinfo
 
 from django.conf import settings
 from django.core.management import get_commands, load_command_class
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction, DEFAULT_DB_ALIAS, connections
-from django.db.utils import OperationalError
+from django.db import DEFAULT_DB_ALIAS
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
@@ -45,141 +40,7 @@ from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Scenario
 from freppledb.common.report import GridReport
 from freppledb.common.utils import get_databases, sendEmail
-from .runworker import launchWorker, runTask
-
-
-class TaskScheduler:
-    _instance = None
-    _mutex = Lock()
-
-    def __init__(self):
-        self.sched = {}
-
-    def __new__(cls, *args, **kwargs):
-        # Singleton class, only 1 instance is created per process
-        if cls._instance is None:
-            with cls._mutex:
-                if cls._instance is None:
-                    cls._instance = super().__new__(cls)
-        return cls._instance
-
-    def start(self):
-        with self._mutex:
-            for db in (
-                Scenario.objects.using(DEFAULT_DB_ALIAS)
-                .filter(status="In use", info__has_key="has_schedule")
-                .only("name")
-            ):
-                try:
-                    with transaction.atomic(using=db.name, savepoint=False):
-                        with connections[db.name].cursor() as cursor:
-                            cursor.execute(
-                                "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ"
-                            )
-                            for s in (
-                                ScheduledTask.objects.all()
-                                .using(db.name)
-                                .order_by("name")
-                                .select_for_update(skip_locked=True)
-                            ):
-                                # Calculation of the next run is included in the save method
-                                s.save(using=db.name, update_fields=["next_run"])
-                except (SerializationFailure, OperationalError):
-                    # Concurrent access by different webserver processes can happen.
-                    # In that case, one of the transactions will abort. That's fine.
-                    pass
-        self.waitNextEvent()
-
-    def waitNextEvent(self, database=None):
-        with self._mutex:
-            now = datetime.now()
-            dbs = (
-                Scenario.objects.using(DEFAULT_DB_ALIAS)
-                .filter(status="In use", info__has_key="has_schedule")
-                .only("name")
-            )
-            if database:
-                dbs = dbs.filter(name=database)
-            for db in dbs:
-                t = (
-                    ScheduledTask.objects.all()
-                    .using(db.name)
-                    .filter(next_run__isnull=False)
-                    .order_by("next_run")
-                    .only("next_run")
-                    .first()
-                )
-                waiting_for = (t.next_run - now).total_seconds() if t else 0
-                if waiting_for > 0:
-                    cur_schedule = self.sched.get(db.name, None)
-                    if not cur_schedule or cur_schedule["time"] > t.next_run:
-                        if cur_schedule:
-                            cur_schedule["timer"].cancel()
-                        self.sched[db.name] = {
-                            "timer": Timer(
-                                waiting_for,
-                                self._tasklauncher,
-                                kwargs={"database": db.name},
-                            ),
-                            "time": t.next_run,
-                        }
-                        self.sched[db.name]["timer"].start()
-
-    @staticmethod
-    def _tasklauncher(database=DEFAULT_DB_ALIAS):
-        # Random delay to avoid races
-        time.sleep(uniform(0.0, 0.200))
-
-        # Keep things tidy
-        Task.removeUnhealthyTasks(database)
-
-        # Note: use transaction and select_for_update to handle concurrent access
-        now = datetime.now()
-        created = False
-        try:
-            with transaction.atomic(using=database, savepoint=False):
-                with connections[database].cursor() as cursor:
-                    cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
-                    for schedule in (
-                        ScheduledTask.objects.all()
-                        .using(database)
-                        .filter(next_run__isnull=False, next_run__lte=now)
-                        .order_by("next_run", "name")
-                        .select_for_update(skip_locked=True)
-                    ):
-                        Task(
-                            name="scheduletasks",
-                            submitted=now,
-                            status="Waiting",
-                            user=schedule.user,
-                            arguments="--schedule='%s'" % schedule.name,
-                        ).save(using=database)
-                        # Calculation of the next run is included in the save method
-                        schedule.save(using=database, update_fields=["next_run"])
-                        created = True
-
-            # Reschedule to run this task again at the next date
-            scheduler.sched.pop(database, None)
-            scheduler.waitNextEvent(database=database)
-
-            # Synchronously run the worker process
-            if created:
-                launchWorker(database)
-
-        except (SerializationFailure, OperationalError):
-            # Concurrent access by different webserver processes can happen.
-            # In that case, one of the transactions will abort. That's fine.
-            pass
-        finally:
-            connections[database].close()
-
-    def status(self, msg=""):
-        print("Scheduler status:", msg)
-        for db, tm in self.sched.items():
-            print("    ", tm["time"], db)
-
-
-scheduler = TaskScheduler()
+from .runworker import runTask
 
 
 class Command(BaseCommand):

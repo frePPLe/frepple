@@ -44,7 +44,6 @@ from freppledb.common.middleware import _thread_locals
 from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -101,8 +100,7 @@ def launchWorker(database=DEFAULT_DB_ALIAS):
                         os.path.join(settings.FREPPLE_APP, "frepplectl.py"),
                         "runworker",
                         "--database=%s" % database,
-                    ],
-                    creationflags=0x08000000,
+                    ]
                 )
         else:
             # Linux standard installation

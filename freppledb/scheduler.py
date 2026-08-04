@@ -1,0 +1,220 @@
+#
+# Copyright (C) 2026 by frePPLe bv
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+
+import ctypes
+import os
+import sys
+from datetime import datetime
+import os
+from random import uniform
+from threading import Event
+from psycopg2.errors import SerializationFailure
+from threading import Lock, Timer
+import signal
+import time
+
+# Assure frePPLe is found in the Python path
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+os.environ["LC_ALL"] = "en_US.UTF-8"
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")
+
+# Boot Django
+import django
+
+django.setup()
+
+from django.conf import settings
+from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction, DEFAULT_DB_ALIAS, connections
+from django.db.utils import OperationalError
+
+from freppledb import __version__
+from freppledb.common.models import Scenario
+from freppledb.execute.models import ScheduledTask, Task
+from freppledb.execute.management.commands.runworker import launchWorker
+
+
+class TaskScheduler:
+    _instance = None
+    _mutex = Lock()
+
+    def __init__(self):
+        self.sched = {}
+
+    def __new__(cls, *args, **kwargs):
+        # Singleton class, only 1 instance is created per process
+        if cls._instance is None:
+            with cls._mutex:
+                if cls._instance is None:
+                    cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def start(self):
+        print("Starting scheduler")
+        with self._mutex:
+            for db in (
+                Scenario.objects.using(DEFAULT_DB_ALIAS)
+                .filter(status="In use", info__has_key="has_schedule")
+                .only("name")
+            ):
+                try:
+                    with transaction.atomic(using=db.name, savepoint=False):
+                        with connections[db.name].cursor() as cursor:
+                            cursor.execute(
+                                "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ"
+                            )
+                            for s in (
+                                ScheduledTask.objects.all()
+                                .using(db.name)
+                                .order_by("name")
+                                .select_for_update(skip_locked=True)
+                            ):
+                                # Calculation of the next run is included in the save method
+                                s.save(using=db.name, update_fields=["next_run"])
+                except (SerializationFailure, OperationalError):
+                    # Concurrent access by different processes can happen.
+                    # In that case, one of the transactions will abort. That's fine.
+                    pass
+        self.waitNextEvent()
+
+    def waitNextEvent(self, database=None):
+        with self._mutex:
+            now = datetime.now()
+            dbs = (
+                Scenario.objects.using(DEFAULT_DB_ALIAS)
+                .filter(status="In use", info__has_key="has_schedule")
+                .only("name")
+            )
+            if database:
+                dbs = dbs.filter(name=database)
+            for db in dbs:
+                t = (
+                    ScheduledTask.objects.all()
+                    .using(db.name)
+                    .filter(next_run__isnull=False)
+                    .order_by("next_run")
+                    .only("next_run")
+                    .first()
+                )
+                waiting_for = (t.next_run - now).total_seconds() if t else 0
+                if waiting_for > 0:
+                    cur_schedule = self.sched.get(db.name, None)
+                    if not cur_schedule or cur_schedule["time"] > t.next_run:
+                        if cur_schedule:
+                            cur_schedule["timer"].cancel()
+                        self.sched[db.name] = {
+                            "timer": Timer(
+                                waiting_for,
+                                self._tasklauncher,
+                                kwargs={"database": db.name},
+                            ),
+                            "time": t.next_run,
+                        }
+                        print(
+                            "Waiting for next scheduled task on %s at %s"
+                            % (db.name, t.next_run)
+                        )
+                        self.sched[db.name]["timer"].start()
+
+    @staticmethod
+    def _tasklauncher(database=DEFAULT_DB_ALIAS):
+        # Random delay to avoid races
+        time.sleep(uniform(0.0, 0.200))
+
+        # Keep things tidy
+        Task.removeUnhealthyTasks(database)
+
+        # Note: use transaction and select_for_update to handle concurrent access
+        now = datetime.now()
+        created = False
+        try:
+            with transaction.atomic(using=database, savepoint=False):
+                with connections[database].cursor() as cursor:
+                    cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
+                    for schedule in (
+                        ScheduledTask.objects.all()
+                        .using(database)
+                        .filter(next_run__isnull=False, next_run__lte=now)
+                        .order_by("next_run", "name")
+                        .select_for_update(skip_locked=True)
+                    ):
+                        Task(
+                            name="scheduletasks",
+                            submitted=now,
+                            status="Waiting",
+                            user=schedule.user,
+                            arguments="--schedule='%s'" % schedule.name,
+                        ).save(using=database)
+                        # Calculation of the next run is included in the save method
+                        schedule.save(using=database, update_fields=["next_run"])
+                        created = True
+
+            # Reschedule to run this task again at the next date
+            scheduler.sched.pop(database, None)
+            scheduler.waitNextEvent(database=database)
+
+            # Spawn the worker process
+            if created:
+                launchWorker(database)
+
+        except (SerializationFailure, OperationalError):
+            # Concurrent access by different webserver processes can happen.
+            # In that case, one of the transactions will abort. That's fine.
+            pass
+        finally:
+            connections[database].close()
+
+    def handle_reload(self, signum, frame):
+        print("Reloading schedule from database")
+        self.waitNextEvent()
+        print("Done reloading schedule from database")
+
+    def handle_shutdown(self, signum, frame):
+        print("Scheduler background worker stopping")
+        sys.exit(0)
+
+    def status(self, msg=""):
+        print("Scheduler status:", msg)
+        for db, tm in self.sched.items():
+            print("    ", tm["time"], db)
+
+
+scheduler = TaskScheduler()
+
+# Set the process name
+ctypes.CDLL("libc.so.6").prctl(15, "frepple-sched".encode("utf-8"), 0, 0, 0)
+
+print("Starting background worker PID %d" % os.getpid())
+# Install signal handlers
+signal.signal(signal.SIGTERM, scheduler.handle_shutdown)
+signal.signal(signal.SIGUSR1, scheduler.handle_reload)
+
+# Wait indefinitely for events
+print("Scheduler background worker starting")
+scheduler.start()
+try:
+    while True:
+        signal.pause()
+        print("Scheduler background worker woke up")
+except KeyboardInterrupt:
+    pass

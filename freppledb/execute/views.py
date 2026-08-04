@@ -63,6 +63,7 @@ from django.http import (
 )
 from django.contrib import messages
 from django.utils.encoding import force_str
+from django.utils.formats import date_format
 from django.utils.text import capfirst
 from django.core.management import get_commands, call_command
 
@@ -86,11 +87,10 @@ from freppledb.common.utils import get_databases
 
 from freppledb.common.utils import forceWsgiReload
 from freppledb.common.views import sendStaticFile
-from .utils import updateScenarioCount
+from .utils import updateScenarioCount, ReloadScheduler
 from .models import Task, ScheduledTask, DataExport
 from .management.commands.runworker import launchWorker
 from .management.commands.runplan import parseConstraints, constraintString
-from .management.commands.scheduletasks import scheduler
 
 import logging
 
@@ -1164,11 +1164,17 @@ def scheduletasks(request):
                     name=oldname
                 ).delete()
             obj.save(using=request.database)
-            scheduler.waitNextEvent(database=request.database)
+            ReloadScheduler()
             obj.adjustForTimezone(GridReport.getTimezoneOffset(request))
             return HttpResponse(
                 content=(
-                    obj.next_run.strftime("%Y-%m-%d %H:%M:%S") if obj.next_run else ""
+                    (
+                        date_format(obj.next_run, "DATE_FORMAT", use_l10n=False)
+                        + " "
+                        + date_format(obj.next_run, "H:i:s")
+                    )
+                    if obj.next_run
+                    else ""
                 )
             )
         elif request.method == "DELETE":

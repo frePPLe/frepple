@@ -22,8 +22,10 @@
 #
 
 import os
+import psutil
 import re
 import shutil
+import signal
 import subprocess
 import sys
 
@@ -187,3 +189,16 @@ def updateScenarioCount(addition=True):
             return 5
 
     return 0
+
+
+def ReloadScheduler():
+    for proc in psutil.process_iter(["pid", "name"]):
+        try:
+            name = proc.info["name"]
+            if name and "frepple-sched" in name:
+                print(f"Found background worker with PID {proc.info['pid']}")
+                proc.send_signal(signal.SIGUSR1)
+                return
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+    print("Warning: No scheduler process found.")

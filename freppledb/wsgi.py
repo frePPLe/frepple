@@ -34,7 +34,6 @@ import sys
 
 # Assure frePPLe is found in the Python path.
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
 os.environ["LC_ALL"] = "en_US.UTF-8"
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")
 
@@ -42,7 +41,13 @@ from django.core.wsgi import get_wsgi_application
 
 application = get_wsgi_application()
 
-if "FREPPLE_TEST" not in os.environ:
-    from freppledb.execute.management.commands.scheduletasks import scheduler
+if "runserver" in sys.argv:
+    import freppledb
+    import subprocess
+    from pathlib import Path
 
-    scheduler.start()
+    bg_script = Path(freppledb.__file__).parent / "scheduler.py"
+    venv = os.environ.get("VIRTUAL_ENV")
+    python = os.path.join(venv, "bin", "python3") if venv else sys.executable
+    worker = subprocess.Popen([python, str(bg_script)])
+    print("puree: started background worker with PID %s" % worker.pid)

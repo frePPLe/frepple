@@ -754,7 +754,7 @@ void Problem::List::clean(Demand* d) const {
     if (static_cast<std::size_t>(lvl) >= opplans.size())
       opplans.resize(lvl + 5);
     opplans[lvl] = p.getOperationPlan();
-    
+
     // Clear stale entries from deeper levels when backtracking
     for (short c = lvl + 1; c <= lvl_prev; ++c) opplans[c] = nullptr;
     lvl_prev = lvl;
@@ -791,7 +791,8 @@ void Problem::List::clean(Demand* d) const {
           for (auto c = lvl_cnt; c >= 0; --c)
             if (opplans[c])
               branch_duration += opplans[c]->getEnd() - opplans[c]->getStart();
-          if (oper && oper == opplans[lvl_cnt]->getOperation() &&
+          if (oper && opplans[lvl_cnt] &&
+              oper == opplans[lvl_cnt]->getOperation() &&
               (branch_duration > critical_path_duration ||
                opplans[lvl_cnt]->getStart() < start_critical_path)) {
             // New critical path identified
@@ -802,7 +803,7 @@ void Problem::List::clean(Demand* d) const {
         }
       }
 
-      if (in_critical_path)
+      if (in_critical_path && opplans[lvl_cnt])
         critical_path[opplans[lvl_cnt]->getOperation()] =
             opplans[lvl_cnt]->getProposed();
     }

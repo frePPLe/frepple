@@ -96,6 +96,9 @@ The section below describes the installation and configuration of these.
       Odoo configuration. It can run for a few minutes and return a large output to the client.
     | To accomodate this traffic, you'll need to review:
 
+    * | Assure the limit_memory_soft and limit_memory_hard are high enough in your Odoo config file.
+        If the threshold is too low, the connector aborts with a memory error.
+
     * | Assure the limit_time_cpu and limit_time_real are configured correctly in your Odoo config file.
         If the threshold is too short, Odoo will abort the connector before its done.
 

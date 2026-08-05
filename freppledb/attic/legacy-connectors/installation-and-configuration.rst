@@ -99,7 +99,7 @@ The section below describes the installation and configuration of these.
     * | Assure the limit_time_cpu and limit_time_real are configured correctly in your Odoo config file.
         If the threshold is too short, Odoo will abort the connector before its done.
 
-    * | When using a nginx proxy in before your Odoo server, assure that the max_response_body_size
+    * | When using a nginx proxy in front of your Odoo server, assure that the max_response_body_size
         allows big datasets to be returned to the client.
 
     * | We strongly recommend using a separate PostgreSQL database cluster for frepple. This is 1)

@@ -192,6 +192,10 @@ module.exports = function (grunt) {
       'freppledb/common/static/js/frepple-common.js',
       'freppledb/input/static/js/frepple-input.js',
       'freppledb/input/static/js/frepple-operationplandetail.js',
+      'freppledb/input/static/main.css',
+      'freppledb/input/static/index.html',
+      'freppledb/forecast/static/main.css',
+      'freppledb/forecast/static/index.html',
     ],
 
     // Vue compilation

@@ -457,13 +457,19 @@ class Command(BaseCommand):
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.PIPE,
                 env=env,
+                start_new_session=True,  # new process group, bash + children
             ) as p:
                 error_message = None
                 try:
+                    original_processid = task.processid
                     task.processid = p.pid
+                    task.processgroupid = os.getpgid(p.pid)
                     task.save(using=source)
                     res = p.communicate()
                     p.wait()
+                    task.processid = original_processid
+                    task.processgroupid = None
+                    task.save(using=source)
                     error_message = res[1].decode().partition("\n")[0]
                     if p.returncode != 0 or "error" in error_message.lower():
                         raise Exception(error_message)
@@ -563,8 +569,8 @@ class Command(BaseCommand):
                 # Assure no running tasks are inherited from the source
                 cursor.execute("""
                     update execute_log
-                    set processid = null
-                    where processid is not null
+                    set processid = null, processgroupid = null
+                    where processid is not null or processgroupid is not null
                     and name != 'scenario_copy'
                     """)
 
@@ -645,6 +651,7 @@ class Command(BaseCommand):
 
             # Logging message
             task.processid = None
+            task.processgroupid = None
             task.status = "Done"
             task.finished = datetime.now()
 
@@ -737,6 +744,7 @@ class Command(BaseCommand):
         finally:
             if task:
                 task.processid = None
+                task.processgroupid = None
                 task.save(using=source)
             settings.DEBUG = tmp_debug
 

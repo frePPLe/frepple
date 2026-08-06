@@ -72,6 +72,7 @@ class Task(models.Model):
         on_delete=models.SET_NULL,
     )
     processid = models.IntegerField("processid", editable=False, null=True)
+    processgroupid = models.IntegerField("processgroupid", editable=False, null=True)
 
     def __str__(self):
         return "%s - %s - %s" % (self.id, self.name, self.status)
@@ -116,8 +117,19 @@ class Task(models.Model):
         except Exception as e:
             pass
 
+    def group_is_alive(pgid: int) -> bool:
+        try:
+            os.killpg(pgid, 0)
+            return True
+        except ProcessLookupError:
+            return False  # nothing left in that group
+        except PermissionError:
+            return True  # exists, but owned by another user — still alive
+
     def checkHealthy(self):
-        if self.processid and not psutil.pid_exists(self.processid):
+        if (self.processgroupid and not self.group_is_alive()) or (
+            self.processid and not psutil.pid_exists(self.processid)
+        ):
             # processid doesn't exist, we cancel the task
             self.message = "Canceled process"
             self.processid = None
@@ -129,8 +141,17 @@ class Task(models.Model):
         # Kill the process and its children with signal 9
         if self.processid:
             database = self._state.db
-            child_pid = [c.pid for c in psutil.Process(self.processid).children()]
-            os.kill(self.processid, 9)
+            child_pid = []
+            try:
+                child_pid = [c.pid for c in psutil.Process(self.processid).children()]
+                os.kill(self.processid, 9)
+            except:
+                pass  # the process is already dead
+            if self.processgroupid:
+                try:
+                    os.killpg(self.processgroupid, 9)
+                except:
+                    pass  # Nothing alive inthere
             self.message = "Canceled process"
             for child_task in (
                 Task.objects.all().using(database).filter(processid__in=child_pid)

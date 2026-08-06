@@ -739,6 +739,7 @@ def CancelTask(request, taskid):
         # We don't know why it failed. We just clean things up.
         task.message = "Canceled process"
         task.processid = None
+        task.processgroupid = None
         task.status = "Canceled"
         task.save(using=request.database)
         return HttpResponse(content="OK")

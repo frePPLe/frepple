@@ -927,7 +927,7 @@ class ExportOperationPlans(PlanTask):
                    case when type = 'PO' then enddate else startdate end
                    - odoo_date
                 where odoo_date is not null
-                and odoo_delta =
+                and odoo_delta <>
                    case when type = 'PO' then enddate else startdate end
                    - odoo_date
             """)

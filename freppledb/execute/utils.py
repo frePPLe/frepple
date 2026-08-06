@@ -196,7 +196,6 @@ def ReloadScheduler():
         try:
             name = proc.info["name"]
             if name and "frepple-sched" in name:
-                print(f"Found background worker with PID {proc.info['pid']}")
                 proc.send_signal(signal.SIGUSR1)
                 return
         except (psutil.NoSuchProcess, psutil.AccessDenied):

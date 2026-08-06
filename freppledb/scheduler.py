@@ -22,16 +22,50 @@
 #
 
 import ctypes
-import os
-import sys
 from datetime import datetime
 import os
+import site
+import sys
 from random import uniform
-from threading import Event
-from psycopg2.errors import SerializationFailure
 from threading import Lock, Timer
 import signal
 import time
+
+# Autodetect Python virtual enviroment
+venv = os.environ.get("VIRTUAL_ENV", None)
+if not venv:
+    curdir = os.path.dirname(os.path.realpath(__file__))
+    for candidate in (
+        # Development layout
+        os.path.join(curdir, "venv"),
+        # Linux install layout
+        os.path.join(curdir, "..", "share", "frepple", "venv"),
+    ):
+        if os.path.isfile(os.path.join(candidate, "bin", "python3")) and os.path.isfile(
+            os.path.join(candidate, "bin", "activate")
+        ):
+            os.environ["VIRTUAL_ENV"] = candidate
+            venv = candidate
+            break
+
+# Activate Python virtual environment
+if venv:
+    prev_length = len(sys.path)
+    os.environ["PATH"] = os.pathsep.join(
+        [os.path.join(venv, "bin")] + os.environ.get("PATH", "").split(os.pathsep)
+    )
+    path = os.path.realpath(
+        os.path.join(
+            venv,
+            "lib",
+            "python%d.%d" % sys.version_info[:2],
+            "site-packages",
+        )
+    )
+    site.addsitedir(path)
+    sys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]
+    sys.real_prefix = sys.prefix
+    sys.prefix = venv
 
 # Assure frePPLe is found in the Python path
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
@@ -42,6 +76,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")
 import django
 
 django.setup()
+
+from psycopg2.errors import SerializationFailure
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
@@ -70,7 +106,6 @@ class TaskScheduler:
         return cls._instance
 
     def start(self):
-        print("Starting scheduler")
         with self._mutex:
             for db in (
                 Scenario.objects.using(DEFAULT_DB_ALIAS)
@@ -130,10 +165,6 @@ class TaskScheduler:
                             ),
                             "time": t.next_run,
                         }
-                        print(
-                            "Waiting for next scheduled task on %s at %s"
-                            % (db.name, t.next_run)
-                        )
                         self.sched[db.name]["timer"].start()
 
     @staticmethod
@@ -185,12 +216,9 @@ class TaskScheduler:
             connections[database].close()
 
     def handle_reload(self, signum, frame):
-        print("Reloading schedule from database")
         self.waitNextEvent()
-        print("Done reloading schedule from database")
 
     def handle_shutdown(self, signum, frame):
-        print("Scheduler background worker stopping")
         sys.exit(0)
 
     def status(self, msg=""):
@@ -204,17 +232,14 @@ scheduler = TaskScheduler()
 # Set the process name
 ctypes.CDLL("libc.so.6").prctl(15, "frepple-sched".encode("utf-8"), 0, 0, 0)
 
-print("Starting background worker PID %d" % os.getpid())
 # Install signal handlers
 signal.signal(signal.SIGTERM, scheduler.handle_shutdown)
 signal.signal(signal.SIGUSR1, scheduler.handle_reload)
 
 # Wait indefinitely for events
-print("Scheduler background worker starting")
 scheduler.start()
 try:
     while True:
         signal.pause()
-        print("Scheduler background worker woke up")
 except KeyboardInterrupt:
     pass

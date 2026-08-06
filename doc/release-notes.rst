@@ -26,6 +26,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     libraries have been upgraded as well.
   | Unless you have custom frepple addons this is a transparent change that doesn't impact you.
 
+.. rubric:: Odoo integration
+
+- | The frepple user interface now allows comparing the dates. This is useful for reviewing
+    rescheduled manufacturing orders and work orders.
+
 9.17.0 (2026-07-10)
 ===================
 

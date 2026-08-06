@@ -481,6 +481,16 @@ class OdooReadData(PlanTask):
                 if r.owner is None and r != rootCustomer:
                     r.owner = rootCustomer
 
+        # Record the date of all existing odoo operatioplans
+        for r in frepple.operationplans():
+            if (
+                r.source
+                and "odoo" in r.source
+                and r.status not in ("proposed", "completed", "closed")
+            ):
+                r.odoo_date = r.start if r.ordertype != "PO" else r.end
+                r.odoo_delta = 0
+
 
 @PlanTaskRegistry.register
 class OdooDeltaChangeSource(PlanTask):
@@ -761,12 +771,12 @@ class OdooSendRecommendations(PlanTask):
                     )
                     reschedule = (
                         j.status == "approved"
-                        and (
-                            j.info or any(c.info for c in j.operationplans)
-                        )
+                        and (j.info or any(c.info for c in j.operationplans))
                         and (
                             not j.owner
-                            or isinstance( j.owner.operation, frepple.operation_alternate)
+                            or isinstance(
+                                j.owner.operation, frepple.operation_alternate
+                            )
                         )
                     )
                     if not new_mo and not reschedule:
@@ -893,3 +903,31 @@ class OdooSendRecommendations(PlanTask):
                 }
             if not self.loglevel:
                 print(f"Generated {so_count} sales order recommendations")
+
+
+@PlanTaskRegistry.register
+class ExportOperationPlans(PlanTask):
+    description = ("Export plan", "Updating odoo delta")
+    sequence = (401, "export1", 6)
+    export = True
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        if "supply" in os.environ and "noexport" not in os.environ:
+            return 1
+        else:
+            return -1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        with connections[database].cursor() as cursor:
+            cursor.execute("""
+                update operationplan
+                set odoo_delta =
+                   case when type = 'PO' then enddate else startdate end
+                   - odoo_date
+                where odoo_date is not null
+                and odoo_delta =
+                   case when type = 'PO' then enddate else startdate end
+                   - odoo_date
+            """)

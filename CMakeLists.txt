@@ -175,6 +175,7 @@ install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADI
 install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin -type f -executable -exec sed -i \"s|\$ENV{DESTDIR}||g\" {} \\;)")
 
 # Packaging of the static files
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_CURRENT_SOURCE_DIR}/freppledb/common/static/doc)")
 install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E env FREPPLE_STATIC=\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/frepple/static ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/frepplectl.py collectstatic --noinput --clear --ignore '*.less' --verbosity=0)")
 
 # Build and install the documentation
@@ -183,7 +184,7 @@ install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_
 
 # Generic packaging
 set(CPACK_PACKAGE_VENDOR "frePPLe")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FrePPLe is an open source production planning and scheduling application.")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FrePPLe is an open sourcels production planning and scheduling application.")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})

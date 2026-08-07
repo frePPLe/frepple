@@ -1041,6 +1041,7 @@ void SolverCreate::solve(const OperationItemSupplier* o, void* v) {
 void SolverCreate::solve(const OperationRouting* oper, void* v) {
   auto* data = static_cast<SolverData*>(v);
   auto useDependencies = oper->useDependencies();
+  auto original_q_qty = data->state->q_qty;
 
   // Call the user exit
   if (userexit_operation)
@@ -1362,6 +1363,8 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
     data->state->a_date = top_q_date + delay;
   }
   data->hitMaxSize = data->state->a_qty == oper->getSizeMaximum();
+  if (data->hitMaxSize && data->state->a_qty < original_q_qty - ROUNDING_ERROR)
+    data->accept_partial_reply = true;
 
   // Message
   if (getLogLevel() > 1) {

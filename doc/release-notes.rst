@@ -17,6 +17,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | Now the algorithm correctly evaluates all pool resources before concluding
     there is a lead time constraint.
 
+- | Bug fix: Routing operations didn't respect the size maximum constraint in
+    some specific cases.
+
 - | Performance improvements on models with complex calendars (typically for bucketized
     capacity) and when running in UTC timezone.
 

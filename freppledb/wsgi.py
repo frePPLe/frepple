@@ -50,4 +50,3 @@ if "runserver" in sys.argv:
     venv = os.environ.get("VIRTUAL_ENV")
     python = os.path.join(venv, "bin", "python3") if venv else sys.executable
     worker = subprocess.Popen([python, str(bg_script)])
-    print("puree: started background worker with PID %s" % worker.pid)

@@ -30,12 +30,14 @@ set(CPACK_PACKAGE_FILE_NAME "${DISTRO}-${PROJECT_NAME}-${CPACK_PACKAGE_VERSION}"
 set(CPACK_PACKAGING_INSTALL_PREFIX "/")
 set(CPACK_SOURCE_GENERATOR "TGZ")
 
-if(CPACK_GENERATOR STREQUAL "DEB")
-  install(
-    FILES "${CMAKE_CURRENT_BINARY_DIR}/httpd.conf"
-    RENAME "z_frepple.conf"
-    DESTINATION "${CMAKE_INSTALL_SYSCONFDIR}/apache2/sites-available"
-  )
-endif()
+install(
+  FILES "${CMAKE_CURRENT_BINARY_DIR}/httpd.conf"
+  RENAME "z_frepple.conf"
+  DESTINATION "${CMAKE_INSTALL_SYSCONFDIR}/apache2/sites-available"
+)
+install(
+  FILES "${CMAKE_CURRENT_SOURCE_DIR}/logrotate.conf"
+  DESTINATION "${CMAKE_INSTALL_SYSCONFDIR}/frepple"
+)
 
 include(CPack)

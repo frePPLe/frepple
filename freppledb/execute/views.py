@@ -22,6 +22,7 @@
 #
 
 from datetime import datetime
+import gzip as gzip_module
 from importlib import import_module
 from io import BytesIO
 import json
@@ -252,9 +253,9 @@ class TaskReport(GridReport):
     def query(reportclass, request, basequery, sortsql="1 asc"):
         logfileslist = set(
             [
-                x
+                x[:-3] if x.endswith(".log.gz") else x
                 for x in os.listdir(settings.FREPPLE_LOGDIR)
-                if x.endswith(".log")
+                if x.endswith((".log", ".log.gz"))
                 or (x.lower().endswith(".dump") and request.user.is_superuser)
             ]
         )
@@ -752,18 +753,33 @@ def DownloadLogFile(request, taskid):
     if (
         not filename
         or (filename.lower().endswith(".dump") and not request.user.is_superuser)
-        or not filename.lower().endswith((".log", ".dump"))
+        or not filename.lower().endswith((".log", ".log.gz", ".dump"))
     ):
         return HttpResponseNotFound(force_str(_("Error")))
-    return sendStaticFile(
-        request,
-        settings.FREPPLE_LOGDIR,
-        filename,
-        headers={
-            "Content-Type": "application/octet-stream",
-            "Content-Disposition": 'inline; filename="%s"' % filename,
-        },
-    )
+    if filename.endswith(".log") and os.path.isfile(
+        os.path.join(settings.FREPPLE_LOGDIR, filename + ".gz")
+    ):
+        # Serve the .gz with Content-Encoding so the browser decompresses transparently
+        return sendStaticFile(
+            request,
+            settings.FREPPLE_LOGDIR,
+            filename + ".gz",
+            headers={
+                "Content-Type": "text/plain",
+                "Content-Encoding": "gzip",
+                "Content-Disposition": 'attachment; filename="%s"' % filename,
+            },
+        )
+    else:
+        return sendStaticFile(
+            request,
+            settings.FREPPLE_LOGDIR,
+            filename,
+            headers={
+                "Content-Type": "application/octet-stream",
+                "Content-Disposition": 'inline; filename="%s"' % filename,
+            },
+        )
 
 
 @staff_member_required
@@ -777,10 +793,15 @@ def DeleteLogFile(request, taskid):
     if (
         not filename
         or (filename.lower().endswith(".dump") and not request.user.is_superuser)
-        or not filename.lower().endswith((".log", ".dump"))
+        or not filename.lower().endswith((".log", ".log.gz", ".dump"))
     ):
         return HttpResponseNotFound(force_str(_("Error")))
     try:
+        # Delete the compressed version if present
+        if filename.endswith(".log") and os.path.isfile(
+            os.path.join(settings.FREPPLE_LOGDIR, filename + ".gz")
+        ):
+            filename = filename + ".gz"
         os.remove(os.path.join(settings.FREPPLE_LOGDIR, filename))
         Task.objects.using(request.database).filter(id=taskid).update(logfile=None)
         return HttpResponse(content="OK")
@@ -801,7 +822,11 @@ def logfile(request, taskid):
         if not filename.lower().endswith(".log"):
             return HttpResponseNotFound(force_str(_("Error")))
 
-        f = open(os.path.join(settings.FREPPLE_LOGDIR, filename), "rb")
+        gz_path = os.path.join(settings.FREPPLE_LOGDIR, filename + ".gz")
+        if os.path.isfile(gz_path):
+            f = gzip_module.open(gz_path, "rb")
+        else:
+            f = open(os.path.join(settings.FREPPLE_LOGDIR, filename), "rb")
     except Exception:
         logdata = "File not found"
     else:

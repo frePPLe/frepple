@@ -1,3 +1,4 @@
 /etc/apache2/sites-available/z_frepple.conf
 /etc/frepple/djangosettings.py
 /etc/frepple/license.xml
+/etc/frepple/logrotate.conf

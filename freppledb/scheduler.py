@@ -22,11 +22,14 @@
 #
 
 import ctypes
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
+from pathlib import Path
+from random import randint, uniform
+import shutil
 import site
+import subprocess
 import sys
-from random import uniform
 from threading import Lock, Timer
 import signal
 import time
@@ -226,6 +229,52 @@ class TaskScheduler:
         for db, tm in self.sched.items():
             print("    ", tm["time"], db)
 
+    @staticmethod
+    def schedule(
+        hour=None,
+        minute=None,
+        second=None,
+        monday=True,
+        tuesday=True,
+        wednesday=True,
+        thursday=True,
+        friday=True,
+        saturday=True,
+        sunday=True,
+    ):
+        """Decorator that runs a function at the given time on the specified weekdays."""
+        enabled_days = [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+        fixed_hour = hour if hour is not None else randint(0, 23)
+        fixed_minute = minute if minute is not None else randint(0, 59)
+        fixed_second = second if second is not None else randint(0, 59)
+
+        def decorator(func):
+            def _schedule_next():
+                now = datetime.now()
+                for days_ahead in range(1, 8):
+                    candidate = (now + timedelta(days=days_ahead)).replace(
+                        hour=fixed_hour,
+                        minute=fixed_minute,
+                        second=fixed_second,
+                        microsecond=0,
+                    )
+                    if enabled_days[candidate.weekday()]:
+                        Timer((candidate - now).total_seconds(), _run).start()
+                        return
+
+            def _run():
+                try:
+                    func()
+                except Exception as e:
+                    print(f"Error running scheduled function {func.__name__}: {e}")
+                finally:
+                    _schedule_next()
+
+            _schedule_next()
+            return func
+
+        return decorator
+
 
 scheduler = TaskScheduler()
 
@@ -235,6 +284,27 @@ ctypes.CDLL("libc.so.6").prctl(15, "frepple-sched".encode("utf-8"), 0, 0, 0)
 # Install signal handlers
 signal.signal(signal.SIGTERM, scheduler.handle_shutdown)
 signal.signal(signal.SIGUSR1, scheduler.handle_reload)
+
+
+# Run logrotate daily sometime in the first minute after midnight
+if (
+    shutil.which("logrotate")
+    and os.access("/etc/frepple/logrotate.conf", os.R_OK)
+    and os.access("/var/log/frepple", os.W_OK)
+):
+
+    @scheduler.schedule(hour=0, minute=0)
+    def logrotate():
+        subprocess.run(
+            ["logrotate", "-f", "/etc/frepple/logrotate.conf", "--state", "/dev/null"],
+            check=True,
+        )
+        cutoff_compress = time.time() + 9 + 24 * 3600
+        for path in Path("/var/log/frepple").glob("*.log"):
+            if path.stat().st_mtime < cutoff_compress:
+                print("Compressing log file", path)
+                subprocess.run(["gzip", str(path)], check=True)
+
 
 # Wait indefinitely for events
 scheduler.start()

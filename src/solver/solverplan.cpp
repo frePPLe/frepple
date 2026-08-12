@@ -988,6 +988,39 @@ PyObject* SolverCreate::markAutofence(PyObject* self, PyObject*) {
   return Py_BuildValue("");
 }
 
+void CommandList::collectChangedOperationPlans(set<OperationPlan*>& result) const {
+  for (auto& cmd : *this) {
+    switch (cmd.getType()) {
+      case 1:
+        static_cast<const CommandList*>(&cmd)->collectChangedOperationPlans(
+            result);
+        break;
+      case 5: {
+        auto* op = static_cast<const CommandCreateOperationPlan*>(&cmd)
+                       ->getOperationPlan();
+        if (op) result.insert(op);
+        break;
+      }
+      case 7: {
+        auto* op = static_cast<const CommandMoveOperationPlan*>(&cmd)
+                       ->getOperationPlan();
+        if (op) result.insert(op);
+        break;
+      }
+    }
+  }
+}
+
+Solver::OperationPlanIterator::OperationPlanIterator(CommandManager* mgr)
+    : iter(opplans.begin()) {
+  if (!mgr)
+    throw RuntimeException(
+        "Can't get changed operation plans when in autocommit mode");
+  for (auto& i : *mgr)
+    if (i.isActive()) i.collectChangedOperationPlans(opplans);
+  iter = opplans.begin();
+}
+
 int SolverPropagateStatus::initialize() {
   // Initialize the metadata
   metadata = MetaClass::registerClass<SolverPropagateStatus>(

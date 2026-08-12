@@ -134,6 +134,8 @@ enum class direction { downstream, upstream, both, none };
  * - 3: Trace the status of all entities.
  */
 class SolverCreate : public Solver {
+  using OperationPlanIterator = Solver::OperationPlanIterator;
+
  public:
   class SolverData;
 
@@ -321,6 +323,11 @@ class SolverCreate : public Solver {
    * we search for appropriate child resources.
    */
   void chooseResource(const Load*, void*);
+
+  OperationPlanIterator changedOperationPlans() const {
+    return Solver::OperationPlanIterator(
+        getAutocommit() ? nullptr : commands.getCommandManager());
+  }
 
  public:
   /* Behavior of this solver method:
@@ -653,6 +660,9 @@ class SolverCreate : public Solver {
                               &Cls::setAlgorithm);
     m->addPointerField<Cls, CommandManager>(
         Tags::manager, &Cls::getCommandManager, &Cls::setCommandManager);
+    m->addIteratorField<Cls, OperationPlanIterator, OperationPlan>(
+        Tags::operationplans, Tags::operationplan, &Cls::changedOperationPlans,
+        DONT_SERIALIZE);
   }
 
  private:

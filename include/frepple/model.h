@@ -1010,6 +1010,29 @@ class Solver : public Object {
 
   /* Automatically commit any plan changes or not. */
   bool autocommit = true;
+
+ public:
+  class OperationPlanIterator {
+   private:
+    set<OperationPlan*> opplans;
+    set<OperationPlan*>::iterator iter;
+
+   public:
+    OperationPlanIterator(CommandManager*);
+
+    OperationPlanIterator(const OperationPlanIterator& other)
+        : opplans(other.opplans), iter(opplans.begin()) {
+      auto source = other.opplans.begin();
+      while (source != other.iter && iter != opplans.end()) {
+        ++source;
+        ++iter;
+      }
+    }
+
+    void insert(OperationPlan* op) { opplans.insert(op); }
+
+    OperationPlan* next() { return iter == opplans.end() ? nullptr : *iter++; }
+  };
 };
 
 /* This class needs to be implemented by all classes that implement

@@ -67,6 +67,7 @@ namespace frepple {
 
 // Forward declarations
 class CommandMoveOperationPlan;
+class OperationPlan;
 
 namespace utils {
 
@@ -4640,6 +4641,9 @@ class CommandList : public Command {
 
   /* Returns true if no commands have been added yet to the list. */
   bool empty() const { return !firstCommand; }
+
+  // Implemented only in the models module.
+  void collectChangedOperationPlans(set<OperationPlan*>&) const;
 
   /* Default constructor. */
   explicit CommandList() {}

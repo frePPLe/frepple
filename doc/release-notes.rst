@@ -31,8 +31,15 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Odoo integration
 
-- | The frepple user interface now allows comparing the dates. This is useful for reviewing
-    rescheduled manufacturing orders and work orders.
+- | The frepple user interface now allows comparing the planned date in odoo with the one in
+    the planned date in frePPLe.
+  | This is extremely handy for reviewing rescheduled manufacturing orders and work orders.
+
+.. rubric:: Sytem integration
+
+- | The REST API now supports filtering on the list endpoints.
+  | The help page lets you intuitively explore this new feature.
+
 
 9.17.0 (2026-07-10)
 ===================

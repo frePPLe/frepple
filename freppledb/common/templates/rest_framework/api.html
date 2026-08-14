@@ -6,21 +6,107 @@
 <script src="{{STATIC_URL}}rest_framework/js/ajax-form.js"></script>
 <script>
 
+fields = {{ filter_form|json }};
+
 $(function() {
   $('form').ajaxForm();
+  displayFilters();
 });
+
+function displayFilters() {
+  console.log("displayFilters");
+}
+
+function removeFieldList() {
+  $("#filterfield").remove();
+}
+
+function selectField(fieldName) {
+  const input = document.getElementById("addfilter");
+  if (!input) return;
+  input.value = fieldName;
+  removeFieldList();
+  input.focus();
+}
+
+function showFieldList(el) {
+  removeFieldList();
+
+  const allFields = Object.keys(fields || {});
+  if (!allFields.length) return;
+
+  const list = $('<span id="filterfield" class="list-group dropdown-menu show" style="top: 100%; left: 0; right: 0; margin-top: 0.25rem;"></span>');
+  for (const fieldName of allFields) {
+    const item = $('<a class="dropdown-item" href="#"></a>');
+    item.text(fieldName);
+    item.attr("data-filterfield", fieldName);
+    item.on("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      selectField(fieldName);
+    });
+    list.append(item);
+  }
+
+  $("#filterform .input-group").first().append(list);
+
+  $(document)
+    .off("click.apiFilterField")
+    .on("click.apiFilterField", function (event) {
+      if (!$(event.target).closest("#filterform").length) {
+        removeFieldList();
+      }
+    });
+}
+
+function showFilterList(event) {
+  if (event.key === "Escape") {
+    removeFieldList();
+    return;
+  }
+  if (event.key === "ArrowDown") {
+    event.preventDefault();
+    showFieldList(event.target);
+  }
+}
+
+function resetFilter() {
+  window.location.assign(window.location.origin + window.location.pathname);
+}
 
 </script>
 {% endblock %}
 
-{% block tools %}
-<h1>
-  <a href="/static/doc/integration-guide/rest-api/detail-api-from-your-browser.html"
-    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"
-    target="_blank">
-    <span class="fa fa-question"></span>
-  </a>
-</h1>
+{% block content_title %}
+{% if title %}
+<div class="row mt-3">
+  <div class="col-auto">
+    <h1>{{title|capfirst|force_escape}}{% if post_title %}: {{post_title|capfirst}}{% endif %}<small>{% block filter %}{% endblock %}&nbsp;&nbsp;<span id="curerror"></span></small></h1>
+  </div>
+  <div id="filterform" class="col-auto ps-2 pe-2 d-inline-flex">
+    <div class="input-group align-middle d-inline-flex position-relative" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,5">
+      <input id="addfilter" class="form-control" placeholder="{% trans 'Filter' %}" role="searchbox" type="text" size="15" oninput="showFieldList(this)" onkeydown="showFilterList(event)">
+      <span class="input-group-text">
+        <i class="fa fa-filter"></i>
+      </span>
+    </div>
+    <div class="ps-2 d-inline-flex align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,5"
+      data-bs-title="{% trans 'clear filters'|capfirst|force_escape %}">
+        <i onclick="resetFilter()" class="fa fa-times fs-6" ></i>
+    </div>
+  </div>
+  <div class="col-auto d-flex ms-auto align-items-top">
+    <h1>
+      <a href="/static/doc/integration-guide/rest-api/detail-api-from-your-browser.html"
+        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"
+        target="_blank">
+        <span class="fa fa-question"></span>
+      </a>
+    </h1>
+  </div>
+</div>
+{% block tabs %}{% endblock %}
+{% endif %}
 {% endblock %}
 
 {% block content %}

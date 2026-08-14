@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015-2017 by frePPLe bv
+# Copyright (C) 2015-2026 by frePPLe bv
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -40,6 +40,33 @@ class freppleBrowsableAPI(BrowsableAPIRenderer):
         else:
             ctx["title"] = "Detail API for %s" % ctx["name"]
         return ctx
+
+    def get_filter_form(self, data, view, request):
+        """
+        Returns a dictionary with the filters that are available for this view.
+        """
+        filterset_class = getattr(view, "filterset_class", None)
+        if not filterset_class:
+            return None
+        filterset = filterset_class(request.GET, queryset=view.get_queryset())
+        results = {}
+        for filter_name, filter_field in filterset.filters.items():
+            form_field = filterset.form[filter_name]
+            field_name = filter_field.field_name
+            if field_name not in results:
+                results[field_name] = {
+                    "name": field_name,
+                    "label": str(filter_field.label or field_name),
+                    "filters": [],
+                }
+            results[field_name]["filters"].append(
+                {
+                    "name": filter_name,
+                    "lookup_expr": str(filter_field.lookup_expr),
+                    "value": form_field.value(),
+                }
+            )
+        return results
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
         if isinstance(data, list) and renderer_context["request"].method in (

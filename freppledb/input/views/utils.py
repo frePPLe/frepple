@@ -2596,284 +2596,293 @@ class OperationPlanDetail(View):
 
                 # INVENTORY REPORT
                 current, start, end = getHorizon(request)
-                cursor.execute(
-                    """
+                if opplan.item:
+                    it = opplan.item.name
+                elif opplan.owner and opplan.owner.item:
+                    it = opplan.owner.item.name
+                else:
+                    it = None
+                if it:
+                    cursor.execute(
+                        """
+                        with arguments as (
+                        select %s::timestamp report_startdate,
+                        %s::timestamp report_enddate,
+                        %s::timestamp report_currentdate,
+                        %s report_bucket,
+                        %s item_id,
+                        %s location_id,
+                        %s batch,
+                        %s buffer
+                        )
 
-                with arguments as (
-                select %s::timestamp report_startdate,
-                %s::timestamp report_enddate,
-                %s::timestamp report_currentdate,
-                %s report_bucket,
-                %s item_id,
-                %s location_id,
-                %s batch,
-                %s buffer
-                )
+                        select
 
-                select
+                        d.bucket,
+                        d.startdate,
+                        d.enddate,
+                        d.history,
 
-                d.bucket,
-                d.startdate,
-                d.enddate,
-                d.history,
-
-                case
-                when d.history then json_build_object(
-                'onhand', min(ax_buffer.onhand)
-                )
-                else coalesce(
-                (
-                select json_build_object(
-                'onhand', onhand,
-                'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
-                'periodofcover', periodofcover
-                )
-                from operationplanmaterial
-                inner join operationplan
-                on operationplanmaterial.operationplan_id = operationplan.reference
-                where operationplanmaterial.item_id = arguments.item_id
-                and operationplanmaterial.location_id = arguments.location_id
-                and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from arguments.batch)
-                and flowdate < greatest(d.startdate,arguments.report_startdate)
-                order by flowdate desc, id desc limit 1
-                ),
-                (
-                select json_build_object(
-                'onhand', 0.0,
-                'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
-                'periodofcover', 1
-                )
-                from operationplanmaterial
-                inner join operationplan
-                on operationplanmaterial.operationplan_id = operationplan.reference
-                where operationplanmaterial.item_id = arguments.item_id
-                and operationplanmaterial.location_id = arguments.location_id
-                and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from arguments.batch)
-                and flowdate >= greatest(d.startdate,arguments.report_startdate)
-                and operationplanmaterial.quantity < 0
-                order by flowdate asc, id asc limit 1
-                ),
-                (
-                select json_build_object(
-                'onhand', 0.0,
-                'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
-                'periodofcover', 1
-                )
-                from operationplanmaterial
-                inner join operationplan
-                on operationplanmaterial.operationplan_id = operationplan.reference
-                where operationplanmaterial.item_id = arguments.item_id
-                and operationplanmaterial.location_id = arguments.location_id
-                and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from arguments.batch)
-                and flowdate >= greatest(d.startdate,arguments.report_startdate)
-                and operationplanmaterial.quantity >= 0
-                order by flowdate asc, id asc limit 1
-                )
-                )
-            end as startoh,
-
-            case when d.history then json_build_object()
-            else (
-             select json_build_object(
-               'consumed_confirmed', coalesce(sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end), 0),
-               'consumed_proposed', coalesce(sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end), 0),
-               'produced_confirmed', coalesce(sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end), 0),
-               'produced_proposed', coalesce(sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end), 0)
-               )
-             from operationplanmaterial opm
-             inner join operationplan
-             on operationplan.reference = opm.operationplan_id
-               and ((startdate < d.enddate and enddate >= d.enddate)
-               or (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate)
-               or (operationplan.type = 'DLVR' and due < d.enddate and due >= case when arguments.report_currentdate >= d.startdate and arguments.report_currentdate < d.enddate then '1970-01-01'::timestamp else d.startdate end))
-             where opm.item_id = arguments.item_id
-               and opm.location_id = arguments.location_id
-               and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from arguments.batch)
-             )
-           end as ongoing,
-
-
-           case when d.history then min(ax_buffer.safetystock)
-           else
-           (select safetystock from
-            (
-            select 1 as priority, coalesce(
-              (select value from calendarbucket
-               where calendar_id = 'SS for ' || arguments.buffer
-               and greatest(d.startdate,arguments.report_startdate) >= coalesce(startdate, '1971-01-01'::timestamp)
-               and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2030-12-31'::timestamp)
-               order by priority limit 1),
-              (select defaultvalue from calendar where name = 'SS for ' || arguments.buffer)
-              ) as safetystock
-            union all
-            select 2 as priority, coalesce(
-              (select value
-               from calendarbucket
-               where calendar_id = (
-                 select minimum_calendar_id
-                 from buffer
-                 where item_id = arguments.item_id
-                 and location_id = arguments.location_id
-                 and (item.type is distinct from 'make to order' or buffer.batch is not distinct from arguments.batch)
-                 )
-               and greatest(d.startdate,arguments.report_startdate) >= coalesce(startdate, '1971-01-01'::timestamp)
-               and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2030-12-31'::timestamp)
-               order by priority limit 1),
-              (select defaultvalue
-               from calendar
-               where name = (
-                 select minimum_calendar_id
-                 from buffer
-                 where item_id = arguments.item_id
-                 and location_id = arguments.location_id
-                 and (item.type is distinct from 'make to order' or buffer.batch is not distinct from arguments.batch)
-                 )
-              )
-            ) as safetystock
-            union all
-            select 3 as priority, minimum as safetystock
-            from buffer
-            where item_id = arguments.item_id
-            and location_id = arguments.location_id
-            and (item.type is distinct from 'make to order' or buffer.batch is not distinct from arguments.batch)
-            ) t
-            where t.safetystock is not null
-            order by priority
-            limit 1)
-            end as safetystock
-
-                from (select distinct operationplanmaterial.item_id,
-                operationplanmaterial.location_id,
-                operationplan.batch
-                        from operationplanmaterial
-                        cross join arguments
-                        inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id
-                        inner join item on item.name = operationplanmaterial.item_id
-                      where operationplanmaterial.item_id = arguments.item_id
-                      and operationplanmaterial.location_id = arguments.location_id
-                      and (item.type is distinct from 'make to order'
-                           or coalesce(operationplan.batch,'') is not distinct from arguments.batch)
-                    ) operationplanmaterial
-                cross join arguments
-                inner join item on item.name = operationplanmaterial.item_id
-
-                -- Multiply with buckets
-                cross join (
-                    select name as bucket, startdate, enddate,
-                    min(snapshot_date) as snapshot_date,
-                    enddate < arguments.report_currentdate as history
-                    from common_bucketdetail
-                    cross join arguments
-                    left outer join ax_manager
-                    on snapshot_date >= common_bucketdetail.startdate
-                    and snapshot_date < common_bucketdetail.enddate
-                    where common_bucketdetail.bucket_id = arguments.report_bucket
-                    and common_bucketdetail.enddate > arguments.report_startdate
-                    and common_bucketdetail.startdate < arguments.report_enddate
-                    group by common_bucketdetail.name, common_bucketdetail.startdate,
-                            common_bucketdetail.enddate, arguments.report_currentdate
-                    ) d
-
-                -- join with the archive data
-                left outer join ax_buffer
-                    on ax_buffer.snapshot_date_id = d.snapshot_date
-                    and ax_buffer.item =  operationplanmaterial.item_id
-                    and ax_buffer.location =  operationplanmaterial.location_id
-                    and (ax_buffer.batch is not distinct from arguments.batch)
-
-                group by d.history,
-                arguments.item_id,
-                arguments.location_id,
-                arguments.buffer,
-                arguments.batch,
-                arguments.report_startdate,
-                arguments.report_currentdate,
-                item.type,
-                d.startdate,
-                d.bucket,
-                d.enddate
-
-                order by d.startdate
-                """,
-                    (
-                        start,
-                        end,
-                        current,
-                        request.user.horizonbuckets,
-                        opplan.item.name,
+                        case
+                        when d.history then json_build_object(
+                        'onhand', min(ax_buffer.onhand)
+                        )
+                        else coalesce(
                         (
-                            opplan.destination.name
-                            if opplan.type == "DO"
-                            else opplan.location.name
+                        select json_build_object(
+                        'onhand', onhand,
+                        'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
+                        'periodofcover', periodofcover
+                        )
+                        from operationplanmaterial
+                        inner join operationplan
+                        on operationplanmaterial.operationplan_id = operationplan.reference
+                        where operationplanmaterial.item_id = arguments.item_id
+                        and operationplanmaterial.location_id = arguments.location_id
+                        and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from arguments.batch)
+                        and flowdate < greatest(d.startdate,arguments.report_startdate)
+                        order by flowdate desc, id desc limit 1
                         ),
-                        opplan.batch or "",
-                        "%s @ %s"
-                        % (
-                            opplan.item.name,
+                        (
+                        select json_build_object(
+                        'onhand', 0.0,
+                        'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
+                        'periodofcover', 1
+                        )
+                        from operationplanmaterial
+                        inner join operationplan
+                        on operationplanmaterial.operationplan_id = operationplan.reference
+                        where operationplanmaterial.item_id = arguments.item_id
+                        and operationplanmaterial.location_id = arguments.location_id
+                        and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from arguments.batch)
+                        and flowdate >= greatest(d.startdate,arguments.report_startdate)
+                        and operationplanmaterial.quantity < 0
+                        order by flowdate asc, id asc limit 1
+                        ),
+                        (
+                        select json_build_object(
+                        'onhand', 0.0,
+                        'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
+                        'periodofcover', 1
+                        )
+                        from operationplanmaterial
+                        inner join operationplan
+                        on operationplanmaterial.operationplan_id = operationplan.reference
+                        where operationplanmaterial.item_id = arguments.item_id
+                        and operationplanmaterial.location_id = arguments.location_id
+                        and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from arguments.batch)
+                        and flowdate >= greatest(d.startdate,arguments.report_startdate)
+                        and operationplanmaterial.quantity >= 0
+                        order by flowdate asc, id asc limit 1
+                        )
+                        )
+                        end as startoh,
+
+                        case when d.history then json_build_object()
+                        else (
+                        select json_build_object(
+                        'consumed_confirmed', coalesce(sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end), 0),
+                        'consumed_proposed', coalesce(sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end), 0),
+                        'produced_confirmed', coalesce(sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end), 0),
+                        'produced_proposed', coalesce(sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end), 0)
+                        )
+                        from operationplanmaterial opm
+                        inner join operationplan
+                        on operationplan.reference = opm.operationplan_id
+                        and ((startdate < d.enddate and enddate >= d.enddate)
+                        or (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate)
+                        or (operationplan.type = 'DLVR' and due < d.enddate and due >= case when arguments.report_currentdate >= d.startdate and arguments.report_currentdate < d.enddate then '1970-01-01'::timestamp else d.startdate end))
+                        where opm.item_id = arguments.item_id
+                        and opm.location_id = arguments.location_id
+                        and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from arguments.batch)
+                        )
+                        end as ongoing,
+
+                        case when d.history then min(ax_buffer.safetystock)
+                        else
+                        (select safetystock from
+                            (
+                            select 1 as priority, coalesce(
+                            (select value from calendarbucket
+                            where calendar_id = 'SS for ' || arguments.buffer
+                            and greatest(d.startdate,arguments.report_startdate) >= coalesce(startdate, '1971-01-01'::timestamp)
+                            and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2030-12-31'::timestamp)
+                            order by priority limit 1),
+                            (select defaultvalue from calendar where name = 'SS for ' || arguments.buffer)
+                            ) as safetystock
+                            union all
+                            select 2 as priority, coalesce(
+                            (select value
+                            from calendarbucket
+                            where calendar_id = (
+                                select minimum_calendar_id
+                                from buffer
+                                where item_id = arguments.item_id
+                                and location_id = arguments.location_id
+                                and (item.type is distinct from 'make to order' or buffer.batch is not distinct from arguments.batch)
+                                )
+                            and greatest(d.startdate,arguments.report_startdate) >= coalesce(startdate, '1971-01-01'::timestamp)
+                            and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2030-12-31'::timestamp)
+                            order by priority limit 1),
+                            (select defaultvalue
+                            from calendar
+                            where name = (
+                                select minimum_calendar_id
+                                from buffer
+                                where item_id = arguments.item_id
+                                and location_id = arguments.location_id
+                                and (item.type is distinct from 'make to order' or buffer.batch is not distinct from arguments.batch)
+                                )
+                            )
+                        ) as safetystock
+                        union all
+                        select 3 as priority, minimum as safetystock
+                        from buffer
+                        where item_id = arguments.item_id
+                        and location_id = arguments.location_id
+                        and (item.type is distinct from 'make to order' or buffer.batch is not distinct from arguments.batch)
+                        ) t
+                        where t.safetystock is not null
+                        order by priority
+                        limit 1)
+                        end as safetystock
+
+                        from (select distinct operationplanmaterial.item_id,
+                        operationplanmaterial.location_id,
+                        operationplan.batch
+                                from operationplanmaterial
+                                cross join arguments
+                                inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id
+                                inner join item on item.name = operationplanmaterial.item_id
+                            where operationplanmaterial.item_id = arguments.item_id
+                            and operationplanmaterial.location_id = arguments.location_id
+                            and (item.type is distinct from 'make to order'
+                                or coalesce(operationplan.batch,'') is not distinct from arguments.batch)
+                            ) operationplanmaterial
+                        cross join arguments
+                        inner join item on item.name = operationplanmaterial.item_id
+
+                        -- Multiply with buckets
+                        cross join (
+                            select name as bucket, startdate, enddate,
+                            min(snapshot_date) as snapshot_date,
+                            enddate < arguments.report_currentdate as history
+                            from common_bucketdetail
+                            cross join arguments
+                            left outer join ax_manager
+                            on snapshot_date >= common_bucketdetail.startdate
+                            and snapshot_date < common_bucketdetail.enddate
+                            where common_bucketdetail.bucket_id = arguments.report_bucket
+                            and common_bucketdetail.enddate > arguments.report_startdate
+                            and common_bucketdetail.startdate < arguments.report_enddate
+                            group by common_bucketdetail.name, common_bucketdetail.startdate,
+                                    common_bucketdetail.enddate, arguments.report_currentdate
+                            ) d
+
+                        -- join with the archive data
+                        left outer join ax_buffer
+                            on ax_buffer.snapshot_date_id = d.snapshot_date
+                            and ax_buffer.item =  operationplanmaterial.item_id
+                            and ax_buffer.location =  operationplanmaterial.location_id
+                            and (ax_buffer.batch is not distinct from arguments.batch)
+
+                        group by d.history,
+                        arguments.item_id,
+                        arguments.location_id,
+                        arguments.buffer,
+                        arguments.batch,
+                        arguments.report_startdate,
+                        arguments.report_currentdate,
+                        item.type,
+                        d.startdate,
+                        d.bucket,
+                        d.enddate
+
+                        order by d.startdate
+                        """,
+                        (
+                            start,
+                            end,
+                            current,
+                            request.user.horizonbuckets,
+                            it,
                             (
                                 opplan.destination.name
                                 if opplan.type == "DO"
                                 else opplan.location.name
                             ),
-                        ),
-                    ),
-                )
-
-                if cursor.rowcount > 0:
-                    res["inventoryreport"] = []
-                    for row in cursor.fetchall():
-
-                        # bucket
-                        # bucket start
-                        # bucket end
-                        # history
-                        # start oh
-                        # safety stock
-                        # total consumed
-                        # consumed proposed
-                        # consumed confirmed
-                        # total produced
-                        # produced proposed
-                        # produced confirmed
-                        # endoh
-
-                        res["inventoryreport"].append(
-                            [
-                                row[0],  # bucket
-                                row[1].strftime(
-                                    settings.DATETIME_INPUT_FORMATS[0]
-                                ),  # d.startdate
-                                row[2].strftime(
-                                    settings.DATETIME_INPUT_FORMATS[0]
-                                ),  # d.enddate,
-                                row[3],  # d.history
+                            opplan.batch or "",
+                            "%s @ %s"
+                            % (
+                                it,
                                 (
-                                    row[4]["onhand"]
-                                    if row[4] and row[4]["onhand"]
-                                    else 0
-                                ),  # startoh
-                                float(row[6] or 0),  # safety stock
-                                (0 if row[3] else row[5]["consumed_proposed"])
-                                + (
-                                    0 if row[3] else row[5]["consumed_confirmed"]
-                                ),  # total consumed
-                                0 if row[3] else row[5]["consumed_proposed"],
-                                0 if row[3] else row[5]["consumed_confirmed"],
-                                (0 if row[3] else row[5]["produced_proposed"])
-                                + (
-                                    0 if row[3] else row[5]["produced_confirmed"]
-                                ),  # total produced
-                                0 if row[3] else row[5]["produced_proposed"],
-                                0 if row[3] else row[5]["produced_confirmed"],
-                                (row[4]["onhand"] if row[4] and row[4]["onhand"] else 0)
-                                + (0 if row[3] else row[5]["produced_proposed"])
-                                + (0 if row[3] else row[5]["produced_confirmed"])
-                                - (0 if row[3] else row[5]["consumed_proposed"])
-                                - (
-                                    0 if row[3] else row[5]["consumed_confirmed"]
-                                ),  # endoh
-                            ]
-                        )
+                                    opplan.destination.name
+                                    if opplan.type == "DO"
+                                    else opplan.location.name
+                                ),
+                            ),
+                        ),
+                    )
+
+                    if cursor.rowcount > 0:
+                        res["inventoryreport"] = []
+                        for row in cursor.fetchall():
+
+                            # bucket
+                            # bucket start
+                            # bucket end
+                            # history
+                            # start oh
+                            # safety stock
+                            # total consumed
+                            # consumed proposed
+                            # consumed confirmed
+                            # total produced
+                            # produced proposed
+                            # produced confirmed
+                            # endoh
+
+                            res["inventoryreport"].append(
+                                [
+                                    row[0],  # bucket
+                                    row[1].strftime(
+                                        settings.DATETIME_INPUT_FORMATS[0]
+                                    ),  # d.startdate
+                                    row[2].strftime(
+                                        settings.DATETIME_INPUT_FORMATS[0]
+                                    ),  # d.enddate,
+                                    row[3],  # d.history
+                                    (
+                                        row[4]["onhand"]
+                                        if row[4] and row[4]["onhand"]
+                                        else 0
+                                    ),  # startoh
+                                    float(row[6] or 0),  # safety stock
+                                    (0 if row[3] else row[5]["consumed_proposed"])
+                                    + (
+                                        0 if row[3] else row[5]["consumed_confirmed"]
+                                    ),  # total consumed
+                                    0 if row[3] else row[5]["consumed_proposed"],
+                                    0 if row[3] else row[5]["consumed_confirmed"],
+                                    (0 if row[3] else row[5]["produced_proposed"])
+                                    + (
+                                        0 if row[3] else row[5]["produced_confirmed"]
+                                    ),  # total produced
+                                    0 if row[3] else row[5]["produced_proposed"],
+                                    0 if row[3] else row[5]["produced_confirmed"],
+                                    (
+                                        row[4]["onhand"]
+                                        if row[4] and row[4]["onhand"]
+                                        else 0
+                                    )
+                                    + (0 if row[3] else row[5]["produced_proposed"])
+                                    + (0 if row[3] else row[5]["produced_confirmed"])
+                                    - (0 if row[3] else row[5]["consumed_proposed"])
+                                    - (
+                                        0 if row[3] else row[5]["consumed_confirmed"]
+                                    ),  # endoh
+                                ]
+                            )
 
                 # Final result
                 if first:

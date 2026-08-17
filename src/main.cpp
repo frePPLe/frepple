@@ -23,6 +23,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <cxxabi.h>
+#include <execinfo.h>
 #include <signal.h>
 
 #include <cstdlib>
@@ -72,76 +74,109 @@ void usage() {
 void handler(int sig) {
   ostringstream o;
   o << "Planning engine terminating due to ";
+  bool stacktrace = true;
   switch (sig) {
-#ifdef SIGHUP
     case SIGHUP:
       o << "hangup signal";
+      stacktrace = false;
       break;
-#endif
-#ifdef SIGINT
     case SIGINT:
       o << "interrupt signal";
+      stacktrace = false;
       break;
-#endif
-#ifdef SIGQUIT
     case SIGQUIT:
       o << "quit signal";
       break;
-#endif
-#ifdef SIGILL
     case SIGILL:
       o << "illegal instruction";
       break;
-#endif
-#ifdef SIGABRT
     case SIGABRT:
       o << "abort signal";
       break;
-#endif
-#ifdef SIGBUS
     case SIGBUS:
       o << "bad memory access";
       break;
-#endif
-#ifdef SIGFPE
     case SIGFPE:
       o << "floating-point exception";
       break;
-#endif
-#ifdef SIGKILL
     case SIGKILL:
       o << "kill signal";
+      stacktrace = false;
       break;
-#endif
-#ifdef SIGSEGV
     case SIGSEGV:
       o << "segmentation violation";
       break;
-#endif
-#ifdef SIGTERM
     case SIGTERM:
       o << "termination signal";
       break;
-#endif
-#ifdef SIGSTKFLT
     case SIGSTKFLT:
       o << "stack fault on coprocressor";
       break;
-#endif
-#ifdef SIGXCPU
     case SIGXCPU:
       o << "CPU limit reached";
+      stacktrace = false;
       break;
-#endif
-#ifdef SIGXFSZ
     case SIGXFSZ:
       o << "file size limit reached";
+      stacktrace = false;
       break;
-#endif
     default:
       o << "signal " << sig;
   }
   o << '\n';
+
+  // Capture and log stack trace
+  if (stacktrace) {
+    const int max_frames = 32;
+    void* addrlist[max_frames];
+    int addrlen = backtrace(addrlist, max_frames);
+
+    if (addrlen > 0) {
+      o << "\nStack trace:\n";
+      char** symbollist = backtrace_symbols(addrlist, addrlen);
+
+      for (int i = 0; i < addrlen; ++i) {
+        char* begin_name = nullptr;
+        char* begin_offset = nullptr;
+        char* end_offset = nullptr;
+
+        // Find function name and offset in backtrace symbol string
+        for (char* p = symbollist[i]; *p; ++p) {
+          if (*p == '(') {
+            begin_name = p;
+          } else if (*p == '+') {
+            begin_offset = p;
+          } else if (*p == ')' && begin_offset) {
+            end_offset = p;
+            break;
+          }
+        }
+
+        if (begin_name && begin_offset && end_offset &&
+            begin_name < begin_offset) {
+          *begin_name++ = '\0';
+          *begin_offset++ = '\0';
+          *end_offset = '\0';
+
+          int status;
+          char* demangled =
+              abi::__cxa_demangle(begin_name, nullptr, nullptr, &status);
+
+          o << "  [" << i << "] ";
+          if (status == 0) {
+            o << demangled << " + " << begin_offset << '\n';
+            free(demangled);
+          } else {
+            o << begin_name << " + " << begin_offset << '\n';
+          }
+        } else {
+          o << "  [" << i << "] " << symbollist[i] << '\n';
+        }
+      }
+      free(symbollist);
+    }
+  }
+
   FreppleLog(o.str().c_str());
   exit(sig);
 }

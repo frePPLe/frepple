@@ -14,19 +14,83 @@ $(function() {
 });
 
 function displayFilters() {
-  console.log("displayFilters");
+  const params = new URLSearchParams(window.location.search);
+  let index = 0;
+  for (const [key, value] of params) {
+    let [fieldName, lookupExpr] = key.split('__');
+    if (!lookupExpr) lookupExpr = 'exact';
+    if (fieldName in fields) {
+      for (fltr of fields[fieldName].filters) {
+        if (fltr.lookup_expr === lookupExpr) {
+          if (index > 0) {
+            $('#curfilter').append($('<span class="ps-1 pe-1">{% trans "and" %}</span>'));
+          }
+          const badge = $('<span class="badge dropdown filter"></span>');
+          badge.attr("data-index", index);
+          fld = $('<span></span>').text(fieldName);
+          fld.on("click", function() {
+            showFieldList($(this));
+          })
+          badge.append(fld);
+          badge.append($('<span class="ps-1 pe-1"></span>').text(lookupExpr));
+          const input = $('<input class="form-control d-inline" style="cursor:pointer">');
+          input.val(value);
+          input.on('change', function() {
+            // Change an existing filter value
+            const newValue = $(this).val();
+            const paramKey = lookupExpr === 'exact' ? fieldName : fieldName + '__' + lookupExpr;
+            const url = new URL(window.location);
+            url.searchParams.set(paramKey, newValue);
+            window.location.href = url.toString();
+          });
+          badge.append(input);
+          remove = $('<span class="fa fa-times"></span>');
+          remove.on("click", function() {
+            // Remove an existing filter
+            index = $(this).parent().data("index");
+            const entries = Array.from(new URLSearchParams(window.location.search).entries());
+            const url = new URL(window.location);
+            url.search = '';
+            entries.forEach((entry, i) => {
+              if (i !== index) url.searchParams.append(entry[0], entry[1]);
+            });
+            window.location.href = url.toString();
+          })
+          badge.append(remove);
+          $('#curfilter').append(badge);
+          first = false;
+          break;
+        }
+      }
+    }
+    index++;
+  }
 }
 
 function removeFieldList() {
   $("#filterfield").remove();
 }
 
-function selectField(fieldName) {
-  const input = document.getElementById("addfilter");
-  if (!input) return;
-  input.value = fieldName;
-  removeFieldList();
-  input.focus();
+function selectField(el) {
+  const fltr = el.closest("[data-index]");
+  const index = fltr.data("index");
+  const url = new URL(window.location);
+  if (index >= 0) {
+    // Changing the field of an existing filter
+    url.search = '';
+    const entries = Array.from(new URLSearchParams(window.location.search).entries());
+    entries.forEach((entry, i) => {
+        url.searchParams.append(
+          (i !== index) ? entry[0] : el.text(),
+          entry[1]
+        );
+    });
+  }
+  else {
+    // Adding a new filter
+    url.searchParams.append(el.text(), fltr.find('input').first().val());
+  }
+  window.location.href = url.toString();
 }
 
 function showFieldList(el) {
@@ -43,12 +107,12 @@ function showFieldList(el) {
     item.on("click", function (event) {
       event.preventDefault();
       event.stopPropagation();
-      selectField(fieldName);
+      selectField($(this));
     });
     list.append(item);
   }
 
-  $("#filterform .input-group").first().append(list);
+  el.append(list);
 
   $(document)
     .off("click.apiFilterField")
@@ -84,8 +148,9 @@ function resetFilter() {
     <h1>{{title|capfirst|force_escape}}{% if post_title %}: {{post_title|capfirst}}{% endif %}<small>{% block filter %}{% endblock %}&nbsp;&nbsp;<span id="curerror"></span></small></h1>
   </div>
   <div id="filterform" class="col-auto ps-2 pe-2 d-inline-flex">
-    <div class="input-group align-middle d-inline-flex position-relative" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,5">
-      <input id="addfilter" class="form-control" placeholder="{% trans 'Filter' %}" role="searchbox" type="text" size="15" oninput="showFieldList(this)" onkeydown="showFilterList(event)">
+    <span id="curfilter"></span>
+    <div data-index="-1" class="input-group align-middle d-inline-flex position-relative" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,5">
+      <input id="addfilter" class="form-control" placeholder="{% trans 'Filter' %}" role="searchbox" type="text" size="15" oninput="showFieldList($('#filterform .input-group').first())" onkeydown="showFilterList(event)">
       <span class="input-group-text">
         <i class="fa fa-filter"></i>
       </span>

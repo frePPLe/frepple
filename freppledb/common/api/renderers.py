@@ -60,11 +60,7 @@ class freppleBrowsableAPI(BrowsableAPIRenderer):
                     "filters": [],
                 }
             results[field_name]["filters"].append(
-                {
-                    "name": filter_name,
-                    "lookup_expr": str(filter_field.lookup_expr),
-                    "value": form_field.value(),
-                }
+                {"name": filter_name, "lookup_expr": str(filter_field.lookup_expr)}
             )
         return results
 

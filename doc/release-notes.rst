@@ -35,6 +35,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     the planned date in frePPLe.
   | This is extremely handy for reviewing rescheduled manufacturing orders and work orders.
 
+- | 17, 18, 19: Possibility to specify a scrap rate at Bill of Material level. A Manufacturing order
+    for such a BOM will have a larger production quantity to account for the expected scrap.
+
 .. rubric:: Sytem integration
 
 - | The REST API now supports filtering on the list endpoints.

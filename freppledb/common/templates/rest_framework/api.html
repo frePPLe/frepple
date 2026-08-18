@@ -25,15 +25,20 @@ function displayFilters() {
           if (index > 0) {
             $('#curfilter').append($('<span class="ps-1 pe-1">{% trans "and" %}</span>'));
           }
-          const badge = $('<span class="badge dropdown filter"></span>');
+          const badge = $('<span class="badge dropdown filter pe-2"></span>');
           badge.attr("data-index", index);
           fld = $('<span></span>').text(fieldName);
           fld.on("click", function() {
             showFieldList($(this));
           })
           badge.append(fld);
-          badge.append($('<span class="ps-1 pe-1"></span>').text(lookupExpr));
-          const input = $('<input class="form-control d-inline" style="cursor:pointer">');
+          const oper = $('<span class="ps-1 pe-1"></span>');
+          oper.text(lookupExpr);
+          oper.on("click", function() {
+            showFilterList($(this));
+          });
+          badge.append(oper);
+          const input = $('<input class="form-control d-inline" style="width: 3em; cursor:pointer">');
           input.val(value);
           input.on('change', function() {
             // Change an existing filter value
@@ -44,7 +49,7 @@ function displayFilters() {
             window.location.href = url.toString();
           });
           badge.append(input);
-          remove = $('<span class="fa fa-times"></span>');
+          remove = $('<span class="ps-1 fa fa-times"></span>');
           remove.on("click", function() {
             // Remove an existing filter
             index = $(this).parent().data("index");
@@ -58,17 +63,12 @@ function displayFilters() {
           })
           badge.append(remove);
           $('#curfilter').append(badge);
-          first = false;
           break;
         }
       }
     }
     index++;
   }
-}
-
-function removeFieldList() {
-  $("#filterfield").remove();
 }
 
 function selectField(el) {
@@ -94,7 +94,7 @@ function selectField(el) {
 }
 
 function showFieldList(el) {
-  removeFieldList();
+  $("#filteroperator, #filterfield").remove();
 
   const allFields = Object.keys(fields || {});
   if (!allFields.length) return;
@@ -118,20 +118,58 @@ function showFieldList(el) {
     .off("click.apiFilterField")
     .on("click.apiFilterField", function (event) {
       if (!$(event.target).closest("#filterform").length) {
-        removeFieldList();
+        $("#filteroperator, #filterfield").remove();
       }
     });
 }
 
-function showFilterList(event) {
-  if (event.key === "Escape") {
-    removeFieldList();
-    return;
+
+function showFilterList(el) {
+  $("#filteroperator, #filterfield").remove();
+  const fltr = $(el).closest("[data-index]");
+  const field = fields[fltr.children("span").first().text()];
+  if (!field || !field.filters || !field.filters.length) return;
+
+  const list = $('<span id="filteroperator" class="list-group dropdown-menu show" style="top: 100%; left: 0; right: 0; margin-top: 0.25rem;"></span>');
+  for (const filterDef of field.filters) {
+    const item = $('<a class="dropdown-item" href="#"></a>');
+    item.text(filterDef.lookup_expr);
+    item.on("click", function (event) {
+      // Change the operator of an existing filter
+      const o = $(this);
+      const fltr = o.closest("[data-index]");
+      const index = fltr.data("index");
+      const fieldName = fltr.children("span").first().text();
+      const lookupExpr = o.text();
+      const url = new URL(window.location);
+      if (index >= 0) {
+        event.preventDefault();
+        event.stopPropagation();
+        url.search = '';
+        const entries = Array.from(new URLSearchParams(window.location.search).entries());
+        entries.forEach((entry, i) => {
+          if (i !== index) url.searchParams.append(entry[0], entry[1]);
+          else {
+            const newKey = lookupExpr === 'exact' ? fieldName : fieldName + '__' + lookupExpr;
+            url.searchParams.append(newKey, entry[1]);
+          }
+        });
+        window.location.href = url.toString();
+      }
+    });
+    list.append(item);
   }
-  if (event.key === "ArrowDown") {
-    event.preventDefault();
-    showFieldList(event.target);
-  }
+
+  $(el).append(list);
+
+  $(document)
+    .off("click.apiFilterOperator")
+    .on("click.apiFilterOperator", function (event) {
+      if (!$(event.target).closest("#filterform").length) {
+        $("#filteroperator, #filterfield").remove();
+      }
+    });
+
 }
 
 function resetFilter() {
@@ -143,31 +181,34 @@ function resetFilter() {
 
 {% block content_title %}
 {% if title %}
-<div class="row mt-3">
-  <div class="col-auto">
-    <h1>{{title|capfirst|force_escape}}{% if post_title %}: {{post_title|capfirst}}{% endif %}<small>{% block filter %}{% endblock %}&nbsp;&nbsp;<span id="curerror"></span></small></h1>
-  </div>
-  <div id="filterform" class="col-auto ps-2 pe-2 d-inline-flex">
-    <span id="curfilter"></span>
-    <div data-index="-1" class="input-group align-middle d-inline-flex position-relative" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,5">
-      <input id="addfilter" class="form-control" placeholder="{% trans 'Filter' %}" role="searchbox" type="text" size="15" oninput="showFieldList($('#filterform .input-group').first())" onkeydown="showFilterList(event)">
-      <span class="input-group-text">
-        <i class="fa fa-filter"></i>
-      </span>
-    </div>
-    <div class="ps-2 d-inline-flex align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,5"
-      data-bs-title="{% trans 'clear filters'|capfirst|force_escape %}">
-        <i onclick="resetFilter()" class="fa fa-times fs-6" ></i>
-    </div>
-  </div>
-  <div class="col-auto d-flex ms-auto align-items-top">
-    <h1>
-      <a href="/static/doc/integration-guide/rest-api/detail-api-from-your-browser.html"
-        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"
-        target="_blank">
-        <span class="fa fa-question"></span>
-      </a>
+<div class="row mt-3 mb-3">
+  <div class="col-auto d-flex align-items-center">
+    <h1 class="m-0">{{title|capfirst|force_escape}}
+      <small>
+        <span id="filterform" class="ps-2 pe-2">
+          <span id="curfilter"></span>
+          <div data-index="-1" class="input-group d-inline-flex w-auto ps-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,5">
+            <input id="addfilter" size="15" style="width: auto !important" class="form-control" placeholder="{% trans 'Filter' %}" role="searchbox" type="text" size="15" oninput="showFieldList($('#filterform .input-group').first())" onkeydown="showFilterList(event)">
+            <button class="input-group-text">
+              <i class="fa fa-filter"></i>
+            </button>
+          </div>
+          <div class="align-middle d-inline-flex ps-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,5"
+              data-bs-title="{% trans 'clear filters'|capfirst|force_escape %}">
+            <span onclick="resetFilter()" style="cursor:pointer">
+              <i class="fa fa-times fs-6"></i>
+            </span>
+          </div>
+        </span>
+      </small>
     </h1>
+  </div>
+  <div class="col-auto d-inline-flex ms-auto h1">
+    <a href="/static/doc/integration-guide/rest-api/detail-api-from-your-browser.html"
+      data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"
+      target="_blank">
+      <span class="fa fa-question"></span>
+    </a>
   </div>
 </div>
 {% block tabs %}{% endblock %}

@@ -408,8 +408,8 @@ class ForecastPlan(models.Model):
     class Meta:
         db_table = "forecastplan"
         ordering = ["id"]
-        verbose_name = _("forecast plan")
-        verbose_name_plural = _("forecast plans")
+        verbose_name = _("forecast report")
+        verbose_name_plural = _("forecast report")
         constraints = [
             models.UniqueConstraint(
                 fields=["item", "location", "customer", "startdate"],

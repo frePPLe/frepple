@@ -1738,6 +1738,9 @@ function drawGraph(jsondata)
   // Multi-op resource: prefer center of gravity of connected ops.
   // Never overlap another element.
   var padding = 6;
+  var resourceSpacingPadding = 18;
+  var resourceMinXGapExtra = 72;
+  var resourceMinYGapExtra = 32;
   var resourceOps = {};
   for (var rl = 0; rl < links.length; rl++) {
     var rlink = links[rl];
@@ -1763,7 +1766,9 @@ function drawGraph(jsondata)
     }
     if (cny < controlsTopY) controlsTopY = cny;
   }
-  var resourceMinY = isFinite(controlsTopY) ? (controlsTopY - 40 - 12) : -Infinity;
+  // Keep resources clear of collapse controls, but leave enough headroom
+  // for legitimate above-operation placement.
+  var resourceMinY = isFinite(controlsTopY) ? (controlsTopY - 260) : -Infinity;
 
   function resourceOverlaps(resNode, xPos, yPos) {
     // Returns true if the resource at (xPos, yPos) overlaps any placed node
@@ -1777,10 +1782,14 @@ function drawGraph(jsondata)
       var hh = resHH + nodeHalfH(other) + padding;
       if (hw - Math.abs(xPos - other.x) > 0 && hh - Math.abs(yPos - other.y) > 0)
         return true;
-      // Prevent two resources from sharing the same vertical line
+      // Keep resources further apart than mere overlap avoidance.
       if (other.type === 'resource' && placedResources[other.id]) {
-        var minXSep = resHW + nodeHalfW(other) + 40;
-        if (Math.abs(xPos - other.x) < minXSep)
+        var minXSep = resHW + nodeHalfW(other) + resourceMinXGapExtra;
+        var minYSep = resHH + nodeHalfH(other) + resourceMinYGapExtra;
+        if (
+          Math.abs(xPos - other.x) < minXSep
+          && Math.abs(yPos - other.y) < minYSep
+        )
           return true;
       }
     }
@@ -1790,6 +1799,25 @@ function drawGraph(jsondata)
     return false;
   }
 
+  var operationAnchorYs = [];
+  for (var on = 0; on < nodes.length; on++) {
+    var opNode = nodes[on];
+    if (opNode.parent >= 0) continue;
+    if (!isOperationNode(opNode)) continue;
+    operationAnchorYs.push(opNode.y);
+  }
+  operationAnchorYs.sort(function(a, b) { return a - b; });
+  var operationYMedian = 1000;
+  var operationYBand = 80;
+  if (operationAnchorYs.length) {
+    operationYMedian = operationAnchorYs[Math.floor(operationAnchorYs.length / 2)];
+    var operationYMin = operationAnchorYs[0];
+    var operationYMax = operationAnchorYs[operationAnchorYs.length - 1];
+    operationYBand = Math.max(80, (operationYMax - operationYMin) * 0.12);
+  }
+
+  var resourcePlacementIndex = 0;
+  var desiredResourceSide = {}; // -1 = above, +1 = below
   for (var rn = 0; rn < nodes.length; rn++) {
     var resNode = nodes[rn];
     if (resNode.type !== 'resource') continue;
@@ -1809,11 +1837,12 @@ function drawGraph(jsondata)
     anchorY /= ops.length;
     anchorX /= ops.length;
 
-    // Build candidate positions, ordered by preference:
-    // For single-op: exhaust ALL above positions before trying below
-    // For multi-op: try above first at each step, then below
+    // Build candidate positions, ordered by preference.
+    // Resources connected to lower operations prefer below; resources connected
+    // to upper operations prefer above; only the middle band alternates.
     var candidates = [];
-    var ySteps = [152, 192, 232, 272, 320, 376, 440, 512, 600];
+    var aboveYSteps = [152, 192, 232, 272, 320, 376, 440, 512, 600];
+    var belowYSteps = [220, 280, 360, 460, 580, 720, 880];
     var xOffsets = [0];
     // Add small x offsets toward the right (toward buffer column)
     for (var xo = 1; xo <= 4; xo++) {
@@ -1822,26 +1851,65 @@ function drawGraph(jsondata)
     }
 
     var isSingleOp = (ops.length === 1);
+    var preferBelowFirst;
+    // Strict logical rule: lower-half anchors (larger y) go below,
+    // upper-half anchors go above.
+    if (anchorY > operationYMedian)
+      preferBelowFirst = true;
+    else if (anchorY < operationYMedian)
+      preferBelowFirst = false;
+    else
+      preferBelowFirst = ((resourcePlacementIndex % 2) === 1);
+    desiredResourceSide[resNode.id] = preferBelowFirst ? 1 : -1;
     if (isSingleOp) {
-      // Try ALL above positions first (all x offsets, all y steps)
-      for (var xi = 0; xi < xOffsets.length; xi++) {
-        var cx = anchorX + xOffsets[xi];
-        for (var yi = 0; yi < ySteps.length; yi++)
-          candidates.push({ x: cx, y: anchorY - ySteps[yi] });
-      }
-      // Then ALL below positions as last resort
-      for (var xi2 = 0; xi2 < xOffsets.length; xi2++) {
-        var cx2 = anchorX + xOffsets[xi2];
-        for (var yi2 = 0; yi2 < ySteps.length; yi2++)
-          candidates.push({ x: cx2, y: anchorY + ySteps[yi2] });
+      // Single-op resources: when below-first is selected, exhaust below
+      // candidates first so some resources are decisively placed well below.
+      if (preferBelowFirst) {
+        for (var xi = 0; xi < xOffsets.length; xi++) {
+          var cx = anchorX + xOffsets[xi];
+          for (var yi = 0; yi < belowYSteps.length; yi++)
+            candidates.push({ x: cx, y: anchorY + belowYSteps[yi] });
+        }
+        for (var xi2 = 0; xi2 < xOffsets.length; xi2++) {
+          var cx2 = anchorX + xOffsets[xi2];
+          for (var yi2 = 0; yi2 < aboveYSteps.length; yi2++)
+            candidates.push({ x: cx2, y: anchorY - aboveYSteps[yi2] });
+        }
+      } else {
+        for (var xi3 = 0; xi3 < xOffsets.length; xi3++) {
+          var cx3 = anchorX + xOffsets[xi3];
+          for (var yi3 = 0; yi3 < aboveYSteps.length; yi3++)
+            candidates.push({ x: cx3, y: anchorY - aboveYSteps[yi3] });
+        }
+        for (var xi4 = 0; xi4 < xOffsets.length; xi4++) {
+          var cx4 = anchorX + xOffsets[xi4];
+          for (var yi4 = 0; yi4 < belowYSteps.length; yi4++)
+            candidates.push({ x: cx4, y: anchorY + belowYSteps[yi4] });
+        }
       }
     } else {
-      // Multi-op: above first at each (x, y) step, then below
-      for (var xi3 = 0; xi3 < xOffsets.length; xi3++) {
-        var cx3 = anchorX + xOffsets[xi3];
-        for (var yi3 = 0; yi3 < ySteps.length; yi3++) {
-          candidates.push({ x: cx3, y: anchorY - ySteps[yi3] });
-          candidates.push({ x: cx3, y: anchorY + ySteps[yi3] });
+      // Multi-op: same directional exhaustion strategy.
+      if (preferBelowFirst) {
+        for (var xi5 = 0; xi5 < xOffsets.length; xi5++) {
+          var cx5 = anchorX + xOffsets[xi5];
+          for (var yi5 = 0; yi5 < belowYSteps.length; yi5++)
+            candidates.push({ x: cx5, y: anchorY + belowYSteps[yi5] });
+        }
+        for (var xi6 = 0; xi6 < xOffsets.length; xi6++) {
+          var cx6 = anchorX + xOffsets[xi6];
+          for (var yi6 = 0; yi6 < aboveYSteps.length; yi6++)
+            candidates.push({ x: cx6, y: anchorY - aboveYSteps[yi6] });
+        }
+      } else {
+        for (var xi7 = 0; xi7 < xOffsets.length; xi7++) {
+          var cx7 = anchorX + xOffsets[xi7];
+          for (var yi7 = 0; yi7 < aboveYSteps.length; yi7++)
+            candidates.push({ x: cx7, y: anchorY - aboveYSteps[yi7] });
+        }
+        for (var xi8 = 0; xi8 < xOffsets.length; xi8++) {
+          var cx8 = anchorX + xOffsets[xi8];
+          for (var yi8 = 0; yi8 < belowYSteps.length; yi8++)
+            candidates.push({ x: cx8, y: anchorY + belowYSteps[yi8] });
         }
       }
     }
@@ -1859,7 +1927,7 @@ function drawGraph(jsondata)
     // Fallback: if all candidates overlap, pick the one with least overlap area
     if (!placed) {
       var bestScore = Number.POSITIVE_INFINITY;
-      var bestX = anchorX, bestY = anchorY - 28;
+      var bestX = anchorX, bestY = anchorY + (preferBelowFirst ? 28 : -28);
       var resHW = nodeHalfW(resNode);
       var resHH = nodeHalfH(resNode);
       for (var ci2 = 0; ci2 < candidates.length; ci2++) {
@@ -1875,6 +1943,18 @@ function drawGraph(jsondata)
           var ovy2 = hh2 - Math.abs(cy2 - other2.y);
           if (ovx2 > 0 && ovy2 > 0)
             score += ovx2 * ovy2;
+          if (other2.type === 'resource' && placedResources[other2.id]) {
+            // Penalize candidates that are still close to already placed resources,
+            // so fallback picks a visibly more separated spot.
+            var dxr = Math.abs(cx2 - other2.x);
+            var dyr = Math.abs(cy2 - other2.y);
+            var wantX = resHW + nodeHalfW(other2) + resourceMinXGapExtra;
+            var wantY = resHH + nodeHalfH(other2) + resourceMinYGapExtra;
+            if (dxr < wantX)
+              score += (wantX - dxr) * resourceSpacingPadding;
+            if (dyr < wantY)
+              score += (wantY - dyr) * resourceSpacingPadding;
+          }
         }
         // Add distance penalty to keep resources close
         var dist = Math.abs(cx2 - anchorX) + Math.abs(cy2 - anchorY);
@@ -1889,6 +1969,7 @@ function drawGraph(jsondata)
       resNode.y = bestY;
     }
     placedResources[resNode.id] = true;
+    resourcePlacementIndex++;
   }
 
   var topNodes = [];
@@ -2147,9 +2228,8 @@ function drawGraph(jsondata)
     }
   }
 
-  // 9) Final resource re-placement: ensure every resource is above its
-  //    connected operation(s) and does not overlap any other element.
-  //    Post-processing passes may have pushed resources below.
+  // 9) Final resource stabilization: keep resources sufficiently away from
+  //    connected operation(s) while preserving a balanced target side mix.
   for (var rfn = 0; rfn < nodes.length; rfn++) {
     var rfRes = nodes[rfn];
     if (rfRes.type !== 'resource') continue;
@@ -2166,19 +2246,27 @@ function drawGraph(jsondata)
     }
     rfAnchorY /= rfOps.length;
     rfAnchorX /= rfOps.length;
-    // If resource is at or below its operation, re-place it above
-    if (rfRes.y >= rfAnchorY - 80) {
-      var rfYSteps = [152, 192, 232, 272, 320, 376, 440, 512, 600];
+    var desiredSide = desiredResourceSide[rfRes.id] || -1;
+    var tooCloseToBand = Math.abs(rfRes.y - rfAnchorY) < 80;
+    var onWrongSide = (desiredSide < 0 && rfRes.y >= rfAnchorY - 10)
+      || (desiredSide > 0 && rfRes.y <= rfAnchorY + 10);
+    // If resource is too close or on the wrong side, re-place it.
+    if (tooCloseToBand || onWrongSide) {
+      var rfAboveSteps = [152, 192, 232, 272, 320, 376, 440, 512, 600];
+      var rfBelowSteps = [220, 280, 360, 460, 580, 720, 880];
       var rfXOffsets = [0];
       for (var rfxo = 1; rfxo <= 4; rfxo++) {
         rfXOffsets.push(-rfxo * width_level * 0.1);
         rfXOffsets.push(rfxo * width_level * 0.1);
       }
+      var rfPreferBelow = desiredSide > 0;
       var rfPlaced = false;
       for (var rfxi = 0; rfxi < rfXOffsets.length; rfxi++) {
         var rfCx = rfAnchorX + rfXOffsets[rfxi];
-        for (var rfyi = 0; rfyi < rfYSteps.length; rfyi++) {
-          var rfTryY = rfAnchorY - rfYSteps[rfyi];
+        var rfPrimarySteps = rfPreferBelow ? rfBelowSteps : rfAboveSteps;
+        var rfPrimaryDir = rfPreferBelow ? 1 : -1;
+        for (var rfyi = 0; rfyi < rfPrimarySteps.length; rfyi++) {
+          var rfTryY = rfAnchorY + rfPrimaryDir * rfPrimarySteps[rfyi];
           if (!resourceOverlaps(rfRes, rfCx, rfTryY)) {
             rfRes.x = rfCx;
             rfRes.y = rfTryY;
@@ -2187,10 +2275,22 @@ function drawGraph(jsondata)
           }
         }
         if (rfPlaced) break;
+        var rfSecondarySteps = rfPreferBelow ? rfAboveSteps : rfBelowSteps;
+        var rfSecondaryDir = rfPreferBelow ? -1 : 1;
+        for (var rfyi2 = 0; rfyi2 < rfSecondarySteps.length; rfyi2++) {
+          var rfTryY2 = rfAnchorY + rfSecondaryDir * rfSecondarySteps[rfyi2];
+          if (!resourceOverlaps(rfRes, rfCx, rfTryY2)) {
+            rfRes.x = rfCx;
+            rfRes.y = rfTryY2;
+            rfPlaced = true;
+            break;
+          }
+        }
+        if (rfPlaced) break;
       }
-      // If still can't place above without overlap, at least push above anchor
+      // If still can't place without overlap, keep desired side while pushing away.
       if (!rfPlaced)
-        rfRes.y = rfAnchorY - 152;
+        rfRes.y = rfAnchorY + (rfPreferBelow ? 152 : -152);
     }
   }
 

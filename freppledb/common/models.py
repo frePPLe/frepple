@@ -1820,6 +1820,8 @@ class Attribute(AuditModel):
                     "systemmessage",
                     "task",
                     "userpreference",
+                    "apikey",
+                    "totpdevice"
                 )
             ]
         except Exception:

@@ -74,6 +74,12 @@ class BulkCompatibleRouter(SimpleRouter):
     ]
 
     def register(self, app, name, list_api, detail_api):
+        # Ignore duplicate registrations for the same basename.
+        # Needed to allow overriding
+        basename = f"api-{app}-{name}"
+        if self.is_already_registered(basename):
+            return
+
         class RoutedAPI(list_api):
             # Preserve historic behavior where primary keys can include '/'.
             lookup_value_regex = ".+"
@@ -133,11 +139,7 @@ class BulkCompatibleRouter(SimpleRouter):
             def destroy(self, request, *args, **kwargs):
                 return detail_api.destroy(self, request, *args, **kwargs)
 
-        super().register(
-            f"api/{app}/{name}",
-            RoutedAPI,
-            basename=f"api-{app}-{name}",
-        )
+        super().register(f"api/{app}/{name}", RoutedAPI, basename=basename)
 
 
 rest_api_router = BulkCompatibleRouter(trailing_slash=True)

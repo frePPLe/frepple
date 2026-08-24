@@ -532,11 +532,11 @@ MEDIA_ROOT = os.path.join(FREPPLE_LOGDIR, "uploads")
 if DATE_STYLE == "month-day-year":
     # Option 1: US style
     DATE_FORMAT = (
-        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        # see https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#std-templatefilter-date
         "m/d/Y"
     )
     DATETIME_FORMAT = (
-        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        # see https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#std-templatefilter-date
         "m/d/Y H:i:s"
         if DATE_STYLE_WITH_HOURS
         else "m/d/Y"
@@ -552,7 +552,7 @@ if DATE_STYLE == "month-day-year":
         else "MM-DD-YYYY"
     )
     DATE_INPUT_FORMATS = [
-        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
+        # See https://docs.djangoproject.com/en/5.2/ref/settings/#std-setting-DATE_FORMAT
         "%m/%d/%Y",
         "%Y-%m-%d",  # Still recognize input in international format with 4-digit year
         "%Y.%m.%d",  # Still recognize input in international format with 4-digit year
@@ -572,7 +572,7 @@ if DATE_STYLE == "month-day-year":
         "%d %B, %Y",
     ]
     DATETIME_INPUT_FORMATS = [
-        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
+        # See https://docs.djangoproject.com/en/5.2/ref/settings/#std-setting-DATETIME_FORMAT
         "%m/%d/%Y %H:%M:%S",
         "%Y-%m-%d %H:%M:%S",  # Still recognize input in international format with 4-digit year
         "%Y.%m.%d %H:%M:%S",  # Still recognize input in international format with 4-digit year
@@ -594,11 +594,11 @@ if DATE_STYLE == "month-day-year":
 elif DATE_STYLE == "day-month-year":
     # Option 2: European style
     DATE_FORMAT = (
-        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        # see https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#std-templatefilter-date
         "d-m-Y"
     )
     DATETIME_FORMAT = (
-        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        # see https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#std-templatefilter-date
         "d-m-Y H:i:s"
         if DATE_STYLE_WITH_HOURS
         else "d-m-Y"
@@ -614,7 +614,7 @@ elif DATE_STYLE == "day-month-year":
         else "DD-MM-YYYY"
     )
     DATE_INPUT_FORMATS = [
-        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
+        # See https://docs.djangoproject.com/en/5.2/ref/settings/#std-setting-DATE_FORMAT
         "%d-%m-%Y",
         "%Y-%m-%d",  # Still recognize input in international format with 4-digit year
         "%Y.%m.%d",  # Still recognize input in international format with 4-digit year
@@ -634,7 +634,7 @@ elif DATE_STYLE == "day-month-year":
         "%d %B, %Y",
     ]
     DATETIME_INPUT_FORMATS = [
-        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
+        # See https://docs.djangoproject.com/en/5.2/ref/settings/#std-setting-DATETIME_FORMAT
         "%d-%m-%Y %H:%M:%S",
         "%Y-%m-%d %H:%M:%S",  # Still recognize input in international format with 4-digit year
         "%Y.%m.%d %H:%M:%S",  # Still recognize input in international format with 4-digit year
@@ -657,11 +657,11 @@ elif DATE_STYLE == "day-month-year":
 else:
     # Option 3: International style, default
     DATE_FORMAT = (
-        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        # see https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#std-templatefilter-date
         "Y-m-d"
     )
     DATETIME_FORMAT = (
-        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        # see https://docs.djangoproject.com/en/5.2/ref/templates/builtins/#std-templatefilter-date
         "Y-m-d H:i:s"
         if DATE_STYLE_WITH_HOURS
         else "Y-m-d"
@@ -677,7 +677,7 @@ else:
         else "YYYY-MM-DD"
     )
     DATE_INPUT_FORMATS = [
-        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
+        # See https://docs.djangoproject.com/en/5.2/ref/settings/#std-setting-DATE_FORMAT
         "%Y-%m-%d",
         "%y-%m-%d",
         "%Y/%m/%d",
@@ -694,7 +694,7 @@ else:
         "%d %B, %Y",
     ]
     DATETIME_INPUT_FORMATS = [
-        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
+        # See https://docs.djangoproject.com/en/5.2/ref/settings/#std-setting-DATETIME_FORMAT
         "%Y-%m-%d %H:%M:%S",
         "%Y-%m-%d %H:%M",
         "%y-%m-%d %H:%M:%S",

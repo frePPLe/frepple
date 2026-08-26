@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2023 by frePPLe bv
+# Copyright (C) 2023-2026 by frePPLe bv
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -79,10 +79,8 @@ def collectRelated(
     for d in opplan.flowplans:
         related_buffers.add(d.buffer)
         for flpln in d.buffer.flowplans:
-            if isinstance(flpln.operationplan.operation, frepple.operation_inventory):
-                # Force stck opplan to be present in the database
+            if flpln.operationplan not in related_opplans:
                 related_opplans.add(flpln.operationplan)
-            break
     for c in opplan.operationplans:
         if c not in related_opplans:
             related_opplans.add(c)
@@ -141,6 +139,34 @@ class OperationplanService(AsyncHttpConsumer):
         "</html>\n"
     )
 
+    def copyFields(self, opplan):
+        fields = {
+            "ordertype": opplan.ordertype,
+            "quantity": opplan.quantity,
+            "status": "proposed",
+            "start": opplan.start,
+        }
+        if fields["ordertype"] == "PO":
+            fields["location"] = opplan.location
+            fields["supplier"] = opplan.supplier
+            fields["item"] = opplan.item
+        elif fields["ordertype"] == "DO":
+            fields["location"] = opplan.location
+            fields["item"] = opplan.item
+            fields["origin"] = opplan.operation.origin
+        elif fields["ordertype"] in ("MO", "WO"):
+            fields["operation"] = opplan.operation
+        if opplan.remark:
+            fields["remark"] = opplan.remark
+        if opplan.demand:
+            fields["demand"] = opplan.demand
+        for attr in opplanAttributes:
+            if attr[0] != "forecast":
+                v = getattr(opplan, attr[0])
+                if attr[3] and v:
+                    fields[attr[0]] = v
+        return fields
+
     async def handle(self, body):
         errors = []
         try:
@@ -154,6 +180,7 @@ class OperationplanService(AsyncHttpConsumer):
                 return
 
             data = json.loads(body.decode("utf-8"))
+            opplans = []
             deleted_opplans = set()
             related_opplans = set()
             related_resources = set()
@@ -162,27 +189,87 @@ class OperationplanService(AsyncHttpConsumer):
 
             async with lock:
                 # Update the plan in memory
-                for rec in data:
+                for rec in (
+                    data.get("operationplans", []) if isinstance(data, dict) else data
+                ):
                     try:
                         for d in rec.get("delete", []):
                             if self.scope["user"].has_perm(
                                 "input.delete_operationplan"
                             ):
-                                opplan = frepple.operationplan(
-                                    {"reference": d, "action": "C"}
+                                opplan = frepple.operationplan(reference=d, action="C")
+                                if not opplan:
+                                    continue
+                                if opplan.owner and isinstance(
+                                    opplan.owner.operation, frepple.operation_routing
+                                ):
+                                    opplan = opplan.owner
+                                collectRelated(
+                                    opplan,
+                                    related_opplans,
+                                    related_resources,
+                                    related_buffers,
+                                    related_demands,
                                 )
-                                if opplan:
-                                    collectRelated(
-                                        opplan,
-                                        related_opplans,
-                                        related_resources,
-                                        related_buffers,
-                                        related_demands,
-                                    )
-                                    deleted_opplans.add(opplan.reference)
-                                    del opplan
+                                deleted_opplans.add(opplan.reference)
+                                frepple.operationplan(
+                                    reference=opplan.reference, action="R"
+                                )
                             elif "permission denied" not in errors:
                                 errors.append("permission denied")
+
+                        for d in rec.get("split", []):
+                            if self.scope["user"].has_perm(
+                                "input.create_operationplan"
+                            ):
+                                opplan = frepple.operationplan(reference=d, action="C")
+                                if not opplan:
+                                    continue
+                                if opplan.owner and isinstance(
+                                    opplan.owner.operation, frepple.operation_routing
+                                ):
+                                    opplan = opplan.owner
+                                quantity_orig = opplan.quantity
+                                related_opplans.add(opplan)
+                                collectRelated(
+                                    opplan,
+                                    related_opplans,
+                                    related_resources,
+                                    related_buffers,
+                                    related_demands,
+                                )
+                                opplan = frepple.operationplan(
+                                    reference=opplan.reference,
+                                    quantity=quantity_orig / 2,
+                                    startdate=opplan.start,
+                                )
+                                if opplan.quantity < quantity_orig:
+                                    fields = self.copyFields(opplan)
+                                    fields["quantity"] = quantity_orig - opplan.quantity
+                                    opplans.append(frepple.operationplan(**fields))
+                            elif "permission denied" not in errors:
+                                errors.append("permission denied")
+
+                        for d in rec.get("copy", []):
+                            if self.scope["user"].has_perm(
+                                "input.create_operationplan"
+                            ):
+                                opplan = frepple.operationplan(reference=d, action="C")
+                                if not opplan:
+                                    continue
+                                if opplan.owner and isinstance(
+                                    opplan.owner.operation, frepple.operation_routing
+                                ):
+                                    opplan = opplan.owner
+                                collectRelated(
+                                    opplan,
+                                    related_opplans,
+                                    related_resources,
+                                    related_buffers,
+                                    related_demands,
+                                )
+                                fields = self.copyFields(opplan)
+                                opplans.append(frepple.operationplan(**fields))
 
                         # Build arguments
                         rsrcs_by_ref = None
@@ -194,12 +281,11 @@ class OperationplanService(AsyncHttpConsumer):
                                 rec.get("reference", rec.get("id", None)),
                             ),
                         )
-                        if ref:
-                            changes["reference"] = ref
-                            opplan = frepple.operationplan(reference=ref, action="C")
-                            changes["ordertype"] = opplan.ordertype
-                        else:
-                            changes["ordertype"] = rec.get("type", "MO")
+                        if not ref:
+                            continue
+                        changes["reference"] = ref
+                        opplan = frepple.operationplan(reference=ref, action="C")
+                        changes["ordertype"] = opplan.ordertype
                         if changes["ordertype"] == "PO":
                             if "location" in rec:
                                 changes["location"] = frepple.location(
@@ -316,6 +402,7 @@ class OperationplanService(AsyncHttpConsumer):
                             ):
                                 if ref:
                                     # Original related objects
+                                    opplans.append(opplan)
                                     collectRelated(
                                         opplan,
                                         related_opplans,
@@ -389,7 +476,7 @@ class OperationplanService(AsyncHttpConsumer):
                 ):
                     try:
                         await savePlan(
-                            deleted_opplans,
+                            list(deleted_opplans),
                             related_opplans,
                             related_resources,
                             related_buffers,
@@ -397,9 +484,14 @@ class OperationplanService(AsyncHttpConsumer):
                             self.scope["database"],
                             -2,
                         )
+                        deleted_opplans = None
+                        related_opplans = None
+                        related_resources = None
+                        related_buffers = None
+                        related_demands = None
                     except Exception as e:
-                        print("exception " % e)
                         errors.append("Error saving plan")
+                        print(f"Error saving plan: {e}")
 
             self.scope["response_headers"].append((b"Content-Type", b"text/html"))
             await asyncio.sleep(0.01)  # Allow event loop to clear pending events

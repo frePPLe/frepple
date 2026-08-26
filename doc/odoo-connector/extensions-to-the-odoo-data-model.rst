@@ -43,3 +43,16 @@ for all master data.
 
      .. image:: _images/operations.png
       :alt: Operations in odoo
+
+  5. | **Bills of Materials**
+     | In the Bills of Materials view of Odoo, new fields have been added:
+       *Scrap Rate* and *Quantity Multiple*.
+     | The scrap rate field allows the planner to define the expected scrap rate for the manufacturing process.
+       A manufacturing order of 10 will consume material quantities to produce 10 pieces but will only
+       produce 9 pieces when the scrap rate is set to 10%.
+     | The quantity multiple field allows the planner to define a multiple quantity for the manufacturing orders.
+       For example, if the quantity multiple is set to 5, manufacturing orders can only have a quantity of 5,10,15...
+     | This table is the equivalent to the frePPLe :doc:`../model-reference/operations` table.
+
+     .. image:: _images/boms.png
+      :alt: Bills of Materials in odoo

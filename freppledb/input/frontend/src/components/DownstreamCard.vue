@@ -23,13 +23,13 @@
 
 <script setup>
 import { useI18n } from 'vue-i18n';
-import {useOperationplansStore} from "@/stores/operationplansStore.js";
-import {numberFormat} from "@common/utils.js";
-import {computed} from "vue";
+import { useOperationplansStore } from '@input/stores/operationplansStore.js';
+import { numberFormat } from '@common/utils.js';
+import { computed } from 'vue';
 
 const { t: ttt } = useI18n({
-  useScope: 'global',  // This is crucial for reactivity
-  inheritLocale: true
+  useScope: 'global', // This is crucial for reactivity
+  inheritLocale: true,
 });
 
 const store = useOperationplansStore();
@@ -39,15 +39,23 @@ const currentOperationplan = store.operationplan;
 const props = defineProps({
   widget: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 });
 
 const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
 
+const handleToggle = () => {
+  if (props.widget?.[0]) {
+    document.getElementById('app').dispatchEvent(
+      new CustomEvent('widget-toggle', { detail: { widget: props.widget[0], state: !isCollapsed.value } })
+    );
+  }
+};
+
 const filteredDownstream = computed(() => {
-  if (!store.operationplan["downstreamoperationplans"]) return [];
-  return store.operationplan.downstreamoperationplans.filter(peg => peg[11] != 2);
+  if (!store.operationplan['downstreamoperationplans']) return [];
+  return store.operationplan.downstreamoperationplans.filter((peg) => peg[11] != 2);
 });
 
 const urlPrefix = computed(() => window.url_prefix || '');
@@ -67,7 +75,8 @@ function buildPrefixedUrl(url, reference = null) {
 
 <template>
   <div>
-  <div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_downstream" aria-expanded="false" aria-controls="widget_downstream">
+  <div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_downstream" aria-expanded="false" aria-controls="widget_downstream"
+    @click="handleToggle">
     <h5 class="card-title text-capitalize fs-5 me-auto">{{ ttt('downstream operations') }}</h5>
     <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
   </div>

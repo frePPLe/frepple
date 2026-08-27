@@ -23,13 +23,13 @@
 
 <script setup>
 import { useI18n } from 'vue-i18n';
-import {useOperationplansStore} from "@/stores/operationplansStore.js";
-import {numberFormat} from "@common/utils.js";
-import {computed} from "vue";
+import { useOperationplansStore } from '@input/stores/operationplansStore.js';
+import { numberFormat } from '@common/utils.js';
+import { computed } from 'vue';
 
 const { t: ttt } = useI18n({
-  useScope: 'global',  // This is crucial for reactivity
-  inheritLocale: true
+  useScope: 'global', // This is crucial for reactivity
+  inheritLocale: true,
 });
 
 const store = useOperationplansStore();
@@ -39,15 +39,23 @@ const currentOperationplan = store.operationplan;
 const props = defineProps({
   widget: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 });
 
 const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
 
+const handleToggle = () => {
+  if (props.widget?.[0]) {
+    document.getElementById('app').dispatchEvent(
+      new CustomEvent('widget-toggle', { detail: { widget: props.widget[0], state: !isCollapsed.value } })
+    );
+  }
+};
+
 const filteredUpstream = computed(() => {
-  if (!store.operationplan["upstreamoperationplans"]) return [];
-  return store.operationplan.upstreamoperationplans.filter(peg => peg[11] !== 2);
+  if (!store.operationplan['upstreamoperationplans']) return [];
+  return store.operationplan.upstreamoperationplans.filter((peg) => peg[11] !== 2);
 });
 
 const urlPrefix = computed(() => window.url_prefix || '');
@@ -68,6 +76,7 @@ function buildPrefixedUrl(url, reference = null) {
 <template>
   <div>
   <div class="card-header d-flex align-items-center" data-bs-toggle="collapse"
+    @click="handleToggle"
     data-bs-target="#widget_upstream" aria-expanded="false" aria-controls="widget_upstream">
     <h5 class="card-title fs-5 me-auto text-capitalize">{{ ttt('upstream operations') }}</h5>
     <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
@@ -114,9 +123,9 @@ function buildPrefixedUrl(url, reference = null) {
             <span class="fa fa-caret-right"></span>
           </a>
         </td>
-        <td v-if="peg[2] === 'STCK'">{{peg[1]}}k</td>
+        <td v-if="peg[2] === 'STCK'">{{peg[1]}}</td>
 
-        <td>{{peg[2]}}</td>
+        <td>{{ peg[2] }}</td>
 
         <td v-if="['MO', 'WO'].includes(peg[2])">{{peg[3]}}
           <a :href="buildPrefixedUrl('/detail/input/operation/', peg[3])" role="input/operation">
@@ -125,7 +134,7 @@ function buildPrefixedUrl(url, reference = null) {
         </td>
         <td v-if="!['MO', 'WO'].includes(peg[2])">{{peg[3]}}</td>
 
-        <td>{{peg[4]}}</td>
+        <td>{{ peg[4] }}</td>
 
         <td>{{peg[5]}}
           <a v-if="peg[5]" :href="buildPrefixedUrl('/detail/input/item/', peg[5])" role="input/item" @click="store.opendetail(event)">

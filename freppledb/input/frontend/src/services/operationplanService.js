@@ -22,10 +22,30 @@
  */
 
 import { api } from './api.js';
+import { usePostBackendData } from '@common/useBackend.js';
 
 export const operationplanService = {
   async getOperationplanDetails(params) {
     return api.get('operationplan/?reference=' + encodeURIComponent(params.reference), {});
+  },
+
+  async getOperationplanDetailsBatch(references) {
+    const params = references.map(r => 'reference=' + encodeURIComponent(r)).join('&');
+    return api.get('operationplan/?' + params, {});
+  },
+
+  async postToEngine(postData) {
+    const defaultHeaders = {
+      'Authorization': 'Bearer ' + window.service_token
+    };
+    const { backendError } = await usePostBackendData(
+      (window.svc_url || window.service_url) + 'operationplan/',
+      postData,
+      defaultHeaders
+    );
+    if (backendError.value) {
+      throw new Error(backendError.value);
+    }
   },
 
   async postOperationplanDetails(postData) {

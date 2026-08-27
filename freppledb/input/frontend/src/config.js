@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 by frePPLe bv
+ * Copyright (C) 2026 by frePPLe bv
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -19,28 +19,29 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
+ * or in the form of compiled binaries. 
  */
 
-import { createApp } from 'vue';
-import App from './App.vue';
-import { createPinia } from 'pinia';
-import { i18n } from '@/i18n/i18n.js';
-
-window.appInstance = null;
-
-const app = createApp(App);
-app.use(i18n);
-app.use(createPinia());
-if (import.meta.env.DEV) {
-  app.config.devtools = true;
-  app.config.performance = true;
-}
-const mountApp = () => {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => app.mount('#app'));
-  } else {
-    app.mount('#app');
-  }
+export const appConfig = {
+  get reportKey() {
+    return window.reportkey || '';
+  },
+  get editable() {
+    return window.editable || false;
+  },
+  get urlPrefix() {
+    return window.url_prefix || '';
+  },
+  get serviceUrl() {
+    return window.service_url || '';
+  },
+  get svcUrl() {
+    return window.svc_url || window.service_url || '';
+  },
+  get preferences() {
+    return window.preferences || {};
+  },
+  get datetimeFormat() {
+    return window.datetimeformat || 'YYYY-MM-DDTHH:mm:ss';
+  },
 };
-
-mountApp();

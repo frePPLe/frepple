@@ -22,14 +22,14 @@
  */
 
 <script setup lang="js">
-import { computed, onMounted } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useOperationplansStore } from "@/stores/operationplansStore.js";
-import { numberFormat, adminEscape } from "@common/utils.js";
+import { useOperationplansStore } from '@input/stores/operationplansStore.js';
+import { numberFormat, adminEscape } from '@common/utils.js';
 
 const { t: ttt } = useI18n({
   useScope: 'global',
-  inheritLocale: true
+  inheritLocale: true,
 });
 
 const store = useOperationplansStore();
@@ -37,11 +37,19 @@ const store = useOperationplansStore();
 const props = defineProps({
   widget: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 });
 
 const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
+
+const handleToggle = () => {
+  if (props.widget?.[0]) {
+    document.getElementById('app').dispatchEvent(
+      new CustomEvent('widget-toggle', { detail: { widget: props.widget[0], state: !isCollapsed.value } })
+    );
+  }
+};
 
 const peggingDemand = computed(() => {
   return store.operationplan?.pegging_demand || [];
@@ -54,31 +62,17 @@ const hasPeggingDemand = computed(() => {
 // Get URL prefix
 const urlPrefix = computed(() => window.url_prefix || '');
 
-// Save column configuration on collapse/expand
-function onCollapseToggle() {
-  if (typeof window.grid !== 'undefined' && window.grid.saveColumnConfiguration) {
-    window.grid.saveColumnConfiguration();
-  }
-}
-
-onMounted(() => {
-  // Set up Bootstrap collapse listeners
-  const collapseElement = document.getElementById('widget_demandpegging');
-  if (collapseElement) {
-    collapseElement.addEventListener('shown.bs.collapse', onCollapseToggle);
-    collapseElement.addEventListener('hidden.bs.collapse', onCollapseToggle);
-  }
-});
 </script>
 
 <template>
   <div>
     <div
-        class="card-header d-flex align-items-center"
-        data-bs-toggle="collapse"
-        data-bs-target="#widget_demandpegging"
-        aria-expanded="false"
-        aria-controls="widget_demandpegging"
+      class="card-header d-flex align-items-center"
+      @click="handleToggle"
+      data-bs-toggle="collapse"
+      data-bs-target="#widget_demandpegging"
+      aria-expanded="false"
+      aria-controls="widget_demandpegging"
     >
       <h5 class="card-title text-capitalize fs-5 me-auto">
         {{ ttt('demand') }}
@@ -87,75 +81,70 @@ onMounted(() => {
     </div>
 
     <div
-        id="widget_demandpegging"
-        class="card-body collapse mb-1"
-        :class="{ 'show': !isCollapsed }"
-        style="max-height: 15em; overflow-y: auto; overflow-x: hidden;"
+      id="widget_demandpegging"
+      class="card-body collapse mb-1"
+      :class="{ show: !isCollapsed }"
+      style="max-height: 15em; overflow: auto"
     >
       <div v-if="!hasPeggingDemand">
         {{ ttt('There is no demand requiring this supply.') }}
       </div>
 
       <div v-else class="table-responsive">
-        <table class="table table-sm table-hover table-borderless" style="table-layout: fixed; width: 100%;">
+        <table class="table table-sm table-hover table-borderless">
           <thead>
             <tr>
-              <th style="width: 20%"><b class="text-capitalize">{{ ttt('name') }}</b></th>
-              <th style="width: 40%"><b class="text-capitalize">{{ ttt('item') }}</b></th>
-              <th style="width: 20%"><b class="text-capitalize">{{ ttt('due') }}</b></th>
-              <th style="width: 20%"><b class="text-capitalize">{{ ttt('quantity') }}</b></th>
+              <td>
+                <b class="text-capitalize">{{ ttt('name') }}</b>
+              </td>
+              <td>
+                <b class="text-capitalize">{{ ttt('item') }}</b>
+              </td>
+              <td>
+                <b class="text-capitalize">{{ ttt('due') }}</b>
+              </td>
+              <td>
+                <b class="text-capitalize">{{ ttt('quantity') }}</b>
+              </td>
             </tr>
           </thead>
           <tbody>
-          <tr v-for="(demand, index) in peggingDemand" :key="index">
-            <!-- Demand name column -->
-            <td>
-              {{ demand.demand?.name }}
-              <a
+            <tr v-for="(demand, index) in peggingDemand" :key="index">
+              <!-- Demand name column -->
+              <td>
+                {{ demand.demand?.name }}
+                <a
                   :href="`${urlPrefix}${demand.demand?.forecast ? '/detail/forecast/forecast/' : '/detail/input/demand/'}${adminEscape(demand.demand?.name)}/`"
                   @click.stop
-              >
-                <span class=" fa fa-caret-right"></span>
-              </a>
-            </td>
+                >
+                  <span class="fa fa-caret-right"></span>
+                </a>
+              </td>
 
-            <!-- Item column -->
-            <td>
-              <div class="d-flex align-items-center">
+              <!-- Item column -->
+              <td>
                 <span
                   v-if="demand.demand?.item?.description"
                   :title="demand.demand.item.description"
                   data-bs-toggle="tooltip"
-                  class="text-truncate"
-                  style="min-width: 0; padding-right: 3px"
                 >
                   {{ demand.demand.item.name }}
                 </span>
-                <span
-                  v-else
-                  class="text-truncate"
-                  style="min-width: 0; padding-right: 3px"
-                  :title="demand.demand?.item?.name"
-                  data-bs-toggle="tooltip"
-                >
-                  {{ demand.demand?.item?.name }}
-                </span>
+                <span v-else style="padding-right: 3px">{{ demand.demand?.item?.name }}</span>
                 <a
                   :href="`${urlPrefix}/detail/input/item/${adminEscape(demand.demand?.item?.name)}/`"
                   @click.stop
-                  class="flex-shrink-0"
                 >
                   <span class="fa fa-caret-right"></span>
                 </a>
-              </div>
-            </td>
+              </td>
 
-            <!-- Due date column -->
-            <td>{{ demand.demand?.due }}</td>
+              <!-- Due date column -->
+              <td>{{ demand.demand?.due }}</td>
 
-            <!-- Quantity column -->
-            <td>{{ numberFormat(demand.quantity) }}</td>
-          </tr>
+              <!-- Quantity column -->
+              <td>{{ numberFormat(demand.quantity) }}</td>
+            </tr>
           </tbody>
         </table>
       </div>

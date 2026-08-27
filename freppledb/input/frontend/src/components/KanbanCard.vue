@@ -1,19 +1,30 @@
-/* * Copyright (C) 2025 by frePPLe bv * * Permission is hereby granted, free of charge, to any
-person obtaining * a copy of this software and associated documentation files (the * "Software"), to
-deal in the Software without restriction, including * without limitation the rights to use, copy,
-modify, merge, publish, * distribute, sublicense, and/or sell copies of the Software, and to *
-permit persons to whom the Software is furnished to do so, subject to * the following conditions: *
-* The above copyright notice and this permission notice shall be * included in all copies or
-substantial portions of the Software. * * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
-KIND, * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF * MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-HOLDERS BE * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION * OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION * WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE */
+/*
+ * Copyright (C) 2025 by frePPLe bv
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
+ */
 
 <script lang="js">
 import { useI18n } from 'vue-i18n';
-import { useOperationplansStore } from '@/stores/operationplansStore.js';
+import { useOperationplansStore } from '@input/stores/operationplansStore.js';
+import { appConfig } from '@input/config.js';
 import { numberFormat, dateTimeFormat, adminEscape, dateFormat } from '@common/utils.js';
 import { computed, defineComponent, ref, watch } from "vue";
 
@@ -46,7 +57,7 @@ export default defineComponent({
     );
 
     const mode = window.mode;
-    const reportKey = window.reportkey.split('.').pop();
+    const reportKey = appConfig.reportKey.split('.').pop();
 
     const editable = true;
 
@@ -169,7 +180,7 @@ export default defineComponent({
       numberFormat,
       dateTimeFormat,
       adminEscape,
-      dateFormat
+      dateFormat,
     };
   },
   template: `
@@ -234,12 +245,12 @@ export default defineComponent({
             numberFormat: props.numberFormat,
             dateTimeFormat: props.dateTimeFormat,
             adminEscape: props.adminEscape,
-            dateFormat: props.dateFormat
+            dateFormat: props.dateFormat,
           };
         },
-        template: template
+        template: template,
       });
-    }
-  }
+    },
+  },
 });
 </script>

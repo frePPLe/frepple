@@ -1,6 +1,6 @@
 /*
-* Copyright (C) 2025 by frePPLe bv
-*
+ * Copyright (C) 2025 by frePPLe bv
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
-*/
+ */
 
 import { onMounted, onUnmounted, ref } from 'vue';
 
@@ -28,6 +28,7 @@ export function useBootstrapTooltips(options = {}) {
   const tooltipInstances = ref([]);
 
   const initTooltips = () => {
+    if (!window.bootstrap) return;
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 
     tooltipInstances.value = [...tooltipTriggerList].map(tooltipTriggerEl => {

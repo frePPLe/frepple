@@ -1,6 +1,7 @@
 import { ref as u, onMounted as a, onUnmounted as l } from "vue";
 function d(r = {}) {
   const { autoDispose: p = !0 } = r, t = u([]), n = () => {
+    if (!window.bootstrap) return;
     const o = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     t.value = [...o].map((s) => {
       const i = window.bootstrap.Tooltip.getInstance(s);

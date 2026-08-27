@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 by frePPLe bv
+ * Copyright (C) 2025-2026 by frePPLe bv
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -50,19 +50,7 @@ const getURLprefix = () => {
 const dateTimeFormat = (input, fmt) => {
   if (!input) return '';
   const date = new Date(input);
-  return moment(date).format(window.datetimeformat);
-  // TODO Use Intl.DateTimeFormat for modern date formatting
-  /*
-  const formatter = new Intl.DateTimeFormat('default', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
-  return fmt ? date.toLocaleString() : formatter.format(date);
-  */
+  return moment(date).format(fmt ? fmt : window.datetimeformat);
 };
 
 function getDjangoTemplateVariable(key, options = { reactive: false }) {
@@ -72,23 +60,30 @@ function getDjangoTemplateVariable(key, options = { reactive: false }) {
 const dateFormat = (input, fmt) => {
   if (!input) return '';
   const date = new Date(input);
-  return moment(date).format(window.dateformat);
-  // TODO Use Intl.DateTimeFormat for modern date formatting
-  /*
-  // Using Intl.DateTimeFormat for date-only formatting
-  const formatter = new Intl.DateTimeFormat('default', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-  return fmt ? date.toLocaleString() : formatter.format(date);
-  */
+  return moment(date).format(fmt ? fmt : window.dateformat);
 };
 
 const timeFormat = (input) => {
   if (!input) return '';
   const date = new Date(input);
   return moment(date).format("HH:mm:ss");
+};
+
+const dateToISO = (input) => {
+  if (!input) return '';
+  if (input instanceof Date) return moment(input).format('YYYY-MM-DDTHH:mm:ss');
+
+  const dateTimeFmt = window.datetimeformat || 'YYYY-MM-DDTHH:mm:ss';
+  const m = moment(input, dateTimeFmt, true);
+  if (m.isValid()) return m.format('YYYY-MM-DDTHH:mm:ss');
+
+  const dateFmt = window.dateformat || 'YYYY-MM-DD';
+  const dm = moment(input, dateFmt, true);
+  if (dm.isValid()) return dm.format('YYYY-MM-DDTHH:mm:ss');
+
+  const fallback = moment(input);
+  if (fallback.isValid()) return fallback.format('YYYY-MM-DDTHH:mm:ss');
+  return input;
 };
 
 function debouncedInputHandler(func, delay = 300) {
@@ -181,6 +176,66 @@ function adminEscape(str) {
   return encodeURIComponent(str);
 }
 
+/**
+ * Create a graph tooltip helper using a d3 instance
+ * This allows Vue components to use d3 for tooltips without relying on the global window.graph object
+ * which may not have access to the d3 module in ES module contexts
+ *
+ * @param {Object} d3Instance - The d3 library instance (imported from 'd3' package)
+ * @returns {Object} Object with showTooltip, hideTooltip, and moveTooltip methods
+ */
+function createGraphTooltipHelper(d3Instance) {
+  if (!d3Instance) {
+    console.warn('Graph tooltip helper created without d3 instance');
+    return {
+      showTooltip: () => {},
+      hideTooltip: () => {},
+      moveTooltip: () => {}
+    };
+  }
+
+  return {
+    showTooltip: function (txt) {
+      let tt = d3Instance.select('#tooltip');
+      if (tt.empty()) {
+        tt = d3Instance.select('body')
+          .append('div')
+          .attr('id', 'tooltip')
+          .attr('role', 'tooltip')
+          .attr('class', 'card p-2')
+          .style('position', 'absolute');
+      }
+      tt.html('' + txt).style('display', 'block');
+      this.moveTooltip();
+    },
+
+    hideTooltip: function () {
+      d3Instance.select('#tooltip').style('display', 'none');
+      d3Instance.event.stopPropagation();
+    },
+
+    moveTooltip: function () {
+      const xpos = d3Instance.event.pageX + 5;
+      let ypos = d3Instance.event.pageY - 28;
+      const tooltipEl = d3Instance.select('#tooltip');
+      const xlimit = window.innerWidth - tooltipEl.node().offsetWidth - 20;
+      const ylimit = window.innerHeight - tooltipEl.node().offsetHeight - 20;
+
+      if (xpos > xlimit) {
+        ypos = d3Instance.event.pageY + 5;
+      }
+      if (ypos > ylimit) {
+        ypos = d3Instance.event.pageY - tooltipEl.node().offsetHeight - 25;
+      }
+      tooltipEl.style({
+        left: xpos + 'px',
+        top: ypos + 'px'
+      });
+      d3Instance.event.stopPropagation();
+    }
+  };
+}
+
 export {
   isEmpty,
   isObject,
@@ -190,9 +245,11 @@ export {
   dateTimeFormat,
   dateFormat,
   timeFormat,
+  dateToISO,
   numberFormat,
   getDjangoTemplateVariable,
   debouncedInputHandler,
   debounce,
-  adminEscape
+  adminEscape,
+  createGraphTooltipHelper
 };

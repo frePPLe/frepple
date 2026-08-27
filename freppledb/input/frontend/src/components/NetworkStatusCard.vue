@@ -22,14 +22,14 @@
  */
 
 <script setup lang="js">
-import { computed, onMounted } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useOperationplansStore } from "@/stores/operationplansStore.js";
-import {numberFormat, adminEscape} from "@common/utils.js";
+import { useOperationplansStore } from '@input/stores/operationplansStore.js';
+import { numberFormat, adminEscape } from '@common/utils.js';
 
 const { t: ttt } = useI18n({
   useScope: 'global',
-  inheritLocale: true
+  inheritLocale: true,
 });
 
 const store = useOperationplansStore();
@@ -37,11 +37,19 @@ const store = useOperationplansStore();
 const props = defineProps({
   widget: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 });
 
 const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
+
+const handleToggle = () => {
+  if (props.widget?.[0]) {
+    document.getElementById('app').dispatchEvent(
+      new CustomEvent('widget-toggle', { detail: { widget: props.widget[0], state: !isCollapsed.value } })
+    );
+  }
+};
 
 const networkData = computed(() => {
   return store.operationplan?.network || [];
@@ -88,34 +96,20 @@ const headers = [
   'distribution orders',
   'manufacturing orders',
   'overdue sales orders',
-  'sales orders'
+  'sales orders',
 ];
 
-// Save column configuration on collapse/expand
-function onCollapseToggle() {
-  if (typeof window.grid !== 'undefined' && window.grid.saveColumnConfiguration) {
-    window.grid.saveColumnConfiguration();
-  }
-}
-
-onMounted(() => {
-  // Set up Bootstrap collapse listeners
-  const collapseElement = document.getElementById('widget_networkstatus');
-  if (collapseElement) {
-    collapseElement.addEventListener('shown.bs.collapse', onCollapseToggle);
-    collapseElement.addEventListener('hidden.bs.collapse', onCollapseToggle);
-  }
-});
 </script>
 
 <template>
   <div>
     <div
-        class="card-header d-flex align-items-center"
-        data-bs-toggle="collapse"
-        data-bs-target="#widget_networkstatus"
-        aria-expanded="false"
-        aria-controls="widget_networkstatus"
+      class="card-header d-flex align-items-center"
+      @click="handleToggle"
+      data-bs-toggle="collapse"
+      data-bs-target="#widget_networkstatus"
+      aria-expanded="false"
+      aria-controls="widget_networkstatus"
     >
       <h5 class="card-title text-capitalize fs-5 me-auto">
         {{ ttt('network status') }}
@@ -123,112 +117,104 @@ onMounted(() => {
       <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
     </div>
 
-    <div
-        id="widget_networkstatus"
-        class="card-body collapse"
-        :class="{ 'show': !isCollapsed }"
-        style="max-height: 15em; overflow-y: auto; overflow-x: hidden;"
-    >
+    <div id="widget_networkstatus" class="card-body collapse" :class="{ show: !isCollapsed }">
       <table class="table table-sm table-hover table-borderless">
         <thead>
-        <tr>
-          <td v-for="header in headers" :key="header">
-            <b class="text-capitalize">{{ ttt(header) }}</b>
-          </td>
-        </tr>
+          <tr>
+            <td v-for="header in headers" :key="header">
+              <b class="text-capitalize">{{ ttt(header) }}</b>
+            </td>
+          </tr>
         </thead>
         <tbody>
-        <tr v-if="!hasNetworkData">
-          <td colspan="8">{{ ttt('no network information') }}</td>
-        </tr>
+          <tr v-if="!hasNetworkData">
+            <td colspan="8">{{ ttt('no network information') }}</td>
+          </tr>
 
-        <tr v-for="(network, index) in networkData" :key="index">
-          <!-- Item column -->
-          <td>
-            {{ network[0] }}
-            <a
-                :href="`${urlPrefix}/detail/input/item/${adminEscape(network[0])}/`"
-                @click.stop
-            >
-              <span class=" fa fa-caret-right"></span>
-            </a>
-            <small v-if="network[1] === true">{{ ttt('superseded') }}</small>
-          </td>
+          <tr v-for="(network, index) in networkData" :key="index">
+            <!-- Item column -->
+            <td>
+              {{ network[0] }}
+              <a :href="`${urlPrefix}/detail/input/item/${adminEscape(network[0])}/`" @click.stop>
+                <span class="fa fa-caret-right"></span>
+              </a>
+              <small v-if="network[1] === true">{{ ttt('superseded') }}</small>
+            </td>
 
-          <!-- Location column -->
-          <td>
-            {{ network[2] }}
-            <a
+            <!-- Location column -->
+            <td>
+              {{ network[2] }}
+              <a
                 :href="`${urlPrefix}/detail/input/location/${adminEscape(network[2])}/`"
                 @click.stop
-            >
-              <span class=" fa fa-caret-right"></span>
-            </a>
-          </td>
+              >
+                <span class="fa fa-caret-right"></span>
+              </a>
+            </td>
 
-          <!-- Onhand column -->
-          <td>{{ numberFormat(network[3]) }}</td>
+            <!-- Onhand column -->
+            <td>{{ numberFormat(network[3]) }}</td>
 
-          <!-- Purchase orders column -->
-          <td>
-            {{ numberFormat(network[4]) }}
-            <a
+            <!-- Purchase orders column -->
+            <td>
+              {{ numberFormat(network[4]) }}
+              <a
                 v-if="network[4] > 0"
                 :href="buildPurchaseOrderUrl(network[0], network[2])"
                 @click.stop
-            >
-              <span class=" fa fa-caret-right"></span>
-            </a>
-          </td>
+              >
+                <span class="fa fa-caret-right"></span>
+              </a>
+            </td>
 
-          <!-- Distribution orders column -->
-          <td>
-            {{ numberFormat(network[5]) }}
-            <a
+            <!-- Distribution orders column -->
+            <td>
+              {{ numberFormat(network[5]) }}
+              <a
                 v-if="network[5] != 0"
                 :href="buildDistributionOrderUrl(network[0], network[2])"
                 @click.stop
-            >
-              <span class=" fa fa-caret-right"></span>
-            </a>
-          </td>
+              >
+                <span class="fa fa-caret-right"></span>
+              </a>
+            </td>
 
-          <!-- Manufacturing orders column -->
-          <td>
-            {{ numberFormat(network[6]) }}
-            <a
+            <!-- Manufacturing orders column -->
+            <td>
+              {{ numberFormat(network[6]) }}
+              <a
                 v-if="network[6] > 0"
                 :href="buildManufacturingOrderUrl(network[0], network[2])"
                 @click.stop
-            >
-              <span class=" fa fa-caret-right"></span>
-            </a>
-          </td>
+              >
+                <span class="fa fa-caret-right"></span>
+              </a>
+            </td>
 
-          <!-- Overdue sales orders column -->
-          <td>
-            {{ numberFormat(network[7]) }}
-            <a
+            <!-- Overdue sales orders column -->
+            <td>
+              {{ numberFormat(network[7]) }}
+              <a
                 v-if="network[7] > 0"
                 :href="buildOverdueSalesOrderUrl(network[0], network[2], network[9])"
                 @click.stop
-            >
-              <span class=" fa fa-caret-right"></span>
-            </a>
-          </td>
+              >
+                <span class="fa fa-caret-right"></span>
+              </a>
+            </td>
 
-          <!-- Sales orders column -->
-          <td>
-            {{ numberFormat(network[8]) }}
-            <a
+            <!-- Sales orders column -->
+            <td>
+              {{ numberFormat(network[8]) }}
+              <a
                 v-if="network[8] > 0"
                 :href="buildSalesOrderUrl(network[0], network[2], network[9])"
                 @click.stop
-            >
-              <span class=" fa fa-caret-right"></span>
-            </a>
-          </td>
-        </tr>
+              >
+                <span class="fa fa-caret-right"></span>
+              </a>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

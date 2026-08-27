@@ -60,7 +60,7 @@ watch(() => store.operationplan, async (newOperationplans) => {
 <template>
   <main>
     <div>
-      <div class="row mb-3">
+      <div class="mb-3">
         <operationplan-details />
       </div>
       <ErrorDialog

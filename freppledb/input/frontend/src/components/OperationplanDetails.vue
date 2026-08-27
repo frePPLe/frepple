@@ -1,40 +1,56 @@
-/* * Copyright (C) 2025 by frePPLe bv * * Permission is hereby granted, free of charge, to any
-person obtaining * a copy of this software and associated documentation files (the * "Software"), to
-deal in the Software without restriction, including * without limitation the rights to use, copy,
-modify, merge, publish, * distribute, sublicense, and/or sell copies of the Software, and to *
-permit persons to whom the Software is furnished to do so, subject to * the following conditions: *
-* The above copyright notice and this permission notice shall be * included in all copies or
-substantial portions of the Software. * * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
-KIND, * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF * MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-HOLDERS BE * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION * OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION * WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE */
+/*
+ * Copyright (C) 2025 by frePPLe bv
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
+ */
 
 <script setup lang="js">
-import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
+/* global widget */
+import { computed, ref, nextTick, onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useOperationplansStore } from '@/stores/operationplansStore.js';
-import OperationplanFormCard from '@/components/OperationplanFormCard.vue';
-import InventoryGraphCard from '@/components/InventoryGraphCard.vue';
-import InventoryDataCard from '@/components/InventoryDataCard.vue';
-import ProblemsCard from '@/components/ProblemsCard.vue';
-import ResourcesCard from '@/components/ResourcesCard.vue';
-import BuffersCard from '@/components/BuffersCard.vue';
-import DemandPeggingCard from '@/components/DemandPeggingCard.vue';
-import NetworkStatusCard from '@/components/NetworkStatusCard.vue';
-import DownstreamCard from '@/components/DownstreamCard.vue';
-import UpstreamCard from '@/components/UpstreamCard.vue';
-import SupplyInformationCard from '@/components/SupplyInformationCard.vue';
-import KanbanBoard from '@/components/KanbanBoard.vue';
-import { debounce } from '@common/utils.js';
+import { useOperationplansStore } from '@input/stores/operationplansStore.js';
+import OperationplanFormCard from '@input/components/OperationplanFormCard.vue';
+import InventoryGraphCard from '@input/components/InventoryGraphCard.vue';
+import InventoryDataCard from '@input/components/InventoryDataCard.vue';
+import ProblemsCard from '@input/components/ProblemsCard.vue';
+import ResourcesCard from '@input/components/ResourcesCard.vue';
+import BuffersCard from '@input/components/BuffersCard.vue';
+import DemandPeggingCard from '@input/components/DemandPeggingCard.vue';
+import NetworkStatusCard from '@input/components/NetworkStatusCard.vue';
+import DownstreamCard from '@input/components/DownstreamCard.vue';
+import UpstreamCard from '@input/components/UpstreamCard.vue';
+import SupplyInformationCard from '@input/components/SupplyInformationCard.vue';
+import MultipleOperationplansCard from '@input/components/MultipleOperationplansCard.vue';
+import KanbanBoard from '@input/components/KanbanBoard.vue';
+import { savePreference } from '@common/services/preferenceService.js';
 import InfoDialog from '@common/components/InfoDialog.vue';
 import ErrorDialog from '@common/components/ErrorDialog.vue';
+import { useLegacyBridge } from '@input/composables/useLegacyBridge.js';
+import { appConfig } from '@input/config.js';
 
 const { t: ttt } = useI18n({
   useScope: 'global',
   inheritLocale: true,
 });
+
+const emit = defineEmits(['opplan-form-changed', 'resource-changed']);
 
 const appElement = ref(null);
 const store = useOperationplansStore();
@@ -50,7 +66,7 @@ const deleteUrl = ref('');
 const confirmCopy = async () => {
   const sel = copySelectedItems.value;
   try {
-    const response = await $.ajax({
+    await $.ajax({
       url: location.pathname,
       data: JSON.stringify([{ copy: sel }]),
       type: 'POST',
@@ -75,17 +91,104 @@ const confirmCopy = async () => {
   }
 };
 
-// Use shared debouncer to throttle grid cell edits applied to the store
-const applyGridCellEditDebounced = debounce((payload) => {
+const confirmDelete = async () => {
+  const sel = deleteSelectedItems.value;
+  const url = deleteUrl.value;
   try {
-    store.applyGridCellEdit(payload);
+    await $.ajax({
+      url: url,
+      data: JSON.stringify([{ delete: sel }]),
+      type: 'POST',
+      contentType: 'application/json',
+      success: function () {
+        $('#delete_selected, #copy_selected, #edit_selected').prop('disabled', true);
+        $('.cbox, #cb_grid.cbox').prop('checked', false);
+        showDeleteDialog.value = false;
+        deleteSelectedItems.value = [];
+        store.loadKanbanData();
+      },
+      error: function (result) {
+        if (result.status == 401) {
+          location.reload();
+          return;
+        }
+        deleteDialogError.value = result.responseText;
+      },
+    });
   } catch (err) {
-    console.warn('Debounced applyGridCellEdit failed', err);
+    console.error('Delete failed:', err);
+    deleteDialogError.value = err.message || 'Delete failed';
   }
-}, 10);
+};
 
 // const database = computed(() => window.database);
 const preferences = computed(() => window.preferences || {});
+
+const collapsedState = ref({});
+
+const buildWidgets = (saved, collapsed) => {
+  const defaults = [
+    {
+      name: 'column1',
+      cols: [
+        { width: 6, widgets: [['operationplan', { collapsed: false }], ['inventorygraph', { collapsed: false }]] },
+      ],
+    },
+    {
+      name: 'column2',
+      cols: [
+        {
+          width: 6,
+          widgets: [
+            ['multipleGanttOperationplans', { collapsed: false }],
+            ['supplyposition', { collapsed: false }],
+            ['inventorydata', { collapsed: false }],
+            ['operationproblems', { collapsed: false }],
+            ['operationresources', { collapsed: false }],
+            ['operationflowplans', { collapsed: false }],
+            ['operationdemandpegging', { collapsed: false }],
+          ],
+        },
+      ],
+    },
+    {
+      name: 'column3',
+      cols: [
+        {
+          width: 12,
+          widgets: [
+            ['networkstatus', { collapsed: false }],
+            ['downstreamoperationplans', { collapsed: false }],
+            ['upstreamoperationplans', { collapsed: false }],
+          ],
+        },
+      ],
+    },
+  ];
+
+  const source = (saved && saved.length > 0) ? saved : defaults;
+  const result = source.map((col) => ({
+    ...col,
+    cols: col.cols.map((row) => ({
+      ...row,
+      widgets: row.widgets.map(([name, cfg]) => [
+        name,
+        { ...cfg, collapsed: collapsed[name] ?? cfg.collapsed ?? false },
+      ]),
+    })),
+  }));
+
+  // Save defaults to server on first load (only if not already saved)
+  if (!preferences.value.widgets) {
+    if (!window.preferences) window.preferences = {};
+    window.preferences.widgets = defaults;
+    nextTick(() => savePreference('widgets', defaults));
+  }
+
+  return result;
+};
+
+const displayWidgets = computed(() => buildWidgets(preferences.value.widgets, collapsedState.value));
 
 const isKanbanMode = computed(() => store.isKanbanMode);
 
@@ -96,18 +199,6 @@ const exportDialogError = ref('');
 const exporting = computed(() => store.exporting);
 
 let pendingModeChange = null;
-
-const handleAttemptModeChange = (e) => {
-  const detail = e?.detail || {};
-  if (!detail.mode || !detail.modeChangeFunction) return;
-
-  if (store.hasChanges) {
-    pendingModeChange = detail.modeChangeFunction;
-    unsavedChangesModal.value = true;
-  } else {
-    detail.modeChangeFunction();
-  }
-};
 
 const confirmModeChange = () => {
   unsavedChangesModal.value = false;
@@ -176,15 +267,24 @@ watch(
     // Update button states for kanban mode
     if (typeof jQuery !== 'undefined' && store.mode === 'kanban') {
       const hasVisible = selected && selected.length > 0;
-      ['#actions1', '#actions2', '#segments1', '#copy_selected', '#delete_selected'].forEach(
-        (s) => {
-          const el = jQuery(s);
-          if (el.length) el.prop('disabled', !hasVisible);
-        }
-      );
+      ['#actions1', '#actions2', '#copy_selected', '#delete_selected'].forEach((s) => {
+        const el = jQuery(s);
+        if (el.length) el.prop('disabled', !hasVisible);
+      });
     }
   },
   { deep: true }
+);
+
+// Pre-fetch loadplans for multi-select so shouldShowWidget can decide accurately
+watch(
+  () => store.selectedOperationplans,
+  (selectedOps) => {
+    if (selectedOps?.length > 1) {
+      store.fetchMultiSelectLoadplans(selectedOps);
+    }
+  },
+  { immediate: true }
 );
 
 function getWidgetComponent(widgetName) {
@@ -200,11 +300,36 @@ function getWidgetComponent(widgetName) {
     downstreamoperationplans: DownstreamCard,
     upstreamoperationplans: UpstreamCard,
     supplyinformation: SupplyInformationCard,
+    multipleGanttOperationplans: MultipleOperationplansCard,
   };
   return componentMap[widgetName] || null;
 }
 
+function handleOpplanFormChanged(detail) {
+  emit('opplan-form-changed', detail);
+}
+
+function handleResourceChanged(detail) {
+  emit('resource-changed', detail);
+}
+
 function shouldShowWidget(widgetName) {
+  if (widgetName === 'multipleGanttOperationplans') {
+    return store.multipleGanttSelectData !== null;
+  }
+  if (widgetName === 'operationresources') {
+    if (store.operationplan?.loadplans?.length > 0) return true;
+    if (store.selectedOperationplans?.length > 0) {
+      const msl = store.multiSelectLoadplans;
+      if (msl && Object.keys(msl).length > 0) {
+        return Object.values(msl).some(lp => lp.length > 0);
+      }
+      if (store.selectedOperationplans.some(op => {
+        if (typeof op === 'string') return false;
+        return Array.isArray(op.loadplans) && op.loadplans.length > 0;
+      })) return true;
+    }
+  }
   if (!store.operationplan || store.operationplan.id === '-1') return false;
 
   const widgetConditions = {
@@ -213,7 +338,6 @@ function shouldShowWidget(widgetName) {
     inventorydata: () => store.operationplan.inventoryreport !== undefined,
     operationproblems: () =>
       store.operationplan.problems !== undefined || store.operationplan.info !== undefined,
-    operationresources: () => store.operationplan.loadplans !== undefined && store.operationplan.loadplans.length > 0,
     operationflowplans: () => store.operationplan.flowplans !== undefined,
     operationdemandpegging: () => store.operationplan.pegging_demand !== undefined,
     networkstatus: () => store.operationplan.network !== undefined,
@@ -253,295 +377,84 @@ const confirmERPExport = async () => {
   }
 };
 
-const handleERPExport = (e) => {
-  const isKanban = e?.detail?.mode === 'kanban';
-  showExportDialog.value = true;
-  exportDialogError.value = '';
-
-  if (isKanban) {
-    const op = store.operationplan;
-    if (!op || !op.reference) {
-      // In Kanban, we might have multiple selected cards, or just clicked the toolbar button.
-      // If we don't have a single "active" operationplan, we skip the status check here.
-      // The actual export will handle multiple selections if implemented in the store.
-      return;
+const bridge = useLegacyBridge(store, {
+  onTriggerSave: () => {
+    if (store.hasChanges) {
+      store.saveOperationplanChanges().catch((error) => {
+        console.error('Failed to save operation plan:', error);
+        store.error = {
+          title: 'Save Failed',
+          showError: true,
+          message: 'There was an error saving your changes.',
+          details: error.message || 'Unknown error',
+          type: 'error',
+        };
+      });
     }
-
-    const status = op?.status || op?.operationplan__status;
-    if (!['proposed', 'approved', 'confirmed'].includes(status)) {
-      exportDialogError.value = ttt('No records with status proposed, approved or confirmed');
-      store.setExporting(false);
-    }
-  }
-};
-
-onMounted(() => {
-  const saveHeightPrefDebounced = debounce(() => {
-    try {
-      store.savePreferences();
-    } catch (e) {
-      console.warn('Failed to save row height preference', e);
-    }
-  }, 400);
-
-  const getGridRowData = (id) => {
-    try {
-      return window.jQuery('#grid').getRowData(id);
-    } catch (err) {
-      console.log('Cannot get row data for id ', id, ': ', err);
-    }
-    return null;
-  };
-
-  const handleSingleSelectEvent = (e) => {
-    const detail = e?.detail || {};
-    if (detail.execute === 'displayInfo') {
-      if (detail.selectedRows.length === 0) {
-        store.undo();
-      } else if (detail.selectedRows.length > 1) {
-        handleAllSelectEvent(e, true);
-      } else if (detail.selectedRows.length < 2) {
-        store.loadOperationplans(
-          [detail.reference],
-          detail.status,
-          detail.selectedRows,
-          window.savedData
-        );
-      }
-    } else {
-      store.undo();
-    }
-  };
-
-  const handleAllSelectEvent = (e, isSingleSelect) => {
-    const detail = e?.detail || {};
-    if (detail.status === false && !isSingleSelect) {
-      store.undo();
-      return;
-    }
-    const ids = detail.rowids || detail.selectedRows || [];
-    const selectiondata = [];
-    try {
-      for (const id of ids) {
-        const row = getGridRowData(id);
-        if (row) selectiondata.push(row);
-      }
-      const colModel = window.jQuery('#grid').jqGrid
-        ? window.jQuery('#grid').jqGrid('getGridParam', 'colModel')
-        : undefined;
-      store.processAggregatedInfo(selectiondata, colModel);
-    } catch (err) {
-      console.error('Error in All Select Event Handler', err);
-    }
-  };
-
-  const handleProcessAggregatedInfo = (e) => {
-    const detail = e?.detail || {};
-    if (detail.selectiondata) {
-      store.processAggregatedInfo(detail.selectiondata, detail.colModel);
-    }
-  };
-
-  const handleTriggerSave = (e) => {
-    store.saveOperationplanChanges().catch((err) => {
-      console.error('Failed to save operation plan:', err);
-    });
-  };
-
-  const handleTriggerCopy = async (e) => {
+  },
+  onTriggerCopy: () => {
     const sel = store.selectedOperationplans || [];
     if (sel.length > 0) {
       copySelectedItems.value = sel;
       copyDialogError.value = '';
       showCopyDialog.value = true;
     }
-  };
-
-  const handleTriggerDelete = async (e) => {
+  },
+  onTriggerDelete: (e) => {
     const sel = store.selectedOperationplans || [];
     const url = e?.detail?.url || window.url_prefix + '/data/operationplan/operationplan/';
     deleteUrl.value = url;
     if (sel.length === 1) {
-      // Redirect to Django delete page for single item
       location.href = url + encodeURIComponent(sel[0]) + '/delete/';
     } else if (sel.length > 0) {
       deleteSelectedItems.value = sel;
       deleteDialogError.value = '';
       showDeleteDialog.value = true;
     }
-  };
-
-  const confirmDelete = async () => {
-    const sel = deleteSelectedItems.value;
-    const url = deleteUrl.value;
-    try {
-      const response = await $.ajax({
-        url: url,
-        data: JSON.stringify([{ delete: sel }]),
-        type: 'POST',
-        contentType: 'application/json',
-        success: function () {
-          $('#delete_selected, #copy_selected, #edit_selected').prop('disabled', true);
-          $('.cbox, #cb_grid.cbox').prop('checked', false);
-          showDeleteDialog.value = false;
-          deleteSelectedItems.value = [];
-          store.loadKanbanData();
-        },
-        error: function (result) {
-          if (result.status == 401) {
-            location.reload();
-            return;
-          }
-          deleteDialogError.value = result.responseText;
-        },
-      });
-    } catch (err) {
-      console.error('Delete failed:', err);
-      deleteDialogError.value = err.message || 'Delete failed';
-    }
-  };
-
-  const handleTriggerUndo = (e) => {
-    store.undo();
-  };
-
-  const handleDisplayOnPanel = (e) => {
-    // This event may carry either { rowid, reference, field, value }
-    const detail = e?.detail;
-    if (!detail) return;
-
-    // If the event contains an inline field/value edit, apply it to the current operationplan immediately
-    if (detail.field && typeof detail.value !== 'undefined') {
-      try {
-        // Use shared debouncer to avoid flooding updates while typing in grid inline editors
-        applyGridCellEditDebounced({
-          reference: detail.reference,
-          field: detail.field,
-          value: detail.value,
-        });
-        window.isDataSaved = false;
-      } catch (err) {
-        console.warn('Failed to apply grid cell edit from displayonpanel event', err);
+  },
+  onAttemptModeChange: (detail) => {
+    pendingModeChange = detail.modeChangeFunction;
+    unsavedChangesModal.value = true;
+  },
+  onTriggerERPExport: (e) => {
+    const isKanban = e?.detail?.mode === 'kanban';
+    showExportDialog.value = true;
+    exportDialogError.value = '';
+    if (isKanban) {
+      const op = store.operationplan;
+      if (!op || !op.reference) return;
+      const status = op?.status || op?.operationplan__status;
+      if (!['proposed', 'approved', 'confirmed'].includes(status)) {
+        exportDialogError.value = ttt('No records with status proposed, approved or confirmed');
+        store.setExporting(false);
       }
     }
-  };
+  },
+});
 
-  const handleUndoEvent = (e) => {
-    const detail = e?.detail || {};
-    if (detail.execute === 'undo') {
-      store.undo();
-    }
-  };
+const widgetToggleHandler = (e) => {
+  const detail = e?.detail || {};
+  if (!detail.widget) return;
+  collapsedState.value = { ...collapsedState.value, [detail.widget]: detail.state };
+  nextTick(() => savePreference('widgets', widget.getConfig()));
+};
 
-  const handleGridCellEdited = (e) => {
-    const detail = e?.detail || {};
-    if (!detail.field) return;
-    window.isDataSaved = false;
-    store.applyGridCellEdit({
-      reference: detail.reference,
-      field: detail.field,
-      value: detail.value,
-    });
-  };
-
-  const handleSetMode = (e) => {
-    const detail = e?.detail || {};
-    if (detail.mode) {
-      store.setMode(detail.mode);
-    }
-  };
-
-  const handleRefreshStatus = (e) => {
-    const detail = e?.detail || {};
-    if (!detail.status) return;
-
-    store.setStatus(detail.status);
-  };
-
-  const handleSetRowHeight = (e) => {
-    const detail = e?.detail || {};
-    const h = Math.max(150, Math.floor(Number(detail.height) || 0));
-    if (!h) return;
-
-    // Update DOM height defensively (resizable already sets it, but this keeps both paths in sync)
-    // try {
-    //   window.jQuery && window.jQuery('#content-main').css('height', h + 'px');
-    // } catch (_) {}
-
-    // Update store so it’s persisted and reflected in preferences
-    // store.setDataRowHeight(h);
-
-    // Persist on drag end, avoid excessive saves while dragging
-    if (detail.source === 'dragend') {
-      saveHeightPrefDebounced();
-    }
-  };
-
-  // Attach listeners on the app root element if present, otherwise on document
+onMounted(() => {
   const rootEl = document.getElementById('app') || document;
-  rootEl.addEventListener('singleSelect', handleSingleSelectEvent);
-  rootEl.addEventListener('allSelect', handleAllSelectEvent);
-  rootEl.addEventListener('processAggregatedInfo', handleProcessAggregatedInfo);
-  rootEl.addEventListener('displayonpanel', handleDisplayOnPanel);
-  rootEl.addEventListener('triggerSave', handleTriggerSave);
-  rootEl.addEventListener('triggerCopy', handleTriggerCopy);
-  rootEl.addEventListener('triggerDelete', handleTriggerDelete);
-  rootEl.addEventListener('triggerUndo', handleTriggerUndo);
-  rootEl.addEventListener('gridCellEdited', handleGridCellEdited);
-  rootEl.addEventListener('refreshStatus', handleRefreshStatus);
-  rootEl.addEventListener('triggerERPExport', handleERPExport);
-  rootEl.addEventListener('hidden.bs.collapse', grid.saveColumnConfiguration);
-  rootEl.addEventListener('shown.bs.collapse', grid.saveColumnConfiguration);
-  rootEl.addEventListener('setMode', handleSetMode);
-  rootEl.addEventListener('setRowHeight', handleSetRowHeight);
-  rootEl.addEventListener('attemptModeChange', handleAttemptModeChange);
+  bridge.attach(rootEl);
+  appElement.value = rootEl;
 
-  // Save references to handlers so they can be removed on unmount
-  appElement.value = {
-    rootEl,
-    handlers: {
-      single: handleSingleSelectEvent,
-      all: handleAllSelectEvent,
-      proc: handleProcessAggregatedInfo,
-      display: handleDisplayOnPanel,
-      undo: handleUndoEvent,
-      triggerSave: handleTriggerSave,
-      triggerCopy: handleTriggerCopy,
-      triggerDelete: handleTriggerDelete,
-      triggerUndo: handleTriggerUndo,
-      gridCellEdited: handleGridCellEdited,
-      refreshStatus: handleRefreshStatus,
-      triggerERPExport: handleERPExport,
-      setMode: handleSetMode,
-      handleSetRowHeight: handleSetRowHeight,
-      attemptModeChange: handleAttemptModeChange,
-    },
-  };
+  rootEl.addEventListener('widget-toggle', widgetToggleHandler);
 
-  widget.init(grid.saveColumnConfiguration);
+  widget.init(() => {
+    savePreference('widgets', widget.getConfig());
+  });
 });
 
 onUnmounted(() => {
-  const info = appElement.value;
-  // if (stopNoVisibleSelectionWatch) stopNoSelectionWatch();
-  if (info && info.rootEl && info.handlers) {
-    try {
-      info.rootEl.removeEventListener('singleSelect', info.handlers.single);
-      info.rootEl.removeEventListener('allSelect', info.handlers.all);
-      info.rootEl.removeEventListener('processAggregatedInfo', info.handlers.proc);
-      info.rootEl.removeEventListener('displayonpanel', info.handlers.display);
-      info.rootEl.removeEventListener('triggerUndo', info.handlers.triggerUndo);
-      info.rootEl.removeEventListener('triggerSave', info.handlers.triggerSave);
-      info.rootEl.removeEventListener('triggerCopy', info.handlers.triggerCopy);
-      info.rootEl.removeEventListener('triggerDelete', info.handlers.triggerDelete);
-      info.rootEl.removeEventListener('gridCellEdited', info.handlers.gridCellEdited);
-      info.rootEl.removeEventListener('setMode', info.handlers.setMode);
-      info.rootEl.removeEventListener('setRowHeight', info.handlers.handleSetRowHeight);
-      info.rootEl.removeEventListener('triggerERPExport', info.handlers.triggerERPExport);
-      info.rootEl.removeEventListener('attemptModeChange', info.handlers.attemptModeChange);
-    } catch (err) {
-      console.log('Failed to remove event listeners from app root element:', err);
-    }
+  bridge.detach();
+  if (appElement.value) {
+    appElement.value.removeEventListener('widget-toggle', widgetToggleHandler);
   }
 });
 </script>
@@ -629,13 +542,13 @@ onUnmounted(() => {
 
     <ErrorDialog
       v-model="showExportErrorDialog"
-      :title="ttt('Export Error')"
+      :title="ttt('Export message')"
       :details="exportDialogError"
     />
 
     <KanbanBoard v-if="isKanbanMode" />
     <div
-      v-for="col in preferences.widgets"
+      v-for="col in displayWidgets"
       :key="col.name"
       class="widget-list col-12"
       :class="'col-lg-' + (col.cols?.[0].width || '6')"
@@ -645,7 +558,12 @@ onUnmounted(() => {
       <template v-if="col.cols?.[0]">
         <template v-for="(widget, index) in col.cols[0].widgets || []" :key="index">
           <div v-if="shouldShowWidget(widget[0])" class="card widget mb-3" :data-widget="widget[0]">
-            <component :is="getWidgetComponent(widget[0])" :widget="widget" />
+            <component
+              :is="getWidgetComponent(widget[0])"
+              :widget="widget"
+              @opplan-form-changed="handleOpplanFormChanged"
+              @resource-changed="handleResourceChanged"
+            />
           </div>
         </template>
       </template>

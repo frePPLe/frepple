@@ -21,7 +21,6 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
  */
 
-
 import { usePostBackendData, useGetBackendData, getCsrfToken } from '@common/useBackend.js';
 
 export const api = {

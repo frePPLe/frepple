@@ -27,9 +27,9 @@ export default defineConfig({
       output: {
         // Provide global variables to use in the UMD build
         globals: {
-          vue: 'Vue'
-        }
-      }
+          vue: 'Vue',
+        },
+      },
     },
   },
   plugins: [vue(), vueDevTools()],

@@ -23,8 +23,11 @@
 
 import { toRaw } from 'vue';
 import { defineStore } from 'pinia';
-import { operationplanService } from '@/services/operationplanService.js';
-import { Operationplan } from '@/models/operationplan.js';
+import { operationplanService } from '@input/services/operationplanService.js';
+import { Operationplan } from '@input/models/operationplan.js';
+import { useOperationplanSave } from '@input/composables/useOperationplanSave.js';
+import { useOperationplanEdit } from '@input/composables/useOperationplanEdit.js';
+import { appConfig } from '@input/config.js';
 
 /**
  * @typedef {Object} OperationplansState
@@ -36,7 +39,7 @@ import { Operationplan } from '@/models/operationplan.js';
  * @property {boolean} showChildren - Show child level operations
  * @property {Array} operationplan - single operationplans
  * @property {Array} selectedOperationplans - Multiple selected operationplans   // list of ids
- * @property {Object} operationplanChanges - Multiple selected operationplans   // {{reference: {fields: values}}]
+ * @property {Object} operationplanChanges - Multiple selected operationplans   // {reference: {fields: values}}
  * @property {boolean} loading - Loading state
  * @property {Object} error - Error state
  * @property {number} dataRowHeight - Row height for table
@@ -54,7 +57,6 @@ import { Operationplan } from '@/models/operationplan.js';
  */
 
 const moment = window.moment;
-const datetimeformat = window.datetimeformat;
 
 export const useOperationplansStore = defineStore('operationplans', {
   state: () => ({
@@ -62,6 +64,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     operationplan: new Operationplan(),
     operationplans: {},
     selectedOperationplans: [],
+    selectedStatusCounts: {},
     operationplanChanges: {},
 
     preferences: {},
@@ -115,6 +118,8 @@ export const useOperationplansStore = defineStore('operationplans', {
     groupOperator: window.groupOperator || 'eq',
     ganttoperationplans: [],
     calendarevents: [],
+    multipleGanttSelectData: null,
+    multiSelectLoadplans: {},
   }),
 
   getters: {
@@ -125,12 +130,6 @@ export const useOperationplansStore = defineStore('operationplans', {
     hasSelected: (state) => state.selectedOperationplans?.length > 0,
     hasChanges(state) {
       return Object.keys(state.operationplanChanges).length > 0;
-    },
-    getMode(state) {
-      state.mode = window.mode;
-    },
-    getPreferences(state) {
-      state.preferences = window.preferences;
     },
   },
 
@@ -149,6 +148,10 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.preferences.calendarmode = newCalendarMode;
     },
 
+    setMultipleGanttSelectData(data) {
+      this.multipleGanttSelectData = data;
+    },
+
     setGrouping(newGrouping) {
       this.grouping = newGrouping;
       this.preferences.grouping = newGrouping;
@@ -164,7 +167,13 @@ export const useOperationplansStore = defineStore('operationplans', {
         );
     },
 
-    async loadOperationplans(references = [], selectedFlag, selectedRows, isDataSaved = false) {
+    async loadOperationplans(
+      references = [],
+      selectedFlag,
+      selectedRows,
+      isDataSaved = false,
+      forceRefresh = false
+    ) {
       this.selectedOperationplans.length = 0;
       this.selectedOperationplans.push(...toRaw(selectedRows));
       if (references.length === 0) {
@@ -176,10 +185,9 @@ export const useOperationplansStore = defineStore('operationplans', {
         // } else if ( this.operationplan.reference !== undefined && (references[0] === this.operationplan.reference.toString())) {
         // do nothing
       } else {
-        this.operationplan = new Operationplan();
+        const operationplanReference = references[0];
         this.loading = true;
         this.error.showError = false;
-        const operationplanReference = references[0];
 
         try {
           const response = await operationplanService.getOperationplanDetails({
@@ -187,13 +195,17 @@ export const useOperationplansStore = defineStore('operationplans', {
           });
 
           // Update the store with the fetched data
-          const operationplan = toRaw(response.responseData.value)[0];
+          const rawData = toRaw(response.responseData.value);
+          const operationplan = Array.isArray(rawData) ? rawData?.[0] : rawData;
           if (this.selectedOperationplans.length === 1) {
-            this.operationplan = new Operationplan(operationplan);
+            this.operationplan = operationplan
+              ? new Operationplan(operationplan)
+              : new Operationplan();
           } else {
             this.operationplan = new Operationplan();
           }
         } catch (error) {
+          console.error('[loadOperationplans] error:', error);
           this.error = {
             title: 'Failed to load operation plans',
             showError: true,
@@ -257,25 +269,6 @@ export const useOperationplansStore = defineStore('operationplans', {
             filters: JSON.stringify(colfilter),
           });
           this.kanbanoperationplans[key] = responseData.value;
-          const colData = this.kanbanoperationplans[key];
-          if (colData && colData.rows) {
-            for (const x of colData.rows) {
-              x.type = x.operationplan__type || x.type || window.default_operationplan_type;
-              x.reference = x.operationplan__reference || x.reference;
-              if (Object.prototype.hasOwnProperty.call(x, "quantity"))
-                x.quantity = parseFloat(x.quantity);
-              if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity"))
-                x.operationplan__quantity = parseFloat(x.operationplan__quantity);
-              if (Object.prototype.hasOwnProperty.call(x, "quantity_completed"))
-                x.quantity_completed = parseFloat(x.quantity_completed);
-              if (Object.prototype.hasOwnProperty.call(x, "operationplan__quantity_completed"))
-                x.operationplan__quantity_completed = parseFloat(x.operationplan__quantity_completed);
-              if (Object.prototype.hasOwnProperty.call(x, "operationplan__status"))
-                x.status = x.operationplan__status;
-              if (Object.prototype.hasOwnProperty.call(x, "operationplan__origin"))
-                x.origin = x.operationplan__origin;
-            }
-          }
         } catch (err) {
           if (err.response && err.response.status === 401) location.reload();
           throw err;
@@ -312,13 +305,9 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.preferences.sord = 'asc';
     },
 
-    setStatus(value) {
-      if (value !== 'no_action' && value !== 'erp_incr_export') {
-        this.selectedOperationplans.forEach((op) => {
-          this.setEditFormValues('status', value);
-          this.trackOperationplanChanges(op.reference, 'status', value);
-        });
-      }
+    async setStatus(value) {
+      if (!this._editComposable) this._editComposable = useOperationplanEdit(this);
+      return this._editComposable.setStatus(value);
     },
 
     setKanbanStatus(oldStatus, oldIndex, newStatus, newIndex, reference) {
@@ -525,54 +514,42 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.exporting = status;
     },
 
-    undo() {
+    undo(skipSavedEvent = false) {
+      // Preserve reference before clearing for refresh after save
+      const savedRef =
+        this.operationplan?.reference || this.operationplan?.operationplan__reference;
       this.operationplan = new Operationplan();
       this.editForm = { setQuantity: null, setStart: '', setEnd: '', setRemark: '' };
       this.selectedOperationplans = [];
+      this.selectedStatusCounts = {};
       this.operationplanChanges = {};
+      this.multipleGanttSelectData = null;
       window.operationplanChanges = toRaw(this.operationplanChanges);
+      // Dispatch 'saved' event for post-save refresh only
+      const rootEl = document.getElementById('app');
+      if (!skipSavedEvent && rootEl && savedRef) {
+        rootEl.dispatchEvent(new CustomEvent('saved', { detail: { reference: savedRef } }));
+      } else if (!skipSavedEvent) {
+        console.warn(
+          '[undo] NOT dispatching saved event - rootEl:',
+          !!rootEl,
+          'savedRef:',
+          !!savedRef
+        );
+      }
       if (this.mode === 'kanban') {
         this.loadKanbanData();
       }
     },
 
     async saveOperationplanChanges() {
-      const changes = [];
-      for (const [key, value] of Object.entries(this.operationplanChanges)) {
-        value.id = key;
-        changes.push(toRaw({ ...value, id: key }));
-      }
-      if (!changes || Object.keys(changes).length === 0) return;
+      if (!this._saveComposable) this._saveComposable = useOperationplanSave(this);
+      return this._saveComposable.savePendingChanges();
+    },
 
-      changes.map((x) => {
-        delete x.end;
-        delete x.start;
-        // delete x.id;
-        if (x.startdate) {
-          x.startdate = x.startdate.replace('T', ' ');
-        }
-        if (x.enddate) {
-          x.enddate = x.enddate.replace('T', ' ');
-        }
-        if (x.operationplan__startdate) {
-          x.operationplan__startdate = x.startdate.replace('T', ' ');
-        }
-        if (x.operationplan__enddate) {
-          x.operationplan__enddate = x.operationplan__enddate.replace('T', ' ');
-        }
-        return x;
-      });
-
-      try {
-        await operationplanService.postOperationplanDetails(changes);
-        this.undo();
-      } catch (e) {
-        this.setError({
-          title: 'Save failed',
-          message: e.message || 'Unknown error',
-          type: 'error',
-        });
-      }
+    async saveBatchChanges() {
+      if (!this._saveComposable) this._saveComposable = useOperationplanSave(this);
+      return this._saveComposable.saveBatchChanges();
     },
 
     async erpExport() {
@@ -581,10 +558,10 @@ export const useOperationplansStore = defineStore('operationplans', {
         // This ensures consistency with what frepple.js sends in table mode
         const exportData = {
           // The backend only needs these fields in the python tests
-          "reference": this.operationplan.reference,
-          "type": this.operationplan.type,
-          "quantity": this.operationplan.quantity,
-          "enddate": this.operationplan.end
+          reference: this.operationplan.reference,
+          type: this.operationplan.type,
+          quantity: this.operationplan.quantity,
+          enddate: this.operationplan.end,
 
           // ...this.operationplan,
         };
@@ -593,21 +570,17 @@ export const useOperationplansStore = defineStore('operationplans', {
         const response = await operationplanService.exportToERP([exportData]);
 
         // Handle successful response
-        if (
-          response.responseData?.value === 'OK'
-        ) {
+        if (response.responseData?.value === 'OK') {
           this.exportError = null;
           this.exportSuccess = true;
-        } else if (
-          response.responseData?.value[0]?.messages
-        ) {
+        } else if (response.responseData?.value[0]?.messages) {
           this.exportError = response.responseData.value[0].messages.join('\n');
+        } else if (response.responseData?.value.messages) {
+          this.exportError = response.responseData.value.messages.join('\n');
         } else {
           this.exportError = 'Export failed: Unexpected response format from server';
         }
       } catch (err) {
-        console.error('Export error:', err);
-
         // Handle different error types
         if (err.response) {
           // Server responded with error status
@@ -654,6 +627,15 @@ export const useOperationplansStore = defineStore('operationplans', {
     // Process aggregated info for multiple selections
     processAggregatedInfo(operationplans, colModel) {
       this.selectedOperationplans = operationplans;
+      this.selectedStatusCounts = {};
+      operationplans.forEach((op) => {
+        const status = op.status || op.operationplan__status || 'proposed';
+        if (status) {
+          this.selectedStatusCounts[status] = (this.selectedStatusCounts[status] || 0) + 1;
+        }
+      });
+
+      if (!colModel) return;
 
       const aggColModel = [];
       const aggregatedopplan = { colmodel: {} };
@@ -714,7 +696,7 @@ export const useOperationplansStore = defineStore('operationplans', {
               }
             } else if (field[3] === 'date') {
               dateKeys.add(field[1]);
-              temp = new moment(opplan[field[1]], datetimeformat);
+              temp = new moment(opplan[field[1]], [window.datetimeformat, moment.ISO_8601]);
               if (temp._d !== 'Invalid Date') {
                 if (aggregatedopplan[field[1]] === null || temp.isAfter(aggregatedopplan[field[1]]))
                   aggregatedopplan[field[1]] = temp;
@@ -741,7 +723,7 @@ export const useOperationplansStore = defineStore('operationplans', {
               }
             } else if (field[3] === 'date') {
               dateKeys.add(field[1]);
-              const temp = new moment(opplan[field[1]], datetimeformat);
+              const temp = new moment(opplan[field[1]], [window.datetimeformat, moment.ISO_8601]);
               if (temp._d !== 'Invalid Date') {
                 if (aggregatedopplan[field[1]] === null) {
                   aggregatedopplan[field[1]] = temp;
@@ -758,10 +740,72 @@ export const useOperationplansStore = defineStore('operationplans', {
         aggregatedopplan.startdate || aggregatedopplan.operationplan__startdate;
       aggregatedopplan.end = aggregatedopplan.enddate || aggregatedopplan.operationplan__enddate;
       dateKeys.forEach((key) => {
-        aggregatedopplan[key] = aggregatedopplan[key].format('YYYY-MM-DD[T]HH:mm:ss');
+        if (aggregatedopplan[key] != null && typeof aggregatedopplan[key].format === 'function') {
+          aggregatedopplan[key] = aggregatedopplan[key].format('YYYY-MM-DD[T]HH:mm:ss');
+        }
       });
 
+      // Aggregate loadplans from selected operationplans
+      const resourceMap = new Map();
+      operationplans.forEach((opplan) => {
+        (opplan.loadplans || []).forEach((lp) => {
+          const name = lp.resource?.name;
+          if (!name) return;
+          if (resourceMap.has(name)) {
+            const existing = resourceMap.get(name);
+            (lp.alternates || []).forEach((alt) => existing.alternates.add(alt.name));
+          } else {
+            const altSet = new Set();
+            (lp.alternates || []).forEach((alt) => altSet.add(alt.name));
+            resourceMap.set(name, {
+              resource: lp.resource,
+              alternates: altSet,
+            });
+          }
+        });
+        // data for resource widget with multi-select
+        const resField = opplan.resource || opplan.resources;
+        if (resField && Array.isArray(resField)) {
+          resField.forEach((item) => {
+            if (!Array.isArray(item) || item.length < 2) return;
+            const name = String(item[0]);
+            if (!name || resourceMap.has(name)) return;
+            resourceMap.set(name, {
+              resource: { name },
+              alternates: new Set(),
+            });
+          });
+        }
+      });
+      aggregatedopplan.loadplans = Array.from(resourceMap.entries())
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([_, entry]) => ({
+          resource: entry.resource,
+          alternates: Array.from(entry.alternates).map((n) => ({ name: n })),
+        }));
+
       this.operationplan = new Operationplan(aggregatedopplan);
+    },
+
+    async fetchMultiSelectLoadplans(operationplans) {
+      const refs = operationplans
+        .map((op) => (typeof op === 'string' ? op : op.reference || op.operationplan__reference))
+        .filter(Boolean);
+
+      const missing = refs.filter((r) => !this.multiSelectLoadplans[r]);
+      if (missing.length === 0) return;
+
+      try {
+        const response = await operationplanService.getOperationplanDetailsBatch(missing);
+        const data = response.responseData?.value || response.data || [];
+        data.forEach((op) => {
+          if (op.loadplans) {
+            this.multiSelectLoadplans[op.reference] = op.loadplans;
+          }
+        });
+      } catch (err) {
+        console.error('Failed to fetch multi-select loadplans', err);
+      }
     },
 
     expandOrCollapse(i, type) {
@@ -788,6 +832,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     },
 
     setKanbanCardValue(id, field, statusKey, value) {
+      // Iterate through all columns to find all cards with the same reference
       for (const columnKey in this.kanbanoperationplans) {
         const column = this.kanbanoperationplans[columnKey];
         if (!column || !column.rows) continue;
@@ -796,81 +841,45 @@ export const useOperationplansStore = defineStore('operationplans', {
 
         targets.forEach((target) => {
           const targetKeys = Object.keys(target);
+
+          // Determine the correct field name (handling operationplan__ prefix)
           let newField = targetKeys.includes(field)
             ? field
             : field.includes('operationplan__')
               ? field.replace('operationplan__', '')
               : 'operationplan__' + field;
+
           // Special handling for quantity fields based on record type
           if (['DO', 'MO', 'WO'].includes(target.type)) {
             if (newField === 'quantity' || newField === 'quantity_completed') {
               if (
-                ['ResourceDetail', 'InventoryDetail'].includes(window.reportkey.split('.').pop()) ||
+                ['ResourceDetail', 'InventoryDetail'].includes(
+                  appConfig.reportKey.split('.').pop()
+                ) ||
                 target.type === 'DO'
               ) {
                 newField = 'operationplan__' + newField.replace('operationplan__', '');
               }
             }
           }
+
           // Update the value on the card
           target[newField] = value;
         });
       }
     },
 
-    setEditFormValues(field, value) {
-      switch (this.mode) {
-        case 'table':
-          window.displayongrid(this.operationplan.reference[0], this.selectedOperationplans[0], field, value);
-          break;
-        case 'kanban':
-          this.setKanbanCardValue(
-            this.operationplan.reference,
-            field,
-            this.operationplan.status,
-            value
-          );
-          break;
-        case 'default':
-          break;
-      }
-
-      this.editForm[field] = value;
-
-      // Capture old status before updating
-      const oldStatus = this.operationplan.status;
-
-      // Map kanban field names to operationplan fields and update
-      if (['status', 'operationplan__status'].includes(field)) {
-        this.operationplan.status = value;
-
-        // Move the Kanban card to the new column
-        if (this.mode === 'kanban')
-          this.moveKanbanCard(this.operationplan.reference, oldStatus, value);
-      } else if (field === 'startdate' || field === 'operationplan__startdate') {
-        this.operationplan.start = value;
-        this.operationplan[field] = value;
-      } else if (field === 'enddate' || field === 'operationplan__enddate') {
-        this.operationplan.end = value;
-        this.operationplan[field] = value;
-      } else if (field === 'quantity' || field === 'operationplan__quantity') {
-        this.operationplan.quantity = parseFloat(value);
-        this.operationplan[field] = parseFloat(value);
-      } else if (field === 'quantity_completed' || field === 'operationplan__quantity_completed') {
-        this.operationplan.quantity_completed = parseFloat(value);
-        this.operationplan[field] = parseFloat(value);
-      } else if (field === 'remark' || field === 'operationplan__remark') {
-        this.operationplan.remark = value;
-        this.operationplan[field] = value;
-      } else {
-        // For any other fields
-        this.operationplan[field] = value;
-      }
-
-      this.trackOperationplanChanges(this.operationplan.reference, field, value);
+    async setEditFormValues(field, value) {
+      if (!this._editComposable) this._editComposable = useOperationplanEdit(this);
+      return this._editComposable.setEditFormValues(field, value);
     },
 
-    applyGridCellEdit({ reference, field, value }) {
+    async shiftGroupDates(field, value) {
+      if (!this._editComposable) this._editComposable = useOperationplanEdit(this);
+      return this._editComposable.shiftGroupDates(field, value);
+    },
+
+    applyGridCellEdit: function ({ reference, field, value }) {
       const currentRef =
         this.operationplan?.reference || this.operationplan?.operationplan__reference;
 
@@ -881,20 +890,36 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.trackOperationplanChanges(reference, field, value);
 
       switch (field) {
+        case 'operationplan__quantity':
+          this.operationplan.operationplan__quantity = parseFloat(value);
+          this.operationplan.quantity = parseFloat(value);
+          break;
         case 'quantity':
           this.operationplan.quantity = parseFloat(value);
           break;
-        case 'remark':
-          this.operationplan.remark = value;
+        case 'operationplan__startdate':
+          this.operationplan.operationplan__startdate = value;
+          this.operationplan.start = value;
           break;
         case 'startdate':
           this.operationplan.start = value;
           break;
+        case 'operationplan__enddate':
+          this.operationplan.operationplan__enddate = value;
+          this.operationplan.end = value;
+          break;
         case 'enddate':
           this.operationplan.end = value;
           break;
+        case 'operationplan__status':
+          this.operationplan.operationplan__status = value;
+          this.operationplan.status = value;
+          break;
         case 'status':
           this.operationplan.status = value;
+          break;
+        case 'remark':
+          this.operationplan.remark = value;
           break;
         default:
           this.operationplan[field] = value;

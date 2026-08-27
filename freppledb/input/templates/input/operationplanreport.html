@@ -46,11 +46,15 @@ rect.opplan {
 <script>
   function getVisibleSelectedIds() {
     pageIDs = (jQuery("#grid").jqGrid && jQuery("#grid").jqGrid('getDataIDs')) || [];
-    const vueSelectedOperationPlans = (upload.selectedRows || []).map((op) => op.reference || op);
-
-    // filter out selected IDs that do not belong to this page
-    upload.selectedRows = pageIDs.filter((id) => vueSelectedOperationPlans.includes(id));
-
+    const selectedRefs = (upload.selectedReferences || []);
+    if (selectedRefs.length === 0) {
+      upload.selectedRows = [];
+    } else {
+      upload.selectedRows = pageIDs.filter((id) => {
+        var rowData = jQuery("#grid").getRowData(id);
+        return selectedRefs.includes(rowData.operationplan__reference);
+      });
+    }
     return upload.selectedRows;
   }
 
@@ -58,7 +62,6 @@ rect.opplan {
   window.getVisibleSelectedIds = getVisibleSelectedIds;
 </script>
 {{block.super}}
-<script src="{{STATIC_URL}}js/d3.min.js"></script>
 
 {% if debug_js %}
 <script type="module" src="http://localhost:5173/static/src/main.js"></script>
@@ -159,6 +162,14 @@ rect.opplan {
           jQuery(".ng-dirty").removeClass('ng-dirty');
           if (typeof ok_callback !== 'undefined') ok_callback();
           isDataSaved = true;
+
+          // NOTE: 'saved' event is now dispatched by undo() in operationplansStore.js
+          // No need to dispatch it here
+
+          // For table mode: reload jqGrid so loadComplete dispatches singleSelect
+          if (mode === 'table') {
+            jQuery("#grid").jqGrid('setGridParam', {datatype: 'json'}).trigger('reloadGrid');
+          }
         },
         error: ajaxerror
     });
@@ -261,7 +272,8 @@ rect.opplan {
         grid.saveColumnConfiguration();
       }
     });
-    jQuery("#save").on('click', function() {
+    jQuery("#save").on('click', function(e) {
+      e.stopImmediatePropagation();
       jQuery(window).off('beforeunload', upload.warnUnsavedChanges);
 
       if (mode === 'kanban') {
@@ -429,38 +441,54 @@ rect.opplan {
     setVisibleByMode(mode.startsWith('calendar') ? 'calendar' : mode);
   });
 
-  // Controller will call this function to pass values to the grid
-  function displayongrid(reference, id, columnid, value) {
-    if (!columnid) return;
-    var grid = jQuery("#grid");
-    // Resolve row id from reference when id is not provided
-    if (!id) {
-      var rowids = grid.jqGrid('getDataIDs');
-      if (rowids.indexOf(String(reference)) === -1) {
-        for (var i = 0; i < rowids.length; i++) {
-          var ref = grid.jqGrid('getCell', rowids[i], 'operationplan__reference');
-          if (String(ref) === String(reference)) {
-            id = rowids[i];
-            break;
-          }
+  jQuery.extend($.fn.fmatter, {
+    drp: function drp( cellvalue, options, row ){
+      if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
+      return cellvalue + '<a href="/inventoryplanning/drp/' + admin_escape(row['item']) + '/" onclick="opendrp(event)"><span class="ps-1 fa fa-caret-right"></span></a>';
+    }
+  });
+
+  function opendrp(event) {
+    var curlink = $(event.target).parent().attr('href');
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    window.location.href = url_prefix + curlink;
+  }
+
+  // // Controller will call this function to pass values to the grid
+  function displayongrid(id, columnid, value) {
+    jQuery("#"+id).removeClass("edited").addClass("edited");
+    const baseCol = columnid.includes('__') ? columnid.substring(columnid.lastIndexOf('__') + 2) : columnid;
+    if (
+      baseCol === "startdate" ||
+      baseCol === "enddate" ||
+      baseCol === "quantity" ||
+      baseCol === "quantity_completed" ||
+      baseCol === "remark" ||
+      (baseCol === "status" && ['proposed', 'approved', 'confirmed', 'completed', 'closed'].indexOf(value) > -1)
+    ) {
+      var targetCol = baseCol;
+      if (columnid !== baseCol) {
+        var cols = jQuery("#grid").jqGrid("getGridParam", "colModel") || [];
+        for (var i = 0; i < cols.length; i++) {
+          if (cols[i].name === columnid) { targetCol = columnid; break; }
         }
       } else {
-        id = reference;
+        // When called with unprefixed name (e.g. 'quantity'), look up the
+        // actual column name in colModel (which may be 'operationplan__quantity')
+        var cols = jQuery("#grid").jqGrid("getGridParam", "colModel") || [];
+        var found = false;
+        for (var i = 0; i < cols.length; i++) {
+          if (cols[i].name === baseCol) { found = true; break; }
+        }
+        if (!found) {
+          var prefixedCol = 'operationplan__' + baseCol;
+          for (var i = 0; i < cols.length; i++) {
+            if (cols[i].name === prefixedCol) { targetCol = prefixedCol; break; }
+          }
+        }
       }
-    }
-
-    if (!id) return;
-
-    jQuery("#"+id).removeClass("edited").addClass("edited");
-
-
-    if ( ["startdate", "enddate", "quantity", "quantity_completed", "remark", "status"].includes(columnid) ||
-      (columnid === "status" && ['proposed', 'approved', 'confirmed', 'completed', 'closed'].indexOf(value) > -1)
-    ) {
-      if (["freppledb.input.views.capacity.ResourceDetail", "freppledb.input.views.inventory.InventoryDetail"].includes(window.reportkey)) {
-        columnid = 'operationplan__' + columnid;
-      }
-      jQuery("#grid").jqGrid("setCell", id, columnid, value, "dirty-cell");
+      jQuery("#grid").jqGrid("setCell", id, targetCol, value, "dirty-cell");
       jQuery("#save, #undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
       jQuery(window).off('beforeunload', upload.warnUnsavedChanges);
       jQuery(window).on('beforeunload', upload.warnUnsavedChanges);
@@ -564,24 +592,30 @@ onSelectRow: function(rowid, status) {
   const rowData = jQuery("#grid").getRowData(rowid);
   const reference = rowData.operationplan__reference ? rowData.operationplan__reference : rowid;
 
-  const rowids = jQuery("#grid").jqGrid('getGridParam', 'selarrrow').filter(id => id !== 'cb');
-  const references = rowids.map(rowid => {
-    const cell = jQuery("#grid").jqGrid('getCell', rowid, 'operationplan__reference');
-    return (cell && String(cell).length) ? cell : rowid;
+  const selarrrow = jQuery("#grid").jqGrid('getGridParam', 'selarrrow') || [];
+  const rowIds = selarrrow.filter(x => String(x) !== 'cb');
+  const selectedReferences = rowIds.map(function(rowId) {
+    var rd = jQuery("#grid").getRowData(rowId);
+    return rd && rd.operationplan__reference ? rd.operationplan__reference : rowId;
   });
   const event = new CustomEvent("singleSelect", {
     detail: {
       execute: 'displayInfo',
       reference: reference,
       status: status,
-      selectedRows: references,
-      rowids: rowids,
+      selectedRows: rowIds,
+      selectedReferences: selectedReferences,
     }
   });
   document.getElementById('app').dispatchEvent(event);
 
   var sel = jQuery("#grid").jqGrid('getGridParam', 'selarrrow') || [];
   upload.selectedRows = sel.filter(x => x.id !== 'cb');
+
+  upload.selectedReferences = upload.selectedRows.map(function(rowId) {
+    var rd = jQuery("#grid").getRowData(rowId);
+    return rd.operationplan__reference || rowId;
+  });
 
   var visibleIds = (jQuery("#grid").jqGrid && jQuery("#grid").jqGrid('getDataIDs')) || [];
   var selectedIds = sel.map(function(x){ return (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x); });
@@ -589,28 +623,27 @@ onSelectRow: function(rowid, status) {
   ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=jQuery(s); if (el.length) el.prop('disabled', !hasVisible); });
 },
 onSelectAll: function(aRowids, status){
-  const rowids = (aRowids || []).filter(id => id !== 'cb');
-  const references = rowids.map(rowid => {
-    const cell = jQuery("#grid").jqGrid('getCell', rowid, 'operationplan__reference');
-    return (cell && String(cell).length) ? cell : rowid;
-  });
   const event = new CustomEvent('allSelect', {
     detail: {
       execute: 'displayInfo',
       status: status,
-      selectedRows: references,
-      rowids: rowids,
+      selectedRows: aRowids,
     }
   });
   document.getElementById('app').dispatchEvent(event);
   if (jQuery("#actions").length) jQuery("#actions1").prop('disabled', !status);
   var sel = jQuery("#grid").jqGrid('getGridParam', 'selarrrow') || [];
   upload.selectedRows = sel.filter(x => x.id !== 'cb');
+  // Save the operationplan__reference values alongside the row IDs
+  upload.selectedReferences = upload.selectedRows.map(function(rowId) {
+    var rd = jQuery("#grid").getRowData(rowId);
+    return rd.operationplan__reference || rowId;
+  });
   if (sel.length !== 0 && status)  {
     var visibleIds = (jQuery("#grid").jqGrid && jQuery("#grid").jqGrid('getDataIDs')) || [];
     var selectedIds = sel.map(function(x){ return (x && typeof x === 'object') ? (x.id || x.operationplan__reference || String(x)) : String(x); });
     var hasVisible = selectedIds.filter(function(id){ return id !== 'cb' && visibleIds.indexOf(id) !== -1; }).length > 0;
-    ['#actions1','#actions2','#segments1','#copy_selected','#delete_selected'].forEach(function(s){ var el=jQuery(s); if (el.length) el.prop('disabled', !hasVisible); });
+    ['#actions1','#actions2','#copy_selected','#delete_selected'].forEach(function(s){ var el=jQuery(s); if (el.length) el.prop('disabled', !hasVisible); });
   }
 },
 
@@ -640,7 +673,14 @@ loadComplete: function(data) {
         const changedCellsKeys = Object.keys(window.operationplanChanges[reference]);
         changedCellsKeys.forEach((field) => {
           try {
-            displayongrid(reference, null, field, window.operationplanChanges[reference][field]);
+            const selarrrow = jQuery("#grid").jqGrid("getGridParam", "selarrrow") || [];
+            let rowId = reference;
+            const found = selarrrow.find(id =>
+              String(id) === String(reference) ||
+              jQuery("#grid").jqGrid('getCell', id, 'operationplan__reference') === reference
+            );
+            if (found) rowId = found;
+            displayongrid(rowId, field, window.operationplanChanges[reference][field]);
           } catch (e) {
             // ignore
           }
@@ -654,23 +694,30 @@ loadComplete: function(data) {
   getVisibleSelectedIds().forEach(function(op) {
     jQuery("#grid").jqGrid('setSelection', op, false);
   })
+  // Scroll the selected row to the top of the grid
+  var scrollToId = getVisibleSelectedIds()[0];
+  if (scrollToId) {
+    var $tr = jQuery('#' + scrollToId);
+    if ($tr.length) {
+      $("#grid").closest(".ui-jqgrid-bdiv").scrollTop($tr.position().top);
+    }
+  }
 
-  const references = jQuery("#grid").jqGrid('getGridParam', 'selarrrow')
-    .filter(rowid => rowid !== 'cb')
-    .map(rowid => {
-      const cell = jQuery("#grid").jqGrid('getCell', rowid, 'operationplan__reference');
-      return (cell && String(cell).length) ? cell : rowid;
-    });
+  const selectedRowId = getVisibleSelectedIds()[0];
+
   if (getVisibleSelectedIds().length === 1) {
-    let event = new CustomEvent('displayonpanel', jQuery("#grid").getRowData(getVisibleSelectedIds()[0]));
+    const rowData = jQuery("#grid").getRowData(selectedRowId);
+    const ref = rowData.operationplan__reference ? rowData.operationplan__reference : selectedRowId;
+
+    let event = new CustomEvent('displayonpanel', rowData);
     document.getElementById('app').dispatchEvent(event);
 
     event = new CustomEvent("singleSelect", {
       detail: {
         execute: 'displayInfo',
-        reference: getVisibleSelectedIds()[0],
-        status: status,
-        selectedRows: references,
+        reference: ref,
+        selectedRows: [selectedRowId],
+        selectedReferences: [ref],
       }
     });
     document.getElementById('app').dispatchEvent(event);
@@ -734,6 +781,12 @@ loadComplete: function(data) {
 <div id="popup" class="modal fade in" role="dialog" style="z-index: 10000"></div>
 
 <script>
+  // Remove inline onclick from #save to prevent double POST
+  // (inline fires before jQuery handler, causing two POSTs with same data)
+  var saveBtn = document.getElementById('save');
+  if (saveBtn) saveBtn.removeAttribute('onclick');
+
+
   // Send event to show dialog if there are unsaved changes
   function attemptModeChange(targetMode, modeChangeFunction) {
     const event = new CustomEvent("attemptModeChange", {

@@ -22,16 +22,16 @@
  */
 
 <script setup lang="js">
-import { computed } from "vue";
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useOperationplansStore } from '@/stores/operationplansStore.js';
-import { numberFormat, dateTimeFormat, adminEscape } from "@common/utils.js";
+import { useOperationplansStore } from '@input/stores/operationplansStore.js';
+import { numberFormat, dateTimeFormat, adminEscape } from '@common/utils.js';
 
 const urlPrefix = computed(() => window.url_prefix || '');
 
 const { t: ttt } = useI18n({
   useScope: 'global',
-  inheritLocale: true
+  inheritLocale: true,
 });
 
 const store = useOperationplansStore();
@@ -39,11 +39,19 @@ const store = useOperationplansStore();
 const props = defineProps({
   widget: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 });
 
 const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
+
+const handleToggle = () => {
+  if (props.widget?.[0]) {
+    document.getElementById('app').dispatchEvent(
+      new CustomEvent('widget-toggle', { detail: { widget: props.widget[0], state: !isCollapsed.value } })
+    );
+  }
+};
 
 const hasFlowplans = computed(() => {
   const op = store.operationplan;
@@ -62,8 +70,8 @@ function selectAlternateItem(flowplan, newItem) {
     // Find and update the flowplan in the store
     const operationplan = store.operationplan;
     if (operationplan && operationplan.flowplans) {
-      const flowToUpdate = operationplan.flowplans.find(flow =>
-          flow.buffer?.item === currentItem
+      const flowToUpdate = operationplan.flowplans.find(
+        (flow) => flow.buffer?.item === currentItem
       );
 
       if (flowToUpdate) {
@@ -82,61 +90,60 @@ function selectAlternateItem(flowplan, newItem) {
 
 function updateGrid(currentItem, newItem) {
   // Check if grid exists (maintaining compatibility with existing jqGrid)
-  const gridElement = document.querySelector("#grid");
+  const gridElement = document.querySelector('#grid');
   if (!gridElement) return;
 
   const grid = window.jQuery(gridElement);
   const selrow = grid.jqGrid('getGridParam', 'selarrrow');
-  const colmodel = grid.jqGrid('getGridParam', 'colModel')?.find(i => i.name === "material");
+  const colmodel = grid.jqGrid('getGridParam', 'colModel')?.find((i) => i.name === 'material');
 
   if (!colmodel || !selrow) return;
 
   const cell = grid.jqGrid('getCell', selrow, 'material');
 
   if (colmodel.formatter === 'detail' && cell === currentItem) {
-    grid.jqGrid("setCell", selrow, "material", newItem, "dirty-cell");
-    grid.jqGrid("setRowData", selrow, false, "edited");
-  }
-  else if (colmodel.formatter === 'listdetail') {
+    grid.jqGrid('setCell', selrow, 'material', newItem, 'dirty-cell');
+    grid.jqGrid('setRowData', selrow, false, 'edited');
+  } else if (colmodel.formatter === 'listdetail') {
     const items = [];
     const operationplan = store.operationplan;
     if (operationplan && operationplan.flowplans) {
-      operationplan.flowplans.forEach(flowplan => {
+      operationplan.flowplans.forEach((flowplan) => {
         items.push([flowplan.buffer?.item, flowplan.quantity]);
       });
     }
-    grid.jqGrid("setCell", selrow, "material", items, "dirty-cell");
-    grid.jqGrid("setRowData", selrow, false, "edited");
+    grid.jqGrid('setCell', selrow, 'material', items, 'dirty-cell');
+    grid.jqGrid('setRowData', selrow, false, 'edited');
   }
 }
 
 function enableSaveUndoButtons() {
-  const saveBtn = document.querySelector("#save");
-  const undoBtn = document.querySelector("#undo");
+  const saveBtn = document.querySelector('#save');
+  const undoBtn = document.querySelector('#undo');
 
   if (saveBtn) {
-    saveBtn.classList.remove("btn-primary");
-    saveBtn.classList.add("btn-danger");
+    saveBtn.classList.remove('btn-primary');
+    saveBtn.classList.add('btn-danger');
     saveBtn.disabled = false;
   }
 
   if (undoBtn) {
-    undoBtn.classList.remove("btn-primary");
-    undoBtn.classList.add("btn-danger");
+    undoBtn.classList.remove('btn-primary');
+    undoBtn.classList.add('btn-danger');
     undoBtn.disabled = false;
   }
 }
-
 </script>
 
 <template>
   <div>
     <div
-        class="card-header d-flex align-items-center"
-        data-bs-toggle="collapse"
-        data-bs-target="#widget_bufferspanel"
-        aria-expanded="false"
-        aria-controls="widget_bufferspanel"
+      class="card-header d-flex align-items-center"
+      @click="handleToggle"
+      data-bs-toggle="collapse"
+      data-bs-target="#widget_bufferspanel"
+      aria-expanded="false"
+      aria-controls="widget_bufferspanel"
     >
       <h5 class="card-title text-capitalize fs-5 me-auto">
         {{ ttt('items') }}

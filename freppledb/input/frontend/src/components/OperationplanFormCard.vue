@@ -22,13 +22,16 @@
 */
 
 <script setup lang="js">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useOperationplansStore } from '@/stores/operationplansStore.js';
-import { numberFormat, isNumeric, debouncedInputHandler, dateTimeFormat } from '@common/utils.js';
+import { useOperationplansStore } from '@input/stores/operationplansStore.js';
+import { numberFormat, debouncedInputHandler, dateTimeFormat } from '@common/utils.js';
 import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js';
+import { useOperationplanEdit } from '@input/composables/useOperationplanEdit.js';
+import { appConfig } from '@input/config.js';
+import { api } from '@input/services/api.js';
 
-useBootstrapTooltips();
+const { initTooltips } = useBootstrapTooltips();
 
 const { t: ttt } = useI18n({
   useScope: 'global', // This is crucial for reactivity
@@ -36,6 +39,7 @@ const { t: ttt } = useI18n({
 });
 
 const store = useOperationplansStore();
+const edit = useOperationplanEdit(store);
 const exporting = computed(() => store.exporting);
 
 const props = defineProps({
@@ -45,9 +49,27 @@ const props = defineProps({
   },
 });
 
-const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
+const emit = defineEmits(['opplan-form-changed', 'widget-toggle']);
+
+const isCollapsed = computed(() => {
+  if (store.operationplan?.reference || store.operationplan?.operationplan__reference) return false;
+  return props.widget[1]?.collapsed ?? false;
+});
+
+const handleToggle = () => {
+  if (props.widget?.[0] && !store.operationplan?.reference && !store.operationplan?.operationplan__reference) {
+    document.getElementById('app').dispatchEvent(
+      new CustomEvent('widget-toggle', { detail: { widget: props.widget[0], state: !isCollapsed.value } })
+    );
+  }
+};
+
+const opPlanHasOwnProperty = (key) => {
+  return Object.prototype.hasOwnProperty.call(store.operationplan, key);
+};
 
 const filteredColmodel = computed(() => {
+  if (window.debug) console.log('filteredColmodel:', store.operationplan.colmodel);
   if (!store.operationplan || !store.operationplan.colmodel) {
     return [];
   }
@@ -58,6 +80,9 @@ const filteredColmodel = computed(() => {
     'quantity',
     'startdate',
     'enddate',
+    'start',
+    'end',
+    'setupend',
     'color',
     'quantity_completed',
     'operationplan__delay',
@@ -80,14 +105,68 @@ const filteredColmodel = computed(() => {
     .reverse();
 });
 
-const editable = true;
+const editable = window.editable || false;
 
-const actions = window.actions;
+const actions = window.actions || {};
 
 function dispatchERPExport() {
   const app = document.getElementById('app');
   if (app) {
     app.dispatchEvent(new CustomEvent('triggerERPExport'));
+  }
+}
+
+async function addOperationPlan() {
+  try {
+    const ref = store.operationplan.reference || store.operationplan.operationplan__reference;
+    if (!ref) return;
+    await api.wspost('operationplan/', {
+      "propagateFwd":true,
+      "resolveConstraints": 1,
+      "operationplans": [{ copy: [ref] }]
+    });
+    emit('opplan-form-changed', [ref]);
+  } catch (err) {
+    console.error('Duplicate failed:', err);
+  }
+}
+
+async function removeOperationPlan() {
+  try {
+    const ref = store.operationplan.reference || store.operationplan.operationplan__reference;
+    if (!ref) return;
+    await api.wspost('operationplan/', [{ delete: [ref] }]);
+    store.undo();
+    emit('opplan-form-changed', [ref]);
+  } catch (err) {
+    console.error('Remove failed:', err);
+  }
+}
+
+async function splitOperationPlan() {
+  try {
+    const ref = store.operationplan.reference || store.operationplan.operationplan__reference;
+    if (!ref) return;
+    // Post to the engine
+    await api.wspost('operationplan/',  {
+      "propagateFwd":true,
+      "resolveConstraints": 1,
+      "operationplans": [{ split: [ref] }]}
+    );
+    // Trigger refresh of the gantt chart (or any other component that listens to this event)
+    emit('opplan-form-changed', [ref]);
+    // Reload the bottom panels
+    document.getElementById('app').dispatchEvent(
+      new CustomEvent('singleSelect', {
+        detail: {
+          execute: 'displayInfo',
+          reference: ref,
+          selectedRows: [ref]
+        },
+      })
+    );
+  } catch (err) {
+    console.error('Split failed:', err);
   }
 }
 
@@ -102,32 +181,75 @@ const opptype = {
 
 const isMultipleOrNone = computed(() => store.selectedOperationplans.length !== 1);
 
-function validateNumericField(field, value) {
-  if (!isNumeric(value)) {
-    validationErrors.value[field] = 'Please enter a valid number';
-    return false;
-  } else {
-    validationErrors.value[field] = '';
-    return true;
-  }
-}
+watch(isMultipleOrNone, () => requestAnimationFrame(initTooltips));
 
-const setEditValueDebounced = debouncedInputHandler((field, value) => {
+const statusIcons = {
+  proposed: 'fa fa-unlock',
+  approved: 'fa fa-unlock-alt',
+  confirmed: 'fa fa-lock',
+  completed: 'fa fa-check',
+  closed: 'fa fa-times',
+};
+
+const statusList = ['proposed', 'approved', 'confirmed', 'completed', 'closed'];
+
+const statusCounts = computed(() => store.selectedStatusCounts);
+
+const selectedCount = computed(() => store.selectedOperationplans.length);
+
+const hasProposed = computed(() => !!store.selectedStatusCounts['proposed']);
+
+const setEditValueDebounced = debouncedInputHandler(async (field, value) => {
   if (value === '') return;
-  store.setEditFormValues(field, value);
+  try {
+    await edit.setEditFormValues(field, value);
+  } catch (err) {
+    console.error('Edit form save failed:', err);
+  }
+  emit('opplan-form-changed');
 }, 300);
 
 function setEditValue(field, value) {
   setEditValueDebounced(field, value);
 }
 
+async function handleSetStatus(status) {
+  try {
+    const saved = await edit.setStatus(status);
+    if (saved) emit('opplan-form-changed');
+  } catch (err) {
+    console.error('Batch status change failed:', err);
+  }
+}
+
+async function handleShiftGroupDates(field, value) {
+  try {
+    const saved = await edit.shiftGroupDates(field, value);
+    if (saved) emit('opplan-form-changed');
+  } catch (err) {
+    console.error('Batch date shift failed:', err);
+  }
+}
+
 const formatDuration = window.formatDuration;
+
+const urlPrefix = computed(() => window.url_prefix || '');
+
+function buildPrefixedUrl(url, reference = null) {
+  if (reference === null || reference === undefined || reference === '') {
+    return `${urlPrefix.value}${url}`;
+  }
+  const encodedReference = encodeURIComponent(reference);
+  const suffix = url.endsWith('/') && !url.includes('?') ? '/' : '';
+  return `${urlPrefix.value}${url}${encodedReference}${suffix}`;
+}
 </script>
 
 <template>
   <div class="card">
     <div
       class="card-header d-flex align-items-center"
+      @click="handleToggle"
       data-bs-toggle="collapse"
       data-bs-target="#widget_operationplanpanel"
       aria-expanded="false"
@@ -144,7 +266,7 @@ const formatDuration = window.formatDuration;
       <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
     </div>
     <div
-      v-if="store.selectedOperationplans.length > 0"
+      v-if="store.operationplan?.quantity !== undefined"
       class="card-body collapse"
       :class="{ show: !isCollapsed }"
       id="widget_operationplanpanel"
@@ -157,24 +279,24 @@ const formatDuration = window.formatDuration;
       >
         <tbody>
           <tr v-if="store.operationplan.operation?.name || store.operationplan.name">
-            <td style="width: 120px">
+            <th style="width: 120px">
               <b id="thead1" class="text-capitalize">{{ ttt('name') }}&nbsp;</b>
-            </td>
-            <td>
-              <b class="text-capitalize" v-if="store.operationplan.hasOwnProperty('operation')">
+            </th>
+            <th>
+              <b class="text-capitalize" v-if="opPlanHasOwnProperty('operation')">
                 {{ store.operationplan.operation.name }}
                 <a
-                  href="/detail/input/operation/key/"
+                  :href="buildPrefixedUrl('/detail/input/operation/', store.operationplan.operation?.name)"
                   data-entity="input/operation"
-                  onclick="opendetail(event)"
+                  @click.stop
                 >
                   <span class="fa fa-caret-right"></span>
                 </a>
               </b>
-              <b class="text-capitalize" v-if="!store.operationplan.hasOwnProperty('operation')">
+              <b class="text-capitalize" v-if="!opPlanHasOwnProperty('operation')">
                 {{ store.operationplan.name }}
-              </b>
-            </td>
+              </b>"
+            </th>
           </tr>
           <tr v-if="!isMultipleOrNone && store.operationplan.type !== 'STCK'">
             <td>
@@ -189,9 +311,9 @@ const formatDuration = window.formatDuration;
             <td id="ownerrow">
               {{ store.operationplan.owner }}
               <a
-                href="/detail/input/manufacturingorder/key/"
+                :href="buildPrefixedUrl('/detail/input/manufacturingorder/', store.operationplan.reference)"
                 data-entity="input/manufacturingorder"
-                onclick="opendetail(event)"
+                @click.stop
               >
                 <span class="fa fa-caret-right"></span>
               </a>
@@ -204,9 +326,9 @@ const formatDuration = window.formatDuration;
             <td id="itemrow">
               {{ store.operationplan.item }}
               <a
-                href="/detail/input/item/key/"
+                :href="buildPrefixedUrl('/detail/input/item/', store.operationplan.item)"
                 data-entity="input/item"
-                onclick="opendetail(event)"
+                @click.stop
               >
                 <span class="fa fa-caret-right"></span>
               </a>
@@ -231,9 +353,9 @@ const formatDuration = window.formatDuration;
             <td id="supplierrow">
               {{ store.operationplan.supplier }}
               <a
-                href="/detail/input/supplier/key/"
+                :href="buildPrefixedUrl('/detail/input/supplier/', store.operationplan.supplier)"
                 data-entity="input/supplier"
-                onclick="opendetail(event)"
+                @click.stop
               >
                 <span class="fa fa-caret-right"></span>
               </a>
@@ -258,9 +380,9 @@ const formatDuration = window.formatDuration;
             <td id="locationrow">
               {{ store.operationplan.location }}
               <a
-                href="/detail/input/location/key/"
+                :href="buildPrefixedUrl('/detail/input/location/', store.operationplan.location)"
                 data-entity="input/location"
-                onclick="opendetail(event)"
+                @click.stop
               >
                 <span class="fa fa-caret-right"></span>
               </a>
@@ -279,9 +401,9 @@ const formatDuration = window.formatDuration;
             <td id="originrow">
               {{ store.operationplan.origin }}
               <a
-                href="/detail/input/location/key/"
+                :href="buildPrefixedUrl('/detail/input/location/', store.operationplan.origin)"
                 data-entity="input/location"
-                onclick="opendetail(event)"
+                @click.stop
               >
                 <span class="fa fa-caret-right"></span>
               </a>
@@ -299,9 +421,9 @@ const formatDuration = window.formatDuration;
             <td id="destinationrow">
               {{ store.operationplan.destination }}
               <a
-                href="/detail/input/location/key/"
+                :href="buildPrefixedUrl('/detail/input/location/', store.operationplan.destination)"
                 data-entity="input/location"
-                onclick="opendetail(event)"
+                @click.stop
               >
                 <span class="fa fa-caret-right"></span>
               </a>
@@ -311,13 +433,13 @@ const formatDuration = window.formatDuration;
             <td>
               <b
                 class="text-capitalize"
-                v-if="store.operationplan.type === 'MO' || store.operationplan.type === 'WO'"
+                v-if="(store.operationplan.type === 'MO' || store.operationplan.type === 'WO') && !store.operationplan.colmodel"
                 >{{ ttt('start date') }}</b
               >
-              <b class="text-capitalize" v-if="store.operationplan.type === 'PO'">{{
+              <b class="text-capitalize" v-if="store.operationplan.type === 'PO' && !store.operationplan.colmodel">{{
                 ttt('ordering date')
               }}</b>
-              <b class="text-capitalize" v-if="store.operationplan.type === 'DO'">{{
+              <b class="text-capitalize" v-if="store.operationplan.type === 'DO' && !store.operationplan.colmodel">{{
                 ttt('shipping date')
               }}</b>
               <b
@@ -325,12 +447,13 @@ const formatDuration = window.formatDuration;
                 v-if="store.operationplan.colmodel?.operationplan__startdate"
                 >{{ ttt(store.operationplan.colmodel.operationplan__startdate.label) }}</b
               >
-              <b class="text-capitalize" v-if="store.operationplan.colmodel?.startdate">{{
+              <b class="text-capitalize" v-if="store.operationplan.colmodel?.startdate && !store.operationplan.colmodel?.operationplan__startdate">{{
                 ttt(store.operationplan.colmodel.startdate.label)
               }}</b>
               <small
                 v-if="
                   store.operationplan.colmodel?.startdate &&
+                  !store.operationplan.colmodel?.operationplan__startdate &&
                   (store.operationplan.colmodel?.startdate || isMultipleOrNone)
                 "
               >
@@ -342,46 +465,26 @@ const formatDuration = window.formatDuration;
             </td>
             <td>
               <input
-                v-if="isMultipleOrNone && store.operationplan.startdate"
-                class="form-control border-0"
+                v-if="isMultipleOrNone"
+                class="form-control border-0 bg-transparent"
                 type="datetime-local"
-                v-model="store.operationplan.startdate"
+                :value="store.operationplan.startdate || store.operationplan.start"
                 readonly
+                @input="handleShiftGroupDates('startdate', $event.target.value)"
               />
               <input
-                v-if="isMultipleOrNone && !store.operationplan.startdate"
-                class="form-control border-0"
-                type="datetime-local"
-                v-model="store.operationplan.start"
-                readonly
-              />
-              <input
-                v-if="
-                  !isMultipleOrNone &&
-                  !store.operationplan.hasOwnProperty('operationplan__startdate')
-                "
+                v-if="!isMultipleOrNone && !opPlanHasOwnProperty('operationplan__startdate')"
                 class="form-control"
                 type="datetime-local"
                 v-model="store.operationplan.start"
-                :class="
-                  store.isChanged(store.operationplan.reference, 'startdate') ? 'ng-dirty' : ''
-                "
                 @input="setEditValue('startdate', $event.target.value)"
                 :readonly="!editable"
               />
               <input
-                v-if="
-                  !isMultipleOrNone &&
-                  store.operationplan.hasOwnProperty('operationplan__startdate')
-                "
+                v-if="!isMultipleOrNone && opPlanHasOwnProperty('operationplan__startdate')"
                 class="form-control"
                 type="datetime-local"
                 v-model="store.operationplan.operationplan__startdate"
-                :class="
-                  store.isChanged(store.operationplan.reference, 'operationplan__startdate')
-                    ? 'ng-dirty'
-                    : ''
-                "
                 @input="setEditValue('startdate', $event.target.value)"
                 :readonly="!editable"
               />
@@ -392,21 +495,21 @@ const formatDuration = window.formatDuration;
               <b class="text-capitalize">{{ ttt('setup end date') }}</b>
             </td>
             <td>
-              {{ store.operationplan.setupend || store.operationplan.operationplan__setupend }}
+              {{ dateTimeFormat(store.operationplan.setupend || store.operationplan.operationplan__setupend) }}
             </td>
           </tr>
           <tr v-if="store.operationplan.type !== 'STCK'">
             <td>
-              <b class="text-capitalize" v-if="store.operationplan.type === 'MO'">{{
+              <b class="text-capitalize" v-if="store.operationplan.type === 'MO' && !store.operationplan.colmodel">{{
                 ttt('end date')
               }}</b>
-              <b class="text-capitalize" v-if="store.operationplan.type === 'PO'">{{
+              <b class="text-capitalize" v-if="store.operationplan.type === 'PO' && !store.operationplan.colmodel">{{
                 ttt('receipt date')
               }}</b>
-              <b class="text-capitalize" v-if="store.operationplan.type === 'DO'">{{
+              <b class="text-capitalize" v-if="store.operationplan.type === 'DO' && !store.operationplan.colmodel">{{
                 ttt('receipt date')
               }}</b>
-              <b class="text-capitalize" v-if="store.operationplan.colmodel?.enddate">{{
+              <b class="text-capitalize" v-if="store.operationplan.colmodel?.enddate && !store.operationplan.colmodel?.operationplan__enddate">{{
                 ttt(store.operationplan.colmodel.enddate.label)
               }}</b>
               <b
@@ -417,6 +520,7 @@ const formatDuration = window.formatDuration;
               <small
                 v-if="
                   store.operationplan.colmodel?.enddate &&
+                  !store.operationplan.colmodel?.operationplan__enddate &&
                   (store.operationplan.colmodel?.enddate || isMultipleOrNone)
                 "
               >
@@ -428,42 +532,26 @@ const formatDuration = window.formatDuration;
             </td>
             <td>
               <input
-                v-if="isMultipleOrNone && store.operationplan.enddate"
-                class="form-control border-0"
+                v-if="isMultipleOrNone"
+                class="form-control border-0 bg-transparent"
                 type="datetime-local"
-                v-model="store.operationplan.enddate"
+                :value="store.operationplan.enddate || store.operationplan.end"
                 readonly
+                @input="handleShiftGroupDates('enddate', $event.target.value)"
               />
               <input
-                v-if="isMultipleOrNone && !store.operationplan.enddate"
-                class="form-control border-0"
-                type="datetime-local"
-                v-model="store.operationplan.end"
-                readonly
-              />
-              <input
-                v-if="
-                  !isMultipleOrNone && !store.operationplan.hasOwnProperty('operationplan__enddate')
-                "
+                v-if="!isMultipleOrNone && !opPlanHasOwnProperty('operationplan__enddate')"
                 class="form-control"
                 type="datetime-local"
                 v-model="store.operationplan.end"
-                :class="store.isChanged(store.operationplan.reference, 'enddate') ? 'ng-dirty' : ''"
                 @input="setEditValue('enddate', $event.target.value)"
                 :readonly="!editable"
               />
               <input
-                v-if="
-                  !isMultipleOrNone && store.operationplan.hasOwnProperty('operationplan__enddate')
-                "
+                v-if="!isMultipleOrNone && opPlanHasOwnProperty('operationplan__enddate')"
                 class="form-control"
                 type="datetime-local"
                 v-model="store.operationplan.operationplan__enddate"
-                :class="
-                  store.isChanged(store.operationplan.reference, 'operationplan__enddate')
-                    ? 'ng-dirty'
-                    : ''
-                "
                 @input="setEditValue('enddate', $event.target.value)"
                 :readonly="!editable"
               />
@@ -497,31 +585,18 @@ const formatDuration = window.formatDuration;
                 )
               }}</span>
               <input
-                v-if="
-                  !isMultipleOrNone &&
-                  !store.operationplan.hasOwnProperty('operationplan__quantity')
-                "
+                v-if="!isMultipleOrNone && !opPlanHasOwnProperty('operationplan__quantity')"
                 class="form-control"
                 type="number"
                 v-model="store.operationplan.quantity"
-                :class="
-                  store.isChanged(store.operationplan.reference, 'quantity') ? 'ng-dirty' : ''
-                "
                 @input="setEditValue('quantity', $event.target.value)"
                 :readonly="!editable"
               />
               <input
-                v-if="
-                  !isMultipleOrNone && store.operationplan.hasOwnProperty('operationplan__quantity')
-                "
+                v-if="!isMultipleOrNone && opPlanHasOwnProperty('operationplan__quantity')"
                 class="form-control"
                 type="number"
                 v-model="store.operationplan.operationplan__quantity"
-                :class="
-                  store.isChanged(store.operationplan.reference, 'operationplan__quantity')
-                    ? 'ng-dirty'
-                    : ''
-                "
                 @input="setEditValue('quantity', $event.target.value)"
                 :readonly="!editable"
               />
@@ -556,12 +631,48 @@ const formatDuration = window.formatDuration;
               {{ store.operationplan[key] }}
             </td>
           </tr>
-          <tr id="statusrow" v-if="store.operationplan.type !== 'STCK' && !isMultipleOrNone">
+          <tr
+            id="statusrow"
+            v-if="store.operationplan.type !== 'STCK' && store.selectedOperationplans.length > 0"
+          >
             <td>
               <b class="text-capitalize">{{ ttt('status') }}</b>
             </td>
             <td>
-              <div class="btn-group" role="group">
+              <template v-if="isMultipleOrNone">
+                <div class="btn-group" role="group">
+                  <button
+                    v-for="s in statusList"
+                    :key="s"
+                    type="button"
+                    class="btn btn-sm text-capitalize"
+                    :class="statusCounts[s] === selectedCount ? 'btn-secondary' : 'btn-primary'"
+                    :disabled="actions.hasOwnProperty('erp_incr_export') || statusCounts[s] === selectedCount"
+                    @click="handleSetStatus(s)"
+                    data-bs-toggle="tooltip"
+                    :title="ttt(s)"
+                  >
+                    <i :class="statusIcons[s]"></i>&nbsp;{{ statusCounts[s] || 0 }}
+                  </button>
+                  <button
+                    id="erp_incr_exportBtn"
+                    v-if="editable && actions.hasOwnProperty('erp_incr_export') && hasProposed"
+                    type="button"
+                    class="btn btn-primary text-capitalize"
+                    :disabled="exporting"
+                    @click="dispatchERPExport()"
+                  >
+                    <template v-if="exporting">
+                      <span class="spinner-border spinner-border-sm me-1"></span>
+                      {{ ttt('Exporting...') }}
+                    </template>
+                    <template v-else>
+                      {{ ttt('Export') }}
+                    </template>
+                  </button>
+                </div>
+              </template>
+              <div v-else class="btn-group" role="group">
                 <button
                   id="proposedBtn"
                   v-if="(!editable && store.operationplan.status === ttt('proposed')) || editable"
@@ -662,7 +773,7 @@ const formatDuration = window.formatDuration;
                   v-if="
                     editable &&
                     actions.hasOwnProperty('erp_incr_export') &&
-                    store.operationplan.status === 'proposed'
+                    (store.operationplan.status === 'proposed' || store.operationplan.operationplan__status === 'proposed')
                   "
                   type="button"
                   class="btn btn-primary text-capitalize"
@@ -680,11 +791,7 @@ const formatDuration = window.formatDuration;
               </div>
             </td>
           </tr>
-          <tr
-            v-if="
-              store.operationplan.hasOwnProperty('remark') && store.operationplan.type !== 'STCK'
-            "
-          >
+          <tr v-if="opPlanHasOwnProperty('remark') && store.operationplan.type !== 'STCK'">
             <td>
               <b class="text-capitalize">{{ ttt('remark') }}</b>
             </td>
@@ -692,7 +799,6 @@ const formatDuration = window.formatDuration;
               <input
                 class="form-control"
                 v-model="store.operationplan.remark"
-                :class="store.isChanged(store.operationplan.reference, 'remark') ? 'ng-dirty' : ''"
                 @input="setEditValue('remark', $event.target.value)"
               />
             </td>

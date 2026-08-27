@@ -1,77 +1,115 @@
-import { ref as d } from "vue";
-const m = (e) => e == null, p = (e) => e && typeof e == "object", g = (e) => m(e) || Array.isArray(e) && e.length === 0 || p(e) && Object.keys(e).length === 0 || typeof e == "string" && e.trim().length === 0, b = (e) => e === "" || e === null || e === void 0 ? !1 : !isNaN(parseFloat(e)) && isFinite(e), w = () => {
-  const e = d(window.database);
-  return e.value === "default" ? "" : `/${e.value}`;
-}, y = (e, n) => {
-  if (!e) return "";
-  const o = new Date(e);
-  return moment(o).format(window.datetimeformat);
+import { ref as u } from "vue";
+const d = (t) => t == null, c = (t) => t && typeof t == "object", w = (t) => d(t) || Array.isArray(t) && t.length === 0 || c(t) && Object.keys(t).length === 0 || typeof t == "string" && t.trim().length === 0, Y = (t) => t === "" || t === null || t === void 0 ? !1 : !isNaN(parseFloat(t)) && isFinite(t), h = () => {
+  const t = u(window.database);
+  return t.value === "default" ? "" : `/${t.value}`;
+}, F = (t, e) => {
+  if (!t) return "";
+  const o = new Date(t);
+  return moment(o).format(e || window.datetimeformat);
 };
-function S(e, n = { reactive: !1 }) {
-  return d(window[e]);
+function y(t, e = { reactive: !1 }) {
+  return u(window[t]);
 }
-const h = (e, n) => {
-  if (!e) return "";
-  const o = new Date(e);
-  return moment(o).format(window.dateformat);
-}, N = (e) => {
-  if (!e) return "";
-  const n = new Date(e);
-  return moment(n).format("HH:mm:ss");
+const T = (t, e) => {
+  if (!t) return "";
+  const o = new Date(t);
+  return moment(o).format(e || window.dateformat);
+}, b = (t) => {
+  if (!t) return "";
+  const e = new Date(t);
+  return moment(e).format("HH:mm:ss");
+}, H = (t) => {
+  if (!t) return "";
+  if (t instanceof Date) return moment(t).format("YYYY-MM-DDTHH:mm:ss");
+  const e = window.datetimeformat || "YYYY-MM-DDTHH:mm:ss", o = moment(t, e, !0);
+  if (o.isValid()) return o.format("YYYY-MM-DDTHH:mm:ss");
+  const n = window.dateformat || "YYYY-MM-DD", r = moment(t, n, !0);
+  if (r.isValid()) return r.format("YYYY-MM-DDTHH:mm:ss");
+  const i = moment(t);
+  return i.isValid() ? i.format("YYYY-MM-DDTHH:mm:ss") : t;
 };
-function j(e, n = 300) {
+function M(t, e = 300) {
   let o;
   return function(...r) {
-    const t = () => {
-      o = null, e.apply(this, r);
+    const i = () => {
+      o = null, t.apply(this, r);
     };
-    clearTimeout(o), o = setTimeout(t, n), o || e.apply(this, r);
+    clearTimeout(o), o = setTimeout(i, e), o || t.apply(this, r);
   };
 }
-const T = (e, n = 6) => {
-  if (typeof e > "u" || e === "")
+const S = (t, e = 6) => {
+  if (typeof t > "u" || t === "")
     return "";
-  if (e !== "" && e !== null && !isNaN(e) && isFinite(e)) {
-    e *= 1;
-    const u = e < 0, r = Math.abs(e);
-    let t = 0;
-    r > 1e5 || n <= 0 ? t = String(parseFloat(r.toFixed())) : r > 1e4 || n <= 1 ? t = String(parseFloat(r.toFixed(1))) : r > 1e3 || n <= 2 ? t = String(parseFloat(r.toFixed(2))) : r > 100 || n <= 3 ? t = String(parseFloat(r.toFixed(3))) : r > 10 || n <= 4 ? t = String(parseFloat(r.toFixed(4))) : r > 1 || n <= 5 ? t = String(parseFloat(r.toFixed(5))) : t = String(parseFloat(r.toFixed(n))), t = (u ? "-" : "") + t;
-    const l = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator") || ".";
-    l !== "." && (t = t.replace(".", l));
-    const c = jQuery("#grid").jqGrid("getGridRes", "formatter.number.thousandsSeparator") || ",";
+  if (t !== "" && t !== null && !isNaN(t) && isFinite(t)) {
+    t *= 1;
+    const n = t < 0, r = Math.abs(t);
+    let i = 0;
+    r > 1e5 || e <= 0 ? i = String(parseFloat(r.toFixed())) : r > 1e4 || e <= 1 ? i = String(parseFloat(r.toFixed(1))) : r > 1e3 || e <= 2 ? i = String(parseFloat(r.toFixed(2))) : r > 100 || e <= 3 ? i = String(parseFloat(r.toFixed(3))) : r > 10 || e <= 4 ? i = String(parseFloat(r.toFixed(4))) : r > 1 || e <= 5 ? i = String(parseFloat(r.toFixed(5))) : i = String(parseFloat(r.toFixed(e))), i = (n ? "-" : "") + i;
+    const a = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator") || ".";
+    a !== "." && (i = i.replace(".", a));
+    const p = jQuery("#grid").jqGrid("getGridRes", "formatter.number.thousandsSeparator") || ",";
     if (r >= 1e3) {
-      let i = t.lastIndexOf(l);
-      i = i > -1 ? i : t.length;
-      let f = l === void 0 ? "" : t.substring(i), a = -1, s;
-      for (s = i; s > 0; s--)
-        a++, a % 3 === 0 && s !== i && (!u || s > 1) && (f = c + f), f = t.charAt(s - 1) + f;
-      t = f;
+      let s = i.lastIndexOf(a);
+      s = s > -1 ? s : i.length;
+      let f = a === void 0 ? "" : i.substring(s), m = -1, l;
+      for (l = s; l > 0; l--)
+        m++, m % 3 === 0 && l !== s && (!n || l > 1) && (f = p + f), f = i.charAt(l - 1) + f;
+      i = f;
     }
-    return t;
+    return i;
   }
-  return (e ? e.toLocaleString() : null) || "0";
+  return (t ? t.toLocaleString() : null) || "0";
 };
-function x(e, n = 150) {
+function v(t, e = 150) {
   let o;
-  return (...u) => {
-    clearTimeout(o), o = setTimeout(() => e(...u), n);
+  return (...n) => {
+    clearTimeout(o), o = setTimeout(() => t(...n), e);
   };
 }
-function I(e) {
-  return typeof window.admin_escape == "function" ? window.admin_escape(e) : encodeURIComponent(e);
+function x(t) {
+  return typeof window.admin_escape == "function" ? window.admin_escape(t) : encodeURIComponent(t);
+}
+function D(t) {
+  return t ? {
+    showTooltip: function(e) {
+      let o = t.select("#tooltip");
+      o.empty() && (o = t.select("body").append("div").attr("id", "tooltip").attr("role", "tooltip").attr("class", "card p-2").style("position", "absolute")), o.html("" + e).style("display", "block"), this.moveTooltip();
+    },
+    hideTooltip: function() {
+      t.select("#tooltip").style("display", "none"), t.event.stopPropagation();
+    },
+    moveTooltip: function() {
+      const e = t.event.pageX + 5;
+      let o = t.event.pageY - 28;
+      const n = t.select("#tooltip"), r = window.innerWidth - n.node().offsetWidth - 20, i = window.innerHeight - n.node().offsetHeight - 20;
+      e > r && (o = t.event.pageY + 5), o > i && (o = t.event.pageY - n.node().offsetHeight - 25), n.style({
+        left: e + "px",
+        top: o + "px"
+      }), t.event.stopPropagation();
+    }
+  } : (console.warn("Graph tooltip helper created without d3 instance"), {
+    showTooltip: () => {
+    },
+    hideTooltip: () => {
+    },
+    moveTooltip: () => {
+    }
+  });
 }
 export {
-  I as adminEscape,
-  h as dateFormat,
-  y as dateTimeFormat,
-  x as debounce,
-  j as debouncedInputHandler,
-  S as getDjangoTemplateVariable,
-  w as getURLprefix,
-  g as isBlank,
-  m as isEmpty,
-  b as isNumeric,
-  p as isObject,
-  T as numberFormat,
-  N as timeFormat
+  x as adminEscape,
+  D as createGraphTooltipHelper,
+  T as dateFormat,
+  F as dateTimeFormat,
+  H as dateToISO,
+  v as debounce,
+  M as debouncedInputHandler,
+  y as getDjangoTemplateVariable,
+  h as getURLprefix,
+  w as isBlank,
+  d as isEmpty,
+  Y as isNumeric,
+  c as isObject,
+  S as numberFormat,
+  b as timeFormat
 };

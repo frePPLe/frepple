@@ -579,13 +579,13 @@ function buildPrefixedUrl(url, reference = null) {
               </small>
             </td>
             <td>
-              <span v-if="isMultipleOrNone">{{
+              <span v-if="isMultipleOrNone || store.operationplan.type == 'STCK'">{{
                 numberFormat(
                   store.operationplan.operationplan__quantity || store.operationplan.quantity || 0
                 )
               }}</span>
               <input
-                v-if="!isMultipleOrNone && !opPlanHasOwnProperty('operationplan__quantity')"
+                v-if="!isMultipleOrNone && !opPlanHasOwnProperty('operationplan__quantity') && store.operationplan.type !== 'STCK'"
                 class="form-control"
                 type="number"
                 v-model="store.operationplan.quantity"
@@ -593,7 +593,7 @@ function buildPrefixedUrl(url, reference = null) {
                 :readonly="!editable"
               />
               <input
-                v-if="!isMultipleOrNone && opPlanHasOwnProperty('operationplan__quantity')"
+                v-if="!isMultipleOrNone && opPlanHasOwnProperty('operationplan__quantity') && store.operationplan.type !== 'STCK'"
                 class="form-control"
                 type="number"
                 v-model="store.operationplan.operationplan__quantity"

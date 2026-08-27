@@ -120,6 +120,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     calendarevents: [],
     multipleGanttSelectData: null,
     multiSelectLoadplans: {},
+    multiSelectOperationplans: {},
   }),
 
   getters: {
@@ -524,6 +525,7 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.selectedStatusCounts = {};
       this.operationplanChanges = {};
       this.multipleGanttSelectData = null;
+      this.multiSelectOperationplans = {};
       window.operationplanChanges = toRaw(this.operationplanChanges);
       // Dispatch 'saved' event for post-save refresh only
       const rootEl = document.getElementById('app');
@@ -554,20 +556,46 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     async erpExport() {
       try {
-        // Send the FULL operationplan object (matching table mode behavior)
-        // This ensures consistency with what frepple.js sends in table mode
-        const exportData = {
-          // The backend only needs these fields in the python tests
-          reference: this.operationplan.reference,
-          type: this.operationplan.type,
-          quantity: this.operationplan.quantity,
-          enddate: this.operationplan.end,
+        const exportPayload = [];
 
-          // ...this.operationplan,
+        const toExportOplan = (rec) => {
+          const op = rec.operationplan || rec;
+          return {
+            reference: rec.reference || op.reference || rec.operationplan__reference,
+            type:
+              rec.type ||
+              op.type ||
+              rec.operationplan__type ||
+              rec.ordertype ||
+              op.ordertype ||
+              this.multiSelectOperationplans[rec.reference || op.reference]?.type,
+            quantity: rec.quantity ?? op.quantity ?? rec.operationplan__quantity,
+            enddate: rec.end || op.end || rec.enddate || rec.operationplan__enddate,
+          };
         };
 
-        // Use the Vue service instead of direct AJAX
-        const response = await operationplanService.exportToERP([exportData]);
+        // multiselect, via processAggregatedInfo
+        if (this.selectedOperationplans.length > 0) {
+          for (const op of this.selectedOperationplans) {
+            if (typeof op === 'string') {
+              const opplan = this.operationplans[op];
+              if (opplan) exportPayload.push(toExportOplan(opplan));
+            } else {
+              exportPayload.push(toExportOplan(op));
+            }
+          }
+        }
+
+        if (exportPayload.length === 0 && this.operationplan?.reference) {
+          exportPayload.push(toExportOplan(this.operationplan));
+        }
+
+        if (exportPayload.length === 0) {
+          this.exportError = 'No records to export.';
+          return;
+        }
+
+        const response = await operationplanService.exportToERP(exportPayload);
 
         // Handle successful response
         if (response.responseData?.value === 'OK') {
@@ -581,7 +609,6 @@ export const useOperationplansStore = defineStore('operationplans', {
           this.exportError = 'Export failed: Unexpected response format from server';
         }
       } catch (err) {
-        // Handle different error types
         if (err.response) {
           // Server responded with error status
           if (err.response.data && err.response.data.detail) {
@@ -802,6 +829,7 @@ export const useOperationplansStore = defineStore('operationplans', {
           if (op.loadplans) {
             this.multiSelectLoadplans[op.reference] = op.loadplans;
           }
+          this.multiSelectOperationplans[op.reference] = op;
         });
       } catch (err) {
         console.error('Failed to fetch multi-select loadplans', err);

@@ -23,6 +23,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <charconv>
+
 #include "frepple/model.h"
 
 namespace frepple {
@@ -742,14 +744,10 @@ OperationPlan* OperationPlan::findReference(string const& l) {
   // Compare with the max reference string
   if (referenceMax < l) guarantueed = true;
 
-  // Compare with the max counter
-  try {
-    unsigned long idx = stoul(l);
-    if (idx > counterMin)
-      guarantueed = true;
-    else
-      guarantueed = false;
-  } catch (...) { /* The reference isn't a numeric value */
+  unsigned long idx;
+  if (from_chars(l.data(), l.data() + l.size(), idx).ec == std::errc()) {
+    // Argument is a number, compare with the max counter
+    guarantueed = (idx > counterMin);
   }
 
   // We are sure not to find it
@@ -776,15 +774,14 @@ bool OperationPlan::assignReference() {
       // The counter need updating to garantuee that counter is always
       // a safe starting point for tagging new operationplans.
       referenceMax = getName();
-    try {
-      unsigned long idx = stoul(getName());
-      if (idx >= counterMin) {
-        if (idx >= ULONG_MAX)
-          throw RuntimeException(
-              "Exhausted the range of available operationplan references");
-        counterMin = idx + 1;
-      }
-    } catch (...) { /* The reference isn't a numeric value */
+    auto n = getName();
+    unsigned long idx;
+    auto result = from_chars(n.data(), n.data() + n.size(), idx);
+    if (result.ec == std::errc() && idx >= counterMin) {
+      if (idx >= ULONG_MAX)
+        throw RuntimeException(
+            "Exhausted the range of available operationplan references");
+      counterMin = idx + 1;
     }
   } else {
     // Fresh operationplan with blank id

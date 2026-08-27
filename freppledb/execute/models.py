@@ -147,11 +147,6 @@ class Task(models.Model):
                 os.kill(self.processid, 9)
             except:
                 pass  # the process is already dead
-            if self.processgroupid:
-                try:
-                    os.killpg(self.processgroupid, 9)
-                except:
-                    pass  # Nothing alive inthere
             self.message = "Canceled process"
             for child_task in (
                 Task.objects.all().using(database).filter(processid__in=child_pid)

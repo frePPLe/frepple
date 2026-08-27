@@ -25,6 +25,7 @@ import os
 import shutil
 import subprocess
 from datetime import datetime
+import time
 
 
 from django.db.models import Case, When, Value, IntegerField
@@ -462,6 +463,10 @@ class Command(BaseCommand):
                 error_message = None
                 try:
                     original_processid = task.processid
+
+                    # Wait a bit for child processes to spawn
+                    time.sleep(0.5)
+
                     task.processid = p.pid
                     task.processgroupid = os.getpgid(p.pid)
                     task.save(using=source)

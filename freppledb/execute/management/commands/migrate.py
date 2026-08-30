@@ -38,6 +38,13 @@ class Command(StdCommand):
 
     def add_arguments(self, parser):
         super().add_arguments(parser)
+        parser.set_defaults(database=None)
+
+    def get_check_kwargs(self, options):
+        opts = dict(options)
+        if not opts.get("database"):
+            opts["database"] = DEFAULT_DB_ALIAS
+        return super().get_check_kwargs(opts)
 
     def handle(self, *args, **options):
         def run_migrate():
@@ -56,7 +63,7 @@ class Command(StdCommand):
                     return
                 raise
 
-        if any(arg.startswith("--database") for arg in sys.argv[1:]):
+        if options["database"]:
             # Database was specified
             run_migrate()
             return

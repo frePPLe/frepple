@@ -7,6 +7,13 @@ Release notes
 This release is scheduled for the end of September 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+9.18.1 (2026-08-31)
+===================
+
+.. rubric:: Sytem administration
+
+- | Bug fix: Migrations didn't run on scenarios in 9.18.0.
+
 9.18.0 (2026-08-31)
 ===================
 

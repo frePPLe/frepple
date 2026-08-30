@@ -21,6 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+import sys
+
 from django.core.management.base import CommandError
 from django.core.management.commands.migrate import Command as StdCommand
 from django.db import connections
@@ -54,8 +56,7 @@ class Command(StdCommand):
                     return
                 raise
 
-        db = options["database"]
-        if db:
+        if any(arg.startswith("--database") for arg in sys.argv[1:]):
             # Database was specified
             run_migrate()
             return

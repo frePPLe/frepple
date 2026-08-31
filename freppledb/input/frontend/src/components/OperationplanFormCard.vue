@@ -295,7 +295,7 @@ function buildPrefixedUrl(url, reference = null) {
               </b>
               <b class="text-capitalize" v-if="!opPlanHasOwnProperty('operation')">
                 {{ store.operationplan.name }}
-              </b>"
+              </b>
             </th>
           </tr>
           <tr v-if="!isMultipleOrNone && store.operationplan.type !== 'STCK'">

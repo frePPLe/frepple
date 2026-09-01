@@ -23,6 +23,7 @@
 
 
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db import models
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
@@ -161,6 +162,28 @@ class frePPleBulkModelViewSet(BulkModelViewSet):
         """Pass partial=True to update method."""
         kwargs["partial"] = True
         return self.update(request, *args, **kwargs)
+
+    def get_unique_fields(self):
+        """
+        Autofields aren't needed in the input data for POST creation requests.
+        We remove them from the list of unique fields.
+        """
+        unique = super().get_unique_fields()
+        if self.request.method != "POST":
+            return unique
+        serializer_class = self.get_serializer_class()
+        model = (
+            getattr(serializer_class.Meta, "model", None)
+            if hasattr(serializer_class, "Meta")
+            else None
+        )
+        if model:
+            unique = [
+                f
+                for f in unique
+                if not isinstance(model._meta.get_field(f), models.AutoField)
+            ]
+        return unique
 
 
 class frePPleRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):

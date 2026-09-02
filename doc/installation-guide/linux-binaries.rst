@@ -2,6 +2,12 @@
 Linux binary packages
 =====================
 
+.. important::
+
+   | Starting from the next major release 10.0 (expected in November-December 2026) frepple will no longer
+     ship the Linux binary packages.
+   | The software will then be available as a container image only.
+
 * `Supported distributions`_
 * `Installation and configuration`_
 * `Ubuntu installation script`_

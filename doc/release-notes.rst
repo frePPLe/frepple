@@ -7,6 +7,12 @@ Release notes
 This release is scheduled for the end of September 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Installation
+
+- | Starting from the next major release 10.0 (expected in November-December 2026) frepple will no longer
+    ship the Linux binary packages.
+  | The software will then be available as a container image only.
+
 9.18.1 (2026-08-31)
 ===================
 
@@ -593,6 +599,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | Bug Fix: confirmed MOs exported to Odoo with the Odoo export command had
     their status incorrectly changed to approved.
+
+   | Starting from the next major release 10.0 (expected in November-December 2026) frepple will no longer
+     ship the Linux binary packages.
+   | The software will then be available as a container image only.
 
 9.8.0 (2025-05-16)
 ==================

@@ -36,6 +36,7 @@ from urllib.request import urlopen, HTTPError, Request
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.conf import settings
 from django.contrib.auth.models import Group, Permission
+from django.utils.crypto import get_random_string
 from django.utils.http import urlencode
 from django.utils.translation import get_supported_language_variant
 from django.utils.translation import gettext_lazy as _
@@ -395,7 +396,7 @@ class OdooReadData(PlanTask):
                             # still prefer to log in directly into frepple.
                             # So, we can set a random password here that nobody will ever
                             # need to know.
-                            password=User.objects.make_random_password(),
+                            password=get_random_string(15),
                         )
                         user._state.db = database
                     if user.username in odoo_users:

@@ -533,6 +533,48 @@ class freppleREST(APITestCase):
         response = self.client.get("/api/common/bucketdetail/")
         checkResponse(self, response)
 
+    def test_api_calendar(self):
+        response = self.client.post(
+            "/api/input/calendarbucket/",
+            {
+                "calendar": "Working Days",
+                "startdate": "2026-01-01T00:00:00",
+                "enddate": "2026-12-31T00:00:00",
+                "value": "1.0000",
+                "priority": 0,
+                "monday": True,
+                "tuesday": True,
+                "wednesday": True,
+                "thursday": True,
+                "friday": True,
+                "saturday": False,
+                "sunday": False,
+                "starttime": "08:00:00",
+                "endtime": "17:00:00",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(
+            CalendarBucket.objects.filter(
+                calendar="Working Days",
+                startdate="2026-01-01T00:00:00",
+                enddate="2026-12-31T00:00:00",
+                value="1.0000",
+                priority=0,
+                monday=True,
+                tuesday=True,
+                wednesday=True,
+                thursday=True,
+                friday=True,
+                saturday=False,
+                sunday=False,
+                starttime="08:00:00",
+                endtime="17:00:00",
+            ).exists()
+        )
+
     def test_api_demand(self):
         response = self.client.get("/api/input/demand/")
         checkResponse(self, response)

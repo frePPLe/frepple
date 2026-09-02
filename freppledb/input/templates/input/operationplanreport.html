@@ -476,21 +476,20 @@ rect.opplan {
       } else {
         // When called with unprefixed name (e.g. 'quantity'), look up the
         // actual column name in colModel. If both 'quantity' and 'operationplan__quantity'
-        // exist, prefer the editable one: 'quantity' for load quantity (ResourceDetail),
-        // or 'operationplan__quantity' for operationplan quantity (InventoryDetail).
+        // exist, prefer the one with the prefix
         var cols = jQuery("#grid").jqGrid("getGridParam", "colModel") || [];
         var targetColName = null;
+        var prefixedCol = 'operationplan__' + baseCol;
         for (var i = 0; i < cols.length; i++) {
-          if (cols[i].name === baseCol && cols[i].editable) {
-            targetColName = baseCol;
+          if (cols[i].name === prefixedCol) {
+            targetColName = prefixedCol;
             break;
           }
         }
         if (!targetColName) {
-          var prefixedCol = 'operationplan__' + baseCol;
           for (var i = 0; i < cols.length; i++) {
-            if (cols[i].name === prefixedCol) {
-              targetColName = prefixedCol;
+            if (cols[i].name === baseCol) {
+              targetColName = baseCol;
               break;
             }
           }

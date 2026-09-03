@@ -299,7 +299,7 @@ if (
             ["logrotate", "-f", "/etc/frepple/logrotate.conf", "--state", "/dev/null"],
             check=True,
         )
-        cutoff_compress = time.time() + 9 + 24 * 3600
+        cutoff_compress = time.time() - 24 * 3600
         for path in Path("/var/log/frepple").glob("*.log"):
             if path.stat().st_mtime < cutoff_compress:
                 print("Compressing log file", path)

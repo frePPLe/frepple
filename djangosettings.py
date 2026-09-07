@@ -22,9 +22,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-r"""
-Main Django configuration file.
-"""
 import os
 import sys
 import pathlib
@@ -68,7 +65,8 @@ DATABASES = {
         # Specify the port number when using a TCP socket.
         "PORT": os.environ.get("POSTGRES_PORT", ""),
         "OPTIONS": {
-            "options": "-c lock_timeout=300000"  # Timeout (in milliseconds) to acquire a lock
+            "connect_timeout": 10,  # Timeout in seconds to establish a connection
+            "options": "-c lock_timeout=300000",  # Timeout (in milliseconds) to acquire a lock
         },
         "CONN_MAX_AGE": None,
         "CONN_HEALTH_CHECKS": True,

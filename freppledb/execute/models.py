@@ -30,8 +30,9 @@ import zoneinfo
 from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS, models
 from django.db.models import Q
-from django.utils.translation import gettext_lazy as _
 from django.db.models.functions import Now
+from django.db.utils import OperationalError
+from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import User, Parameter
 
@@ -114,7 +115,9 @@ class Task(models.Model):
                     t.killProcess()
                 else:
                     t.checkHealthy()
-        except Exception as e:
+        except OperationalError:
+            raise
+        except Exception:
             pass
 
     def group_is_alive(pgid: int) -> bool:

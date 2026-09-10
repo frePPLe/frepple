@@ -108,6 +108,19 @@ jobs:
             exit 1
           fi
 
+      - name: Determine if this is the latest release
+        working-directory: ${{github.workspace}}
+        if: startsWith(github.ref, 'refs/tags/') && github.repository == 'frePPLe/frepple'
+        run: |
+          git fetch --tags --force
+          # highest plain "x.y.z" version tag, including patch releases, wins
+          latest=$(git tag --list | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n1)
+          if [ "$latest" == "${{ env.frepple_version }}" ]; then
+            echo "is_latest_release=true" >> $GITHUB_ENV
+          else
+            echo "is_latest_release=false" >> $GITHUB_ENV
+          fi
+
       - name: Publish release
         if: startsWith(github.ref, 'refs/tags/') && github.repository == 'frePPLe/frepple'
         uses: softprops/action-gh-release@v3
@@ -118,13 +131,17 @@ jobs:
 
             **docker container**\: Docker pull ghcr.io/frepple/frepple:${{ env.frepple_version }}
             **ubuntu24-frepple-${{ env.frepple_version }}.deb**\: Installer for Ubuntu 24.04 LTS
-            **frepple-doc-${{ env.frepple_version }}.tgz**\: Documentation
           files: |
             ${{github.workspace}}/build/*.deb
-            ${{github.workspace}}/build/frepple-doc-*.tgz
-          make_latest: ${{ endsWith(github.ref, '.0') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag release build as latest
+        working-directory: ${{github.workspace}}
+        if: startsWith(github.ref, 'refs/tags/') && github.repository == 'frePPLe/frepple' && env.is_latest_release == 'true'
+        run: |
+          docker tag ghcr.io/frepple/frepple-community:${{ env.frepple_version }} ghcr.io/frepple/frepple-community:latest
+          docker push ghcr.io/frepple/frepple-community:latest
 
       - name: Send failure mail
         if: failure()

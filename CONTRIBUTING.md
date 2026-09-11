@@ -17,7 +17,7 @@
   contributions from our community. There are AI-generated translations available,
   but these will often miss the subtle nuances of your language.
 
-  [Updating a translation](https://frepple.com/docs/current/developer-guide/translating-the-user-interface.php)
+  [Updating a translation](https://frepple.com/docs/current/developer-guide/translating-the-user-interface.html)
   is and easy and clear process. It's a single file to edit and submit as a pull request.
   It's also an easy way to contribute to frePPLe.
 

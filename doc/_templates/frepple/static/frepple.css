@@ -116,7 +116,7 @@ a {
 }
 
 div.body {
-  max-width: 995px;
+  width: 100%;
 }
 
 #site-title {

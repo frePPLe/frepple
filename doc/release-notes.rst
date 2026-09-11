@@ -1,17 +1,54 @@
 Release notes
 -------------
 
+10.0.0 (Heads up on major release)
+==================================
+
+This release is scheduled for the end of 2026. This release will bring some
+bigger and backward incompatible changes.
+
+- | The software will only be distributed as a container image.
+  | The Ubuntu installer will no longer be available.
+
+- | These container images will be restructured to simplify configuration and
+    align with best practices for containers.
+  | Expect fewer volumes, more configuration parameters and improved monitoring.
+
+- | The emerging next-generation of the planning algorithm is gradually getting
+    in shape. With v10 it will be ready to plan a wide variety of
+    Frepple configurations.
+  | The current solver algorithm will of course still be available.
+
+- | Some long-deprecated features will be removed:
+
+   - | Transfer batching feature of the solver.
+     | This isn't widely used and significantly complicates the solver code.
+
+   - | Suboperation table
+     | Everybody uses the owner field on the operation table name.
+
+   - | Owner field of the supplier table.
+     | It had no functional use, and you can always define a custom attribute if
+       you still want a field with that name.
+
+   - | Status field in the resource detail and inventory detail tables.
+     | Only the status on purchase orders, manufacturing orders and distribution orders matters.
+
+- | We may rename some parameters to be more intuitive.
+
+- | December 31st 2030 is a magical date in Frepple that represents the infinite future.
+  | As that date approaches, we're extending the planning horizon so it's
+    no longer a hard limit.
+
 9.19.0 (Upcoming release)
 =========================
 
 This release is scheduled for the end of September 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
-.. rubric:: Installation
+.. rubric:: System integration
 
-- | Starting from the next major release 10.0 (expected in November-December 2026) frepple will no longer
-    ship the Linux binary packages.
-  | The software will then be available as a container image only.
+- | Bug fix: 9.18 introduced a backward incompatibility in the REST API..
 
 9.18.1 (2026-08-31)
 ===================
@@ -54,7 +91,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 17, 18, 19: Possibility to specify a scrap rate at Bill of Material level. A Manufacturing order
     for such a BOM will have a larger production quantity to account for the expected scrap.
 
-.. rubric:: Sytem integration
+.. rubric:: System integration
 
 - | The REST API now supports filtering on the list endpoints.
   | The help page lets you intuitively explore this new feature.

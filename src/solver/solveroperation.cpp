@@ -571,6 +571,10 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
       }
 
       opplan->setStart(threshold, false, false);
+      // When the threshold falls in an unavailable calendar period, the
+      // preferEnd=false calculation can move the operationplan before the
+      // threshold. Such a date isn't a valid answer for a lead time check.
+      if (opplan->getStart() < threshold) opplan->setStart(threshold);
       if (opplan->getEnd() < earliest_date) earliest_date = opplan->getEnd();
       int pos = static_cast<int>(idx.size()) - 1;
       while (pos >= 0) {

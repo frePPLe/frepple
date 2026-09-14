@@ -48,7 +48,14 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: System integration
 
-- | Bug fix: 9.18 introduced a backward incompatibility in the REST API..
+- | Bug fix: 9.18 introduced a backward incompatibility in the REST API.
+
+.. rubric:: Odoo integration
+
+- | 18, 19: Reordering rules were not mapped correctly when you have multiple
+    reordering rules for the same product and warehouse combination. This can
+    happen if you have them defined at different locations within the same
+    warehouse.
 
 9.18.1 (2026-08-31)
 ===================

@@ -26,15 +26,17 @@ For translators
    - French: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/fr/fr.po
    - German: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/de/de.po
    - Hebrew: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/he/he.po
+   - Croatian: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/hr/hr.po
    - Italian: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/it/it.po
    - Japanese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/ja/ja.po
    - Dutch: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/nl/nl.po
    - Portuguese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/pt/pt.po
-   - Brazilian Portuguese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/pt-br/pt-br.po
+   - Brazilian Portuguese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/pt_BR/pt_BR.po
    - Russian: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/ru/ru.po
    - Spanish: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/es/es.po
-   - Simplified Chinese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/zh-hans/zh-hans.po
-   - Traditional Chinese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/zh-hant/zh-hant.po
+   - Simplified Chinese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/zh_Hans/zh_Hans.po
+   - Traditional Chinese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/zh_Hant/zh_Hant.po
+   - Ukrainian: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/uk/uk.po
 
   Open the file with the editor you installed in step 1, and start translating. The terms will
   already "pre-translated" with an automated translation engine. Your job as a translator is to
@@ -93,6 +95,7 @@ For developers
         ("fr", _("French")),
         ("de", _("German")),
         ("he", _("Hebrew")),
+        ("hr", _("Croatian")),
         ("it", _("Italian")),
         ("ja", _("Japanese")),
         ("nl", _("Dutch")),
@@ -102,6 +105,7 @@ For developers
         ("es", _("Spanish")),
         ("zh-hans", _("Simplified Chinese")),
         ("zh-hant", _("Traditional Chinese")),
+        ("uk", _("Ukrainian")),
       )
 
 **3. Let the translators do their work**

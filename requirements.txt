@@ -1,5 +1,5 @@
 portend == 3.2.1
-djangorestframework == 3.17.1
+djangorestframework == 3.17.2
 django-bulk-drf == 0.2.91
 django-bootstrap3 == 26.1
 django-filter == 25.2

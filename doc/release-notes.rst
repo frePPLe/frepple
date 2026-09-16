@@ -50,6 +50,12 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | Bug fix: 9.18 introduced a backward incompatibility in the REST API.
 
+.. rubric:: Production planning
+
+- | Bug fix: The capacity report gave confusing results on bucketized resources
+    when confirmed loads are present in zero-sized buckets.
+  | The loading numbers were correct, but not shown in the correct bucket.
+
 .. rubric:: Odoo integration
 
 - | 18, 19: Reordering rules were not mapped correctly when you have multiple

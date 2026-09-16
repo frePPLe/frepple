@@ -6990,6 +6990,7 @@ class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator> {
     double cur_load_confirmed;
     bool prev_value;
     bool bucketized;
+    bool bucket_zero_capacity;
   };
 
   vector<_res> res_list;

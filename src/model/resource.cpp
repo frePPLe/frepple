@@ -341,17 +341,17 @@ void Resource::setOwner(Resource* o) {
   }
   HasHierarchy<Resource>::setOwner(o);
   if (o) {
-  if (getTool() != o->getTool()) {
-    if (getTool())
-      o->setTool(true);
-    else
-      setTool(true);
-  }
-  if (getToolPerPiece() != o->getToolPerPiece()) {
-    if (getToolPerPiece())
-      o->setToolPerPiece(true);
-    else
-      setToolPerPiece(true);
+    if (getTool() != o->getTool()) {
+      if (getTool())
+        o->setTool(true);
+      else
+        setTool(true);
+    }
+    if (getToolPerPiece() != o->getToolPerPiece()) {
+      if (getToolPerPiece())
+        o->setToolPerPiece(true);
+      else
+        setToolPerPiece(true);
     }
   }
 }
@@ -419,6 +419,7 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o)
     i.ldplaniter =
         Resource::loadplanlist::iterator(i.res->getLoadPlans().begin());
     i.bucketized = i.res->hasType<ResourceBuckets>();
+    i.bucket_zero_capacity = false;
     i.cur_date = PythonData(end_date).getDate();
     i.prev_date = i.cur_date;
     i.cur_size = 0.0;
@@ -549,6 +550,7 @@ PyObject* Resource::PlanIterator::iternext() {
   if (start_date) Py_DECREF(start_date);
 
   // Repeat until a non-empty bucket is found
+  bool bucketized = false;
   do {
     // Get the start and end date of the current bucket
     start_date = end_date;
@@ -561,20 +563,25 @@ PyObject* Resource::PlanIterator::iternext() {
     for (auto& i : res_list) {
       i.cur_date = cpp_end_date;
       if (i.bucketized) {
+        bucketized = true;
         // Bucketized resource
         while (i.ldplaniter != i.res->getLoadPlans().end() &&
                i.ldplaniter->getDate() < cpp_end_date) {
-          // At this point ldplaniter points to a bucket start event in the
-          // current reporting bucket
-          if (i.res->isTime())
-            bucket_available += i.ldplaniter->getOnhand() / 3600;
-          else
-            bucket_available += i.ldplaniter->getOnhand();
-
-          // Advance the loadplan iterator to the start of the next bucket
-          ++(i.ldplaniter);
+          if (i.ldplaniter->getEventType() == 2) {
+            // At this point ldplaniter points to a bucket start event in the
+            // current reporting bucket
+            auto onhand = i.ldplaniter->getOnhand();
+            if (i.res->isTime())
+              bucket_available += onhand / 3600;
+            else
+              bucket_available += onhand;
+            i.bucket_zero_capacity = (onhand == 0.0);
+            ++(i.ldplaniter);
+          }
           while (i.ldplaniter != i.res->getLoadPlans().end() &&
-                 i.ldplaniter->getEventType() != 2) {
+                 i.ldplaniter->getEventType() != 2 &&
+                 (!i.bucket_zero_capacity ||
+                  i.ldplaniter->getDate() < cpp_end_date)) {
             if (i.ldplaniter->getEventType() == 1) {
               auto tmp = -i.ldplaniter->getQuantity();
               if (i.res->isTime()) tmp /= 3600;
@@ -642,7 +649,7 @@ PyObject* Resource::PlanIterator::iternext() {
       }
     }
   } while (!bucket_available && !bucket_unavailable && !bucket_load &&
-           !bucket_setup);
+           !bucket_setup && !bucket_load_confirmed && !bucketized);
 
   // Return the result
   bucket_setup /= 3600.0;

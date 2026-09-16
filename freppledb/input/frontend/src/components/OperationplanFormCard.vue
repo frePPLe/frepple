@@ -483,7 +483,7 @@ function buildPrefixedUrl(url, reference = null) {
               />
             </td>
           </tr>
-          <tr v-if="store.operationplan.setupend">
+          <tr v-if="store.operationplan.setupend && !isMultipleOrNone">
             <td>
               <b class="text-capitalize">{{ ttt('setup end date') }}</b>
             </td>

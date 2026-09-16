@@ -25,9 +25,11 @@ from collections import OrderedDict
 from sys import maxsize
 
 from django.conf import settings
+from django.contrib import messages
 from django.db.models import F, Q, DateTimeField, DurationField, FloatField
 from django.db.models.functions import Cast
 from django.db.models.expressions import RawSQL
+from django.http import HttpResponseRedirect
 from django.template import Template
 from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_str
@@ -755,6 +757,23 @@ class CalendarDetail(GridReport):
     template = "input/calendardetail.html"
     help_url = "user-interface/plan-analysis/calendar-detail.html"
     title = _("calendar buckets")
+
+    @classmethod
+    def get(cls, request, *args, **kwargs):
+        if (
+            not args
+            or not Calendar.objects.all()
+            .using(request.database)
+            .filter(name=args[0])
+            .exists()
+        ):
+            messages.add_message(
+                request,
+                messages.ERROR,
+                f"Unknown calendar {args[0] if args else ''}",
+            )
+            return HttpResponseRedirect(request.prefix + "/")
+        return super().get(request, *args, **kwargs)
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):

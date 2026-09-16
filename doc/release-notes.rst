@@ -48,6 +48,16 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: System integration
 
+- | Frepple now ships an MCP (Model Context Protocol) server.
+  | It allows AI assistants to connect to frepple and work with your plan
+    in natural language.
+  | You can query all the objects like purchase orders, manufacturing orders...
+  | The AI assistant can interpret questions like "What are the proposed purchase orders for sales order X?"
+    or "Show me the manufacturing orders planned today."
+  | Manufacturing orders and purchase orders can also be approved through
+    the server.
+  | This applies to Enterprise and Cloud Editions only.
+
 - | Bug fix: 9.18 introduced a backward incompatibility in the REST API.
 
 .. rubric:: Production planning

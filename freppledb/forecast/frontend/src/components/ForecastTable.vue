@@ -267,7 +267,7 @@ const navigateToDrilldown = (event) => {
                     :key="bucketIndex"
                     class="text-center text-nowrap"
                     style="background-color: var(--bs-card-cap-bg)"
-                    :title="`${formatDate(bucket.startdate)} - ${formatDate(bucket.enddate)}`"
+                    v-tooltip="`${formatDate(bucket.startdate)} - ${formatDate(bucket.enddate)}`"
                 >
                   {{ bucket.bucket }}
                 </th>
@@ -312,8 +312,7 @@ const navigateToDrilldown = (event) => {
                         <!-- Outlier warning -->
                         <span v-if="isOutlierBucket(bucket, row)"
                               class="fa fa-warning text-danger"
-                              :title="outlierString"
-                              data-bs-toggle="tooltip">
+                              v-tooltip="outlierString">
                           </span>
                       </div>
                     </template>

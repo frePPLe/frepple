@@ -92,7 +92,7 @@ function toggleRowVisibility(rowIndex) {
           </div>
 
           <div v-for="(row, index) in data" :key="row[modelName]" :class="(row[modelName] === store[modelName].Name) ? 'bg-light' : ''" class="d-flex evtitemrow" v-on:click="selectILCobject(modelName, index)">
-            <div class="overflow-hidden text-nowrap me-3" :style="'padding-left: ' + row.lvl * 13 + 'px'" data-bs-toggle="tooltip" :data-bs-title="row['description']">
+            <div class="overflow-hidden text-nowrap me-3" :style="'padding-left: ' + row.lvl * 13 + 'px'" v-tooltip="row['description']">
               &nbsp;<span v-if="row.children && row.visible" class="fa" :class="row.expanded === 1 ? 'fa-caret-down' : 'fa-caret-right'"></span>
               {{ row.visible ? row[modelName] : '' }}
               <template v-if="store.showDescription && row['description']">

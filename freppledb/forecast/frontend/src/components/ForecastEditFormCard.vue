@@ -26,9 +26,6 @@ import {ref, computed, onMounted} from "vue";
 import { useI18n } from 'vue-i18n';
 import {useForecastsStore} from "@/stores/forecastsStore.js";
 import { isNumeric } from "@common/utils.js";
-import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js'
-
-useBootstrapTooltips();
 
 // eslint-disable-next-line no-unused-vars
 const { t: ttt, locale, availableLocales } = useI18n({

@@ -22,12 +22,11 @@
 */
 
 <script setup>
-import { inject, computed, watch, nextTick } from "vue";
+import { computed } from "vue";
 import { useForecastsStore } from './stores/forecastsStore.js';
 import ForecastSelection from "@/components/ForecastSelection.vue";
 import ForcastDetails from "@/components/ForcastDetails.vue";
 import ErrorDialog from '@common/components/ErrorDialog.vue';
-import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js';
 import { useI18n } from 'vue-i18n';
 
 const { t: ttt } = useI18n();
@@ -43,22 +42,6 @@ const showErrorDialog = computed({
 });
 
 // const globalVar = inject('getURLprefix');
-
-const { initTooltips } = useBootstrapTooltips({ autoDispose: false });
-
-// Reinitialize tooltips when tab changes
-watch(() => store.showTab, async () => {
-  await nextTick();
-  initTooltips();
-});
-
-// Reinitialize tooltips when buckets change
-watch(() => store.buckets, async (newBuckets) => {
-  if (newBuckets && newBuckets.length > 0) {
-    await nextTick();
-    initTooltips();
-  }
-});
 
 </script>
 

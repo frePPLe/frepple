@@ -51,8 +51,10 @@ let isDirty = computed(() => (detaildata.value.oldForecastmethod !== detaildata.
           <td>
             <div v-if="detaildata.forecastmethod" class="dropdown d-inline w-auto">
 <!--          Vue dynamic class does not play well with bootstrap dropdown (could be a version specific issue?) so I used a dynamic style instead-->
+<!--          A dropdown toggle cannot carry a Bootstrap tooltip itself, so the tooltip lives on this wrapper span -->
+              <span class="d-inline-block" v-tooltip="ttt('Select forecast method, only possible at single item/location/customer level')">
               <button :style="isDirty ? 'background-color: #ff5252 !important; box-shadow: none !important;' : ''" class="dropdown-toggle form-control d-inline w-auto text-capitalize" name="forecastmethod" id="forecastmethodbutton" aria-expanded="false" type="button" data-bs-toggle="dropdown"
-                      data-bs-auto-close="true" :title="ttt('Select forecast method, only possible at single item/location/customer level')">
+                      data-bs-auto-close="true">
                 {{ ttt(detaildata.forecastmethod) }}&nbsp;&nbsp;
               </button>
               <ul :class="(detaildata.forecastmethod === 'aggregate') ? 'd-none' : ''" class="dropdown-menu" aria-labelledby="forecastmethodbutton">
@@ -78,6 +80,7 @@ let isDirty = computed(() => (detaildata.value.oldForecastmethod !== detaildata.
                   <a class="dropdown-item text-capitalize" id="manual" href="#" data-bs-dismiss="dropdown"><span>{{ ttt('Manual') }}</span></a>
                 </li>
               </ul>
+              </span>
             </div>
           </td>
         </tr>

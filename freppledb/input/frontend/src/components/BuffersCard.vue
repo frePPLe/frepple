@@ -188,8 +188,7 @@ function enableSaveUndoButtons() {
             <div class="d-flex align-items-center">
               <span
                 v-if="flowplan.buffer?.description"
-                data-bs-toggle="tooltip"
-                :title="flowplan.buffer.description"
+                v-tooltip="flowplan.buffer.description"
                 class="text-truncate"
                 style="min-width: 0; padding-right: 3px"
               >
@@ -199,8 +198,7 @@ function enableSaveUndoButtons() {
                 v-else
                 class="text-truncate"
                 style="min-width: 0; padding-right: 3px"
-                :title="flowplan.buffer?.item"
-                data-bs-toggle="tooltip"
+                v-tooltip="flowplan.buffer?.item"
               >
                 {{ flowplan.buffer?.item }}
               </span>

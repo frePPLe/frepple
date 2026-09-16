@@ -22,11 +22,10 @@
  */
 
 <script setup>
-import { computed, watch, nextTick } from "vue";
+import { computed } from "vue";
 import { useOperationplansStore } from './stores/operationplansStore.js';
 import OperationplanDetails from "@/components/OperationplanDetails.vue";
 import ErrorDialog from '@common/components/ErrorDialog.vue';
-import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js';
 
 const store = useOperationplansStore();
 
@@ -36,22 +35,6 @@ const showErrorDialog = computed({
     if (!value) {
       store.error = { showError: false, message: '', details: '', type: 'error', title: '' };
     }
-  }
-});
-
-const { initTooltips } = useBootstrapTooltips({ autoDispose: false });
-
-// Reinitialize tooltips when tab changes
-watch(() => store.showTab, async () => {
-  await nextTick();
-  initTooltips();
-});
-
-// Reinitialize tooltips when operationplans change
-watch(() => store.operationplan, async (newOperationplans) => {
-  if (newOperationplans && newOperationplans.length > 0) {
-    await nextTick();
-    initTooltips();
   }
 });
 

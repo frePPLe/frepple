@@ -58,20 +58,18 @@ function undo() {
               id="save"
               class="btn btn-primary me-1 text-capitalize"
               @click="save(false)"
-              data-bs-toggle="tooltip"
               :disabled="!store.hasChanges"
               :class="store.hasChanges ? 'btn-danger' : ''"
-              :data-bs-original-title="ttt('Save changes')">
+              v-tooltip="ttt('Save changes')">
             {{ ttt('save') }}
           </button>
           <button
               id="undo"
               class="btn btn-primary text-capitalize"
               @click="undo()"
-              data-bs-toggle="tooltip"
               :disabled="!store.hasChanges"
               :class="store.hasChanges ? 'btn-danger' : ''"
-              :data-bs-original-title="ttt('Undo changes')">
+              v-tooltip="ttt('Undo changes')">
             {{ ttt('Undo') }}
           </button>
         </div>

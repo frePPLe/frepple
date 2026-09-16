@@ -154,10 +154,8 @@ function formatCell(val, rIdx) {
               <td style="position: sticky; left: 0px; background: var(--bs-card-bg)"></td>
               <template v-for="(col, idx) in inventoryreport" :key="idx">
                 <td
-                  data-bs-toggle="tooltip"
+                  v-tooltip="col.title"
                   data-bs-placement="top"
-                  data-bs-custom-class="custom-tooltip"
-                  :data-bs-title="col.title"
                   style="background: var(--bs-card-bg)"
                 >
                   <span v-if="col.italic" class="text-capitalize">{{ col.label }}</span>

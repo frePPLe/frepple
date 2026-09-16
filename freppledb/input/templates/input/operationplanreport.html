@@ -550,16 +550,16 @@ rect.opplan {
 
 {% block actions %}
   <div class="btn-group" role="group">
-    <button data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display table"|capfirst|force_escape %}"
+    <button data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "display table"|capfirst|force_escape %}"
       class="btn btn-sm btn-primary{% if preferences.mode != 'kanban' and preferences.mode != 'gantt' and preferences.mode != 'calendarday' and preferences.mode != 'calendarweek' and preferences.mode != 'calendarmonth' or not preferences.mode %} active{% endif %}"
       type="button" id="gridmode" name="mode">
       <span class="fa fa-table fa-lg" style="margin: 2px 0 3px 0;"></span>
     </button>
-    <button data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display kanban cards"|capfirst|force_escape %}" class="btn btn-sm btn-primary{% if preferences.mode == 'kanban' %} active{% endif %}" type="button" id="kanbanmode" name="mode">
+    <button data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "display kanban cards"|capfirst|force_escape %}" class="btn btn-sm btn-primary{% if preferences.mode == 'kanban' %} active{% endif %}" type="button" id="kanbanmode" name="mode">
       <span class="fa fa-columns fa-lg fa-lg" style="margin: 2px 0 3px 0;"></span>
     </button>
-    <div class="btn-group dropdown" data-bs-toggle="tooltip" data-bs-toggle="tooltip"
-      data-bs-placement="top" title="{% trans "display calendar"|capfirst|force_escape %}">
+    <div class="btn-group dropdown" data-bs-toggle="tooltip"
+      data-bs-placement="top" data-bs-title="{% trans "display calendar"|capfirst|force_escape %}">
       <button type="button" id="calendarmode" name="mode"
         class="btn btn-sm btn-primary dropdown-toggle{% if preferences.mode == 'calendarday' or preferences.mode == 'calendarweek' or preferences.mode == 'calendarmonth' %} active{% endif %}"
         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -573,7 +573,7 @@ rect.opplan {
       </ul>
     </div>
     {% if showGantt %}
-    <button data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display Gantt chart"|capfirst|force_escape %}" class="btn btn-sm btn-primary{% if preferences.mode == 'gantt' %} active{% endif %}" type="button" id="ganttmode" name="mode">
+    <button data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "display Gantt chart"|capfirst|force_escape %}" class="btn btn-sm btn-primary{% if preferences.mode == 'gantt' %} active{% endif %}" type="button" id="ganttmode" name="mode">
       <span class="fa fa-align-left fa-lg fa-lg" style="margin: 2px 0 3px 0;"></span>
     </button>
     {% endif %}

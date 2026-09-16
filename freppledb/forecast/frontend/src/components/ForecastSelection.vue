@@ -27,14 +27,12 @@ import { useI18n } from 'vue-i18n';
 import { useForecastsStore } from '@/stores/forecastsStore';
 import ForecastSelectionCard from "@/components/ForecastSelectionCard.vue";
 import CustomizeGrid from "@/components/CustomizeGrid.vue";
-import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js'
+
 
 const { t: ttt, locale, availableLocales } = useI18n({
   useScope: 'global',  // This is crucial for reactivity
   inheritLocale: true
 });
-
-useBootstrapTooltips();
 
 const store = useForecastsStore();
 const dict =  {'I':  'item', 'L': 'location', 'C': 'customer'};
@@ -199,7 +197,8 @@ onUnmounted(() => {
     <div class="row mb-1">
       <div class="col-auto">
         <div class="dropdown d-inline w-auto">
-          <button id="selectseq" :title="ttt('Select panel sequence')" class="form-control d-inline w-auto dropdown-toggle text-capitalize" name="sequence" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="d-inline-block" v-tooltip="ttt('Select panel sequence')">
+          <button id="selectseq" class="form-control d-inline w-auto dropdown-toggle text-capitalize" name="sequence" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             {{ dictLabels[currentSequence[0]] }}{{(currentSequence).length > 1 ? "," : ""}}&nbsp;{{ dictLabels[currentSequence[1]] }}{{(currentSequence).length > 2 ? "," : ""}}&nbsp;{{ dictLabels[currentSequence[2]] }}&nbsp;&nbsp;<span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
@@ -249,10 +248,12 @@ onUnmounted(() => {
               <a class="dropdown-item text-capitalize" href="#" v-on:click="store.setCurrentSequence('C')">{{ ttt(dict['C']) }}</a>
             </li>
           </ul>
+          </span>
         </div>
         &nbsp;&nbsp;
         <div class="dropdown d-inline w-auto ">
-          <button id="selectmeasure" :title="ttt('Select panel measure')" class="dropdown-toggle form-control d-inline w-auto text-capitalize" name="measure" :value="measure" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="d-inline-block" v-tooltip="ttt('Select panel measure')">
+          <button id="selectmeasure" class="dropdown-toggle form-control d-inline w-auto text-capitalize" name="measure" :value="measure" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             {{ttt(store.measures[currentMeasure].label) }}&nbsp;&nbsp;<span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
@@ -260,6 +261,7 @@ onUnmounted(() => {
               <a v-if="!m.computed" href="#" class="dropdown-item text-capitalize" @click="store.setCurrentMeasure(m.name)">{{ttt(m.label) }}</a>
             </li>
           </ul>
+          </span>
         </div>
       </div>
 
@@ -269,21 +271,20 @@ onUnmounted(() => {
               type="button"
               class="btn btn-sm btn-primary me-1"
               @click="showBucket"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              :data-bs-title="ttt('set time horizon')">
+              v-tooltip="ttt('set time horizon')"
+              data-bs-placement="top">
             <span class="fa fa-clock-o"></span>
           </button>
+          <span class="d-inline-block"
+                v-tooltip="ttt('Bookmark your favorite report configurations')"
+                data-bs-placement="top">
           <button
               type="button"
               class="btn btn-sm btn-primary me-1"
               data-bs-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false">
-            <span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
-                 :data-bs-title="ttt('Bookmark your favorite report configurations')">
               <span class="fa fa-star"></span>
-            </span>
           </button>
           <ul class="dropdown-menu dropdown-menu-end" id="favoritelist">
             <li v-for="favname in favoriteNames" :key="favname">
@@ -307,22 +308,21 @@ onUnmounted(() => {
               </a>
             </li>
           </ul>
+          </span>
           <button
               type="button"
               class="btn btn-sm d-none d-md-inline-block btn-primary me-1"
               @click="showImportDialog"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              :data-bs-title="ttt('Import CSV or Excel file')">
+              v-tooltip="ttt('Import CSV or Excel file')"
+              data-bs-placement="top">
             <span id="csvimport" class="fa fa-arrow-up"></span>
           </button>
           <button
               type="button"
               class="btn btn-sm btn-primary me-1"
               @click="showCustomizeGrid"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              :data-bs-title="ttt('Customize')">
+              v-tooltip="ttt('Customize')"
+              data-bs-placement="top">
             <span class="fa fa-wrench"></span>
           </button>
         </div>

@@ -22,16 +22,13 @@
 */
 
 <script setup lang="js">
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@input/stores/operationplansStore.js';
 import { numberFormat, debouncedInputHandler, dateTimeFormat } from '@common/utils.js';
-import { useBootstrapTooltips } from '@common/useBootstrapTooltips.js';
 import { useOperationplanEdit } from '@input/composables/useOperationplanEdit.js';
 import { appConfig } from '@input/config.js';
 import { api } from '@input/services/api.js';
-
-const { initTooltips } = useBootstrapTooltips();
 
 const { t: ttt } = useI18n({
   useScope: 'global', // This is crucial for reactivity
@@ -180,8 +177,6 @@ const opptype = {
 };
 
 const isMultipleOrNone = computed(() => store.selectedOperationplans.length !== 1);
-
-watch(isMultipleOrNone, () => requestAnimationFrame(initTooltips));
 
 const statusIcons = {
   proposed: 'fa fa-unlock',
@@ -337,10 +332,9 @@ function buildPrefixedUrl(url, reference = null) {
           <tr v-if="store.operationplan.item__description !== null && !isMultipleOrNone">
             <td></td>
             <td>
-              <div
+                <div
                 style="max-width: 100%; white-space: nowrap; overflow: hidden"
-                :title="store.operationplan.item__description"
-                onmouseenter="window.jQuery(this).tooltip('show')"
+                v-tooltip="store.operationplan.item__description"
               >
                 {{ store.operationplan.item__description }}
               </div>
@@ -364,10 +358,9 @@ function buildPrefixedUrl(url, reference = null) {
           <tr v-if="store.operationplan.supplier__description !== null && !isMultipleOrNone">
             <td></td>
             <td style="max-width: calc(100% - 120px); white-space: nowrap; overflow: hidden">
-              <div
+                <div
                 style="max-width: 100%; white-space: nowrap; overflow: hidden"
-                :title="store.operationplan.supplier__description"
-                onmouseenter="window.jQuery(this).tooltip('show')"
+                v-tooltip="store.operationplan.supplier__description"
               >
                 {{ store.operationplan.supplier__description }}
               </div>
@@ -649,8 +642,7 @@ function buildPrefixedUrl(url, reference = null) {
                     :class="statusCounts[s] === selectedCount ? 'btn-secondary' : 'btn-primary'"
                     :disabled="actions.hasOwnProperty('erp_incr_export') || statusCounts[s] === selectedCount"
                     @click="handleSetStatus(s)"
-                    data-bs-toggle="tooltip"
-                    :title="ttt(s)"
+                    v-tooltip="ttt(s)"
                   >
                     <i :class="statusIcons[s]"></i>&nbsp;{{ statusCounts[s] || 0 }}
                   </button>
@@ -687,8 +679,7 @@ function buildPrefixedUrl(url, reference = null) {
                   ]"
                   @click="setEditValue('status', 'proposed')"
                   :disabled="actions.hasOwnProperty('erp_incr_export') || !editable"
-                  data-bs-toggle="tooltip"
-                  :title="ttt('proposed')"
+                  v-tooltip="ttt('proposed')"
                 >
                   <i class="fa fa-unlock"></i>
                 </button>
@@ -706,8 +697,7 @@ function buildPrefixedUrl(url, reference = null) {
                   ]"
                   @click="setEditValue('status', 'approved')"
                   :disabled="actions.hasOwnProperty('erp_incr_export') || !editable"
-                  data-bs-toggle="tooltip"
-                  :title="ttt('approved')"
+                  v-tooltip="ttt('approved')"
                 >
                   <i class="fa fa-unlock-alt"></i>
                 </button>
@@ -725,8 +715,7 @@ function buildPrefixedUrl(url, reference = null) {
                   ]"
                   @click="setEditValue('status', 'confirmed')"
                   :disabled="actions.hasOwnProperty('erp_incr_export') || !editable"
-                  data-bs-toggle="tooltip"
-                  :title="ttt('confirmed')"
+                  v-tooltip="ttt('confirmed')"
                 >
                   <i class="fa fa-lock"></i>
                 </button>
@@ -744,8 +733,7 @@ function buildPrefixedUrl(url, reference = null) {
                   ]"
                   @click="setEditValue('status', 'completed')"
                   :disabled="actions.hasOwnProperty('erp_incr_export') || !editable"
-                  data-bs-toggle="tooltip"
-                  :title="ttt('completed')"
+                  v-tooltip="ttt('completed')"
                 >
                   <i class="fa fa-check"></i>
                 </button>
@@ -763,8 +751,7 @@ function buildPrefixedUrl(url, reference = null) {
                   ]"
                   @click="setEditValue('status', 'closed')"
                   :disabled="actions.hasOwnProperty('erp_incr_export') || !editable"
-                  data-bs-toggle="tooltip"
-                  :title="ttt('closed')"
+                  v-tooltip="ttt('closed')"
                 >
                   <i class="fa fa-times"></i>
                 </button>

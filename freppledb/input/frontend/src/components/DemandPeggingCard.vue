@@ -125,8 +125,7 @@ const urlPrefix = computed(() => window.url_prefix || '');
               <td>
                 <span
                   v-if="demand.demand?.item?.description"
-                  :title="demand.demand.item.description"
-                  data-bs-toggle="tooltip"
+                  v-tooltip="demand.demand.item.description"
                 >
                   {{ demand.demand.item.name }}
                 </span>

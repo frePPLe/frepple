@@ -26,9 +26,8 @@
       </span>
       <i
         class="fa fa-shopping-cart"
-        data-bs-toggle="tooltip"
         data-bs-html="true"
-        :title="ttt('Purchase Order')"
+        v-tooltip="ttt('Purchase Order')"
       ></i
       >&nbsp;
       <strong>{{ opplan.operationplan__reference || opplan.reference }}</strong
@@ -50,9 +49,8 @@
           type="button"
           class="btn btn-sm btn-primary"
           :class="[getStatus(opplan) === s ? 'active' : '', store.isChanged(opplan.reference, 'status') && s === opplan.status ? 'btn-danger' : '']"
-          data-bs-toggle="tooltip"
           data-bs-html="true"
-          :title="ttt(s)"
+          v-tooltip="ttt(s)"
           :disabled="actions.hasOwnProperty('erp_incr_export') || !editable"
           @click="setStatus(opplan, s)"
         >
@@ -70,8 +68,8 @@
         class="badge bg-danger float-end"> {{ttt('unsaved')}}
       </span>
       <span class="text-truncate d-block"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="opplan.item__description || opplan.operationplan__item__description">
+            data-bs-html="true"
+            v-tooltip="opplan.item__description || opplan.operationplan__item__description">
         {{ opplan.item__description || opplan.operationplan__item__description }}
       </span>&nbsp;
     </p>
@@ -87,8 +85,8 @@
     <p class="d-flex align-items-baseline">
       <span class="text-truncate"
             style="min-width:0"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="opplan.operationplan__supplier || opplan.supplier || opplan.operationplan__supplier__name">
+            data-bs-html="true"
+            v-tooltip="opplan.operationplan__supplier || opplan.supplier || opplan.operationplan__supplier__name">
         {{ opplan.operationplan__supplier || opplan.supplier ||
         opplan.operationplan__supplier__name }}
       </span><a
@@ -105,15 +103,15 @@
       <div class="row gx-2">
         <div class="col">
           <span v-if="!editable || !isSelected(opplan.reference)"
-                data-bs-toggle="tooltip" data-bs-html="true"
-                :title="ttt('Quantity')"
+                data-bs-html="true"
+                v-tooltip="ttt('Quantity')"
             >{{ numberFormat(opplan.operationplan__quantity || opplan.quantity)
             }}</span
           >
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('Quantity')"
+            data-bs-html="true"
+            v-tooltip="ttt('Quantity')"
             :class="store.isChanged(opplan.reference, 'quantity') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -129,8 +127,8 @@
           />
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('Quantity')"
+            data-bs-html="true"
+            v-tooltip="ttt('Quantity')"
             :class="store.isChanged(opplan.reference, 'operationplan__quantity') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -164,14 +162,14 @@
       <div class="row gx-2">
         <div class="col">
           <span v-if="!editable || !isSelected(opplan.reference)"
-                data-bs-toggle="tooltip" data-bs-html="true"
-                :title="ttt('Start date')">
+                data-bs-html="true"
+                v-tooltip="ttt('Start date')">
             {{ dateFormat(opplan.operationplan__startdate || opplan.startdate) }}
           </span>
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('Start date')"
+            data-bs-html="true"
+            v-tooltip="ttt('Start date')"
             :class="store.isChanged(opplan.reference, 'startdate') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -185,8 +183,8 @@
           />
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('Start date')"
+            data-bs-html="true"
+            v-tooltip="ttt('Start date')"
             :class="store.isChanged(opplan.reference, 'operationplan__startdate') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -208,14 +206,14 @@
         </div>
         <div class="col">
           <span v-if="!editable || !isSelected(opplan.reference)"
-                data-bs-toggle="tooltip" data-bs-html="true"
-                :title="ttt('End date')">
+                data-bs-html="true"
+                v-tooltip="ttt('End date')">
             {{ dateFormat(opplan.operationplan__enddate || opplan.enddate) }}
           </span>
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('End date')"
+            data-bs-html="true"
+            v-tooltip="ttt('End date')"
             :class="store.isChanged(opplan.reference, 'enddate') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -229,8 +227,8 @@
           />
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('End date')"
+            data-bs-html="true"
+            v-tooltip="ttt('End date')"
             :class="store.isChanged(opplan.reference, 'operationplan__enddate') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -250,14 +248,14 @@
     <p v-if="isSelected(opplan.reference) || (opplan.remark || opplan.operationplan__remark)">
       <span v-if="(!editable || !isSelected(opplan.reference)) && ((opplan.remark && opplan.remark.length > 0) || (opplan.operationplan__remark && opplan.operationplan__remark.length > 0))"
         class="text-truncate d-block"
-        data-bs-toggle="tooltip" data-bs-html="true"
-        :title="opplan.remark || opplan.operationplan__remark"
+        data-bs-html="true"
+        v-tooltip="opplan.remark || opplan.operationplan__remark"
       >{{ opplan.remark || opplan.operationplan__remark }}</span
       >
       <input
         class="form-control form-control-sm"
-        data-bs-toggle="tooltip" data-bs-html="true"
-        :title="ttt('Remark')"
+        data-bs-html="true"
+        v-tooltip="ttt('Remark')"
         :class="store.isChanged(opplan.reference, 'remark') ? 'ng-dirty' : ''"
         v-if="
             editable &&
@@ -270,8 +268,8 @@
       />
       <input
         class="form-control form-control-sm"
-        data-bs-toggle="tooltip" data-bs-html="true"
-        :title="ttt('Remark')"
+        data-bs-html="true"
+        v-tooltip="ttt('Remark')"
         :class="store.isChanged(opplan.reference, 'operationplan__remark') ? 'ng-dirty' : ''"
         v-if="
             editable &&
@@ -296,9 +294,8 @@
       </span>
       <i
         class="fa fa-truck"
-        data-bs-toggle="tooltip"
         data-bs-html="true"
-        :title="ttt('Distribution Order')"
+        v-tooltip="ttt('Distribution Order')"
       ></i
       >&nbsp;
       <strong>{{ opplan.operationplan__reference || opplan.reference }}</strong
@@ -340,9 +337,8 @@
           type="button"
           class="btn btn-sm"
           :class="[getStatus(opplan) === s ? 'active' : '', store.isChanged(opplan.reference, 'status') && s === opplan.status ? 'btn-danger' : 'btn-primary']"
-          data-bs-toggle="tooltip"
           data-bs-html="true"
-          :title="ttt(s)"
+          v-tooltip="ttt(s)"
           :disabled="actions.hasOwnProperty('erp_incr_export') || !editable"
           @click="setStatus(opplan, s)"
         >
@@ -361,9 +357,8 @@
           type="button"
           class="btn btn-sm"
           :class="[getStatus(opplan) === s ? 'active' : '', store.isChanged(opplan.reference, 'status') && s === opplan.operationplan__status ? 'btn-danger' : ' btn-primary']"
-          data-bs-toggle="tooltip"
           data-bs-html="true"
-          :title="ttt(s)"
+          v-tooltip="ttt(s)"
           :disabled="actions.hasOwnProperty('erp_incr_export') || !editable"
           @click="setStatus(opplan, s)"
         >
@@ -374,8 +369,8 @@
     <p class="d-flex align-items-baseline">
       <span class="text-truncate"
             style="min-width:0"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="opplan.item__name || opplan.item">
+            data-bs-html="true"
+            v-tooltip="opplan.item__name || opplan.item">
         {{ opplan.item__name || opplan.item }}
       </span><a
         class="flex-shrink-0 ps-1"
@@ -394,8 +389,8 @@
       v-if="(opplan.item__description || opplan.operationplan__item__description) && editable && isSelected(opplan.reference)"
     >
       <span class="text-truncate d-block"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="opplan.item__description || opplan.operationplan__item__description">
+            data-bs-html="true"
+            v-tooltip="opplan.item__description || opplan.operationplan__item__description">
         {{ opplan.item__description || opplan.operationplan__item__description }}
       </span>&nbsp;
     </p>
@@ -444,15 +439,15 @@
       <div class="row gx-2">
         <div class="col">
           <span v-if="!editable || !isSelected(opplan.reference)"
-                data-bs-toggle="tooltip" data-bs-html="true"
-                :title="ttt('Quantity')"
+                data-bs-html="true"
+                v-tooltip="ttt('Quantity')"
             >{{ numberFormat(opplan.operationplan__quantity || opplan.quantity)
             }}</span
           >
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('Quantity')"
+            data-bs-html="true"
+            v-tooltip="ttt('Quantity')"
             :class="store.isChanged(opplan.reference, 'quantity') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -468,8 +463,8 @@
           />
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('Quantity')"
+            data-bs-html="true"
+            v-tooltip="ttt('Quantity')"
             :class="store.isChanged(opplan.reference, 'operationplan__quantity') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -503,14 +498,14 @@
       <div class="row gx-2">
         <div class="col">
           <span v-if="!editable || !isSelected(opplan.reference)"
-                data-bs-toggle="tooltip" data-bs-html="true"
-                :title="ttt('Start date')">
+                data-bs-html="true"
+                v-tooltip="ttt('Start date')">
             {{ dateFormat(opplan.operationplan__startdate || opplan.startdate) }}
           </span>
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('Start date')"
+            data-bs-html="true"
+            v-tooltip="ttt('Start date')"
             :class="store.isChanged(opplan.reference, 'startdate') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -524,8 +519,8 @@
           />
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('Start date')"
+            data-bs-html="true"
+            v-tooltip="ttt('Start date')"
             :class="store.isChanged(opplan.reference, 'operationplan__startdate') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -547,14 +542,14 @@
         </div>
         <div class="col">
           <span v-if="!editable || !isSelected(opplan.reference)"
-                data-bs-toggle="tooltip" data-bs-html="true"
-                :title="ttt('End date')">
+                data-bs-html="true"
+                v-tooltip="ttt('End date')">
             {{ dateTimeFormat(opplan.operationplan__enddate || opplan.enddate) }}
           </span>
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('End date')"
+            data-bs-html="true"
+            v-tooltip="ttt('End date')"
             :class="store.isChanged(opplan.reference, 'enddate') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -568,8 +563,8 @@
           />
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('End date')"
+            data-bs-html="true"
+            v-tooltip="ttt('End date')"
             :class="store.isChanged(opplan.reference, 'operationplan__enddate') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -589,14 +584,14 @@
     <p v-if="isSelected(opplan.reference) || (opplan.remark || opplan.operationplan__remark)">
       <span v-if="(!editable || !isSelected(opplan.reference)) && ((opplan.remark && opplan.remark.length > 0) || (opplan.operationplan__remark && opplan.operationplan__remark.length > 0))"
         class="text-truncate d-block"
-        data-bs-toggle="tooltip" data-bs-html="true"
-        :title="opplan.remark || opplan.operationplan__remark"
+        data-bs-html="true"
+        v-tooltip="opplan.remark || opplan.operationplan__remark"
       >{{ opplan.remark || opplan.operationplan__remark }}</span
       >
       <input
         class="form-control form-control-sm"
-        data-bs-toggle="tooltip" data-bs-html="true"
-        :title="ttt('Remark')"
+        data-bs-html="true"
+        v-tooltip="ttt('Remark')"
         :class="store.isChanged(opplan.reference, 'remark') ? 'ng-dirty' : ''"
         v-if="
             editable &&
@@ -609,8 +604,8 @@
       />
       <input
         class="form-control form-control-sm"
-        data-bs-toggle="tooltip" data-bs-html="true"
-        :title="ttt('Remark')"
+        data-bs-html="true"
+        v-tooltip="ttt('Remark')"
         :class="store.isChanged(opplan.reference, 'operationplan__remark') ? 'ng-dirty' : ''"
         v-if="
             editable &&
@@ -635,9 +630,8 @@
       </span>
       <i
         class="fa fa-wrench"
-        data-bs-toggle="tooltip"
         data-bs-html="true"
-        :title="ttt('Manufacturing Order')"
+        v-tooltip="ttt('Manufacturing Order')"
       ></i
       >&nbsp;
       <strong>{{ opplan.operationplan__reference || opplan.reference }}</strong
@@ -659,9 +653,8 @@
           type="button"
           class="btn btn-sm btn-primary"
           :class="[getStatus(opplan) === s ? 'active' : '', store.isChanged(opplan.reference, 'status') && s === opplan.status ? 'btn-danger' : '']"
-          data-bs-toggle="tooltip"
           data-bs-html="true"
-          :title="ttt(s)"
+          v-tooltip="ttt(s)"
           :disabled="actions.hasOwnProperty('erp_incr_export') || !editable"
           @click="setStatus(opplan, s)"
         >
@@ -675,8 +668,8 @@
     >
       <span class="text-truncate"
             style="min-width:0"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="opplan.item__name || opplan.operationplan__item__name || opplan.item">
+            data-bs-html="true"
+            v-tooltip="opplan.item__name || opplan.operationplan__item__name || opplan.item">
         {{ opplan.item__name || opplan.operationplan__item__name || opplan.item }}
       </span><a
         class="flex-shrink-0 ps-1"
@@ -690,16 +683,16 @@
       v-if="(opplan.item__description || opplan.operationplan__item__description) && editable && isSelected(opplan.reference)"
     >
       <span class="text-truncate d-block"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="opplan.item__description || opplan.operationplan__item__description">
+            data-bs-html="true"
+            v-tooltip="opplan.item__description || opplan.operationplan__item__description">
         {{ opplan.item__description || opplan.operationplan__item__description }}
       </span>&nbsp;
     </p>
     <p class="d-flex align-items-baseline">
       <span class="text-truncate"
             style="min-width:0"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation">
+            data-bs-html="true"
+            v-tooltip="opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation">
         {{ opplan.operationplan__name || opplan.operationplan__operation__name ||
         opplan.operation }}
       </span><a
@@ -714,8 +707,8 @@
       v-if="(opplan.operation__description || opplan.operationplan__operation__description) && editable && isSelected(opplan.reference)"
     >
       <span class="text-truncate d-block"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="opplan.operation__description || opplan.operationplan__operation__description">
+            data-bs-html="true"
+            v-tooltip="opplan.operation__description || opplan.operationplan__operation__description">
         {{ opplan.operation__description ||
         opplan.operationplan__operation__description }}
       </span>&nbsp;
@@ -726,15 +719,15 @@
       <div class="row gx-2">
         <div class="col">
           <span v-if="!editable || !isSelected(opplan.reference)"
-                data-bs-toggle="tooltip" data-bs-html="true"
-                :title="ttt('Quantity')"
+                data-bs-html="true"
+                v-tooltip="ttt('Quantity')"
             >{{ numberFormat(opplan.operationplan__quantity || opplan.quantity)
             }}</span
           >
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('Quantity')"
+            data-bs-html="true"
+            v-tooltip="ttt('Quantity')"
             :class="store.isChanged(opplan.reference, 'operationplan__quantity') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -751,8 +744,8 @@
           />
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('Quantity')"
+            data-bs-html="true"
+            v-tooltip="ttt('Quantity')"
             :class="store.isChanged(opplan.reference, 'quantity') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -770,15 +763,15 @@
         </div>
         <div class="col">
           <span v-if="!editable || !isSelected(opplan.reference)"
-                data-bs-toggle="tooltip" data-bs-html="true"
-                :title="ttt('Completed quantity')"
+                data-bs-html="true"
+                v-tooltip="ttt('Completed quantity')"
             >{{ numberFormat( opplan.operationplan__quantity_completed ||
             opplan.quantity_completed || 0 ) }}</span
           >
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('Completed quantity')"
+            data-bs-html="true"
+            v-tooltip="ttt('Completed quantity')"
             :class="store.isChanged(opplan.reference, 'operationplan__quantity_completed') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -801,8 +794,8 @@
           />
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('Completed quantity')"
+            data-bs-html="true"
+            v-tooltip="ttt('Completed quantity')"
             :class="store.isChanged(opplan.reference, 'quantity_completed') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -825,14 +818,14 @@
       <div class="row gx-2">
         <div class="col">
           <span v-if="!editable || !isSelected(opplan.reference)"
-                data-bs-toggle="tooltip" data-bs-html="true"
-                :title="ttt('Start date')">
+                data-bs-html="true"
+                v-tooltip="ttt('Start date')">
             {{ dateFormat(opplan.operationplan__startdate || opplan.startdate) }}
           </span>
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('Start date')"
+            data-bs-html="true"
+            v-tooltip="ttt('Start date')"
             :class="store.isChanged(opplan.reference, 'startdate') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -846,8 +839,8 @@
           />
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('Start date')"
+            data-bs-html="true"
+            v-tooltip="ttt('Start date')"
             :class="store.isChanged(opplan.reference, 'operationplan__startdate') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -869,14 +862,14 @@
         </div>
         <div class="col">
           <span v-if="!editable || !isSelected(opplan.reference)"
-                data-bs-toggle="tooltip" data-bs-html="true"
-                :title="ttt('End date')">
+                data-bs-html="true"
+                v-tooltip="ttt('End date')">
             {{ dateFormat(opplan.operationplan__enddate || opplan.enddate) }}
           </span>
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('End date')"
+            data-bs-html="true"
+            v-tooltip="ttt('End date')"
             :class="store.isChanged(opplan.reference, 'enddate') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -890,8 +883,8 @@
           />
           <input
             class="form-control form-control-sm"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="ttt('End date')"
+            data-bs-html="true"
+            v-tooltip="ttt('End date')"
             :class="store.isChanged(opplan.reference, 'operationplan__enddate') ? 'ng-dirty' : ''"
             v-if="
                 editable &&
@@ -911,14 +904,14 @@
     <p v-if="isSelected(opplan.reference) || (opplan.remark || opplan.operationplan__remark)">
       <span v-if="(!editable || !isSelected(opplan.reference)) && ((opplan.remark && opplan.remark.length > 0) || (opplan.operationplan__remark && opplan.operationplan__remark.length > 0))"
         class="text-truncate d-block"
-        data-bs-toggle="tooltip" data-bs-html="true"
-        :title="opplan.remark || opplan.operationplan__remark"
+        data-bs-html="true"
+        v-tooltip="opplan.remark || opplan.operationplan__remark"
       >{{ opplan.remark || opplan.operationplan__remark }}</span
       >
       <input
         class="form-control form-control-sm"
-        data-bs-toggle="tooltip" data-bs-html="true"
-        :title="ttt('Remark')"
+        data-bs-html="true"
+        v-tooltip="ttt('Remark')"
         :class="store.isChanged(opplan.reference, 'remark') ? 'ng-dirty' : ''"
         v-if="
             editable &&
@@ -931,8 +924,8 @@
       />
       <input
         class="form-control form-control-sm"
-        data-bs-toggle="tooltip" data-bs-html="true"
-        :title="ttt('Remark')"
+        data-bs-html="true"
+        v-tooltip="ttt('Remark')"
         :class="store.isChanged(opplan.reference, 'operationplan__remark') ? 'ng-dirty' : ''"
         v-if="
             editable &&
@@ -957,15 +950,14 @@
       </span>
       <i
         class="fa fa-box"
-        data-bs-toggle="tooltip"
         data-bs-html="true"
-        :title="ttt('Stock')"
+        v-tooltip="ttt('Stock')"
       ></i
       >&nbsp;
       <strong class="text-truncate d-inline-block"
             style="min-width:0;max-width:calc(100% - 2em);vertical-align:baseline"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="(opplan.item__name || opplan.item) + ' @ ' + opplan.location">
+            data-bs-html="true"
+            v-tooltip="(opplan.item__name || opplan.item) + ' @ ' + opplan.location">
         {{ opplan.item__name || opplan.item }} @ {{ opplan.location }}
       </strong><a
         class="flex-shrink-0 ps-1"
@@ -979,12 +971,12 @@
       v-if="opplan.item__description || opplan.operationplan__item__description"
     >
       <span class="text-truncate d-block"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="opplan.item__description || opplan.operationplan__item__description">
+            data-bs-html="true"
+            v-tooltip="opplan.item__description || opplan.operationplan__item__description">
         {{ opplan.item__description || opplan.operationplan__item__description }}
       </span>&nbsp;
     </p>
-    <p><span data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('Quantity')">{{ numberFormat(opplan.operationplan__quantity || opplan.quantity) }}</span></p>
+    <p><span data-bs-html="true" v-tooltip="ttt('Quantity')">{{ numberFormat(opplan.operationplan__quantity || opplan.quantity) }}</span></p>
   </div>
   <div data-no-drag v-if="opplan.type === 'DLVR'">
     <p>
@@ -996,9 +988,8 @@
       </span>
       <i
         class="fa fa-truck"
-        data-bs-toggle="tooltip"
         data-bs-html="true"
-        :title="ttt('Delivery')"
+        v-tooltip="ttt('Delivery')"
       ></i
       >&nbsp;
       <strong>{{ opplan.demands[0][1] }}</strong>
@@ -1006,8 +997,8 @@
     <p v-if="opplan.item__name" class="d-flex align-items-baseline">
       <span class="text-truncate"
             style="min-width:0"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="opplan.item">
+            data-bs-html="true"
+            v-tooltip="opplan.item">
         {{ opplan.item }}
       </span><a
         class="flex-shrink-0 ps-1"
@@ -1021,8 +1012,8 @@
       v-if="opplan.item__description || opplan.operationplan__item__description"
     >
       <span class="text-truncate d-block"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            :title="opplan.item__description || opplan.operationplan__item__description">
+            data-bs-html="true"
+            v-tooltip="opplan.item__description || opplan.operationplan__item__description">
         {{ opplan.item__description || opplan.operationplan__item__description }}
       </span>&nbsp;
     </p>
@@ -1035,8 +1026,8 @@
         <i class="fa fa-caret-right"></i>
       </a>
     </p>
-    <p><span data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('End date')">{{ dateFormat(opplan.operationplan__enddate || opplan.enddate) }}</span></p>
-    <p><span data-bs-toggle="tooltip" data-bs-html="true" :title="ttt('Quantity')">{{ numberFormat(opplan.operationplan__quantity || opplan.quantity) }}</span></p>
+    <p><span data-bs-html="true" v-tooltip="ttt('End date')">{{ dateFormat(opplan.operationplan__enddate || opplan.enddate) }}</span></p>
+    <p><span data-bs-html="true" v-tooltip="ttt('Quantity')">{{ numberFormat(opplan.operationplan__quantity || opplan.quantity) }}</span></p>
   </div>
 </div>
 <!--{% endverbatim %}-->

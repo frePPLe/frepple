@@ -28,25 +28,25 @@ importers:
         version: 9.39.1
       '@intlify/unplugin-vue-i18n':
         specifier: ^11.0.7
-        version: 11.1.1(@vue/compiler-dom@3.5.21)(eslint@9.39.1(jiti@2.4.2))(rollup@4.62.0)(typescript@5.8.2)(vue-i18n@11.3.2(vue@3.5.21(typescript@5.8.2)))(vue@3.5.21(typescript@5.8.2))
+        version: 11.1.1(@vue/compiler-dom@3.5.21)(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(rollup@4.62.0)(supports-color@7.2.0)(typescript@5.8.2)(vue-i18n@11.3.2(vue@3.5.21(typescript@5.8.2)))(vue@3.5.21(typescript@5.8.2))
       bootstrap:
         specifier: ^5.3.8
         version: 5.3.8(@popperjs/core@2.11.8)
       easygettext:
         specifier: ^2.17.0
-        version: 2.17.0
+        version: 2.17.0(supports-color@7.2.0)
       eslint:
         specifier: ^9.39.1
-        version: 9.39.1(jiti@2.4.2)
+        version: 9.39.1(jiti@2.4.2)(supports-color@7.2.0)
       eslint-config-prettier:
         specifier: ^9.1.2
-        version: 9.1.2(eslint@9.39.1(jiti@2.4.2))
+        version: 9.1.2(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))
       eslint-plugin-prettier:
         specifier: ^5.5.4
-        version: 5.5.4(eslint-config-prettier@9.1.2(eslint@9.39.1(jiti@2.4.2)))(eslint@9.39.1(jiti@2.4.2))(prettier@3.6.2)
+        version: 5.5.4(eslint-config-prettier@9.1.2(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0)))(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(prettier@3.6.2)
       eslint-plugin-vue:
         specifier: ~10.0.1
-        version: 10.0.1(eslint@9.39.1(jiti@2.4.2))(vue-eslint-parser@10.0.0(eslint@9.39.1(jiti@2.4.2)))
+        version: 10.0.1(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(vue-eslint-parser@10.0.0(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(supports-color@7.2.0))
       gettext-extractor:
         specifier: ^4.0.6
         version: 4.0.6
@@ -79,7 +79,7 @@ importers:
         version: 3.3.0
       grunt-contrib-watch:
         specifier: ^1.1.0
-        version: 1.1.0
+        version: 1.1.0(supports-color@7.2.0)
       grunt-sass:
         specifier: ^3.1.0
         version: 3.1.0(grunt@1.6.1)
@@ -91,7 +91,7 @@ importers:
         version: 9.1.7
       lint-staged:
         specifier: ^15.5.2
-        version: 15.5.2
+        version: 15.5.2(supports-color@7.2.0)
       po2json:
         specifier: ^0.4.5
         version: 0.4.5
@@ -106,10 +106,10 @@ importers:
         version: 6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1)
       vite-plugin-vue-devtools:
         specifier: ^7.7.7
-        version: 7.7.7(rollup@4.62.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))(vue@3.5.21(typescript@5.8.2))
+        version: 7.7.7(rollup@4.62.0)(supports-color@7.2.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))(vue@3.5.21(typescript@5.8.2))
       vue-eslint-parser:
         specifier: ~10.0.0
-        version: 10.0.0(eslint@9.39.1(jiti@2.4.2))
+        version: 10.0.0(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(supports-color@7.2.0)
       vue-i18n:
         specifier: ^11.0.1
         version: 11.3.2(vue@3.5.21(typescript@5.8.2))
@@ -121,7 +121,7 @@ importers:
     dependencies:
       axios:
         specifier: ^1.19.0
-        version: 1.19.0
+        version: 1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.2.3
@@ -131,7 +131,7 @@ importers:
         version: 6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1)
       vite-plugin-vue-devtools:
         specifier: ^7.7.2
-        version: 7.7.7(rollup@4.62.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))(vue@3.5.21(typescript@5.8.2))
+        version: 7.7.7(rollup@4.62.0)(supports-color@7.2.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))(vue@3.5.21(typescript@5.8.2))
       vue:
         specifier: ^3.5.13
         version: 3.5.21(typescript@5.8.2)
@@ -156,19 +156,19 @@ importers:
         version: 9.23.0
       '@intlify/unplugin-vue-i18n':
         specifier: ^11.1.0
-        version: 11.1.1(@vue/compiler-dom@3.5.21)(eslint@9.23.0(jiti@2.4.2))(rollup@4.62.0)(typescript@5.8.2)(vue-i18n@11.3.2(vue@3.5.21(typescript@5.8.2)))(vue@3.5.21(typescript@5.8.2))
+        version: 11.1.1(@vue/compiler-dom@3.5.21)(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))(rollup@4.62.0)(supports-color@7.2.0)(typescript@5.8.2)(vue-i18n@11.3.2(vue@3.5.21(typescript@5.8.2)))(vue@3.5.21(typescript@5.8.2))
       '@vitejs/plugin-vue':
         specifier: ^5.2.3
         version: 5.2.4(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))(vue@3.5.21(typescript@5.8.2))
       '@vue/eslint-config-prettier':
         specifier: ^10.2.0
-        version: 10.2.0(eslint@9.23.0(jiti@2.4.2))(prettier@3.5.3)
+        version: 10.2.0(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))(prettier@3.5.3)
       eslint:
         specifier: ^9.22.0
-        version: 9.23.0(jiti@2.4.2)
+        version: 9.23.0(jiti@2.4.2)(supports-color@7.2.0)
       eslint-plugin-vue:
         specifier: ~10.0.0
-        version: 10.0.1(eslint@9.23.0(jiti@2.4.2))(vue-eslint-parser@10.0.0(eslint@9.23.0(jiti@2.4.2)))
+        version: 10.0.1(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))(vue-eslint-parser@10.0.0(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))(supports-color@7.2.0))
       globals:
         specifier: ^16.0.0
         version: 16.3.0
@@ -186,7 +186,7 @@ importers:
         version: 6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1)
       vite-plugin-vue-devtools:
         specifier: ^7.7.2
-        version: 7.7.7(rollup@4.62.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))(vue@3.5.21(typescript@5.8.2))
+        version: 7.7.7(rollup@4.62.0)(supports-color@7.2.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))(vue@3.5.21(typescript@5.8.2))
       vue-i18n-extract:
         specifier: ^2.0.7
         version: 2.0.7
@@ -214,19 +214,19 @@ importers:
         version: 9.39.1
       '@intlify/unplugin-vue-i18n':
         specifier: ^11.1.0
-        version: 11.1.1(@vue/compiler-dom@3.5.21)(eslint@9.39.1(jiti@2.4.2))(rollup@4.62.0)(typescript@5.8.2)(vue-i18n@11.3.2(vue@3.5.21(typescript@5.8.2)))(vue@3.5.21(typescript@5.8.2))
+        version: 11.1.1(@vue/compiler-dom@3.5.21)(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(rollup@4.62.0)(supports-color@7.2.0)(typescript@5.8.2)(vue-i18n@11.3.2(vue@3.5.21(typescript@5.8.2)))(vue@3.5.21(typescript@5.8.2))
       '@vitejs/plugin-vue':
         specifier: ^5.2.3
         version: 5.2.4(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))(vue@3.5.21(typescript@5.8.2))
       '@vue/eslint-config-prettier':
         specifier: ^10.2.0
-        version: 10.2.0(eslint@9.39.1(jiti@2.4.2))(prettier@3.5.3)
+        version: 10.2.0(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(prettier@3.5.3)
       eslint:
         specifier: ^9.22.0
-        version: 9.39.1(jiti@2.4.2)
+        version: 9.39.1(jiti@2.4.2)(supports-color@7.2.0)
       eslint-plugin-vue:
         specifier: ~10.0.0
-        version: 10.0.1(eslint@9.39.1(jiti@2.4.2))(vue-eslint-parser@10.0.0(eslint@9.39.1(jiti@2.4.2)))
+        version: 10.0.1(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(vue-eslint-parser@10.0.0(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(supports-color@7.2.0))
       globals:
         specifier: ^16.0.0
         version: 16.5.0
@@ -244,7 +244,7 @@ importers:
         version: 6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1)
       vite-plugin-vue-devtools:
         specifier: ^7.7.2
-        version: 7.7.7(rollup@4.62.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))(vue@3.5.21(typescript@5.8.2))
+        version: 7.7.7(rollup@4.62.0)(supports-color@7.2.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))(vue@3.5.21(typescript@5.8.2))
 
 packages:
 
@@ -885,66 +885,79 @@ packages:
     resolution: {integrity: sha512-T1dMEQhXA/jkJ/jyMIw9IovK8bSUq7A8kLIlvZTb/6YIVsp2zLavr4F3oyllHWo7eIVJRyE5n3tUjQJEbE1IuQ==}
     cpu: [arm]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-arm-musleabihf@4.62.0':
     resolution: {integrity: sha512-2as0LgT7qQpyceQq6VUJYnumUMUrgGQCWIiDIN9DE0/tglsk6o66uCB4f3djRawAltvfCNLyZZrsqbPA6inCsA==}
     cpu: [arm]
     os: [linux]
+    libc: [musl]
 
   '@rollup/rollup-linux-arm64-gnu@4.62.0':
     resolution: {integrity: sha512-bVURMg+6eNN9C/yc0aVjooZcwTTtYF4YW3xta5pP0//r3o1V8gXEHXWCndj47w/HhwsFroZrFhR+6uQP5T0n0g==}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-arm64-musl@4.62.0':
     resolution: {integrity: sha512-Ful8pM/2yYI83PViWdFdpZhdI8HJ5qsXANe5atypbHDf+KIBBDsZsbyy8hbXnULVvW9NsTh5DHwbcBftyLTfiw==}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@rollup/rollup-linux-loong64-gnu@4.62.0':
     resolution: {integrity: sha512-9Gp/DgrkzfUBmNPVTyPTvay+4xEP7M/clXpj3efXBcm6uTIVIgDg4rqUpqKXvLEuFRVuEpSAOkhgNeecvaZ4Cg==}
     cpu: [loong64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-loong64-musl@4.62.0':
     resolution: {integrity: sha512-m9tsJz54LUXkSYM8+8PG81B9IKK5r+2T0clMq4QrS16xFosufU7firBDAZEsDheDs7wTlP7h3++S7lMsU955HA==}
     cpu: [loong64]
     os: [linux]
+    libc: [musl]
 
   '@rollup/rollup-linux-ppc64-gnu@4.62.0':
     resolution: {integrity: sha512-3UvJ5PNVU16aJf6M3tFI24pWzAl2/ynfbyRN3ICyQajK1lSkrnVYNnLz3v04J32qKa0FczJc22zeToc0lr2A3w==}
     cpu: [ppc64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-ppc64-musl@4.62.0':
     resolution: {integrity: sha512-vRWUAbYLGHBZS6Q8Msb2sfnf1fvJf+47t8l/TwOerM2qArzy+IeNMTHrYLHXh95h8MoatPHI5hhSZNs+mGXKPg==}
     cpu: [ppc64]
     os: [linux]
+    libc: [musl]
 
   '@rollup/rollup-linux-riscv64-gnu@4.62.0':
     resolution: {integrity: sha512-c00T5SYENHAt86cfW47URaP3Us5vLC/4QO7GYud1G5VNRffCwwCuBspwqYrriuJB+5m0WFzClCn9wed0FBjKvg==}
     cpu: [riscv64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-riscv64-musl@4.62.0':
     resolution: {integrity: sha512-krrCDilhXOwFkSkO3Wm9I/f9H0L92XHHwy2fwxjukxIbh0dem8gZqOW5Y8BsHrpJv5qwlRBV+Wl4ZFyRWhUpwg==}
     cpu: [riscv64]
     os: [linux]
+    libc: [musl]
 
   '@rollup/rollup-linux-s390x-gnu@4.62.0':
     resolution: {integrity: sha512-7pfYFSTc4/rUC/FtAI0Qp6QthDBCIi6/AuP1xYqFk5vanI6KnL5dWKP60OM/05LOsbwTmIcvr6eXC4CJuJ75IA==}
     cpu: [s390x]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-x64-gnu@4.62.0':
     resolution: {integrity: sha512-7SDIalKeIpG0Ifogbbdn58HmSotYMlf23K3dCJEmiVd9Fg36Vmni82iPQec27N3wY4Bvbxftkxz6vSx9OcouTg==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-x64-musl@4.62.0':
     resolution: {integrity: sha512-eRZevouTH2i1HeAVLqJuLnt256krQkGY0TN6WsTmsIhuzbh457HuWDMakKwmi0Cjadux983CoSr8Lim2QhUIFw==}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@rollup/rollup-openbsd-x64@4.62.0':
     resolution: {integrity: sha512-3oVS7FLGa4U1qcvao9ylGxrjXZyUQqR8UwxEcnUEyPX53O/C/mKDZegNXTdHCP+h3e6ta/f1EN38Yif1mmZHYg==}
@@ -1813,6 +1826,7 @@ packages:
   eslint@9.23.0:
     resolution: {integrity: sha512-jV7AbNoFPAY1EkFYpLq5bslU9NLNO8xnEeQXwErNibVryjk67wHVmddTBilc5srIttJDBrB0eMHKZBFbSIABCw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -1823,6 +1837,7 @@ packages:
   eslint@9.39.1:
     resolution: {integrity: sha512-BhHmn2yNOFA9H9JmmIVKJmd288g9hrVRDkdoIgRCRuSySRUHH7r/DI6aAXW9T1WwUuY3DFgrcaqB+deURBLR5g==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -2091,7 +2106,7 @@ packages:
   git-raw-commits@4.0.0:
     resolution: {integrity: sha512-ICsMM1Wk8xSGMowkOmPrzo2Fgmfo4bMHLNX6ytHjajRJUqvHOw/TFapQ+QG75c3X/tTDDhOSRPGC52dDbNM8FQ==}
     engines: {node: '>=16'}
-    deprecated: This package is no longer maintained. For the JavaScript API, please use @conventional-changelog/git-client instead.
+    deprecated: Deprecated and no longer maintained. Use @conventional-changelog/git-client instead.
     hasBin: true
 
   glob-parent@5.1.2:
@@ -2337,8 +2352,8 @@ packages:
     engines: {node: '>=0.10.0'}
     hasBin: true
 
-  immutable@4.3.7:
-    resolution: {integrity: sha512-1hqclzwYwjRDFLjcFxOM5AYkkG0rpFPpr1RLPMEuGczoS7YA8gLhy8SWXYRAA/XwfEHpfo3cw5JGioS32fnMRw==}
+  immutable@4.3.9:
+    resolution: {integrity: sha512-ObHy4YN7ycwZOUCLI1/6svfyAFu7vL8RhAvVu/bh/RZW9EPlOyDaQ9jDQWCtdqzaXUjgXZCW1migtHE7YI7UGQ==}
 
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
@@ -3643,6 +3658,7 @@ packages:
     engines: {node: '>=v14.21.3'}
     peerDependencies:
       vite: ^3.1.0 || ^4.0.0-0 || ^5.0.0-0 || ^6.0.0-0 || ^7.0.0-0
+      vue: '*'
 
   vite-plugin-vue-inspector@5.3.2:
     resolution: {integrity: sha512-YvEKooQcSiBTAs0DoYLfefNja9bLgkFM7NI2b07bE2SruuvX0MEa9cMaxjKVMkeCp5Nz9FRIdcN1rOdFVBeL6Q==}
@@ -3828,20 +3844,20 @@ snapshots:
 
   '@babel/compat-data@7.28.4': {}
 
-  '@babel/core@7.28.4':
+  '@babel/core@7.28.4(supports-color@7.2.0)':
     dependencies:
       '@babel/code-frame': 7.27.1
       '@babel/generator': 7.28.3
       '@babel/helper-compilation-targets': 7.27.2
-      '@babel/helper-module-transforms': 7.28.3(@babel/core@7.28.4)
+      '@babel/helper-module-transforms': 7.28.3(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)
       '@babel/helpers': 7.28.4
       '@babel/parser': 7.28.4
       '@babel/template': 7.27.2
-      '@babel/traverse': 7.28.4
+      '@babel/traverse': 7.28.4(supports-color@7.2.0)
       '@babel/types': 7.28.4
       '@jridgewell/remapping': 2.3.5
       convert-source-map: 2.0.0
-      debug: 4.4.0
+      debug: 4.4.0(supports-color@7.2.0)
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -3868,41 +3884,41 @@ snapshots:
       lru-cache: 5.1.1
       semver: 6.3.1
 
-  '@babel/helper-create-class-features-plugin@7.28.3(@babel/core@7.28.4)':
+  '@babel/helper-create-class-features-plugin@7.28.3(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
-      '@babel/core': 7.28.4
+      '@babel/core': 7.28.4(supports-color@7.2.0)
       '@babel/helper-annotate-as-pure': 7.27.3
-      '@babel/helper-member-expression-to-functions': 7.27.1
+      '@babel/helper-member-expression-to-functions': 7.27.1(supports-color@7.2.0)
       '@babel/helper-optimise-call-expression': 7.27.1
-      '@babel/helper-replace-supers': 7.27.1(@babel/core@7.28.4)
-      '@babel/helper-skip-transparent-expression-wrappers': 7.27.1
-      '@babel/traverse': 7.28.4
+      '@babel/helper-replace-supers': 7.27.1(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)
+      '@babel/helper-skip-transparent-expression-wrappers': 7.27.1(supports-color@7.2.0)
+      '@babel/traverse': 7.28.4(supports-color@7.2.0)
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-globals@7.28.0': {}
 
-  '@babel/helper-member-expression-to-functions@7.27.1':
+  '@babel/helper-member-expression-to-functions@7.27.1(supports-color@7.2.0)':
     dependencies:
-      '@babel/traverse': 7.28.4
+      '@babel/traverse': 7.28.4(supports-color@7.2.0)
       '@babel/types': 7.28.4
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/helper-module-imports@7.27.1':
+  '@babel/helper-module-imports@7.27.1(supports-color@7.2.0)':
     dependencies:
-      '@babel/traverse': 7.28.4
+      '@babel/traverse': 7.28.4(supports-color@7.2.0)
       '@babel/types': 7.28.4
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/helper-module-transforms@7.28.3(@babel/core@7.28.4)':
+  '@babel/helper-module-transforms@7.28.3(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
-      '@babel/core': 7.28.4
-      '@babel/helper-module-imports': 7.27.1
+      '@babel/core': 7.28.4(supports-color@7.2.0)
+      '@babel/helper-module-imports': 7.27.1(supports-color@7.2.0)
       '@babel/helper-validator-identifier': 7.27.1
-      '@babel/traverse': 7.28.4
+      '@babel/traverse': 7.28.4(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -3912,18 +3928,18 @@ snapshots:
 
   '@babel/helper-plugin-utils@7.27.1': {}
 
-  '@babel/helper-replace-supers@7.27.1(@babel/core@7.28.4)':
+  '@babel/helper-replace-supers@7.27.1(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
-      '@babel/core': 7.28.4
-      '@babel/helper-member-expression-to-functions': 7.27.1
+      '@babel/core': 7.28.4(supports-color@7.2.0)
+      '@babel/helper-member-expression-to-functions': 7.27.1(supports-color@7.2.0)
       '@babel/helper-optimise-call-expression': 7.27.1
-      '@babel/traverse': 7.28.4
+      '@babel/traverse': 7.28.4(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/helper-skip-transparent-expression-wrappers@7.27.1':
+  '@babel/helper-skip-transparent-expression-wrappers@7.27.1(supports-color@7.2.0)':
     dependencies:
-      '@babel/traverse': 7.28.4
+      '@babel/traverse': 7.28.4(supports-color@7.2.0)
       '@babel/types': 7.28.4
     transitivePeerDependencies:
       - supports-color
@@ -3951,48 +3967,48 @@ snapshots:
     dependencies:
       '@babel/types': 7.28.4
 
-  '@babel/plugin-proposal-decorators@7.28.0(@babel/core@7.28.4)':
+  '@babel/plugin-proposal-decorators@7.28.0(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
-      '@babel/core': 7.28.4
-      '@babel/helper-create-class-features-plugin': 7.28.3(@babel/core@7.28.4)
+      '@babel/core': 7.28.4(supports-color@7.2.0)
+      '@babel/helper-create-class-features-plugin': 7.28.3(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/plugin-syntax-decorators': 7.27.1(@babel/core@7.28.4)
+      '@babel/plugin-syntax-decorators': 7.27.1(@babel/core@7.28.4(supports-color@7.2.0))
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/plugin-syntax-decorators@7.27.1(@babel/core@7.28.4)':
+  '@babel/plugin-syntax-decorators@7.27.1(@babel/core@7.28.4(supports-color@7.2.0))':
     dependencies:
-      '@babel/core': 7.28.4
+      '@babel/core': 7.28.4(supports-color@7.2.0)
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-syntax-import-attributes@7.27.1(@babel/core@7.28.4)':
+  '@babel/plugin-syntax-import-attributes@7.27.1(@babel/core@7.28.4(supports-color@7.2.0))':
     dependencies:
-      '@babel/core': 7.28.4
+      '@babel/core': 7.28.4(supports-color@7.2.0)
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-syntax-import-meta@7.10.4(@babel/core@7.28.4)':
+  '@babel/plugin-syntax-import-meta@7.10.4(@babel/core@7.28.4(supports-color@7.2.0))':
     dependencies:
-      '@babel/core': 7.28.4
+      '@babel/core': 7.28.4(supports-color@7.2.0)
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-syntax-jsx@7.27.1(@babel/core@7.28.4)':
+  '@babel/plugin-syntax-jsx@7.27.1(@babel/core@7.28.4(supports-color@7.2.0))':
     dependencies:
-      '@babel/core': 7.28.4
+      '@babel/core': 7.28.4(supports-color@7.2.0)
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-syntax-typescript@7.27.1(@babel/core@7.28.4)':
+  '@babel/plugin-syntax-typescript@7.27.1(@babel/core@7.28.4(supports-color@7.2.0))':
     dependencies:
-      '@babel/core': 7.28.4
+      '@babel/core': 7.28.4(supports-color@7.2.0)
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-transform-typescript@7.28.0(@babel/core@7.28.4)':
+  '@babel/plugin-transform-typescript@7.28.0(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
-      '@babel/core': 7.28.4
+      '@babel/core': 7.28.4(supports-color@7.2.0)
       '@babel/helper-annotate-as-pure': 7.27.3
-      '@babel/helper-create-class-features-plugin': 7.28.3(@babel/core@7.28.4)
+      '@babel/helper-create-class-features-plugin': 7.28.3(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/helper-skip-transparent-expression-wrappers': 7.27.1
-      '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.28.4)
+      '@babel/helper-skip-transparent-expression-wrappers': 7.27.1(supports-color@7.2.0)
+      '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.28.4(supports-color@7.2.0))
     transitivePeerDependencies:
       - supports-color
 
@@ -4002,7 +4018,7 @@ snapshots:
       '@babel/parser': 7.28.4
       '@babel/types': 7.28.4
 
-  '@babel/traverse@7.28.4':
+  '@babel/traverse@7.28.4(supports-color@7.2.0)':
     dependencies:
       '@babel/code-frame': 7.27.1
       '@babel/generator': 7.28.3
@@ -4010,7 +4026,7 @@ snapshots:
       '@babel/parser': 7.28.4
       '@babel/template': 7.27.2
       '@babel/types': 7.28.4
-      debug: 4.4.0
+      debug: 4.4.0(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -4212,35 +4228,35 @@ snapshots:
   '@esbuild/win32-x64@0.25.12':
     optional: true
 
-  '@eslint-community/eslint-utils@4.5.1(eslint@9.23.0(jiti@2.4.2))':
+  '@eslint-community/eslint-utils@4.5.1(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))':
     dependencies:
-      eslint: 9.23.0(jiti@2.4.2)
+      eslint: 9.23.0(jiti@2.4.2)(supports-color@7.2.0)
       eslint-visitor-keys: 3.4.3
 
-  '@eslint-community/eslint-utils@4.9.0(eslint@9.23.0(jiti@2.4.2))':
+  '@eslint-community/eslint-utils@4.9.0(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))':
     dependencies:
-      eslint: 9.23.0(jiti@2.4.2)
+      eslint: 9.23.0(jiti@2.4.2)(supports-color@7.2.0)
       eslint-visitor-keys: 3.4.3
 
-  '@eslint-community/eslint-utils@4.9.0(eslint@9.39.1(jiti@2.4.2))':
+  '@eslint-community/eslint-utils@4.9.0(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))':
     dependencies:
-      eslint: 9.39.1(jiti@2.4.2)
+      eslint: 9.39.1(jiti@2.4.2)(supports-color@7.2.0)
       eslint-visitor-keys: 3.4.3
 
   '@eslint-community/regexpp@4.12.1': {}
 
-  '@eslint/config-array@0.19.2':
+  '@eslint/config-array@0.19.2(supports-color@7.2.0)':
     dependencies:
       '@eslint/object-schema': 2.1.6
-      debug: 4.4.0
+      debug: 4.4.0(supports-color@7.2.0)
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint/config-array@0.21.1':
+  '@eslint/config-array@0.21.1(supports-color@7.2.0)':
     dependencies:
       '@eslint/object-schema': 2.1.7
-      debug: 4.4.0
+      debug: 4.4.0(supports-color@7.2.0)
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -4263,10 +4279,10 @@ snapshots:
     dependencies:
       '@types/json-schema': 7.0.15
 
-  '@eslint/eslintrc@3.3.1':
+  '@eslint/eslintrc@3.3.1(supports-color@7.2.0)':
     dependencies:
       ajv: 6.12.6
-      debug: 4.4.0
+      debug: 4.4.0(supports-color@7.2.0)
       espree: 10.4.0
       globals: 14.0.0
       ignore: 5.3.2
@@ -4347,16 +4363,16 @@ snapshots:
 
   '@intlify/shared@11.3.2': {}
 
-  '@intlify/unplugin-vue-i18n@11.1.1(@vue/compiler-dom@3.5.21)(eslint@9.23.0(jiti@2.4.2))(rollup@4.62.0)(typescript@5.8.2)(vue-i18n@11.3.2(vue@3.5.21(typescript@5.8.2)))(vue@3.5.21(typescript@5.8.2))':
+  '@intlify/unplugin-vue-i18n@11.1.1(@vue/compiler-dom@3.5.21)(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))(rollup@4.62.0)(supports-color@7.2.0)(typescript@5.8.2)(vue-i18n@11.3.2(vue@3.5.21(typescript@5.8.2)))(vue@3.5.21(typescript@5.8.2))':
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.0(eslint@9.23.0(jiti@2.4.2))
+      '@eslint-community/eslint-utils': 4.9.0(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))
       '@intlify/bundle-utils': 11.1.1(vue-i18n@11.3.2(vue@3.5.21(typescript@5.8.2)))
       '@intlify/shared': 11.1.12
       '@intlify/vue-i18n-extensions': 8.0.0(@intlify/shared@11.1.12)(@vue/compiler-dom@3.5.21)(vue-i18n@11.3.2(vue@3.5.21(typescript@5.8.2)))(vue@3.5.21(typescript@5.8.2))
       '@rollup/pluginutils': 5.3.0(rollup@4.62.0)
       '@typescript-eslint/scope-manager': 8.42.0
-      '@typescript-eslint/typescript-estree': 8.58.2(typescript@5.8.2)
-      debug: 4.4.3
+      '@typescript-eslint/typescript-estree': 8.58.2(supports-color@7.2.0)(typescript@5.8.2)
+      debug: 4.4.3(supports-color@7.2.0)
       fast-glob: 3.3.3
       pathe: 2.0.3
       picocolors: 1.1.1
@@ -4371,16 +4387,16 @@ snapshots:
       - supports-color
       - typescript
 
-  '@intlify/unplugin-vue-i18n@11.1.1(@vue/compiler-dom@3.5.21)(eslint@9.39.1(jiti@2.4.2))(rollup@4.62.0)(typescript@5.8.2)(vue-i18n@11.3.2(vue@3.5.21(typescript@5.8.2)))(vue@3.5.21(typescript@5.8.2))':
+  '@intlify/unplugin-vue-i18n@11.1.1(@vue/compiler-dom@3.5.21)(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(rollup@4.62.0)(supports-color@7.2.0)(typescript@5.8.2)(vue-i18n@11.3.2(vue@3.5.21(typescript@5.8.2)))(vue@3.5.21(typescript@5.8.2))':
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.0(eslint@9.39.1(jiti@2.4.2))
+      '@eslint-community/eslint-utils': 4.9.0(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))
       '@intlify/bundle-utils': 11.1.1(vue-i18n@11.3.2(vue@3.5.21(typescript@5.8.2)))
       '@intlify/shared': 11.1.12
       '@intlify/vue-i18n-extensions': 8.0.0(@intlify/shared@11.1.12)(@vue/compiler-dom@3.5.21)(vue-i18n@11.3.2(vue@3.5.21(typescript@5.8.2)))(vue@3.5.21(typescript@5.8.2))
       '@rollup/pluginutils': 5.3.0(rollup@4.62.0)
       '@typescript-eslint/scope-manager': 8.42.0
-      '@typescript-eslint/typescript-estree': 8.58.2(typescript@5.8.2)
-      debug: 4.4.3
+      '@typescript-eslint/typescript-estree': 8.58.2(supports-color@7.2.0)(typescript@5.8.2)
+      debug: 4.4.3(supports-color@7.2.0)
       fast-glob: 3.3.3
       pathe: 2.0.3
       picocolors: 1.1.1
@@ -4559,11 +4575,11 @@ snapshots:
 
   '@types/parse5@5.0.3': {}
 
-  '@typescript-eslint/project-service@8.58.2(typescript@5.8.2)':
+  '@typescript-eslint/project-service@8.58.2(supports-color@7.2.0)(typescript@5.8.2)':
     dependencies:
       '@typescript-eslint/tsconfig-utils': 8.58.2(typescript@5.8.2)
       '@typescript-eslint/types': 8.58.2
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@7.2.0)
       typescript: 5.8.2
     transitivePeerDependencies:
       - supports-color
@@ -4581,13 +4597,13 @@ snapshots:
 
   '@typescript-eslint/types@8.58.2': {}
 
-  '@typescript-eslint/typescript-estree@8.58.2(typescript@5.8.2)':
+  '@typescript-eslint/typescript-estree@8.58.2(supports-color@7.2.0)(typescript@5.8.2)':
     dependencies:
-      '@typescript-eslint/project-service': 8.58.2(typescript@5.8.2)
+      '@typescript-eslint/project-service': 8.58.2(supports-color@7.2.0)(typescript@5.8.2)
       '@typescript-eslint/tsconfig-utils': 8.58.2(typescript@5.8.2)
       '@typescript-eslint/types': 8.58.2
       '@typescript-eslint/visitor-keys': 8.58.2
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@7.2.0)
       minimatch: 10.2.5
       semver: 7.7.4
       tinyglobby: 0.2.17
@@ -4613,27 +4629,27 @@ snapshots:
 
   '@vue/babel-helper-vue-transform-on@1.5.0': {}
 
-  '@vue/babel-plugin-jsx@1.5.0(@babel/core@7.28.4)':
+  '@vue/babel-plugin-jsx@1.5.0(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
-      '@babel/helper-module-imports': 7.27.1
+      '@babel/helper-module-imports': 7.27.1(supports-color@7.2.0)
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.4)
+      '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.4(supports-color@7.2.0))
       '@babel/template': 7.27.2
-      '@babel/traverse': 7.28.4
+      '@babel/traverse': 7.28.4(supports-color@7.2.0)
       '@babel/types': 7.28.4
       '@vue/babel-helper-vue-transform-on': 1.5.0
-      '@vue/babel-plugin-resolve-type': 1.5.0(@babel/core@7.28.4)
+      '@vue/babel-plugin-resolve-type': 1.5.0(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)
       '@vue/shared': 3.5.21
     optionalDependencies:
-      '@babel/core': 7.28.4
+      '@babel/core': 7.28.4(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
-  '@vue/babel-plugin-resolve-type@1.5.0(@babel/core@7.28.4)':
+  '@vue/babel-plugin-resolve-type@1.5.0(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@babel/core': 7.28.4
-      '@babel/helper-module-imports': 7.27.1
+      '@babel/core': 7.28.4(supports-color@7.2.0)
+      '@babel/helper-module-imports': 7.27.1(supports-color@7.2.0)
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/parser': 7.28.4
       '@vue/compiler-sfc': 3.5.21
@@ -4702,20 +4718,20 @@ snapshots:
     dependencies:
       rfdc: 1.4.1
 
-  '@vue/eslint-config-prettier@10.2.0(eslint@9.23.0(jiti@2.4.2))(prettier@3.5.3)':
+  '@vue/eslint-config-prettier@10.2.0(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))(prettier@3.5.3)':
     dependencies:
-      eslint: 9.23.0(jiti@2.4.2)
-      eslint-config-prettier: 10.1.8(eslint@9.23.0(jiti@2.4.2))
-      eslint-plugin-prettier: 5.5.4(eslint-config-prettier@10.1.8(eslint@9.23.0(jiti@2.4.2)))(eslint@9.23.0(jiti@2.4.2))(prettier@3.5.3)
+      eslint: 9.23.0(jiti@2.4.2)(supports-color@7.2.0)
+      eslint-config-prettier: 10.1.8(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))
+      eslint-plugin-prettier: 5.5.4(eslint-config-prettier@10.1.8(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0)))(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))(prettier@3.5.3)
       prettier: 3.5.3
     transitivePeerDependencies:
       - '@types/eslint'
 
-  '@vue/eslint-config-prettier@10.2.0(eslint@9.39.1(jiti@2.4.2))(prettier@3.5.3)':
+  '@vue/eslint-config-prettier@10.2.0(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(prettier@3.5.3)':
     dependencies:
-      eslint: 9.39.1(jiti@2.4.2)
-      eslint-config-prettier: 10.1.8(eslint@9.39.1(jiti@2.4.2))
-      eslint-plugin-prettier: 5.5.4(eslint-config-prettier@10.1.8(eslint@9.39.1(jiti@2.4.2)))(eslint@9.39.1(jiti@2.4.2))(prettier@3.5.3)
+      eslint: 9.39.1(jiti@2.4.2)(supports-color@7.2.0)
+      eslint-config-prettier: 10.1.8(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))
+      eslint-plugin-prettier: 5.5.4(eslint-config-prettier@10.1.8(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0)))(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(prettier@3.5.3)
       prettier: 3.5.3
     transitivePeerDependencies:
       - '@types/eslint'
@@ -4795,9 +4811,9 @@ snapshots:
 
   acorn@8.15.0: {}
 
-  agent-base@6.0.2:
+  agent-base@6.0.2(supports-color@7.2.0):
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -4878,11 +4894,11 @@ snapshots:
 
   asynckit@0.4.0: {}
 
-  axios@1.19.0:
+  axios@1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
-      follow-redirects: 1.16.0
+      follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
       form-data: 4.0.6
-      https-proxy-agent: 5.0.1
+      https-proxy-agent: 5.0.1(supports-color@7.2.0)
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
@@ -5221,17 +5237,23 @@ snapshots:
 
   dateformat@4.6.3: {}
 
-  debug@3.2.7:
+  debug@3.2.7(supports-color@7.2.0):
     dependencies:
       ms: 2.1.3
+    optionalDependencies:
+      supports-color: 7.2.0
 
-  debug@4.4.0:
+  debug@4.4.0(supports-color@7.2.0):
     dependencies:
       ms: 2.1.3
+    optionalDependencies:
+      supports-color: 7.2.0
 
-  debug@4.4.3:
+  debug@4.4.3(supports-color@7.2.0):
     dependencies:
       ms: 2.1.3
+    optionalDependencies:
+      supports-color: 7.2.0
 
   decamelize@1.2.0: {}
 
@@ -5313,9 +5335,9 @@ snapshots:
 
   eastasianwidth@0.2.0: {}
 
-  easygettext@2.17.0:
+  easygettext@2.17.0(supports-color@7.2.0):
     dependencies:
-      '@babel/core': 7.28.4
+      '@babel/core': 7.28.4(supports-color@7.2.0)
       acorn: 7.4.1
       acorn-stage3: 4.0.0(acorn@7.4.1)
       acorn-walk: 8.3.4
@@ -5431,65 +5453,65 @@ snapshots:
     optionalDependencies:
       source-map: 0.6.1
 
-  eslint-config-prettier@10.1.8(eslint@9.23.0(jiti@2.4.2)):
+  eslint-config-prettier@10.1.8(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0)):
     dependencies:
-      eslint: 9.23.0(jiti@2.4.2)
+      eslint: 9.23.0(jiti@2.4.2)(supports-color@7.2.0)
 
-  eslint-config-prettier@10.1.8(eslint@9.39.1(jiti@2.4.2)):
+  eslint-config-prettier@10.1.8(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0)):
     dependencies:
-      eslint: 9.39.1(jiti@2.4.2)
+      eslint: 9.39.1(jiti@2.4.2)(supports-color@7.2.0)
 
-  eslint-config-prettier@9.1.2(eslint@9.39.1(jiti@2.4.2)):
+  eslint-config-prettier@9.1.2(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0)):
     dependencies:
-      eslint: 9.39.1(jiti@2.4.2)
+      eslint: 9.39.1(jiti@2.4.2)(supports-color@7.2.0)
 
-  eslint-plugin-prettier@5.5.4(eslint-config-prettier@10.1.8(eslint@9.23.0(jiti@2.4.2)))(eslint@9.23.0(jiti@2.4.2))(prettier@3.5.3):
+  eslint-plugin-prettier@5.5.4(eslint-config-prettier@10.1.8(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0)))(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))(prettier@3.5.3):
     dependencies:
-      eslint: 9.23.0(jiti@2.4.2)
+      eslint: 9.23.0(jiti@2.4.2)(supports-color@7.2.0)
       prettier: 3.5.3
       prettier-linter-helpers: 1.0.0
       synckit: 0.11.11
     optionalDependencies:
-      eslint-config-prettier: 10.1.8(eslint@9.23.0(jiti@2.4.2))
+      eslint-config-prettier: 10.1.8(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))
 
-  eslint-plugin-prettier@5.5.4(eslint-config-prettier@10.1.8(eslint@9.39.1(jiti@2.4.2)))(eslint@9.39.1(jiti@2.4.2))(prettier@3.5.3):
+  eslint-plugin-prettier@5.5.4(eslint-config-prettier@10.1.8(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0)))(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(prettier@3.5.3):
     dependencies:
-      eslint: 9.39.1(jiti@2.4.2)
+      eslint: 9.39.1(jiti@2.4.2)(supports-color@7.2.0)
       prettier: 3.5.3
       prettier-linter-helpers: 1.0.0
       synckit: 0.11.11
     optionalDependencies:
-      eslint-config-prettier: 10.1.8(eslint@9.39.1(jiti@2.4.2))
+      eslint-config-prettier: 10.1.8(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))
 
-  eslint-plugin-prettier@5.5.4(eslint-config-prettier@9.1.2(eslint@9.39.1(jiti@2.4.2)))(eslint@9.39.1(jiti@2.4.2))(prettier@3.6.2):
+  eslint-plugin-prettier@5.5.4(eslint-config-prettier@9.1.2(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0)))(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(prettier@3.6.2):
     dependencies:
-      eslint: 9.39.1(jiti@2.4.2)
+      eslint: 9.39.1(jiti@2.4.2)(supports-color@7.2.0)
       prettier: 3.6.2
       prettier-linter-helpers: 1.0.0
       synckit: 0.11.11
     optionalDependencies:
-      eslint-config-prettier: 9.1.2(eslint@9.39.1(jiti@2.4.2))
+      eslint-config-prettier: 9.1.2(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))
 
-  eslint-plugin-vue@10.0.1(eslint@9.23.0(jiti@2.4.2))(vue-eslint-parser@10.0.0(eslint@9.23.0(jiti@2.4.2))):
+  eslint-plugin-vue@10.0.1(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))(vue-eslint-parser@10.0.0(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))(supports-color@7.2.0)):
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.0(eslint@9.23.0(jiti@2.4.2))
-      eslint: 9.23.0(jiti@2.4.2)
+      '@eslint-community/eslint-utils': 4.9.0(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))
+      eslint: 9.23.0(jiti@2.4.2)(supports-color@7.2.0)
       natural-compare: 1.4.0
       nth-check: 2.1.1
       postcss-selector-parser: 6.1.2
       semver: 7.7.1
-      vue-eslint-parser: 10.0.0(eslint@9.23.0(jiti@2.4.2))
+      vue-eslint-parser: 10.0.0(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))(supports-color@7.2.0)
       xml-name-validator: 4.0.0
 
-  eslint-plugin-vue@10.0.1(eslint@9.39.1(jiti@2.4.2))(vue-eslint-parser@10.0.0(eslint@9.39.1(jiti@2.4.2))):
+  eslint-plugin-vue@10.0.1(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(vue-eslint-parser@10.0.0(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(supports-color@7.2.0)):
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.0(eslint@9.39.1(jiti@2.4.2))
-      eslint: 9.39.1(jiti@2.4.2)
+      '@eslint-community/eslint-utils': 4.9.0(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))
+      eslint: 9.39.1(jiti@2.4.2)(supports-color@7.2.0)
       natural-compare: 1.4.0
       nth-check: 2.1.1
       postcss-selector-parser: 6.1.2
       semver: 7.7.1
-      vue-eslint-parser: 10.0.0(eslint@9.39.1(jiti@2.4.2))
+      vue-eslint-parser: 10.0.0(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(supports-color@7.2.0)
       xml-name-validator: 4.0.0
 
   eslint-scope@8.3.0:
@@ -5508,14 +5530,14 @@ snapshots:
 
   eslint-visitor-keys@5.0.1: {}
 
-  eslint@9.23.0(jiti@2.4.2):
+  eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0):
     dependencies:
-      '@eslint-community/eslint-utils': 4.5.1(eslint@9.23.0(jiti@2.4.2))
+      '@eslint-community/eslint-utils': 4.5.1(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))
       '@eslint-community/regexpp': 4.12.1
-      '@eslint/config-array': 0.19.2
+      '@eslint/config-array': 0.19.2(supports-color@7.2.0)
       '@eslint/config-helpers': 0.2.1
       '@eslint/core': 0.12.0
-      '@eslint/eslintrc': 3.3.1
+      '@eslint/eslintrc': 3.3.1(supports-color@7.2.0)
       '@eslint/js': 9.23.0
       '@eslint/plugin-kit': 0.2.8
       '@humanfs/node': 0.16.6
@@ -5526,7 +5548,7 @@ snapshots:
       ajv: 6.12.6
       chalk: 4.1.2
       cross-spawn: 7.0.6
-      debug: 4.4.0
+      debug: 4.4.0(supports-color@7.2.0)
       escape-string-regexp: 4.0.0
       eslint-scope: 8.3.0
       eslint-visitor-keys: 4.2.1
@@ -5550,14 +5572,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint@9.39.1(jiti@2.4.2):
+  eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0):
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.0(eslint@9.39.1(jiti@2.4.2))
+      '@eslint-community/eslint-utils': 4.9.0(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))
       '@eslint-community/regexpp': 4.12.1
-      '@eslint/config-array': 0.21.1
+      '@eslint/config-array': 0.21.1(supports-color@7.2.0)
       '@eslint/config-helpers': 0.4.2
       '@eslint/core': 0.17.0
-      '@eslint/eslintrc': 3.3.1
+      '@eslint/eslintrc': 3.3.1(supports-color@7.2.0)
       '@eslint/js': 9.39.1
       '@eslint/plugin-kit': 0.4.1
       '@humanfs/node': 0.16.6
@@ -5567,7 +5589,7 @@ snapshots:
       ajv: 6.12.6
       chalk: 4.1.2
       cross-spawn: 7.0.6
-      debug: 4.4.0
+      debug: 4.4.0(supports-color@7.2.0)
       escape-string-regexp: 4.0.0
       eslint-scope: 8.4.0
       eslint-visitor-keys: 4.2.1
@@ -5772,7 +5794,9 @@ snapshots:
       pirates: 3.0.2
       vlq: 0.2.3
 
-  follow-redirects@1.16.0: {}
+  follow-redirects@1.16.0(debug@4.4.3(supports-color@7.2.0)):
+    optionalDependencies:
+      debug: 4.4.3(supports-color@7.2.0)
 
   for-in@1.0.2: {}
 
@@ -5995,12 +6019,12 @@ snapshots:
       uglify-es: 3.3.9
       uri-path: 1.0.0
 
-  grunt-contrib-watch@1.1.0:
+  grunt-contrib-watch@1.1.0(supports-color@7.2.0):
     dependencies:
       async: 2.6.4
       gaze: 1.1.3
       lodash: 4.17.21
-      tiny-lr: 1.1.1
+      tiny-lr: 1.1.1(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -6156,10 +6180,10 @@ snapshots:
 
   http-parser-js@0.5.9: {}
 
-  https-proxy-agent@5.0.1:
+  https-proxy-agent@5.0.1(supports-color@7.2.0):
     dependencies:
-      agent-base: 6.0.2
-      debug: 4.4.3
+      agent-base: 6.0.2(supports-color@7.2.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -6180,7 +6204,7 @@ snapshots:
   image-size@0.5.5:
     optional: true
 
-  immutable@4.3.7: {}
+  immutable@4.3.9: {}
 
   import-fresh@3.3.1:
     dependencies:
@@ -6417,11 +6441,11 @@ snapshots:
 
   lines-and-columns@1.2.4: {}
 
-  lint-staged@15.5.2:
+  lint-staged@15.5.2(supports-color@7.2.0):
     dependencies:
       chalk: 5.4.1
       commander: 13.1.0
-      debug: 4.4.0
+      debug: 4.4.0(supports-color@7.2.0)
       execa: 8.0.1
       lilconfig: 3.1.3
       listr2: 8.2.5
@@ -7151,7 +7175,7 @@ snapshots:
   sass@1.77.6:
     dependencies:
       chokidar: 3.6.0
-      immutable: 4.3.7
+      immutable: 4.3.9
       source-map-js: 1.2.1
 
   sax@1.4.1:
@@ -7327,10 +7351,10 @@ snapshots:
 
   through@2.3.8: {}
 
-  tiny-lr@1.1.1:
+  tiny-lr@1.1.1(supports-color@7.2.0):
     dependencies:
       body: 5.1.0
-      debug: 3.2.7
+      debug: 3.2.7(supports-color@7.2.0)
       faye-websocket: 0.10.0
       livereload-js: 2.4.0
       object-assign: 4.1.1
@@ -7430,11 +7454,11 @@ snapshots:
     dependencies:
       vite: 6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1)
 
-  vite-plugin-inspect@0.8.9(rollup@4.62.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1)):
+  vite-plugin-inspect@0.8.9(rollup@4.62.0)(supports-color@7.2.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1)):
     dependencies:
       '@antfu/utils': 0.7.10
       '@rollup/pluginutils': 5.3.0(rollup@4.62.0)
-      debug: 4.4.0
+      debug: 4.4.0(supports-color@7.2.0)
       error-stack-parser-es: 0.1.5
       fs-extra: 11.3.1
       open: 10.2.0
@@ -7446,7 +7470,7 @@ snapshots:
       - rollup
       - supports-color
 
-  vite-plugin-vue-devtools@7.7.7(rollup@4.62.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))(vue@3.5.21(typescript@5.8.2)):
+  vite-plugin-vue-devtools@7.7.7(rollup@4.62.0)(supports-color@7.2.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))(vue@3.5.21(typescript@5.8.2)):
     dependencies:
       '@vue/devtools-core': 7.7.7(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))(vue@3.5.21(typescript@5.8.2))
       '@vue/devtools-kit': 7.7.7
@@ -7454,22 +7478,22 @@ snapshots:
       execa: 9.6.0
       sirv: 3.0.2
       vite: 6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1)
-      vite-plugin-inspect: 0.8.9(rollup@4.62.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))
-      vite-plugin-vue-inspector: 5.3.2(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))
+      vite-plugin-inspect: 0.8.9(rollup@4.62.0)(supports-color@7.2.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))
+      vite-plugin-vue-inspector: 5.3.2(supports-color@7.2.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1))
+      vue: 3.5.21(typescript@5.8.2)
     transitivePeerDependencies:
       - '@nuxt/kit'
       - rollup
       - supports-color
-      - vue
 
-  vite-plugin-vue-inspector@5.3.2(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1)):
+  vite-plugin-vue-inspector@5.3.2(supports-color@7.2.0)(vite@6.4.3(@types/node@22.13.17)(jiti@2.4.2)(less@4.2.2)(sass@1.77.6)(yaml@2.7.1)):
     dependencies:
-      '@babel/core': 7.28.4
-      '@babel/plugin-proposal-decorators': 7.28.0(@babel/core@7.28.4)
-      '@babel/plugin-syntax-import-attributes': 7.27.1(@babel/core@7.28.4)
-      '@babel/plugin-syntax-import-meta': 7.10.4(@babel/core@7.28.4)
-      '@babel/plugin-transform-typescript': 7.28.0(@babel/core@7.28.4)
-      '@vue/babel-plugin-jsx': 1.5.0(@babel/core@7.28.4)
+      '@babel/core': 7.28.4(supports-color@7.2.0)
+      '@babel/plugin-proposal-decorators': 7.28.0(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)
+      '@babel/plugin-syntax-import-attributes': 7.27.1(@babel/core@7.28.4(supports-color@7.2.0))
+      '@babel/plugin-syntax-import-meta': 7.10.4(@babel/core@7.28.4(supports-color@7.2.0))
+      '@babel/plugin-transform-typescript': 7.28.0(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)
+      '@vue/babel-plugin-jsx': 1.5.0(@babel/core@7.28.4(supports-color@7.2.0))(supports-color@7.2.0)
       '@vue/compiler-dom': 3.5.21
       kolorist: 1.8.0
       magic-string: 0.30.18
@@ -7498,10 +7522,10 @@ snapshots:
   void-elements@3.1.0:
     optional: true
 
-  vue-eslint-parser@10.0.0(eslint@9.23.0(jiti@2.4.2)):
+  vue-eslint-parser@10.0.0(eslint@9.23.0(jiti@2.4.2)(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
-      debug: 4.4.0
-      eslint: 9.23.0(jiti@2.4.2)
+      debug: 4.4.0(supports-color@7.2.0)
+      eslint: 9.23.0(jiti@2.4.2)(supports-color@7.2.0)
       eslint-scope: 8.4.0
       eslint-visitor-keys: 4.2.1
       espree: 10.4.0
@@ -7511,10 +7535,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vue-eslint-parser@10.0.0(eslint@9.39.1(jiti@2.4.2)):
+  vue-eslint-parser@10.0.0(eslint@9.39.1(jiti@2.4.2)(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
-      debug: 4.4.0
-      eslint: 9.39.1(jiti@2.4.2)
+      debug: 4.4.0(supports-color@7.2.0)
+      eslint: 9.39.1(jiti@2.4.2)(supports-color@7.2.0)
       eslint-scope: 8.4.0
       eslint-visitor-keys: 4.2.1
       espree: 10.4.0

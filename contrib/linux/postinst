@@ -30,6 +30,8 @@ a2enmod -q proxy
 a2enmod -q proxy_http
 a2enmod -q proxy_wstunnel
 a2enmod -q rewrite
+a2enmod -q headers
+a2enmod -q deflate
 
 # Wsgi file must be writeable to the group to allow reloading the app
 chgrp frepple /usr/share/frepple/venv/lib/python*/site-packages/freppledb/wsgi.py

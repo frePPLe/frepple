@@ -391,7 +391,7 @@ class checkBrokenSupplyPath(CheckTask):
                         inner join item parentitem on itemdistribution.item_id = parentitem.name
                         inner join item on item.lft between parentitem.lft and parentitem.rght
                             and item.lft = item.rght-1
-                        inner join cte on cte.item_id = itemdistribution.item_id
+                        inner join cte on cte.item_id = item.name
                             and cte.location_id = itemdistribution.location_id
                         where coalesce(itemdistribution.effective_end, %%s) >= %%s
                         and itemdistribution.priority is distinct from 0

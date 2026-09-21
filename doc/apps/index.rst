@@ -19,6 +19,7 @@ or `developed by yourself <../developer-guide/creating-an-extension-app.html>`_.
    executesql
    forecast
    mlforecast
+   mcp_server
    metrics
    odoo
    reportmanager

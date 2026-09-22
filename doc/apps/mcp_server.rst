@@ -16,25 +16,6 @@ Chat with your AI agent (like Claude, Gemini, ChatGPT...) to query and update th
 .. image:: _images/ai_chat.png
    :alt: AI chat session with Frepple
 
-Technical setup
-===============
-
-The app is registered as a standard Frepple application and can be enabled or disabled
-from the Admin/Apps menu.
-
-The MCP server currently includes the following functions:
-
-- ``searchDocumentation``: searches the Frepple documentation with a keyword.
-- ``getPurchaseOrders``: retrieves a list of purchase orders filtered by the specified criteria the user requested.
-- ``getDistributionOrders``: retrieves a list of distribution orders filtered by the specified criteria the user requested.
-- ``getManufacturingOrders``: retrieves a list of manufacturing orders filtered by the specified criteria the user requested.
-- ``getWorkOrders``: retrieves a list of work orders filtered by the specified criteria the user requested.
-- ``getSalesOrders``: retrieves a list of sales orders filtered by the specified criteria the user requested.
-- ``getDeliveryPlan``: retrieves the delivery plan for the specified sales orders.
-- ``ApproveOrder``: approves the specified order (either a manufacturing order, a work order, a purchase order, or a distribution order).
-
-The above list will be extended as new functions are added to the MCP server.
-
 Using the app
 =============
 
@@ -63,6 +44,24 @@ Using the app
    - Find the delivery plan for sales order SO001.
    - Search the documentation for forecast editor usage.
 
+Technical setup
+===============
+
+The app is registered as a standard Frepple application and can be enabled or disabled
+from the Admin/Apps menu.
+
+The MCP server currently includes the following functions:
+
+- ``searchDocumentation``: searches the Frepple documentation with a keyword.
+- ``getPurchaseOrders``: retrieves a list of purchase orders filtered by the specified criteria the user requested.
+- ``getDistributionOrders``: retrieves a list of distribution orders filtered by the specified criteria the user requested.
+- ``getManufacturingOrders``: retrieves a list of manufacturing orders filtered by the specified criteria the user requested.
+- ``getWorkOrders``: retrieves a list of work orders filtered by the specified criteria the user requested.
+- ``getSalesOrders``: retrieves a list of sales orders filtered by the specified criteria the user requested.
+- ``getDeliveryPlan``: retrieves the delivery plan for the specified sales orders.
+- ``ApproveOrder``: approves the specified order (either a manufacturing order, a work order, a purchase order, or a distribution order).
+
+The above list will be extended as new functions are added to the MCP server.
 
 Permissions and security
 =========================

@@ -1,6 +1,6 @@
-==========
-MCP server
-==========
+=============
+AI MCP server
+=============
 
   .. Important::
 
@@ -9,23 +9,18 @@ MCP server
 Overview
 ========
 
-This app starts an MCP server on the Frepple side.
-AI agents (like Claude, Gemini, ChatGPT...) can connect to the server to ask questions or execute actions.
+This app allows Frepple to communicate with AI agents through the
+`MCP standard <https://modelcontextprotocol.io>`_.
+Chat with your AI agent (like Claude, Gemini, ChatGPT...) to query and update the plan.
 
-Typical examples include:
-
-- What are the purchase orders I should expedite?
-- What are the manufacturing orders I should process today?
-- Retrieve all manufacturing and purchase orders pegged to a specific sales order.
-- Export to the ERP all POs and MOs of sales order SO001.
-
+.. image:: _images/ai_chat.png
+   :alt: AI chat session with Frepple
 
 Technical setup
 ===============
 
 The app is registered as a standard Frepple application and can be enabled or disabled
 from the Admin/Apps menu.
-
 
 The MCP server currently includes the following functions:
 
@@ -44,36 +39,37 @@ Using the app
 =============
 
 1. Ensure the app is enabled in Admin/Apps menu.
-2. Connect your AI agent to the server endpoint:
+2. | Connect your AI agent to the server endpoint.
 
+   | It is important to use a different endpoint for each scenario.
    | ``https://your-frepple-instance/mcp`` for the default scenario.
    | ``https://your-frepple-instance/scenario1/mcp`` for the scenario1.
    | ``https://your-frepple-instance/scenario2/mcp`` for the scenario2.
-   ...
+   | ...
 
 3. Authenticate the client using an API key (using the menu Admin/My API Keys). The AI agent will connect to the MCP server (and access the Frepple data)
    as the user owning this key.
 
-4. Ask your questions and execute actions through the AI agent. The AI agent can use any of the registered functions.
-   These functions are permission-aware and enforce the normal permission rules defined in Frepple for the connected user.
+4. Chat with your AI agent.
+   Some typical questions and actions include:
 
-For example, a client can ask:
+   - What are the purchase orders I should expedite?
+   - What are the manufacturing orders I should process today?
+   - Retrieve all manufacturing and purchase orders pegged to a specific sales order.
+   - Export to the ERP all purchase orders of sales order SO001.
+   - Approve the manufacturing orders proposed in the next 3 days
+   - List the proposed purchase orders due this week.
+   - Show me the open manufacturing orders for item A.
+   - Find the delivery plan for sales order SO001.
+   - Search the documentation for forecast editor usage.
 
-- "List the proposed purchase orders due this week."
-- "Show me the open manufacturing orders for item A."
-- "Find the delivery plan for sales order SO001."
-- "Search the documentation for forecast editor usage."
-
-The answer will be displayed in the client UI.
 
 Permissions and security
 =========================
 
-The MCP server does not bypass the application security model. Tool execution checks the
-current authenticated user and validates whether the user has the required permission for
-that operation. This is important for sensitive actions such as approving manufacturing or purchase orders, or querying data.
+The MCP server respects the permissions of your user. The AI agent operates with the same privileges
+as the user would have within the regular user interface.
 
-For this reason, an AI agent should be connected with a user account that has the
-appropriate permission set for the operational tasks you want it to perform.
-
-
+Configure your AI agent with a user account that has the appropriate permission set
+for the operational tasks you want it to perform. Using a superuser account may not be the
+best idea...

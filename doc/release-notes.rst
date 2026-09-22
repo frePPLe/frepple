@@ -46,19 +46,17 @@ bigger and backward incompatible changes.
 This release is scheduled for the end of September 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
-.. rubric:: System integration
+.. rubric:: AI
 
-- | Frepple now ships an MCP (Model Context Protocol) server.
-  | It allows AI assistants to connect to frepple and work with your plan
-    in natural language.
-  | You can query all the objects like purchase orders, manufacturing orders...
-  | The AI assistant can interpret questions like "What are the proposed purchase orders for sales order X?"
+- | Frepple goes AI!
+  | Frepple now ships with a `AI MCP app <apps/mcp_server.html>`_ that allows AI assistants to
+    communicate with frepple. End users can work with the AI assistant in natural language
+    for querying and managing the frepple plan. The AI assistant can interpret questions like
+    "What are the proposed purchase orders for sales order X?"
     or "Show me the manufacturing orders planned today."
-  | Manufacturing orders and purchase orders can also be approved through
-    the server.
+  | This release introduces a first version. In follow-up releases we expect further
+    improvements to the AI capabilitiies.
   | This applies to Enterprise and Cloud Editions only.
-
-- | Bug fix: 9.18 introduced a backward incompatibility in the REST API.
 
 .. rubric:: Production planning
 
@@ -72,6 +70,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     reordering rules for the same product and warehouse combination. This can
     happen if you have them defined at different locations within the same
     warehouse.
+
+.. rubric:: System integration
+
+- | Bug fix: 9.18 introduced a backward incompatibility in the REST API.
 
 9.18.1 (2026-08-31)
 ===================

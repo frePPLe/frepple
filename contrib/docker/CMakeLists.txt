@@ -2,13 +2,20 @@
 find_program(docker NAMES docker)
 
 if(docker)
+  execute_process(
+    COMMAND git log -1 --pretty=%ct
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    OUTPUT_VARIABLE SOURCE_DATE_EPOCH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+
   # Main build & runtime image
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/ubuntu-24.04.dockerfile" ubuntu-24.04/dockerfile COPYONLY)
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/entrypoint.sh" ubuntu-24.04/entrypoint.sh COPYONLY)
   configure_file("${CMAKE_SOURCE_DIR}/requirements.txt" ubuntu-24.04/requirements.txt COPYONLY)
   add_custom_target(
     "docker-ubuntu-24.04"
-    COMMAND ${CMAKE_COMMAND} --build . --target package_source
+    COMMAND ${CMAKE_COMMAND} -E env SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH} ${CMAKE_COMMAND} --build . --target package_source
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/frepple-${PROJECT_VERSION}-Source.tar.gz" "${CMAKE_CURRENT_BINARY_DIR}/ubuntu-24.04/"
     COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
     ${docker} build --progress=plain --target package --output type=local,dest=. ubuntu-24.04
@@ -34,7 +41,7 @@ if(docker)
   configure_file("${CMAKE_SOURCE_DIR}/requirements.txt" ubuntu-devel/requirements.txt COPYONLY)
   add_custom_target(
     "docker-ubuntu-devel"
-    COMMAND ${CMAKE_COMMAND} --build . --target package_source
+    COMMAND ${CMAKE_COMMAND} -E env SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH} ${CMAKE_COMMAND} --build . --target package_source
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/frepple-${PROJECT_VERSION}-Source.tar.gz" "${CMAKE_CURRENT_BINARY_DIR}/ubuntu-devel/"
     COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
     ${docker} build --progress=plain --target package --output type=local,dest=. ubuntu-devel

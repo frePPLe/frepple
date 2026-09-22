@@ -205,6 +205,7 @@ set(CPACK_SOURCE_IGNORE_FILES
   "^${PROJECT_SOURCE_DIR}/bin/frepple$"
   "^${PROJECT_SOURCE_DIR}/bin/libfrepple.*"
   "^${PROJECT_SOURCE_DIR}/bin/.*\\\\.pdb$"
+  "^${PROJECT_SOURCE_DIR}/freppleapps/"
   "^${PROJECT_SOURCE_DIR}/freppledb/execute/management/commands/frepple_container\\\\.py$"
 )
 

@@ -50,6 +50,12 @@ Technical setup
 The app is registered as a standard Frepple application and can be enabled or disabled
 from the Admin/Apps menu.
 
+The app isn't an AI LLM agent itself. It acts as a bridge between Frepple and external
+AI agents using the MCP standard.
+
+.. image:: _images/mcp_frepple.png
+   :alt: MCP server setup in Frepple
+
 The MCP server currently includes the following functions:
 
 - ``searchDocumentation``: searches the Frepple documentation with a keyword.

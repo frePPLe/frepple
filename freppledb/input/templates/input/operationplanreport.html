@@ -66,8 +66,10 @@ rect.opplan {
 {% if debug_js %}
 <script type="module" src="http://localhost:5173/static/src/main.js"></script>
 <script type="module" src="http://localhost:5173/static/@vite/client"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/favoritewidgets.js"></script>
 {% else %}
 <script src="{{STATIC_URL}}input/main.js"></script>
+<script src="{{STATIC_URL}}js/frepple-favoritewidgets.min.js"></script>
 {% endif %}
 <script>
 
@@ -182,12 +184,24 @@ rect.opplan {
       "width": Math.floor(jQuery("#fields").width()),
       "mode": mode,
       "calendarmode": calendarmode,
-      "columns": window.appInstance?.kanbancolumns || window.preferences.columns || undefined,
+      "columns": window.preferences.columns || undefined,
       "grouping": grouping,
       "groupingdir": groupingdir,
       "detailwidth": Math.floor(jQuery("#detailspanel").width() || 0),
-      "widgets": jQuery(".widget").length > 1 ? widget.getConfig() : preferences.widgets
+      "widgets": preferences.widgets
     };
+    // Ask Vue (if mounted) to fill in columns + widgets via event.
+    // Synchronous: listeners mutate evt.detail before return.
+    var appEl = document.getElementById('app');
+    if (appEl) {
+      try {
+        var evt = new CustomEvent('collect-preferences', { detail: tmp });
+        appEl.dispatchEvent(evt);
+        tmp = evt.detail;
+      } catch (err) {
+        console.warn('Failed to collect preferences from Vue', err);
+      }
+    }
     return tmp;
   }
 

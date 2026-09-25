@@ -121,8 +121,13 @@ const confirmDelete = async () => {
   }
 };
 
-// const database = computed(() => window.database);
-const preferences = computed(() => window.preferences || {});
+// Reactive trigger: window.preferences is a plain global, so bump this
+// version whenever an external (legacy favorite) update mutates it.
+const widgetsVersion = ref(0);
+const preferences = computed(() => {
+  void widgetsVersion.value;
+  return window.preferences || {};
+});
 
 const collapsedState = ref({});
 
@@ -377,6 +382,37 @@ const confirmERPExport = async () => {
   }
 };
 
+// Widget DOM work for a favorite restore. Invoked by useLegacyBridge's
+// single favorite-apply handler so it shares the same unsaved-changes
+// gating as columns/grouping/filter. The bridge already synced
+// window.preferences.widgets / store.preferences.widgets before calling.
+function applyRestoredWidgets(restored) {
+  if (!restored || !restored.length) return;
+  // Sync collapsed flags so buildWidgets renders them immediately
+  const nextCollapsed = { ...collapsedState.value };
+  for (const col of restored) {
+    for (const row of col.cols || []) {
+      for (const [name, cfg] of row.widgets || []) {
+        if (cfg && typeof cfg.collapsed !== 'undefined') nextCollapsed[name] = cfg.collapsed;
+      }
+    }
+  }
+  collapsedState.value = nextCollapsed;
+  widgetsVersion.value++;
+  nextTick(() => {
+    try {
+      if (typeof widget !== 'undefined' && widget.init) {
+        widget.init(() => {
+          savePreference('widgets', widget.getConfig());
+        });
+      }
+    } catch (err) {
+      console.warn('Failed to re-init widgets after favorite restore', err);
+    }
+    savePreference('widgets', restored);
+  });
+}
+
 const bridge = useLegacyBridge(store, {
   onTriggerSave: () => {
     if (store.hasChanges) {
@@ -430,6 +466,7 @@ const bridge = useLegacyBridge(store, {
       }
     }
   },
+  onApplyFavoriteWidgets: (restored) => applyRestoredWidgets(restored),
 });
 
 const widgetToggleHandler = (e) => {
@@ -439,12 +476,55 @@ const widgetToggleHandler = (e) => {
   nextTick(() => savePreference('widgets', widget.getConfig()));
 };
 
+// Django extraPreference() dispatches this synchronously and reads the
+// mutated detail. Vue owns columns + widgets + filter; Django only falls
+// back to window.preferences when Vue isn't mounted yet.
+const collectPreferencesHandler = (e) => {
+  const d = e?.detail;
+  if (!d) return;
+  try {
+    if (store.kanbancolumns) d.columns = [...store.kanbancolumns];
+  } catch (err) {
+    console.warn('Failed to collect kanban columns for preferences', err);
+  }
+  try {
+    const saved = store.preferences?.widgets || window.preferences?.widgets;
+    if (saved && saved.length > 0) {
+      const collapsed = collapsedState.value || {};
+      d.widgets = saved.map((col) => ({
+        ...col,
+        cols: (col.cols || []).map((row) => ({
+          ...row,
+          widgets: (row.widgets || []).map(([name, cfg]) => [
+            name,
+            { ...(cfg || {}), collapsed: collapsed[name] ?? cfg?.collapsed ?? false },
+          ]),
+        })),
+      }));
+    }
+  } catch (err) {
+    console.warn('Failed to collect widgets for preferences', err);
+  }
+  try {
+    // In table mode jqGrid postData is authoritative and read directly by
+    // saveColumnConfiguration; only provide the filter when the grid is
+    // hidden (kanban/gantt/calendar) and its postData is stale.
+    if (store.mode && store.mode !== 'table') {
+      const f = store.currentFilter || window.thefilter || window.initialfilter;
+      if (f) d.filter = typeof f === 'string' ? f : JSON.stringify(f);
+    }
+  } catch (err) {
+    console.warn('Failed to collect filter for preferences', err);
+  }
+};
+
 onMounted(() => {
   const rootEl = document.getElementById('app') || document;
   bridge.attach(rootEl);
   appElement.value = rootEl;
 
   rootEl.addEventListener('widget-toggle', widgetToggleHandler);
+  rootEl.addEventListener('collect-preferences', collectPreferencesHandler);
 
   widget.init(() => {
     savePreference('widgets', widget.getConfig());
@@ -455,6 +535,7 @@ onUnmounted(() => {
   bridge.detach();
   if (appElement.value) {
     appElement.value.removeEventListener('widget-toggle', widgetToggleHandler);
+    appElement.value.removeEventListener('collect-preferences', collectPreferencesHandler);
   }
 });
 </script>

@@ -72,10 +72,12 @@ rect.opplan {
 <script src="{{STATIC_URL}}operationplandetail/src/inventorygraphDrv.js"></script>
 <script src="{{STATIC_URL}}operationplandetail/src/kanbanDrv.js"></script>
 <script src="{{STATIC_URL}}operationplandetail/src/ganttDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/favoritewidgets.js"></script>
 {% else %}
 <script src="{{STATIC_URL}}js/frepple-common.min.js"></script>
 <script src="{{STATIC_URL}}js/frepple-input.min.js"></script>
 <script src="{{STATIC_URL}}js/frepple-operationplandetail.min.js"></script>
+<script src="{{STATIC_URL}}js/frepple-favoritewidgets.min.js"></script>
 {% endif %}
 <script>
 
@@ -125,6 +127,79 @@ rect.opplan {
     }
     return tmp;
   }
+
+  // State ownership for favorite restores on this (no-Vue) page. The
+  // favorite wrapper dispatches `favorite-apply` before the stock grid
+  // restore and `favorite-opened` after it, both carrying the favorite
+  // object by reference. Favorites restore widgets + columns + grouping +
+  // filter; the stock open owns the whole jqGrid side.
+  (function () {
+    document.addEventListener('favorite-apply', function (e) {
+      var detail = (e && e.detail) || {};
+      var fav = detail.fav || {};
+      try {
+        if (fav.widgets && window.preferences) window.preferences.widgets = fav.widgets;
+        ['columns', 'grouping', 'groupingdir'].forEach(function (k) {
+          if (k in fav) {
+            if (window.preferences) window.preferences[k] = fav[k];
+            // extraPreference() reads live globals rather than
+            // preferences.*, so update those too for the next save.
+            try { window[k] = fav[k]; } catch (err) {
+              console.warn('Failed to restore favorite detail pref', k, err);
+            }
+          }
+        });
+        if (typeof fav.filter !== 'undefined') {
+          if (typeof fav.filter === 'string' && fav.filter) {
+            try {
+              var parsed = JSON.parse(fav.filter);
+              window.thefilter = parsed;
+              window.initialfilter = parsed;
+            } catch (err) {
+              console.warn('Failed to parse favorite filter, keeping current filter', err);
+            }
+          } else if (fav.filter === '') {
+            window.thefilter = null;
+            window.initialfilter = null;
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to apply favorite detail prefs', err);
+      }
+    });
+    document.addEventListener('favorite-opened', function () {
+      // Push the restored filter into the Angular scope so calendar/kanban/
+      // gantt re-fetch with it.
+      try {
+        if (typeof angular === 'undefined' || typeof angular.element !== 'function') return;
+        var scope = angular.element('#controller').scope();
+        if (!scope) return;
+        var f = window.thefilter || window.initialfilter || null;
+        var loader = null;
+        if (window.mode === 'kanban' && typeof scope.loadKanbanData === 'function') {
+          loader = scope.loadKanbanData.bind(scope);
+        } else if (window.mode === 'gantt' && typeof scope.loadGanttData === 'function') {
+          loader = scope.loadGanttData.bind(scope);
+        } else if (window.mode && window.mode.startsWith('calendar')
+          && typeof scope.loadCalendarData === 'function') {
+          loader = scope.loadCalendarData.bind(scope);
+        }
+        if (!loader) return;
+        if (typeof scope.$apply === 'function') {
+          try {
+            scope.$apply(function () { loader(f); });
+          } catch (applyErr) {
+            console.warn('Failed to apply Angular data for favorite', applyErr);
+            loader(f);
+          }
+        } else {
+          loader(f);
+        }
+      } catch (err) {
+        console.warn('Failed to sync Angular scope after favorite', err);
+      }
+    });
+  })();
 
   function extraSearchUpdate(filter) {
     thefilter = filter;

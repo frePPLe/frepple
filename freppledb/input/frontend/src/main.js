@@ -27,8 +27,6 @@ import { createPinia } from 'pinia';
 import { i18n } from '@/i18n/i18n.js';
 import { tooltip } from '@common/directives/tooltip.js';
 
-window.appInstance = null;
-
 const app = createApp(App);
 app.use(i18n);
 app.use(createPinia());
@@ -38,10 +36,16 @@ if (import.meta.env.DEV) {
   app.config.performance = true;
 }
 const mountApp = () => {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => app.mount('#app'));
-  } else {
+  const doMount = () => {
+    // Favorite wrappers (grid.getGridConfig + favorite.open) are provided by
+    // the grunt-built frepple-favoritewidgets bundle loaded by the template,
+    // so there is nothing to install here.
     app.mount('#app');
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', doMount);
+  } else {
+    doMount();
   }
 };
 

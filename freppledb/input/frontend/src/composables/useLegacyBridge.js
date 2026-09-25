@@ -30,7 +30,7 @@ import { debounce } from '@common/utils.js';
  * @param {Object} store  - Pinia operationplans store
  * @param {Object} callbacks - handler callbacks from the component that need local state:
  *   { onTriggerSave, onTriggerCopy, onTriggerDelete, onAttemptModeChange,
- *     onTriggerERPExport }
+ *     onTriggerERPExport, onApplyFavoriteWidgets }
  */
 export function useLegacyBridge(store, callbacks = {}) {
   let registrations = [];
@@ -217,6 +217,92 @@ export function useLegacyBridge(store, callbacks = {}) {
 
     const handleERPExport = (e) => callbacks.onTriggerERPExport?.(e);
 
+    const handleFavoriteApply = (e) => {
+      const detail = e?.detail || {};
+      // State owner on Vue pages: the favorite-apply event carries the
+      // favorite object by reference ({ name, fav, widgets }).
+      // Unsaved-changes gating already happened once in the wrapper
+      // dispatcher (attemptModeChange); the store.hasChanges check below is
+      // defense in depth in case window.operationplanChanges and the store
+      // disagree. The whole favorite (filter + columns + grouping + widgets)
+      // applies atomically, like mode switches do.
+      const fav = detail.fav || {};
+      const applyFavorite = () => {
+        if (fav.columns && Array.isArray(fav.columns)) {
+          store.kanbancolumns = fav.columns;
+          if (window.preferences) window.preferences.columns = fav.columns;
+          window.columns = fav.columns;
+        }
+        if (typeof fav.grouping !== 'undefined') {
+          store.setGrouping(fav.grouping);
+          window.grouping = fav.grouping;
+          if (typeof fav.groupingdir !== 'undefined') {
+            store.groupingdir = fav.groupingdir;
+            if (store.preferences) store.preferences.groupingdir = fav.groupingdir;
+            window.groupingdir = fav.groupingdir;
+          }
+        }
+        if (fav.widgets) {
+          if (window.preferences) window.preferences.widgets = fav.widgets;
+          if (store.preferences) store.preferences.widgets = fav.widgets;
+          // Widget DOM work (collapsed flags, re-render, widget.init) lives in
+          // the component and is invoked here so it shares the same
+          // unsaved-changes gating as columns/grouping/filter.
+          try {
+            callbacks.onApplyFavoriteWidgets?.(fav.widgets);
+          } catch (cbErr) {
+            console.warn('Failed to apply favorite widgets', cbErr);
+          }
+        }
+        // The stock open (running right after this event) owns the jqGrid
+        // side; here we only sync the filter into the store/globals and
+        // re-fetch non-table modes.
+        if (typeof fav.filter !== 'undefined') {
+          applyFavoriteFilter(fav.filter);
+        }
+      };
+      try {
+        if (store.hasChanges) {
+          callbacks.onAttemptModeChange?.({
+            mode: store.mode,
+            modeChangeFunction: applyFavorite,
+          });
+        } else {
+          applyFavorite();
+        }
+      } catch (err) {
+        console.warn('Failed to apply favorite detail prefs', err);
+      }
+    };
+
+    const applyFavoriteFilter = (filter) => {
+      // Syncs the restored filter into the store and the template globals
+      // and re-fetches kanban/calendar data. The jqGrid side (postData,
+      // pills, reload) is owned by the stock favorite.open running right
+      // after this event, so it is deliberately left alone here.
+      try {
+        const fStr = typeof filter === 'string' ? filter : JSON.stringify(filter);
+        let fObj = null;
+        try {
+          fObj = fStr ? JSON.parse(fStr) : null;
+        } catch (parseErr) {
+          console.warn('Failed to parse favorite filter, keeping current filter', parseErr);
+          return;
+        }
+        window.initialfilter = fObj;
+        window.thefilter = fObj;
+        if (typeof store.setCurrentFilter === 'function') store.setCurrentFilter(fObj || '');
+        else store.currentFilter = fObj || '';
+        if (store.mode === 'kanban') {
+          store.loadKanbanData(fObj);
+        } else if (store.mode && store.mode.startsWith('calendar')) {
+          store.loadCalendarData(fObj);
+        }
+      } catch (err) {
+        console.warn('Failed to apply favorite filter', err);
+      }
+    };
+
     // Register all listeners
     on(rootEl, 'singleSelect', handleSingleSelect);
     on(rootEl, 'allSelect', handleAllSelect);
@@ -234,6 +320,7 @@ export function useLegacyBridge(store, callbacks = {}) {
     on(rootEl, 'multipleGanttSelect', handleMultipleGanttSelect);
     on(rootEl, 'saved', handleSaved);
     on(rootEl, 'triggerERPExport', handleERPExport);
+    on(rootEl, 'favorite-apply', handleFavoriteApply);
   }
 
   function detach() {

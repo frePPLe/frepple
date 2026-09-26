@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <current>2026-08-01T00:00:00</current>
+  <locations>
+    <location name="factory">
+      <available name="Working days">
+        <default>1</default>
+        <buckets>
+          <!-- 65 = Saturday and Sunday -->
+          <bucket days="65" value="0" />
+        </buckets>
+      </available>
+    </location>
+  </locations>
+  <resources>
+    <resource name="operator 1">
+      <owner name="operators" />
+    </resource>
+  </resources>
+  <operations>
+    <operation name="make item" xsi:type="operation_time_per">
+      <size_minimum>10</size_minimum>
+      <size_multiple>10</size_multiple>
+      <item name="item" />
+      <loads>
+        <load>
+          <resource name="operators" />
+        </load>
+      </loads>
+      <location name="factory" />
+      <duration>PT0H</duration>
+      <duration_per>PT1H</duration_per>
+    </operation>
+  </operations>
+  <demands>
+    <demand name="sales order" quantity="10" due="2026-08-03T00:00:00">
+      <item name="item" />
+      <location name="factory" />
+      <customer name="customer" />
+    </demand>
+  </demands>
+  <?python
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.1.xml")?>
+</plan>

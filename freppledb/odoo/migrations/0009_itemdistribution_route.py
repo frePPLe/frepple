@@ -21,20 +21,24 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from freppledb.boot import registerAttribute
+from django.db import models, migrations
 
-from django.utils.translation import gettext_lazy as _
+from freppledb.common.migrate import AttributeMigration
 
-registerAttribute(
-    "freppledb.input.models.OperationPlan",
-    [
-        ("odoo_date", _("odoo date"), "datetime", False, False),
-        ("odoo_delta", _("odoo delta"), "duration", False, False),
-    ],
-)
-registerAttribute(
-    "freppledb.input.models.ItemDistribution",
-    [
-        ("route_id", _("route id"), "integer", True, False),
-    ],
-)
+
+class Migration(AttributeMigration):
+    dependencies = [("odoo", "0008_operationplan")]
+
+    extends_app_label = "input"
+    operations = [
+        migrations.AddField(
+            model_name="itemdistribution",
+            name="route_id",
+            field=models.IntegerField(
+                db_index=False,
+                verbose_name="route id",
+                null=True,
+                blank=True,
+            ),
+        ),
+    ]

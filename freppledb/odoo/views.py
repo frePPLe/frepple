@@ -273,7 +273,6 @@ def Upload(request):
                             .order_by("priority")
                             .first()
                         )
-                        print(f"route_id={route_id}")
 
                         if not route_id:
                             continue

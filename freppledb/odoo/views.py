@@ -44,6 +44,7 @@ from freppledb.input.models import (
     OperationPlan,
     Supplier,
 )
+from freppledb.input.models.itemdistribution import ItemDistribution
 from freppledb.common.models import Parameter
 from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
@@ -143,7 +144,11 @@ def Upload(request):
                         "reference", rec.get("operationplan__reference", None)
                     )
                     type = rec.get("operationplan__type", rec.get("type", None))
-                    if not reference or not rec["quantity"] or "exported as" in reference:
+                    if (
+                        not reference
+                        or not rec["quantity"]
+                        or "exported as" in reference
+                    ):
                         continue
 
                     # Check if some records were updated by the user.
@@ -255,8 +260,26 @@ def Upload(request):
                             continue
 
                         obj.append(op)
+
+                        route_id = (
+                            ItemDistribution.objects.using(request.database)
+                            .filter(route_id__isnull=False)
+                            .filter(item__lft__lte=op.item.lft)
+                            .filter(item__rght__gte=op.item.lft)
+                            .exclude(priority=0)
+                            .filter(origin__name=op.origin.name)
+                            .filter(location__name=op.destination.name)
+                            .values_list("route_id", flat=True)
+                            .order_by("priority")
+                            .first()
+                        )
+                        print(f"route_id={route_id}")
+
+                        if not route_id:
+                            continue
+
                         data_odoo.append(
-                            '<operationplan status="%s" reference="%s" ordertype="DO" item=%s origin=%s destination=%s start="%s" end="%s" quantity="%s" origin_id=%s destination_id=%s item_id=%s criticality="%d" batch=%s remark=%s/>'
+                            '<operationplan status="%s" reference="%s" ordertype="DO" item=%s origin=%s destination=%s start="%s" end="%s" quantity="%s" origin_id=%s destination_id=%s item_id=%s criticality="%d" batch=%s remark=%s route_id="%s"/>'
                             % (
                                 op.status,
                                 op.reference,
@@ -272,6 +295,7 @@ def Upload(request):
                                 int(op.criticality or 0),
                                 quoteattr(op.batch or ""),
                                 quoteattr(getattr(op, "remark", None) or ""),
+                                route_id,
                             )
                         )
                     elif type not in ("DLVR", "STCK"):
@@ -495,6 +519,10 @@ def Upload(request):
                         reference_mapping[frepple_po] = po["reference"]
                 for mo in odoo_response.get("created_manufacturing_orders", []):
                     reference_mapping[mo["frepple_reference"]] = mo["reference"]
+                for distorder in odoo_response.get("created_distribution_orders", []):
+                    reference_mapping[distorder["frepple_reference"]] = distorder[
+                        "reference"
+                    ]
             except (json.JSONDecodeError, KeyError, TypeError):
                 # Old inbound.py returns plain text, no reference mapping available
                 pass

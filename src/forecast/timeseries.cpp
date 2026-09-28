@@ -352,8 +352,8 @@ ForecastSolver::Metrics ForecastSolver::MovingAverage::generateForecast(
       if (i >= solver->getForecastSkip() && i < count &&
           fabs(avg + actual) > ROUNDING_ERROR) {
         error_smape +=
-            fabs(avg - actual) / fabs(avg + actual) * weight[count - i];
-        error_smape_weights += weight[count - i];
+            fabs(avg - actual) / fabs(avg + actual) * smapeWeight(count - i);
+        error_smape_weights += smapeWeight(count - i);
       }
     }
 
@@ -513,14 +513,14 @@ ForecastSolver::Metrics ForecastSolver::SingleExponential::generateForecast(
                   true);
           }
         }
-        sum_12 += df_dalfa_i * (history_i - f_i) * weight[count - i];
-        sum_11 += df_dalfa_i * df_dalfa_i * weight[count - i];
+        sum_12 += df_dalfa_i * (history_i - f_i) * smapeWeight(count - i);
+        sum_11 += df_dalfa_i * df_dalfa_i * smapeWeight(count - i);
         if (i >= solver->getForecastSkip()) {
-          error += (f_i - history_i) * (f_i - history_i) * weight[count - i];
+          error += (f_i - history_i) * (f_i - history_i) * smapeWeight(count - i);
           if (fabs(f_i + history_i) > ROUNDING_ERROR) {
             error_smape +=
-                fabs(f_i - history_i) / (f_i + history_i) * weight[count - i];
-            error_smape_weights += weight[count - i];
+                fabs(f_i - history_i) / (f_i + history_i) * smapeWeight(count - i);
+            error_smape_weights += smapeWeight(count - i);
           }
         }
       }
@@ -778,24 +778,24 @@ ForecastSolver::Metrics ForecastSolver::DoubleExponential::generateForecast(
             (1 - gamma) * d_trend_d_gamma;
         d_forecast_d_alfa = d_constant_d_alfa + d_trend_d_alfa;
         d_forecast_d_gamma = d_constant_d_gamma + d_trend_d_gamma;
-        sum11 += weight[count - i] * d_forecast_d_alfa * d_forecast_d_alfa;
-        sum12 += weight[count - i] * d_forecast_d_alfa * d_forecast_d_gamma;
-        sum22 += weight[count - i] * d_forecast_d_gamma * d_forecast_d_gamma;
-        sum13 += weight[count - i] * d_forecast_d_alfa *
+        sum11 += smapeWeight(count - i) * d_forecast_d_alfa * d_forecast_d_alfa;
+        sum12 += smapeWeight(count - i) * d_forecast_d_alfa * d_forecast_d_gamma;
+        sum22 += smapeWeight(count - i) * d_forecast_d_gamma * d_forecast_d_gamma;
+        sum13 += smapeWeight(count - i) * d_forecast_d_alfa *
                  (history_i - constant_i - trend_i);
-        sum23 += weight[count - i] * d_forecast_d_gamma *
+        sum23 += smapeWeight(count - i) * d_forecast_d_gamma *
                  (history_i - constant_i - trend_i);
         if (i >=
             solver
                 ->getForecastSkip())  // Don't measure during the warmup period
         {
           error += (constant_i + trend_i - history_i) *
-                   (constant_i + trend_i - history_i) * weight[count - i];
+                   (constant_i + trend_i - history_i) * smapeWeight(count - i);
           if (fabs(constant_i + trend_i + history_i) > ROUNDING_ERROR) {
             error_smape += fabs(constant_i + trend_i - history_i) /
                            fabs(constant_i + trend_i + history_i) *
-                           weight[count - i];
-            error_smape_weights += weight[count - i];
+                           smapeWeight(count - i);
+            error_smape_weights += smapeWeight(count - i);
           }
         }
       }
@@ -1139,20 +1139,20 @@ ForecastSolver::Metrics
       d_forecast_d_beta = (d_L_d_beta + d_T_d_beta) * S_i[cycleindex] +
                           (L_i + T_i) * d_S_d_beta[cycleindex];
       forecast_i = (L_i + T_i) * S_i[cycleindex];
-      sum11 += weight[count - i] * d_forecast_d_alfa * d_forecast_d_alfa;
-      sum12 += weight[count - i] * d_forecast_d_alfa * d_forecast_d_beta;
-      sum22 += weight[count - i] * d_forecast_d_beta * d_forecast_d_beta;
-      sum13 += weight[count - i] * d_forecast_d_alfa * (actual - forecast_i);
-      sum23 += weight[count - i] * d_forecast_d_beta * (actual - forecast_i);
+      sum11 += smapeWeight(count - i) * d_forecast_d_alfa * d_forecast_d_alfa;
+      sum12 += smapeWeight(count - i) * d_forecast_d_alfa * d_forecast_d_beta;
+      sum22 += smapeWeight(count - i) * d_forecast_d_beta * d_forecast_d_beta;
+      sum13 += smapeWeight(count - i) * d_forecast_d_alfa * (actual - forecast_i);
+      sum23 += smapeWeight(count - i) * d_forecast_d_beta * (actual - forecast_i);
       if (i >=
           solver->getForecastSkip())  // Don't measure during the warmup period
       {
         double fcst = (L_i + T_i) * S_i[cycleindex];
-        error += (fcst - actual) * (fcst - actual) * weight[count - i];
+        error += (fcst - actual) * (fcst - actual) * smapeWeight(count - i);
         if (fabs(fcst + actual) > ROUNDING_ERROR) {
           error_smape +=
-              fabs(fcst - actual) / fabs(fcst + actual) * weight[count - i];
-          error_smape_weights += weight[count - i];
+              fabs(fcst - actual) / fabs(fcst + actual) * smapeWeight(count - i);
+          error_smape_weights += smapeWeight(count - i);
           standarddeviation += (fcst - actual) * (fcst - actual);
         }
       }
@@ -1402,8 +1402,8 @@ ForecastSolver::Metrics ForecastSolver::Croston::generateForecast(
         {
           if (fabs(f_i + history_i) > ROUNDING_ERROR) {
             error_smape += fabs(f_i - history_i) / fabs(f_i + history_i) *
-                           weight[count - i];
-            error_smape_weights += weight[count - i];
+                           smapeWeight(count - i);
+            error_smape_weights += smapeWeight(count - i);
           }
         }
       }

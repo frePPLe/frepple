@@ -230,11 +230,10 @@ div.sphinxsidebar ul ul ul {
 
 div.admonition,
 div.warning {
-  font-size: 0.9em;
   margin: 1em 0 1em 0;
   border: 1px solid #86989B;
   background-color: #f7f7f7;
-  padding: 0;
+  padding: 0 0 1em 0;
 }
 
 div.admonition p,

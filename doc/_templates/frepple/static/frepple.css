@@ -105,7 +105,8 @@ tt {
   font-weight: normal;
 }
 
-a {
+a,
+a:visited {
   color: #d21900;
   text-decoration: none;
   outline: none;

@@ -71,6 +71,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     happen if you have them defined at different locations within the same
     warehouse.
 
+.. rubric:: User interface
+
+- | Bug fix: Custom attributes of type string were limited to 300 characters.
+
 .. rubric:: System integration
 
 - | Bug fix: 9.18 introduced a backward incompatibility in the REST API.

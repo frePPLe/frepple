@@ -162,9 +162,8 @@ DATE_STYLE_WITH_HOURS = (
     os.environ.get("FREPPLE_DATE_STYLE_WITH_HOURS", "false").lower() == "true"
 )
 
-# The default redirects URLs not ending with a slash.
-# This causes trouble in combination with the DatabaseSelectionMiddleware.
-# We prefer not to redirect and report this as an incorrect URL.
+# We implement our own redirection logic for ending slashes in the MultiDBMiddleware class.
+# Do not activate this feature in Django.
 APPEND_SLASH = False
 
 ASGI_APPLICATION = "freppledb.asgi.application"

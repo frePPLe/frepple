@@ -43,6 +43,7 @@ from django.http.response import (
     HttpResponse,
     HttpResponseForbidden,
     HttpResponseRedirect,
+    HttpResponsePermanentRedirect,
 )
 from django.utils import translation, timezone
 from django.utils.translation import get_supported_language_variant
@@ -173,6 +174,13 @@ class MultiDBMiddleware:
     def __call__(self, request):
         # Make request information available throughout the application
         setattr(_thread_locals, "request", request)
+
+        # Redirect if the url doesn't end in a slash
+        if not request.path.endswith("/"):
+            return HttpResponsePermanentRedirect(
+                request.get_full_path(force_append_slash=True),
+                status=301 if request.method in ("GET", "HEAD") else 308,
+            )
 
         # Select scenario database
         allow_scenario_switch = False
@@ -392,7 +400,8 @@ class MultiDBMiddleware:
                     else:
                         return HttpResponseNotFound(
                             "Sorry, no scenario is accesible to you.\n"
-                            "Ask your administrator to grant you access.")
+                            "Ask your administrator to grant you access."
+                        )
                 else:
                     return HttpResponseNotFound(
                         "Scenario not in use, or access is denied"

@@ -73,6 +73,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: User interface
 
+- | Frepple expects a trailing slash at the end of URLs. We now automatically
+    redirect to the correct URL if the trailing slash at the end of URLs is missing.
+  | As a user you can now use URLs without and with a trailing slash.
+
 - | Bug fix: Custom attributes of type string were limited to 300 characters.
 
 .. rubric:: System integration

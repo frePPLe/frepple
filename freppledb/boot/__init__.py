@@ -333,7 +333,7 @@ def addAttributesFromDatabase():
     from django.conf import settings
 
     database_type_mapping = {
-        "string": ("varchar", "(300)"),
+        "string": ("varchar", ""),
         "boolean": ("bool", ""),
         "number": ("numeric", "(15,6)"),
         "integer": ("int4", ""),

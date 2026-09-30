@@ -2515,13 +2515,14 @@ var ERPconnection = {
 
           // Mark selected rows as "approved" if the original status was "proposed".
 
-          // Check if the answer contains the created POs and MOs:
+          // Check if the answer contains the created POs, DOs and MOs:
           var isNewStyleResponse = !!(
             parsedResponse
             && typeof parsedResponse === 'object'
             && (
               Object.prototype.hasOwnProperty.call(parsedResponse, 'created_purchase_orders')
               || Object.prototype.hasOwnProperty.call(parsedResponse, 'created_manufacturing_orders')
+              || Object.prototype.hasOwnProperty.call(parsedResponse, 'created_distribution_orders')
             )
           );
 
@@ -2536,6 +2537,9 @@ var ERPconnection = {
             });
             (parsedResponse.created_manufacturing_orders || []).forEach(function (mo) {
               if (mo.frepple_reference) renamedReferenceMap[String(mo.frepple_reference)] = mo.reference;
+            });
+            (parsedResponse.created_distribution_orders || []).forEach(function (distorder) {
+              if (distorder.frepple_reference) renamedReferenceMap[String(distorder.frepple_reference)] = distorder.reference;
             });
           }
 

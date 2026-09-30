@@ -954,6 +954,8 @@ class SolverCreate : public Solver {
 
     void clearDependencies() { dependency_list.clear(); }
 
+    void collectResources(OperationPlan*);
+
    private:
     static const int MAXSTATES = 256;
 
@@ -1096,6 +1098,8 @@ class SolverCreate : public Solver {
 
     /* Pointer to the solver status one level higher on the stack. */
     State* prevstate;
+
+    set<Resource*> resources;
   };
 
  private:
@@ -1216,6 +1220,7 @@ class OperatorForward : public Solver, public NonCopyable {
       cmds->add(new CommandMoveOperationPlan(op, d, Date::infinitePast));
     if (op->getDemand() || (op->getOwner() && op->getOwner()->getDemand()))
       moved_deliveries = true;
+    if (data->getSolver()->isCapacityConstrained()) data->collectResources(op);
   }
 
   /* Add a command to move the end date of the operationplan. */
@@ -1232,6 +1237,7 @@ class OperatorForward : public Solver, public NonCopyable {
                                              false, true));
     if (op->getDemand() || (op->getOwner() && op->getOwner()->getDemand()))
       moved_deliveries = true;
+    if (data->getSolver()->isCapacityConstrained()) data->collectResources(op);
   }
 
   void addResize(FlowPlan* flplan, double qty, bool) {

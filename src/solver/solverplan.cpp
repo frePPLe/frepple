@@ -755,6 +755,15 @@ void SolverCreate::SolverData::unmaskTemporaryShortages() {
   }
 }
 
+void SolverCreate::SolverData::collectResources(OperationPlan* opplan) {
+  if (!opplan) return;
+  auto ldplniter = opplan->getLoadPlans();
+  while (auto subldpln = ldplniter.next()) {
+    if (subldpln->getResource()->getConstrained())
+      resources.insert(subldpln->getResource());
+  }
+}
+
 void SolverCreate::update_user_exits() {
   setUserExitBuffer(getPyObjectProperty(Tags::userexit_buffer.getName()));
   setUserExitDemand(getPyObjectProperty(Tags::userexit_demand.getName()));
@@ -988,7 +997,8 @@ PyObject* SolverCreate::markAutofence(PyObject* self, PyObject*) {
   return Py_BuildValue("");
 }
 
-void CommandList::collectChangedOperationPlans(set<OperationPlan*>& result) const {
+void CommandList::collectChangedOperationPlans(
+    set<OperationPlan*>& result) const {
   for (auto& cmd : *this) {
     switch (cmd.getType()) {
       case 1:

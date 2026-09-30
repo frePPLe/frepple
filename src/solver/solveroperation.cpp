@@ -634,9 +634,10 @@ void SolverCreate::solve(const Operation* oper, void* v) {
             oper->getSizeMaximum());
     if (requirement_in_window > data->state->q_qty) {
       data->state->q_qty = requirement_in_window;
-      logger << indentlevel << "Quantity increased to " << data->state->q_qty
-             << " to group requirements within " << oper->getBatchWindow()
-             << "\n";
+      if (getLogLevel() > 1)
+        logger << indentlevel << "Quantity increased to " << data->state->q_qty
+               << " to group requirements within " << oper->getBatchWindow()
+               << "\n";
     }
   }
 
@@ -1131,9 +1132,10 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
             oper->getSizeMaximum());
     if (requirement_in_window > data->state->q_qty) {
       data->state->q_qty = requirement_in_window;
-      logger << indentlevel << "Quantity increased to " << data->state->q_qty
-             << " to group requirements within " << oper->getBatchWindow()
-             << "\n";
+      if (getLogLevel() > 1)
+        logger << indentlevel << "Quantity increased to " << data->state->q_qty
+               << " to group requirements within " << oper->getBatchWindow()
+               << "\n";
     }
   }
 

@@ -32,14 +32,14 @@ void OperatorForward::solve(void*) {
   auto& indentlevel = data->getSolver()->indentlevel;
 
   // Detect whether this cluster has operation dependencies.
-  auto has_dependencies = false;
-  for (auto& o : Operation::all()) {
-    if ((cluster == -1 || o.getCluster() == cluster) &&
-        !o.getDependencies().empty()) {
-      has_dependencies = true;
-      break;
-    }
-  }
+  // auto has_dependencies = false;
+  // for (auto& o : Operation::all()) {
+  //   if ((cluster == -1 || o.getCluster() == cluster) &&
+  //       !o.getDependencies().empty()) {
+  //     has_dependencies = true;
+  //     break;
+  //   }
+  // }
 
   if (getLogLevel() > 0)
     logger << indentlevel << "Starting forward propagation in cluster "
@@ -71,14 +71,15 @@ void OperatorForward::solve(void*) {
   // Propagate the shortage across all buffers, starting from the deepest
   // level
   for (short lvl = HasLevel::getNumberOfLevels(); lvl; --lvl) {
-    bool action_at_level = false;
+    data->resources.clear();
+
+    // Solve all buffers
     for (auto& b : Buffer::all()) {
       if ((cluster != -1 && b.getCluster() != cluster) || b.getLevel() != lvl ||
           b.getFlowPlans().empty())
         continue;
       try {
         b.solve(*this, data);
-        if (!data->getCommandManager()->empty()) action_at_level = true;
         data->getCommandManager()->commit();
       } catch (...) {
         data->getCommandManager()->rollback();
@@ -96,41 +97,26 @@ void OperatorForward::solve(void*) {
       }
     }
 
-    // TODO We can drastically limit the list of resources to visit in every
-    // level sweep. That would require keeping track of a list of resources to
-    // propagate. Initially all resources would be in that list for an first,
-    // initial sweep. After the initial move only resource whose plan is
-    // changing should be put back on the propagation list.
-    action_at_level = true;
-    while (action_at_level || has_dependencies) {
-      // One or more shortages got resolved. We propagate to the resources
-      // before solving the next level.
-      action_at_level = false;
-      for (auto& res : Resource::all()) {
-        if ((cluster != -1 && res.getCluster() != cluster) ||
-            res.getLoadPlans().empty() || res.isGroup())
-          continue;
+    // Solve impacted resources
+    for (auto& res : data->resources) {
+      try {
+        res->solve(*this, nullptr);
+      } catch (...) {
+        data->getCommandManager()->rollback();
+        logger << "Error: Caught an exception while solving resource '" << res
+               << "':\n";
         try {
-          res.solve(*this, nullptr);
-          if (!data->getCommandManager()->empty()) action_at_level = true;
-          data->getCommandManager()->commit();
+          throw;
+        } catch (const bad_exception&) {
+          logger << "  bad exception\n";
+        } catch (const exception& e) {
+          logger << "  " << e.what() << "\n";
         } catch (...) {
-          data->getCommandManager()->rollback();
-          logger << "Error: Caught an exception while solving resource '" << res
-                 << "':\n";
-          try {
-            throw;
-          } catch (const bad_exception&) {
-            logger << "  bad exception\n";
-          } catch (const exception& e) {
-            logger << "  " << e.what() << "\n";
-          } catch (...) {
-            logger << "  Unknown type\n";
-          }
+          logger << "  Unknown type\n";
         }
       }
-      if (!action_at_level) break;
     }
+    data->resources.clear();
   }
 
   if (getLogLevel() > 0)
@@ -154,6 +140,8 @@ void OperatorForward::solve(OperationPlan* opplan, void*) {
   OperationPlan* tmp_operationplan = curOperationPlan;
   FlowPlan* tmp_flowplan = curFlowPlan;
   LoadPlan* tmp_loadplan = curLoadPlan;
+  if (data->getSolver()->isCapacityConstrained())
+    data->collectResources(opplan);
 
   // Move the operationplan to be feasible
   if (data->getSolver()->isLeadTimeConstrained(opplan->getOperation())) {

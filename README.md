@@ -33,5 +33,5 @@ The *Community Edition* is released under the [MIT licence](https://opensource.o
 The *Enterprise Edition* can be purchased from frePPLe bv. It provides additional functionality
 and professional support.
 
-The *Cloud Edition* provides provides the same capabilities as the Enterprise Edition, but is
+The *Cloud Edition* provides the same capabilities as the Enterprise Edition, but is
 hosted as a service in the cloud: fully supported and maintained by frePPLe bv.

@@ -208,13 +208,10 @@ in each sheet must contain the column names.
 Export plan result
 ------------------
 
-This task allows exporting data to a set of files in CSV or Excel format.
+This task allows exporting data to a set of files in CSV, JSON or Excel format.
 The purpose of this task is to help the exchange of information with other systems.
 
 The command can easily by customized to export the results you need.
-
-The files are all placed in a folder UPLOADFILEFOLDER/export/, which can be configured
-per scenario with the UPLOADFILEFOLDER value in the djangosettings.py file.
 
 The exported files can be accessed from the user interface, or through over a
 HTTP(S) web interface.

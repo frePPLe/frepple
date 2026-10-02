@@ -37,10 +37,10 @@ if mode == "WSGI":
     urlpatterns = [
         # Overridable card for kanban and calendar views
         path(
-            "input/kanbancard.html",
+            "input/kanbancard.html/",
             TemplateView.as_view(template_name="input/kanbancard.html"),
         ),
-        path("input/card.html", TemplateView.as_view(template_name="input/card.html")),
+        path("input/card.html/", TemplateView.as_view(template_name="input/card.html")),
         # Model list reports, which override standard admin screens
         path(
             "data/input/buffer/",

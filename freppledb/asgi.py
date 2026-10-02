@@ -31,8 +31,10 @@ import sys
 
 from django.conf import settings
 from django.contrib.auth import authenticate
+from django.core.handlers.asgi import ASGIRequest
 from django.db import DEFAULT_DB_ALIAS
 from django.urls import re_path
+from django.utils.http import escape_leading_slashes
 
 from django.contrib.auth.models import AnonymousUser
 from freppledb.common.models import User, APIKey
@@ -135,6 +137,23 @@ def get_user_by_apikey(key, database=DEFAULT_DB_ALIAS):
         return user
     except Exception:
         return AnonymousUser()
+
+
+class RedirectSlashMiddleware(BaseMiddleware):
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http" and not scope["path"].endswith("/"):
+            location = ASGIRequest(scope, None).get_full_path(force_append_slash=True)
+            await send(
+                {
+                    "type": "http.response.start",
+                    "status": 301 if scope["method"] in ("GET", "HEAD") else 308,
+                    "headers": [
+                        (b"location", escape_leading_slashes(location).encode("ascii"))
+                    ],
+                }
+            )
+            return await send({"type": "http.response.body"})
+        return await super().__call__(scope, receive, send)
 
 
 class TokenMiddleware(BaseMiddleware):
@@ -301,13 +320,16 @@ class AuthenticatedMiddleware(BaseMiddleware):
 
 application = ProtocolTypeRouter(
     {
-        "http": CookieMiddleware(
-            SessionMiddleware(
-                TokenMiddleware(
-                    AuthAndPermissionMiddleware(
-                        AuthenticatedMiddleware(
-                            URLRouter(
-                                svcpatterns + [re_path(r".*", HTTPNotFound.as_asgi())]
+        "http": RedirectSlashMiddleware(
+            CookieMiddleware(
+                SessionMiddleware(
+                    TokenMiddleware(
+                        AuthAndPermissionMiddleware(
+                            AuthenticatedMiddleware(
+                                URLRouter(
+                                    svcpatterns
+                                    + [re_path(r".*", HTTPNotFound.as_asgi())]
+                                )
                             )
                         )
                     )

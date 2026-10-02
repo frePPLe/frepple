@@ -2,7 +2,10 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <current>2027-01-01T00:00:00</current>
 
-  <!-- 1. simple backward-forward case with material coordination and lead time constraints -->
+  <!--
+  1. simple backward-forward case with material coordination and lead time constraints.
+  Results identical to the old solver.
+  -->
   <locations>
     <location name="1. factory">
       <available name="1. Working Days">
@@ -169,7 +172,10 @@
     </item>
   </items>
 
-  <!-- 2. same as 1, but different batch windows -->
+  <!--
+  2. same as 1, but different batch windows.
+  Results identical to the old solver.
+  -->
   <locations>
     <location name="2. factory">
       <available name="2. Working Days">
@@ -336,7 +342,12 @@
     </item>
   </items>
 
-  <!-- 3. Same as 1, but with time_per operations -->
+  <!--
+  3. Same as 1, but with time_per operations.
+  Planning results show more delay compared to the old solver, but this expected
+  and normal. The old solver plans smaller manufacturing orders in parallel, which the
+  new solver doesn't.
+  -->
   <locations>
     <location name="3. factory">
       <available name="3. Working Days">
@@ -510,7 +521,11 @@
     </item>
   </items>
 
-  <!-- 4. Same as 3, and adding a capacity constraint and a second item -->
+  <!--
+  4. Same as 3, and adding a capacity constraint and a second item.
+  Extra lateness in the new solver is because the old solver catches up with the overdue
+  backlog with smaller and shorter manufacturing orders.
+   -->
   <locations>
     <location name="4. factory">
       <available name="4. Working Days">
@@ -529,7 +544,7 @@
       <customer name="Average Joe" />
       <location name="4. factory" />
       <quantity>100</quantity>
-      <minshipment>10</minshipment>
+      <minshipment>100</minshipment>
       <item name="4. X level 0" />
       <due>2027-01-01T00:00:00</due>
       <priority>1</priority>
@@ -538,7 +553,7 @@
       <customer name="Average Joe" />
       <location name="4. factory" />
       <quantity>100</quantity>
-      <minshipment>10</minshipment>
+      <minshipment>100</minshipment>
       <item name="4. X level 0" />
       <due>2027-01-05T00:00:00</due>
       <priority>1</priority>
@@ -547,7 +562,7 @@
       <customer name="Average Joe" />
       <location name="4. factory" />
       <quantity>30</quantity>
-      <minshipment>10</minshipment>
+      <minshipment>30</minshipment>
       <item name="4. X level 0" />
       <due>2027-04-01T00:00:00</due>
       <priority>1</priority>
@@ -556,7 +571,7 @@
       <customer name="Average Joe" />
       <location name="4. factory" />
       <quantity>30</quantity>
-      <minshipment>10</minshipment>
+      <minshipment>30</minshipment>
       <item name="4. X level 0" />
       <due>2027-04-07T00:00:00</due>
       <priority>1</priority>
@@ -565,7 +580,7 @@
       <customer name="Average Joe" />
       <location name="4. factory" />
       <quantity>30</quantity>
-      <minshipment>10</minshipment>
+      <minshipment>30</minshipment>
       <item name="4. X level 0" />
       <due>2027-04-15T00:00:00</due>
       <priority>1</priority>
@@ -574,7 +589,7 @@
       <customer name="Average Joe" />
       <location name="4. factory" />
       <quantity>100</quantity>
-      <minshipment>10</minshipment>
+      <minshipment>100</minshipment>
       <item name="4. Y level 0" />
       <due>2027-01-01T00:00:00</due>
       <priority>1</priority>
@@ -583,7 +598,7 @@
       <customer name="Average Joe" />
       <location name="4. factory" />
       <quantity>100</quantity>
-      <minshipment>10</minshipment>
+      <minshipment>100</minshipment>
       <item name="4. Y level 0" />
       <due>2027-01-05T00:00:00</due>
       <priority>1</priority>
@@ -592,7 +607,7 @@
       <customer name="Average Joe" />
       <location name="4. factory" />
       <quantity>30</quantity>
-      <minshipment>10</minshipment>
+      <minshipment>30</minshipment>
       <item name="4. Y level 0" />
       <due>2027-04-01T00:00:00</due>
       <priority>1</priority>
@@ -601,7 +616,7 @@
       <customer name="Average Joe" />
       <location name="4. factory" />
       <quantity>30</quantity>
-      <minshipment>10</minshipment>
+      <minshipment>30</minshipment>
       <item name="4. Y level 0" />
       <due>2027-04-07T00:00:00</due>
       <priority>1</priority>
@@ -610,7 +625,7 @@
       <customer name="Average Joe" />
       <location name="4. factory" />
       <quantity>30</quantity>
-      <minshipment>10</minshipment>
+      <minshipment>30</minshipment>
       <item name="4. Y level 0" />
       <due>2027-04-15T00:00:00</due>
       <priority>1</priority>
@@ -857,7 +872,10 @@
     </item>
   </items>
 
-  <!-- 5. Capacity constraint causing lateness -->
+  <!--
+  5. Capacity constraint causing lateness.
+  Results not ok.
+  -->
   <locations>
     <location name="5. factory">
       <available name="5. Working Days">
@@ -1348,7 +1366,10 @@
     </item>
   </items>
 
-  <!-- 6. Reusing the same resource at multiple steps in a supply path -->
+  <!--
+  6. Reusing the same resource at multiple steps in a supply path.
+  Results not ok.
+  -->
   <locations>
     <location name="6. factory">
       <available name="6. Working Days">

@@ -2030,6 +2030,7 @@ class ForecastEditor:
 
         # Use root objects when no specific node is specified.
         # If multiple root nodes exist, we pick the first one.
+        missing = []
         if not item:
             try:
                 item = (
@@ -2040,7 +2041,7 @@ class ForecastEditor:
                     .name
                 )
             except Exception:
-                pass
+                missing.append("item")
         if not location:
             try:
                 location = (
@@ -2051,7 +2052,7 @@ class ForecastEditor:
                     .name
                 )
             except Exception:
-                pass
+                missing.append("location")
         if not customer:
             try:
                 customer = (
@@ -2062,11 +2063,13 @@ class ForecastEditor:
                     .name
                 )
             except Exception:
-                pass
+                missing.append("customer")
 
         # Verify we have an existing item, location and customer
-        if not item or not customer or not location:
-            return HttpResponseNotFound("Item, customer or location aren't specified")
+        if missing:
+            return HttpResponseNotFound(
+                f"Missing root in {', '.join(missing)} dimension. Regenerate the plan to rebuild the hierarchies."
+            )
 
         # Pick up the current date
         current = getCurrentDate(request.database, lastplan=True)

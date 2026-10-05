@@ -66,6 +66,14 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Odoo integration
 
+- | 18, 19: Connectors are now handling the routes. Inter-warehouse routes are now
+    mapped as item distribution records in Frepple and inter-warehouse transfers are
+    mapped as distribution orders in Frepple. Proposed distribution orders can now be
+    exported to Odoo.
+  | The location field of the item suppliers record is now correctly mapped based on the
+    buy rule(s) defined at product (product category or warehouse) level.
+  | A special thank you goes to the @abdelghanikhattara for his contribution on this topic.
+
 - | 18, 19: Reordering rules were not mapped correctly when you have multiple
     reordering rules for the same product and warehouse combination. This can
     happen if you have them defined at different locations within the same

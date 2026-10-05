@@ -259,8 +259,6 @@ def Upload(request):
                         ):
                             continue
 
-                        obj.append(op)
-
                         route_id = (
                             ItemDistribution.objects.using(request.database)
                             .filter(route_id__isnull=False)
@@ -276,6 +274,8 @@ def Upload(request):
 
                         if not route_id:
                             continue
+
+                        obj.append(op)
 
                         data_odoo.append(
                             '<operationplan status="%s" reference="%s" ordertype="DO" item=%s origin=%s destination=%s start="%s" end="%s" quantity="%s" origin_id=%s destination_id=%s item_id=%s criticality="%d" batch=%s remark=%s route_id="%s"/>'

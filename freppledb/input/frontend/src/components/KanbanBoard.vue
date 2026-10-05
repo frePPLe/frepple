@@ -25,8 +25,8 @@
 import { computed, onMounted, ref, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@input/stores/operationplansStore.js';
-import { appConfig } from '@input/config.js';
 import KanbanCard from '@input/components/KanbanCard.vue';
+import { setPreferences } from '@input/services/preferences.js';
 
 const sortableInstances = new WeakMap();
 
@@ -153,10 +153,7 @@ onMounted(async () => {
               (c) => hiddenColumns.value.includes(c) && !visible.includes(c)
             );
             store.kanbancolumns = [...visible, ...hidden];
-
-            // Persist preference: component already stores only the visible order
-            window.preferences.columns = visible;
-            store.setPreferences(appConfig.reportKey, window.preferences);
+            setPreferences({ columns: [...visible] });
           },
         });
 
@@ -170,10 +167,7 @@ onMounted(async () => {
 
 const kanbancolumns = computed(() => store.kanbancolumns);
 const visibleKanbancolumns = computed(() => {
-  const result = kanbancolumns.value.filter((col) => !hiddenColumns.value.includes(col));
-  window.preferences.columns = result;
-  store.setPreferences(appConfig.reportKey, window.preferences);
-  return result;
+  return kanbancolumns.value.filter((col) => !hiddenColumns.value.includes(col));
 });
 
 const hiddenColumns = ref([]);
@@ -208,6 +202,7 @@ const kanbanoperationplans = computed(() => {
 
 function hideColumn(col) {
   hiddenColumns.value.push(col);
+  setPreferences({ columns: [...visibleKanbancolumns.value] });
 }
 
 function formatInventoryStatus(opplan) {

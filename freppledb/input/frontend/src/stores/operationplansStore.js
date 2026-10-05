@@ -28,6 +28,7 @@ import { Operationplan } from '@input/models/operationplan.js';
 import { useOperationplanSave } from '@input/composables/useOperationplanSave.js';
 import { useOperationplanEdit } from '@input/composables/useOperationplanEdit.js';
 import { appConfig } from '@input/config.js';
+import { getPreference, setPreferences } from '@input/services/preferences.js';
 
 /**
  * @typedef {Object} OperationplansState
@@ -43,7 +44,6 @@ import { appConfig } from '@input/config.js';
  * @property {boolean} loading - Loading state
  * @property {Object} error - Error state
  * @property {number} dataRowHeight - Row height for table
- * @property {Object} preferences - User preferences
  * @property {Date} horizonstart - Start date of planning horizon
  * @property {Date} horizonend - End date of planning horizon
  * @property {Date} viewstart - Start date of current view
@@ -67,10 +67,9 @@ export const useOperationplansStore = defineStore('operationplans', {
     selectedStatusCounts: {},
     operationplanChanges: {},
 
-    preferences: {},
     editForm: { quantity: null, startdate: '', enddate: '', remark: '' },
 
-    mode: window.preferences?.mode || window.mode || 'table',
+    mode: getPreference('mode') ?? window.mode ?? 'table',
     calendarmode: 'month',
     grouping: null,
     groupingdir: 'asc',
@@ -93,7 +92,7 @@ export const useOperationplansStore = defineStore('operationplans', {
     exportError: null,
     exportSuccess: null,
     error: { title: '', showError: false, message: '', details: '', type: 'error' },
-    dataRowHeight: window.preferences?.height || null,
+    dataRowHeight: getPreference('height', null),
     width: 300,
     detailwidth: 300,
     height: 300,
@@ -107,7 +106,7 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     // Kanban
     kanbanoperationplans: {},
-    kanbancolumns: window.preferences?.columns || [
+    kanbancolumns: getPreference('columns') ?? [
       'proposed',
       'approved',
       'confirmed',
@@ -138,15 +137,13 @@ export const useOperationplansStore = defineStore('operationplans', {
     setMode(newMode) {
       this.mode = newMode;
       window.mode = newMode;
-      if (window.preferences) {
-        window.preferences.mode = newMode;
-      }
+      setPreferences({ mode: newMode });
       this.undo();
     },
 
     setCalendarMode(newCalendarMode) {
       this.calendarmode = newCalendarMode;
-      this.preferences.calendarmode = newCalendarMode;
+      setPreferences({ calendarmode: newCalendarMode });
     },
 
     setMultipleGanttSelectData(data) {
@@ -155,7 +152,7 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     setGrouping(newGrouping) {
       this.grouping = newGrouping;
-      this.preferences.grouping = newGrouping;
+      setPreferences({ grouping: newGrouping });
     },
 
     isChanged(reference, field = null) {
@@ -302,8 +299,8 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.page = 1;
       this.sidx = 'batch';
       this.sord = 'asc';
-      this.preferences.sidx = 'batch';
-      this.preferences.sord = 'asc';
+      // NOTE: sidx/sord are grid-owned. Sort persistence stays with
+      // grid.saveColumnConfiguration, which writes them on every save.
     },
 
     async setStatus(value) {
@@ -381,26 +378,22 @@ export const useOperationplansStore = defineStore('operationplans', {
       this.currentdate = date;
     },
 
-    // Initialize store with preferences
+    // Initialize UI state from the server-rendered preference document. It is
+    // the source of truth; there is no localStorage cache and no store-owned
+    // copy of it.
     async initialize() {
-      // Load preferences from localStorage if available
-      const savedPreferences = localStorage.getItem('operationplansPreferences');
-      if (savedPreferences) {
-        try {
-          const parsedPrefs = JSON.parse(savedPreferences);
-          this.preferences = { ...this.preferences, ...parsedPrefs };
-        } catch (e) {
-          console.warn('Failed to parse saved preferences:', e);
-        }
-      }
-
-      // Apply saved preferences to UI state
-      if (this.preferences.mode) this.mode = this.preferences.mode;
-      if (this.preferences.calendarmode) this.calendarmode = this.preferences.calendarmode;
-      if (this.preferences.grouping) this.grouping = this.preferences.grouping;
-      if (this.preferences.groupingdir) this.groupingdir = this.preferences.groupingdir;
-      if (this.preferences.sidx) this.sidx = this.preferences.sidx;
-      if (this.preferences.sord) this.sord = this.preferences.sord;
+      const mode = getPreference('mode');
+      if (mode) this.mode = mode;
+      const calendarmode = getPreference('calendarmode');
+      if (calendarmode) this.calendarmode = calendarmode;
+      const grouping = getPreference('grouping');
+      if (grouping) this.grouping = grouping;
+      const groupingdir = getPreference('groupingdir');
+      if (groupingdir) this.groupingdir = groupingdir;
+      const sidx = getPreference('sidx');
+      if (sidx) this.sidx = sidx;
+      const sord = getPreference('sord');
+      if (sord) this.sord = sord;
 
       // Load initial data
       await this.loadOperationplans();
@@ -408,20 +401,17 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     setShowTop(value) {
       this.showTop = value;
-      if (!this.preferences) this.preferences = {};
-      this.preferences.showTop = value;
+      setPreferences({ showTop: value });
     },
 
     setShowChildren(value) {
       this.showChildren = value;
-      if (!this.preferences) this.preferences = {};
-      this.preferences.showChildren = value;
+      setPreferences({ showChildren: value });
     },
 
     setDataRowHeight(height) {
       this.dataRowHeight = height;
-      if (!this.preferences) this.preferences = {};
-      this.preferences.height = height;
+      setPreferences({ height: height });
     },
 
     setViewDates(startDate, endDate) {
@@ -468,46 +458,6 @@ export const useOperationplansStore = defineStore('operationplans', {
       } catch (err) {
         if (err.response && err.response.status === 401) location.reload();
         throw err;
-      }
-    },
-
-    // Preferences
-    setPreferences(reportKey, preferences) {
-      this.preferences = preferences;
-      window.preferences = preferences;
-      const data = {};
-      if (reportKey) {
-        data[reportKey] = preferences;
-        operationplanService.savePreferences(data);
-      }
-    },
-
-    async savePreferences() {
-      this.loading = true;
-      this.clearError();
-      try {
-        // Update preferences with current mode settings
-        this.preferences.mode = this.mode;
-        this.preferences.calendarmode = this.calendarmode;
-        this.preferences.grouping = this.grouping;
-        this.preferences.groupingdir = this.groupingdir;
-        this.preferences.showTop = this.showTop;
-        this.preferences.showChildren = this.showChildren;
-        // if (this.dataRowHeight !== null) {
-        //   this.preferences.height = this.dataRowHeight;
-        // }
-        await operationplanService.savePreferences({
-          'freppledb.input.views.manufacturing.ManufacturingOrderList': this.preferences,
-        });
-      } catch (error) {
-        this.setError({
-          title: 'Error',
-          message: 'Unable to save preferences',
-          details: error.message || '',
-          type: 'error',
-        });
-      } finally {
-        this.loading = false;
       }
     },
 

@@ -39,11 +39,10 @@ import UpstreamCard from '@input/components/UpstreamCard.vue';
 import SupplyInformationCard from '@input/components/SupplyInformationCard.vue';
 import MultipleOperationplansCard from '@input/components/MultipleOperationplansCard.vue';
 import KanbanBoard from '@input/components/KanbanBoard.vue';
-import { savePreference } from '@common/services/preferenceService.js';
 import InfoDialog from '@common/components/InfoDialog.vue';
 import ErrorDialog from '@common/components/ErrorDialog.vue';
 import { useLegacyBridge } from '@input/composables/useLegacyBridge.js';
-import { appConfig } from '@input/config.js';
+import { getPreference, setPreferences } from '@input/services/preferences.js';
 
 const { t: ttt } = useI18n({
   useScope: 'global',
@@ -121,57 +120,53 @@ const confirmDelete = async () => {
   }
 };
 
-// Reactive trigger: window.preferences is a plain global, so bump this
-// version whenever an external (legacy favorite) update mutates it.
+// Bumping the version changes every column's key, so Vue discards the rendered panel and mounts
+// it again rather than trying to move nodes Sortable already moved.
 const widgetsVersion = ref(0);
-const preferences = computed(() => {
-  void widgetsVersion.value;
-  return window.preferences || {};
-});
 
 const collapsedState = ref({});
 
-const buildWidgets = (saved, collapsed) => {
-  const defaults = [
-    {
-      name: 'column1',
-      cols: [
-        { width: 6, widgets: [['operationplan', { collapsed: false }], ['inventorygraph', { collapsed: false }]] },
-      ],
-    },
-    {
-      name: 'column2',
-      cols: [
-        {
-          width: 6,
-          widgets: [
-            ['multipleGanttOperationplans', { collapsed: false }],
-            ['supplyposition', { collapsed: false }],
-            ['inventorydata', { collapsed: false }],
-            ['operationproblems', { collapsed: false }],
-            ['operationresources', { collapsed: false }],
-            ['operationflowplans', { collapsed: false }],
-            ['operationdemandpegging', { collapsed: false }],
-          ],
-        },
-      ],
-    },
-    {
-      name: 'column3',
-      cols: [
-        {
-          width: 12,
-          widgets: [
-            ['networkstatus', { collapsed: false }],
-            ['downstreamoperationplans', { collapsed: false }],
-            ['upstreamoperationplans', { collapsed: false }],
-          ],
-        },
-      ],
-    },
-  ];
+const defaultWidgets = () => [
+  {
+    name: 'column1',
+    cols: [
+      { width: 6, widgets: [['operationplan', { collapsed: false }], ['inventorygraph', { collapsed: false }]] },
+    ],
+  },
+  {
+    name: 'column2',
+    cols: [
+      {
+        width: 6,
+        widgets: [
+          ['multipleGanttOperationplans', { collapsed: false }],
+          ['supplyposition', { collapsed: false }],
+          ['inventorydata', { collapsed: false }],
+          ['operationproblems', { collapsed: false }],
+          ['operationresources', { collapsed: false }],
+          ['operationflowplans', { collapsed: false }],
+          ['operationdemandpegging', { collapsed: false }],
+        ],
+      },
+    ],
+  },
+  {
+    name: 'column3',
+    cols: [
+      {
+        width: 12,
+        widgets: [
+          ['networkstatus', { collapsed: false }],
+          ['downstreamoperationplans', { collapsed: false }],
+          ['upstreamoperationplans', { collapsed: false }],
+        ],
+      },
+    ],
+  },
+];
 
-  const source = (saved && saved.length > 0) ? saved : defaults;
+const buildWidgets = (saved, collapsed) => {
+  const source = (saved && saved.length > 0) ? saved : defaultWidgets();
   const result = source.map((col) => ({
     ...col,
     cols: col.cols.map((row) => ({
@@ -183,17 +178,13 @@ const buildWidgets = (saved, collapsed) => {
     })),
   }));
 
-  // Save defaults to server on first load (only if not already saved)
-  if (!preferences.value.widgets) {
-    if (!window.preferences) window.preferences = {};
-    window.preferences.widgets = defaults;
-    nextTick(() => savePreference('widgets', defaults));
-  }
-
   return result;
 };
 
-const displayWidgets = computed(() => buildWidgets(preferences.value.widgets, collapsedState.value));
+const displayWidgets = computed(() => {
+  void widgetsVersion.value;
+  return buildWidgets(getPreference('widgets'), collapsedState.value);
+});
 
 const isKanbanMode = computed(() => store.isKanbanMode);
 
@@ -382,10 +373,83 @@ const confirmERPExport = async () => {
   }
 };
 
+// Widget reordering.
+//
+// Sortable moves the DOM itself, which Vue never observes, so after a drop the
+// rendered tree no longer matches the layout. Left to patch against that
+// mismatch, Vue mounts the widget into its new column and never takes it out of
+// the old one - leaving two copies of it.
+//
+// So a drop does two things: store the layout Sortable produced, then bump
+// widgetsVersion. The version is part of every column's key below, so the bump
+// makes Vue throw the whole panel away and rebuild it from the stored layout
+// rather than diff it. That leaves the DOM and the vdom in agreement, which is
+// what lets an ordinary later re-render - a collapse toggle, say - patch
+// correctly instead of duplicating.
+const widgetSortables = new WeakMap();
+
+function onWidgetDragEnd() {
+  try {
+    // getConfig() reads the live DOM, so it captures the post-drag order.
+    setPreferences({ widgets: widget.getConfig() });
+    widgetsVersion.value++;
+  } catch (err) {
+    console.warn('Failed to persist widget reorder', err);
+  }
+}
+
+// Owns the Sortable instances for the widget columns. Mirrors the kanban
+// board: destroy before create, so repeated calls (mount, favorite restore)
+// cannot stack handlers on the same column.
+function initWidgetDrag() {
+  if (typeof window.Sortable === 'undefined') return;
+  document.querySelectorAll('.widget-list').forEach((el) => {
+    const prev = widgetSortables.get(el);
+    if (prev && typeof prev.destroy === 'function') {
+      try {
+        prev.destroy();
+      } catch {
+        /* best effort: a stale instance is harmless, a missing one is not fatal */
+      }
+    }
+    try {
+      widgetSortables.set(
+        el,
+        window.Sortable.create(el, {
+          group: 'widgets',
+          draggable: '.widget',
+          handle: '.widget-handle',
+          animation: 100,
+          onEnd: onWidgetDragEnd
+        })
+      );
+    } catch (err) {
+      console.warn('Failed to make widget column sortable', err);
+    }
+  });
+}
+
+function destroyWidgetDrag() {
+  if (typeof document === 'undefined') return;
+  document.querySelectorAll('.widget-list').forEach((el) => {
+    const inst = widgetSortables.get(el);
+    if (inst && typeof inst.destroy === 'function') {
+      try {
+        inst.destroy();
+      } catch {
+        /* best effort: teardown only, never block unmount */
+      }
+    }
+    widgetSortables.delete(el);
+  });
+}
+
 // Widget DOM work for a favorite restore. Invoked by useLegacyBridge's
 // single favorite-apply handler so it shares the same unsaved-changes
-// gating as columns/grouping/filter. The bridge already synced
-// window.preferences.widgets / store.preferences.widgets before calling.
+// gating as columns/grouping/filter.
+//
+// The bridge calls this *before* it persists the favorite's own patch, so the
+// restored layout has to be written here rather than left to the bridge.
 function applyRestoredWidgets(restored) {
   if (!restored || !restored.length) return;
   // Sync collapsed flags so buildWidgets renders them immediately
@@ -398,18 +462,16 @@ function applyRestoredWidgets(restored) {
     }
   }
   collapsedState.value = nextCollapsed;
+  // Write before bumping the version: displayWidgets reads the layout from the
+  // document, so the restore has to be in place by the time it recomputes.
+  setPreferences({ widgets: restored });
   widgetsVersion.value++;
   nextTick(() => {
     try {
-      if (typeof widget !== 'undefined' && widget.init) {
-        widget.init(() => {
-          savePreference('widgets', widget.getConfig());
-        });
-      }
+      initWidgetDrag();
     } catch (err) {
       console.warn('Failed to re-init widgets after favorite restore', err);
     }
-    savePreference('widgets', restored);
   });
 }
 
@@ -473,12 +535,15 @@ const widgetToggleHandler = (e) => {
   const detail = e?.detail || {};
   if (!detail.widget) return;
   collapsedState.value = { ...collapsedState.value, [detail.widget]: detail.state };
-  nextTick(() => savePreference('widgets', widget.getConfig()));
+  nextTick(() => {
+    setPreferences({ widgets: widget.getConfig() });
+  });
 };
 
 // Django extraPreference() dispatches this synchronously and reads the
-// mutated detail. Vue owns columns + widgets + filter; Django only falls
-// back to window.preferences when Vue isn't mounted yet.
+// mutated detail. Vue owns columns + widgets + filter; the template's
+// extraPreference() falls back to the persisted document when Vue isn't
+// mounted yet.
 const collectPreferencesHandler = (e) => {
   const d = e?.detail;
   if (!d) return;
@@ -488,19 +553,26 @@ const collectPreferencesHandler = (e) => {
     console.warn('Failed to collect kanban columns for preferences', err);
   }
   try {
-    const saved = store.preferences?.widgets || window.preferences?.widgets;
-    if (saved && saved.length > 0) {
-      const collapsed = collapsedState.value || {};
-      d.widgets = saved.map((col) => ({
-        ...col,
-        cols: (col.cols || []).map((row) => ({
-          ...row,
-          widgets: (row.widgets || []).map(([name, cfg]) => [
-            name,
-            { ...(cfg || {}), collapsed: collapsed[name] ?? cfg?.collapsed ?? false },
-          ]),
-        })),
-      }));
+    // Read the live DOM order: a Sortable drag only moves DOM nodes, so the
+    // saved document is stale until the drag's onEnd callback persists it.
+    // getConfig() also reads the collapsed state from the DOM.
+    if (typeof widget !== 'undefined' && typeof widget.getConfig === 'function') {
+      d.widgets = widget.getConfig();
+    } else {
+      const saved = getPreference('widgets');
+      if (saved && saved.length > 0) {
+        const collapsed = collapsedState.value || {};
+        d.widgets = saved.map((col) => ({
+          ...col,
+          cols: (col.cols || []).map((row) => ({
+            ...row,
+            widgets: (row.widgets || []).map(([name, cfg]) => [
+              name,
+              { ...(cfg || {}), collapsed: collapsed[name] ?? cfg?.collapsed ?? false },
+            ]),
+          })),
+        }));
+      }
     }
   } catch (err) {
     console.warn('Failed to collect widgets for preferences', err);
@@ -526,13 +598,18 @@ onMounted(() => {
   rootEl.addEventListener('widget-toggle', widgetToggleHandler);
   rootEl.addEventListener('collect-preferences', collectPreferencesHandler);
 
-  widget.init(() => {
-    savePreference('widgets', widget.getConfig());
-  });
+  // Persist the default layout on first load (only if not already saved).
+  // No re-render: displayWidgets already falls back to defaultWidgets().
+  if (!getPreference('widgets')?.length) {
+    setPreferences({ widgets: defaultWidgets() });
+  }
+
+  initWidgetDrag();
 });
 
 onUnmounted(() => {
   bridge.detach();
+  destroyWidgetDrag();
   if (appElement.value) {
     appElement.value.removeEventListener('widget-toggle', widgetToggleHandler);
     appElement.value.removeEventListener('collect-preferences', collectPreferencesHandler);
@@ -630,14 +707,14 @@ onUnmounted(() => {
     <KanbanBoard v-if="isKanbanMode" />
     <div
       v-for="col in displayWidgets"
-      :key="col.name"
+      :key="widgetsVersion + ':' + col.name"
       class="widget-list col-12"
       :class="'col-lg-' + (col.cols?.[0].width || '6')"
       :data-widget="col.name"
       :data-widget-width="col.cols?.[0].width || '6'"
     >
       <template v-if="col.cols?.[0]">
-        <template v-for="(widget, index) in col.cols[0].widgets || []" :key="index">
+        <template v-for="(widget, index) in col.cols[0].widgets || []" :key="widget[0] || index">
           <div v-if="shouldShowWidget(widget[0])" class="card widget mb-3" :data-widget="widget[0]">
             <component
               :is="getWidgetComponent(widget[0])"

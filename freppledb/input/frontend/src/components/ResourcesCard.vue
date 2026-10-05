@@ -25,7 +25,6 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@input/stores/operationplansStore.js';
-import { appConfig } from '@input/config.js';
 import { adminEscape, numberFormat } from '@common/utils.js';
 
 const emit = defineEmits(['resource-changed']);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 by frePPLe bv
+ * Copyright (C) 2026 by frePPLe bv
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,6 +25,7 @@ import { toRaw } from 'vue';
 import { appConfig } from '@input/config.js';
 import { operationplanService } from '@input/services/operationplanService.js';
 import { dateToISO } from '@common/utils.js';
+import { getPreference } from '@input/services/preferences.js';
 
 /**
  * Encapsulates save strategy: auto-save on planning board, manual save elsewhere.
@@ -58,10 +59,7 @@ export function useOperationplanSave(store) {
   async function saveBatchChanges() {
     const changes = collectPayload();
     if (changes.length === 0) return false;
-    const resolveConstraints =
-      window.preferences && window.preferences.resolveConstraints !== undefined
-        ? window.preferences.resolveConstraints
-        : 1;
+    const resolveConstraints = getPreference('resolveConstraints', 1);
     if (appConfig.isPlanningBoard && resolveConstraints) {
       await operationplanService.postToEngine({
         resolveConstraints: resolveConstraints === 1,

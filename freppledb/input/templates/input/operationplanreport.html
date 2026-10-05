@@ -64,10 +64,12 @@ rect.opplan {
 {{block.super}}
 
 {% if debug_js %}
+<script src="{{STATIC_URL}}common/src/preferencesService.js"></script>
 <script type="module" src="http://localhost:5173/static/src/main.js"></script>
 <script type="module" src="http://localhost:5173/static/@vite/client"></script>
 <script src="{{STATIC_URL}}operationplandetail/src/favoritewidgets.js"></script>
 {% else %}
+<script src="{{STATIC_URL}}common/src/preferencesService.js"></script>
 <script src="{{STATIC_URL}}input/main.js"></script>
 <script src="{{STATIC_URL}}js/frepple-favoritewidgets.min.js"></script>
 {% endif %}

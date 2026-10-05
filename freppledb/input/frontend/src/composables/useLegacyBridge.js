@@ -22,6 +22,7 @@
  */
 
 import { debounce } from '@common/utils.js';
+import { setPreferences } from '@input/services/preferences.js';
 
 /**
  * Bridges Vue Pinia store with legacy jQuery/jqGrid DOM CustomEvents.
@@ -171,7 +172,7 @@ export function useLegacyBridge(store, callbacks = {}) {
 
     const saveHeightPrefDebounced = debounce(() => {
       try {
-        store.savePreferences();
+        if (store.dataRowHeight != null) setPreferences({ height: store.dataRowHeight });
       } catch (e) {
         console.warn('Failed to save row height preference', e);
       }
@@ -228,23 +229,23 @@ export function useLegacyBridge(store, callbacks = {}) {
       // applies atomically, like mode switches do.
       const fav = detail.fav || {};
       const applyFavorite = () => {
+        const patch = {};
         if (fav.columns && Array.isArray(fav.columns)) {
           store.kanbancolumns = fav.columns;
-          if (window.preferences) window.preferences.columns = fav.columns;
           window.columns = fav.columns;
+          patch.columns = fav.columns;
         }
         if (typeof fav.grouping !== 'undefined') {
           store.setGrouping(fav.grouping);
           window.grouping = fav.grouping;
           if (typeof fav.groupingdir !== 'undefined') {
             store.groupingdir = fav.groupingdir;
-            if (store.preferences) store.preferences.groupingdir = fav.groupingdir;
             window.groupingdir = fav.groupingdir;
+            patch.groupingdir = fav.groupingdir;
           }
         }
         if (fav.widgets) {
-          if (window.preferences) window.preferences.widgets = fav.widgets;
-          if (store.preferences) store.preferences.widgets = fav.widgets;
+          patch.widgets = fav.widgets;
           // Widget DOM work (collapsed flags, re-render, widget.init) lives in
           // the component and is invoked here so it shares the same
           // unsaved-changes gating as columns/grouping/filter.
@@ -254,6 +255,9 @@ export function useLegacyBridge(store, callbacks = {}) {
             console.warn('Failed to apply favorite widgets', cbErr);
           }
         }
+        // Persist everything the favorite carried in a single service write.
+        // (store.setGrouping above already persisted grouping on its own.)
+        if (Object.keys(patch).length) setPreferences(patch);
         // The stock open (running right after this event) owns the jqGrid
         // side; here we only sync the filter into the store/globals and
         // re-fetch non-table modes.

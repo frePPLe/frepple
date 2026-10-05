@@ -52,10 +52,6 @@ export const operationplanService = {
     return api.wspost('operationplan/', postData);
   },
 
-  async savePreferences(preferencesData) {
-    return api.post('settings/', preferencesData);
-  },
-
   async exportToERP(postData) {
     return api.post('erp/upload/', JSON.stringify(postData));
   },

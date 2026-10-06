@@ -37,9 +37,9 @@ if (import.meta.env.DEV) {
 }
 const mountApp = () => {
   const doMount = () => {
-    // Favorite wrappers (grid.getGridConfig + favorite.open) are provided by
-    // the grunt-built frepple-favoritewidgets bundle loaded by the template,
-    // so there is nothing to install here.
+      // Favorite wrappers (grid.getGridConfig + favorite.open) are provided by
+      // the grunt-built frepple-favoritedetails bundle loaded by the template,
+      // so there is nothing to install here.
     app.mount('#app');
   };
   if (document.readyState === 'loading') {

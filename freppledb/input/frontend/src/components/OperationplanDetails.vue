@@ -386,12 +386,65 @@ const confirmERPExport = async () => {
 // rather than diff it. That leaves the DOM and the vdom in agreement, which is
 // what lets an ordinary later re-render - a collapse toggle, say - patch
 // correctly instead of duplicating.
+function widgetLayoutWithState(base) {
+  const collapsed = collapsedState.value || {};
+  return (base || []).map((col) => ({
+    ...col,
+    cols: (col.cols || []).map((row) => ({
+      ...row,
+      widgets: (row.widgets || []).map(([name, cfg]) => [
+        name,
+        { ...(cfg || {}), collapsed: collapsed[name] ?? (cfg || {}).collapsed ?? false },
+      ]),
+    })),
+  }));
+}
+
+function widgetLayout() {
+  return widgetLayoutWithState(getPreference('widgets') || defaultWidgets());
+}
+
+// The layout with the DOM's widget order applied, for right after a drag.
+//
+// Only the rendered widgets can be reordered and only they appear in
+// getConfig(), so anything not on screen is appended to the column the document
+// already had it in. That is what keeps a drag from dropping it.
+function widgetLayoutFromDom() {
+  const stored = getPreference('widgets') || [];
+  if (typeof widget === 'undefined' || typeof widget.getConfig !== 'function') {
+    return widgetLayout();
+  }
+  const live = widget.getConfig();
+  if (!live || !live.length) return widgetLayout();
+
+  const byName = {};
+  for (const col of stored) {
+    for (const [name, cfg] of col.cols?.[0]?.widgets || []) byName[name] = cfg;
+  }
+  const rendered = new Set();
+  for (const col of live) {
+    for (const [name] of col.cols?.[0]?.widgets || []) rendered.add(name);
+  }
+
+  return widgetLayoutWithState(
+    live.map((col) => {
+      const widgets = (col.cols?.[0]?.widgets || [])
+        .filter(([name]) => byName[name])
+        .map(([name]) => [name, byName[name]]);
+      const original = stored.find((c) => c.name === col.name);
+      for (const [name, cfg] of original?.cols?.[0]?.widgets || []) {
+        if (!rendered.has(name)) widgets.push([name, cfg]);
+      }
+      return { ...col, cols: [{ ...(col.cols?.[0] || {}), widgets }] };
+    })
+  );
+}
+
 const widgetSortables = new WeakMap();
 
 function onWidgetDragEnd() {
   try {
-    // getConfig() reads the live DOM, so it captures the post-drag order.
-    setPreferences({ widgets: widget.getConfig() });
+    setPreferences({ widgets: widgetLayoutFromDom() });
     widgetsVersion.value++;
   } catch (err) {
     console.warn('Failed to persist widget reorder', err);
@@ -536,7 +589,7 @@ const widgetToggleHandler = (e) => {
   if (!detail.widget) return;
   collapsedState.value = { ...collapsedState.value, [detail.widget]: detail.state };
   nextTick(() => {
-    setPreferences({ widgets: widget.getConfig() });
+    setPreferences({ widgets: widgetLayout() });
   });
 };
 
@@ -545,35 +598,15 @@ const widgetToggleHandler = (e) => {
 // extraPreference() falls back to the persisted document when Vue isn't
 // mounted yet.
 const collectPreferencesHandler = (e) => {
-  const d = e?.detail;
-  if (!d) return;
+  const preferencesData = e?.detail;
+  if (!preferencesData) return;
   try {
-    if (store.kanbancolumns) d.columns = [...store.kanbancolumns];
+    if (store.kanbancolumns) preferencesData.columns = [...store.kanbancolumns];
   } catch (err) {
     console.warn('Failed to collect kanban columns for preferences', err);
   }
   try {
-    // Read the live DOM order: a Sortable drag only moves DOM nodes, so the
-    // saved document is stale until the drag's onEnd callback persists it.
-    // getConfig() also reads the collapsed state from the DOM.
-    if (typeof widget !== 'undefined' && typeof widget.getConfig === 'function') {
-      d.widgets = widget.getConfig();
-    } else {
-      const saved = getPreference('widgets');
-      if (saved && saved.length > 0) {
-        const collapsed = collapsedState.value || {};
-        d.widgets = saved.map((col) => ({
-          ...col,
-          cols: (col.cols || []).map((row) => ({
-            ...row,
-            widgets: (row.widgets || []).map(([name, cfg]) => [
-              name,
-              { ...(cfg || {}), collapsed: collapsed[name] ?? cfg?.collapsed ?? false },
-            ]),
-          })),
-        }));
-      }
-    }
+    preferencesData.widgets = widgetLayout();
   } catch (err) {
     console.warn('Failed to collect widgets for preferences', err);
   }
@@ -583,7 +616,7 @@ const collectPreferencesHandler = (e) => {
     // hidden (kanban/gantt/calendar) and its postData is stale.
     if (store.mode && store.mode !== 'table') {
       const f = store.currentFilter || window.thefilter || window.initialfilter;
-      if (f) d.filter = typeof f === 'string' ? f : JSON.stringify(f);
+      if (f) preferencesData.filter = typeof f === 'string' ? f : JSON.stringify(f);
     }
   } catch (err) {
     console.warn('Failed to collect filter for preferences', err);

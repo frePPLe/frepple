@@ -38,16 +38,25 @@
  *   saveColumnConfiguration persists the restored widget layout.
  * The stock grid restore itself always runs and owns the whole jqGrid side
  * (columns, widths, frozen columns, filter, pills, sorting, reload).
- *
- * Plain ES5, no modules: this file is concatenated and minified by the
- * grunt `minify` task and loaded directly by the operationplan templates.
- * Loading it installs the wrappers (with retries while legacy scripts are
- * still loading).
  */
 (function () {
   'use strict';
 
   var DETAIL_KEYS = ['widgets', 'columns', 'grouping', 'groupingdir', 'filter'];
+
+  /*
+   * Read a favorite through the favorites service, falling back to the published
+   * map. The service is only loaded by the Vue report while this wrapper also
+   * runs on the legacy AngularJS report, where nothing answers the event - so
+   * both paths have to work.
+   */
+  function readFavorite(w, name) {
+    if (!name) return undefined;
+    var detail = { name: name };
+    document.dispatchEvent(new CustomEvent('favorites:get', { detail }));
+    if (detail.value !== undefined) return detail.value;
+    return w.favorites ? w.favorites[name] : undefined;
+  }
 
   function getWindow() {
     return typeof window !== 'undefined' ? window : {};
@@ -92,7 +101,7 @@
   }
 
   function readCurrentFilter(w) {
-    // In table mode jqGrid postData is authoritative (read by the stock
+    // In table mode jqGrid postData is the responsible (read by the stock
     // getGridConfig). In kanban/gantt/calendar the grid is hidden and stale,
     // so read the live filter from the template globals instead.
     try {
@@ -144,9 +153,9 @@
     return document.getElementById('app') || document;
   }
 
-  function installFavoriteWidgetsPatch() {
+  function applyFavoriteData() {
     var w = getWindow();
-    if (!w || w.__favoriteWidgetsPatched) return false;
+    if (!w || w.__favoriteDataApplied) return false;
     if (!w.favorite || !w.grid || typeof w.grid.getGridConfig !== 'function') return false;
 
     var origGetGridConfig = w.grid.getGridConfig.bind(w.grid);
@@ -175,7 +184,7 @@
     var origOpen = w.favorite.open.bind(w.favorite);
     w.favorite.open = function (event) {
       var favName = getFavoriteName(event);
-      var fav = favName && w.favorites ? w.favorites[favName] : undefined;
+      var fav = readFavorite(w, favName);
       if (!fav) return origOpen(event);
       var hasWidgets = !!fav.widgets;
 
@@ -200,7 +209,7 @@
 
         // The stock open parses the stored filter unguarded; a corrupt
         // value would throw mid-restore. Neutralize it for this open only
-        // (the stored favorite is restored afterwards) so the grid simply
+        // (the stored favorite is restored afterward) so the grid simply
         // ends up unfiltered instead of half-restored.
         var guarded = false;
         var storedFilter;
@@ -279,48 +288,29 @@
       return doOpen();
     };
 
-    w.__favoriteWidgetsPatched = true;
+    w.__favoriteDataApplied = true;
     return true;
   }
 
-  // Legacy scripts (favorite/grid) may load after this file, so retry with
-  // backoff instead of once, with a final attempt on window load.
-  function ensureInstalled(maxAttempts, delayMs) {
-    maxAttempts = maxAttempts || 10;
-    delayMs = delayMs || 500;
-    var attempts = 0;
-    var loadHooked = false;
-    var tryInstall = function () {
-      attempts++;
+  /*
+   * Settles with whether the favorite data is in place.
+   *
+   * grid.getGridConfig and favorite.open belong to frepple.js, which
+   * admin/base_site.html loads ahead of this file, so the first attempt
+   * normally succeeds. Waiting for load keeps that from being load-bearing - it
+   * fires after every script - without polling.
+   */
+  var w = getWindow();
+  w.favoriteDataReady = new Promise(function (resolve) {
+    var apply = function () {
       try {
-        if (installFavoriteWidgetsPatch()) return;
+        applyFavoriteData();
       } catch (err) {
-        warn('Failed to install favorite widgets patch', err);
+        /* reported by the marker check below */
       }
-      if (attempts < maxAttempts) {
-        setTimeout(tryInstall, delayMs);
-      } else if (typeof window !== 'undefined' && !loadHooked) {
-        loadHooked = true;
-        if (document.readyState === 'complete') {
-          warn('Favorite widgets patch could not be installed: window.favorite/grid missing');
-        } else {
-          window.addEventListener('load', function onLoad() {
-            window.removeEventListener('load', onLoad);
-            try {
-              if (!installFavoriteWidgetsPatch()) {
-                warn('Favorite widgets patch could not be installed: window.favorite/grid missing');
-              }
-            } catch (err) {
-              warn('Failed to install favorite widgets patch on load', err);
-            }
-          });
-        }
-      }
+      resolve(w.__favoriteDataApplied === true);
     };
-    tryInstall();
-  }
-
-  if (!installFavoriteWidgetsPatch()) {
-    ensureInstalled(10, 500);
-  }
+    apply();
+    if (w.__favoriteDataApplied !== true) w.addEventListener('load', apply, { once: true });
+  });
 })();

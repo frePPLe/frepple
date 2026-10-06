@@ -11,6 +11,8 @@
     "preinstall": "npx only-allow pnpm",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
+    "test:prefsvc": "node freppledb/common/tests/js/preference-services.test.mjs",
+    "lint:classic": "eslint --config freppledb/common/static/eslint.config.js freppledb/common/static/common/src freppledb/input/static/operationplandetail/src",
     "format": "prettier --write ."
   },
   "lint-staged": {

@@ -78,11 +78,10 @@ export const useOperationplansStore = defineStore('operationplans', {
     page: 1,
     rows: [], // table columns to be (de)selected
     frozen: 0,
-    currentFilter: '', // preferences.favorites
+    currentFilter: '',
     widgets: {},
     sidx: 'batch',
     sord: 'asc',
-    favorites: [], // for filters
     segment: '',
     columns: [], // ['proposed', 'approved', 'confirmed', 'completed', 'closed']
 
@@ -229,6 +228,22 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     async loadKanbanData(thefilter) {
       if (this.mode !== 'kanban') return;
+
+      // The card markup is fetched by the report template while the page parses,
+      // and KanbanCard reads it from window.kanban_card_template inside a computed
+      // that has no reactive dependency - so a card rendered before the fetch
+      // resolves caches the empty fallback and stays blank for the life of the
+      // page, leaving columns that show their record count with no cards in them.
+      //
+      // Every kanban load funnels through here, including the one undo() triggers
+      // from jqGrid's loadComplete while the page is still loading, so the wait
+      // has to be here rather than at any one caller.
+      try {
+        await window.kanban_card_template_promise;
+      } catch (err) {
+        console.warn('Kanban card template failed to load', err);
+      }
+
       if (!thefilter) {
         thefilter = this.currentFilter || window.initialfilter;
       }

@@ -65,13 +65,15 @@ rect.opplan {
 
 {% if debug_js %}
 <script src="{{STATIC_URL}}common/src/preferencesService.js"></script>
+<script src="{{STATIC_URL}}common/src/favoritesService.js"></script>
 <script type="module" src="http://localhost:5173/static/src/main.js"></script>
 <script type="module" src="http://localhost:5173/static/@vite/client"></script>
-<script src="{{STATIC_URL}}operationplandetail/src/favoritewidgets.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/favoriteDetails.js"></script>
 {% else %}
 <script src="{{STATIC_URL}}common/src/preferencesService.js"></script>
+<script src="{{STATIC_URL}}common/src/favoritesService.js"></script>
 <script src="{{STATIC_URL}}input/main.js"></script>
-<script src="{{STATIC_URL}}js/frepple-favoritewidgets.min.js"></script>
+<script src="{{STATIC_URL}}js/frepple-favoritedetails.min.js"></script>
 {% endif %}
 <script>
 
@@ -261,7 +263,10 @@ rect.opplan {
   var language = "{{LANGUAGE_CODE}}";
   var version = '{% version_short %}';
   var lastid = '';
-  var preferences = {{ preferences | json }};
+  /* `preferences` is published by admin/base_site_grid.html. Re-publishing it
+   * here would replace the global with a fresh copy of the favorites map after
+   * favoritesService.js had already tied the two together, so the document and
+   * window.favorites would drift apart again. */
   var default_operationplan_type = "{{ default_operationplan_type }}";
   var groupBy = "{{ groupBy }}";
   var thefilter = initialfilter;

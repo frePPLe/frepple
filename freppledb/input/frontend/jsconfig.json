@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@input/*": ["./src/*"],
+      "@common/*": ["../../common/frontend/src/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

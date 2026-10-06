@@ -212,6 +212,9 @@ export default defineComponent({
   `,
   computed: {
     innerComponent() {
+      if (!window.kanban_card_template) {
+        console.warn('Kanban card template is not loaded, rendering empty cards');
+      }
       const template = window.kanban_card_template || '<div v-if="false"></div>';
       return defineComponent({
         props: [

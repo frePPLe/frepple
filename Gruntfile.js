@@ -141,15 +141,15 @@ module.exports = function (grunt) {
         ],
         dest: 'freppledb/input/static/js/frepple-operationplandetail.js'
       },
-      favoritewidgets: {
+      favoriteDetails: {
         // Favorite wrapper (grid.getGridConfig + favorite.open) for the
         // operationplan report. Plain script with no dependencies: it
         // self-installs on load and works on both the Vue page and the
         // AngularJS page (state owners listen for its custom events).
         src: [
-          'freppledb/input/static/operationplandetail/src/favoritewidgets.js',
+          'freppledb/input/static/operationplandetail/src/favoriteDetails.js',
         ],
-        dest: 'freppledb/input/static/js/frepple-favoritewidgets.js'
+        dest: 'freppledb/input/static/js/frepple-favoritedetails.js'
       },
     },
 
@@ -195,9 +195,9 @@ module.exports = function (grunt) {
         src: ['freppledb/input/static/js/frepple-operationplandetail.js'],
         dest: 'freppledb/input/static/js/frepple-operationplandetail.min.js'
       },
-      favoritewidgets: {
-        src: ['freppledb/input/static/js/frepple-favoritewidgets.js'],
-        dest: 'freppledb/input/static/js/frepple-favoritewidgets.min.js'
+      favoriteDetails: {
+        src: ['freppledb/input/static/js/frepple-favoritedetails.js'],
+        dest: 'freppledb/input/static/js/frepple-favoritedetails.min.js'
       }
     },
 
@@ -206,7 +206,7 @@ module.exports = function (grunt) {
       'freppledb/common/static/js/frepple-common.js',
       'freppledb/input/static/js/frepple-input.js',
       'freppledb/input/static/js/frepple-operationplandetail.js',
-      'freppledb/input/static/js/frepple-favoritewidgets.js',
+      'freppledb/input/static/js/frepple-favoritedetails.js',
       'freppledb/input/static/main.css',
       'freppledb/input/static/index.html',
       'freppledb/forecast/static/main.css',

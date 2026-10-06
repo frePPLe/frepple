@@ -15,6 +15,7 @@ FrePPLe provides an integration with `Odoo <https://www.odoo.com>`_, a leading o
    installation-and-configuration
    extensions-to-the-odoo-data-model
    data-mapping
+   routes
    read-more
 
 .. TO ADD

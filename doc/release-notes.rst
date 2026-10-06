@@ -79,6 +79,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     happen if you have them defined at different locations within the same
     warehouse.
 
+- | 18, 19: The purchasing unit of measure was not correctly respected by the connector.
+  | If the purchasing unit of measure was different from the product unit of measure,
+    we used incorrect values for the minimum order quantity and the cost.
+
 .. rubric:: User interface
 
 - | Frepple expects a trailing slash at the end of URLs. We now automatically

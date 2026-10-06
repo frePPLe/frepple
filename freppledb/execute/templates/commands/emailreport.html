@@ -13,7 +13,7 @@
       <td></td>
       <td style="padding-left:15px">
            <input class="form-check-input" type="checkbox" id="allcheckboxes" checked>
-           <strong>{% trans 'file name'|capfirst %}</strong>
+           <label for="allcheckboxes"><strong>{% trans 'file name'|capfirst %}</strong></label>
       </td>
       <td><strong>{% trans 'size'|capfirst %}</strong></td>
       <td><strong>{% trans 'last modified'|capfirst %}</strong></td>
@@ -23,8 +23,8 @@
     <tr data-file="{{j.0}}">
       <td></td>
       <td style="padding-left:15px">
-          <input class="form-check-input" type="checkbox" id="{{j.0}}" checked>
-          {{j.0}}
+          <input class="form-check-input" type="checkbox" id="emailreport-{{forloop.counter}}" checked>
+          <label for="emailreport-{{forloop.counter}}">{{j.0}}</label>
       </td>
       <td class="text-nowrap">{{j.2}}</td>
       <td class="text-nowrap">{{j.1}}</td>
@@ -44,7 +44,7 @@ function validateEmailButton() {
     var reports = "";
     var first = true;
     {% for j in filesexported %}
-      if ($('#{{j.3}}').is(':checked')) {
+      if ($('#emailreport-{{forloop.counter}}').is(':checked')) {
           if (first) {
             reports = reports + "{{j.0}}";
             first = false
@@ -57,7 +57,7 @@ function validateEmailButton() {
     $("#report").val(reports);
     var oneChecked = false;
     {% for j in filesexported %}
-      oneChecked = oneChecked || $('#{{j.3}}').is(':checked');
+      oneChecked = oneChecked || $('#emailreport-{{forloop.counter}}').is(':checked');
     {% endfor %}
     var testEmail = /^([\w+-.%]+@[\w-.]+\.[A-Za-z]{2,},?)+$/;
     emails_ok = $("#emails").val() != '' && testEmail.test($("#emails").val());
@@ -81,15 +81,15 @@ $("#emails").on('input', function () {
 $("#allcheckboxes").on("click", function(event) {
     var isChecked = $('#allcheckboxes').is(':checked');
     {% for j in filesexported %}
-    $("#{{j.3}}").prop("checked", isChecked);
+    $("#emailreport-{{forloop.counter}}").prop("checked", isChecked);
     {% endfor %}
     validateEmailButton();
 });
 {% for j in filesexported %}
-$("#{{j.3}}").on("click", function(event) {
+$("#emailreport-{{forloop.counter}}").on("click", function(event) {
     var allChecked = true;
     {% for j in filesexported %}
-      allChecked = allChecked && $('#{{j.3}}').is(':checked');
+      allChecked = allChecked && $('#emailreport-{{forloop.counter}}').is(':checked');
     {% endfor %}
     $("#allcheckboxes").prop("checked", allChecked);
     validateEmailButton();

@@ -443,7 +443,7 @@ const widgetSortables = new WeakMap();
 
 function onWidgetDragEnd(evt) {
   try {
-    const next = (evt && widgetLayoutFromDom();
+    const next = evt && widgetLayoutFromDom();
     if (!next) return;
     setPreferences({ widgets: next });
     widgetsVersion.value++;

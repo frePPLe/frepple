@@ -22,7 +22,6 @@
  */
 
 <script setup lang="js">
-/* global widget */
 import { computed, ref, nextTick, onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@input/stores/operationplansStore.js';
@@ -442,10 +441,22 @@ function widgetLayoutFromDom() {
 
 const widgetSortables = new WeakMap();
 
-function onWidgetDragEnd() {
+function onWidgetDragEnd(evt) {
   try {
-    setPreferences({ widgets: widgetLayoutFromDom() });
+    const next = (evt && widgetLayoutFromDom();
+    if (!next) return;
+    setPreferences({ widgets: next });
     widgetsVersion.value++;
+    // The bump above replaces every .widget-list node, orphaning the
+    // Sortable instances bound to the old nodes. Re-attach to the fresh
+    // nodes once Vue has re-rendered, or the next drag is impossible.
+    nextTick(() => {
+      try {
+        initWidgetDrag();
+      } catch (err) {
+        console.warn('Failed to re-init widgets after reorder', err);
+      }
+    });
   } catch (err) {
     console.warn('Failed to persist widget reorder', err);
   }

@@ -48,13 +48,10 @@ const props = defineProps({
 
 const emit = defineEmits(['opplan-form-changed', 'widget-toggle']);
 
-const isCollapsed = computed(() => {
-  if (store.operationplan?.reference || store.operationplan?.operationplan__reference) return false;
-  return props.widget[1]?.collapsed ?? false;
-});
+const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
 
 const handleToggle = () => {
-  if (props.widget?.[0] && !store.operationplan?.reference && !store.operationplan?.operationplan__reference) {
+  if (props.widget?.[0]) {
     document.getElementById('app').dispatchEvent(
       new CustomEvent('widget-toggle', { detail: { widget: props.widget[0], state: !isCollapsed.value } })
     );

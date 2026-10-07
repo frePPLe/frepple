@@ -1386,7 +1386,7 @@
   <demands>
     <demand name="6. Demand 1">
       <customer name="Average Joe" />
-      <location name="5. factory" />
+      <location name="6. factory" />
       <quantity>30</quantity>
       <minshipment>30</minshipment>
       <item name="6. level 0" />
@@ -1395,7 +1395,7 @@
     </demand>
     <demand name="6. Demand 2">
       <customer name="Average Joe" />
-      <location name="5. factory" />
+      <location name="6. factory" />
       <quantity>30</quantity>
       <minshipment>30</minshipment>
       <item name="6. level 0" />
@@ -1404,7 +1404,7 @@
     </demand>
     <demand name="6. Demand 3">
       <customer name="Average Joe" />
-      <location name="5. factory" />
+      <location name="6. factory" />
       <quantity>30</quantity>
       <minshipment>30</minshipment>
       <item name="6. level 0" />
@@ -1413,7 +1413,7 @@
     </demand>
     <demand name="6. Demand 4">
       <customer name="Average Joe" />
-      <location name="5. factory" />
+      <location name="6. factory" />
       <quantity>30</quantity>
       <minshipment>30</minshipment>
       <item name="6. level 0" />
@@ -1422,7 +1422,7 @@
     </demand>
     <demand name="6. Demand 5">
       <customer name="Average Joe" />
-      <location name="5. factory" />
+      <location name="6. factory" />
       <quantity>30</quantity>
       <minshipment>30</minshipment>
       <item name="6. level 0" />
@@ -1433,7 +1433,7 @@
   <operations>
     <operation name="6. Make level 0" xsi:type="operation_time_per">
       <item name="6. level 0" />
-      <location name="5. factory" />
+      <location name="6. factory" />
       <batchwindow>P3D</batchwindow>
       <flows>
         <flow xsi:type="flow_end">
@@ -1455,7 +1455,7 @@
     </operation>
     <operation name="6. Make level 1" xsi:type="operation_time_per">
       <item name="6. level 1" />
-      <location name="5. factory" />
+      <location name="6. factory" />
       <batchwindow>P3D</batchwindow>
       <flows>
         <flow xsi:type="flow_end">
@@ -1477,7 +1477,7 @@
     </operation>
     <operation name="6. Make level 2" xsi:type="operation_time_per">
       <item name="6. level 2" />
-      <location name="5. factory" />
+      <location name="6. factory" />
       <batchwindow>P3D</batchwindow>
       <flows>
         <flow xsi:type="flow_end">
@@ -1499,7 +1499,7 @@
     </operation>
     <operation name="6. Make level 3" xsi:type="operation_time_per">
       <item name="6. level 3" />
-      <location name="5. factory" />
+      <location name="6. factory" />
       <batchwindow>P3D</batchwindow>
       <flows>
         <flow xsi:type="flow_end">
@@ -1521,7 +1521,7 @@
     </operation>
     <operation name="6. Make level 4" xsi:type="operation_time_per">
       <item name="6. level 4" />
-      <location name="5. factory" />
+      <location name="6. factory" />
       <batchwindow>P3D</batchwindow>
       <flows>
         <flow xsi:type="flow_end">

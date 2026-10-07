@@ -1273,17 +1273,17 @@ bool OperatorForward::compareCandidates(OperationPlan* opplan1,
   if (t1 != tabu.end())
     score1 = (opplan1 == curOperationPlan) ? t1->second + 1000 : t1->second;
   else if (opplan1 == curOperationPlan)
-    score1 = static_cast<double>(opplan1->getDelay()) / 86400 + 1000;
+    score1 = -static_cast<double>(opplan1->getDelay()) / 86400 + 1000;
   else
-    score1 = static_cast<double>(opplan1->getDelay()) / 86400;
+    score1 = -static_cast<double>(opplan1->getDelay()) / 86400;
 
   double score2;
   if (t2 != tabu.end())
     score2 = (opplan2 == curOperationPlan) ? t2->second + 1000 : t2->second;
   else if (opplan2 == curOperationPlan)
-    score2 = static_cast<double>(opplan2->getDelay()) / 86400 + 1000;
+    score2 = -static_cast<double>(opplan2->getDelay()) / 86400 + 1000;
   else
-    score2 = static_cast<double>(opplan2->getDelay()) / 86400;
+    score2 = -static_cast<double>(opplan2->getDelay()) / 86400;
 
   // Adjust the scores for the impact on the setup time
   // We only want to favor keeping in place operationplans that have require no
@@ -1335,11 +1335,11 @@ bool OperatorForward::compareCandidates(OperationPlan* opplan1,
     }
   }
 
-  // Final result:
+  // Final result: opposite to backward comparison
   if (fabs(score1 - score2) > ROUNDING_ERROR)
     return score1 < score2;
   else
-    return *opplan1 < *opplan2;
+    return *opplan2 < *opplan1;
 }
 
 }  // namespace frepple

@@ -515,7 +515,7 @@ bool OperatorBackward::compareCandidates(OperationPlan* opplan1,
   else
     score2 = -static_cast<double>(opplan2->getDelay()) / 86400;
 
-  // Final result
+  // Final result: opposite to forward comparison
   if (fabs(score1 - score2) > ROUNDING_ERROR)
     return score1 > score2;
   else

@@ -55,7 +55,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     "What are the proposed purchase orders for sales order X?"
     or "Show me the manufacturing orders planned today."
   | This release introduces a first version. In follow-up releases we expect further
-    improvements to the AI capabilitiies.
+    improvements to the AI capabilities.
   | This applies to Enterprise and Cloud Editions only.
 
 .. rubric:: Production planning
@@ -63,6 +63,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Bug fix: The capacity report gave confusing results on bucketized resources
     when confirmed loads are present in zero-sized buckets.
   | The loading numbers were correct, but not shown in the correct bucket.
+
+- | Bug fix: Non-zero values of the parameter plan.move_approved_early could result in
+    unnecessary lateness when some work orders in a routing manufacturing order
+    are in the confirmed status.
 
 .. rubric:: Odoo integration
 

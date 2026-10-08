@@ -118,7 +118,6 @@ export const useOperationplansStore = defineStore('operationplans', {
     calendarevents: [],
     multipleGanttSelectData: null,
     multiSelectLoadplans: {},
-    multiSelectOperationplans: {},
   }),
 
   getters: {
@@ -781,20 +780,19 @@ export const useOperationplansStore = defineStore('operationplans', {
 
     async fetchMultiSelectLoadplans(operationplans) {
       const refs = operationplans
-        .map((op) => (typeof op === 'string' ? op : op.reference || op.operationplan__reference))
+        .map(op => typeof op === 'string' ? op : (op.reference || op.operationplan__reference))
         .filter(Boolean);
 
-      const missing = refs.filter((r) => !this.multiSelectLoadplans[r]);
+      const missing = refs.filter(r => !this.multiSelectLoadplans[r]);
       if (missing.length === 0) return;
 
       try {
         const response = await operationplanService.getOperationplanDetailsBatch(missing);
         const data = response.responseData?.value || response.data || [];
-        data.forEach((op) => {
+        data.forEach(op => {
           if (op.loadplans) {
             this.multiSelectLoadplans[op.reference] = op.loadplans;
           }
-          this.multiSelectOperationplans[op.reference] = op;
         });
       } catch (err) {
         console.error('Failed to fetch multi-select loadplans', err);

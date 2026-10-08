@@ -2038,6 +2038,9 @@ class OperationPlanDetail(View):
         view_OpplanMaterial = request.user.has_perm("input.view_operationplanmaterial")
         view_OpplanResource = request.user.has_perm("input.view_operationplanresource")
 
+        # Collect results to return as single JSON array
+        results = []
+
         # Loop over all operationplans
         for opplan in opplans:
             # Check permissions
@@ -2884,16 +2887,13 @@ class OperationPlanDetail(View):
                                 ]
                             )
 
-                # Final result
-                if first:
-                    yield "[%s" % json.dumps(res)
-                    first = False
-                else:
-                    yield ",%s" % json.dumps(res)
-                yield "]"
+                # Final result - collect in list
+                results.append(res)
             except Exception as e:
                 # Ignore exceptions and move on
                 logger.error("Error retrieving operationplan: %s" % e)
+
+        yield json.dumps(results)
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):

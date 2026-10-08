@@ -313,17 +313,8 @@ function shouldShowWidget(widgetName) {
     return store.multipleGanttSelectData !== null;
   }
   if (widgetName === 'operationresources') {
-    if (store.operationplan?.loadplans?.length > 0) return true;
-    if (store.selectedOperationplans?.length > 0) {
-      const msl = store.multiSelectLoadplans;
-      if (msl && Object.keys(msl).length > 0) {
-        return Object.values(msl).some(lp => lp.length > 0);
-      }
-      if (store.selectedOperationplans.some(op => {
-        if (typeof op === 'string') return false;
-        return Array.isArray(op.loadplans) && op.loadplans.length > 0;
-      })) return true;
-    }
+    if (store.operationplan?.loadplans !== undefined) return true;
+    if (store.selectedOperationplans?.length > 0) return true;
   }
   if (!store.operationplan || store.operationplan.id === '-1') return false;
 

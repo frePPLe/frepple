@@ -22,7 +22,7 @@
  */
 
 <script setup lang="js">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOperationplansStore } from '@input/stores/operationplansStore.js';
 import { adminEscape, numberFormat } from '@common/utils.js';
@@ -100,6 +100,16 @@ const loadplans = computed(() => {
 const hasLoadplans = computed(() => {
   return loadplans.value.length > 0;
 });
+
+watch(
+  () => [multipleOpplans.value, store.selectedOperationplans],
+  async ([isMulti, selectedOps]) => {
+    if (isMulti && selectedOps && selectedOps.length > 0) {
+      await store.fetchMultiSelectLoadplans(selectedOps);
+    }
+  },
+  { immediate: true }
+);
 
 // Get URL prefix
 const urlPrefix = computed(() => window.url_prefix || '');
@@ -279,10 +289,6 @@ function markDirty() {
                   <span class="fa fa-caret-right ps-1"></span>
                 </a>
               </div>
-            </td>
-
-            <td v-if="!multipleOpplans">
-              {{ numberFormat(loadplan.quantity || 0) }}
             </td>
           </tr>
         </tbody>

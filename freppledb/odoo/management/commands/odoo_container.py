@@ -242,23 +242,20 @@ class Command(BaseCommand):
                     "docker",
                     "run",
                     "--rm",
-                    # "--add-host",
-                    # "host.docker.internal:host-gateway",
-                    "--network",
-                    "host",
+                    "--add-host",
+                    "host.docker.internal:host-gateway",
                 ]
                 + [
                     "-v",
                     "%s:/var/lib/odoo" % name,
                     "-e",
-                    # "HOST=%s"
-                    # % (
-                    #     "host.docker.internal"
-                    #     if not options["odoo_db_host"]
-                    #     or options["odoo_db_host"] == "localhost"
-                    #     else options["odoo_db_host"]
-                    # ),
-                    "HOST=127.0.0.1",
+                    "HOST=%s"
+                    % (
+                        "host.docker.internal"
+                        if not options["odoo_db_host"]
+                        or options["odoo_db_host"] == "localhost"
+                        else options["odoo_db_host"]
+                    ),
                     "-e",
                     "USER=%s" % options["odoo_db_user"],
                     "-e",
@@ -291,23 +288,20 @@ class Command(BaseCommand):
                         "docker",
                         "run",
                         "--rm",
-                        # "--add-host",
-                        # "host.docker.internal:host-gateway",
-                        "--network",
-                        "host",
+                        "--add-host",
+                        "host.docker.internal:host-gateway",
                     ]
                     + [
                         "-v",
                         "%s:/var/lib/odoo" % name,
                         "-e",
-                        # "HOST=%s"
-                        # % (
-                        #     "host.docker.internal"
-                        #     if not options["odoo_db_host"]
-                        #     or options["odoo_db_host"] == "localhost"
-                        #     else options["odoo_db_host"]
-                        # ),
-                        "HOST=127.0.0.1",
+                        "HOST=%s"
+                        % (
+                            "host.docker.internal"
+                            if not options["odoo_db_host"]
+                            or options["odoo_db_host"] == "localhost"
+                            else options["odoo_db_host"]
+                        ),
                         "-e",
                         "USER=%s" % options["odoo_db_user"],
                         "-e",
@@ -339,23 +333,20 @@ class Command(BaseCommand):
                     "docker",
                     "run",
                     "--rm",
-                    # "--add-host",
-                    # "host.docker.internal:host-gateway",
-                    "--network",
-                    "host",
+                    "--add-host",
+                    "host.docker.internal:host-gateway",
                 ]
                 + [
                     "-v",
                     "%s:/var/lib/odoo" % name,
                     "-e",
-                    # "HOST=%s"
-                    # % (
-                    # #     "host.docker.internal"
-                    # #     if not options["odoo_db_host"]
-                    # #     or options["odoo_db_host"] == "localhost"
-                    # #     else options["odoo_db_host"]
-                    # ),
-                    "HOST=127.0.0.1",
+                    "HOST=%s"
+                    % (
+                        "host.docker.internal"
+                        if not options["odoo_db_host"]
+                        or options["odoo_db_host"] == "localhost"
+                        else options["odoo_db_host"]
+                    ),
                     "-e",
                     "USER=%s" % options["odoo_db_user"],
                     "-e",
@@ -550,16 +541,19 @@ class Command(BaseCommand):
                 "%s:/var/lib/odoo" % name,
                 "--restart",
                 "always",
-                # "--add-host",
-                # "host.docker.internal:host-gateway",
-                "--network",
-                "host",
+                "--add-host",
+                "host.docker.internal:host-gateway",
             ]
             + ([i for i in options["docker_arg"]] if options["docker_arg"] else [])
             + [
                 "-e",
-                #
-                "HOST=127.0.0.1",
+                "HOST=%s"
+                % (
+                    "host.docker.internal"
+                    if not options["odoo_db_host"]
+                    or options["odoo_db_host"] == "localhost"
+                    else options["odoo_db_host"]
+                ),
                 "-e",
                 "USER=%s" % options["odoo_db_user"],
                 "-e",

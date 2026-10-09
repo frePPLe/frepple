@@ -1,11 +1,13 @@
 Release notes
 -------------
 
-10.0.0 (Heads up on major release)
-==================================
+10.0.0 (Upcoming major release)
+===============================
 
-This release is scheduled for the end of 2026. This release will bring some
-bigger and backward incompatible changes.
+This release is scheduled for the end of 2026.
+You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+This release will bring some bigger and backward incompatible changes.
 
 - | The software will only be distributed as a container image.
   | The Ubuntu installer will no longer be available.
@@ -40,11 +42,8 @@ bigger and backward incompatible changes.
   | As that date approaches, we're extending the planning horizon so it's
     no longer a hard limit.
 
-9.19.0 (Upcoming release)
-=========================
-
-This release is scheduled for the end of September 2026.
-You can already check out a `preview <https://demo-preview.frepple.com>`_.
+9.19.0 (2026-10-09)
+===================
 
 .. rubric:: AI
 

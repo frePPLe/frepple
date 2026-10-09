@@ -116,10 +116,7 @@ jobs:
           body: |
             Release notes are available on https://frepple.com/docs/current/release-notes.html
 
-            **docker container**\: Docker pull ghcr.io/frepple/frepple:${{ env.frepple_version }}
-            **ubuntu24-frepple-${{ env.frepple_version }}.deb**\: Installer for Ubuntu 24.04 LTS
-          files: |
-            ${{github.workspace}}/build/*.deb
+            Pull the docker image for this release\: docker pull ghcr.io/frepple/frepple:${{ env.frepple_version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

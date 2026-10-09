@@ -41,10 +41,6 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  mode: {
-    type: String,
-    default: '',
-  },
 });
 
 const isCollapsed = computed(() => props.widget[1]?.collapsed ?? false);
@@ -140,13 +136,13 @@ function selectAlternateResource(loadplan, newResource) {
 
   // Handle different modes
   if (props.mode && (props.mode.startsWith('calendar') || props.mode === 'kanban')) {
-    // Update calendar or kanban card
-    store.$emit?.(
-      'updateCard',
-      'loadplans',
-      store.operationplan.loadplansOriginal,
-      loadplans.value
-    );
+    const ref =
+      store.operationplan?.reference || store.operationplan?.operationplan__reference;
+    if (ref) {
+      const resources = loadplans.value.map((lp) => [lp.resource?.name, lp.quantity, ref]);
+      store.trackOperationplanChanges(ref, 'resource', resources);
+      window.isDataSaved = false;
+    }
   } else {
     // Update the grid
     updateGrid(currentResource, newResource);

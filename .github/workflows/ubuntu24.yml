@@ -108,19 +108,6 @@ jobs:
             exit 1
           fi
 
-      - name: Determine if this is the latest release
-        working-directory: ${{github.workspace}}
-        if: startsWith(github.ref, 'refs/tags/') && github.repository == 'frePPLe/frepple'
-        run: |
-          git -c submodule.recurse=false fetch --tags --force
-          # highest plain "x.y.z" version tag, including patch releases, wins
-          latest=$(git tag --list | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n1)
-          if [ "$latest" == "${{ env.frepple_version }}" ]; then
-            echo "is_latest_release=true" >> $GITHUB_ENV
-          else
-            echo "is_latest_release=false" >> $GITHUB_ENV
-          fi
-
       - name: Publish release
         if: startsWith(github.ref, 'refs/tags/') && github.repository == 'frePPLe/frepple'
         uses: softprops/action-gh-release@v3
@@ -135,13 +122,6 @@ jobs:
             ${{github.workspace}}/build/*.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Tag release build as latest
-        working-directory: ${{github.workspace}}
-        if: startsWith(github.ref, 'refs/tags/') && github.repository == 'frePPLe/frepple' && env.is_latest_release == 'true'
-        run: |
-          docker tag ghcr.io/frepple/frepple-community:${{ env.frepple_version }} ghcr.io/frepple/frepple-community:latest
-          docker push ghcr.io/frepple/frepple-community:latest
 
       - name: Send failure mail
         if: failure()
@@ -230,6 +210,11 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/') && github.repository == 'frePPLe/frepple'
     runs-on: ubuntu-24.04
     steps:
+      - name: Checking out source code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v4
         with:
@@ -237,13 +222,31 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Determine if this is the latest release
+        working-directory: ${{github.workspace}}
+        run: |
+          git -c submodule.recurse=false fetch --tags --force
+          latest=$(git tag --list | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n1)
+          if [ "$latest" == "${GITHUB_REF#refs/tags/}" ]; then
+            echo "is_latest_release=true" >> $GITHUB_ENV
+          else
+            echo "is_latest_release=false" >> $GITHUB_ENV
+          fi
+
       - name: Create and push the multi-arch manifest
         run: |
           version=${GITHUB_REF#refs/tags/}
           image=${{ needs.docker.outputs.image }}
-          docker buildx imagetools create \
-            --tag "$image:$version" \
-            --tag "$image:latest" \
-            "$image:$version-amd64" \
-            "$image:$version-arm64"
+          if [ "$is_latest_release" == "true" ]; then
+            docker buildx imagetools create \
+              --tag "$image:$version" \
+              --tag "$image:latest" \
+              "$image:$version-amd64" \
+              "$image:$version-arm64"
+          else
+            docker buildx imagetools create \
+              --tag "$image:$version" \
+              "$image:$version-amd64" \
+              "$image:$version-arm64"
+          fi
           docker buildx imagetools inspect "$image:$version"

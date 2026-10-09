@@ -290,6 +290,9 @@ function markDirty() {
                 </a>
               </div>
             </td>
+            <td v-if="!multipleOpplans">
+              {{ numberFormat(loadplan.quantity || 0) }}
+            </td>
           </tr>
         </tbody>
       </table>

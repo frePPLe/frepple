@@ -313,8 +313,24 @@ function shouldShowWidget(widgetName) {
     return store.multipleGanttSelectData !== null;
   }
   if (widgetName === 'operationresources') {
-    if (store.operationplan?.loadplans !== undefined) return true;
-    if (store.selectedOperationplans?.length > 0) return true;
+    if (store.operationplan?.loadplans?.length > 0) return true;
+    // Multi-select: stay hidden until the async fetch confirms at least one resource to avoid flashing on screen
+    if (store.selectedOperationplans?.length > 1) {
+      for (const opplan of store.selectedOperationplans) {
+        const ref =
+          typeof opplan === 'string' ? opplan : opplan?.reference || opplan?.opplanerationplan__reference;
+        const ldplan = (ref && store.multiSelectLoadplans?.[ref]) || opplan?.loadplans;
+        if (ldplan?.length > 0) return true;
+        const resField = opplan?.resource || opplan?.resources;
+        if (
+          Array.isArray(resField) &&
+          resField.some((i) => Array.isArray(i) && i.length >= 2 && String(i[0]))
+        )
+          return true;
+      }
+      return false;
+    }
+    return false;
   }
   if (!store.operationplan || store.operationplan.id === '-1') return false;
 

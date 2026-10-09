@@ -1111,12 +1111,12 @@ def csrf_failure(request, reason):
 
 
 def sendStaticFile(request, *args, headers=None):
-    """
-    Serving log and data files can be handled either:
-    - by Django's Python code
-    - by the apache or nginx web server if the module xsendfile is installed
-    """
-    if getattr(settings, "APACHE_XSENDFILE", False):
+    if not getattr(settings, "DEBUG", False):
+        # Debug mode: use Django's static file server
+        response = static.serve(
+            request, args[-1], document_root=os.path.join(*args[:-1])
+        )
+    else:
         # Forward to Apache
         # Code inspired on https://github.com/johnsensible/django-sendfile/
         response = HttpResponse()
@@ -1129,11 +1129,6 @@ def sendStaticFile(request, *args, headers=None):
         response["X-Sendfile"] = os.path.join(*args)
         # For nginx:
         # response["X-Accel-Redirect"]= os.path.join(*args)
-    else:
-        # Django's static file server
-        response = static.serve(
-            request, args[-1], document_root=os.path.join(*args[:-1])
-        )
     if response.headers.get("Content-Encoding", None) == "gzip":
         # Avoid that gzipped files are decompressed automatically by browsers
         del response.headers["Content-Encoding"]

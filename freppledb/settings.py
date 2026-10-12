@@ -166,8 +166,8 @@ DATE_STYLE_WITH_HOURS = (
 # Do not activate this feature in Django.
 APPEND_SLASH = False
 
-ASGI_APPLICATION = "freppledb.asgi.application"
-WSGI_APPLICATION = "freppledb.wsgi.application"
+ASGI_APPLICATION = "freppledb.asgi_webserver.application"
+WSGI_APPLICATION = None
 ROOT_URLCONF = "freppledb.urls"
 if "FREPPLE_STATIC" in os.environ:
     STATIC_ROOT = os.environ["FREPPLE_STATIC"]

@@ -27,9 +27,7 @@ from freppledb import mode
 # Automatically add these URLs when the application is installed
 autodiscover = True
 
-if mode == "WSGI":
+if mode == "webserver":
     from . import views
 
-    urlpatterns = [
-        path("executesql/", views.ExecuteSQL.as_view(), name="executesql")
-    ]
+    urlpatterns = [path("executesql/", views.ExecuteSQL.as_view(), name="executesql")]

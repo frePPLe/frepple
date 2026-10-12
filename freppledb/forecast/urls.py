@@ -28,7 +28,7 @@ from freppledb import mode
 # Automatically add these URLs when the application is installed
 autodiscover = True
 
-if mode == "ASGI":
+if mode == "service":
     from . import services
 
     svcpatterns = [

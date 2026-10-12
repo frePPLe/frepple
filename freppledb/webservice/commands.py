@@ -50,7 +50,7 @@ class WebService:
         cls.service = CommandLineInterface()
         cls.service.run(
             (
-                ":".join(settings.ASGI_APPLICATION.rsplit(".", 1)),
+                "freppledb.asgi_service:application",
                 "--bind",
                 address,
                 "--port",
@@ -201,7 +201,7 @@ class RunWebService(PlanTask):
 
         # Running the server
         os.environ["FREPPLE_DATABASE"] = database
-        freppledb.mode = "ASGI"
+        freppledb.mode = "service"
         WebService.start(*server.split(":", 1))
 
         # Exit immediately, to avoid that any more messages are printed to the log file

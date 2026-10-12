@@ -28,7 +28,7 @@ from freppledb import mode
 # Automatically add these URLs when the application is installed
 autodiscover = True
 
-if mode == "WSGI":
+if mode == "webserver":
     from . import views
 
     urlpatterns = [

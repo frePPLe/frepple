@@ -33,8 +33,8 @@ except Exception:
 
 VERSION = __version__  # Old custom way, deprecated
 
-# Recognize ASGI vs WSGI mode
-mode = "WSGI"
+# Recognize webserver versus engine service mode
+mode = "webserver"
 
 
 def runCommand(taskname, *args, **kwargs):

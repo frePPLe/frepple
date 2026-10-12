@@ -170,10 +170,10 @@ class OdooReadData(PlanTask):
         try:
             singlecompany = (
                 getattr(settings, "ODOO_SINGLECOMPANY", {}).get(database, None)
-                or Parameter.getValue("odoo.singlecompany", database, "false")
+                or Parameter.getValue("odoo.singlecompany", database, "true")
             ).strip()
         except Exception:
-            singlecompany = "false"
+            singlecompany = "true"
         try:
             odoo_delta = Parameter.getValue("odoo.delta", database, "999")
         except Exception:

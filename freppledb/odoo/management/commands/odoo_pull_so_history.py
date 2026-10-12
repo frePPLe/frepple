@@ -179,27 +179,50 @@ class Command(BaseCommand):
             task.save(using=self.database)
 
             # Get parameters
-            self.odoo_user = getattr(settings, "ODOO_USER", {}).get(
-                self.database, None
-            ) or Parameter.getValue("odoo.user", self.database)
-            self.odoo_password = getattr(settings, "ODOO_PASSWORDS", {}).get(
-                self.database, None
-            ) or Parameter.getValue("odoo.password", self.database)
-            self.odoo_db = getattr(settings, "ODOO_DB", {}).get(
-                self.database, None
-            ) or Parameter.getValue("odoo.db", self.database, None)
-            self.odoo_url = (
-                getattr(settings, "ODOO_URL", {}).get(self.database, None)
-                or Parameter.getValue("odoo.url", self.database, "")
-            ).strip()
-            if not self.odoo_url.endswith("/"):
-                self.odoo_url = self.odoo_url + "/"
-            self.odoo_company = getattr(settings, "ODOO_COMPANY", {}).get(
-                self.database, None
-            ) or Parameter.getValue("odoo.company", self.database, None)
-            self.singlecompany = getattr(settings, "ODOO_SINGLECOMPANY", {}).get(
-                self.database, None
-            ) or Parameter.getValue("odoo.singlecompany", self.database, "false")
+            try:
+                self.odoo_user = (
+                    getattr(settings, "ODOO_USER", {}).get(self.database, None)
+                    or Parameter.getValue("odoo.user", self.database)
+                ).strip()
+            except Exception:
+                self.odoo_user = None
+            try:
+                self.odoo_password = (
+                    getattr(settings, "ODOO_PASSWORDS", {}).get(self.database, None)
+                    or Parameter.getValue("odoo.password", self.database)
+                ).strip()
+            except Exception:
+                self.odoo_password = None
+            try:
+                self.odoo_db = (
+                    getattr(settings, "ODOO_DB", {}).get(self.database, None)
+                    or Parameter.getValue("odoo.db", self.database, None)
+                ).strip()
+            except Exception:
+                self.odoo_db = None
+            try:
+                self.odoo_url = (
+                    getattr(settings, "ODOO_URL", {}).get(self.database, None)
+                    or Parameter.getValue("odoo.url", self.database, "")
+                ).strip()
+                if not self.odoo_url.endswith("/"):
+                    self.odoo_url = self.odoo_url + "/"
+            except Exception:
+                self.odoo_url = None
+            try:
+                self.odoo_company = (
+                    getattr(settings, "ODOO_COMPANY", {}).get(self.database, None)
+                    or Parameter.getValue("odoo.company", self.database, None)
+                ).strip()
+            except Exception:
+                self.odoo_company = None
+            try:
+                self.singlecompany = (
+                    getattr(settings, "ODOO_SINGLECOMPANY", {}).get(self.database, None)
+                    or Parameter.getValue("odoo.singlecompany", self.database, "true")
+                ).strip()
+            except Exception:
+                self.singlecompany = "true"
             self.odoo_delta = Parameter.getValue("odoo.delta", self.database, "999")
 
             # Check parameters

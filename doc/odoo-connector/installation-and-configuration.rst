@@ -154,9 +154,9 @@ The section below describes the installation and configuration of these.
         manufacturing orders.
 
     * | odoo.singlecompany:
-      | When false (the default) the connector downloads all allowed companies for the Odoo integration
+      | When false the connector downloads all allowed companies for the Odoo integration
         user.
-      | When true the connector only downloads the data of the configured odoo.company.
+      | When true (the default) the connector only downloads the data of the configured odoo.company.
 
     * | odoo.allowSharedOwnership:
       | By default records read from Odoo aren't editable in frepple. You loose your

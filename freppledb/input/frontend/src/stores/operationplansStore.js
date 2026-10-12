@@ -329,48 +329,61 @@ export const useOperationplansStore = defineStore('operationplans', {
         this.operationplan?.reference || this.operationplan?.operationplan__reference;
       if (currentRef === reference) {
         this.operationplan.status = newStatus;
+        if (Object.prototype.hasOwnProperty.call(this.operationplan, 'operationplan__status')) {
+          this.operationplan.operationplan__status = newStatus;
+        }
       }
-
-      this.trackOperationplanChanges(reference, 'status', newStatus);
     },
 
-    // Move a card between Kanban columns when status changes
-    moveKanbanCard(reference, oldStatus, newStatus) {
+    // Move all cards sharing a reference between Kanban columns when the status
+    // changes. A status applies to the whole operationplan, so every card of
+    // that operationplan has to move along.
+    // The optional insertIndex places the moved group at that position in the
+    // target column (used by drag-and-drop); omit it to insert at the top.
+    moveKanbanCard(reference, oldStatus, newStatus, insertIndex = null) {
       if (!this.kanbancolumns.includes(newStatus)) return;
       if (oldStatus === newStatus) return;
-
-      // We need to check all columns because multiple cards with same reference
-      // might exist in different status columns
-      // or at least ensure we move ALL matching cards from the oldStatus column.
 
       const oldColumn = this.kanbanoperationplans[oldStatus];
       if (!oldColumn || !oldColumn.rows) return;
 
-      // Find all matching cards
-      let cardIndex;
-      while ((cardIndex = oldColumn.rows.findIndex((row) => row.reference == reference)) !== -1) {
-        // Remove from old column
-        const cardData = oldColumn.rows.splice(cardIndex, 1)[0];
+      const matches = (row) =>
+        row.reference == reference ||
+        row.operationplan__reference == reference ||
+        row.id == reference;
 
-        // Update status fields
+      // Collect all matching cards, preserving their source order.
+      const moved = [];
+      for (let i = oldColumn.rows.length - 1; i >= 0; i--) {
+        if (matches(oldColumn.rows[i])) moved.unshift(oldColumn.rows.splice(i, 1)[0]);
+      }
+      if (moved.length === 0) return;
+
+      // Update status fields
+      for (const cardData of moved) {
         cardData.status = newStatus;
         if (Object.prototype.hasOwnProperty.call(cardData, 'operationplan__status')) {
           cardData.operationplan__status = newStatus;
         }
         cardData.dirty = true;
-
-        // Ensure new column exists
-        if (!this.kanbanoperationplans[newStatus]) {
-          this.kanbanoperationplans[newStatus] = { rows: [], records: 0 };
-        }
-
-        // Add to new column
-        this.kanbanoperationplans[newStatus].rows.unshift(cardData);
-
-        // Update counters
-        oldColumn.records--;
-        this.kanbanoperationplans[newStatus].records++;
       }
+
+      // Ensure new column exists
+      if (!this.kanbanoperationplans[newStatus]) {
+        this.kanbanoperationplans[newStatus] = { rows: [], records: 0 };
+      }
+      const newColumn = this.kanbanoperationplans[newStatus];
+
+      // Insert the group at the requested position, otherwise at the top.
+      let index = insertIndex;
+      if (index === null || index < 0 || index > newColumn.rows.length) {
+        index = index === null ? 0 : newColumn.rows.length;
+      }
+      newColumn.rows.splice(index, 0, ...moved);
+
+      // Update counters
+      oldColumn.records -= moved.length;
+      newColumn.records += moved.length;
     },
 
     setFrozenColumns(frozen) {

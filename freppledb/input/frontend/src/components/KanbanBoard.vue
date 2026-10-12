@@ -72,50 +72,56 @@ onMounted(async () => {
             return true;
           },
           onEnd: (evt) => {
-            const reference = evt.item
+            const rawReference = evt.item
               ?.querySelector('[data-reference]')
               ?.getAttribute('data-reference');
             const oldStatus = evt.from.getAttribute('data-column');
             const newStatus = evt.item.parentElement.getAttribute('data-column');
-            if (!reference || !newStatus || !oldStatus) return;
+            if (!rawReference || !newStatus || !oldStatus) return;
 
             if (actions.hasOwnProperty('erp_incr_export') || !editable) return;
             // Mark data as unsaved for legacy UI buttons
             window.isDataSaved = false;
 
-            // Track change for save
-            store.trackOperationplanChanges(reference, 'status', newStatus);
+            const rows = store.kanbanoperationplans[oldStatus]?.rows;
+            if (!rows) return;
+
+            // The rendered data-reference is opplan.id when the report exposes an
+            // id column, otherwise the operationplan reference. Resolve it to the
+            // operationplan reference used everywhere else for change tracking.
+            const cardIndex = rows.findIndex(
+              (row) =>
+                row.reference == rawReference ||
+                row.operationplan__reference == rawReference ||
+                row.id == rawReference
+            );
+            if (cardIndex === -1) {
+              console.error('Card not found in source column:', rawReference);
+              return;
+            }
+            const reference =
+              rows[cardIndex].reference ||
+              rows[cardIndex].operationplan__reference ||
+              rawReference;
 
             if (newStatus !== oldStatus) {
-              const oldIndex = evt.oldIndex; // use Sortable’s index
-              const newIndex = evt.newIndex; // Find the card by reference instead of using oldIndex
-              const rows = store.kanbanoperationplans[oldStatus].rows;
-              const cardIndex = rows.findIndex((row) => row.reference == reference);
-              if (cardIndex === -1) {
-                console.error('Card not found in source column:', reference);
-                return;
-              }
-              const cardData = rows.splice(cardIndex, 1)[0];
-              // Keep both fields in sync if present
-              cardData.status = newStatus;
-              if (Object.prototype.hasOwnProperty.call(cardData, 'operationplan__status')) {
-                cardData.operationplan__status = newStatus;
-              }
-              cardData.dirty = true;
+              // The status field is prefixed in the detail reports.
+              const statusField = Object.prototype.hasOwnProperty.call(
+                rows[cardIndex],
+                'operationplan__status'
+              )
+                ? 'operationplan__status'
+                : 'status';
 
-              store.setKanbanStatus(oldStatus, oldIndex, newStatus, newIndex, reference);
+              // Track change for save
+              store.trackOperationplanChanges(reference, statusField, newStatus);
+              store.setKanbanStatus(oldStatus, evt.oldIndex, newStatus, evt.newIndex, reference);
 
-              if (!store.kanbanoperationplans[newStatus]) {
-                store.kanbanoperationplans[newStatus] = { rows: [], records: 0 };
-              }
-              store.kanbanoperationplans[newStatus].rows.splice(newIndex, 0, cardData);
-
-              // Update counters
-              store.kanbanoperationplans[oldStatus].records--;
-              store.kanbanoperationplans[newStatus].records++;
+              // A status change applies to the whole operationplan: every card
+              // sharing the reference moves along, landing at the drop position.
+              store.moveKanbanCard(reference, oldStatus, newStatus, evt.newIndex);
             } else {
               // Reorder inside same column
-              const rows = store.kanbanoperationplans[oldStatus].rows;
               const [moved] = rows.splice(evt.oldIndex, 1);
               rows.splice(evt.newIndex, 0, moved);
             }
@@ -307,7 +313,7 @@ function selectCard(opplan) {
               <div
                 class="card-kanban"
                 v-for="(opplan, index) in kanbanoperationplans[col].rows"
-                :key="opplan.reference || opplan.id"
+                :key="opplan.id || opplan.reference"
                 :data-index="index"
                 @click="selectCard(opplan)"
               >

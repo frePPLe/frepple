@@ -42,6 +42,13 @@ This release will bring some bigger and backward incompatible changes.
   | As that date approaches, we're extending the planning horizon so it's
     no longer a hard limit.
 
+.. rubric:: Odoo integration
+
+- | 18, 19: Bug fix for partially completed manufacturing orders.
+  | The quantity showing in frepple was the completed quantity, which incorrectly made frepple
+    propose another manufacturing order for the remaining quantity.
+
+
 9.19.0 (2026-10-09)
 ===================
 

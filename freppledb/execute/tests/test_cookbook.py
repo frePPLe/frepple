@@ -282,28 +282,6 @@ class cookbook_input(cookbooktest):
             "make-to-order.expect",
         )
 
-    @unittest.skip("Feature is deprecated")
-    def test_buffer_transfer_batch(self):
-        self.loadExcel(
-            settings.FREPPLE_HOME,
-            "..",
-            "doc",
-            "examples",
-            "buffer",
-            "transfer-batch.xlsx",
-        )
-        management.call_command(
-            "runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply"
-        )
-        self.assertOperationplans(
-            settings.FREPPLE_HOME,
-            "..",
-            "doc",
-            "examples",
-            "buffer",
-            "transfer-batch.expect",
-        )
-
     def test_supplier_capacity(self):
         self.loadExcel(
             settings.FREPPLE_HOME,

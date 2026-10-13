@@ -56,13 +56,13 @@ def runCommand(taskname, *args, **kwargs):
     # Be sure to use the correct database
     from django.conf import settings
     from django.db import DEFAULT_DB_ALIAS, connections
-    from freppledb.common.middleware import _thread_locals
+    from freppledb.common.middleware import _db_ctxvar
     from freppledb.common.utils import get_databases
 
     from threading import local
 
     database = kwargs.get("database", DEFAULT_DB_ALIAS)
-    setattr(_thread_locals, "database", database)
+    _db_ctxvar.set(database)
     connections._connections = local()
     if "FREPPLE_TEST" in os.environ:
         settings.EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
@@ -111,13 +111,13 @@ def runFunction(func, *args, **kwargs):
     # Be sure to use the correct database
     from django.conf import settings
     from django.db import DEFAULT_DB_ALIAS, connections
-    from freppledb.common.middleware import _thread_locals
+    from freppledb.common.middleware import _db_ctxvar
     from freppledb.common.utils import get_databases
 
     from threading import local
 
     database = kwargs.get("database", DEFAULT_DB_ALIAS)
-    setattr(_thread_locals, "database", database)
+    _db_ctxvar.set(database)
     connections._connections = local()
     if "FREPPLE_TEST" in os.environ:
         settings.EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"

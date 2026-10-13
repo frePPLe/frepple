@@ -36,7 +36,7 @@ from django.utils.translation import gettext_lazy as _
 
 from ...models import ScheduledTask, Task
 from freppledb import __version__
-from freppledb.common.middleware import _thread_locals
+from freppledb.common.middleware import _db_ctxvar
 from freppledb.common.models import User, Scenario
 from freppledb.common.report import GridReport
 from freppledb.common.utils import get_databases, sendEmail
@@ -157,9 +157,8 @@ class Command(BaseCommand):
 
         task = None
         now = datetime.now()
-        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
-            setattr(_thread_locals, "database", database)
+            database_token = _db_ctxvar.set(database)
 
             scenario_obj = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=database)
 
@@ -407,7 +406,7 @@ class Command(BaseCommand):
             raise e
 
         finally:
-            setattr(_thread_locals, "database", old_thread_locals)
+            _db_ctxvar.reset(database_token)
 
     def getStepTaskStatus(self, steptask):
         """

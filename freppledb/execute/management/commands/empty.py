@@ -35,7 +35,7 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
 from freppledb.execute.models import Task
-from freppledb.common.middleware import _thread_locals
+from freppledb.common.middleware import _db_ctxvar
 from freppledb.common.models import User
 from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS
 from freppledb.common.utils import get_databases, vacuumAnalyze
@@ -102,10 +102,9 @@ class Command(BaseCommand):
 
         now = datetime.now()
         task = None
-        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             # Initialize the task
-            setattr(_thread_locals, "database", database)
+            database_token = _db_ctxvar.set(database)
             if options["task"]:
                 try:
                     task = Task.objects.all().using(database).get(pk=options["task"])
@@ -350,7 +349,7 @@ class Command(BaseCommand):
             raise CommandError("%s" % e)
 
         finally:
-            setattr(_thread_locals, "database", old_thread_locals)
+            _db_ctxvar.reset(database_token)
 
     title = _("Clear all data")
     index = 1700

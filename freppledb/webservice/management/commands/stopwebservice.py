@@ -31,7 +31,6 @@ from django.db import DEFAULT_DB_ALIAS
 
 from freppledb import VERSION
 from freppledb.common.auth import getWebserviceAuthorization
-from freppledb.common.middleware import _thread_locals
 from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 from freppledb.webservice.utils import checkRunning, waitTillNotRunning

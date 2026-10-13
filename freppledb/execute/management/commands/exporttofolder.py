@@ -42,7 +42,7 @@ from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
 import freppledb
-from freppledb.common.middleware import _thread_locals
+from freppledb.common.middleware import _db_ctxvar
 from freppledb.common.models import User
 from freppledb.common.report import GridReport, sizeof_fmt
 from freppledb.common.utils import getStorageUsage, get_databases
@@ -291,11 +291,10 @@ class Command(BaseCommand):
 
         task = None
         errors = 0
-        old_thread_locals = getattr(_thread_locals, "database", None)
         startofall = datetime.now()
         try:
             # Initialize the task
-            setattr(_thread_locals, "database", self.database)
+            database_token = _db_ctxvar.set(self.database)
             if options["task"]:
                 if options["task"] > 0:
                     try:
@@ -645,7 +644,7 @@ class Command(BaseCommand):
                 task.finished = datetime.now()
                 task.processid = None
                 task.save(using=self.database)
-            setattr(_thread_locals, "database", old_thread_locals)
+            _db_ctxvar.reset(database_token)
 
     def email_info(self, database):
         scenario = "" if database == DEFAULT_DB_ALIAS else f"/{database}"

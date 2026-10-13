@@ -31,7 +31,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.formats import date_format
 from django.template.loader import render_to_string
 
-from freppledb.common.middleware import _thread_locals
+from freppledb.common.middleware import _db_ctxvar
 from freppledb.common.models import Bucket, BucketDetail
 from freppledb.execute.models import Task
 from freppledb.common.models import User
@@ -133,10 +133,9 @@ class Command(BaseCommand):
 
         now = datetime.now()
         task = None
-        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             # Initialize the task
-            setattr(_thread_locals, "database", database)
+            database_token = _db_ctxvar.set(database)
             if options["task"]:
                 if options["task"] > 0:
                     try:
@@ -295,7 +294,7 @@ class Command(BaseCommand):
                 task.processid = None
                 task.save(using=database)
             settings.DEBUG = tmp_debug
-            setattr(_thread_locals, "database", old_thread_locals)
+            _db_ctxvar.reset(database_token)
 
     # accordion template
     title = _("Generate buckets")

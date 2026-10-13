@@ -39,13 +39,12 @@ from django.template.loader import render_to_string
 
 from freppledb import __version__
 from freppledb.boot import addAttributesFromDatabase
-from freppledb.common.middleware import _thread_locals
+from freppledb.common.middleware import _db_ctxvar
 from freppledb.common.models import User, Comment, Parameter
 from freppledb.common.report import GridReport, matchesModelName
 from freppledb.common.dataload import parseExcelWorksheet
 from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
-
 
 logger = logging.getLogger(__name__)
 
@@ -107,9 +106,8 @@ class Command(BaseCommand):
         )
 
         task = None
-        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
-            setattr(_thread_locals, "database", self.database)
+            database_token = _db_ctxvar.set(self.database)
             # Initialize the task
             if options["task"]:
                 try:
@@ -333,7 +331,7 @@ class Command(BaseCommand):
             raise e
 
         finally:
-            setattr(_thread_locals, "database", old_thread_locals)
+            _db_ctxvar.reset(database_token)
             if task:
                 task.save(using=self.database)
 

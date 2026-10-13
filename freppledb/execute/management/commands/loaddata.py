@@ -33,7 +33,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import User, addAttributesFromDatabase
-from freppledb.common.middleware import _thread_locals
+from freppledb.common.middleware import _db_ctxvar
 from freppledb.common.report import getCurrentDate
 from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
@@ -86,9 +86,8 @@ class Command(loaddata.Command):
 
         now = datetime.now()
         task = None
-        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
-            setattr(_thread_locals, "database", database)
+            database_token = _db_ctxvar.set(database)
             # Initialize the task
             if options["task"]:
                 try:
@@ -163,11 +162,9 @@ class Command(loaddata.Command):
 
                 # update currentdate to now
                 cursor = connections[database].cursor()
-                cursor.execute(
-                    """
+                cursor.execute("""
                     update common_parameter set value = 'today' where name = 'currentdate'
-                    """
-                )
+                    """)
 
                 # update demand due dates
                 cursor.execute(
@@ -249,4 +246,4 @@ class Command(loaddata.Command):
             raise CommandError("%s" % e)
 
         finally:
-            setattr(_thread_locals, "database", old_thread_locals)
+            _db_ctxvar.reset(database_token)

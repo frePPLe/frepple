@@ -21,12 +21,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+import contextvars
 from datetime import timedelta, datetime
 import base64
 import ipaddress
 import jwt
 import re
-import threading
 from urllib.parse import urlencode
 from warnings import warn
 
@@ -57,8 +57,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-# A local thread variable to make the current request visible everywhere
-_thread_locals = threading.local()
+# Context variables make the current request and database visible throughout the application.
+_request_ctxvar = contextvars.ContextVar("request", default=None)
+_db_ctxvar = contextvars.ContextVar("database", default=None)
 
 
 class HTTPAuthenticationMiddleware:
@@ -143,7 +144,7 @@ def resetRequest(**kwargs):
     """
     Used as a request_finished signal handler.
     """
-    setattr(_thread_locals, "request", None)
+    _request_ctxvar.set(None)
 
 
 # Initialize the URL parsing middleware
@@ -173,7 +174,7 @@ class MultiDBMiddleware:
 
     def __call__(self, request):
         # Make request information available throughout the application
-        setattr(_thread_locals, "request", request)
+        _request_ctxvar.set(request)
 
         # Redirect if the url doesn't end in a slash
         if not request.path.endswith("/") and request.path not in (
@@ -418,7 +419,7 @@ class MultiDBMiddleware:
         if not response.streaming:
             # Note: Streaming response get the request field cleared in the
             # request_finished signal handler
-            setattr(_thread_locals, "request", None)
+            _request_ctxvar.set(None)
         return response
 
 

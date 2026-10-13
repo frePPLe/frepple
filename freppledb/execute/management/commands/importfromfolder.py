@@ -41,7 +41,7 @@ from django.utils.formats import get_format
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.execute.models import Task
-from freppledb.common.middleware import _thread_locals
+from freppledb.common.middleware import _db_ctxvar
 from freppledb.common.report import GridReport, matchesModelName, sizeof_fmt
 from freppledb import __version__
 from freppledb.common.dataload import parseCSVdata, parseExcelWorksheet
@@ -119,10 +119,9 @@ class Command(BaseCommand):
 
         task = None
         errors = [0, 0]
-        old_thread_locals = getattr(_thread_locals, "database", None)
         startofall = datetime.now()
         try:
-            setattr(_thread_locals, "database", self.database)
+            database_token = _db_ctxvar.set(self.database)
             # Initialize the task
             if options["task"]:
                 try:
@@ -348,7 +347,7 @@ class Command(BaseCommand):
             raise e
 
         finally:
-            setattr(_thread_locals, "database", old_thread_locals)
+            _db_ctxvar.reset(database_token)
             if task:
                 if errors[0] == 0:
                     task.status = "Done"

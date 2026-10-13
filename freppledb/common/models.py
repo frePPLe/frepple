@@ -231,36 +231,36 @@ class HierarchyModel(models.Model):
 
 class MultiDBManager(models.Manager):
     def get_queryset(self):
-        from .middleware import _thread_locals
+        from .middleware import _db_ctxvar, _request_ctxvar
 
-        req = getattr(_thread_locals, "request", None)
+        req = _request_ctxvar.get()
         if req:
             return (
                 super().get_queryset().using(getattr(req, "database", DEFAULT_DB_ALIAS))
             )
         else:
-            db = getattr(_thread_locals, "database", None)
+            db = _db_ctxvar.get()
             return super().get_queryset().using(db or DEFAULT_DB_ALIAS)
 
 
 class MultiDBRouter:
     def db_for_read(self, model, **hints):
-        from freppledb.common.middleware import _thread_locals
+        from freppledb.common.middleware import _db_ctxvar, _request_ctxvar
 
-        req = getattr(_thread_locals, "request", None)
+        req = _request_ctxvar.get()
         if req:
             return getattr(req, "database", None)
         else:
-            return getattr(_thread_locals, "database", None)
+            return _db_ctxvar.get()
 
     def db_for_write(self, model, **hints):
-        from .middleware import _thread_locals
+        from .middleware import _db_ctxvar, _request_ctxvar
 
-        req = getattr(_thread_locals, "request", None)
+        req = _request_ctxvar.get()
         if req:
             return getattr(req, "database", None)
         else:
-            return getattr(_thread_locals, "database", None)
+            return _db_ctxvar.get()
 
 
 class AuditModel(models.Model):
@@ -657,9 +657,9 @@ class User(AbstractUser):
             if using:
                 using = using.db
             else:
-                from .middleware import _thread_locals
+                from .middleware import _db_ctxvar
 
-                using = getattr(_thread_locals, "database", None)
+                using = _db_ctxvar.get()
                 if not using:
                     using = DEFAULT_DB_ALIAS
 
@@ -1026,14 +1026,14 @@ class Comment(models.Model):
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
-        from .middleware import _thread_locals
+        from .middleware import _db_ctxvar, _request_ctxvar
 
         if not using:
             using = getattr(self, "_state", None)
             if using:
                 using = using.db
             else:
-                using = getattr(_thread_locals, "database", DEFAULT_DB_ALIAS)
+                using = _db_ctxvar.get() or DEFAULT_DB_ALIAS
         tmp = super().save(
             force_insert=force_insert,
             force_update=force_update,
@@ -1041,7 +1041,7 @@ class Comment(models.Model):
             update_fields=update_fields,
         )
         if update_fields != ["processed"]:
-            req = getattr(_thread_locals, "request", None)
+            req = _request_ctxvar.get()
             NotificationFactory.launchWorker(
                 database=using,
                 url=(
@@ -1281,9 +1281,9 @@ class Follower(models.Model):
         return FollowerForm
 
     def clean(self):
-        from .middleware import _thread_locals
+        from .middleware import _request_ctxvar
 
-        request = getattr(_thread_locals, "request", None)
+        request = _request_ctxvar.get()
         if request and request.user:
             self.user = request.user
 
@@ -1313,9 +1313,9 @@ class Notification(models.Model):
     )
 
     def clean(self):
-        from .middleware import _thread_locals
+        from .middleware import _request_ctxvar
 
-        request = getattr(_thread_locals, "request", None)
+        request = _request_ctxvar.get()
         if request and request.user:
             self.user = request.user
 
@@ -1397,9 +1397,9 @@ class NotificationFactory:
         """
         cls._buildRegistry()
         try:
-            from .middleware import _thread_locals
+            from .middleware import _db_ctxvar
 
-            setattr(_thread_locals, "database", database)
+            _db_ctxvar.set(database)
             followers = list(
                 Follower.objects.all()
                 .using(database)

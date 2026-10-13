@@ -176,7 +176,10 @@ class MultiDBMiddleware:
         setattr(_thread_locals, "request", request)
 
         # Redirect if the url doesn't end in a slash
-        if not request.path.endswith("/"):
+        if not request.path.endswith("/") and request.path not in (
+            "/favicon.ico",
+            "/robots.txt",
+        ):
             return HttpResponsePermanentRedirect(
                 request.get_full_path(force_append_slash=True),
                 status=301 if request.method in ("GET", "HEAD") else 308,

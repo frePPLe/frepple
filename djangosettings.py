@@ -95,7 +95,6 @@ DATABASES = {
         "FREPPLE_PORT": f"127.0.0.1:{i+8002}",
     }
     # Adjust the range to include extra scenarios in the list.
-    # When changing this, your apache configuration file also needs a matching adjustment.
     # THE NEXT LINE IS AUTOMATICALLY UPDATED IN SCENARIO MANAGEMENT WIDGET!
     for i in range(3)
 }

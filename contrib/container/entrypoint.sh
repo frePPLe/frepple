@@ -73,18 +73,15 @@ if [ $# -gt 0 ]; then
   # Execute the command passed by the user to the container
   exec "$@"
 else
-  # Run apache
-  grep -qxF 'ServerName' /etc/apache2/apache2.conf || echo "ServerName localhost" >> /etc/apache2/apache2.conf
-  rm -f /usr/local/apache2/logs/httpd.pid
-
   # Allow custom configuration steps to be added
   if [[ -d "/etc/frepple/entrypoint.d" ]]; then
     /bin/run-parts --verbose "/etc/frepple/entrypoint.d"
   fi
 
-  # Start apache web server
-  echo "Starting web server"
-  exec apachectl -D FOREGROUND
+  # Start supervisor as the container's main process
+  echo "Starting frepple server"
+  export FREPPLE_WEBWORKERS="${FREPPLE_WEBWORKERS:-4}"
+  exec /usr/bin/supervisord -n -c /etc/frepple/supervisord.conf
 
   exit 1
 fi

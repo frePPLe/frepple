@@ -9,13 +9,6 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 This release will bring some bigger and backward incompatible changes.
 
-- | The software will only be distributed as a container image.
-  | The Ubuntu installer will no longer be available.
-
-- | These container images will be restructured to simplify configuration and
-    align with best practices for containers.
-  | Expect fewer volumes, more configuration parameters and improved monitoring.
-
 - | The emerging next-generation of the planning algorithm is gradually getting
     in shape. With v10 it will be ready to plan a wide variety of
     Frepple configurations.
@@ -48,6 +41,18 @@ This release will bring some bigger and backward incompatible changes.
   | The quantity showing in frepple was the completed quantity, which incorrectly made frepple
     propose another manufacturing order for the remaining quantity.
 
+.. rubric:: System administration
+
+- | Frepple is now distributed exclusively as a container image.
+  | The traditional Ubuntu installer is no longer available.
+
+- | The internal structure of the frepple container has been changed
+    significantly to simply maintenance and configuration.
+
+.. rubric:: Documentation
+
+- | The installation documentation has been completely rewritten to
+    focus solely on the container-based installations.
 
 9.19.0 (2026-10-09)
 ===================

@@ -93,7 +93,7 @@ def launchWorker(database=DEFAULT_DB_ALIAS):
                     ]
                 )
             else:
-                # Deployment on Apache web server
+                # Deployment on web server
                 Popen(
                     [
                         "python",

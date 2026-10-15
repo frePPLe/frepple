@@ -108,24 +108,16 @@ target_link_libraries(frepple PUBLIC forecast)
 target_link_libraries(frepple PRIVATE pq)
 target_link_libraries(frepple PRIVATE ${Python3_LIBRARIES})
 
-install(
-  TARGETS frepple
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-)
-
 # Main executable
 add_executable(frepple-main
   main.cpp
   "${CMAKE_SOURCE_DIR}/include/freppleinterface.h"
 )
+
 target_link_libraries(frepple-main LINK_PUBLIC frepple)
 set_target_properties(frepple-main PROPERTIES
   OUTPUT_NAME "frepple"
   PDB_NAME_DEBUG "frepple-main"
-)
-install(
-  TARGETS frepple-main
-  DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
 
 # Put the compiled binaries in the source folder.

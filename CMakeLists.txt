@@ -14,16 +14,9 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   # Detect the linux distribution
   if(EXISTS "/etc/issue")
     file(READ "/etc/issue" LINUX_ISSUE)
-
-    # Ubuntu 24
     if(LINUX_ISSUE MATCHES "Ubuntu 24")
       set(CPACK_GENERATOR "DEB")
       set(DISTRO "ubuntu24")
-
-    # Ubuntu development
-    elseif(LINUX_ISSUE MATCHES "Ubuntu.*development")
-      set(CPACK_GENERATOR "DEB")
-      set(DISTRO "ubuntudevel")
     endif()
   endif()
 
@@ -40,17 +33,6 @@ endif()
 find_library(xerces-c NAMES xerces-c)
 if(NOT xerces-c)
   message(FATAL_ERROR "xerces-c library not found")
-endif()
-
-if(UNIX)
-  set(CMAKE_INSTALL_PREFIX "/")
-  include(GNUInstallDirs)
-else()
-  set(CMAKE_INSTALL_LIBDIR "bin")
-  set(CMAKE_INSTALL_SYSCONFDIR "custom")
-  set(CMAKE_INSTALL_DATADIR "custom")
-  set(CMAKE_INSTALL_BINDIR "custom")
-  set(CMAKE_INSTALL_INCLUDEDIR "include")
 endif()
 
 # Check python and create the virtualenv
@@ -142,49 +124,9 @@ configure_file(
   "${CMAKE_CURRENT_BINARY_DIR}/include/config.h"
 )
 
-# File installation
-install(
-  FILES frepplectl.py
-  DESTINATION "${CMAKE_INSTALL_BINDIR}"
-  RENAME frepplectl
-  PERMISSIONS OWNER_EXECUTE OWNER_READ GROUP_EXECUTE GROUP_READ
-)
-install(
-  FILES djangosettings.py
-  DESTINATION "${CMAKE_INSTALL_SYSCONFDIR}/frepple"
-)
-
-# Packaging of the django app: Python module in a virtual environment
-# Note that we use \$ to delay the evaluation till install time
-execute_process(
-  COMMAND ${Python3_EXECUTABLE} -c "import sys; print(sys.prefix)"
-  OUTPUT_VARIABLE PYTHON_PREFIX
-  ERROR_QUIET
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-install(CODE "execute_process(COMMAND mkdir -p \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple)")
-install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} -m venv \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv)")
-install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/activate)")
-install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/pip3 install pip install --upgrade pip wheel six appdirs setuptools)")
-install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/python3 -m pip install --quiet ${PROJECT_SOURCE_DIR})")
-install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/pip3 install -r ${CMAKE_SOURCE_DIR}/requirements.txt)")
-install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/python3 -m pip install --quiet ${PROJECT_SOURCE_DIR})")
-install(CODE "execute_process(COMMAND rm \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/lib64)")
-install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv -type f -exec sed -i \"s|/usr/bin/env python$  |/usr/bin/env python3|g\" {} \;)")
-install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin -type f -name \"*ctivate*\" -exec sed -i \"s|\$ENV{DESTDIR}||g\" {} \\;)")
-install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin -type f -executable -exec sed -i \"s|\$ENV{DESTDIR}||g\" {} \\;)")
-
-# Packaging of the static files
-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_CURRENT_SOURCE_DIR}/freppledb/common/static/doc)")
-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E env FREPPLE_STATIC=\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/frepple/static ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/frepplectl.py collectstatic --noinput --clear --ignore '*.less' --verbosity=0)")
-
-# Build and install the documentation
-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target doc)")
-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/doc/_build/html \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/frepple/static/doc)")
-
 # Generic packaging
-set(CPACK_PACKAGE_VENDOR "frePPLe")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FrePPLe is an open sourcels production planning and scheduling application.")
+# set(CPACK_PACKAGE_VENDOR "frePPLe")
+# set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FrePPLe is an open sourcels production planning and scheduling application.")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
@@ -208,13 +150,12 @@ set(CPACK_SOURCE_IGNORE_FILES
   "^${PROJECT_SOURCE_DIR}/freppleapps/"
   "^${PROJECT_SOURCE_DIR}/freppledb/execute/management/commands/frepple_container\\\\.py$"
 )
+include(CPack)
 
 # Add folders
-add_subdirectory(bin)
 add_subdirectory(src)
 add_subdirectory(doc)
-add_subdirectory(contrib/docker)
-add_subdirectory(contrib/linux)
+add_subdirectory(contrib/container)
 
 # Debugging targets
 find_program(valgrind NAMES valgrind)

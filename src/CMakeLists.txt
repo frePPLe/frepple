@@ -6,8 +6,8 @@ configure_file(
   COPYONLY
 )
 
-# Auxilary static libraries
-add_library(utils STATIC
+# Auxilary libraries
+add_library(utils OBJECT
   "utils/actions.cpp"
   "utils/date.cpp"
   "utils/library.cpp"
@@ -25,7 +25,7 @@ add_library(utils STATIC
 )
 add_dependencies(utils venv)
 
-add_library(model STATIC
+add_library(model OBJECT
   "model/actions.cpp"
   "model/buffer.cpp"
   "model/calendar.cpp"
@@ -61,7 +61,7 @@ add_library(model STATIC
 )
 add_dependencies(model utils)
 
-add_library(solver STATIC
+add_library(solver OBJECT
   "solver/operatordelete.cpp"
   "solver/solverbuffer.cpp"
   "solver/solverdemand.cpp"
@@ -76,7 +76,7 @@ add_library(solver STATIC
 )
 add_dependencies(solver model)
 
-add_library(forecast STATIC
+add_library(forecast OBJECT
   "forecast/exprtk.h"
   "forecast/forecast.cpp"
   "forecast/forecast.h"

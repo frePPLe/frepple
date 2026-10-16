@@ -37,9 +37,8 @@ This release will bring some bigger and backward incompatible changes.
 
 .. rubric:: Odoo integration
 
-- | 18, 19: Bug fix for partially completed manufacturing orders.
-  | The quantity showing in frepple was the completed quantity, which incorrectly made frepple
-    propose another manufacturing order for the remaining quantity.
+- | 18, 19: Bug fix for partially completed and partially reserved materials on manufacturing orders.
+  | The quantity showing in frepple didn't match what odoo still sees as remaining to consume.
 
 .. rubric:: System administration
 

@@ -2,9 +2,10 @@
 set(CMAKE_VERBOSE_MAKEFILE ON)
 cmake_minimum_required(VERSION 3.28)
 
-# The version is defined in 2 places:
+# The version is defined in 3 places:
 #  - pyproject.toml
-#  - this file, next line
+#  - freppledb/__init__.py
+#  - this file
 project(frepple VERSION 10.0.0)
 
 set(PROJECT_EDITION "Community Edition")

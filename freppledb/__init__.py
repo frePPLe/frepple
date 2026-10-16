@@ -24,14 +24,7 @@
 
 edition = "Community Edition"
 
-try:
-    import importlib.metadata
-
-    __version__ = importlib.metadata.version("freppledb")
-except Exception:
-    __version__ = "development"
-
-VERSION = __version__  # Old custom way, deprecated
+__version__ = "10.0.0"
 
 # Recognize webserver versus engine service mode
 mode = "webserver"

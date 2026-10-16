@@ -30,7 +30,6 @@ from django.utils.text import capfirst
 from django.utils.timesince import timesince
 from django.utils.translation import gettext_lazy as _
 
-from freppledb import __version__
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.common.models import Notification
 

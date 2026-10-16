@@ -32,7 +32,7 @@ from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
-from freppledb import VERSION
+from freppledb import __version__
 from freppledb.common.models import Parameter, Scenario
 from freppledb.common.utils import get_databases
 from freppledb.input.models import Item
@@ -47,7 +47,7 @@ class Command(BaseCommand):
     requires_system_checks = []
 
     def get_version(self):
-        return VERSION
+        return __version__
 
     def add_arguments(self, parser):
         parser.add_argument("--user", help="User running the command")

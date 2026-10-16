@@ -1125,10 +1125,7 @@ def sendStaticFile(request, *args, headers=None):
             response["Content-Type"] = guessed_mimetype
         else:
             response["Content-Type"] = "application/octet-stream"
-        # For apache:
-        response["X-Sendfile"] = os.path.join(*args)
-        # For nginx:
-        # response["X-Accel-Redirect"]= os.path.join(*args)
+        response["X-Accel-Redirect"] = os.path.join(*args)
     if response.headers.get("Content-Encoding", None) == "gzip":
         # Avoid that gzipped files are decompressed automatically by browsers
         del response.headers["Content-Encoding"]

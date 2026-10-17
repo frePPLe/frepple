@@ -1117,7 +1117,7 @@ def sendStaticFile(request, *args, headers=None):
             request, args[-1], document_root=os.path.join(*args[:-1])
         )
     else:
-        # Forward to Apache
+        # Forward to the web sever
         # Code inspired on https://github.com/johnsensible/django-sendfile/
         response = HttpResponse()
         guessed_mimetype = guess_type(args[-1], strict=False)[0]

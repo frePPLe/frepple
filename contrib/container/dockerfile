@@ -44,10 +44,18 @@ RUN src=`basename --suffix=.tar.gz frepple-*` && \
     rm *.tar.gz && \
     mv $src source && \
     cd source && \
+    # Compile c++ code and documentation
     cmake -B /build -DCMAKE_BUILD_TYPE=Release && \
     cmake --build /build --config Release --target frepple-main -- -j 2 && \
     cmake --build /build --target doc && \
-    FREPPLE_STATIC=/usr/share/frepple/static ./frepplectl.py collectstatic --noinput --clear --ignore '*.less' --verbosity=0
+    # Populate the /usr/share/frepple folder
+    FREPPLE_STATIC=/usr/share/frepple/static ./frepplectl.py collectstatic --noinput --clear --ignore '*.less' --verbosity=0 && \
+    mv /build/doc/_build/html /usr/share/frepple/static/doc && \
+    cp -r /source/bin/frepple.xsd /usr/share/frepple/ && \
+    python3 -m venv /usr/share/frepple/venv && \
+    /usr/share/frepple/venv/bin/pip install --no-cache-dir --upgrade pip wheel six appdirs setuptools && \
+    /usr/share/frepple/venv/bin/pip install --no-cache-dir -r requirements.txt && \
+    /usr/share/frepple/venv/bin/pip install --no-cache-dir .
 
 #
 # STAGE 2: Build the deployment container
@@ -58,72 +66,42 @@ FROM ubuntu:24.04
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
-# Download dependencies (including postgres clients for supported postgresql versions)
+# Download dependencies (including supported postgresql clients)
 RUN apt-get -y -q update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install adduser libxerces-c3.2 \
-    nginx postgresql-client psmisc locales libpq5 openssl ssl-cert \
+    nginx postgresql-client psmisc locales libpq5 openssl ssl-cert python3 \
     curl ca-certificates gnupg openssh-server supervisor && \
-    curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
-    echo "deb http://apt.postgresql.org/pub/repos/apt/ noble-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt/ noble-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get -y -q update && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install postgresql-common postgresql-common postgresql-client-18 \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install postgresql-common postgresql-client-18 \
     postgresql-client-17 postgresql-client-16 postgresql-client-15 postgresql-client-14 && \
     apt-get clean && \
-    rm -rf *.deb /var/lib/apt/lists/* /etc/apt/sources.list.d/pgdg.list
-
-# Create new group and user for frepple
-RUN addgroup --quiet --system --firstgid 8000 --lastgid 9000 frepple && \
+    rm -rf /var/lib/apt/lists/* /etc/apt/sources.list.d/pgdg.list && \
+    # Create new group and user for frepple
+    addgroup --quiet --system --firstgid 8000 --lastgid 9000 frepple && \
     adduser --quiet --firstuid 8000 --lastuid 9000 --ingroup frepple --gecos "" --shell /bin/bash --disabled-password frepple &&\
     # Create log folder with correct permissions
     mkdir -p /var/log/frepple && \
     chown -R frepple:frepple /var/log/frepple && \
-    chmod g=rwx,o= /var/log/frepple
+    chmod g=rwx,o= /var/log/frepple && \
+    mkdir -p /var/lib/frepple && \
+    chown -R frepple:frepple /var/lib/frepple && \
+    chmod g=rwx,o= /var/lib/frepple
 
 COPY --from=builder --chown=frepple:frepple --chmod=750 /build/src/frepple /usr/bin/frepple
 COPY --from=builder --chown=frepple:frepple --chmod=750 /build/src/libfrepple.so /usr/bin/libfrepple.so
 COPY --from=builder --chown=frepple:frepple --chmod=750 /source/contrib/container/entrypoint.sh /etc/frepple/entrypoint.sh
 COPY --from=builder --chown=frepple:frepple --chmod=640 /source/contrib/container/supervisord.conf /etc/frepple/supervisord.conf
+COPY --from=builder --chown=frepple:frepple --chmod=640 /source/contrib/container/nginx.conf /etc/frepple/nginx.conf
 COPY --from=builder --chown=frepple:frepple --chmod=640 /source/djangosettings.py /etc/frepple/djangosettings.py
 COPY --from=builder --chown=frepple:frepple --chmod=750 /source/frepplectl.py /usr/bin/frepplectl
-COPY --from=builder --chown=frepple:frepple --chmod=640 /source/venv /usr/share/frepple/venv
-COPY --from=builder --chown=frepple:frepple --chmod=640 /build/doc/_build/html /usr/share/frepple/static/doc
 COPY --from=builder --chown=frepple:frepple --chmod=640 /source/bin/license.xml /etc/frepple/license.xml
+COPY --from=builder --chown=frepple:frepple /usr/share/frepple /usr/share/frepple
 
-# # Packaging of the django app: Python module in a virtual environment
-# # Note that we use \$ to delay the evaluation till install time
-# execute_process(
-# COMMAND ${Python3_EXECUTABLE} -c "import sys; print(sys.prefix)"
-# OUTPUT_VARIABLE PYTHON_PREFIX
-# ERROR_QUIET
-# OUTPUT_STRIP_TRAILING_WHITESPACE
-# )
-# install(CODE "execute_process(COMMAND mkdir -p \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple)")
-# install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} -m venv \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv)")
-# install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/activate)")
-# install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/pip3 install pip install --upgrade pip wheel six appdirs setuptools)")
-# install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/python3 -m pip install --quiet ${PROJECT_SOURCE_DIR})")
-# install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/pip3 install -r ${CMAKE_SOURCE_DIR}/requirements.txt)")
-# install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/python3 -m pip install --quiet ${PROJECT_SOURCE_DIR})")
-# install(CODE "execute_process(COMMAND rm \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/lib64)")
-# install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv -type f -exec sed -i \"s|/usr/bin/env python$  |/usr/bin/env python3|g\" {} \;)")
-# install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin -type f -name \"*ctivate*\" -exec sed -i \"s|\$ENV{DESTDIR}||g\" {} \\;)")
-# install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin -type f -executable -exec sed -i \"s|\$ENV{DESTDIR}||g\" {} \\;)")
-
-# # Wsgi file must be writeable to the group to allow reloading the app
-# # chgrp frepple /usr/share/frepple/venv/lib/python*/site-packages/freppledb/wsgi.py
-# # chmod 770 /usr/share/frepple/venv/lib/python*/site-packages/freppledb/wsgi.py
-
-# # Set permissions needed????
-# chgrp -R frepple /etc/frepple
-# chmod 770 /etc/frepple
-# chmod 750 /etc/frepple/*
-
-# # Add apache user to the frepple and monitoring groups
-# . /etc/apache2/envvars
-# adduser --quiet www-data frepple
-# adduser --quiet www-data adm
-
-
+# Update permissions
+RUN find /usr/share/frepple -type d -exec chmod u+rwx,g+rx,o-rwx {} + && \
+    find /usr/share/frepple -type f -exec chmod g+r,o-rwx {} +
 
 EXPOSE 80
 

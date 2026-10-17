@@ -315,7 +315,6 @@ if os.access("/var/log/frepple", os.W_OK):
         cutoff_compress = time.time() - 24 * 3600
         for path in Path("/var/log/frepple").glob("*.log"):
             if path.stat().st_mtime < cutoff_compress:
-                print("Compressing log file", path)
                 subprocess.run(["gzip", str(path)], check=True)
 
 

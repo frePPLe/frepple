@@ -69,7 +69,7 @@ ENV LC_ALL=C.UTF-8
 # Download dependencies (including supported postgresql clients)
 RUN apt-get -y -q update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install adduser libxerces-c3.2 \
-    nginx postgresql-client psmisc locales libpq5 openssl ssl-cert python3 \
+    nginx postgresql-client psmisc locales libpq5 openssl ssl-cert python3 libpython3.12t64 \
     curl ca-certificates gnupg openssh-server supervisor && \
     curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt/ noble-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \

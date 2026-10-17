@@ -90,7 +90,7 @@ RUN apt-get -y -q update && \
     chmod g=rwx,o= /var/lib/frepple
 
 COPY --from=builder --chown=frepple:frepple --chmod=750 /build/src/frepple /usr/bin/frepple
-COPY --from=builder --chown=frepple:frepple --chmod=750 /build/src/libfrepple.so /usr/bin/libfrepple.so
+COPY --from=builder --chown=frepple:frepple --chmod=750 /build/src/libfrepple.so /usr/lib/libfrepple.so
 COPY --from=builder --chown=frepple:frepple --chmod=750 /source/contrib/container/entrypoint.sh /etc/frepple/entrypoint.sh
 COPY --from=builder --chown=frepple:frepple --chmod=640 /source/contrib/container/supervisord.conf /etc/frepple/supervisord.conf
 COPY --from=builder --chown=frepple:frepple --chmod=640 /source/contrib/container/nginx.conf /etc/frepple/nginx.conf

@@ -50,7 +50,6 @@ from freppledb.input.models import (
     SetupMatrix,
     SetupRule,
     Skill,
-    SubOperation,
     Supplier,
 )
 
@@ -283,14 +282,5 @@ menu.addItem(
     report=freppledb.input.views.OperationDependencyList,
     index=16500,
     model=OperationDependency,
-    dependencies=[Operation],
-)
-menu.addItem(
-    "manufacturing",
-    "suboperations",
-    url="/data/input/suboperation/",
-    report=freppledb.input.views.SubOperationList,
-    index=1700,
-    model=SubOperation,
     dependencies=[Operation],
 )

@@ -34,7 +34,6 @@ from .operation import (
     OperationMaterial,
     OperationResource,
     searchmode,
-    SubOperation,
 )
 from .operationplan import (
     OperationPlan,

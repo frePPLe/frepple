@@ -61,7 +61,6 @@ from .manufacturing import (
     OperationResourceList,
     CalendarList,
     CalendarBucketList,
-    SubOperationList,
     ManufacturingOrderList,
     WorkOrderList,
 )

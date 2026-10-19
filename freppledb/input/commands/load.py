@@ -815,7 +815,7 @@ class loadSuppliers(LoadTask):
                 starttime = time()
                 cursor.execute("""
                 SELECT
-                  name, description, owner_id, category, subcategory, source, available_id
+                  name, description, category, subcategory, source, available_id
                 FROM supplier %s
                 """ % filter_where)
                 for i in cursor:
@@ -828,11 +828,9 @@ class loadSuppliers(LoadTask):
                             subcategory=i[4],
                             source=i[5],
                         )
-                        if i[2]:
-                            x.owner = frepple.supplier(name=i[2])
-                        if i[6]:
+                        if i[5]:
                             frepple.location(name=i[0]).available = frepple.calendar(
-                                name=i[6]
+                                name=i[5]
                             )
                     except Exception as e:
                         logger.error("**** %s ****" % e)
@@ -873,26 +871,6 @@ class loadOperations(LoadTask):
 
             # Preprocessing step
             # Make sure any routing has the produced item of its last step populated in the operation table
-            # Old style
-            cursor.execute("""
-                update operation
-                set item_id = t.item_id
-                from (
-                      select operation.name operation_id, min(operationmaterial.item_id) item_id
-                       from operation
-                       inner join suboperation s1 on s1.operation_id = operation.name
-                       inner join operationmaterial
-                         on operationmaterial.operation_id = s1.suboperation_id and quantity > 0
-                       where operation.type = 'routing'
-                       and not exists
-                          (select 1 from suboperation s2 where s1.operation_id = s2.operation_id and s1.priority < s2.priority)
-                       group by operation.name
-                       having count(operationmaterial.item_id) = 1
-                     ) t
-                where operation.type = 'routing'
-                  and operation.name = t.operation_id
-                """)
-            # New style
             cursor.execute("""
                 update operation
                 set item_id = t.item_id
@@ -916,7 +894,6 @@ class loadOperations(LoadTask):
             # Make sure any regular operation (i.e. that has no suboperation and is not a suboperation)
             # has its item_id field populated
             # That should cover 90% of the cases
-            # Old style
             cursor.execute("""
                 update operation
                 set item_id = t.item_id
@@ -926,10 +903,6 @@ class loadOperations(LoadTask):
                       inner join operationmaterial
                         on operationmaterial.operation_id = operation.name and quantity > 0
                       where not exists
-                            (select 1 from suboperation
-                            where suboperation.operation_id = operation.name
-                                  or suboperation.suboperation_id = operation.name)
-                        and not exists
                             (select 1 from operation subop
                             where subop.owner_id = operation.name)
                         and operation.type not in ('routing', 'alternate', 'split')
@@ -944,13 +917,6 @@ class loadOperations(LoadTask):
             # Preprocessing step
             # Operations that are suboperation of a parent operation shouldn't have
             # the item field set. It is the parent operation that should have it set.
-            cursor.execute("""
-                update operation
-                set item_id = null
-                from suboperation
-                where operation.name = suboperation.suboperation_id
-                and operation.item_id is not null
-                """)
             cursor.execute("""
                 update operation
                 set item_id = null
@@ -1101,13 +1067,6 @@ class loadSuboperations(LoadTask):
                 select
                   operation_id, suboperation_id, priority, effective_start, effective_end
                 from (
-                    SELECT operation_id, suboperation_id, priority, effective_start, effective_end,
-                      (SELECT type
-                       from operation
-                       where suboperation.operation_id = operation.name) as type
-                    FROM suboperation
-                    WHERE priority >= 0 %s
-                    union
                     select owner_id, name, priority, effective_start, effective_end,
                       (SELECT type
                        from operation as parent
@@ -1116,7 +1075,7 @@ class loadSuboperations(LoadTask):
                     where owner_id is not null and priority >= 0 %s
                     ) suboperations
                 order by operation_id, priority, suboperation_id
-                """ % (filter_and, filter_and))
+                """ % filter_and)
                 curopername = None
                 for i in cursor:
                     cnt += 1

@@ -1246,8 +1246,6 @@ class ResourceDetail(OperationPlanMixin):
                 "{} - {} - {}", _("resource"), _("location"), _("source")
             ),
         ),
-        # Status field currently not used
-        # GridFieldChoice('status', title=_('load status'), choices=OperationPlanResource.OPRstatus),
         GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified", initially_hidden=True),
     )

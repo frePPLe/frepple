@@ -113,11 +113,6 @@ if mode == "webserver":
             name="input_setuprule_changelist",
         ),
         path(
-            "data/input/suboperation/",
-            views.SubOperationList.as_view(),
-            name="input_suboperation_changelist",
-        ),
-        path(
             "data/input/operationdependency/",
             views.OperationDependencyList.as_view(),
             name="input_operationdepency_changelist",
@@ -443,12 +438,6 @@ if mode == "webserver":
     )
     rest_api_router.register(
         "input", "setuprule", serializers.SetupRuleAPI, serializers.SetupRuledetailAPI
-    )
-    rest_api_router.register(
-        "input",
-        "suboperation",
-        serializers.SubOperationAPI,
-        serializers.SubOperationdetailAPI,
     )
     rest_api_router.register(
         "input",

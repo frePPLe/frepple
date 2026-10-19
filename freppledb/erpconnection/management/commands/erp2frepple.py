@@ -187,12 +187,6 @@ class Command(BaseCommand):
                 self.task.status = "42%"
                 self.task.save(using=self.database)
 
-                # Note: the suboperation table is now deprecated.
-                # The same data can now be directly loaded in the the operation table.
-                self.extractSuboperation()
-                self.task.status = "48%"
-                self.task.save(using=self.database)
-
                 self.extractOperationResource()
                 self.task.status = "54%"
                 self.task.save(using=self.database)
@@ -389,7 +383,7 @@ class Command(BaseCommand):
     def extractOperation(self):
         """
         Map JobBOSS jobs into frePPLe operations.
-        We extract a routing operation and also suboperations.
+        We extract a routing operation and their suboperations.
         SQL contains an ugly trick to avoid duplicate job-sequence combinations.
         """
         outfilename = os.path.join(self.destination, "operation.%s" % self.ext)
@@ -447,34 +441,6 @@ class Command(BaseCommand):
                     "location%s" % self.fk,
                     "duration",
                     "duration_per",
-                    "lastmodified",
-                ]
-            )
-            outcsv.writerows(self.cursor.fetchall())
-
-    def extractSuboperation(self):
-        """
-        Map JobBOSS joboperations into frePPLe suboperations.
-        """
-        outfilename = os.path.join(self.destination, "suboperation.%s" % self.ext)
-        print("Start extracting suboperations to %s" % outfilename)
-        self.cursor.execute(
-            """
-      select
-        distinct job.job, concat(job.job, ' - ', sequence), sequence, current_timestamp
-      from job_operation
-      inner join job
-      on job_operation.job = job.job
-      where job.status = 'Active'
-      """
-        )
-        with open(outfilename, "w", newline="") as outfile:
-            outcsv = csv.writer(outfile, quoting=csv.QUOTE_MINIMAL)
-            outcsv.writerow(
-                [
-                    "operation%s" % self.fk,
-                    "suboperation%s" % self.fk,
-                    "priority",
                     "lastmodified",
                 ]
             )

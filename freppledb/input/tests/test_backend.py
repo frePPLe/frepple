@@ -73,7 +73,6 @@ from freppledb.input.models import (
     ResourceSkill,
     SetupMatrix,
     Skill,
-    SubOperation,
     Supplier,
     WorkOrder,
 )
@@ -121,8 +120,6 @@ class DataLoadTest(TestCase):
         self.assertContains(response, '"records":4,')
         response = self.client.get("/data/input/resource/?format=json")
         self.assertContains(response, '"records":3,')
-        response = self.client.get("/data/input/suboperation/?format=json")
-        self.assertContains(response, '"records":0,')
         response = self.client.get(
             "/data/input/calendardetail/Working%20Days/?format=json"
         )
@@ -283,7 +280,6 @@ class ExcelTest(TransactionTestCase):
         countResource = Resource.objects.count()
         countSetupMatrix = SetupMatrix.objects.count()
         countSkill = Skill.objects.count()
-        countSubOperation = SubOperation.objects.count()
         countSupplier = Supplier.objects.count()
         countBucket = Bucket.objects.count()
         countBucketDetail = BucketDetail.objects.count()
@@ -317,7 +313,6 @@ class ExcelTest(TransactionTestCase):
                     "input.operation",
                     "input.operationplanmaterial",
                     "input.operationresource",
-                    "input.suboperation",
                     "common.parameter",
                     "common.bucket",
                     "common.bucketdetail",
@@ -351,7 +346,6 @@ class ExcelTest(TransactionTestCase):
         self.assertEqual(Resource.objects.count(), 0)
         self.assertEqual(SetupMatrix.objects.count(), 0)
         self.assertEqual(Skill.objects.count(), 0)
-        self.assertEqual(SubOperation.objects.count(), 0)
         self.assertEqual(Supplier.objects.count(), 0)
         self.assertEqual(Bucket.objects.count(), 0)
         self.assertEqual(BucketDetail.objects.count(), 0)
@@ -387,7 +381,6 @@ class ExcelTest(TransactionTestCase):
         self.assertEqual(Resource.objects.count(), countResource)
         self.assertEqual(SetupMatrix.objects.count(), countSetupMatrix)
         self.assertEqual(Skill.objects.count(), countSkill)
-        self.assertEqual(SubOperation.objects.count(), countSubOperation)
         self.assertEqual(Supplier.objects.count(), countSupplier)
         self.assertEqual(Bucket.objects.count(), countBucket)
         self.assertEqual(BucketDetail.objects.count(), countBucketDetail)
@@ -519,9 +512,6 @@ class freppleREST(APITestCase):
         checkResponse(self, response)
 
         response = self.client.get("/api/input/operationresource/")
-        checkResponse(self, response)
-
-        response = self.client.get("/api/input/suboperation/")
         checkResponse(self, response)
 
         response = self.client.get("/api/common/parameter/")

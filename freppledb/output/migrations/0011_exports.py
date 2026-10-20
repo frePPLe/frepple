@@ -90,11 +90,17 @@ class Migration(migrations.Migration):
                 ), (
                     'operationplanmaterial.csv.gz',
                     'select
-                       item_id as item, location_id as location, quantity,
-                       to_char(flowdate,''%s HH24:MI:SS'') as date, onhand,
-                       operationplan_id as operationplan, status
-                     from operationplanmaterial
-                     order by item_id, location_id, flowdate, quantity desc
+                        operationplanmaterial.item_id as item,
+                        operationplanmaterial.location_id as location,
+                        operationplanmaterial.quantity,
+                        to_char(operationplanmaterial.flowdate,''%s HH24:MI:SS'') as date,
+                        operationplanmaterial.onhand,
+                        operationplan_id as operationplan,
+                        operationplan.status
+                    from operationplanmaterial
+                    inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id
+                    order by operationplanmaterial.item_id, operationplanmaterial.location_id,
+                    operationplanmaterial.flowdate, operationplanmaterial.quantity desc
                     ',
                     null,
                     null
@@ -126,8 +132,7 @@ class Migration(migrations.Migration):
                     '{"buckets": "week", "horizontype": true, "horizonunit": "month", "horizonlength": 6}'
                 )
             on conflict (name) do nothing
-            """
-            % ((settings.DATE_FORMAT_JS,) * 11),
+            """ % ((settings.DATE_FORMAT_JS,) * 11),
             """
             delete from execute_export where name in (
                'purchaseorder.csv.gz',

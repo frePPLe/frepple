@@ -1372,7 +1372,7 @@ class CustomerDefault : public Customer {
 };
 
 /* This abstracts class represents a supplier. */
-class Supplier : public HasHierarchy<Supplier> {
+class Supplier : public HasName<Supplier>, public HasDescription<Supplier> {
   friend class ItemSupplier;
 
  public:
@@ -1397,11 +1397,14 @@ class Supplier : public HasHierarchy<Supplier> {
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    HasHierarchy<Cls>::registerFields(m);
+    m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
+                              MANDATORY);
+    HasSource<Cls>::registerFields(m);
     m->addIteratorField<Cls, itemlist::const_iterator, ItemSupplier>(
         Tags::itemsuppliers, Tags::itemsupplier, &Cls::getItemIterator, DETAIL);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
+    HasDescription<Cls>::registerFields(m);
   }
 
  private:

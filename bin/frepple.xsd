@@ -181,14 +181,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     </xsd:annotation>
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:group ref="common_fields" />
-      <xsd:element name="owner" type="supplier" minOccurs="0" />
-      <xsd:element name="members" minOccurs="0">
-        <xsd:complexType>
-          <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-            <xsd:element name="supplier" type="supplier" />
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
       <xsd:element name="itemsuppliers" type="itemsupplierlist" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
@@ -900,7 +892,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <xsd:element name="maximum" type="xsd:double" />
       <xsd:element name="operationplan" type="operationplan" />
       <xsd:element name="resource" type="resource" />
-      <xsd:element name="status" type="xsd:string" />
       <xsd:element name="setuponly" type="xsd:boolean" />
     </xsd:choice>
     <xsd:attribute name="date" type="xsd:dateTime" />
@@ -908,7 +899,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <xsd:attribute name="onhand" type="xsd:double" />
     <xsd:attribute name="minimum" type="xsd:double" />
     <xsd:attribute name="maximum" type="xsd:double" />
-    <xsd:attribute name="status" type="xsd:string" />
     <xsd:attribute name="setuponly" type="xsd:boolean" />
   </xsd:complexType>
 
@@ -1058,14 +1048,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <xsd:element name="onhand" type="xsd:double" />
       <xsd:element name="minimum" type="xsd:double" />
       <xsd:element name="maximum" type="xsd:double" />
-      <xsd:element name="status" type="xsd:string" />
     </xsd:choice>
     <xsd:attribute name="quantity" type="xsd:double" />
     <xsd:attribute name="onhand" type="xsd:double" />
     <xsd:attribute name="minimum" type="xsd:double" />
     <xsd:attribute name="maximum" type="xsd:double" />
     <xsd:attribute name="date" type="xsd:dateTime" />
-    <xsd:attribute name="status" type="xsd:string" />
   </xsd:complexType>
 
   <xsd:complexType name="flowplanlist">

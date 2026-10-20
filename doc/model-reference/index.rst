@@ -40,7 +40,6 @@ a high level overview of the model objects and their relationships.
    parameters
    purchase-orders
    segment
-   suboperations
    resources
    resource-skills
    sales-orders

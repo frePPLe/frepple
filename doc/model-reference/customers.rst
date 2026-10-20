@@ -5,7 +5,7 @@ Customers
 Demands are associated with a customer.
 
 Customers can be organized in a hierarchical tree to represent the
-sales organization’s structure.
+sales organization's structure.
 
 FrePPLe uses customers only from reporting purposes, no real planning logic is currently linked to them.
 

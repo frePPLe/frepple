@@ -24,7 +24,7 @@ are being accepted by the customer:
 * **Maximum lateness** :samp:`B`.
 
   Determines the maximum delay the customer will accept before cancelling his or her order.
-  When the demand isn’t feasible within this delay frePPLe will plan the order short.
+  When the demand isn't feasible within this delay frePPLe will plan the order short.
 
   In some businesses demand that can't be met on time is lost - the customer will simply buy
   the product from your competitor. Another usage is for forecasted demand - typically you don't

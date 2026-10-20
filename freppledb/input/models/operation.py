@@ -230,7 +230,6 @@ class OperationMaterial(AuditModel):
     types = (
         ("start", _("Start")),
         ("end", _("End")),
-        ("transfer_batch", _("Batch transfer")),
     )
 
     # Database fields
@@ -322,14 +321,6 @@ class OperationMaterial(AuditModel):
         blank=True,
         choices=searchmode,
         help_text=_("Method to select preferred alternate"),
-    )
-    transferbatch = models.DecimalField(
-        _("transfer batch quantity"),
-        max_digits=20,
-        decimal_places=8,
-        null=True,
-        blank=True,
-        help_text=_("Batch size by in which material is produced or consumed"),
     )
     offset = models.DurationField(
         _("offset"),

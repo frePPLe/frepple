@@ -2,7 +2,7 @@
 Problem report
 ==============
 
-This screen shows a list of issues requiring the planner’s attention.
+This screen shows a list of issues requiring the planner's attention.
 
 Each entity type has its own set of exceptions:
 
@@ -52,4 +52,3 @@ end          Date at which the problem ends.
 
 .. image:: ../_images/problem-report.png
    :alt: Problem report
-

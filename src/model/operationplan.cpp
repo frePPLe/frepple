@@ -2631,8 +2631,7 @@ void OperationPlan::setBatch(const PooledString& s, bool up) {
 
 Date OperationPlan::computeOperationToFlowDate(Date d) const {
   for (auto g = beginFlowPlans(); g != endFlowPlans(); ++g)
-    if (g->getFlow()->isProducer() &&
-        !g->getFlow()->hasType<FlowTransferBatch>())
+    if (g->getFlow()->isProducer())
       return g->getFlow()->getOffset()
                  ? g->getFlow()->computeOperationToFlowDate(this, d)
                  : d;

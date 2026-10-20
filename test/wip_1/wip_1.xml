@@ -348,13 +348,11 @@
 			<flowplans>
 				<flowplan>
 					<item name="In1"/>
-					<status>confirmed</status>
 					<quantity>-5</quantity>
 					<date>2013-12-31T00:00:00</date>
 				</flowplan>
 				<flowplan>
 					<item name="In2"/>
-					<status>confirmed</status>
 					<quantity>-8</quantity>
 					<date>2013-12-31T00:00:00</date>
 				</flowplan>
@@ -365,13 +363,11 @@
 			<flowplans>
 				<flowplan>
 					<item name="In1"/>
-					<status>confirmed</status>
 					<quantity>-5</quantity>
 					<date>2014-02-02T00:00:00</date>
 				</flowplan>
 				<flowplan>
 					<item name="In2"/>
-					<status>confirmed</status>
 					<quantity>-2</quantity>
 					<date>2014-02-05T00:00:00</date>
 				</flowplan>
@@ -382,13 +378,11 @@
 			<flowplans>
 				<flowplan>
 					<item name="In1"/>
-					<status>confirmed</status>
 					<quantity>-10</quantity>
 					<date>2014-02-28T00:00:00</date>
 				</flowplan>
 				<flowplan>
 					<item name="In2"/>
-					<status>confirmed</status>
 					<quantity>-20</quantity>
 					<date>2014-02-28T00:00:00</date>
 				</flowplan>
@@ -407,7 +401,6 @@
 			<flowplans>
 				<flowplan>
 					<item name="In3B"/>
-					<status>confirmed</status>
 					<quantity>-2</quantity>
 					<date>2014-02-05T00:00:00</date>
 				</flowplan>
@@ -433,7 +426,6 @@
 			<flowplans>
 				<flowplan>
 					<item name="In4"/>
-					<status>confirmed</status>
 					<quantity>-8</quantity>
 					<date>2014-01-01T00:00:00</date>
 				</flowplan>
@@ -444,7 +436,6 @@
 			<flowplans>
 				<flowplan>
 					<item name="In4"/>
-					<status>confirmed</status>
 					<quantity>-10</quantity>
 					<date>2014-02-01T00:00:00</date>
 				</flowplan>
@@ -458,7 +449,6 @@
 			<flowplans>
 				<flowplan>
 					<item name="In4B"/>
-					<status>confirmed</status>
 					<quantity>-10</quantity>
 					<date>2014-01-31T00:00:00</date>
 				</flowplan>
@@ -469,7 +459,6 @@
 			<flowplans>
 				<flowplan>
 					<item name="In4"/>
-					<status>confirmed</status>
 					<quantity>-10</quantity>
 					<date>2014-03-02T00:00:00</date>
 				</flowplan>
@@ -481,7 +470,6 @@
 			<flowplans>
 				<flowplan>
 					<item name="In4B"/>
-					<status>confirmed</status>
 					<quantity>-10</quantity>
 					<date>2014-03-01T00:00:00</date>
 				</flowplan>
@@ -493,7 +481,6 @@
 			<flowplans>
 				<flowplan>
 					<item name="In4"/>
-					<status>confirmed</status>
 					<quantity>-10</quantity>
 					<date>2014-03-02T00:00:00</date>
 				</flowplan>
@@ -525,7 +512,7 @@
 			</loadplans>
 		</operationplan>
 	</operationplans>
-	
+
 	<!-- Another corner case -->
 	<buffers>
 		<buffer name="creepy component 1 @ factory" xsi:type="buffer_infinite">
@@ -645,7 +632,7 @@
 			</loadplans>
 		</operationplan>
 	</operationplans>
-	
+
 	<!-- Corner case: start and end date on the top routing operationplan are not feasible. -->
 	<suppressFlowplanCreation>true</suppressFlowplanCreation>
 	<operationplans>
@@ -913,7 +900,7 @@
 								</flow>
 								<flow quantity="-1.0">
 									<item name="second consumed by 16 - MO/DE/2025-00321"/>
-								</flow>							
+								</flow>
 							</flows>
 							<loads>
 								<load quantity="0.842105">
@@ -1097,7 +1084,7 @@
 			<loadplans>
 				<loadplan>
 					<resource name="Resource W"/>
-				</loadplan>		
+				</loadplan>
 			</loadplans>
 		</operationplan>
 		<operationplan reference="5 - MO/DE/2025-00321" start="2025-08-06T07:19:07" quantity="5.0" status="approved">

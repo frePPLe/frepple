@@ -1825,7 +1825,7 @@ class loadOperationMaterials(LoadTask):
                 cursor.execute("""
                 SELECT
                   operation_id, item_id, quantity, type, effective_start, effective_end,
-                  name, priority, search, source, transferbatch, quantity_fixed, "offset", location_id
+                  name, priority, search, source, quantity_fixed, "offset", location_id
                 FROM operationmaterial %s
                 ORDER BY operation_id, priority, item_id
                 """ % filter_where)
@@ -1835,9 +1835,9 @@ class loadOperationMaterials(LoadTask):
                         curflow = frepple.flow(
                             operation=frepple.operation(name=i[0]),
                             item=frepple.item(name=i[1]),
-                            location=frepple.location(name=i[13]) if i[13] else None,
+                            location=frepple.location(name=i[12]) if i[12] else None,
                             quantity=i[2],
-                            quantity_fixed=i[11],
+                            quantity_fixed=i[10],
                             type="flow_%s" % i[3],
                             source=i[9],
                         )
@@ -1851,12 +1851,8 @@ class loadOperationMaterials(LoadTask):
                             curflow.priority = i[7]
                         if i[8]:
                             curflow.search = i[8]
-                        if i[3] == "transfer_batch":
-                            if i[10]:
-                                curflow.transferbatch = i[10]
-                        else:
-                            if i[12]:
-                                curflow.offset = i[12]
+                        if i[11]:
+                            curflow.offset = i[11]
                     except Exception as e:
                         logger.error("**** %s ****" % e)
                 logger.info(

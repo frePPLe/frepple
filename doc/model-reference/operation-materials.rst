@@ -39,15 +39,6 @@ Different types are available:
   | The quantity consumed or produced is proportional to the quantity of the
     manufacturing order.
 
-* | **transfer_batch**:
-  | Consume (or produce) material in a number of batches of fixed size
-    at various moments during the total duration of the manufacturing order
-    (not including the setup time on the loaded resource).
-  | This feature is deprecated. Use
-    :doc:`operation dependencies </model-reference/operation-dependencies>`
-    or :doc:`operation material offsets </model-reference/operation-materials>`
-    instead.
-
 =============== ================= ===========================================================
 Field           Type              Description
 =============== ================= ===========================================================
@@ -62,7 +53,7 @@ location        location          | Optional location where the material is cons
                                     be consumed or produced at a different location
                                     should this field be filled.
                                   | This field is currently only supported for consuming
-                                    items (i.e. the quantity is negative).               
+                                    items (i.e. the quantity is negative).
 quantity        double            | Material quantity being consumed or produced per unit of
                                     the manufacturing order.
                                   | Default value is 1.0.
@@ -71,15 +62,6 @@ quantity_fixed  double            | Fixed material consumption or production per
                                   | This is useful to model a constant scrap rate for calibration
                                     or testing, modeling a throw-away prodcution tool, etc...
                                   | Default value is 0.0.
-transferbatch   double            | Batch size by in which material is produced or consumed.
-                                  | Only relevant for flows of type batch_transfer.
-                                  | The default value is null, in which case we default to
-                                    produce at the end when the quantity is positive, or
-                                    consume at the start when the quantity is negative.
-                                  | To protect against a big impact on performance and
-                                    memory footprint we limit the number of material transfer
-                                    batches to 50 per manufacturing order.
-                                  | This field is deprecated.
 offset          duration          | Time offset relative to the start or end date of the manufacturing
                                     order for the material production or consumption.
                                   | Eg offset is 1 day for a flow of type 'end'

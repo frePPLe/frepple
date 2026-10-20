@@ -55,6 +55,10 @@ class Migration(migrations.Migration):
             model_name="supplier",
             name="rght",
         ),
+        migrations.RemoveField(
+            model_name="operation",
+            name="transferbatch",
+        ),
         migrations.DeleteModel(
             name="SubOperation",
         ),

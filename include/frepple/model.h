@@ -35,7 +35,6 @@ namespace frepple {
 class Flow;
 class FlowStart;
 class FlowEnd;
-class FlowTransferBatch;
 class FlowPlan;
 class LoadPlan;
 class Resource;
@@ -956,10 +955,6 @@ class Solver : public Object {
     solve(reinterpret_cast<const Flow*>(b), v);
   }
 
-  virtual void solve(const FlowTransferBatch* b, void* v = nullptr) {
-    solve(reinterpret_cast<const Flow*>(b), v);
-  }
-
   virtual void solve(const Solvable*, void* = nullptr) {
     throw LogicException("Called undefined solve(Solvable*) method");
   }
@@ -1812,7 +1807,6 @@ class OperationPlan final : public Object,
   friend class OperationSplit;
   friend class OperationAlternate;
   friend class OperationRouting;
-  friend class FlowTransferBatch;
   friend class OperationPlanDependency;
   friend class OperationDependency;
 
@@ -5964,55 +5958,6 @@ class FlowEnd : public Flow {
   static const MetaClass* metadata;
 };
 
-/* This class represents a flow producing/material of a fixed quantity
- * spread across the total duration of the operationplan
- *
- * TODO The implementation of this class ignores date effectivity.
- */
-class FlowTransferBatch : public Flow {
- private:
-  double transferbatch = 0;
-
- public:
-  /* Constructor. */
-  explicit FlowTransferBatch(Operation* o, Buffer* b, double q)
-      : Flow(o, b, q) {
-    initType(metadata);
-  }
-
-  /* This constructor is called from the plan begin_element function. */
-  explicit FlowTransferBatch() { initType(metadata); }
-
-  double getTransferBatch() const { return transferbatch; }
-
-  void setTransferBatch(double d) {
-    if (d < 0.0)
-      logger << "Warning: Transfer batch size must be greater than or equal to "
-                "0\n";
-    else
-      transferbatch = d;
-  }
-
-  Date computeFlowToOperationDate(const OperationPlan*, Date) override;
-
-  Date computeOperationToFlowDate(const OperationPlan*, Date) override;
-
-  template <class Cls>
-  static inline void registerFields(MetaClass* m) {
-    m->addDoubleField<Cls>(Tags::transferbatch, &Cls::getTransferBatch,
-                           &Cls::setTransferBatch);
-  }
-
-  /* This method holds the logic the compute the date and quantity of a
-   * flowplan. */
-  pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const override;
-
-  void solve(Solver& s, void* v = nullptr) const override { s.solve(this, v); }
-
-  const MetaClass& getType() const override { return *metadata; }
-  static const MetaClass* metadata;
-};
-
 /* A flowplan represents a planned material flow in or out of a buffer.
  *
  * Flowplans are owned by operationplans, which manage a container to store
@@ -6021,7 +5966,6 @@ class FlowTransferBatch : public Flow {
 class FlowPlan final : public TimeLine<FlowPlan>::EventChangeOnhand {
   friend class OperationPlan::FlowPlanIterator;
   friend class OperationPlan;
-  friend class FlowTransferBatch;
 
  private:
   /* Points to the flow instantiated by this flowplan. */

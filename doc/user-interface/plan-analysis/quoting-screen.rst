@@ -36,7 +36,7 @@ request to the quoting service. The buttons perform the following actions:
 
  - | **Inquiry**: Send the new order to the quoting service and display
      the feasible delivery date.
-   | An inquiry doesn’t keep any material or capacity reserved. It is thus
+   | An inquiry doesn't keep any material or capacity reserved. It is thus
      possible that other orders use up that supply, and the returned
      delivery date is no longer feasible when the order is finally confirmed.
 

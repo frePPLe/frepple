@@ -29,7 +29,6 @@ namespace frepple {
 const MetaCategory* Flow::metadata;
 const MetaClass* FlowStart::metadata;
 const MetaClass* FlowEnd::metadata;
-const MetaClass* FlowTransferBatch::metadata;
 
 int Flow::initialize() {
   // Initialize the metadata
@@ -41,25 +40,6 @@ int Flow::initialize() {
       "flow", "flow_start", Object::create<FlowStart>, true);
   FlowEnd::metadata = MetaClass::registerClass<FlowEnd>(
       "flow", "flow_end", Object::create<FlowEnd>);
-  FlowTransferBatch::metadata = MetaClass::registerClass<FlowTransferBatch>(
-      "flow", "flow_transfer_batch", Object::create<FlowTransferBatch>);
-  FlowTransferBatch::registerFields<FlowTransferBatch>(
-      const_cast<MetaClass*>(FlowTransferBatch::metadata));
-
-  // Initialize the FlowTransferBatch type
-  auto& t = FreppleClass<FlowTransferBatch, Flow>::getPythonType();
-  t.setName(FlowTransferBatch::metadata->type);
-  t.setDoc("frePPLe " + FlowTransferBatch::metadata->type);
-  t.supportgetattro();
-  t.supportsetattro();
-  t.supportstr();
-  t.supportcompare();
-  t.supportcreate(FlowTransferBatch::create);
-  t.setBase(Flow::metadata->pythonClass);
-  t.addMethod("toXML", FlowTransferBatch::toXML, METH_VARARGS,
-              "return a XML representation");
-  FlowTransferBatch::metadata->setPythonClass(t);
-  ok += t.typeReady();
 
   // Initialize the Flow type
   auto& x = FreppleCategory<Flow>::getPythonType();
@@ -151,9 +131,6 @@ PyObject* Flow::create(PyTypeObject*, PyObject*, PyObject* kwds) {
       if (d.getString() == "flow_end")
         l = new FlowEnd(static_cast<Operation*>(oper),
                         static_cast<Buffer*>(buf), q2);
-      else if (d.getString() == "flow_transfer_batch")
-        l = new FlowTransferBatch(static_cast<Operation*>(oper),
-                                  static_cast<Buffer*>(buf), q2);
       else
         l = new FlowStart(static_cast<Operation*>(oper),
                           static_cast<Buffer*>(buf), q2);
@@ -315,138 +292,6 @@ pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const {
   }
 }
 
-pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(
-    const FlowPlan* fl) const {
-  double batch_quantity = getTransferBatch();
-  if (!batch_quantity || fl->getOperationPlan()->getSetupEnd() ==
-                             fl->getOperationPlan()->getEnd()) {
-    // Default to a simple flowplan at the start or end
-    auto dt = isConsumer() ? fl->getOperationPlan()->getSetupEnd()
-                           : fl->getOperationPlan()->getEnd();
-    auto* oper = fl->getOperation();
-    const bool is_correction_fixedtime =
-        oper->hasType<OperationFixedTime>() &&
-        oper->getName().starts_with("Correction for ");
-    if (fl->getOperationPlan()->getConfirmed() &&
-        !fl->getOperationPlan()->getCompleted() &&
-        dt < Plan::instance().getCurrent() &&
-        !oper->hasType<OperationInventory>() && !is_correction_fixedtime)
-      // Confirmed material production and consumption is always in the future
-      dt = Plan::instance().getCurrent() + Duration(1L);
-    if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
-      return make_pair(dt, 0.0);
-    else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
-      return make_pair(dt, 0.0);
-    else if (!getEffective().within(fl->getOperationPlan()->getEnd()) ||
-             !fl->getOperationPlan()->getQuantity())
-      return make_pair(dt, 0.0);
-    else {
-      auto q = getQuantityFixed() +
-               fl->getOperationPlan()->getQuantity() * getQuantity();
-      if (fl->getOperationPlan()->getQuantityCompleted() &&
-          (isConsumer() || !Plan::instance().getWipProduceFullQuantity()))
-        return make_pair(dt,
-                         q * fl->getOperationPlan()->getQuantityRemaining() /
-                             fl->getOperationPlan()->getQuantity());
-      else
-        return make_pair(dt, q);
-    }
-  }
-
-  // Compute the number of batches
-  double total_quantity = getQuantityFixed() +
-                          fl->getOperationPlan()->getQuantity() * getQuantity();
-  if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
-    total_quantity = 0.0;
-  else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
-    total_quantity = 0.0;
-  else if (fl->getOperationPlan()->getQuantity() &&
-           fl->getOperationPlan()->getQuantityCompleted() &&
-           (isConsumer() || !Plan::instance().getWipProduceFullQuantity()))
-    total_quantity *= fl->getOperationPlan()->getQuantityRemaining() /
-                      fl->getOperationPlan()->getQuantity();
-  double batches = ceil((getQuantity() > 0 ? total_quantity : -total_quantity) /
-                        getTransferBatch());
-  if (!batches)
-    batches = 1;
-  else if (batches > 50) {
-    // Put a limit to the number of batches
-    batches = 50;
-    batch_quantity =
-        (getQuantity() > 0 ? total_quantity : -total_quantity) / 50;
-  }
-
-  // Count the index of this batch
-  bool found = false;
-  long count = 0;
-  long totalcount = 0;
-  FlowPlan* cur_flpln = fl->getOperationPlan()->firstflowplan;
-  FlowPlan* prev_flpln = nullptr;
-  while (cur_flpln) {
-    if (cur_flpln == fl) found = true;
-    if (cur_flpln->getFlow() == fl->getFlow()) {
-      ++totalcount;
-      if (totalcount > batches && !count) {
-        if (cur_flpln->oper->firstflowplan == cur_flpln)
-          cur_flpln->oper->firstflowplan = cur_flpln->nextFlowPlan;
-        else
-          prev_flpln->nextFlowPlan = cur_flpln->nextFlowPlan;
-        auto almost_dead = cur_flpln;
-        cur_flpln = cur_flpln->nextFlowPlan;
-        delete almost_dead;
-        continue;
-      }
-      if (!found) ++count;
-    }
-    prev_flpln = cur_flpln;
-    cur_flpln = cur_flpln->nextFlowPlan;
-  }
-
-  Duration op_delta;
-  Date op_date =
-      fl->getOperation()
-          ->calculateOperationTime(fl->getOperationPlan(),
-                                   fl->getOperationPlan()->getSetupEnd(),
-                                   fl->getOperationPlan()->getEnd(), &op_delta)
-          .getStart();
-
-  if (!count) {
-    // The first flowplan in the list will always be there, even when the
-    // quantity becomes 0. It is responsible for creating extra flowplans when
-    // required.
-    while (totalcount < batches) {
-      auto newflowplan = new FlowPlan(fl->getOperationPlan(), this);
-      newflowplan->setFollowingBatch(true);
-      ++totalcount;
-    }
-  }
-
-  if (getQuantity() > 0 || getQuantityFixed() > 0) {
-    // Producing a batch
-    op_delta =
-        static_cast<long>(op_delta) / static_cast<long>(batches) * (count + 1);
-    total_quantity -= count * batch_quantity;
-    if (total_quantity < 0.0) total_quantity = 0.0;
-    return make_pair(
-        fl->getOperation()
-            ->calculateOperationTime(fl->getOperationPlan(), op_date, op_delta,
-                                     true)
-            .getEnd(),
-        total_quantity > batch_quantity ? batch_quantity : total_quantity);
-  } else {
-    // Consuming a batch
-    op_delta = static_cast<long>(op_delta) / static_cast<long>(batches) * count;
-    total_quantity += count * getTransferBatch();
-    if (total_quantity > 0.0) total_quantity = 0.0;
-    return make_pair(
-        fl->getOperation()
-            ->calculateOperationTime(fl->getOperationPlan(), op_date, op_delta,
-                                     true)
-            .getEnd(),
-        total_quantity < -batch_quantity ? -batch_quantity : total_quantity);
-  }
-}
-
 Date FlowEnd::computeFlowToOperationDate(const OperationPlan* opplan, Date d) {
   if (!getOffset() || (opplan && opplan->getCompleted())) return d;
   DateRange dr = getOperation()->calculateOperationTime(
@@ -475,16 +320,6 @@ Date FlowStart::computeOperationToFlowDate(const OperationPlan* opplan,
   DateRange dr = getOperation()->calculateOperationTime(
       opplan, d, getOffset(), true, nullptr, getOffset() > 0L);
   return getOffset() > 0L ? dr.getEnd() : dr.getStart();
-}
-
-Date FlowTransferBatch::computeFlowToOperationDate(const OperationPlan*,
-                                                   Date d) {
-  return d;
-}
-
-Date FlowTransferBatch::computeOperationToFlowDate(const OperationPlan*,
-                                                   Date d) {
-  return d;
 }
 
 }  // namespace frepple

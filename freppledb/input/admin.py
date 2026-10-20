@@ -848,7 +848,6 @@ class OperationMaterial_admin(MultiDBModelAdmin):
                     "quantity",
                     "location",
                     "quantity_fixed",
-                    "transferbatch",
                     "offset",
                     "effective_start",
                     "effective_end",

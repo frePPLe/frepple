@@ -499,9 +499,6 @@ class OperationMaterialList(GridReport):
         ),
         GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
-        GridFieldNumber(
-            "transferbatch", title=_("transfer batch quantity"), initially_hidden=True
-        ),
         GridFieldDuration("offset", title=_("offset"), initially_hidden=True),
         # Operation fields
         GridFieldText(

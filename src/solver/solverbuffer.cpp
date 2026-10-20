@@ -138,13 +138,6 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   bool firstmsg2 = true;
   bool firstmsg3 = true;
 
-  bool hasTransferbatching = false;
-  for (const auto& fl : b->getFlows())
-    if (fl.hasType<FlowTransferBatch>()) {
-      hasTransferbatching = true;
-      break;
-    }
-
   bool increment_cur = false;
   for (auto cur = b->getFlowPlans().begin();;) {
     if (increment_cur) ++cur;
@@ -484,7 +477,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
           }
         } else
           while (theDate >= requested_date && loop &&
-                 (theDate >= noSupplyBefore || hasTransferbatching)) {
+                 theDate >= noSupplyBefore) {
             Duration repeat_early;
             Date prev_date = Date::infiniteFuture;
             short prev_stuck = 0;

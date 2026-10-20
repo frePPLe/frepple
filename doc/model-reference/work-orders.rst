@@ -67,7 +67,7 @@ criticality        number            | The criticality is a read-only field, cal
                                      | It represents an indication of the slack time in the usage of the work order.
                                      | A criticality of 0 indicates that the work order is on the critical path of one or more demands.
                                      | Higher criticality values indicate a delay of the work order will not immediately impact the shipment of any demand.
-                                     | A criticality of 999 indicates a work order that isn’t used at all to meet any demand.
+                                     | A criticality of 999 indicates a work order that isn't used at all to meet any demand.
                                      | Note that the criticality is independent of whether the customer demand will be shipped on time or not.
 delay              duration          | The delay is a read-only field, calculated by the planning engine.
                                      | It compares the end data of the work order with the latest possible end date to ship all demands it feeds on time.

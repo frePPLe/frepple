@@ -3,15 +3,15 @@
   <suppressFlowplanCreation>true</suppressFlowplanCreation>
   <current>2019-01-01T00:00:00</current>
   <locations>
-    <location name="prod"/>
-    <location name="store"/>
+    <location name="prod" />
+    <location name="store" />
   </locations>
   <resources>
     <resource name="operators">
       <members>
-        <resource name="X"/>
-        <resource name="Y"/>
-        <resource name="W"/>
+        <resource name="X" />
+        <resource name="Y" />
+        <resource name="W" />
       </members>
     </resource>
   </resources>
@@ -19,48 +19,48 @@
     <item name="consumed item">
       <itemsuppliers>
         <itemsupplier>
-          <supplier name="my supplier"/>
-          <location name="store"/>
+          <supplier name="my supplier" />
+          <location name="store" />
           <leadtime>P60D</leadtime>
         </itemsupplier>
       </itemsuppliers>
       <itemdistributions>
         <itemdistribution>
-          <origin name="store"/>
-          <destination name="prod"/>
+          <origin name="store" />
+          <destination name="prod" />
           <leadtime>P3D</leadtime>
         </itemdistribution>
       </itemdistributions>
     </item>
-    <item name="produced item"/>
+    <item name="produced item" />
   </items>
   <operations>
     <operation name="prod">
-      <item name="produced item"/>
-      <location name="prod"/>
+      <item name="produced item" />
+      <location name="prod" />
       <flows>
         <flow>
-          <item name="consumed item"/>
+          <item name="consumed item" />
           <quantity>-777</quantity>
         </flow>
         <flow xsi:type="flow_end">
-          <item name="produced item"/>
+          <item name="produced item" />
           <quantity>1</quantity>
         </flow>
       </flows>
       <duration>P7D</duration>
       <loads>
         <load>
-          <resource name="operators"/>
+          <resource name="operators" />
           <quantity>1</quantity>
         </load>
       </loads>
     </operation>
-  </operations>  
+  </operations>
   <operationplans>
     <operationplan>
       <reference>MO 1</reference>
-      <operation name="prod"/>
+      <operation name="prod" />
       <start>2017-12-01T00:00:00</start>
       <quantity>1</quantity>
       <status>confirmed</status>
@@ -68,90 +68,91 @@
         <loadplan>
           <resource name="W" />
           <quantity>0.2</quantity>
-          <status>confirmed</status>
         </loadplan>
       </loadplans>
     </operationplan>
     <operationplan>
       <reference>MO 2</reference>
-      <operation name="prod"/>
+      <operation name="prod" />
       <start>2023-01-01T00:00:00</start>
       <quantity>1</quantity>
       <status>confirmed</status>
     </operationplan>
-	<operationplan>
+    <operationplan>
       <reference>MO 3</reference>
-      <operation name="prod"/>
+      <operation name="prod" />
       <start>2023-01-01T00:00:00</start>
       <quantity>1</quantity>
       <status>confirmed</status>
-    </operationplan>	
+    </operationplan>
   </operationplans>
-  
+
   <operations>
     <operation name="complex product routing" xsi:type="operation_routing">
-        <item name="complex product"/>
-        <location name="prod2"/>
-        <suboperations>
-            <suboperation>
-                <operation name="complex product step A" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
-                    <location name="prod2"/>
-                    <flows>
-                        <flow xsi:type="flow_start">
-                            <item name="comp A"/>
-                            <quantity>-1</quantity>
-                        </flow>
-                    </flows>
-                </operation>
-                <priority>1</priority>
-            </suboperation>
-            <suboperation>
-                <operation name="complex product step B" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
-                    <location name="prod2"/>
-                    <flows>
-                        <flow xsi:type="flow_start">
-                            <item name="comp B"/>
-                            <quantity>-1</quantity>
-                        </flow>
-                    </flows>
-                </operation>
-                <priority>2</priority>
-            </suboperation>
-            <suboperation>
-                <operation name="complex product step C" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
-                    <location name="prod2"/>
-                    <flows>
-                        <flow xsi:type="flow_start">
-                            <item name="comp C"/>
-                            <quantity>-1</quantity>
-                        </flow>
-                        <flow xsi:type="flow_end">
-                            <item name="complex product"/>
-                            <quantity>1</quantity>
-                        </flow>
-                    </flows>
-                </operation>
-                <priority>3</priority>
-            </suboperation>
-        </suboperations>
+      <item name="complex product" />
+      <location name="prod2" />
+      <suboperations>
+        <suboperation>
+          <operation name="complex product step A" xsi:type="operation_time_per" duration="P1D"
+            duration_per="P1D">
+            <location name="prod2" />
+            <flows>
+              <flow xsi:type="flow_start">
+                <item name="comp A" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+          </operation>
+          <priority>1</priority>
+        </suboperation>
+        <suboperation>
+          <operation name="complex product step B" xsi:type="operation_time_per" duration="P1D"
+            duration_per="P1D">
+            <location name="prod2" />
+            <flows>
+              <flow xsi:type="flow_start">
+                <item name="comp B" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+          </operation>
+          <priority>2</priority>
+        </suboperation>
+        <suboperation>
+          <operation name="complex product step C" xsi:type="operation_time_per" duration="P1D"
+            duration_per="P1D">
+            <location name="prod2" />
+            <flows>
+              <flow xsi:type="flow_start">
+                <item name="comp C" />
+                <quantity>-1</quantity>
+              </flow>
+              <flow xsi:type="flow_end">
+                <item name="complex product" />
+                <quantity>1</quantity>
+              </flow>
+            </flows>
+          </operation>
+          <priority>3</priority>
+        </suboperation>
+      </suboperations>
     </operation>
-</operations>
-<operationplans>
+  </operations>
+  <operationplans>
     <operationplan reference="MO#1" start="2022-01-01T00:00:00" quantity="2" status="confirmed">
-        <operation name="complex product routing"/>
-        <flowplans>
-            <flowplan status="confirmed" quantity="-3">
-                <item name="comp A"/>
-            </flowplan>
-            <flowplan status="confirmed" quantity="-4">
-                <item name="comp B"/>
-            </flowplan>
-        </flowplans>
+      <operation name="complex product routing" />
+      <flowplans>
+        <flowplan quantity="-3">
+          <item name="comp A" />
+        </flowplan>
+        <flowplan quantity="-4">
+          <item name="comp B" />
+        </flowplan>
+      </flowplans>
     </operationplan>
-</operationplans>
-<suppressFlowplanCreation>false</suppressFlowplanCreation>
-      
-<?python  
+  </operationplans>
+  <suppressFlowplanCreation>false</suppressFlowplanCreation>
+  <?python
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
@@ -159,7 +160,6 @@ print("CREATING UNCONSTRAINED PLAN")
 frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
 print("SAVING TO XML FILE")
-frepple.saveXMLfile("output.3.xml")
-?>
+frepple.saveXMLfile("output.3.xml")?>
 
 </plan>

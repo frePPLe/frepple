@@ -1817,11 +1817,6 @@ class exportOperationMaterials(PlanTask):
                             else None
                         ),
                         i.source,
-                        (
-                            round(i.transferbatch, 8)
-                            if isinstance(i, frepple.flow_transfer_batch)
-                            else None
-                        ),
                         i.offset,
                         (
                             i.location.name
@@ -1840,8 +1835,8 @@ class exportOperationMaterials(PlanTask):
                 """
                 insert into operationmaterial
                 (operation_id,item_id,effective_start,quantity,quantity_fixed,type,effective_end,
-                name,priority,search,source,transferbatch,"offset",location_id,lastmodified%s)
-                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s%s)
+                name,priority,search,source,"offset",location_id,lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s%s)
                 on conflict (operation_id, item_id, effective_start)
                 do update set
                   quantity=excluded.quantity,
@@ -1852,7 +1847,6 @@ class exportOperationMaterials(PlanTask):
                   priority=excluded.priority,
                   search=excluded.search,
                   source=excluded.source,
-                  transferbatch=excluded.transferbatch,
                   "offset"=excluded."offset",
                   location_id=excluded.location_id,
                   lastmodified=excluded.lastmodified

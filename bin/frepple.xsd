@@ -796,17 +796,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="flow_transfer_batch">
-    <xsd:complexContent>
-      <xsd:extension base="flow">
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element name="transferbatch" type="xsd:double" />
-        </xsd:choice>
-        <xsd:attribute name="transferbatch" type="xsd:double" />
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
   <!-- LOAD -->
   <xsd:complexType name="load">
     <xsd:annotation>

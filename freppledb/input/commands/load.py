@@ -1065,7 +1065,7 @@ class loadSuboperations(LoadTask):
                 starttime = time()
                 cursor.execute("""
                 select
-                  operation_id, suboperation_id, priority, effective_start, effective_end
+                  owner_id, name, priority, effective_start, effective_end
                 from (
                     select owner_id, name, priority, effective_start, effective_end,
                       (SELECT type
@@ -1074,7 +1074,7 @@ class loadSuboperations(LoadTask):
                     from operation
                     where owner_id is not null and priority >= 0 %s
                     ) suboperations
-                order by operation_id, priority, suboperation_id
+                order by owner_id, priority, name
                 """ % filter_and)
                 curopername = None
                 for i in cursor:
@@ -2465,8 +2465,7 @@ class loadOperationPlanMaterials(LoadTask):
                 cursor.execute(
                     """
                     select
-                    operationplan_id, opplanmat.item_id,
-                    coalesce(opplanmat.status, 'confirmed'), opplanmat.quantity,
+                    operationplan_id, opplanmat.item_id, opplanmat.quantity,
                     opplanmat.flowdate
                     from (select * from operationplanmaterial %s) as opplanmat
                     inner join operationplan
@@ -2490,8 +2489,7 @@ class loadOperationPlanMaterials(LoadTask):
                         frepple.flowplan(
                             operationplan=frepple.operationplan(id=i[0]),
                             item=frepple.item(name=i[1]),
-                            status=i[2],
-                            quantity=i[3],
+                            quantity=i[2],
                         )
                     except Exception as e:
                         logger.error("**** %s ****" % e)

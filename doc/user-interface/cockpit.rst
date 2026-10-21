@@ -19,9 +19,6 @@ The following widgets are available:
   | A welcome text to give first-time users some guidance to get started
     with the application.
 
-* | **News**
-  | This widget picks up the latest news topics from frepple.com.
-
 * | **Recent actions**
   | Shows your most recent editing actions.
 

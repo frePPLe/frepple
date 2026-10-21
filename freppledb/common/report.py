@@ -2854,7 +2854,7 @@ class GridReport(View):
             return ~models.Q(
                 **{
                     f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}exact": parseLocalizedDateTime(
-                        data
+                        data, hours_allowed=settings.DATE_STYLE_WITH_HOURS
                     )
                 }
             )
@@ -2991,7 +2991,7 @@ class GridReport(View):
             return models.Q(
                 **{
                     f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}exact": parseLocalizedDateTime(
-                        data
+                        data, hours_allowed=settings.DATE_STYLE_WITH_HOURS
                     )
                 }
             )
@@ -3026,12 +3026,11 @@ class GridReport(View):
     @staticmethod
     def _filter_gt(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(reportrow, GridFieldDateTime):
-            data = parseLocalizedDateTime(data)
             return models.Q(
                 **{
-                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}gt": smart_str(
-                        data
-                    ).strip()
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}gt": parseLocalizedDateTime(
+                        data, hours_allowed=settings.DATE_STYLE_WITH_HOURS
+                    )
                 }
             )
         elif isinstance(reportrow, GridFieldDate):
@@ -3043,12 +3042,11 @@ class GridReport(View):
     @staticmethod
     def _filter_gte(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(reportrow, GridFieldDateTime):
-            data = parseLocalizedDateTime(data)
             return models.Q(
                 **{
-                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}gte": smart_str(
-                        data
-                    ).strip()
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}gte": parseLocalizedDateTime(
+                        data, hours_allowed=settings.DATE_STYLE_WITH_HOURS
+                    )
                 }
             )
         elif isinstance(reportrow, GridFieldDate):
@@ -3060,16 +3058,15 @@ class GridReport(View):
     @staticmethod
     def _filter_lt(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(reportrow, GridFieldDateTime):
-            data = parseLocalizedDateTime(data)
-        elif isinstance(reportrow, GridFieldDate):
-            data = parseLocalizedDate(data)
             return models.Q(
                 **{
-                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}lt": smart_str(
-                        data
-                    ).strip()
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}lt": parseLocalizedDateTime(
+                        data, hours_allowed=settings.DATE_STYLE_WITH_HOURS
+                    )
                 }
             )
+        elif isinstance(reportrow, GridFieldDate):
+            data = parseLocalizedDate(data)
         elif isinstance(reportrow, GridFieldDuration):
             data = parseInterval(data)
         return models.Q(**{"%s__lt" % reportrow.field_name: smart_str(data).strip()})
@@ -3077,12 +3074,11 @@ class GridReport(View):
     @staticmethod
     def _filter_lte(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(reportrow, GridFieldDateTime):
-            data = parseLocalizedDateTime(data)
             return models.Q(
                 **{
-                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}lte": smart_str(
-                        data
-                    ).strip()
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}lte": parseLocalizedDateTime(
+                        data, hours_allowed=settings.DATE_STYLE_WITH_HOURS
+                    )
                 }
             )
         elif isinstance(reportrow, GridFieldDate):

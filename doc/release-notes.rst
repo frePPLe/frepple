@@ -35,6 +35,13 @@ This release will bring some bigger and backward incompatible changes.
   | As that date approaches, we're extending the planning horizon so it's
     no longer a hard limit.
 
+.. rubric:: Data integration
+
+- | Bug fix: Since 9.16 data imports dropped the tme component of input data when the parameter
+    'display_time' is set to False. That was incorrect: input should still be accepted with time,
+    but the user interface only shows the date component.
+  | Thanks Tobias Tschorn for the accurate bug report.
+  
 .. rubric:: Odoo integration
 
 - | 18, 19: Bug fix for partially completed and partially reserved materials on manufacturing orders.

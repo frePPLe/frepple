@@ -464,10 +464,11 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
     if (zerobucket->getDates().within(dmd->getDue())) break;
     ++zerobucket;
   }
-  if (zerobucket == data->getBuckets().end())
-    throw LogicException("Can't find forecast bucket for " +
-                         string(dmd->getDue()) + " in forecast '" +
-                         fcst->getName() + "'");
+  if (zerobucket == data->getBuckets().end()) {
+    if (getLogLevel() > 1)
+      logger << "    Can't find forecast bucket for " << dmd->getDue() << "\n";
+    return;
+  }
 
   Duration netLate = dmd->hasProperty("net_late")
                          ? Duration(dmd->getDoubleProperty("net_late") * 86400)

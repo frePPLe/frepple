@@ -89,7 +89,7 @@ criticality      number            | The criticality is a read-only field, calcu
                                    | It represents an indication of the slack time in the usage of the distribution order.
                                    | A criticality of 0 indicates that the distribution order is on the critical path of one or more demands.
                                    | Higher criticality values indicate a delay of the distribution order will not immediately impact the shipment of any demand.
-                                   | A criticality of 999 indicates a distribution order that isn’t used at all to meet any demand.
+                                   | A criticality of 999 indicates a distribution order that isn't used at all to meet any demand.
                                    | Note that the criticality is independent of whether the customer demand will be shipped on time or not.
 delay            duration          | The delay is a read-only field, calculated by the planning engine.
                                    | It compares the end data of the distribution order with the latest possible end date to ship all demands it feeds on time.

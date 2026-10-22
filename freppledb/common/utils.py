@@ -28,6 +28,8 @@ from io import StringIO
 import math
 import os
 from pathlib import Path
+import shutil
+import subprocess
 import tokenize
 
 from django.conf import settings
@@ -54,13 +56,25 @@ def getPostgresVersion():
 
 
 def forceWsgiReload():
-    wsgi = os.path.join(settings.FREPPLE_CONFIGDIR, "wsgi.py")
-    if os.access(wsgi, os.W_OK):
-        Path(wsgi).touch()
+    if os.environ.get("SUPERVISOR_ENABLED") and shutil.which("supervisorctl"):
+        # In a container: Ask supervisord to restart it instead.
+        subprocess.run(
+            [
+                "supervisorctl",
+                "-c",
+                os.path.join(settings.FREPPLE_CONFIGDIR, "supervisord.conf"),
+                "restart",
+                "applicationserver",
+            ],
+            check=False,
+        )
     else:
-        wsgi = os.path.join(os.path.split(find_spec("freppledb").origin)[0], "wsgi.py")
-        if os.access(wsgi, os.W_OK):
-            Path(wsgi).touch()
+        # In development: trigger autoreload
+        asgi = os.path.join(
+            os.path.split(find_spec("freppledb").origin)[0], "asgi_webserver.py"
+        )
+        if os.access(asgi, os.W_OK):
+            Path(asgi).touch()
 
 
 def getStorageUsage():

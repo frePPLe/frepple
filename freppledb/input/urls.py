@@ -29,7 +29,7 @@ from freppledb import mode
 # Automatically add these URLs when the application is installed
 autodiscover = True
 
-if mode == "WSGI":
+if mode == "webserver":
     from . import views
     from . import serializers
     from freppledb.common.api.router import rest_api_router
@@ -111,11 +111,6 @@ if mode == "WSGI":
             "data/input/setuprule/",
             views.SetupRuleList.as_view(),
             name="input_setuprule_changelist",
-        ),
-        path(
-            "data/input/suboperation/",
-            views.SubOperationList.as_view(),
-            name="input_suboperation_changelist",
         ),
         path(
             "data/input/operationdependency/",
@@ -443,12 +438,6 @@ if mode == "WSGI":
     )
     rest_api_router.register(
         "input", "setuprule", serializers.SetupRuleAPI, serializers.SetupRuledetailAPI
-    )
-    rest_api_router.register(
-        "input",
-        "suboperation",
-        serializers.SubOperationAPI,
-        serializers.SubOperationdetailAPI,
     )
     rest_api_router.register(
         "input",

@@ -1980,11 +1980,6 @@ class InventoryDetail(OperationPlanMixin):
             initially_hidden=True,
             editable=False,
         ),
-        GridFieldChoice(
-            "status",
-            title=_("material status"),
-            choices=OperationPlanMaterial.OPMstatus,
-        ),
         GridFieldLastModified("lastmodified", initially_hidden=True),
     )
 

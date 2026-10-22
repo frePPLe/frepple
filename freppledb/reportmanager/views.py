@@ -232,7 +232,7 @@ class ReportManager(GridReport):
         elif isinstance(reportrow, GridFieldDateTime):
             return (
                 f'"{field}"{"::date" if not settings.DATE_STYLE_WITH_HOURS else ""} is distinct from %s',
-                [parseLocalizedDateTime(data)],
+                [parseLocalizedDateTime(data, hours_allowed=settings.DATE_STYLE_WITH_HOURS)],
             )
         elif isinstance(reportrow, GridFieldDate):
             return ('"%s" is distinct from %%s' % field, [parseLocalizedDate(data)])
@@ -283,7 +283,7 @@ class ReportManager(GridReport):
         elif isinstance(reportrow, GridFieldDateTime):
             return (
                 f'"{field}"{"::date" if not settings.DATE_STYLE_WITH_HOURS else ""} = %s',
-                [parseLocalizedDateTime(data)],
+                [parseLocalizedDateTime(data, hours_allowed=settings.DATE_STYLE_WITH_HOURS)],
             )
         elif isinstance(reportrow, GridFieldDate):
             return ('"%s" = %%s' % field, [parseLocalizedDate(data)])
@@ -302,7 +302,7 @@ class ReportManager(GridReport):
         if isinstance(reportrow, GridFieldDateTime):
             return (
                 f'"{field}"{"::date" if not settings.DATE_STYLE_WITH_HOURS else ""} > %s',
-                [parseLocalizedDateTime(data)],
+                [parseLocalizedDateTime(data, hours_allowed=settings.DATE_STYLE_WITH_HOURS)],
             )
         elif isinstance(reportrow, GridFieldDate):
             return ('"%s" > %%s' % field, [parseLocalizedDate(data)])
@@ -314,7 +314,7 @@ class ReportManager(GridReport):
         if isinstance(reportrow, GridFieldDateTime):
             return (
                 f'"{field}"{"::date" if not settings.DATE_STYLE_WITH_HOURS else ""} >= %s',
-                [parseLocalizedDateTime(data)],
+                [parseLocalizedDateTime(data, hours_allowed=settings.DATE_STYLE_WITH_HOURS)],
             )
         elif isinstance(reportrow, GridFieldDate):
             return ('"%s" >= %%s' % field, [parseLocalizedDate(data)])
@@ -326,7 +326,7 @@ class ReportManager(GridReport):
         if isinstance(reportrow, GridFieldDateTime):
             return (
                 f'"{field}"{"::date" if not settings.DATE_STYLE_WITH_HOURS else ""} < %s',
-                [parseLocalizedDateTime(data)],
+                [parseLocalizedDateTime(data, hours_allowed=settings.DATE_STYLE_WITH_HOURS)],
             )
         elif isinstance(reportrow, GridFieldDate):
             return ('"%s" < %%s' % field, [parseLocalizedDate(data)])
@@ -338,7 +338,7 @@ class ReportManager(GridReport):
         if isinstance(reportrow, GridFieldDateTime):
             return (
                 f'"{field}"{"::date" if not settings.DATE_STYLE_WITH_HOURS else ""} <= %s',
-                [parseLocalizedDateTime(data)],
+                [parseLocalizedDateTime(data, hours_allowed=settings.DATE_STYLE_WITH_HOURS)],
             )
         elif isinstance(reportrow, GridFieldDate):
             return ('"%s" <= %%s' % field, [parseLocalizedDate(data)])

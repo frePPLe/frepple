@@ -682,13 +682,6 @@ class PurchaseReport(GridPivot):
             title=format_lazy("{} - {}", _("supplier"), _("subcategory")),
         ),
         GridFieldText(
-            "supplier__owner",
-            initially_hidden=True,
-            editable=False,
-            title=format_lazy("{} - {}", _("supplier"), _("owner")),
-            field_name="supplier__owner__name",
-        ),
-        GridFieldText(
             "supplier__source",
             initially_hidden=True,
             editable=False,
@@ -879,7 +872,6 @@ class PurchaseReport(GridPivot):
         supplier.description as supplier__description,
         supplier.category as supplier__category,
         supplier.subcategory as supplier__subcategory,
-        supplier.owner_id as supplier__owner,
         supplier.source as supplier__source,
         supplier.lastmodified as supplier__lastmodified,
         %s

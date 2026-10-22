@@ -40,7 +40,7 @@ from django.db import DEFAULT_DB_ALIAS, connections
 
 from freppledb import __version__, runCommand
 from freppledb.common.models import Parameter
-from freppledb.common.middleware import _thread_locals
+from freppledb.common.middleware import _db_ctxvar
 from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 
@@ -93,7 +93,7 @@ def launchWorker(database=DEFAULT_DB_ALIAS):
                     ]
                 )
             else:
-                # Deployment on Apache web server
+                # Deployment on web server
                 Popen(
                     [
                         "python",
@@ -249,8 +249,7 @@ class Command(BaseCommand):
                 % (os.getpid(), get_databases()[database]["NAME"])
             )
         idle_loop_done = False
-        old_thread_locals = getattr(_thread_locals, "database", None)
-        setattr(_thread_locals, "database", database)
+        database_token = _db_ctxvar.set(database)
         while True:
             try:
                 task = (
@@ -317,7 +316,7 @@ class Command(BaseCommand):
             Parameter.objects.all().using(database).get(pk="Worker alive").delete()
         except Exception:
             pass
-        setattr(_thread_locals, "database", old_thread_locals)
+        _db_ctxvar.reset(database_token)
 
         # Remove log files exceeding the configured disk space allocation
         totallogs = 0

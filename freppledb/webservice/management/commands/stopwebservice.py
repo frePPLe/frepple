@@ -29,9 +29,8 @@ from http.client import HTTPConnection
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS
 
-from freppledb import VERSION
+from freppledb import __version__
 from freppledb.common.auth import getWebserviceAuthorization
-from freppledb.common.middleware import _thread_locals
 from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
 from freppledb.webservice.utils import checkRunning, waitTillNotRunning
@@ -43,7 +42,7 @@ class Command(BaseCommand):
     requires_model_validation = False
 
     def get_version(self):
-        return VERSION
+        return __version__
 
     def add_arguments(self, parser):
         parser.add_argument(

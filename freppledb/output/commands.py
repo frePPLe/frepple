@@ -68,23 +68,19 @@ class loadConstraints(PlanTask):
                 cnt = 0
                 starttime = time()
                 if "freppledb.forecast" in settings.INSTALLED_APPS:
-                    cursor.execute(
-                        """
+                    cursor.execute("""
                         SELECT
                         coalesce(demand, forecast), name, owner, startdate, enddate
                         FROM out_constraint
                         order by 1
-                        """
-                    )
+                        """)
                 else:
-                    cursor.execute(
-                        """
+                    cursor.execute("""
                         SELECT
                         demand, name, owner, startdate, enddate
                         FROM out_constraint
                         order by 1
-                        """
-                    )
+                        """)
                 prevdmd = None
                 for i in cursor:
                     cnt += 1
@@ -139,8 +135,7 @@ class TruncatePlan(PlanTask):
                 # TODO not very clean to make this difference here
                 cursor.execute("delete from out_problem where name != 'outlier'")
                 cursor.execute("truncate table out_resourceplan, out_constraint")
-            cursor.execute(
-                """
+            cursor.execute("""
                 update operationplan
                   set owner_id = null
                   where owner_id is not null
@@ -150,19 +145,14 @@ class TruncatePlan(PlanTask):
                     where op2.reference = operationplan.owner_id
                     and (op2.status is null or op2.status = 'proposed')
                     )
-                """
-            )
-            cursor.execute(
-                """
+                """)
+            cursor.execute("""
                 truncate operationplanmaterial, operationplanresource
-                """
-            )
-            cursor.execute(
-                """
+                """)
+            cursor.execute("""
                 delete from operationplan
                 where (status='proposed' or status is null) or type = 'STCK'
-                """
-            )
+                """)
         elif cluster == -2:
             # Minimal incremental export
             if deleted_opplans:
@@ -236,8 +226,7 @@ class TruncatePlan(PlanTask):
 
             cursor.execute("create index on cluster_keys (name)")
 
-            cursor.execute(
-                """
+            cursor.execute("""
                 delete from out_constraint
                 where demand in (
                   select demand.name
@@ -245,19 +234,15 @@ class TruncatePlan(PlanTask):
                   inner join cluster_keys
                     on cluster_keys.name = demand.item_id
                   )
-                """
-            )
+                """)
 
-            cursor.execute(
-                """
+            cursor.execute("""
                 delete from out_problem
                 where entity = 'demand' and owner in (
                   select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id
                   )
-                """
-            )
-            cursor.execute(
-                """
+                """)
+            cursor.execute("""
                 delete from out_problem
                 where entity = 'material'
                 and owner in (
@@ -265,19 +250,15 @@ class TruncatePlan(PlanTask):
                    from buffer
                    inner join cluster_keys on cluster_keys.name = buffer.item_id
                    )
-                """
-            )
+                """)
 
-            cursor.execute(
-                """
+            cursor.execute("""
                 delete from operationplanmaterial where item_id in (
                     select name from cluster_keys
                 )
-                """
-            )
+                """)
 
-            cursor.execute(
-                """
+            cursor.execute("""
                 with opplans as (
                     select oplan_parent.reference
                     from operationplan as oplan_parent
@@ -298,13 +279,11 @@ class TruncatePlan(PlanTask):
                 delete from operationplan
                 using opplans
                 where opplans.reference = operationplan.reference
-                """
-            )
+                """)
 
             # TODO next subqueries are not efficient - the exists condition triggers a sequential scan
             if "freppledb.forecast" in settings.INSTALLED_APPS:
-                cursor.execute(
-                    """
+                cursor.execute("""
                     delete from out_constraint
                     where exists (
                     select 1 from forecast
@@ -312,10 +291,8 @@ class TruncatePlan(PlanTask):
                         on cluster_keys.name = forecast.item_id
                         and out_constraint.demand like forecast.name || ' - %'
                     )
-                    """
-                )
-                cursor.execute(
-                    """
+                    """)
+                cursor.execute("""
                     delete from out_problem
                     where entity = 'forecast'
                     and exists (
@@ -324,16 +301,14 @@ class TruncatePlan(PlanTask):
                         on cluster_keys.name = forecast.item_id
                         and out_problem.owner like forecast.name || ' - %'
                     )
-                    """
-                )
+                    """)
             cursor.execute("truncate table cluster_keys")
             for i in frepple.resources():
                 if i.cluster in cluster:
                     cursor.execute(
                         "insert into cluster_keys (name) values (%s)", (i.name,)
                     )
-            cursor.execute(
-                """
+            cursor.execute("""
                 delete from out_problem
                 where entity = 'demand'
                 and owner in (
@@ -341,8 +316,7 @@ class TruncatePlan(PlanTask):
                   from demand
                   inner join cluster_keys on cluster_keys.name = demand.item_id
                   )
-                """
-            )
+                """)
             cursor.execute(
                 "delete from operationplanresource using cluster_keys where resource_id = cluster_keys.name"
             )
@@ -359,21 +333,17 @@ class TruncatePlan(PlanTask):
                         "insert into cluster_keys (name) select %s",
                         (i.name,),
                     )
-            cursor.execute(
-                """
+            cursor.execute("""
                 delete from out_problem
                 using cluster_keys
                 where entity = 'operation' and owner = cluster_keys.name
-                """
-            )
-            cursor.execute(
-                """
+                """)
+            cursor.execute("""
                 delete from operationplan
                 using cluster_keys
                 where (status='proposed' or status is null)
                 and operationplan.name = cluster_keys.name
-                """
-            )
+                """)
             cursor.execute("drop table cluster_keys")
 
 
@@ -392,8 +362,7 @@ class ShowPlanStats(PlanTask):
     @staticmethod
     def run(database=DEFAULT_DB_ALIAS, **kwargs):
         cursor = connections[database].cursor()
-        cursor.execute(
-            """
+        cursor.execute("""
             select 'out_problem', count(*) from out_problem
             union select 'out_constraint', count(*) from out_constraint
             union select 'operationplanmaterial', count(*) from operationplanmaterial
@@ -401,8 +370,7 @@ class ShowPlanStats(PlanTask):
             union select 'out_resourceplan', count(*) from out_resourceplan
             union select 'operationplan', count(*) from operationplan
             order by 1
-            """
-        )
+            """)
         for table, recs in cursor.fetchall():
             logger.info("Table %s: %d records" % (table, recs))
 
@@ -1092,14 +1060,12 @@ class ExportOperationPlans(PlanTask):
         # Make sure any deleted confirmed MO from Plan Editor gets deleted in the database
         # Only MO can currently be deleted through Plan Editor
         if cluster != -2:
-            cursor.execute(
-                """
+            cursor.execute("""
                 delete from operationplan
                 where status in ('confirmed','approved','completed','closed')
                 and type in ('MO','WO')
                 and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
-                """
-            )
+                """)
 
         # Directly injecting proposed records in operationplan table
         if cluster != -2:
@@ -1155,8 +1121,7 @@ class ExportOperationPlans(PlanTask):
 
         # update demand table specific fields
         if cluster != -2:
-            cursor.execute(
-                """
+            cursor.execute("""
                 with cte as (
                 select demand_id, sum(quantity) plannedquantity, max(enddate) deliverydate, max(enddate)-due as delay
                 from operationplan
@@ -1171,10 +1136,8 @@ class ExportOperationPlans(PlanTask):
                 where cte.demand_id = demand.name
                 and (demand.plannedquantity is distinct from cte.plannedquantity
                 or demand.deliverydate is distinct from cte.deliverydate)
-                """
-            )
-            cursor.execute(
-                """
+                """)
+            cursor.execute("""
                 update demand set
                 delay = null,
                 plannedquantity = case when demand.status in ('open','quote') then 0 else null end,
@@ -1185,8 +1148,7 @@ class ExportOperationPlans(PlanTask):
                 and not exists(
                 select 1 from operationplan where owner_id is null and operationplan.demand_id = demand.name
                 )
-                """
-            )
+                """)
         else:
             # interactive planning
             demands_to_update = [j.demand.name for j in opplans if j.demand]
@@ -1228,16 +1190,14 @@ class ExportOperationPlans(PlanTask):
                 (demands_to_update,),
             )
 
-        cursor.execute(
-            """
+        cursor.execute("""
             update operationplan
               set plan = null
             where
               type <> 'STCK'
               and status = 'closed'
               and plan is not null
-            """
-        )
+            """)
 
 
 @PlanTaskRegistry.register
@@ -1276,7 +1236,7 @@ class ExportOperationPlanMaterials(PlanTask):
                         )
                     )
                 else:
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(j.operationplan.reference),
                         clean_value(j.buffer.item.name),
                         clean_value(j.buffer.location.name),
@@ -1285,7 +1245,6 @@ class ExportOperationPlanMaterials(PlanTask):
                         round(j.onhand, 8),
                         round(j.minimum, 8),
                         round(j.period_of_cover, 8),
-                        j.status,
                         timestamp,
                     )
 
@@ -1320,7 +1279,6 @@ class ExportOperationPlanMaterials(PlanTask):
                 "onhand",
                 "minimum",
                 "periodofcover",
-                "status",
                 "lastmodified",
             ),
             size=1024,
@@ -1362,11 +1320,9 @@ class ComputePeriodOfCover(PlanTask):
         cursor = connections[database].cursor()
 
         if cluster != -1:
-            cursor.execute(
-                """
+            cursor.execute("""
                 create temp table cluster_item_tmp as select name from item where false;
-                """
-            )
+                """)
 
             cursor.copy_from(
                 CopyFromGenerator(cls.getItemsFromCluster(cluster)),
@@ -1474,12 +1430,11 @@ class ExportOperationPlanResources(PlanTask):
                         )
                     )
                 else:
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    yield "%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(j.operationplan.reference),
                         clean_value(j.resource.name),
                         round(-j.quantity, 8),
                         clean_value(j.setup),
-                        j.status,
                         timestamp,
                     )
 
@@ -1510,7 +1465,6 @@ class ExportOperationPlanResources(PlanTask):
                     "resource_id",
                     "quantity",
                     "setup",
-                    "status",
                     "lastmodified",
                 ),
                 size=1024,

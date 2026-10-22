@@ -471,11 +471,9 @@ Object* OperationPlan::createOperationPlan(const MetaClass*,
       if (!flowiter->getOperation()->hasType<OperationItemSupplier>()) continue;
       auto* opitemsupplier =
           static_cast<OperationItemSupplier*>(flowiter->getOperation());
-      if (supval) {
-        if (static_cast<Supplier*>(supval)->isMemberOf(
-                opitemsupplier->getItemSupplier()->getSupplier()))
-          operval = opitemsupplier;
-      } else
+      if ((!supval ||
+           supval == opitemsupplier->getItemSupplier()->getSupplier()) &&
+          opitemsupplier->getEffective().within(end ? end : start))
         operval = opitemsupplier;
     }
 
@@ -2279,11 +2277,9 @@ void OperationPlan::updatePurchaseOrder(Item* newitem, Location* newlocation,
     if (!flowiter.getOperation()->hasType<OperationItemSupplier>()) continue;
     auto* opitemsupplier =
         static_cast<OperationItemSupplier*>(flowiter.getOperation());
-    if (newsupplier) {
-      if (newsupplier->isMemberOf(
-              opitemsupplier->getItemSupplier()->getSupplier()))
-        newoper = opitemsupplier;
-    } else
+    if ((!newsupplier ||
+         newsupplier == opitemsupplier->getItemSupplier()->getSupplier()) &&
+        opitemsupplier->getEffective().within(getEnd()))
       newoper = opitemsupplier;
   }
 
@@ -2635,8 +2631,7 @@ void OperationPlan::setBatch(const PooledString& s, bool up) {
 
 Date OperationPlan::computeOperationToFlowDate(Date d) const {
   for (auto g = beginFlowPlans(); g != endFlowPlans(); ++g)
-    if (g->getFlow()->isProducer() &&
-        !g->getFlow()->hasType<FlowTransferBatch>())
+    if (g->getFlow()->isProducer())
       return g->getFlow()->getOffset()
                  ? g->getFlow()->computeOperationToFlowDate(this, d)
                  : d;

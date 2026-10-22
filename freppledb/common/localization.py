@@ -45,7 +45,7 @@ def parseLocalizedDate(data):
         raise Exception(_("Invalid date format"))
 
 
-def parseLocalizedDateTime(data):
+def parseLocalizedDateTime(data, hours_allowed=True):
     if isinstance(data, date):
         return datetime.combine(data, datetime.min.time())
     elif isinstance(data, datetime):
@@ -60,7 +60,7 @@ def parseLocalizedDateTime(data):
             try:
                 return (
                     datetime.strptime(data, format)
-                    if settings.DATE_STYLE_WITH_HOURS
+                    if hours_allowed
                     else datetime.strptime(data, format).date()
                 )
             except (ValueError, TypeError):

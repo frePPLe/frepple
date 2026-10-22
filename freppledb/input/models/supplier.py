@@ -36,8 +36,11 @@ from ..models.location import Location
 from ..models.resource import Resource
 
 
-class Supplier(AuditModel, HierarchyModel):
+class Supplier(AuditModel):
     # Database fields
+    name = models.CharField(
+        _("name"), primary_key=True, help_text=_("Unique identifier")
+    )
     description = models.CharField(_("description"), null=True, blank=True)
     category = models.CharField(_("category"), null=True, blank=True, db_index=True)
     subcategory = models.CharField(

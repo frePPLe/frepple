@@ -355,7 +355,6 @@ class SupplierFilter(FilterSet):
         fields = dict(
             {
                 "name": ["exact", "in", "contains"],
-                "owner": ["exact", "in"],
                 "description": ["exact", "in", "contains"],
                 "category": ["exact", "in", "contains"],
                 "subcategory": ["exact", "in", "contains"],
@@ -372,7 +371,6 @@ class SupplierSerializer(BulkModelSerializer):
         model = models.Supplier
         fields = (
             "name",
-            "owner",
             "description",
             "category",
             "subcategory",
@@ -622,59 +620,6 @@ class OperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
         return models.Operation.objects.using(self.request.database).all()
 
     serializer_class = OperationSerializer
-
-
-class SubOperationFilter(FilterSet):
-    class Meta:
-        model = models.SubOperation
-        fields = dict(
-            {
-                "id": ["exact", "in", "gt", "gte", "lt", "lte"],
-                "operation": ["exact", "in"],
-                "priority": ["exact", "in", "gt", "gte", "lt", "lte"],
-                "suboperation": ["exact", "in"],
-                "effective_start": ["exact", "in", "gt", "gte", "lt", "lte"],
-                "effective_end": ["exact", "in", "gt", "gte", "lt", "lte"],
-                "source": ["exact", "in"],
-                "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
-            },
-            **getAttributeAPIFilterDefinition(models.SubOperation),
-        )
-
-
-class SubOperationSerializer(BulkModelSerializer):
-    class Meta:
-        model = models.SubOperation
-        fields = (
-            "id",
-            "operation",
-            "priority",
-            "suboperation",
-            "effective_start",
-            "effective_end",
-            "source",
-            "lastmodified",
-        ) + getAttributeAPIFields(models.SubOperation)
-        read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
-            models.SubOperation
-        )
-
-
-class SubOperationAPI(frePPleBulkModelViewSet):
-    def get_queryset(self):
-        return models.SubOperation.objects.using(self.request.database).all()
-
-    serializer_class = SubOperationSerializer
-    filterset_class = SubOperationFilter
-
-    unique_fields = ["id"]
-
-
-class SubOperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    def get_queryset(self):
-        return models.SubOperation.objects.using(self.request.database).all()
-
-    serializer_class = SubOperationSerializer
 
 
 class OperationDependencyFilter(FilterSet):
@@ -1068,7 +1013,6 @@ class OperationMaterialFilter(FilterSet):
                 "id": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "quantity": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "quantity_fixed": ["exact", "in", "gt", "gte", "lt", "lte"],
-                "transferbatch": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "offset": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "operation": ["exact", "in"],
                 "item": ["exact", "in"],
@@ -1096,7 +1040,6 @@ class OperationMaterialSerializer(BulkModelSerializer):
             "location",
             "quantity",
             "quantity_fixed",
-            "transferbatch",
             "offset",
             "type",
             "effective_start",
@@ -1141,7 +1084,6 @@ class OperationPlanMaterialFilter(FilterSet):
                 "quantity": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "onhand": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "flowdate": ["exact", "in", "gt", "gte", "lt", "lte"],
-                "status": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
@@ -1160,7 +1102,6 @@ class OperationPlanMaterialSerializer(BulkModelSerializer):
             "quantity",
             "onhand",
             "flowdate",
-            "status",
             "source",
             "lastmodified",
         ) + getAttributeAPIFields(models.OperationPlanMaterial)
@@ -1259,7 +1200,6 @@ class OperationPlanResourceFilter(FilterSet):
                 "operationplan": ["exact", "in"],
                 "resource": ["exact", "in"],
                 "quantity": ["exact", "in", "gt", "gte", "lt", "lte"],
-                "status": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "setup": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
@@ -1287,7 +1227,6 @@ class OperationPlanResourceSerializer(BulkModelSerializer):
             "quantity",
             "startdate",
             "enddate",
-            "status",
             "setup",
             "source",
             "lastmodified",

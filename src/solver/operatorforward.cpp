@@ -967,57 +967,27 @@ void OperatorForward::solve(const Buffer* buf, void*) {
       // Resolving (part of) the shortage by moving this operationplan
       // TODO consider splitting the consumer if (shortage <
       // candidate->getQuantity() ) or to find a smarter match on the quantity
-      if (candidate->getFlow()->hasType<FlowStart, FlowTransferBatch>()) {
-        if (candidate->getFlow()->hasType<FlowTransferBatch>()) {
-          // Some calculation is required to translate the date of the candidate
-          // transfer batch into a new start date of the operation.
-          Duration delta;
-          candidate->getOperation()->calculateOperationTime(
-              candidate->getOperationPlan(), candidate->getDate(),
-              flpln_iter2->getDate(), &delta);
-          DateRange newdate = candidate->getOperation()->calculateOperationTime(
-              candidate->getOperationPlan(),
-              candidate->getOperationPlan()->getStart(), delta, true);
-          if (getLogLevel() > 1) {
-            if (first_action) {
-              first_action = false;
-              logger << indentlevel << "Forward propagation of buffer " << buf;
-              if (curOperationPlan)
-                logger << " for operationplan " << curOperationPlan;
-              if (curFlowPlan) logger << " on " << curFlowPlan->getDate();
-              logger << "\n";
-            }
-            logger << indentlevel << "Moving operationplan "
-                   << candidate->getOperationPlan() << " to start on "
-                   << newdate.getEnd() << " to move a transfer batch to "
-                   << flpln_iter2->getDate() << "\n";
+      if (candidate->getFlow()->hasType<FlowStart>()) {
+        // We know the date where we need to move the operationplan to
+        Date newopplandate =
+            candidate->computeFlowToOperationDate(flpln_iter2->getDate());
+        if (getLogLevel() > 1) {
+          if (first_action) {
+            first_action = false;
+            logger << indentlevel << "Forward propagation of buffer " << buf;
+            if (curOperationPlan)
+              logger << " for operationplan " << curOperationPlan;
+            if (curFlowPlan) logger << " on " << curFlowPlan->getDate();
+            logger << "\n";
           }
-          addMoveStartDate(candidate->getOperationPlan(), newdate.getEnd());
-          candidate->getOperationPlan()->appendInfo(
-              "Moved the start late to match material supply of " +
-              candidate->getItem()->getName());
-        } else {
-          // We know the date where we need to move the operationplan to
-          Date newopplandate =
-              candidate->computeFlowToOperationDate(flpln_iter2->getDate());
-          if (getLogLevel() > 1) {
-            if (first_action) {
-              first_action = false;
-              logger << indentlevel << "Forward propagation of buffer " << buf;
-              if (curOperationPlan)
-                logger << " for operationplan " << curOperationPlan;
-              if (curFlowPlan) logger << " on " << curFlowPlan->getDate();
-              logger << "\n";
-            }
-            logger << indentlevel << "Moving operationplan "
-                   << candidate->getOperationPlan() << " to start on "
-                   << newopplandate << "\n";
-          }
-          addMoveStartDate(candidate->getOperationPlan(), newopplandate);
-          candidate->getOperationPlan()->appendInfo(
-              "Moved the start late to match material supply of " +
-              candidate->getItem()->getName());
+          logger << indentlevel << "Moving operationplan "
+                 << candidate->getOperationPlan() << " to start on "
+                 << newopplandate << "\n";
         }
+        addMoveStartDate(candidate->getOperationPlan(), newopplandate);
+        candidate->getOperationPlan()->appendInfo(
+            "Moved the start late to match material supply of " +
+            candidate->getItem()->getName());
 
         // Propagate dependencies
         for (auto d : candidate->getOperationPlan()->getDependencies()) {

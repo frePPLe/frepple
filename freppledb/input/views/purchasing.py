@@ -85,14 +85,6 @@ class SupplierList(GridReport):
         GridFieldText("description", title=_("description")),
         GridFieldText("category", title=_("category"), initially_hidden=True),
         GridFieldText("subcategory", title=_("subcategory"), initially_hidden=True),
-        GridFieldText(
-            "owner",
-            title=_("owner"),
-            field_name="owner__name",
-            formatter="detail",
-            extra='"role":"input/supplier"',
-            initially_hidden=True,
-        ),
         GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
         GridFieldText(
@@ -1147,15 +1139,6 @@ class PurchaseOrderList(OperationPlanMixin):
             "supplier__subcategory",
             title=format_lazy("{} - {}", _("supplier"), _("subcategory")),
             initially_hidden=True,
-            editable=False,
-        ),
-        GridFieldText(
-            "supplier__owner",
-            title=format_lazy("{} - {}", _("supplier"), _("owner")),
-            initially_hidden=True,
-            field_name="supplier__owner__name",
-            formatter="detail",
-            extra='"role":"input/supplier"',
             editable=False,
         ),
         GridFieldText(

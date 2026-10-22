@@ -31,7 +31,7 @@ from .views import login
 
 autodiscover = True
 
-if mode == "WSGI":
+if mode == "webserver":
 
     if "allauth" in settings.INSTALLED_APPS:
         urlpatterns = [

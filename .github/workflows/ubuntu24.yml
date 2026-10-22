@@ -58,7 +58,7 @@ jobs:
           git submodule update --remote --checkout --force
           grunt
           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
-          cmake --build ${{github.workspace}}/build --config Release --target package -- -j 4
+          cmake --build ${{github.workspace}}/build --config Release --target frepple-main -- -j 4
           cmake --build ${{github.workspace}}/build --config Release --target doc
           . ${{github.workspace}}/venv/bin/activate
           echo "PATH=$PATH" >> $GITHUB_ENV

@@ -6,8 +6,8 @@ configure_file(
   COPYONLY
 )
 
-# Auxilary static libraries
-add_library(utils STATIC
+# Auxilary libraries
+add_library(utils OBJECT
   "utils/actions.cpp"
   "utils/date.cpp"
   "utils/library.cpp"
@@ -25,7 +25,7 @@ add_library(utils STATIC
 )
 add_dependencies(utils venv)
 
-add_library(model STATIC
+add_library(model OBJECT
   "model/actions.cpp"
   "model/buffer.cpp"
   "model/calendar.cpp"
@@ -61,7 +61,7 @@ add_library(model STATIC
 )
 add_dependencies(model utils)
 
-add_library(solver STATIC
+add_library(solver OBJECT
   "solver/operatordelete.cpp"
   "solver/solverbuffer.cpp"
   "solver/solverdemand.cpp"
@@ -76,7 +76,7 @@ add_library(solver STATIC
 )
 add_dependencies(solver model)
 
-add_library(forecast STATIC
+add_library(forecast OBJECT
   "forecast/exprtk.h"
   "forecast/forecast.cpp"
   "forecast/forecast.h"
@@ -108,24 +108,16 @@ target_link_libraries(frepple PUBLIC forecast)
 target_link_libraries(frepple PRIVATE pq)
 target_link_libraries(frepple PRIVATE ${Python3_LIBRARIES})
 
-install(
-  TARGETS frepple
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-)
-
 # Main executable
 add_executable(frepple-main
   main.cpp
   "${CMAKE_SOURCE_DIR}/include/freppleinterface.h"
 )
+
 target_link_libraries(frepple-main LINK_PUBLIC frepple)
 set_target_properties(frepple-main PROPERTIES
   OUTPUT_NAME "frepple"
   PDB_NAME_DEBUG "frepple-main"
-)
-install(
-  TARGETS frepple-main
-  DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
 
 # Put the compiled binaries in the source folder.

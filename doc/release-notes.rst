@@ -9,13 +9,6 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 This release will bring some bigger and backward incompatible changes.
 
-- | The software will only be distributed as a container image.
-  | The Ubuntu installer will no longer be available.
-
-- | These container images will be restructured to simplify configuration and
-    align with best practices for containers.
-  | Expect fewer volumes, more configuration parameters and improved monitoring.
-
 - | The emerging next-generation of the planning algorithm is gradually getting
     in shape. With v10 it will be ready to plan a wide variety of
     Frepple configurations.
@@ -41,6 +34,31 @@ This release will bring some bigger and backward incompatible changes.
 - | December 31st 2030 is a magical date in Frepple that represents the infinite future.
   | As that date approaches, we're extending the planning horizon so it's
     no longer a hard limit.
+
+.. rubric:: Data integration
+
+- | Bug fix: Since 9.16 data imports dropped the tme component of input data when the parameter
+    'display_time' is set to False. That was incorrect: input should still be accepted with time,
+    but the user interface only shows the date component.
+  | Thanks Tobias Tschorn for the accurate bug report.
+  
+.. rubric:: Odoo integration
+
+- | 18, 19: Bug fix for partially completed and partially reserved materials on manufacturing orders.
+  | The quantity showing in frepple didn't match what odoo still sees as remaining to consume.
+
+.. rubric:: System administration
+
+- | Frepple is now distributed exclusively as a container image.
+  | The traditional Ubuntu installer is no longer available.
+
+- | The internal structure of the frepple container has been changed
+    significantly to simply maintenance and configuration.
+
+.. rubric:: Documentation
+
+- | The installation documentation has been completely rewritten to
+    focus solely on the container-based installations.
 
 9.19.0 (2026-10-09)
 ===================

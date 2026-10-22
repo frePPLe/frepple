@@ -32,7 +32,6 @@ from .models import (
     ItemSupplier,
     ItemDistribution,
     Operation,
-    SubOperation,
     Buffer,
     SetupRule,
     SetupMatrix,
@@ -169,11 +168,6 @@ def OperationNotification(flw, msg):
     else:
         args = flw.args.get("sub", None) if flw.args else None
         return msg.model_name() in args if args else True
-
-
-@NotificationFactory.register(SubOperation, [SubOperation])
-def SubOperationNotification(flw, msg):
-    return flw.content_type == msg.content_type and flw.object_pk == msg.object_pk
 
 
 @NotificationFactory.register(Buffer, [Buffer])

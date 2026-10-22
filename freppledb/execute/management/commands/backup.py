@@ -34,7 +34,7 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
 from freppledb.execute.models import Task
-from freppledb.common.middleware import _thread_locals
+from freppledb.common.middleware import _db_ctxvar
 from freppledb.common.models import User, Attribute
 from freppledb.common.utils import get_databases, getPostgresVersion
 from freppledb import __version__
@@ -85,10 +85,9 @@ class Command(BaseCommand):
 
         now = datetime.now()
         task = None
-        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             # Initialize the task
-            setattr(_thread_locals, "database", database)
+            database_token = _db_ctxvar.set(database)
             if "task" in options and options["task"]:
                 try:
                     task = Task.objects.all().using(database).get(pk=options["task"])
@@ -229,7 +228,7 @@ class Command(BaseCommand):
         finally:
             if task:
                 task.save(using=database)
-            setattr(_thread_locals, "database", old_thread_locals)
+            _db_ctxvar.reset(database_token)
 
     # accordion template
     title = _("Contact frePPLe support")

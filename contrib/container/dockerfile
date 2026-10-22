@@ -1,0 +1,119 @@
+#
+# Copyright (C) 2023 by frePPLe bv
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+
+#
+# STAGE 1: Compile and build the application
+#
+
+FROM ubuntu:24.04 AS builder
+
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
+RUN apt-get -y -q update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install \
+    cmake g++ git python3 python3-pip python3-dev python3-venv \
+    psmisc libxerces-c3.2 libxerces-c-dev openssl libssl-dev \
+    postgresql-client libpq5 libpq-dev locales && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY frepple-*.tar.gz ./
+
+RUN src=`basename --suffix=.tar.gz frepple-*` && \
+    tar -xzf *.tar.gz && \
+    rm *.tar.gz && \
+    mv $src source && \
+    cd source && \
+    # Compile c++ code and documentation
+    cmake -B /build -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build /build --config Release --target frepple-main -- -j 2 && \
+    cmake --build /build --target doc && \
+    # Populate the /usr/share/frepple folder
+    FREPPLE_STATIC=/usr/share/frepple/static ./frepplectl.py collectstatic --noinput --clear --ignore '*.less' --verbosity=0 && \
+    mv /build/doc/_build/html /usr/share/frepple/static/doc && \
+    cp -r /source/bin/frepple.xsd /usr/share/frepple/ && \
+    python3 -m venv /usr/share/frepple/venv && \
+    /usr/share/frepple/venv/bin/pip install --no-cache-dir --upgrade pip wheel six appdirs setuptools && \
+    /usr/share/frepple/venv/bin/pip install --no-cache-dir -r requirements.txt && \
+    /usr/share/frepple/venv/bin/pip install --no-cache-dir .
+
+#
+# STAGE 2: Build the deployment container
+#
+
+FROM ubuntu:24.04
+
+ARG EXTRA_UBUNTU_PACKAGES=""
+
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
+# Download dependencies (including supported postgresql clients)
+RUN apt-get -y -q update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install adduser libxerces-c3.2 \
+    nginx postgresql-client psmisc locales libpq5 openssl ssl-cert python3 libpython3.12t64 \
+    curl ca-certificates gnupg openssh-server supervisor ${EXTRA_UBUNTU_PACKAGES} && \
+    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt/ noble-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    apt-get -y -q update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install postgresql-common postgresql-client-18 \
+    postgresql-client-17 postgresql-client-16 postgresql-client-15 postgresql-client-14 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /etc/apt/sources.list.d/pgdg.list && \
+    # Create new group and user for frepple
+    addgroup --quiet --system --firstgid 8000 --lastgid 9000 frepple && \
+    adduser --quiet --firstuid 8000 --lastuid 9000 --ingroup frepple --gecos "" --shell /bin/bash --disabled-password frepple &&\
+    # Create log folder with correct permissions
+    mkdir -p /var/log/frepple && \
+    chown -R frepple:frepple /var/log/frepple && \
+    chmod g=rwx,o= /var/log/frepple && \
+    mkdir -p /var/lib/frepple && \
+    chown -R frepple:frepple /var/lib/frepple && \
+    chmod g=rwx,o= /var/lib/frepple
+
+COPY --from=builder --chown=frepple:frepple --chmod=750 /build/src/frepple /usr/bin/frepple
+COPY --from=builder --chown=frepple:frepple --chmod=750 /build/src/libfrepple.so /usr/lib/libfrepple.so
+COPY --from=builder --chown=frepple:frepple --chmod=750 /source/contrib/container/entrypoint.sh /etc/frepple/entrypoint.sh
+COPY --from=builder --chown=frepple:frepple --chmod=640 /source/contrib/container/supervisord.conf /etc/frepple/supervisord.conf
+COPY --from=builder --chown=frepple:frepple --chmod=640 /source/contrib/container/nginx.conf /etc/frepple/nginx.conf
+COPY --from=builder --chown=frepple:frepple --chmod=640 /source/djangosettings.py /etc/frepple/djangosettings.py
+COPY --from=builder --chown=frepple:frepple --chmod=750 /source/frepplectl.py /usr/bin/frepplectl
+COPY --from=builder --chown=frepple:frepple --chmod=640 /source/bin/license.xml /etc/frepple/license.xml
+COPY --from=builder --chown=frepple:frepple /usr/share/frepple /usr/share/frepple
+
+# Update permissions
+RUN find /usr/share/frepple -type d -exec chmod u+rwx,g+rx,o-rwx {} + && \
+    find /usr/share/frepple -type f -exec chmod g+r,o-rwx {} + && \
+    # Create a folder for custom python packages
+    mkdir -p /usr/share/frepple/python_packages && \
+    chown -R frepple:frepple /usr/share/frepple/python_packages && \
+    chmod g=rwx,o= /usr/share/frepple/python_packages && \
+    echo "/usr/share/frepple/python_packages" > /usr/share/frepple/venv/lib/python3.12/site-packages/frepple-extensions.pth
+
+EXPOSE 80
+
+VOLUME ["/var/log/frepple", "/etc/frepple", "/usr/share/frepple/python_packages"]
+
+USER frepple
+
+ENTRYPOINT ["/etc/frepple/entrypoint.sh"]

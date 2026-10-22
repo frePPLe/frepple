@@ -149,28 +149,6 @@ class Command(BaseCommand):
                 if os.path.isfile(license):
                     print("COPY license.xml /etc/frepple/license.xml", file=dockerfile)
                     shutil.copy(license, os.path.join(tmpdir, "license.xml"))
-
-                # Environment variables for PostgreSQL
-                print(
-                    f'ENV POSTGRES_HOST="{"host.docker.internal" if settings.DATABASES[DEFAULT_DB_ALIAS]["HOST"] == "localhost" else settings.DATABASES[DEFAULT_DB_ALIAS]["HOST"]}"',
-                    file=dockerfile,
-                )
-                print(
-                    f'ENV POSTGRES_PORT="{settings.DATABASES[DEFAULT_DB_ALIAS]["PORT"] or 5432}"',
-                    file=dockerfile,
-                )
-                print(
-                    f'ENV POSTGRES_USER="{settings.DATABASES[DEFAULT_DB_ALIAS]["USER"]}"',
-                    file=dockerfile,
-                )
-                print(
-                    f'ENV POSTGRES_PASSWORD="{settings.DATABASES[DEFAULT_DB_ALIAS]["PASSWORD"]}"',
-                    file=dockerfile,
-                )
-                print(
-                    f'ENV POSTGRES_DBNAME="{settings.DATABASES[DEFAULT_DB_ALIAS]["NAME"]}"',
-                    file=dockerfile,
-                )
             result = subprocess.run(
                 [
                     "docker",
@@ -186,6 +164,19 @@ class Command(BaseCommand):
 
         subprocess.run(["docker", "rm", "--force", container_name])
 
+        # Passed at runtime rather than baked into the image with ENV, since ENV
+        # values persist in the image's layer metadata even after the container is removed
+        db = settings.DATABASES[DEFAULT_DB_ALIAS]
+        db_env = {
+            "POSTGRES_HOST": (
+                "host.docker.internal" if db["HOST"] == "localhost" else db["HOST"]
+            ),
+            "POSTGRES_PORT": str(db["PORT"] or 5432),
+            "POSTGRES_USER": db["USER"],
+            "POSTGRES_PASSWORD": db["PASSWORD"],
+            "POSTGRES_DBNAME": db["NAME"],
+        }
+
         result = subprocess.run(
             [
                 "docker",
@@ -199,6 +190,7 @@ class Command(BaseCommand):
                 options["memory"],
                 "--name",
                 container_name,
+                *(arg for kv in db_env.items() for arg in ("-e", "%s=%s" % kv)),
                 *(options["docker_arg"] or []),
                 container_name,
             ]

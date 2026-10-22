@@ -38,7 +38,7 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 
 import freppledb.common.commands
-from freppledb.common.middleware import _thread_locals
+from freppledb.common.middleware import _db_ctxvar
 from freppledb.common.models import User
 from freppledb.common.report import GridReport
 from freppledb.execute.models import Task
@@ -194,10 +194,9 @@ class Command(BaseCommand):
             )
 
         task = None
-        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             # Initialize the task
-            setattr(_thread_locals, "database", database)
+            database_token = _db_ctxvar.set(database)
             if "task" in options and options["task"]:
                 try:
                     task = Task.objects.all().using(database).get(pk=options["task"])
@@ -383,7 +382,7 @@ class Command(BaseCommand):
             raise e
 
         finally:
-            setattr(_thread_locals, "database", old_thread_locals)
+            _db_ctxvar.reset(database_token)
 
     # accordion template
     title = _("Create a plan")

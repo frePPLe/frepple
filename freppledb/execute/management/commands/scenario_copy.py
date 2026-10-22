@@ -39,7 +39,7 @@ from django.template.loader import render_to_string
 
 from freppledb.execute.models import Task, ScheduledTask
 from freppledb.execute.views import FileManager
-from freppledb.common.middleware import _thread_locals
+from freppledb.common.middleware import _db_ctxvar
 from freppledb.common.models import User, Scenario, Parameter
 from freppledb.common.utils import getStorageUsage, get_databases, getPostgresVersion
 from freppledb.input.models import Item
@@ -712,9 +712,9 @@ class Command(BaseCommand):
                     ).update(logfile=None)
 
             if options["dumpfile"]:
-                setattr(_thread_locals, "database", destination)
+                database_token = _db_ctxvar.set(destination)
                 call_command("migrate", database=destination)
-                delattr(_thread_locals, "database")
+                _db_ctxvar.reset(database_token)
 
             # Start the web service in the new scenario
             if useWebService(destination):

@@ -45,13 +45,13 @@ class SQLReport(AuditModel):
     public = models.BooleanField(blank=True, default=False)
 
     def refreshColumns(self):
-        from freppledb.common.middleware import _thread_locals
+        from freppledb.common.middleware import _db_ctxvar, _request_ctxvar
 
-        req = getattr(_thread_locals, "request", None)
+        req = _request_ctxvar.get()
         if req:
             db = getattr(req, "database", DEFAULT_DB_ALIAS)
         else:
-            db = getattr(_thread_locals, "database", DEFAULT_DB_ALIAS)
+            db = _db_ctxvar.get() or DEFAULT_DB_ALIAS
         if self.pk:
             SQLColumn.objects.filter(report=self).using(db).delete()
 
@@ -78,11 +78,13 @@ class SQLReport(AuditModel):
                     if f[0] in cols:
                         raise Exception("Duplicate column name '%s'" % f[0])
                     cols.append(f[0])
-                    if f[1] == 1700:
+                    if f[1] in (1700, 700, 701):
                         fmt = "number"
-                    elif f[1] == 1184:
+                    elif f[1] == 1082:
+                        fmt = "date"
+                    elif f[1] in (1184, 1114):
                         fmt = "datetime"
-                    elif f[1] in (23, 20):
+                    elif f[1] in (23, 20, 21):
                         fmt = "integer"
                     elif f[1] == 1186:
                         fmt = "duration"

@@ -179,31 +179,14 @@ void FlowPlan::setBuffer(Buffer* newbuf) {
     throw DataException(
         "Flowplans can only switch to buffers with the same item and location");
 
-  if (fl && fl->hasType<FlowTransferBatch>()) {
-    // Switch all flowplans of the same transfer batch
-    auto oldbuf = buf;
-    for (auto flpln = getOperationPlan()->beginFlowPlans();
-         flpln != getOperationPlan()->endFlowPlans(); ++flpln) {
-      if (flpln->buf != oldbuf) continue;
+  // Remove from the old buffer
+  buf->flowplans.erase(this);
+  buf->setChanged();
 
-      // Remove from the old buffer
-      flpln->buf->flowplans.erase(&*flpln);
+  // Insert in the new buffer
+  buf = newbuf;
+  buf->flowplans.insert(this, getQuantity(), getDate());
 
-      // Insert in the new buffer
-      flpln->buf = newbuf;
-      flpln->buf->flowplans.insert(&*flpln, flpln->getQuantity(),
-                                   flpln->getDate());
-    }
-    oldbuf->setChanged();
-  } else {
-    // Remove from the old buffer
-    buf->flowplans.erase(this);
-    buf->setChanged();
-
-    // Insert in the new buffer
-    buf = newbuf;
-    buf->flowplans.insert(this, getQuantity(), getDate());
-  }
   buf->setChanged();
 }
 
@@ -218,16 +201,14 @@ void FlowPlan::setFlow(Flow* newfl) {
 
   PooledString batch;
   if (buf) batch = buf->getBatch();
-  if (!newfl->hasType<FlowTransferBatch>() || !fl) {
-    // Remove from the old buffer, if there is one
-    if (fl) {
-      if (fl->getOperation() != newfl->getOperation())
-        throw DataException(
-            "Only switching to a flow on the same operation is allowed");
-      if (buf) {
-        buf->flowplans.erase(this);
-        buf->setChanged();
-      }
+  // Remove from the old buffer, if there is one
+  if (fl) {
+    if (fl->getOperation() != newfl->getOperation())
+      throw DataException(
+          "Only switching to a flow on the same operation is allowed");
+    if (buf) {
+      buf->flowplans.erase(this);
+      buf->setChanged();
     }
 
     // Insert in the new buffer
@@ -513,7 +494,7 @@ Object* FlowPlan::reader(const MetaClass*, const DataValueDict& in,
   return new FlowPlan(opplan, correctflow);
 }
 
-PyObject* FlowPlan::create(PyTypeObject*, PyObject* , PyObject* kwds) {
+PyObject* FlowPlan::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   try {
     // Find or create the C++ object
     PythonDataValueDict atts(kwds);

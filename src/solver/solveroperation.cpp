@@ -725,7 +725,6 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   Date orig_q_date = data->state->q_date;
   double flow_qty_per = 0.0;
   double flow_qty_fixed = 0.0;
-  bool transferbatch_flow = false;
   Flow* producing_flow = nullptr;
   if (data->state->dependency) {
     flow_qty_per = 1.0;
@@ -736,8 +735,6 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
       flow_qty_per += producing_flow->getQuantity();
       flow_qty_fixed += producing_flow->getQuantityFixed();
       producing_flow = producing_flow;
-      if (producing_flow->hasType<FlowTransferBatch>())
-        transferbatch_flow = true;
     } else {
       // The producing operation doesn't have a valid flow into the current
       // buffer. Either it is missing or it is producing a negative quantity.
@@ -781,79 +778,6 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
 
   // Split operations are unavoidable in this case
   if (flow_qty_fixed && !flow_qty_per) data->accept_partial_reply = true;
-
-  // If transferbatch, then recompute the operation quantity and date here
-  if (transferbatch_flow) {
-    // Find maximum shortage in the buffer, and the date on which it happens
-    Date max_short_date = Date::infiniteFuture;
-    double max_short_qty = -ROUNDING_ERROR;
-    for (auto flpln = data->state->curBuffer->getFlowPlans().rbegin();
-         flpln != data->state->curBuffer->getFlowPlans().end(); --flpln) {
-      if (flpln->isLastOnDate() && flpln->getOnhand() < max_short_qty) {
-        max_short_date = flpln->getDate();
-        max_short_qty = flpln->getOnhand();
-      }
-      if (flpln->getDate() < data->state->q_date) break;
-    }
-
-    // Create an operationplan to solve for the maximum shortage at its date
-    double opplan_qty;
-    if (!flow_qty_per || -max_short_qty < flow_qty_fixed + ROUNDING_ERROR)
-      // Minimum size if sufficient
-      opplan_qty = 0.001;
-    else
-      opplan_qty = (-max_short_qty - flow_qty_fixed) / flow_qty_per;
-    if (data->state->curOwnerOpplan) {
-      // There is already an owner and thus also an owner command
-      assert(!data->state->curDemand);
-      z = oper->createOperationPlan(
-          opplan_qty, Date::infinitePast, max_short_date, data->state->curBatch,
-          data->state->curDemand, data->state->curOwnerOpplan, true, false);
-    } else {
-      // There is no owner operationplan yet. We need a new command.
-      auto* a = new CommandCreateOperationPlan(
-          oper, opplan_qty, Date::infinitePast, max_short_date,
-          data->state->curDemand, data->state->curBatch,
-          data->state->curOwnerOpplan, true, false);
-      data->state->curDemand = nullptr;
-      z = a->getOperationPlan();
-      data->getCommandManager()->add(a);
-    }
-
-    // Move the newly created operationplan early if shortages are left
-    while (true) {
-      bool repeat = false;
-      Date shortage_d;
-      double shortage_q = 0.0;
-      double z_produced = 0.0;
-      for (auto& flpln : data->state->curBuffer->getFlowPlans()) {
-        if (flpln.isLastOnDate() && flpln.getOnhand() < -ROUNDING_ERROR &&
-            !shortage_q) {
-          // Loop mode 1: Scan for the start of a shortage period
-          shortage_q = flpln.getOnhand();
-          shortage_d = flpln.getDate();
-        } else if (shortage_q && flpln.getOperationPlan() == z) {
-          // Loop mode 2: See how many transfer batches are required to fill the
-          // shortage
-          z_produced += flpln.getQuantity();
-          if (shortage_q + z_produced < -ROUNDING_ERROR)
-            // Not enough yet
-            continue;
-
-          // Now we need to move the operationplan such that the current
-          // transfer batch aligns with the shortage date.
-          Duration delta;
-          oper->calculateOperationTime(z, shortage_d, flpln.getDate(), &delta);
-          DateRange newdate =
-              oper->calculateOperationTime(z, z->getStart(), delta, false);
-          z->setStart(newdate.getStart(), false, false);
-          repeat = true;
-          break;
-        }
-      }
-      if (!repeat) break;
-    };
-  }
 
   // Find the current list of constraints
   Problem* topConstraint =

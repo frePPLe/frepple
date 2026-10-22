@@ -11,5 +11,4 @@ based by a item + location combination.
    make-to-order
    time-based-safety-stock
    alternate-materials
-   transfer-batch
    global-purchase

@@ -27,7 +27,7 @@ from freppledb import mode
 
 autodiscover = True
 
-if mode == "ASGI":
+if mode == "service":
     from . import services
 
     svcpatterns = [

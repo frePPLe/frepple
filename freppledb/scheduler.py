@@ -308,25 +308,14 @@ signal.signal(signal.SIGTERM, scheduler.handle_shutdown)
 signal.signal(signal.SIGUSR1, scheduler.handle_reload)
 
 
-# Run logrotate daily sometime in the first minute after midnight
-if (
-    shutil.which("logrotate")
-    and os.access("/etc/frepple/logrotate.conf", os.R_OK)
-    and os.access("/var/log/frepple", os.W_OK)
-):
+if os.access("/var/log/frepple", os.W_OK):
 
     @scheduler.schedule(hour=0, minute=0)
-    def logrotate():
-        subprocess.run(
-            ["logrotate", "-f", "/etc/frepple/logrotate.conf", "--state", "/dev/null"],
-            check=True,
-        )
-        # Temporary deactivated: Downloading the compressed log files doesn't work well
-        # cutoff_compress = time.time() - 24 * 3600
-        # for path in Path("/var/log/frepple").glob("*.log"):
-        #     if path.stat().st_mtime < cutoff_compress:
-        #         print("Compressing log file", path)
-        #         subprocess.run(["gzip", str(path)], check=True)
+    def compressFreppleLogs():
+        cutoff_compress = time.time() - 24 * 3600
+        for path in Path("/var/log/frepple").glob("*.log"):
+            if path.stat().st_mtime < cutoff_compress:
+                subprocess.run(["gzip", str(path)], check=True)
 
 
 # Wait indefinitely for events

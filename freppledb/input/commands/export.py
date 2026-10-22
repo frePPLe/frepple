@@ -100,8 +100,7 @@ class cleanStatic(PlanTask):
             and split_part(old%s.subcategory,',',2) = split_part(new%s.subcategory,',',2)
             and new%s.lastmodified > old%s.lastmodified
             and old%s.source = %%s and new%s.source = %%s
-            """
-            % ((db_table,) * 14),
+            """ % ((db_table,) * 14),
             (source, source),
         )
 
@@ -151,8 +150,7 @@ class cleanStatic(PlanTask):
                 cls.updateNames(Customer, database, source)
 
                 # Build a dictionary of all foreign key relations in our database
-                cursor.execute(
-                    """
+                cursor.execute("""
                     select
                     u.table_name || '.' || u.column_name, r.table_name, r.column_name
                     from information_schema.constraint_column_usage u
@@ -167,8 +165,7 @@ class cleanStatic(PlanTask):
                     and r.constraint_name = fk.constraint_name
                     and r.table_schema = 'public'
                     order by u.table_name
-                    """
-                )
+                    """)
                 for fk in cursor.fetchall():
                     if fk[0] in cls.fk_relations:
                         cls.fk_relations[fk[0]].append((fk[1], fk[2]))
@@ -179,8 +176,7 @@ class cleanStatic(PlanTask):
                 """
                 delete from operation_dependency
                 where source = %%s and lastmodified <> %%s and %s
-                """
-                % cls.getSQLNoReferences("operation_dependency", "id"),
+                """ % cls.getSQLNoReferences("operation_dependency", "id"),
                 (source, cls.timestamp),
             )
             cursor.execute(
@@ -193,8 +189,7 @@ class cleanStatic(PlanTask):
                 where exists
                 (select 1 from cte where name = any(select operation_id union all select blockedby_id))
                 and %s
-                """
-                % cls.getSQLNoReferences("operation_dependency", "id"),
+                """ % cls.getSQLNoReferences("operation_dependency", "id"),
                 (source, cls.timestamp),
             )
 
@@ -202,8 +197,7 @@ class cleanStatic(PlanTask):
                 """
                 delete from operationmaterial
                 where source = %%s and lastmodified <> %%s and %s
-                """
-                % cls.getSQLNoReferences("operationmaterial", "id"),
+                """ % cls.getSQLNoReferences("operationmaterial", "id"),
                 (source, cls.timestamp),
             )
             cursor.execute(
@@ -216,8 +210,7 @@ class cleanStatic(PlanTask):
                     and operation.lastmodified <> %%s
                     )
                 and %s
-                """
-                % cls.getSQLNoReferences("operationmaterial", "id"),
+                """ % cls.getSQLNoReferences("operationmaterial", "id"),
                 (source, cls.timestamp),
             )
             cursor.execute(
@@ -325,8 +318,7 @@ class cleanStatic(PlanTask):
                      and operation.source = %%s and operation.lastmodified <> %%s
                      )
                   ) and %s
-                """
-                % cls.getSQLNoReferences("operationresource", "id"),
+                """ % cls.getSQLNoReferences("operationresource", "id"),
                 (source, cls.timestamp, source, cls.timestamp),
             )
             cursor.execute(
@@ -343,8 +335,7 @@ class cleanStatic(PlanTask):
                     and item.source = %%s
                     and item.lastmodified <> %%s)
                     and %s
-                    """
-                    % cls.getSQLNoReferences("forecast", "name"),
+                    """ % cls.getSQLNoReferences("forecast", "name"),
                     (source, cls.timestamp),
                 )
                 cursor.execute(
@@ -355,8 +346,7 @@ class cleanStatic(PlanTask):
                     and location.source = %%s
                     and location.lastmodified <> %%s)
                     and %s
-                    """
-                    % cls.getSQLNoReferences("forecast", "name"),
+                    """ % cls.getSQLNoReferences("forecast", "name"),
                     (source, cls.timestamp),
                 )
                 cursor.execute(
@@ -367,8 +357,7 @@ class cleanStatic(PlanTask):
                     and source = %%s
                     and lastmodified <> %%s)
                     and %s
-                    """
-                    % cls.getSQLNoReferences("forecast", "name"),
+                    """ % cls.getSQLNoReferences("forecast", "name"),
                     (source, cls.timestamp),
                 )
                 cursor.execute(
@@ -410,8 +399,7 @@ class cleanStatic(PlanTask):
                     and item.source = %%s
                     and item.lastmodified <> %%s)
                     and %s
-                    """
-                    % cls.getSQLNoReferences("inventoryplanning", "id"),
+                    """ % cls.getSQLNoReferences("inventoryplanning", "id"),
                     (source, cls.timestamp),
                 )
                 cursor.execute(
@@ -429,8 +417,7 @@ class cleanStatic(PlanTask):
                     delete from inventoryplanning where exists
                     (select 1 from location where name = inventoryplanning.location_id and source = %%s and lastmodified <> %%s)
                     and %s
-                    """
-                    % cls.getSQLNoReferences("inventoryplanning", "id"),
+                    """ % cls.getSQLNoReferences("inventoryplanning", "id"),
                     (source, cls.timestamp),
                 )
                 cursor.execute(
@@ -463,8 +450,7 @@ class cleanStatic(PlanTask):
                 delete from itemsupplier where exists
                 (select name from item where name = itemsupplier.item_id and source = %%s and lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("itemsupplier", "id"),
+                """ % cls.getSQLNoReferences("itemsupplier", "id"),
                 (source, cls.timestamp),
             )
 
@@ -473,8 +459,7 @@ class cleanStatic(PlanTask):
                 delete from itemdistribution where exists
                 (select 1 from item where name = itemdistribution.item_id and source = %%s and lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("itemdistribution", "id"),
+                """ % cls.getSQLNoReferences("itemdistribution", "id"),
                 (source, cls.timestamp),
             )
 
@@ -483,8 +468,7 @@ class cleanStatic(PlanTask):
                 delete from buffer where exists
                 (select name from item where name = buffer.item_id and source = %%s and lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("buffer", "id"),
+                """ % cls.getSQLNoReferences("buffer", "id"),
                 (source, cls.timestamp),
             )
 
@@ -502,8 +486,7 @@ class cleanStatic(PlanTask):
                 delete from demand where exists
                 (select 1 from item where name = demand.item_id and source = %%s and lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("demand", "name"),
+                """ % cls.getSQLNoReferences("demand", "name"),
                 (source, cls.timestamp),
             )
 
@@ -529,8 +512,7 @@ class cleanStatic(PlanTask):
                 delete from itemsupplier where exists
                 (select 1 from item where name = itemsupplier.item_id and source = %%s and lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("itemsupplier", "id"),
+                """ % cls.getSQLNoReferences("itemsupplier", "id"),
                 (source, cls.timestamp),
             )
 
@@ -540,8 +522,7 @@ class cleanStatic(PlanTask):
                 (select 1 from item where name = itemdistribution.item_id and source = %%s
                 and lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("itemdistribution", "id"),
+                """ % cls.getSQLNoReferences("itemdistribution", "id"),
                 (source, cls.timestamp),
             )
 
@@ -553,8 +534,7 @@ class cleanStatic(PlanTask):
                 and item.source = %%s
                 and item.lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("buffer", "id"),
+                """ % cls.getSQLNoReferences("buffer", "id"),
                 (source, cls.timestamp),
             )
 
@@ -566,8 +546,7 @@ class cleanStatic(PlanTask):
                 and item.source = %%s
                 and item.lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("demand", "name"),
+                """ % cls.getSQLNoReferences("demand", "name"),
                 (source, cls.timestamp),
             )
 
@@ -630,8 +609,7 @@ class cleanStatic(PlanTask):
                 (select 1 from location where location.name = itemsupplier.location_id
                 and source = %%s and lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("itemsupplier", "id"),
+                """ % cls.getSQLNoReferences("itemsupplier", "id"),
                 (source, cls.timestamp),
             )
 
@@ -642,8 +620,7 @@ class cleanStatic(PlanTask):
                   any(select itemdistribution.location_id union all select itemdistribution.origin_id)
                   and source = %%s and lastmodified <> %%s)
                 ) and %s
-                """
-                % cls.getSQLNoReferences("itemdistribution", "id"),
+                """ % cls.getSQLNoReferences("itemdistribution", "id"),
                 (source, cls.timestamp),
             )
 
@@ -652,8 +629,7 @@ class cleanStatic(PlanTask):
                 delete from buffer where exists
                 (select 1 from location where name = buffer.location_id and source = %%s and lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("buffer", "id"),
+                """ % cls.getSQLNoReferences("buffer", "id"),
                 (source, cls.timestamp),
             )
 
@@ -673,8 +649,7 @@ class cleanStatic(PlanTask):
                 delete from demand where exists
                 (select 1 from location where location.name = demand.location_id and source = %%s and lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("demand", "name"),
+                """ % cls.getSQLNoReferences("demand", "name"),
                 (source, cls.timestamp),
             )
             cursor.execute(
@@ -682,8 +657,7 @@ class cleanStatic(PlanTask):
                 delete from resource where exists
                 (select 1 from location where location.name = resource.location_id and source = %%s and lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("resource", "name"),
+                """ % cls.getSQLNoReferences("resource", "name"),
                 (source, cls.timestamp),
             )
 
@@ -693,8 +667,7 @@ class cleanStatic(PlanTask):
                 (select 1 from location where location.name = operation.location_id and source = %%s
                 and lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("operation", "name"),
+                """ % cls.getSQLNoReferences("operation", "name"),
                 (source, cls.timestamp),
             )
 
@@ -749,8 +722,7 @@ class cleanStatic(PlanTask):
                 and customer.source = %%s and
                 customer.lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("demand", "name"),
+                """ % cls.getSQLNoReferences("demand", "name"),
                 (source, cls.timestamp),
             )
             cursor.execute(
@@ -768,8 +740,7 @@ class cleanStatic(PlanTask):
                 and supplier.source = %%s
                 and supplier.lastmodified <> %%s)
                 and %s
-                """
-                % cls.getSQLNoReferences("itemsupplier", "id"),
+                """ % cls.getSQLNoReferences("itemsupplier", "id"),
                 (source, cls.timestamp),
             )
             cursor.execute(
@@ -853,8 +824,7 @@ class exportCalendars(PlanTask):
                   source=excluded.source,
                   lastmodified=excluded.lastmodified
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
 
@@ -918,8 +888,7 @@ class exportLocations(PlanTask):
                   owner_id=excluded.owner_id,
                   lft=null
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
             execute_batch(
@@ -996,8 +965,7 @@ class exportItems(PlanTask):
                   owner_id=excluded.owner_id,
                   lft=null
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
             execute_batch(
@@ -1130,8 +1098,7 @@ class exportOperations(PlanTask):
                   lastmodified=excluded.lastmodified,
                   owner_id=excluded.owner_id
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
             execute_batch(
@@ -1175,8 +1142,7 @@ class exportSetupMatrices(PlanTask):
                   source=excluded.source,
                   lastmodified=excluded.lastmodified
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
 
@@ -1262,8 +1228,7 @@ class exportResources(PlanTask):
                   owner_id=excluded.owner_id,
                   lft=null
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
             execute_batch(
@@ -1325,8 +1290,7 @@ class exportSetupRules(PlanTask):
                   source=excluded.source,
                   lastmodified=excluded.lastmodified
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
 
@@ -1367,8 +1331,7 @@ class exportSkills(PlanTask):
                   source=excluded.source,
                   lastmodified=excluded.lastmodified
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
 
@@ -1426,8 +1389,7 @@ class exportResourceSkills(PlanTask):
                   source=excluded.source,
                   lastmodified=excluded.lastmodified
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
 
@@ -1499,8 +1461,7 @@ class exportOperationResources(PlanTask):
                   source=excluded.source,
                   lastmodified=excluded.lastmodified
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
 
@@ -1559,8 +1520,7 @@ class exportCustomers(PlanTask):
                   owner_id=excluded.owner_id,
                   lft=null
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
             execute_batch(
@@ -1658,8 +1618,7 @@ class exportDemands(PlanTask):
                   owner=excluded.owner,
                   policy=excluded.policy
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
 
@@ -1745,8 +1704,7 @@ class exportCalendarBuckets(PlanTask):
                   source=excluded.source,
                   lastmodified=excluded.lastmodified
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(cursor),
             )
 
@@ -1815,8 +1773,7 @@ class exportBuffers(PlanTask):
                   source=excluded.source,
                   lastmodified=excluded.lastmodified
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
 
@@ -1860,11 +1817,6 @@ class exportOperationMaterials(PlanTask):
                             else None
                         ),
                         i.source,
-                        (
-                            round(i.transferbatch, 8)
-                            if isinstance(i, frepple.flow_transfer_batch)
-                            else None
-                        ),
                         i.offset,
                         (
                             i.location.name
@@ -1883,8 +1835,8 @@ class exportOperationMaterials(PlanTask):
                 """
                 insert into operationmaterial
                 (operation_id,item_id,effective_start,quantity,quantity_fixed,type,effective_end,
-                name,priority,search,source,transferbatch,"offset",location_id,lastmodified%s)
-                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s%s)
+                name,priority,search,source,"offset",location_id,lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s%s)
                 on conflict (operation_id, item_id, effective_start)
                 do update set
                   quantity=excluded.quantity,
@@ -1895,13 +1847,11 @@ class exportOperationMaterials(PlanTask):
                   priority=excluded.priority,
                   search=excluded.search,
                   source=excluded.source,
-                  transferbatch=excluded.transferbatch,
                   "offset"=excluded."offset",
                   location_id=excluded.location_id,
                   lastmodified=excluded.lastmodified
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
 
@@ -1959,8 +1909,7 @@ class exportOperationDependencies(PlanTask):
                   hard_safety_leadtime=excluded.hard_safety_leadtime,
                   lastmodified=excluded.lastmodified
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )
 
@@ -2002,18 +1951,13 @@ class exportSuppliers(PlanTask):
                     r.append(getattr(i, a[0], None))
                 yield r
 
-        def getOwners():
-            for i in frepple.suppliers():
-                if i.owner and (not source or source == i.source):
-                    yield (i.owner.name, i.name)
-
         with connections[database].cursor() as cursor:
             execute_batch(
                 cursor,
                 """
                 insert into supplier
-                (name,description,category,subcategory,available_id,source,lastmodified,owner_id%s)
-                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,null%s)
+                (name,description,category,subcategory,available_id,source,lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
                 on conflict (name)
                 do update set
                   description=excluded.description,
@@ -2021,15 +1965,10 @@ class exportSuppliers(PlanTask):
                   subcategory=excluded.subcategory,
                   available_id=excluded.available_id,
                   source=excluded.source,
-                  lastmodified=excluded.lastmodified,
-                  owner_id=excluded.owner_id
+                  lastmodified=excluded.lastmodified
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
-            )
-            execute_batch(
-                cursor, "update supplier set owner_id=%s where name=%s", getOwners()
             )
 
 
@@ -2111,8 +2050,7 @@ class exportItemSuppliers(PlanTask):
                   source=excluded.source,
                   lastmodified=excluded.lastmodified
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(null_location=False),
             )
             execute_batch(
@@ -2145,8 +2083,7 @@ class exportItemSuppliers(PlanTask):
                   source=excluded.source,
                   lastmodified=excluded.lastmodified
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(null_location=True),
             )
 
@@ -2213,7 +2150,6 @@ class exportItemDistributions(PlanTask):
                   source=excluded.source,
                   lastmodified=excluded.lastmodified
                   %s
-                """
-                % SQL4attributes(attrs),
+                """ % SQL4attributes(attrs),
                 getData(),
             )

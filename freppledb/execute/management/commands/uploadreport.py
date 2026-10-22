@@ -34,7 +34,7 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
 from freppledb.execute.models import Task
-from freppledb.common.middleware import _thread_locals
+from freppledb.common.middleware import _db_ctxvar
 from freppledb.common.models import User
 from freppledb.common.report import GridReport, sizeof_fmt
 from freppledb.common.utils import get_databases
@@ -83,9 +83,8 @@ class Command(BaseCommand):
             user = None
 
         task = None
-        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
-            setattr(_thread_locals, "database", database)
+            database_token = _db_ctxvar.set(database)
             if "task" in options and options["task"]:
                 try:
                     task = Task.objects.all().using(database).get(pk=options["task"])
@@ -280,7 +279,7 @@ class Command(BaseCommand):
             raise e
 
         finally:
-            setattr(_thread_locals, "database", old_thread_locals)
+            _db_ctxvar.reset(database_token)
             if task:
                 task.processid = None
                 task.save(using=database)

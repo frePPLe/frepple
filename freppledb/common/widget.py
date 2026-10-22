@@ -30,7 +30,6 @@ from django.utils.text import capfirst
 from django.utils.timesince import timesince
 from django.utils.translation import gettext_lazy as _
 
-from freppledb import __version__
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.common.models import Notification
 
@@ -40,7 +39,7 @@ class WelcomeWidget(Widget):
     title = _("Welcome")
     tooltip = _("Some links to get started")
     asynchronous = False
-    size = 'xl'
+    size = "xl"
 
     @staticmethod
     def render(request):
@@ -70,28 +69,13 @@ How to get started?
 Dashboard.register(WelcomeWidget)
 
 
-class NewsWidget(Widget):
-    name = "news"
-    title = _("News")
-    tooltip = _("Show the latest news items from the frePPLe website")
-    asynchronous = False
-    size = 'md'
-
-    @staticmethod
-    def render(request):
-        return '<iframe style="width:100%; border:none;" src="https://frepple.com/news-summary/"></iframe>'
-
-
-Dashboard.register(NewsWidget)
-
-
 class InboxWidget(Widget):
     name = "inbox"
     title = _("inbox")
     tooltip = _("Unread messages from your inbox")
     url = "/inbox/"
     asynchronous = False
-    size = 'md'
+    size = "md"
     limit = 10
 
     @classmethod

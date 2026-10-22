@@ -51,7 +51,6 @@ from freppledb.input.models import (
     SetupMatrix,
     SetupRule,
     Skill,
-    SubOperation,
     Supplier,
 )
 from freppledb.common.adminforms import MultiDBModelAdmin
@@ -244,7 +243,7 @@ class Customer_admin(MultiDBModelAdmin):
 @admin.register(Supplier, site=data_site)
 class Supplier_admin(MultiDBModelAdmin):
     model = Supplier
-    raw_id_fields = ("available", "owner")
+    raw_id_fields = ("available",)
     help_url = "model-reference/suppliers.html"
     save_on_top = True
     fieldsets = (
@@ -540,30 +539,6 @@ class Operation_admin(MultiDBModelAdmin):
             ]
         )
         return tabs
-
-
-@admin.register(SubOperation, site=data_site)
-class SubOperation_admin(MultiDBModelAdmin):
-    model = SubOperation
-    raw_id_fields = ("operation", "suboperation")
-    help_url = "model-reference/suboperations.html"
-    save_on_top = True
-    fieldsets = (
-        (
-            None,
-            {
-                "fields": [
-                    "operation",
-                    "suboperation",
-                    "priority",
-                    "effective_start",
-                    "effective_end",
-                ]
-                + [a[0] for a in getAttributes(SubOperation) if a[3]]
-                + ["source"]
-            },
-        ),
-    )
 
 
 @admin.register(OperationDependency, site=data_site)
@@ -873,7 +848,6 @@ class OperationMaterial_admin(MultiDBModelAdmin):
                     "quantity",
                     "location",
                     "quantity_fixed",
-                    "transferbatch",
                     "offset",
                     "effective_start",
                     "effective_end",
@@ -1322,7 +1296,6 @@ class OperationPlanMaterial_admin(MultiDBModelAdmin):
                     "operationplan",
                     "item",
                     "location",
-                    "status",
                     "quantity",
                     "flowdate",
                 )

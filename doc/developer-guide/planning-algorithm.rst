@@ -50,7 +50,7 @@ when the missing quantity might be feasible.
 
                 | The buffer checks the inventory situation.
                 | If material is available no further recursion is required.
-                | If the required material isn’t available the buffer will
+                | If the required material isn't available the buffer will
                   **ask an operation** for a new replenishment.
                 | Each buffer has a field indicating which operation is to
                   be used to generate replenishments.
@@ -101,7 +101,7 @@ when the missing quantity might be feasible.
     demand late or in multiple deliveries) we can now decide to commit all
     operation plans created during the whole ask-reply sequence.
 
-    If we’re not happy with the reply the operation plans created are undone
+    If we're not happy with the reply the operation plans created are undone
     again and we can go back to the first step and ask for the remaining
     material or at a later date.
 
@@ -118,4 +118,3 @@ which significantly facilitate reviewing big and complex log files.
 
 .. image:: _images/notepadplusplus_debugging.png
    :alt: Debugging with Notepad++
-

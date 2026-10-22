@@ -534,13 +534,6 @@ class OperationPlanRelatedMixin:
 
 
 class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
-    # Possible status
-    OPRstatus = (
-        ("proposed", _("proposed")),
-        ("confirmed", _("confirmed")),
-        ("closed", _("closed")),
-    )
-
     # Database fields
     id = models.AutoField(_("identifier"), primary_key=True)
     resource = models.ForeignKey(
@@ -565,13 +558,6 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
         null=True,
     )
     setup = models.CharField(_("setup"), null=True, blank=True)
-    status = models.CharField(
-        _("load status"),
-        null=True,
-        blank=True,
-        choices=OPRstatus,
-        help_text=_("Status of the resource assignment"),
-    )
 
     class Manager(MultiDBManager):
         def get_by_natural_key(self, resource, operationplan):
@@ -600,13 +586,6 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
 
 
 class OperationPlanMaterial(AuditModel, OperationPlanRelatedMixin):
-    # Possible status
-    OPMstatus = (
-        ("proposed", _("proposed")),
-        ("confirmed", _("confirmed")),
-        ("closed", _("closed")),
-    )
-
     # Database fields
     id = models.AutoField(_("identifier"), primary_key=True)
     item = models.ForeignKey(
@@ -640,13 +619,6 @@ class OperationPlanMaterial(AuditModel, OperationPlanRelatedMixin):
     )
     periodofcover = models.DecimalField(
         _("period of cover"), max_digits=20, decimal_places=8, null=True, blank=True
-    )
-    status = models.CharField(
-        _("material status"),
-        null=True,
-        blank=True,
-        choices=OPMstatus,
-        help_text=_("status of the material production or consumption"),
     )
 
     class Manager(MultiDBManager):

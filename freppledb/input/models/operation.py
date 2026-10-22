@@ -230,7 +230,6 @@ class OperationMaterial(AuditModel):
     types = (
         ("start", _("Start")),
         ("end", _("End")),
-        ("transfer_batch", _("Batch transfer")),
     )
 
     # Database fields
@@ -322,14 +321,6 @@ class OperationMaterial(AuditModel):
         blank=True,
         choices=searchmode,
         help_text=_("Method to select preferred alternate"),
-    )
-    transferbatch = models.DecimalField(
-        _("transfer batch quantity"),
-        max_digits=20,
-        decimal_places=8,
-        null=True,
-        blank=True,
-        help_text=_("Batch size by in which material is produced or consumed"),
     )
     offset = models.DurationField(
         _("offset"),
@@ -529,102 +520,6 @@ class OperationResource(AuditModel):
             )
         else:
             return q.order_by("-efficiency", "name").first()
-
-
-class SubOperation(AuditModel):
-    # Database fields
-    id = models.AutoField(_("identifier"), primary_key=True)
-    operation = models.ForeignKey(
-        Operation,
-        verbose_name=_("operation"),
-        related_name="suboperations",
-        help_text=_("Parent operation"),
-        on_delete=models.CASCADE,
-    )
-    priority = models.IntegerField(
-        _("priority"),
-        default=1,
-        help_text=_(
-            "Sequence of this operation among the suboperations. Negative values are ignored."
-        ),
-    )
-    suboperation = models.ForeignKey(
-        Operation,
-        verbose_name=_("suboperation"),
-        related_name="superoperations",
-        help_text=_("Child operation"),
-        on_delete=models.CASCADE,
-    )
-    effective_start = models.DateTimeField(
-        _("effective start"),
-        null=True,
-        blank=True,
-        help_text=_("Validity start date"),
-        default=datetime(1971, 1, 1),
-    )
-    effective_end = models.DateTimeField(
-        _("effective end"),
-        null=True,
-        blank=True,
-        help_text=_("Validity end date"),
-        default=datetime(2030, 12, 31),
-    )
-
-    class Manager(MultiDBManager):
-        def get_by_natural_key(self, operation, suboperation, effective_start):
-            return self.get(
-                operation=operation,
-                suboperation=suboperation,
-                effective_start=effective_start or datetime(1971, 1, 1),
-            )
-
-    def natural_key(self):
-        return (
-            self.operation,
-            self.suboperation,
-            self.effective_start or datetime(1971, 1, 1),
-        )
-
-    def validate_unique(self, exclude=None):
-        if self.effective_start is None:
-            self.effective_start = datetime(1971, 1, 1)
-        super().validate_unique(exclude=exclude)
-
-    objects = Manager()
-
-    def __str__(self):
-        return "%s   %s   %s" % (
-            self.operation.name if self.operation else None,
-            self.priority,
-            self.suboperation.name if self.suboperation else None,
-        )
-
-    class Meta(AuditModel.Meta):
-        db_table = "suboperation"
-        ordering = ["operation", "priority", "suboperation"]
-        verbose_name = _("suboperation")
-        verbose_name_plural = _("suboperations")
-        unique_together = (("operation", "suboperation", "effective_start"),)
-
-    def save(self, *args, **kwargs):
-        # Call the real save() method
-        super().save(*args, **kwargs)
-
-        # Merge the same info immediately in the operation table
-        self.suboperation.owner = self.operation
-        self.suboperation.priority = self.priority
-        self.suboperation.effective_start = self.effective_start
-        self.suboperation.effective_end = self.effective_end
-        self.suboperation.item = None
-        self.suboperation.save(
-            update_fields=[
-                "owner",
-                "priority",
-                "effective_start",
-                "effective_end",
-                "item",
-            ]
-        )
 
 
 class OperationDependency(AuditModel):

@@ -35,8 +35,10 @@ class WizardWidget(Widget):
     size = "xl"
 
     def render(self, request=None):
-        from freppledb.common.middleware import _thread_locals
+        from freppledb.common.middleware import _request_ctxvar
 
+        req = _request_ctxvar.get()
+        prefix = req.prefix
         return """
         <div class="row pt-3 pb-3">
             <div class="col-auto mx-auto">
@@ -86,12 +88,7 @@ class WizardWidget(Widget):
                     </div>
                 </div>
             </div>
-        </div>""" % (
-            _thread_locals.request.prefix,
-            _thread_locals.request.prefix,
-            _thread_locals.request.prefix,
-            _thread_locals.request.prefix,
-        )
+        </div>""" % (prefix, prefix, prefix, prefix)
 
 
 Dashboard.register(WizardWidget)

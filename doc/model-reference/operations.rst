@@ -267,19 +267,19 @@ search           string            Defines the order of preference among the alt
                                      | Select the alternate which gives the lowest sum of
                                        the cost and penalty.
                                      | The sum is computed for the complete upstream path.
-suboperations    List of           | List of alternate sub-operations.
-                 suboperation      | See :doc:`suboperations`
 ================ ================= ===========================================================
 
 Operation_split
 ---------------
 
 This operation type plans the demand proportionally over a number of operations.
-It has a list of alternate sub-operations listed, each with a percentage.
+
+It has a list of alternate sub-operations (referring to the split-operation
+with the owner field), each with a percentage.
 
 The percentages are treated as a hard constraint by the solver. This means that
-if one of the alternates can’t deliver the requested quantity, the complete split
-operation is considered as infeasible. (If we’ld treat it as a soft constraint,
+if one of the alternates can't deliver the requested quantity, the complete split
+operation is considered as infeasible. (If we'd treat it as a soft constraint,
 we would distribute the infeasible quantity among the other alternates).
 
 Minimum, multiple and maximum size constraints on the sub-operations are respected.
@@ -289,24 +289,17 @@ specified percentages.
 The percentages don't need to add up to 100%. We use the relative ratio's of
 the sub-operations.
 
-================ ================= ===========================================================
-Field            Type              Description
-================ ================= ===========================================================
-suboperations    List of           | List of sub-operations to divide the plan across.
-                 suboperation      | See :doc:`suboperations`
-================ ================= ===========================================================
-
-
 Operation_routing
 -----------------
 
-Models a sequence a number of ‘step’ sub-operations, to be executed sequentially.
+Models a sequence a number of step sub-operations, to be executed sequentially
+(the default) or with defined dependencies.
+
+Step sub-operations refer to their parent routing with the owner field.
 
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================
-suboperations    List of           | List of sub-operations to execute in sequence.
-                 suboperation      | See :doc:`suboperations`
 hard_posttime    Boolean           | A flag to mark whether the post-operation time of the
                                      routing steps should be used as a hard or soft constraint.
                                    | The default is false, i.e. a soft constraint.

@@ -38,7 +38,7 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
 from freppledb import __version__
-from freppledb.common.middleware import _thread_locals
+from freppledb.common.middleware import _db_ctxvar
 from freppledb.common.models import User, Parameter
 from freppledb.common.utils import get_databases
 from freppledb.execute.models import Task
@@ -94,10 +94,9 @@ class Command(BaseCommand):
 
         now = datetime.now()
         task = None
-        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             # Initialize the task
-            setattr(_thread_locals, "database", self.database)
+            database_token = _db_ctxvar.set(self.database)
             if "task" in options and options["task"]:
                 try:
                     task = (
@@ -278,7 +277,7 @@ class Command(BaseCommand):
         finally:
             if task:
                 task.save(using=self.database)
-            setattr(_thread_locals, "database", old_thread_locals)
+            _db_ctxvar.reset(database_token)
 
     def generatePagesToPublish(self, records_per_page=None):
         if not records_per_page:

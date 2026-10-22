@@ -75,7 +75,7 @@ rect.opplan {
 <script>
 
   // Pre-load kanban card template
-  window.kanban_card_template_promise = fetch('{% url "operationplandetail" %}../input/kanbancard.html')
+  window.kanban_card_template_promise = fetch(url_prefix  + '{% url "operationplandetail" %}../input/kanbancard.html')
     .then(response => response.text())
     .then(html => {
       // Strip {% verbatim %} and {% endverbatim %} if they exist

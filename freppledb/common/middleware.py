@@ -385,6 +385,7 @@ class MultiDBMiddleware:
                         "/accounts/logout/",
                         "/data/logout/",
                         "/data/jsi18n/",
+                        "/preferences/",
                     )
                 )
             ):

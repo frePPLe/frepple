@@ -2,38 +2,33 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
-import vueDevTools from 'vite-plugin-vue-devtools'
 import { resolve, dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // https://vite.dev/config/
-export default defineConfig(
-  {
-    server: {
-    // Allow any host to enable proper integration with Django
-    host: '0.0.0.0',
-    origin: 'http://localhost:5173', // Add this line
-    // Enable CORS during development
-    cors: true,
-    hmr: {
-      protocol: 'ws',
-      host: 'localhost',
-    },
-  },
+// The "debug" mode builds an unminified bundle, used when the DEBUG_JS
+// setting is enabled. The minified bundle is used in all other cases.
+export default defineConfig(({ mode }) => {
+  const debug = mode === 'debug';
+  const suffix = debug ? '.debug' : '';
+  return {
     build: {
       outDir: '../static',
       assetsDir: '../static',
-      emptyOutDir: true,
+      // Don't delete the other variant of the bundle
+      emptyOutDir: false,
+      minify: !debug,
+      sourcemap: debug,
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'index.html')
         },
         output: {
-          entryFileNames: 'forecast/[name].js',
-          chunkFileNames: 'forecast/[name].js',
-          assetFileNames: '[name].[ext]'
+          entryFileNames: `forecast/[name]${suffix}.js`,
+          chunkFileNames: `forecast/[name]${suffix}.js`,
+          assetFileNames: `[name]${suffix}.[ext]`
         }
       }
     },
@@ -45,7 +40,6 @@ export default defineConfig(
         fullInstall: true,
         forceStringify: false,
       }),
-      vueDevTools(),
     ],
     resolve: {
       alias: {
@@ -61,7 +55,4 @@ export default defineConfig(
       }
     }
   }
-)
-
-
-
+})

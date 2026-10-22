@@ -10,6 +10,10 @@ node_modules/
 .pnpm-store
 /freppledb/common/static/doc
 
+# Unminified vue bundles, generated when the DEBUG_JS setting is enabled
+/freppledb/forecast/static/forecast/*.debug.js*
+/freppledb/input/static/input/*.debug.js*
+
 .*Zone.Identifier
 
 # Executables

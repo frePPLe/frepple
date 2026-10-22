@@ -25,63 +25,69 @@ import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
-import vueDevTools from 'vite-plugin-vue-devtools';
 import { resolve, dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // https://vite.dev/config/
-export default defineConfig({
-  server: {
-    // Allow any host to enable proper integration with Django
-    host: '0.0.0.0',
-    origin: 'http://localhost:5173', // Add this line
-    // Enable CORS during development
-    cors: true,
-    hmr: {
-      protocol: 'ws',
-      host: 'localhost',
-    },
-  },
-  build: {
-    outDir: '../static',
-    assetsDir: '../static',
-    emptyOutDir: false,
-    rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html'),
+// The "debug" mode builds an unminified bundle, used when the DEBUG_JS
+// setting is enabled. The minified bundle is used in all other cases.
+export default defineConfig(({ mode }) => {
+  const debug = mode === 'debug';
+  const suffix = debug ? '.debug' : '';
+  return {
+    build: {
+      outDir: '../static',
+      assetsDir: '../static',
+      // Don't delete the other variant of the bundle
+      emptyOutDir: false,
+      minify: !debug,
+      sourcemap: debug,
+      rollupOptions: {
+        input: {
+          main: resolve(__dirname, 'index.html'),
+        },
+        output: {
+          entryFileNames: `input/[name]${suffix}.js`,
+          chunkFileNames: `input/[name]${suffix}.js`,
+          assetFileNames: `[name]${suffix}.[ext]`,
+          // Wrap the debug bundle in a function, so its top level declarations
+          // don't overwrite the globals of the page (window.addEventListener)
+          // and don't collide with the variables of the inline scripts.
+          // The bundle stays a classic script: d3 reads "this.document" and
+          // needs the sloppy mode of a script, not the strict mode of a module.
+          intro: debug ? '(function () {' : '',
+          outro: debug ? '})();' : '',
+          // Keep the debug bundle a single file, so the wrapper above encloses
+          // all of the code.
+          inlineDynamicImports: debug,
+        },
       },
-      output: {
-        entryFileNames: 'input/[name].js',
-        chunkFileNames: 'input/[name].js',
-        assetFileNames: '[name].[ext]',
+    },
+    plugins: [
+      vue(),
+      VueI18nPlugin({
+        include: resolve(__dirname, './src/i18n/translations/*.json'),
+        runtimeOnly: false,
+        fullInstall: true,
+        forceStringify: false,
+      }),
+    ],
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+        '@input': fileURLToPath(new URL('./src', import.meta.url)),
+        vue: 'vue/dist/vue.esm-bundler.js',
+        '@common': fileURLToPath(new URL('../../common/frontend/src', import.meta.url)),
+        '@translations': fileURLToPath(new URL('src/translations', import.meta.url)),
       },
     },
-  },
-  plugins: [
-    vue(),
-    VueI18nPlugin({
-      include: resolve(__dirname, './src/i18n/translations/*.json'),
-      runtimeOnly: false,
-      fullInstall: true,
-      forceStringify: false,
-    }),
-    process.env.NODE_ENV !== 'production' && vueDevTools(),
-  ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-      '@input': fileURLToPath(new URL('./src', import.meta.url)),
-      vue: 'vue/dist/vue.esm-bundler.js',
-      '@common': fileURLToPath(new URL('../../common/frontend/src', import.meta.url)),
-      '@translations': fileURLToPath(new URL('src/translations', import.meta.url)),
+    base: '/static/', // This ensures assets are loaded from the correct path
+    css: {
+      modules: {
+        scopeBehaviour: 'local',
+      },
     },
-  },
-  base: '/static/', // This ensures assets are loaded from the correct path
-  css: {
-    modules: {
-      scopeBehaviour: 'local',
-    },
-  },
+  };
 });

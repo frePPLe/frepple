@@ -20,7 +20,38 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
  */
 
+const path = require('path');
 const sass = require('sass');
+
+// Detect the effective value of the DEBUG_JS setting.
+// The setting is read from the Django configuration files, in the same order
+// as freppledb/settings.py loads them: djangosettings.py first, then the
+// optional localsettings.py overrides.
+// Only the value "False" (or an empty value) disables the debug mode.
+function readDebugJs(grunt) {
+  const configdir = process.env.FREPPLE_CONFIGDIR || __dirname;
+  const falsy = ['False', 'false', '0', 'None', 'none', '""', "''", ''];
+  let debugjs = false;
+  for (const filename of ['djangosettings.py', 'localsettings.py']) {
+    const filepath = path.join(configdir, filename);
+    if (!grunt.file.exists(filepath)) continue;
+    const content = grunt.file.read(filepath);
+    const regex = /^[ \t]*DEBUG_JS[ \t]*=[ \t]*(.*)$/gm;
+    let match;
+    while ((match = regex.exec(content)) !== null) {
+      // Strip the comments and the quotes of the value
+      let value = match[1].split('#')[0].trim();
+      if (
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))
+      ) {
+        value = value.slice(1, -1).trim();
+      }
+      debugjs = !falsy.includes(value);
+    }
+  }
+  return debugjs;
+}
 
 function themeconfig(themefolder, themename) {
   // Auxilary function to generate the task configuration for a single theme.
@@ -47,6 +78,10 @@ function themeconfig(themefolder, themename) {
 
 // Grunt configuration
 module.exports = function (grunt) {
+
+  // The DEBUG_JS setting tells us if the javascript files must be minified.
+  const debugjs = readDebugJs(grunt);
+  grunt.log.writeln('DEBUG_JS: ' + debugjs);
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -208,14 +243,21 @@ module.exports = function (grunt) {
       'freppledb/input/static/js/frepple-operationplandetail.js',
       'freppledb/input/static/js/frepple-favoritedetails.js',
       'freppledb/input/static/main.css',
+      'freppledb/input/static/main.debug.css',
       'freppledb/input/static/index.html',
       'freppledb/forecast/static/main.css',
+      'freppledb/forecast/static/main.debug.css',
       'freppledb/forecast/static/index.html',
     ],
 
     // Vue compilation
+    // In debug mode we build the unminified vue bundles.
     shell: {
-      viteBuild: { command: 'pnpm -r build' },
+      viteBuild: {
+        command: debugjs
+          ? 'pnpm -r run build:debug'
+          : 'pnpm -r run build',
+      },
     }
   });
 
@@ -230,7 +272,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-shell');
 
   // Register our tasks
-  grunt.registerTask('minify', ['concat', 'uglify', 'clean']);
-  grunt.registerTask('default', ['sass', 'concat', 'uglify', 'shell', 'clean']);
+  // In debug mode we skip the concatenation and the minification of the
+  // javascript files: the templates load the unminified sources.
+  const jsTasks = debugjs ? [] : ['concat', 'uglify'];
+  grunt.registerTask('minify', [...jsTasks, 'clean']);
+  grunt.registerTask('default', ['sass', ...jsTasks, 'shell', 'clean']);
 
 };

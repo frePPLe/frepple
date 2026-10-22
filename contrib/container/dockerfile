@@ -103,11 +103,16 @@ COPY --from=builder --chown=frepple:frepple /usr/share/frepple /usr/share/freppl
 
 # Update permissions
 RUN find /usr/share/frepple -type d -exec chmod u+rwx,g+rx,o-rwx {} + && \
-    find /usr/share/frepple -type f -exec chmod g+r,o-rwx {} +
+    find /usr/share/frepple -type f -exec chmod g+r,o-rwx {} + && \
+    # Create a folder for custom python packages
+    mkdir -p /usr/share/frepple/python_packages && \
+    chown -R frepple:frepple /usr/share/frepple/python_packages && \
+    chmod g=rwx,o= /usr/share/frepple/python_packages && \
+    echo "/usr/share/frepple/python_packages" > /usr/share/frepple/venv/lib/python3.12/site-packages/frepple-extensions.pth
 
 EXPOSE 80
 
-VOLUME ["/var/log/frepple", "/etc/frepple"]
+VOLUME ["/var/log/frepple", "/etc/frepple", "/usr/share/frepple/python_packages"]
 
 USER frepple
 

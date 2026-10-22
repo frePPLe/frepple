@@ -508,13 +508,6 @@ export const useOperationplansStore = defineStore('operationplans', {
       const rootEl = document.getElementById('app');
       if (!skipSavedEvent && rootEl && savedRef) {
         rootEl.dispatchEvent(new CustomEvent('saved', { detail: { reference: savedRef } }));
-      } else if (!skipSavedEvent) {
-        console.warn(
-          '[undo] NOT dispatching saved event - rootEl:',
-          !!rootEl,
-          'savedRef:',
-          !!savedRef
-        );
       }
       if (this.mode === 'kanban') {
         this.loadKanbanData();

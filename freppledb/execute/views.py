@@ -324,6 +324,11 @@ def APITask(request, action):
                     "logfile": t.logfile,
                 }
         elif action == "cancel":
+            if request.method not in ("POST", "PUT"):
+                return HttpResponseNotAllowed(
+                    ["POST", "PUT"],
+                    content="Only POST and PUT request methods are allowed",
+                )
             response = {}
             with transaction.atomic(using=request.database):
                 args = request.GET.getlist("id")
@@ -361,7 +366,7 @@ def APITask(request, action):
                 )
                 if not task:
                     response = {"message": f"Task {taskid} not found"}
-                elif not task.logfile:
+                elif not task.logfile or task.logfile.endswith(".dump"):
                     response = {"message": f"Task {taskid} has no logfile"}
                 else:
                     return sendStaticFile(

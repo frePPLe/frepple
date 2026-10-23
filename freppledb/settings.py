@@ -90,7 +90,7 @@ try:
     DEBUG = "runserver" in sys.argv
 except Exception:
     DEBUG = False
-DEBUG_JS = DEBUG
+DEBUG_JS = False
 
 # A list of strings representing the host/domain names the application can serve.
 # This is a security measure to prevent an attacker from poisoning caches and

@@ -21,7 +21,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import base64
 from functools import wraps
 import jwt
 import time
@@ -34,7 +33,6 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.db import DEFAULT_DB_ALIAS
 from django.db.models import Q
-from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
 from freppledb.common.models import User, Scenario

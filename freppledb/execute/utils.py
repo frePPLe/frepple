@@ -192,12 +192,25 @@ def updateScenarioCount(addition=True):
 
 
 def ReloadScheduler():
-    for proc in psutil.process_iter(["pid", "name"]):
-        try:
-            name = proc.info["name"]
-            if name and "frepple-sched" in name:
-                proc.send_signal(signal.SIGUSR1)
-                return
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            continue
-    print("Warning: No scheduler process found.")
+    if os.environ.get("SUPERVISOR_ENABLED") and shutil.which("supervisorctl"):
+        # In a container: Ask supervisord to restart it instead.
+        subprocess.run(
+            [
+                "supervisorctl",
+                "-c",
+                os.path.join(settings.FREPPLE_CONFIGDIR, "supervisord.conf"),
+                "restart",
+                "scheduler",
+            ],
+            check=False,
+        )
+    else:
+        for proc in psutil.process_iter(["pid", "name"]):
+            try:
+                name = proc.info["name"]
+                if name and "frepple-sched" in name:
+                    proc.send_signal(signal.SIGUSR1)
+                    return
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
+        print("Warning: No scheduler process found.")

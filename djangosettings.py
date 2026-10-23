@@ -138,7 +138,6 @@ INSTALLED_APPS = (
     # the database, using the SQL_ROLE configured above.
     "freppledb.reportmanager",
     "freppledb.executesql",
-    "freppledb.debugreport",
 )
 # ================= END UPDATED BLOCK =================
 
@@ -153,7 +152,6 @@ INSTALLABLE_APPS = (
     "freppledb.metrics",
     "freppledb.reportmanager",
     "freppledb.executesql",
-    "freppledb.debugreport",
     pathlib.Path(os.path.join(FREPPLE_APP, "apps")),
     pathlib.Path(os.path.join(FREPPLE_APP, "freppleapps")),
     pathlib.Path(os.path.join(FREPPLE_HOME, "apps")),

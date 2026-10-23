@@ -70,6 +70,7 @@ from django.core.management import get_commands, call_command
 
 from freppledb import __version__
 from freppledb.admin import data_site
+from freppledb.common.auth import csrf_or_api
 from freppledb.common.dataload import parseExcelWorksheet
 from freppledb.common.models import Scenario, HierarchyModel, Parameter
 from freppledb.common.report import (
@@ -293,7 +294,7 @@ class TaskReport(GridReport):
             return '"lastcompleted":0,\n'
 
 
-@csrf_exempt
+@csrf_or_api
 @staff_member_required
 def APITask(request, action):
     try:

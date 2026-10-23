@@ -213,7 +213,6 @@ class MultiDBMiddleware:
                     authmethod = None
                 if authmethod == "basic":
                     # Basic authentication
-                    request.api = True  # API requests don't start the web service
                     auth_header_split = (
                         base64.b64decode(auth_header_split[1])
                         .decode("iso-8859-1")
@@ -226,6 +225,7 @@ class MultiDBMiddleware:
                         # Active user
                         login(request, user)
                         request.user = user
+                        request.api = True
                 elif authmethod == "bearer" or webtoken:
                     # JWT webtoken or APIkey authentication
                     decoded = None
@@ -304,6 +304,8 @@ class MultiDBMiddleware:
                             request.session["branding"] = decoded["branding"] == True
                         if decoded.get("xframe_options_exempt", True):
                             request.session["xframe_options_exempt"] = True
+                    if not webtoken:
+                        request.api = True
             except Exception as e:
                 logger.warning(
                     "silently ignoring exception in http authentication: %s" % e

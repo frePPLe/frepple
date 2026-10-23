@@ -22,6 +22,7 @@
 #
 
 import base64
+from functools import wraps
 import jwt
 import time
 
@@ -34,6 +35,7 @@ from django.core.exceptions import ValidationError
 from django.db import DEFAULT_DB_ALIAS
 from django.db.models import Q
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
 from freppledb.common.models import User, Scenario
 from freppledb.common.utils import get_databases
@@ -41,6 +43,22 @@ from freppledb.common.utils import get_databases
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def csrf_or_api(view):
+    """
+    Require CSRF validation unless the request is marked as an API request.
+    """
+    protected_view = csrf_protect(view)
+
+    @csrf_exempt
+    @wraps(view)
+    def wrapper(request, *args, **kwargs):
+        if getattr(request, "api", False):
+            return view(request, *args, **kwargs)
+        return protected_view(request, *args, **kwargs)
+
+    return wrapper
 
 
 class MultiDBBackend(ModelBackend):

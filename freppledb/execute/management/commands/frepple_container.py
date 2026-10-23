@@ -93,7 +93,7 @@ class Command(BaseCommand):
         root = os.path.abspath(os.path.join(os.path.dirname(freppledb.__file__), ".."))
 
         # This command only makes sense in a development checkout, never in a production deployment
-        if not os.path.isdir(os.path.join(root, ".git")):
+        if not os.path.exists(os.path.join(root, ".git")):
             raise CommandError("This command is only available in a git checkout")
 
         # Building the docker image

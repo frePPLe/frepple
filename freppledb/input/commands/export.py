@@ -1836,7 +1836,7 @@ class exportOperationMaterials(PlanTask):
                 insert into operationmaterial
                 (operation_id,item_id,effective_start,quantity,quantity_fixed,type,effective_end,
                 name,priority,search,source,"offset",location_id,lastmodified%s)
-                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s%s)
                 on conflict (operation_id, item_id, effective_start)
                 do update set
                   quantity=excluded.quantity,

@@ -27,9 +27,6 @@ $(function() {
   });
 });
 
-if (navigator && 'serviceWorker' in navigator)
-   navigator.serviceWorker.register("{{STATIC_URL}}js/serviceworker.js");
-
 let deferredInstallPrompt;
 
 document.getElementById("installAppButton").addEventListener('click', async () => {

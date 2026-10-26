@@ -1111,7 +1111,7 @@ def csrf_failure(request, reason):
 
 
 def sendStaticFile(request, *args, headers=None):
-    if not getattr(settings, "DEBUG", False):
+    if getattr(settings, "DEBUG", False):
         # Debug mode: use Django's static file server
         response = static.serve(
             request, args[-1], document_root=os.path.join(*args[:-1])

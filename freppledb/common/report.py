@@ -51,10 +51,11 @@ from io import StringIO, BytesIO
 import urllib
 from openpyxl import load_workbook, Workbook
 from openpyxl.utils import get_column_letter
-from openpyxl.cell import WriteOnlyCell
+from openpyxl.cell import WriteOnlyCell as WriteOnlyCellStd
 from openpyxl.styles import NamedStyle, PatternFill
-from dateutil.parser import parse
+from openpyxl.utils.exceptions import IllegalCharacterError
 from openpyxl.comments import Comment as CellComment
+from dateutil.parser import parse
 
 from django.apps import apps
 from django.core.cache import cache
@@ -122,8 +123,20 @@ logger = logging.getLogger(__name__)
 # They should be excluded from bulk import, export and erasing actions.
 EXCLUDE_FROM_BULK_OPERATIONS = (Group, User, Comment, APIKey)
 
-
 separatorpattern = re.compile(r"[\s\-_]+")
+
+
+def WriteOnlyCell(ws=None, value=None):
+    """
+    OpenPyXL throws an exception when writing illegal characters to a cell.
+    We filter out the illegal characters instead.
+    """
+    try:
+        return WriteOnlyCellStd(ws=ws, value=value)
+    except IllegalCharacterError:
+        from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
+
+        return WriteOnlyCellStd(ws=ws, value=ILLEGAL_CHARACTERS_RE.sub("", value))
 
 
 @CharField.register_lookup

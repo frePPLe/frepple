@@ -28,7 +28,6 @@ from io import BytesIO
 import json
 from openpyxl import load_workbook, Workbook
 from openpyxl.utils import get_column_letter
-from openpyxl.cell import WriteOnlyCell
 from openpyxl.styles import NamedStyle, PatternFill
 from openpyxl.comments import Comment as CellComment
 import os
@@ -86,8 +85,7 @@ from freppledb.common.report import (
     sizeof_fmt,
 )
 from freppledb.common.utils import get_databases
-
-from freppledb.common.utils import forceWsgiReload
+from freppledb.common.report import WriteOnlyCell
 from freppledb.common.views import sendStaticFile
 from .utils import updateScenarioCount, ReloadScheduler
 from .models import Task, ScheduledTask, DataExport
@@ -1469,11 +1467,14 @@ def exportWorkbook(request):
                 fld = 0
                 for f in rec:
                     cells.append(
-                        _getCellValue(
-                            f,
-                            field=modelfields[fld],
-                            exportConfig=exportConfig,
-                            excel_duration_in_days=excel_duration_in_days,
+                        WriteOnlyCell(
+                            ws,
+                            _getCellValue(
+                                f,
+                                field=modelfields[fld],
+                                exportConfig=exportConfig,
+                                excel_duration_in_days=excel_duration_in_days,
+                            ),
                         )
                     )
                     fld += 1

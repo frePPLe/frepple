@@ -1892,7 +1892,11 @@ class GridReport(View):
                 "sidx": sidx,
                 "default_sort": cls.defaultSortString(request),
                 "is_popup": is_popup,
-                "filters": json.loads(filters) if filters else None,
+                "filters": (
+                    filters
+                    if isinstance(filters, dict)
+                    else json.loads(filters) if filters else None
+                ),
                 "args": args,
                 "bucketnames": bucketnames,
                 "model": cls.model,

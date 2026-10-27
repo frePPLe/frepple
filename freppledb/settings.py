@@ -40,6 +40,8 @@ from django.contrib import messages
 import django.contrib.admindocs
 from django.utils.translation import gettext_lazy as _
 
+from freppledb import readDatabaseParameters
+
 # FREPPLE_APP directory
 if "FREPPLE_APP" in os.environ:
     FREPPLE_APP = os.environ["FREPPLE_APP"]

@@ -30,6 +30,38 @@ __version__ = "10.0.0"
 mode = "webserver"
 
 
+def readDatabaseParameters(
+    *parameters, database=None, host=None, port=None, user=None, password=None
+):
+    import psycopg2
+
+    if not database:
+        return {}
+    conn_params = {"database": database}
+    if user:
+        conn_params["user"] = user
+    if password:
+        conn_params["password"] = password
+    if host:
+        conn_params["host"] = host
+    if port:
+        conn_params["port"] = port
+    connection = psycopg2.connect(**conn_params)
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                select
+                name, value
+                from common_parameter
+                where name in %s""",
+                (parameters,),
+            )
+            return {r[0]: r[1] for r in cursor.fetchall()}
+    finally:
+        connection.close()
+
+
 def runCommand(taskname, *args, **kwargs):
     """
     Auxilary method to run a django command. It is intended to be used

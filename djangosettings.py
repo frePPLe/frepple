@@ -44,28 +44,51 @@ ADMINS = (
 SECRET_KEY = "%@mzit!i8b*$zc&6oev96=RANDOMSTRING"
 
 # Configuration of the frepple database
+POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "localhost")
+POSTGRES_DB_PREFIX = os.environ.get("POSTGRES_DB_PREFIX", "frepple")
+POSTGRES_USER = os.environ.get("POSTGRES_USER", "frepple")
+POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD", "frepple")
+POSTGRES_PORT = os.environ.get("POSTGRES_PORT", "")
+
+# Read database configurable settings
+db_parameters = readDatabaseParameters(
+    "currency",
+    "plan.loglevel",
+    "forecast.DueWithinBucket",
+    database=f"{POSTGRES_DB_PREFIX}0",
+    host=POSTGRES_HOST,
+    port=POSTGRES_PORT,
+    user=POSTGRES_USER,
+    password=POSTGRES_PASSWORD,
+)
+for param, value in db_parameters.items():
+    print("testing", param, value)
+if db_parameters:
+    del param, value
+del db_parameters
+
 MIN_NUMBER_OF_SCENARIOS = 2
 MAX_NUMBER_OF_SCENARIOS = 30
 DATABASES = {
     "default" if i == 0 else f"scenario{i}": {
         "ENGINE": "freppledb.common.postgresql",
         # Database name
-        "NAME": f"{os.environ.get("POSTGRES_DBNAME","frepple")}{i}",
+        "NAME": f"{POSTGRES_DB_PREFIX}{i}",
         # Role name when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "USER": os.environ.get("POSTGRES_USER", "frepple"),
+        "USER": POSTGRES_USER,
         # Role password when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "frepple"),
+        "PASSWORD": POSTGRES_PASSWORD,
         # When using TCP sockets specify the hostname,
         # the ip4 address or the ip6 address here.
         # Leave as an empty string to use Unix domain
         # socket ("local" lines in pg_hba.conf).
-        "HOST": os.environ.get("POSTGRES_HOST", ""),
+        "HOST": POSTGRES_HOST,
         # Specify the port number when using a TCP socket.
-        "PORT": os.environ.get("POSTGRES_PORT", ""),
+        "PORT": POSTGRES_PORT,
         "OPTIONS": {
             "connect_timeout": 10,  # Timeout in seconds to establish a connection
             "options": "-c lock_timeout=300000",  # Timeout (in milliseconds) to acquire a lock
@@ -74,7 +97,7 @@ DATABASES = {
         "CONN_HEALTH_CHECKS": True,
         "TEST": {
             # Database name used when running the test suite.
-            "NAME": (f"{os.environ.get("POSTGRES_DBNAME","frepple")}_test{i}"),
+            "NAME": (f"{POSTGRES_DB_PREFIX}_test{i}"),
             # Port for web service when running the test suite
             "FREPPLE_PORT": f"127.0.0.1:{i+9002}",
         },

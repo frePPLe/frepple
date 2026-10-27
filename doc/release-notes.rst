@@ -41,10 +41,12 @@ This release will bring some bigger and backward incompatible changes.
     'display_time' is set to False. That was incorrect: input should still be accepted with time,
     but the user interface only shows the date component.
   | Thanks Tobias Tschorn for the accurate bug report.
-  
+
 .. rubric:: Odoo integration
 
-- | 18, 19: Bug fix for partially completed and partially reserved materials on manufacturing orders.
+- | 20: We are pleased to announce full support for Odoo 20 in the frepple connector.
+
+- | 18, 19, 20: Bug fix for partially completed and partially reserved materials on manufacturing orders.
   | The quantity showing in frepple didn't match what odoo still sees as remaining to consume.
 
 .. rubric:: System administration

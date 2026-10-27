@@ -4,7 +4,7 @@ Getting started
 
 - **STEP 1:Installation of the connector addon in Odoo**
 
-  | The connector can be downloaded from the `Odoo apps store <https://apps.odoo.com/apps/modules/19.0/frepple>`_
+  | The connector can be downloaded from the `Odoo apps store <https://apps.odoo.com/apps/modules/20.0/frepple>`_
     or its `GitHub repository <https://github.com/frepple/odoo>`_.  Only the frePPLe app should be installed from
     this repository, the other apps (freppledata and autologin) are for testing and development purposes only.
 
@@ -36,7 +36,7 @@ Getting started
 
   #. **Use a frePPLe instance on the frePPLe cloud.**
 
-     You can register for a 15-day free trial on the `frePPLe cloud <https://cloud.frepple.com>`_ and
+     You can register for a 15-day free trial on the `frePPLe cloud <https://register.frepple.com/accounts/register/>`_ and
      connect your Odoo instance to it.
 
      In this option you have access to the frePPLe user interface with all its features, without

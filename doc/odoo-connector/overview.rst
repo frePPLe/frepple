@@ -46,5 +46,5 @@ FrePPLe has a long history of working with Odoo. Our Odoo integration provides:
   | The connector is open source, allowing you to customize and extend its functionality to
     meet your specific Odoo customizations and planning requirements.
 
-The connector can be downloaded from the `Odoo apps store <https://apps.Odoo.com/apps/modules/19.0/frepple>`_.
-The connector is available for the last 3 versions of Odoo (currently the 17, 18 and 19).
+The connector can be downloaded from the `Odoo apps store <https://apps.Odoo.com/apps/modules/20.0/frepple>`_.
+The connector is available for the last few versions of Odoo (currently the 17, 18, 19 and 20).

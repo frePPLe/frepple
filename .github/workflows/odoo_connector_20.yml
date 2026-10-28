@@ -1,22 +1,22 @@
-name: Run odoo 17 integration test
+name: Run odoo 20 integration test
 
 on:
   repository_dispatch:
-    types: [odoo_connector_17]
+    types: [odoo_connector_20]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 env:
-  odoo_connector_branch: 17.0-dev
+  odoo_connector_branch: 20.0-dev
 
 jobs:
   build:
     runs-on: ubuntu-24.04
     services:
       postgres:
-        image: postgres:16
+        image: postgres:18
         env:
           POSTGRES_USER: frepple
           POSTGRES_PASSWORD: frepple

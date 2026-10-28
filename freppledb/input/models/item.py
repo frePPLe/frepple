@@ -48,9 +48,7 @@ class Item(AuditModel, HierarchyModel):
         decimal_places=8,
         help_text=_("Cost of the item"),
     )
-    type = models.CharField(
-        _("type"), null=True, blank=True, choices=types
-    )
+    type = models.CharField(_("type"), null=True, blank=True, choices=types)
     weight = models.DecimalField(
         _("weight"),
         null=True,

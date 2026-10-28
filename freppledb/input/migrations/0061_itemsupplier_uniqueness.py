@@ -27,8 +27,7 @@ def cleanBadRecords(apps, schema_editor):
     db = schema_editor.connection.alias
     with connections[db].cursor() as cursor:
         # delete records that will fail with the new indexes
-        cursor.execute(
-            """
+        cursor.execute("""
             with cte as
             (
             select id, row_number() over(partition by item_id, supplier_id, effective_start order by cost) as rn
@@ -39,8 +38,7 @@ def cleanBadRecords(apps, schema_editor):
             using cte
             where itemsupplier.id = cte.id
             and cte.rn > 1
-            """
-        )
+            """)
 
 
 class Migration(migrations.Migration):

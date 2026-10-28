@@ -72,15 +72,13 @@ class Command(BaseCommand):
         with connections[database].cursor() as cursor:
 
             # Check the archiving frequency
-            cursor.execute(
-                """
+            cursor.execute("""
                select common_bucket.name
                from common_bucket
                inner join common_parameter
                  on common_parameter.name = 'archive.frequency'
                  and common_bucket.name = common_parameter.value
-               """
-            )
+               """)
             frequency = cursor.fetchone()
             if frequency:
                 frequency = frequency[0]
@@ -136,8 +134,7 @@ class Command(BaseCommand):
             mgr.save(using=database)
 
             # Archiving buffer table
-            cursor.execute(
-                """
+            cursor.execute("""
                 insert into ax_buffer (item, location, batch, onhand, cost, safetystock, snapshot_date_id)
                 select item_id, location_id, batch, onhand, cost, safetystock, '%s'
                 from (
@@ -188,14 +185,11 @@ class Command(BaseCommand):
                   where flowdate < '%s'
                 ) recs
                 where rownumber = 1
-                """
-                % ((now,) * 6)
-            )
+                """ % ((now,) * 6))
             buffer_records = cursor.rowcount
 
             # Archiving demand table
-            cursor.execute(
-                """
+            cursor.execute("""
                 insert into ax_demand (name, item, location, customer, cost, due, status, priority, quantity,
                                       deliverydate, quantityplanned, snapshot_date_id)
                 select demand.name, demand.item_id, demand.location_id, demand.customer_id, item.cost,
@@ -204,14 +198,11 @@ class Command(BaseCommand):
                 inner join item on demand.item_id = item.name
                 left outer join operationplan on operationplan.demand_id = demand.name
                 where demand.status in ('open', 'quote')
-                """
-                % (now,)
-            )
+                """ % (now,))
             demand_records = cursor.rowcount
 
             # Archiving POs
-            cursor.execute(
-                """
+            cursor.execute("""
                 insert into ax_operationplan
                 (reference, status, type, quantity, startdate, enddate, item, operation, supplier, location, item_cost, itemsupplier_cost, snapshot_date_id)
                 select op.reference, op.status, op.type, op.quantity, op.startdate, op.enddate, op.item_id, op.operation_id, op.supplier_id, op.location_id,
@@ -221,9 +212,7 @@ class Command(BaseCommand):
                 left outer join itemsupplier on itemsupplier.item_id = op.item_id and itemsupplier.supplier_id = op.supplier_id
                 where
                 op.type <> 'STCK' and op.status in ('confirmed','approved','completed')
-                """
-                % (now,)
-            )
+                """ % (now,))
             operationplan_records = cursor.rowcount
 
             mgr.buffer_records = buffer_records

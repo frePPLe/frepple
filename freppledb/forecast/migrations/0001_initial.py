@@ -64,7 +64,9 @@ def grant_read_access(apps, schema_editor):
     role = settings.DATABASES[db].get("SQL_ROLE", "report_role")
     if role:
         with connections[db].cursor() as cursor:
-            cursor.execute("select count(*) from pg_roles where rolname = lower(%s)", (role,))
+            cursor.execute(
+                "select count(*) from pg_roles where rolname = lower(%s)", (role,)
+            )
             if not cursor.fetchone()[0]:
                 cursor.execute(
                     "create role %s with nologin noinherit role current_user" % (role,)
@@ -80,8 +82,7 @@ def createProcedure(apps, schema_editor):
             # Do not create the procedure when the postgres version is too old
             return
 
-        cursor.execute(
-            """
+        cursor.execute("""
             drop procedure if exists aggregatedemand;
 
             drop type if exists demand_key_type;
@@ -275,8 +276,7 @@ def createProcedure(apps, schema_editor):
             raise notice 'unchanged % forecastplan records', counter_untouched;
 
             end $$;
-            """
-        )
+            """)
 
 
 class Migration(migrations.Migration):

@@ -28,23 +28,19 @@ class Migration(migrations.Migration):
     dependencies = [("odoo", "0004_parameter")]
 
     operations = [
-        migrations.RunSQL(
-            """
+        migrations.RunSQL("""
             insert into common_parameter
             (name, value, description, lastmodified)
             values
             ('odoo.allowSharedOwnership','false','Odoo connector: By default records read from odoo aren''t editable in frepple. If this flag is set to true you can override the odoo data if the source field of the records is blanked.', now())
             on conflict(name) do nothing
-            """
-        ),
-        migrations.RunSQL(
-            """
+            """),
+        migrations.RunSQL("""
             delete from common_parameter
             where name in (
               'odoo.filter_export_purchase_order',
               'odoo.filter_export_manufacturing_order',
               'odoo.filter_export_distribution_order'
               )
-            """
-        ),
+            """),
     ]

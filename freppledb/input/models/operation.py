@@ -34,7 +34,6 @@ from ..models.item import Item
 from ..models.location import Location
 from ..models.resource import Resource, Skill
 
-
 searchmode = (
     ("PRIORITY", _("priority")),
     ("MINCOST", _("minimum cost")),

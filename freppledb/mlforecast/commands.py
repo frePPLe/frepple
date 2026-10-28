@@ -34,7 +34,6 @@ from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.common.models import Parameter
 from freppledb.common.report import getCurrentDate
 
-
 logger = logging.getLogger(__name__)
 
 

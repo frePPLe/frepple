@@ -537,7 +537,7 @@ class OverviewReportWithForecast(GridPivot):
                 for row in cursor_chunked:
                     numfields = len(row)
                     if row[0] != previtem:
-                        (backlog_o, backlog_f) = startbacklogdict.get(row[0], (0, 0))
+                        backlog_o, backlog_f = startbacklogdict.get(row[0], (0, 0))
                         previtem = row[0]
                     backlog_o += float(row[numfields - 5] - row[numfields - 4])
                     backlog_f += float(row[numfields - 1] - row[numfields - 3])

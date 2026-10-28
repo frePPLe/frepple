@@ -25,7 +25,6 @@ import json
 
 import django.db.models as models
 
-
 #
 # DURATIONFIELD
 #

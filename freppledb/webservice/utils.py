@@ -60,9 +60,9 @@ def checkRunning(database=DEFAULT_DB_ALIAS, timeout=1.0):
     Returns True if the web service is running.
     """
     if "FREPPLE_TEST" in os.environ:
-        (host, port) = get_databases()[database]["TEST"]["FREPPLE_PORT"].split(":")
+        host, port = get_databases()[database]["TEST"]["FREPPLE_PORT"].split(":")
     else:
-        (host, port) = get_databases()[database]["FREPPLE_PORT"].split(":")
+        host, port = get_databases()[database]["FREPPLE_PORT"].split(":")
     try:
         portend.free(host.replace("0.0.0.0", "localhost"), port, timeout=timeout)
         return False
@@ -75,9 +75,9 @@ def waitTillRunning(database=DEFAULT_DB_ALIAS, timeout=180):
     Raise an exception if the service isn't running within the specified time.
     """
     if "FREPPLE_TEST" in os.environ:
-        (host, port) = get_databases()[database]["TEST"]["FREPPLE_PORT"].split(":")
+        host, port = get_databases()[database]["TEST"]["FREPPLE_PORT"].split(":")
     else:
-        (host, port) = get_databases()[database]["FREPPLE_PORT"].split(":")
+        host, port = get_databases()[database]["FREPPLE_PORT"].split(":")
     try:
         portend.occupied(host.replace("0.0.0.0", "localhost"), port, timeout=timeout)
     except Exception:
@@ -89,9 +89,9 @@ def waitTillNotRunning(database=DEFAULT_DB_ALIAS, timeout=60):
     Raise an exception if the web service isn't stopped within the specified time.
     """
     if "FREPPLE_TEST" in os.environ:
-        (host, port) = get_databases()[database]["TEST"]["FREPPLE_PORT"].split(":")
+        host, port = get_databases()[database]["TEST"]["FREPPLE_PORT"].split(":")
     else:
-        (host, port) = get_databases()[database]["FREPPLE_PORT"].split(":")
+        host, port = get_databases()[database]["FREPPLE_PORT"].split(":")
     try:
         portend.free(host.replace("0.0.0.0", "localhost"), port, timeout=timeout)
     except Exception:

@@ -355,9 +355,7 @@ def getWizardSteps(request, mode):
          You need to configure what time bucket size you wish to use.</p>
          <div class="form-check ps-5 mb-2">
            <input class="form-check-input" type="radio" id="fcstbckt_month" name="fcstbckt" data-forecastbucketsize="month"
-         """.format(
-                    **context
-                )
+         """.format(**context)
                 + (
                     ' checked="checked"'
                     if parameter_forecast_calendar == "month"
@@ -956,9 +954,7 @@ def getWizardSteps(request, mode):
          <td><p><b><a href="{prefix}/data/common/parameter/?name=forecast.populateForecastTable" class="text-decoration-underline" target="_blank">Enable or disable the use of forecast</a></b>:</p>
          <div class="form-check ps-5">
            <input class="form-check-input" id="fcst_auto" type="radio" name="fcstbckt" data-parameter="forecast.populateForecastTable" data-parameter-value="true"
-           """.format(
-                    **context
-                )
+           """.format(**context)
                 + (
                     ' checked="checked"'
                     if parameter_populateForecastTable.lower() == "true"
@@ -971,9 +967,7 @@ def getWizardSteps(request, mode):
          </div>
          <div class="form-check ps-5">
            <input class="form-check-input" type="radio" id="fcst_man" name="fcstbckt" data-parameter="forecast.populateForecastTable" data-parameter-value="false"
-           """.format(
-                    **context
-                )
+           """.format(**context)
                 + (
                     ' checked="checked"'
                     if parameter_populateForecastTable.lower() != "true"

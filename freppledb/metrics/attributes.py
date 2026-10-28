@@ -25,7 +25,6 @@ from freppledb.boot import registerAttribute
 
 from django.utils.translation import gettext_lazy as _
 
-
 registerAttribute(
     "freppledb.input.models.Item",
     [

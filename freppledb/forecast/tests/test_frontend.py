@@ -74,15 +74,13 @@ class ForecastEditorScreen(SeleniumTest):
         time.sleep(1)
 
         with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
-            cursor.execute(
-                """
+            cursor.execute("""
                 select sum(forecastoverride)
                 from forecastplan
                 where item_id = (select name from item where lvl = 0)
                   and location_id = (select name from location where lvl = 0)
                   and customer_id = (select name from customer where lvl = 0)
-                """
-            )
+                """)
             self.assertEqual(cursor.fetchone()[0], newQuantity)
 
             # months are numbered from 1 to n
@@ -121,15 +119,13 @@ class ForecastEditorScreen(SeleniumTest):
         time.sleep(1)
 
         with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
-            cursor.execute(
-                """
+            cursor.execute("""
                 select count(forecastoverride)
                 from forecastplan
                 where item_id = (select name from item where lvl = 0)
                   and location_id = (select name from location where lvl = 0)
                   and customer_id = (select name from customer where lvl = 0)
                   and forecastoverride > 0
-                """
-            )
+                """)
 
             self.assertEqual(cursor.fetchone()[0], timerange)

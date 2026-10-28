@@ -73,8 +73,7 @@ class Command(BaseCommand):
         if "freppledb.erpconnection" in settings.INSTALLED_APPS:
             context = RequestContext(request)
 
-            template = Template(
-                """
+            template = Template("""
         {% load i18n %}
         <form role="form" method="post" action="{{request.prefix}}/execute/launch/erp2frepple/">{% csrf_token %}
         <table>
@@ -87,8 +86,7 @@ class Command(BaseCommand):
           </tr>
         </table>
         </form>
-      """
-            )
+      """)
             return template.render(context)
         else:
             return None
@@ -186,8 +184,7 @@ class Command(BaseCommand):
           - proposed purchase orders that start within the next day and with a total cost less than 500$.
         """
         print("Start exporting purchase orders")
-        self.cursor_frepple.execute(
-            """
+        self.cursor_frepple.execute("""
       select
         item_id, location_id, supplier_id, quantity, startdate, enddate
       from operationplan
@@ -198,8 +195,7 @@ class Command(BaseCommand):
           or (status = 'proposed' and quantity * cost < 500 and startdate < now() + interval '1 day')
           )
       order by supplier_id
-      """
-        )
+      """)
         output = [i for i in self.cursor_frepple.fetchall()]
         execute_batch(
             self.cursor_erp,
@@ -219,8 +215,7 @@ class Command(BaseCommand):
           - proposed distribution orders that start within the next day and with a total cost less than 500$.
         """
         print("Start exporting distribution orders")
-        self.cursor_frepple.execute(
-            """
+        self.cursor_frepple.execute("""
       select
         item_id, destination_id, origin_id, quantity, startdate, enddate
       from operationplan
@@ -231,8 +226,7 @@ class Command(BaseCommand):
           or (status = 'proposed' and quantity * cost < 500 and startdate < now() + interval '1 day')
           )
       order by origin_id, destination_id
-      """
-        )
+      """)
         output = [i for i in self.cursor_frepple.fetchall()]
         execute_batch(
             self.cursor_erp,
@@ -252,8 +246,7 @@ class Command(BaseCommand):
           - proposed manufacturing orders that start within the next day.
         """
         print("Start exporting manufacturing orders")
-        self.cursor_frepple.execute(
-            """
+        self.cursor_frepple.execute("""
       select
         item_id, location_id, operation_id, quantity, startdate, enddate
       from operationplan
@@ -263,8 +256,7 @@ class Command(BaseCommand):
           or (status = 'proposed' and startdate < now() + interval '1 day')
           )
       order by operation_id
-      """
-        )
+      """)
         output = [i for i in self.cursor_frepple.fetchall()]
         execute_batch(
             self.cursor_erp,

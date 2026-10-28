@@ -1821,7 +1821,7 @@ class Attribute(AuditModel):
                     "task",
                     "userpreference",
                     "apikey",
-                    "totpdevice"
+                    "totpdevice",
                 )
             ]
         except Exception:

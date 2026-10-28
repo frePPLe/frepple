@@ -106,7 +106,11 @@ class Command(BaseCommand):
 
         # Drop existing database
         subprocess.run(
-            [f"/usr/lib/postgresql/{getPostgresVersion()}/bin/dropdb", "--if-exists", "--force"]
+            [
+                f"/usr/lib/postgresql/{getPostgresVersion()}/bin/dropdb",
+                "--if-exists",
+                "--force",
+            ]
             + commonargs
             + [get_databases()[database]["NAME"]],
             env=env,
@@ -115,7 +119,9 @@ class Command(BaseCommand):
 
         # Recreate a new database
         subprocess.run(
-            [f"/usr/lib/postgresql/{getPostgresVersion()}/bin/createdb"] + commonargs + [get_databases()[database]["NAME"]],
+            [f"/usr/lib/postgresql/{getPostgresVersion()}/bin/createdb"]
+            + commonargs
+            + [get_databases()[database]["NAME"]],
             env=env,
             check=True,
         )

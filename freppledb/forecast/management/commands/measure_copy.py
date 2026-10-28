@@ -248,8 +248,7 @@ class Command(BaseCommand):
                 request, {"javascript": javascript, "measures": measures}
             )
 
-            template = Template(
-                """
+            template = Template("""
     {% load i18n %}
     {% if perms.auth.run_db %}
     <form class="form form-inline" role="form" method="post"
@@ -281,8 +280,7 @@ class Command(BaseCommand):
     {% else %}
     {% trans "Sorry, You don't have any execute permissions..." %}
     {% endif %}
-      """
-            )
+      """)
             return template.render(context)
             # A list of translation strings from the above
             translated = (_("Copy source measure"), _("to destination measure"))

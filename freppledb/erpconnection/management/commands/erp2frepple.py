@@ -80,8 +80,7 @@ class Command(BaseCommand):
         if "freppledb.erpconnection" in settings.INSTALLED_APPS:
             context = RequestContext(request)
 
-            template = Template(
-                """
+            template = Template("""
         {% load i18n %}
         <form role="form" method="post" action="{{request.prefix}}/execute/launch/erp2frepple/">{% csrf_token %}
         <table>
@@ -94,8 +93,7 @@ class Command(BaseCommand):
           </tr>
         </table>
         </form>
-      """
-            )
+      """)
             return template.render(context)
         else:
             return None
@@ -241,13 +239,11 @@ class Command(BaseCommand):
         """
         outfilename = os.path.join(self.destination, "location.%s" % self.ext)
         print("Start extracting locations to %s" % outfilename)
-        self.cursor.execute(
-            """
+        self.cursor.execute("""
       select
         location_id, description, current_timestamp
       from location
-      """
-        )
+      """)
         with open(outfilename, "w", newline="") as outfile:
             outcsv = csv.writer(outfile, quoting=csv.QUOTE_MINIMAL)
             outcsv.writerow(["name", "description", "lastmodified"])
@@ -259,13 +255,11 @@ class Command(BaseCommand):
         """
         outfilename = os.path.join(self.destination, "customer.%s" % self.ext)
         print("Start extracting customers to %s" % outfilename)
-        self.cursor.execute(
-            """
+        self.cursor.execute("""
       select distinct customer, type, current_timestamp from customer
       union
       select 'N/A', null, current_timestamp
-      """
-        )
+      """)
         with open(outfilename, "w", newline="") as outfile:
             outcsv = csv.writer(outfile, quoting=csv.QUOTE_MINIMAL)
             outcsv.writerow(["name", "category", "lastmodified"])
@@ -277,13 +271,11 @@ class Command(BaseCommand):
         """
         outfilename = os.path.join(self.destination, "item.%s" % self.ext)
         print("Start extracting items to %s" % outfilename)
-        self.cursor.execute(
-            """
+        self.cursor.execute("""
       select job, part_number, description, customer, current_timestamp
       from job
       where status = 'Active'
-      """
-        )
+      """)
         with open(outfilename, "w", newline="") as outfile:
             outcsv = csv.writer(outfile, quoting=csv.QUOTE_MINIMAL)
             outcsv.writerow(
@@ -297,13 +289,11 @@ class Command(BaseCommand):
         """
         outfilename = os.path.join(self.destination, "supplier.%s" % self.ext)
         print("Start extracting suppliers to %s" % outfilename)
-        self.cursor.execute(
-            """
+        self.cursor.execute("""
       select vendor, name, current_timestamp
       from vendor
       where status = 'Active'
-      """
-        )
+      """)
         with open(outfilename, "w", newline="") as outfile:
             outcsv = csv.writer(outfile, quoting=csv.QUOTE_MINIMAL)
             outcsv.writerow(["name", "description", "lastmodified"])
@@ -316,8 +306,7 @@ class Command(BaseCommand):
         """
         outfilename = os.path.join(self.destination, "resource.%s" % self.ext)
         print("Start extracting resources to %s" % outfilename)
-        self.cursor.execute(
-            """
+        self.cursor.execute("""
       select work_center, uvtext4, department, machines, 'SHOP', 'default', current_timestamp
       from work_center
       where parent_id is null and department <> 'INACTIVE'
@@ -325,8 +314,7 @@ class Command(BaseCommand):
       select vendor, name, 'OUTSOURCED', 1, 'SHOP', 'infinite', current_timestamp
       from vendor
       where status = 'Active'
-      """
-        )
+      """)
         with open(outfilename, "w", newline="") as outfile:
             outcsv = csv.writer(outfile, quoting=csv.QUOTE_MINIMAL)
             outcsv.writerow(
@@ -348,8 +336,7 @@ class Command(BaseCommand):
         """
         outfilename = os.path.join(self.destination, "demand.%s" % self.ext)
         print("Start extracting demand to %s" % outfilename)
-        self.cursor.execute(
-            """
+        self.cursor.execute("""
       select
         job, job, 'SHOP', coalesce(customer, 'N/A'), 'open', order_date,
         make_quantity - completed_quantity, make_quantity - completed_quantity,
@@ -358,8 +345,7 @@ class Command(BaseCommand):
       where status = 'Active'
       and top_lvl_job = job
       and make_quantity > completed_quantity
-      """
-        )
+      """)
         with open(outfilename, "w", newline="") as outfile:
             outcsv = csv.writer(outfile, quoting=csv.QUOTE_MINIMAL)
             outcsv.writerow(
@@ -388,8 +374,7 @@ class Command(BaseCommand):
         """
         outfilename = os.path.join(self.destination, "operation.%s" % self.ext)
         print("Start extracting operations to %s" % outfilename)
-        self.cursor.execute(
-            """
+        self.cursor.execute("""
       select
         job, description, part_number, null, 'routing', job,
         'SHOP', null, null, current_timestamp
@@ -426,8 +411,7 @@ class Command(BaseCommand):
       where job.status = 'Active'
       ) ops
       where rownumber = 1
-      """
-        )
+      """)
         with open(outfilename, "w", newline="") as outfile:
             outcsv = csv.writer(outfile, quoting=csv.QUOTE_MINIMAL)
             outcsv.writerow(
@@ -452,8 +436,7 @@ class Command(BaseCommand):
         """
         outfilename = os.path.join(self.destination, "operationresource.%s" % self.ext)
         print("Start extracting operationresource to %s" % outfilename)
-        self.cursor.execute(
-            """
+        self.cursor.execute("""
       select
         concat(job.job, ' - ', sequence),
         coalesce(vendor.vendor, coalesce(work_center.parent_id, work_center.work_center)),
@@ -465,8 +448,7 @@ class Command(BaseCommand):
       left outer join vendor on job_operation.vendor = vendor.vendor and vendor.status = 'Active'
       where job.status = 'Active'
         and (vendor.vendor is not null or work_center.work_center is not null)
-      """
-        )
+      """)
         with open(outfilename, "w", newline="") as outfile:
             outcsv = csv.writer(outfile, quoting=csv.QUOTE_MINIMAL)
             outcsv.writerow(
@@ -485,8 +467,7 @@ class Command(BaseCommand):
         """
         outfilename = os.path.join(self.destination, "operationmaterial.%s" % self.ext)
         print("Start extracting operationmaterial to %s" % outfilename)
-        self.cursor.execute(
-            """
+        self.cursor.execute("""
       select
         case when job_operation.sequence is null then parent_job else concat(parent_job, ' - ', sequence) end,
         component_job, 'start', -relationship_qty, current_timestamp
@@ -508,8 +489,7 @@ class Command(BaseCommand):
         group by job
       ) job_max_sequence on job_max_sequence.job = job.job
       where status = 'Active'
-      """
-        )
+      """)
         with open(outfilename, "w", newline="") as outfile:
             outcsv = csv.writer(outfile, quoting=csv.QUOTE_MINIMAL)
             outcsv.writerow(
@@ -529,8 +509,7 @@ class Command(BaseCommand):
         """
         outfilename = os.path.join(self.destination, "buffer.%s" % self.ext)
         print("Start extracting buffer to %s" % outfilename)
-        self.cursor.execute(
-            """
+        self.cursor.execute("""
       select
         concat(job, ' @ SHOP'), job, 'SHOP',
         case when completed_quantity > order_quantity then order_quantity else completed_quantity end,
@@ -538,8 +517,7 @@ class Command(BaseCommand):
       from job
       where status = 'Active'
         and completed_quantity > 0
-      """
-        )
+      """)
         with open(outfilename, "w", newline="") as outfile:
             outcsv = csv.writer(outfile, quoting=csv.QUOTE_MINIMAL)
             outcsv.writerow(
@@ -565,11 +543,9 @@ class Command(BaseCommand):
         """
         outfilename = os.path.join(self.destination, "calendar.%s" % self.ext)
         print("Start extracting calendar to %s" % outfilename)
-        self.cursor.execute(
-            """
+        self.cursor.execute("""
       select 'Working hours', current_timestamp
-      """
-        )
+      """)
         with open(outfilename, "w", newline="") as outfile:
             outcsv = csv.writer(outfile, quoting=csv.QUOTE_MINIMAL)
             outcsv.writerow(["name", "lastmodified"])

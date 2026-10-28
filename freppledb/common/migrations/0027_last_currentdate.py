@@ -27,15 +27,11 @@ from django.db import migrations
 class Migration(migrations.Migration):
     dependencies = [("common", "0026_permissions")]
 
-    operations = [
-        migrations.RunSQL(
-            """
+    operations = [migrations.RunSQL("""
             insert into common_parameter (name, value, description, lastmodified)
             select
             'last_currentdate',value,'This parameter is automatically populated. It stores the date of the last plan execution', now()
             from common_parameter
             where name = 'currentdate'
             ON CONFLICT (name) DO NOTHING
-            """
-        )
-    ]
+            """)]

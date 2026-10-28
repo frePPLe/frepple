@@ -2586,4 +2586,3 @@ class ForecastEditor:
             "forecast.html",
             context=ctx,
         )
-

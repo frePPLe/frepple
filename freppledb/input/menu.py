@@ -53,7 +53,6 @@ from freppledb.input.models import (
     Supplier,
 )
 
-
 menu.addItem(
     "inventory",
     "inventory detail",

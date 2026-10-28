@@ -56,8 +56,7 @@ class Migration(migrations.Migration):
                      where name <> ''material excess''
                      order by entity, name, startdate
                      ', '\\s', '', 'g')
-            """
-            % ((DATE_FORMAT,) * 4),
+            """ % ((DATE_FORMAT,) * 4),
             """
             update execute_export
                set sql = 'select
@@ -79,7 +78,6 @@ class Migration(migrations.Migration):
                      where name <> ''material excess''
                      order by entity, name, startdate
                     ', '\\s', '', 'g')
-            """
-            % ((DATE_FORMAT,) * 4),
+            """ % ((DATE_FORMAT,) * 4),
         ),
     ]

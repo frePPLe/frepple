@@ -27,8 +27,7 @@ def dropIndexLike(apps, schema_editor):
     db = schema_editor.connection.alias
     output = []
     with connections[db].cursor() as cursor:
-        cursor.execute(
-            """
+        cursor.execute("""
             with cte as (
             select
             t.relname as table_name,
@@ -72,8 +71,7 @@ def dropIndexLike(apps, schema_editor):
             kcu.table_name,
             kcu.column_name,
             cte.index_name
-            """
-        )
+            """)
         for i in cursor:
             output.append(i[0])
 

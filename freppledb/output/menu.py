@@ -40,7 +40,6 @@ import freppledb.output.views.constraint
 import freppledb.output.views.resource
 import freppledb.output.views.operation
 
-
 # Adding reports. We use an index value to keep the same order of the entries in all languages.
 menu.addItem(
     "sales",

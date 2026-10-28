@@ -29,8 +29,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL(
-            """
+        migrations.RunSQL("""
             delete from buffer a
             using (
                 select max(id) as id, item_id, location_id, batch
@@ -42,16 +41,14 @@ class Migration(migrations.Migration):
             and a.location_id is not distinct from b.location_id
             and a.batch is not distinct from b.batch
             and a.id is distinct from b.id
-            """
-        ),
+            """),
         migrations.RunSQL(
             "update buffer set batch = '' where batch is null",
         ),
         migrations.RunSQL(
             "ALTER TABLE buffer ALTER COLUMN batch SET DEFAULT ''",
         ),
-        migrations.RunSQL(
-            """
+        migrations.RunSQL("""
             delete from calendarbucket a
             using (
                 select max(id) as id, calendar_id, priority, startdate, enddate
@@ -64,8 +61,7 @@ class Migration(migrations.Migration):
             and a.startdate is not distinct from b.startdate
             and a.enddate is not distinct from b.enddate
             and a.id is distinct from b.id
-            """
-        ),
+            """),
         migrations.RunSQL(
             "update calendarbucket set startdate = '1971-01-01'::timestamp where startdate is null",
         ),
@@ -84,8 +80,7 @@ class Migration(migrations.Migration):
         migrations.RunSQL(
             "ALTER TABLE calendarbucket ALTER COLUMN priority SET DEFAULT 0",
         ),
-        migrations.RunSQL(
-            """
+        migrations.RunSQL("""
             delete from suboperation a
             using (
                 select max(id) as id, operation_id, suboperation_id, effective_start
@@ -97,16 +92,14 @@ class Migration(migrations.Migration):
             and a.suboperation_id is not distinct from b.suboperation_id
             and a.effective_start is not distinct from b.effective_start
             and a.id is distinct from b.id
-            """
-        ),
+            """),
         migrations.RunSQL(
             "update suboperation set effective_start = '1971-01-01'::timestamp where effective_start is null",
         ),
         migrations.RunSQL(
             "ALTER TABLE suboperation ALTER COLUMN effective_start SET DEFAULT '1971-01-01'::timestamp",
         ),
-        migrations.RunSQL(
-            """
+        migrations.RunSQL("""
             delete from operationmaterial a
             using (
                 select max(id) as id, operation_id, item_id, effective_start
@@ -118,16 +111,14 @@ class Migration(migrations.Migration):
             and a.item_id is not distinct from b.item_id
             and a.effective_start is not distinct from b.effective_start
             and a.id is distinct from b.id
-            """
-        ),
+            """),
         migrations.RunSQL(
             "update operationmaterial set effective_start = '1971-01-01'::timestamp where effective_start is null",
         ),
         migrations.RunSQL(
             "ALTER TABLE operationmaterial ALTER COLUMN effective_start SET DEFAULT '1971-01-01'::timestamp",
         ),
-        migrations.RunSQL(
-            """
+        migrations.RunSQL("""
             delete from operationresource a
             using (
                 select max(id) as id, operation_id, resource_id, effective_start
@@ -139,16 +130,14 @@ class Migration(migrations.Migration):
             and a.resource_id is not distinct from b.resource_id
             and a.effective_start is not distinct from b.effective_start
             and a.id is distinct from b.id
-            """
-        ),
+            """),
         migrations.RunSQL(
             "update operationresource set effective_start = '1971-01-01'::timestamp where effective_start is null",
         ),
         migrations.RunSQL(
             "ALTER TABLE operationresource ALTER COLUMN effective_start SET DEFAULT '1971-01-01'::timestamp",
         ),
-        migrations.RunSQL(
-            """
+        migrations.RunSQL("""
             delete from itemsupplier a
             using (
                 select max(id) as id, item_id, supplier_id, location_id, effective_start
@@ -161,16 +150,14 @@ class Migration(migrations.Migration):
             and a.location_id is not distinct from b.location_id
             and a.effective_start is not distinct from b.effective_start
             and a.id is distinct from b.id
-            """
-        ),
+            """),
         migrations.RunSQL(
             "update itemsupplier set effective_start = '1971-01-01'::timestamp where effective_start is null",
         ),
         migrations.RunSQL(
             "ALTER TABLE itemsupplier ALTER COLUMN effective_start SET DEFAULT '1971-01-01'::timestamp",
         ),
-        migrations.RunSQL(
-            """
+        migrations.RunSQL("""
             delete from itemdistribution a
             using (
                 select max(id) as id, item_id, origin_id, location_id, effective_start
@@ -183,8 +170,7 @@ class Migration(migrations.Migration):
             and a.location_id is not distinct from b.location_id
             and a.effective_start is not distinct from b.effective_start
             and a.id is distinct from b.id
-            """
-        ),
+            """),
         migrations.RunSQL(
             "update itemdistribution set effective_start = '1971-01-01'::timestamp where effective_start is null",
         ),

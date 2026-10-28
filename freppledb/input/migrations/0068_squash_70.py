@@ -50,26 +50,22 @@ def recreateConstraintsCascade(apps, schema_editor):
             "alter table operationplanresource drop constraint %s"
             % (getConstraint(cursor, "operationplanresource"),)
         )
-        cursor.execute(
-            """
+        cursor.execute("""
             alter table operationplanresource
             ADD FOREIGN KEY (operationplan_id)
             REFERENCES public.operationplan (reference) MATCH SIMPLE
             ON UPDATE NO ACTION
             ON DELETE CASCADE
             DEFERRABLE INITIALLY DEFERRED
-            """
-        )
-        cursor.execute(
-            """
+            """)
+        cursor.execute("""
             alter table operationplanmaterial
                 ADD FOREIGN KEY (operationplan_id)
                 REFERENCES public.operationplan (reference) MATCH SIMPLE
                 ON UPDATE NO ACTION
                 ON DELETE CASCADE
                 DEFERRABLE INITIALLY DEFERRED
-            """
-        )
+            """)
 
 
 def grant_read_access(apps, schema_editor):
@@ -77,7 +73,9 @@ def grant_read_access(apps, schema_editor):
     role = settings.DATABASES[db].get("SQL_ROLE", "report_role")
     if role:
         with connections[db].cursor() as cursor:
-            cursor.execute("select count(*) from pg_roles where rolname = lower(%s)", (role,))
+            cursor.execute(
+                "select count(*) from pg_roles where rolname = lower(%s)", (role,)
+            )
             if not cursor.fetchone()[0]:
                 cursor.execute(
                     "create role %s with nologin noinherit role current_user" % (role,)
@@ -114,8 +112,7 @@ def dropIndexLike(apps, schema_editor):
     db = schema_editor.connection.alias
     output = []
     with connections[db].cursor() as cursor:
-        cursor.execute(
-            """
+        cursor.execute("""
             with cte as (
             select
             t.relname as table_name,
@@ -161,8 +158,7 @@ def dropIndexLike(apps, schema_editor):
             kcu.table_name,
             kcu.column_name,
             cte.index_name
-            """
-        )
+            """)
         for i in cursor:
             output.append(i[0])
 

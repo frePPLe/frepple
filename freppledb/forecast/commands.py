@@ -44,7 +44,6 @@ from freppledb.common.report import getCurrentDate
 from freppledb.input.commands.load import LoadTask, CheckTask
 from freppledb.input.models import Item, Customer, Location
 
-
 logger = logging.getLogger(__name__)
 
 default_forecast_parameters = {
@@ -197,8 +196,7 @@ class PopulateForecastTable(PlanTask):
 
                 # Removing any forecast record for non existing (item,location) combinations in the demand
                 deleted_rows = 0
-                cursor.execute(
-                    """
+                cursor.execute("""
                     delete from forecast f
                     using (
                       select distinct item_id, location_id from forecast
@@ -208,8 +206,7 @@ class PopulateForecastTable(PlanTask):
                       ) t
                     where t.item_id = f.item_id
                     and t.location_id = f.location_id
-                    """
-                )
+                    """)
                 deleted_rows = cursor.rowcount
 
                 # Removing any forecast record for leaf combinations where (item,location,customer) in the demand
@@ -258,8 +255,7 @@ class PopulateForecastTable(PlanTask):
                 )
                 added_rows = cursor.rowcount
                 # Adding the missing records into forecast table at the customer level.
-                cursor.execute(
-                    """
+                cursor.execute("""
                     with cte as(
                       select distinct item_id, location_id, customer_id from demand
                       except select item_id, location_id, customer_id from forecast)
@@ -270,8 +266,7 @@ class PopulateForecastTable(PlanTask):
                       item_id, location_id,
                       customer_id, 'automatic', 20, true, false, now()
                     from cte
-                    """
-                )
+                    """)
                 logger.info(
                     "Adding %s records into forecast table"
                     % (added_rows + cursor.rowcount)
@@ -311,19 +306,16 @@ class CalculateDemandPattern(PlanTask):
             """,
             (fcst_calendar, currentdate, horizon_history, currentdate),
         )
-        cursor.execute(
-            """
+        cursor.execute("""
             create unique index bucket_tmp_idx1 on bucket_tmp (startdate)
-            """
-        )
+            """)
 
         # find id for current period -1
         cursor.execute("select max(id) from bucket_tmp")
         lastPeriod = cursor.fetchone()[0]
 
         # Analyze demand
-        cursor.execute(
-            """
+        cursor.execute("""
             create temporary table item_pattern on commit preserve rows as
             select
               item_id, coalesce(pow(stddev(quantity)/avg(quantity),2),0) CV2,
@@ -339,20 +331,17 @@ class CalculateDemandPattern(PlanTask):
             ) demand
             where exists (select 1 from forecast where forecast.item_id = demand.item_id)
             group by item_id
-            """
-        )
+            """)
         cursor.execute(
             "create unique index item_pattern_idx_1 on item_pattern (item_id)"
         )
 
         # Merge results
-        cursor.execute(
-            """
+        cursor.execute("""
             update item
             set adi = null, cv2 = null, demand_pattern = null
             where adi is not null or cv2 is not null or demand_pattern is not null
-            """
-        )
+            """)
         cursor.execute(
             """
             update item
@@ -405,43 +394,34 @@ class AggregateDemand(PlanTask):
 
         # Creating temp tables
         starttime = time()
-        cursor.execute(
-            """
+        cursor.execute("""
             create temporary table item_hierarchy on commit preserve rows as
             select parent.name parent, child.name child from item parent
             inner join item child
             on child.lft between parent.lft and parent.rght
-            """
-        )
-        cursor.execute(
-            """
+            """)
+        cursor.execute("""
             create index item_hierarchy_idx on item_hierarchy (child)
-            """
-        )
-        cursor.execute(
-            """
+            """)
+        cursor.execute("""
             create temporary table location_hierarchy on commit preserve rows as
             select parent.name parent, child.name child from location parent
             inner join location child
             on child.lft between parent.lft and parent.rght
-            """
-        )
+            """)
         cursor.execute(
             "create index location_hierarchy_idx on location_hierarchy (child)"
         )
-        cursor.execute(
-            """
+        cursor.execute("""
             create temporary table customer_hierarchy on commit preserve rows as
             select parent.name parent, child.name child from customer parent
             inner join customer child
             on child.lft between parent.lft and parent.rght
-            """
-        )
+            """)
         cursor.execute(
             "create index customer_hierarchy_idx on customer_hierarchy (child)"
         )
-        cursor.execute(
-            """
+        cursor.execute("""
             drop table if exists forecasthierarchy;
             create table forecasthierarchy as
             select distinct
@@ -452,8 +432,7 @@ class AggregateDemand(PlanTask):
             inner join customer_hierarchy on forecast.customer_id = customer_hierarchy.child
             inner join location_hierarchy on forecast.location_id = location_hierarchy.child
             where coalesce(method, 'automatic') != 'aggregate'
-            """
-        )
+            """)
         cursor.execute(
             "create unique index nodes on forecasthierarchy (item_id, location_id, customer_id)"
         )
@@ -491,16 +470,14 @@ class AggregateDemand(PlanTask):
 
         # Delete forecastplan for invalid (item, location, customer) combinations
         starttime = time()
-        cursor.execute(
-            """
+        cursor.execute("""
             delete from forecastplan
             using (select distinct item_id, location_id, customer_id from forecastplan
             except select item_id, location_id, customer_id from forecasthierarchy) t
             where forecastplan.item_id = t.item_id
             and forecastplan.location_id = t.location_id
             and forecastplan.customer_id = t.customer_id
-            """
-        )
+            """)
         logger.info(
             "Aggregate - deleted %d invalid combinations in %.2f seconds"
             % (cursor.rowcount, time() - starttime)
@@ -563,8 +540,7 @@ class AggregateDemand(PlanTask):
         )
 
         # updating open/total orders values
-        cursor.execute(
-            """
+        cursor.execute("""
             insert into forecastplan
               (item_id, location_id, customer_id, startdate, enddate,
               orderstotal, orderstotalvalue, ordersopen, ordersopenvalue)
@@ -586,10 +562,8 @@ class AggregateDemand(PlanTask):
               or excluded.orderstotalvalue is distinct from forecastplan.orderstotalvalue
               or excluded.ordersopen is distinct from forecastplan.ordersopen
               or excluded.ordersopenvalue is distinct from forecastplan.ordersopenvalue;
-            """
-        )
-        cursor.execute(
-            """
+            """)
+        cursor.execute("""
             -- Handle when there is no match in demand_agg
             UPDATE forecastplan
             SET ordersopen = NULL, ordersopenvalue = NULL, orderstotal = NULL, orderstotalvalue = NULL
@@ -603,8 +577,7 @@ class AggregateDemand(PlanTask):
             and forecastplan.customer_id = customer_id
             and coalesce(method, 'automatic') != 'aggregate')
             and (ordersopen is not NULL or ordersopenvalue is not null or orderstotal is not NULL or orderstotalvalue is not NULL);
-            """
-        )
+            """)
         logger.info(
             "Aggregate - updating orders open/total in %.2f seconds"
             % (time() - starttime)
@@ -612,15 +585,13 @@ class AggregateDemand(PlanTask):
 
         # Pruning empty records
         starttime = time()
-        cursor.execute(
-            """
+        cursor.execute("""
             delete from forecastplan
             where jsonb_strip_nulls(
               to_jsonb(forecastplan)
               - array['customer_id', 'item_id', 'location_id', 'startdate', 'enddate']
               ) = '{}'::jsonb
-            """
-        )
+            """)
         transaction.commit(using=database)
         logger.info(
             "Aggregate - pruned %d empty records in %.2f seconds"
@@ -689,14 +660,12 @@ class LoadMeasures(PlanTask):
         cnt = 0
         starttime = time()
         with connections[database].cursor() as cursor:
-            cursor.execute(
-                """
+            cursor.execute("""
                 select
                   type, name, discrete, compute_expression, update_expression, defaultvalue, overrides
                 from measure
                 order by overrides nulls first, name
-                """
-            )
+                """)
             for i in cursor:
                 cnt += 1
                 try:
@@ -1256,8 +1225,7 @@ class ExportForecastMetrics(PlanTask):
                 cursor.execute(
                     "update forecast set out_smape=null, out_method=null, out_deviation=null"
                 )
-                cursor.execute(
-                    """
+                cursor.execute("""
                     create temporary table forecast_tmp
                     (
                     name character varying(300),
@@ -1266,8 +1234,7 @@ class ExportForecastMetrics(PlanTask):
                     out_deviation numeric(20,8)
                     )
                     on commit preserve rows
-                    """
-                )
+                    """)
 
                 with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
                     for i in frepple.demands():
@@ -1289,16 +1256,14 @@ class ExportForecastMetrics(PlanTask):
                 cursor.execute(
                     "create unique index forecast_tmp_idx on forecast_tmp (name)"
                 )
-                cursor.execute(
-                    """
+                cursor.execute("""
                     update forecast
                     set out_smape = tmp.out_smape,
                         out_method = tmp.out_method,
                         out_deviation = tmp.out_deviation
                     from forecast_tmp tmp
                     where tmp.name = forecast.name
-                    """
-                )
+                    """)
                 cursor.execute("drop table forecast_tmp")
                 cursor.execute("vacuum analyze forecast")
             elif cluster != -2:

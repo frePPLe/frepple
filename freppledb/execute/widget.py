@@ -35,7 +35,7 @@ class ExecuteWidget(Widget):
     tooltip = _("Generate a constrained plan")
     asynchronous = True
     repeat = True
-    size = 'md'
+    size = "md"
     url = "/execute/#runplan"
 
     javascript_before_repeat = """
@@ -66,7 +66,7 @@ class ExecuteTaskGroupWidget(Widget):
     tooltip = _("Run a sequence of tasks.")
     asynchronous = True
     repeat = True
-    size = 'md'
+    size = "md"
     url = "/execute/#scheduletasks"
 
     @staticmethod

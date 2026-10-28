@@ -370,13 +370,11 @@ class Migration(migrations.Migration):
                 "ordering": ["reference"],
             },
         ),
-        migrations.RunSQL(
-            """
+        migrations.RunSQL("""
             insert into common_parameter
             (name, value, description, lastmodified)
             values
             ('archive.frequency','week','Frequency of history snapshot. Values: week, month, none',now())
             on conflict (name) do nothing
-            """
-        ),
+            """),
     ]

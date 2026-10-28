@@ -35,7 +35,7 @@ def BucketNotification(flw, msg):
         return flw.object_pk == msg.object_pk
     elif msg.content_type.model_class() == BucketDetail and msg.content_object:
         return flw.object_pk == msg.content_object.bucket.name
-    else: 
+    else:
         return False
 
 

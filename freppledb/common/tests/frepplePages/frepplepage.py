@@ -76,11 +76,11 @@ class BasePage:
         return WebDriverWait(self.driver, timing)
 
     def go_to_target_page_by_menu(self, menu_item, submenu_item):
-        (menuby, menulocator) = BasePageLocators.mainMenuLinkLocator(menu_item)
+        menuby, menulocator = BasePageLocators.mainMenuLinkLocator(menu_item)
         self.menuitem = self.driver.find_element(menuby, menulocator)
         ActionChains(self.driver).move_to_element(self.menuitem).perform()
 
-        (submenuby, submenulocator) = BasePageLocators.subMenuItemLocator(submenu_item)
+        submenuby, submenulocator = BasePageLocators.subMenuItemLocator(submenu_item)
         self.submenuitem = self.driver.find_element(submenuby, submenulocator)
         time.sleep(1)
         ActionChains(self.driver).move_to_element(self.submenuitem).click().perform()

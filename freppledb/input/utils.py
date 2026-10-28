@@ -36,8 +36,7 @@ def countItemLocations(db=DEFAULT_DB_ALIAS):
     """
     try:
         with connections[db].cursor() as cursor:
-            cursor.execute(
-                f"""
+            cursor.execute(f"""
                 select greatest(
                    (SELECT COUNT(*)
                     FROM (
@@ -52,8 +51,7 @@ def countItemLocations(db=DEFAULT_DB_ALIAS):
                    ),
                    (select count(distinct operation_id) from operationplan)
                 )
-                """
-            )
+                """)
             return cursor.fetchone()[0]
     except Exception:
         return 0

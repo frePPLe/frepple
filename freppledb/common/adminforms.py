@@ -60,7 +60,6 @@ from django.views.decorators.csrf import csrf_protect
 
 from .models import Comment, User, Scenario
 
-
 csrf_protect_m = method_decorator(csrf_protect)
 
 

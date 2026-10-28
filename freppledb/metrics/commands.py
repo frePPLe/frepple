@@ -227,8 +227,7 @@ class GetPlanMetrics(PlanTask):
                     defaults={"value": performance},
                 )
 
-                cursor.execute(
-                    """
+                cursor.execute("""
                     create temporary table metrics as
                     select item.name as item_id,
                     coalesce(sum(late_count),0) as latedemandcount,
@@ -256,11 +255,9 @@ class GetPlanMetrics(PlanTask):
                     from item_hierarchy
                     left outer join metrics on item_hierarchy.child = metrics.item_id
                     group by parent;
-                    """
-                )
+                    """)
 
-                cursor.execute(
-                    """
+                cursor.execute("""
                     update item set
                         latedemandcount = updated.latedemandcount,
                         latedemandquantity = updated.latedemandquantity,
@@ -289,16 +286,13 @@ class GetPlanMetrics(PlanTask):
                       or item.unplanneddemandquantity is distinct from updated.unplanneddemandquantity
                       or item.unplanneddemandvalue is distinct from updated.unplanneddemandvalue
                     )
-                    """
-                )
+                    """)
 
-                cursor.execute(
-                    """
+                cursor.execute("""
                     drop table item_hierarchy;
                     drop table demand_late_unplanned;
                     drop table metrics;
-                    """
-                )
+                    """)
 
             except Exception as e:
                 print("Error updating item metrics: %s" % e)
@@ -307,8 +301,7 @@ class GetPlanMetrics(PlanTask):
             try:
                 Resource.rebuildHierarchy(database)
 
-                cursor.execute(
-                    """
+                cursor.execute("""
                     with resource_hierarchy as (select child.name child, parent.name parent
                     from resource child
                     inner join resource parent on child.lft between parent.lft and parent.rght
@@ -325,8 +318,7 @@ class GetPlanMetrics(PlanTask):
                     from cte
                     where cte.parent = resource.name
                     and resource.overloadcount is distinct from cte.overloadcount;
-                    """
-                )
+                    """)
 
             except Exception as e:
                 print("Error updating resource metrics: %s" % e)

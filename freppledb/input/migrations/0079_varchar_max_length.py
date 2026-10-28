@@ -48,26 +48,22 @@ def recreateConstraintsCascade(apps, schema_editor):
             "alter table operationplanresource drop constraint %s"
             % (getConstraint(cursor, "operationplanresource"),)
         )
-        cursor.execute(
-            """
+        cursor.execute("""
             alter table operationplanresource
             ADD FOREIGN KEY (operationplan_id)
             REFERENCES public.operationplan (reference) MATCH SIMPLE
             ON UPDATE NO ACTION
             ON DELETE CASCADE
             DEFERRABLE INITIALLY DEFERRED
-            """
-        )
-        cursor.execute(
-            """
+            """)
+        cursor.execute("""
             alter table operationplanmaterial
                 ADD FOREIGN KEY (operationplan_id)
                 REFERENCES public.operationplan (reference) MATCH SIMPLE
                 ON UPDATE NO ACTION
                 ON DELETE CASCADE
                 DEFERRABLE INITIALLY DEFERRED
-            """
-        )
+            """)
 
 
 class Migration(migrations.Migration):

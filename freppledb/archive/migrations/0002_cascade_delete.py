@@ -50,36 +50,30 @@ def recreateConstraintsCascade(apps, schema_editor):
             "alter table ax_operationplan drop constraint %s"
             % (getConstraint(cursor, "ax_operationplan"),)
         )
-        cursor.execute(
-            """
+        cursor.execute("""
             alter table ax_demand
             ADD FOREIGN KEY (snapshot_date_id)
             REFERENCES public.ax_manager (snapshot_date) MATCH SIMPLE
             ON UPDATE NO ACTION
             ON DELETE CASCADE
             DEFERRABLE INITIALLY DEFERRED
-            """
-        )
-        cursor.execute(
-            """
+            """)
+        cursor.execute("""
             alter table ax_buffer
             ADD FOREIGN KEY (snapshot_date_id)
             REFERENCES public.ax_manager (snapshot_date) MATCH SIMPLE
             ON UPDATE NO ACTION
             ON DELETE CASCADE
             DEFERRABLE INITIALLY DEFERRED
-            """
-        )
-        cursor.execute(
-            """
+            """)
+        cursor.execute("""
             alter table ax_operationplan
             ADD FOREIGN KEY (snapshot_date_id)
             REFERENCES public.ax_manager (snapshot_date) MATCH SIMPLE
             ON UPDATE NO ACTION
             ON DELETE CASCADE
             DEFERRABLE INITIALLY DEFERRED
-            """
-        )
+            """)
 
 
 class Migration(migrations.Migration):

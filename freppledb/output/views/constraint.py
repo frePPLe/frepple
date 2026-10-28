@@ -36,7 +36,6 @@ from freppledb.common.report import (
 )
 from freppledb.input.models import Demand, Resource, Buffer, Operation
 
-
 entities = (
     ("demand", _("demand")),
     ("material", _("material")),

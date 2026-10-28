@@ -385,11 +385,6 @@ class NonCopyable {
  * The implementation is implemented in a thread-safe way (within the
  * limitations of the Python threading model, of course).
  *
- * During the initialization the code checks for a file 'init.py' in its
- * search path and, if it does exist, the statements in the file will be
- * executed. In this way a library of globally available functions
- * can easily be initialized.
- *
  * The stderr and stdout streams of Python are redirected by default to
  * the frePPLe log stream.
  *

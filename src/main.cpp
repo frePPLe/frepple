@@ -65,8 +65,8 @@ void usage() {
          "content.\n"
          "  -? -h -help   Show these instructions.\n"
          "\nEnvironment: The variable FREPPLE_HOME optionally points to a\n"
-         "     directory where the initialization files init.xml, init.py,\n"
-         "     frepple.xsd and module libraries will be searched.\n"
+         "     directory where the initialization and license files\n"
+         "     will be searched.\n"
          "\nReturn codes: 0 when successful, non-zero in case of errors\n"
          "\nMore information on this program: http://www.frepple.com\n\n\n";
 }

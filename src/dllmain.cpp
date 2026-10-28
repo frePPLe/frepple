@@ -109,33 +109,6 @@ void FreppleInitialize(bool procesInitializationFiles) {
     PyGILState_Release(state);
     logger << "Error: unknown exception\n";
   }
-
-  // Search for the initialization PY file
-  if (!procesInitializationFiles) return;
-  string init = Environment::searchFile("init.py");
-  if (!init.empty()) {
-    // Execute the commands in the file
-    try {
-      PythonInterpreter::executeFile(init);
-    } catch (...) {
-      logger << "Exception caught during execution of 'init.py'\n";
-      throw;
-    }
-  }
-
-  // Search for the initialization XML file
-  init = Environment::searchFile("init.xml");
-  if (!init.empty()) {
-    // Execute the commands in the file
-    try {
-      XMLInputFile p_init(init);
-      p_init.setAllowPython(true);
-      p_init.parse(&Plan::instance(), true);
-    } catch (...) {
-      logger << "Exception caught during execution of 'init.xml'\n";
-      throw;
-    }
-  }
 }
 
 void FreppleReadXMLData(const char* x, bool validate, bool validateonly) {

@@ -30,7 +30,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/bin/frepple",
             "args": [
-                "${workspaceFolder}/freppledb/common/commands.py"
+                // "${workspaceFolder}/freppledb/common/commands.py"
+                "${workspaceFolder}/test/wip_2/wip_2.xml"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/bin",

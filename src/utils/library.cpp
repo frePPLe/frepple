@@ -26,8 +26,8 @@
 // These headers are required for the loading of dynamic libraries and the
 // detection of the number of cores.
 #include <dlfcn.h>
-#include <unistd.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include "frepple/utils.h"
 #include "frepple/xml.h"
@@ -101,45 +101,20 @@ string Environment::searchFile(const string& filename) {
   int result = stat(filename.c_str(), &stat_p);
   if (!result && (stat_p.st_mode & S_IREAD)) return filename;
 
-  // Second: check the FREPPLE_HOME directory, if it is defined
-  string fullname;
-  char* envvar = getenv("FREPPLE_HOME");
-  if (envvar) {
-    fullname = envvar;
-    if (*fullname.rbegin() != pathseperator) fullname += pathseperator;
+  const pair<const char*, const char*> directories[] = {
+      {getenv("FREPPLE_HOME"), ""},
+      {DATADIRECTORY, ""},
+      {LIBDIRECTORY, "frepple/"},
+      {SYSCONFDIRECTORY, ""}};
+  for (const auto& [directory, subdirectory] : directories) {
+    if (!directory || !*directory) continue;
+    string fullname = directory;
+    if (fullname.back() != pathseperator) fullname += pathseperator;
+    fullname += subdirectory;
     fullname += filename;
     result = stat(fullname.c_str(), &stat_p);
     if (!result && (stat_p.st_mode & S_IREAD)) return fullname;
   }
-
-#ifdef DATADIRECTORY
-  // Third: check the data directory
-  fullname = DATADIRECTORY;
-  if (*fullname.rbegin() != pathseperator) fullname += pathseperator;
-  fullname.append(filename);
-  result = stat(fullname.c_str(), &stat_p);
-  if (!result && (stat_p.st_mode & S_IREAD)) return fullname;
-#endif
-
-#ifdef LIBDIRECTORY
-  // Fourth: check the lib directory
-  fullname = LIBDIRECTORY;
-  if (*fullname.rbegin() != pathseperator) fullname += pathseperator;
-  fullname += "frepple";
-  fullname += pathseperator;
-  fullname += filename;
-  result = stat(fullname.c_str(), &stat_p);
-  if (!result && (stat_p.st_mode & S_IREAD)) return fullname;
-#endif
-
-#ifdef SYSCONFDIRECTORY
-  // Fifth: check the sysconf directory
-  fullname = SYSCONFDIRECTORY;
-  if (*fullname.rbegin() != pathseperator) fullname += pathseperator;
-  fullname += filename;
-  result = stat(fullname.c_str(), &stat_p);
-  if (!result && (stat_p.st_mode & S_IREAD)) return fullname;
-#endif
 
   // Not found
   return "";

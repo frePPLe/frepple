@@ -36,6 +36,9 @@ if(NOT xerces-c)
   message(FATAL_ERROR "xerces-c library not found")
 endif()
 
+set(CMAKE_INSTALL_PREFIX "/")
+include(GNUInstallDirs)
+
 # Check python and create the virtualenv
 set(Python3_VENV "${PROJECT_SOURCE_DIR}/venv/bin")
 find_package(Python3 3.12 COMPONENTS Interpreter Development REQUIRED)

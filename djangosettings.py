@@ -44,28 +44,36 @@ ADMINS = (
 SECRET_KEY = "%@mzit!i8b*$zc&6oev96=RANDOMSTRING"
 
 # Configuration of the frepple database
-POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "localhost")
-POSTGRES_DB_PREFIX = os.environ.get("POSTGRES_DB_PREFIX", "frepple")
-POSTGRES_USER = os.environ.get("POSTGRES_USER", "frepple")
-POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD", "frepple")
-POSTGRES_PORT = os.environ.get("POSTGRES_PORT", "")
+POSTGRES_HOST = os.environ.get("POSTGRES_HOST") or "localhost"
+POSTGRES_PORT = os.environ.get("POSTGRES_PORT") or ""
+POSTGRES_DB_PREFIX = (
+    os.environ.get("POSTGRES_DB_PREFIX")
+    or os.environ.get("POSTGRES_DBNAME")
+    or "frepple"
+)
+POSTGRES_USER = os.environ.get("POSTGRES_USER") or "frepple"
+POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD") or "frepple"
+
 
 # Read database configurable settings
-db_parameters = readDatabaseParameters(
-    "currency",
-    "plan.loglevel",
-    "forecast.DueWithinBucket",
-    database=f"{POSTGRES_DB_PREFIX}0",
-    host=POSTGRES_HOST,
-    port=POSTGRES_PORT,
-    user=POSTGRES_USER,
-    password=POSTGRES_PASSWORD,
-)
-for param, value in db_parameters.items():
-    print("testing", param, value)
-if db_parameters:
-    del param, value
-del db_parameters
+try:
+    db_parameters = readDatabaseParameters(
+        "currency",
+        "plan.loglevel",
+        "forecast.DueWithinBucket",
+        database=f"{POSTGRES_DB_PREFIX}0",
+        host=POSTGRES_HOST,
+        port=POSTGRES_PORT,
+        user=POSTGRES_USER,
+        password=POSTGRES_PASSWORD,
+    )
+    for param, value in db_parameters.items():
+        print("testing", param, value)
+    if db_parameters:
+        del param, value
+    del db_parameters
+except Exception as e:
+    print("Error reading database parameters:", e)
 
 MIN_NUMBER_OF_SCENARIOS = 2
 MAX_NUMBER_OF_SCENARIOS = 30

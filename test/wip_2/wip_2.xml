@@ -67,7 +67,7 @@
       <loadplans>
         <loadplan>
           <resource name="W" />
-          <quantity>0.2</quantity>
+          <quantity>0.2</quantity> <!-- quantity update will be ignored -->
         </loadplan>
       </loadplans>
     </operationplan>
@@ -141,14 +141,6 @@
   <operationplans>
     <operationplan reference="MO#1" start="2022-01-01T00:00:00" quantity="2" status="confirmed">
       <operation name="complex product routing" />
-      <flowplans>
-        <flowplan quantity="-3">
-          <item name="comp A" />
-        </flowplan>
-        <flowplan quantity="-4">
-          <item name="comp B" />
-        </flowplan>
-      </flowplans>
     </operationplan>
   </operationplans>
   <suppressFlowplanCreation>false</suppressFlowplanCreation>

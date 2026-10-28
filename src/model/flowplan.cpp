@@ -121,25 +121,6 @@ FlowPlan::FlowPlan(OperationPlan* opplan, const Flow* f, Date d, double q)
   fl->getOperation()->setChanged();
 }
 
-string FlowPlan::getStatus() const {
-  if (flags & STATUS_CONFIRMED)
-    return "confirmed";
-  else
-    return "proposed";
-}
-
-void FlowPlan::setStatus(const string& s) {
-  if (getOperationPlan()->getProposed() && s == "confirmed")
-    throw DataException(
-        "OperationPlanMaterial locked while OperationPlan is not");
-  if (s == "confirmed")
-    flags |= STATUS_CONFIRMED;
-  else if (s == "proposed")
-    flags &= ~STATUS_CONFIRMED;
-  else
-    throw DataException("invalid operationplanmaterial status:" + s);
-}
-
 void FlowPlan::update() {
   // Update the timeline data structure
   auto fl_info = fl->getFlowplanDateQuantity(this);
@@ -222,32 +203,6 @@ void FlowPlan::setFlow(Flow* newfl) {
     buf->flowplans.insert(this, fl_info.second, fl_info.first);
     buf->setChanged();
     fl->getOperation()->setChanged();
-  } else {
-    // Switch all flowplans of the same transfer batch
-    auto oldFlow = fl;
-    if (oldFlow->getOperation() != newfl->getOperation())
-      throw DataException(
-          "Only switching to a flow on the same operation is allowed");
-    if (fl->getBuffer()->getItem()->hasType<ItemMTO>() && !batch.empty())
-      buf = Buffer::findOrCreate(fl->getBuffer()->getItem(),
-                                 fl->getBuffer()->getLocation(), batch);
-    else
-      buf = fl->getBuffer();
-    for (auto flpln = getOperationPlan()->beginFlowPlans();
-         flpln != getOperationPlan()->endFlowPlans(); ++flpln) {
-      if (flpln->getFlow() != oldFlow) continue;
-
-      // Remove from the old buffer
-      flpln->buf->flowplans.erase(&*flpln);
-      flpln->buf->setChanged();
-
-      // Insert in the new buffer
-      flpln->fl = newfl;
-      auto fl_info = flpln->fl->getFlowplanDateQuantity(&*flpln);
-      buf->flowplans.insert(&*flpln, fl_info.second, fl_info.first);
-      buf->setChanged();
-      flpln->fl->getOperation()->setChanged();
-    }
   }
 }
 
@@ -274,22 +229,6 @@ void FlowPlan::setQuantityRaw(double q) {
 
 pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,
                                            bool, bool execute, short mode) {
-  // TODO argument "update" isn't used
-  if (getConfirmed()) {
-    // Confirmed flowplans take any quantity, regardless of the
-    // quantity of the owning operationplan.
-    if (execute) {
-      // Update the timeline data structure
-      buf->flowplans.update(this, quantity, getDate());
-
-      // Mark the operation and buffer as having changed. This will trigger the
-      // recomputation of their problems
-      buf->setChanged();
-      fl->getOperation()->setChanged();
-    }
-    return make_pair(quantity, oper->getQuantity());
-  }
-
   if (!getFlow()->getEffective().within(getDate())) {
     if (execute) {
       if (mode == 2 || (mode == 0 && getFlow()->hasType<FlowEnd>())) {
@@ -352,9 +291,7 @@ pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,
         throw LogicException("Unreachable code reached");
     }
   } else {
-    // Proportional or transfer batch flows
-    // For transfer batch flowplans the argument quantity is expected to be the
-    // total quantity of all batches.
+    // Proportional flows
     if (mode == 2 || (mode == 0 && getFlow()->hasType<FlowEnd>()))
       opplan_quantity = oper->setOperationPlanParameters(
                                 (quantity - getFlow()->getQuantityFixed()) /

@@ -82,7 +82,6 @@ void SolverCreate::chooseResource(
   }
 
   if ((!l->getSkill() && !l->getResource()->isGroup()) ||
-      lplan->getConfirmed() ||
       lplan->getOperationPlan() == data->state->keepAssignments) {
     // CASE 1: No skill involved, no aggregate resource and forced to keep
     // the current resource assignments
@@ -376,8 +375,7 @@ void SolverCreate::solve(const Load* l, void* v) {
   // load of an alternate group. See SolverCreate::checkOperation
   auto* data = static_cast<SolverData*>(v);
 
-  if ((!l->hasAlternates() && !l->getAlternate()) ||
-      data->state->q_loadplan->getConfirmed()) {
+  if (!l->hasAlternates() && !l->getAlternate()) {
     // CASE I: It is not an alternate load.
     // Delegate the answer immediately to the resource
     chooseResource(l, data);

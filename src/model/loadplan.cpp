@@ -130,7 +130,8 @@ LoadPlan::LoadPlan(OperationPlan* o, const Load* r, LoadPlan* lp)
   else if (lp)
     getResource()->loadplans.insert(this, -lp->getQuantity(), o->getEnd());
   else
-    throw LogicException("LoadPlan creation requires either a load or a sibling LoadPlan");
+    throw LogicException(
+        "LoadPlan creation requires either a load or a sibling LoadPlan");
 
   // Initialize the Python type
   initType(metadata);
@@ -283,26 +284,6 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
   }
 }
 
-string LoadPlan::getStatus() const {
-  if (flags & STATUS_CONFIRMED)
-    return "confirmed";
-  else if (flags & STATUS_CLOSED)
-    return "closed";
-  else
-    return "proposed";
-}
-
-void LoadPlan::setStatus(const string& s) {
-  if (s == "confirmed") {
-    setConfirmed(true);
-  } else if (s == "proposed")
-    setProposed(true);
-  else if (s == "closed") {
-    setClosed(true);
-  } else
-    throw DataException("invalid operationplanresource status:" + s);
-}
-
 void LoadPlan::update() {
   if (ld) {
     // Update the timeline data structure
@@ -441,7 +422,6 @@ Object* LoadPlan::reader(const MetaClass*, const DataValueDict& in,
   }
 
   // Pick up the action attribute and update accordingly
-  const DataValue* statusElement = in.get(Tags::status);
   switch (MetaClass::decodeAction(in)) {
     case Action::ADD:
       // Only additions are allowed
@@ -453,7 +433,6 @@ Object* LoadPlan::reader(const MetaClass*, const DataValueDict& in,
       for (auto& g : opplan->getOperation()->getLoads())
         if (g.getResource()->getTop() == res->getTop()) ld = &g;
       ldpln = new LoadPlan(opplan, ld, res);
-      if (statusElement) ldpln->setStatus(statusElement->getString());
       opplan->setStart(opplan->getStart());  // Recompute duration
       if (mgr) mgr->add(new CommandCreateObject(ldpln));
       return ldpln;
@@ -461,7 +440,6 @@ Object* LoadPlan::reader(const MetaClass*, const DataValueDict& in,
       // Only changes are allowed
       if (!ldpln) throw DataException("Loadplan not found");
       ldpln->setResource(res);
-      if (statusElement) ldpln->setStatus(statusElement->getString());
       return ldpln;
     case Action::REMOVE:
       // Delete the entity
@@ -483,7 +461,6 @@ Object* LoadPlan::reader(const MetaClass*, const DataValueDict& in,
         if (mgr) mgr->add(new CommandCreateObject(ldpln));
       } else
         ldpln->setResource(res);
-      if (statusElement) ldpln->setStatus(statusElement->getString());
       return ldpln;
   }
 
@@ -530,6 +507,65 @@ PyObject* LoadPlan::create(PyTypeObject*, PyObject*, PyObject* kwds) {
   }
 }
 
+void LoadPlan::setQuantity(double quantity) {
+  logger << "kadee setting quantity to " << quantity << "\n";
+  if (!ld || ld->getQuantity() <= 0.0 || oper->getConfirmed() ||
+      oper->getCompleted() || oper->getClosed() ||
+      (!oper->getProposed() && !oper->getConsumeCapacity()) ||
+      (!oper->getDates().overlap(ld->getEffective()) &&
+       (oper->getDates().getDuration() ||
+        !ld->getEffective().within(oper->getStart()))))
+    // These loadplans can't be resized
+    return;
+
+  double operationQuantity;
+  if (res->hasType<ResourceBuckets>()) {
+    if (quantity > 0.0) {
+      logger << "Ignoring resizing of a bucketized loadplan quantity to a "
+                "positive quantity\n";
+      return;
+    }
+    auto efficiency = (res->getEfficiencyCalendar()
+                           ? res->getEfficiencyCalendar()->getValue(getDate())
+                           : res->getEfficiency()) /
+                      100.0;
+    if (efficiency <= 0.0) {
+      logger << "Ignoring resizing a loadplan on a zero "
+                "efficiency bucketized resource\n";
+      return;
+    }
+    auto remainingLoad = -quantity * efficiency;
+    auto completed = oper->getQuantityCompleted();
+    auto variableLoad =
+        remainingLoad + ld->getQuantity() * completed - ld->getQuantityFixed();
+    if (!quantity)
+      operationQuantity = 0.0;
+    else if (completed && ld->getQuantityFixed()) {
+      auto discriminant =
+          sqrt(variableLoad * variableLoad +
+               4.0 * ld->getQuantity() * ld->getQuantityFixed() * completed);
+      operationQuantity =
+          variableLoad >= 0.0
+              ? (variableLoad + discriminant) / (2.0 * ld->getQuantity())
+              : 2.0 * ld->getQuantityFixed() * completed /
+                    (discriminant - variableLoad);
+    } else
+      operationQuantity = variableLoad / ld->getQuantity();
+  } else {
+    if (!res->getToolPerPiece() ||
+        (ld->getResource()->isGroup() && ld->getQuantity() > 1.0 &&
+         Plan::instance().getIndividualPoolResources()))
+      return;
+    operationQuantity = (isStart() ? quantity : -quantity) / ld->getQuantity();
+  }
+  if (!std::isfinite(operationQuantity) || operationQuantity < 0.0) {
+    logger << "Invalid operationplan quantity for resizing a loadplan\n";
+    return;
+  }
+  oper->setOperationPlanParameters(operationQuantity, oper->getStart(),
+                                   Date::infinitePast, false, true, false);
+}
+
 double Load::getLoadplanQuantity(const LoadPlan* lp) const {
   if ((!lp->getOperationPlan()->getProposed() &&
        !lp->getOperationPlan()->getConsumeCapacity()) ||
@@ -538,7 +574,6 @@ double Load::getLoadplanQuantity(const LoadPlan* lp) const {
       lp->getOperationPlan()->getCompleted())
     // No capacity consumption required
     return 0.0;
-  if (lp->getConfirmed()) return lp->getQuantity();
   if (!lp->getOperationPlan()->getDates().overlap(getEffective()) &&
       (lp->getOperationPlan()->getDates().getDuration() ||
        !getEffective().within(lp->getOperationPlan()->getStart())))

@@ -162,7 +162,26 @@ class Command(BaseCommand):
             if result.returncode:
                 raise CommandError("Building the docker image failed")
 
+        # Remove any existing container with the same name
         subprocess.run(["docker", "rm", "--force", container_name])
+
+        # Stop other odoo container already running on port 8069
+        container = subprocess.run(
+            [
+                "docker",
+                "ps",
+                "--filter",
+                "publish=%s" % options["container_port"],
+                "--format",
+                "{{.ID}}",
+            ],
+            capture_output=True,
+            text=True,
+        ).stdout
+        if container:
+            if options["verbosity"]:
+                print("STOPPING ANOTHER ODOO CONTAINER")
+            subprocess.run(["docker", "stop", container.strip()])
 
         # Passed at runtime rather than baked into the image with ENV, since ENV
         # values persist in the image's layer metadata even after the container is removed

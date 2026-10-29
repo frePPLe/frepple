@@ -5,6 +5,9 @@ Recommendations in Odoo
 FrePPLe analyzes the supply and demand situation in your Odoo data. It generates a set of
 recommendations to start working on.
 
+The recommendations can be generated without a Frepple instance thanks to the
+`advanced planning and scheduling service <using-the-connectors-with-the-aps-service.html>`_
+
 These recommendations are actionable activities that can be accepted by the Odoo users, which
 will trigger the creation of a draft order in Odoo.
 

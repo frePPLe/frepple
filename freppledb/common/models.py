@@ -1829,7 +1829,7 @@ class Attribute(AuditModel):
 
     # Database fields
     id = models.AutoField(_("identifier"), primary_key=True)
-    model = models.CharField(verbose_name=_("model"), choices=_getContentTypeChoices())
+    model = models.CharField(verbose_name=_("model"), choices=_getContentTypeChoices)
     name = models.CharField(_("name"), db_index=True)
     label = models.CharField(_("label"), db_index=True)
     type = models.CharField(_("type"), null=False, blank=False, choices=types)

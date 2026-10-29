@@ -62,19 +62,6 @@ _request_ctxvar = contextvars.ContextVar("request", default=None)
 _db_ctxvar = contextvars.ContextVar("database", default=None)
 
 
-class HTTPAuthenticationMiddleware:
-    def __init__(self, get_response):
-        warn(
-            "The HTTPAuthenticationMiddleware class is deprecated. You can safely remove it from your djangosettings.py file without loss of functionality",
-            DeprecationWarning,
-        )
-        self.get_response = get_response
-
-    def __call__(self, request):
-        response = self.get_response(request)
-        return response
-
-
 class LocaleMiddleware(DjangoLocaleMiddleware):
     """
     This middleware extends the Django default locale middleware with the user

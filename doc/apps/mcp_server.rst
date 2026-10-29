@@ -66,7 +66,8 @@ The MCP server currently includes the following functions:
 - ``getSalesOrders``: retrieves a list of sales orders filtered by the specified criteria the user requested.
 - ``getDeliveryPlan``: retrieves the delivery plan for the specified sales orders.
 - ``ApproveOrder``: approves the specified order (either a manufacturing order, a work order, a purchase order, or a distribution order).
-- - ``getForecast``: retrieves the forecast for the specified item, location, customer and time bucket.
+- ``getForecast``: retrieves the forecast for the specified item, location, customer and time bucket.
+- ``setForecast``: updates the forecast for the specified item, location, customer and time bucket.
 
 The above list will be extended as new functions are added to the MCP server.
 

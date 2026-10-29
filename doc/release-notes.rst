@@ -49,6 +49,12 @@ This release will bring some bigger and backward incompatible changes.
 - | 18, 19, 20: Bug fix for partially completed and partially reserved materials on manufacturing orders.
   | The quantity showing in frepple didn't match what odoo still sees as remaining to consume.
 
+.. rubric:: AI
+
+- | The AI MCP server is enriched with new capabilities regarding the forecast:
+  | Addition of the getForecast tool to retrieve forecast data from the AI MCP server.
+  | Addition of the setForecast tool to update forecast data using the AI MCP server.
+
 .. rubric:: System administration
 
 - | Frepple is now distributed exclusively as a container image.

@@ -43,170 +43,110 @@ ADMINS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = "%@mzit!i8b*$zc&6oev96=RANDOMSTRING"
 
-# Configuration of the frepple database
+# Make this unique, and don't share it with anybody.
+SECRET_WEBTOKEN_KEY = SECRET_KEY
+
+# When using TCP sockets specify the hostname, the ip4 or ip6 addresshere.
+# Leave as an empty string to use Unix domain socket ("local" lines in pg_hba.conf).
 POSTGRES_HOST = os.environ.get("POSTGRES_HOST") or "localhost"
+
+# Specify the port number when using a TCP socket. Leave empty when using a local unix socket.
 POSTGRES_PORT = os.environ.get("POSTGRES_PORT") or ""
 POSTGRES_DB_PREFIX = (
     os.environ.get("POSTGRES_DB_PREFIX")
     or os.environ.get("POSTGRES_DBNAME")
     or "frepple"
 )
+
+# Role name when using md5 authentication. Leave as an empty string when using peer or ident authencation.
 POSTGRES_USER = os.environ.get("POSTGRES_USER") or "frepple"
+
+# Role password when using md5 authentication. Leave as an empty string when using peer or ident authencation.
 POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD") or "frepple"
 
+# Role name for executing custom reports and processing sql data files.
+# Make sure this role has properly restricted permissions!
+# When left unspecified, SQL statements run with the full read-write
+# permissions of the user specified above. Which can be handy, but is not secure.
+POSTGRES_REPORTING_USER = os.environ.get("POSTGRES_REPORTING_USER") or "report_role"
+
+APPS = (
+    {"name": "daphne", "status": "required"},
+    {"name": "django.contrib.auth", "status": "required"},
+    {"name": "django.contrib.contenttypes", "status": "required"},
+    {"name": "django.contrib.messages", "status": "required"},
+    {"name": "django.contrib.staticfiles", "status": "required"},
+    {"name": "freppledb.boot", "status": "required"},
+    # {"path": pathlib.Path(os.path.join(FREPPLE_APP, "apps"))},
+    {"name": "freppledb.odoo", "status": "optional"},
+    # {"name": "freppledb.erpconnection", "status": "optional"},
+    {"name": "freppledb.wizard", "status": "optional_and_default"},
+    {"name": "freppledb.input", "status": "required"},
+    {"name": "freppledb.forecast", "status": "optional_and_default"},
+    {"name": "freppledb.output", "status": "required"},
+    {"name": "freppledb.metrics", "status": "optional_and_default"},
+    {"name": "freppledb.execute", "status": "required"},
+    {"name": "freppledb.webservice", "status": "required"},
+    {"name": "freppledb.common", "status": "required"},
+    {"name": "django_filters", "status": "required"},
+    {"name": "rest_framework", "status": "required"},
+    {"name": "django.contrib.admin", "status": "required"},
+    {"name": "freppledb.archive", "status": "required"},
+    {"name": "freppledb.reportmanager", "status": "optional_and_default"},
+    {"name": "freppledb.executesql", "status": "optional"},
+)
 
 # Read database configurable settings
-try:
-    db_parameters = readDatabaseParameters(
-        "currency",
-        "plan.loglevel",
-        "forecast.DueWithinBucket",
+globals().update(
+    readDatabaseParameters(
+        APPS,
         database=f"{POSTGRES_DB_PREFIX}0",
         host=POSTGRES_HOST,
         port=POSTGRES_PORT,
         user=POSTGRES_USER,
         password=POSTGRES_PASSWORD,
     )
-    for param, value in db_parameters.items():
-        print("testing", param, value)
-    if db_parameters:
-        del param, value
-    del db_parameters
-except Exception as e:
-    print("Error reading database parameters:", e)
+)
 
 MIN_NUMBER_OF_SCENARIOS = 2
 MAX_NUMBER_OF_SCENARIOS = 30
-DATABASES = {
-    "default" if i == 0 else f"scenario{i}": {
-        "ENGINE": "freppledb.common.postgresql",
-        # Database name
-        "NAME": f"{POSTGRES_DB_PREFIX}{i}",
-        # Role name when using md5 authentication.
-        # Leave as an empty string when using peer or
-        # ident authencation.
-        "USER": POSTGRES_USER,
-        # Role password when using md5 authentication.
-        # Leave as an empty string when using peer or
-        # ident authencation.
-        "PASSWORD": POSTGRES_PASSWORD,
-        # When using TCP sockets specify the hostname,
-        # the ip4 address or the ip6 address here.
-        # Leave as an empty string to use Unix domain
-        # socket ("local" lines in pg_hba.conf).
-        "HOST": POSTGRES_HOST,
-        # Specify the port number when using a TCP socket.
-        "PORT": POSTGRES_PORT,
-        "OPTIONS": {
-            "connect_timeout": 10,  # Timeout in seconds to establish a connection
-            "options": "-c lock_timeout=300000",  # Timeout (in milliseconds) to acquire a lock
-        },
-        "CONN_MAX_AGE": None,
-        "CONN_HEALTH_CHECKS": True,
-        "TEST": {
-            # Database name used when running the test suite.
-            "NAME": (f"{POSTGRES_DB_PREFIX}_test{i}"),
-            # Port for web service when running the test suite
-            "FREPPLE_PORT": f"127.0.0.1:{i+9002}",
-        },
-        # The FILEUPLOADFOLDER setting is used by the "import data files" task.
-        # By default all scenario databases use the same data folder on the server.
-        # By configuring this setting you can configure a dedicated data folder for each
-        # scenario database.
-        "FILEUPLOADFOLDER": os.path.normpath(
-            os.path.join(
-                FREPPLE_LOGDIR, "data", "default" if i == 0 else f"scenario{i}"
-            )
-        ),
-        # Role name for executing custom reports and processing sql data files.
-        # Make sure this role has properly restricted permissions!
-        # When left unspecified, SQL statements run with the full read-write
-        # permissions of the user specified above. Which can be handy, but is not secure.
-        "SQL_ROLE": "report_role",
-        "SECRET_WEBTOKEN_KEY": SECRET_KEY,
-        # Port for the frepple web service
-        "FREPPLE_PORT": f"127.0.0.1:{i+8002}",
-    }
-    # Adjust the range to include extra scenarios in the list.
-    # THE NEXT LINE IS AUTOMATICALLY UPDATED IN SCENARIO MANAGEMENT WIDGET!
-    for i in range(3)
-}
+SCENARIOS = max(MIN_NUMBER_OF_SCENARIOS, min(SCENARIOS, MAX_NUMBER_OF_SCENARIOS))
 
 # Google analytics code to report usage statistics to.
 # The value None disables this feature.
 GOOGLE_ANALYTICS = None
 
-# Installed applications.
-# The order is important: urls, templates and menus of the earlier entries
-# take precedence over and override later entries.
-#
-# IMPORTANT: the apps screen updates this section of the file.
-# So, please don't change the layout of this section: just keep a separate
-# line for each app.
-# ================= START UPDATED BLOCK =================
-INSTALLED_APPS = (
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "freppledb.boot",
-    # Add any project specific apps here
-    # "freppledb.odoo",
-    # "freppledb.erpconnection",
-    "freppledb.wizard",
-    "freppledb.input",
-    "freppledb.forecast",
-    "freppledb.output",
-    "freppledb.metrics",
-    "freppledb.execute",
-    "freppledb.webservice",
-    "freppledb.common",
-    "django_filters",
-    "rest_framework",
-    "django.contrib.admin",
-    "freppledb.archive",
-    # The next two apps allow users to run their own SQL statements on
-    # the database, using the SQL_ROLE configured above.
-    "freppledb.reportmanager",
-    "freppledb.executesql",
-)
-# ================= END UPDATED BLOCK =================
-
-# This setting contains a list containing:
-#   - names of installable apps.
-#   - a Path object pointing to a folder where installable apps are found.
-INSTALLABLE_APPS = (
-    "freppledb.odoo",
-    "freppledb.forecast",
-    "freppledb.mlforecast",
-    "freppledb.wizard",
-    "freppledb.metrics",
-    "freppledb.reportmanager",
-    "freppledb.executesql",
-    pathlib.Path(os.path.join(FREPPLE_APP, "apps")),
-    pathlib.Path(os.path.join(FREPPLE_APP, "freppleapps")),
-    pathlib.Path(os.path.join(FREPPLE_HOME, "apps")),
-    pathlib.Path(os.path.join(FREPPLE_HOME, "freppleapps")),
-    pathlib.Path(os.path.join(FREPPLE_CONFIGDIR, "apps")),
-    pathlib.Path(os.path.join(FREPPLE_CONFIGDIR, "freppleapps")),
-    pathlib.Path(os.path.join(FREPPLE_LOGDIR, "apps")),
-    pathlib.Path(os.path.join(FREPPLE_LOGDIR, "freppleapps")),
-)
-
 # Odoo connection parameters in this file they override the ones set in the database parameters table.
 # Configuring them here is more secure and eases automated deployments.
-ODOO_URL = {i: os.environ.get("ODOO_URL", None) for i in DATABASES.keys()}
-ODOO_DB = {i: os.environ.get("ODOO_DB", None) for i in DATABASES.keys()}
-ODOO_USER = {i: os.environ.get("ODOO_USER", None) for i in DATABASES.keys()}
-ODOO_COMPANY = {i: os.environ.get("ODOO_COMPANY", None) for i in DATABASES.keys()}
-ODOO_SINGLECOMPANY = {
-    i: os.environ.get("ODOO_SINGLECOMPANY", None) for i in DATABASES.keys()
+ODOO_URL = {
+    "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_URL", None)
+    for i in range(SCENARIOS)
 }
-ODOO_PASSWORDS = {i: os.environ.get("ODOO_PASSWORD", None) for i in DATABASES.keys()}
+ODOO_DB = {
+    "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_DB", None)
+    for i in range(SCENARIOS)
+}
+ODOO_USER = {
+    "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_USER", None)
+    for i in range(SCENARIOS)
+}
+ODOO_COMPANY = {
+    "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_COMPANY", None)
+    for i in range(SCENARIOS)
+}
+ODOO_SINGLECOMPANY = {
+    "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_SINGLECOMPANY", None)
+    for i in range(SCENARIOS)
+}
+ODOO_PASSWORDS = {
+    "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_PASSWORD", None)
+    for i in range(SCENARIOS)
+}
 
 # If passwords are set in this file they will be used instead of the ones set in the database parameters table
 OPENBRAVO_PASSWORDS = {
-    i: os.environ.get("OPENBRAVO_PASSWORD", "") for i in DATABASES.keys()
+    "default" if i == 0 else f"scenario{i}": os.environ.get("OPENBRAVO_PASSWORD", "")
+    for i in range(SCENARIOS)
 }
 
 if "FREPPLE_TIME_ZONE" in os.environ:
@@ -228,16 +168,6 @@ else:
 # Tests have to be done in UTC time zone to guarantuee portable results!
 if not hasattr(sys, "argv") or "test" in sys.argv or "FREPPLE_TEST" in os.environ:
     TIME_ZONE = "UTC"
-
-# We provide 3 options for formatting dates (and you always add your own).
-#  - month-day-year: US format
-#  - day-month-year: European format
-#  - year-month-day: international format. This is the default
-# As option you can choose to hide the hour, minutes and seconds.
-DATE_STYLE = os.environ.get("FREPPLE_DATE_STYLE", "year-month-day")
-DATE_STYLE_WITH_HOURS = (
-    os.environ.get("FREPPLE_DATE_STYLE_WITH_HOURS", "false").lower() == "true"
-)
 
 # Supported language codes, sorted by language code.
 # Language names and codes should match the ones in Django.
@@ -293,46 +223,6 @@ MIDDLEWARE = (
 # ALLOWED_IPS = [
 #     "127.0.0.1",
 # ]
-
-# Custom attribute fields in the database
-# After each change of this setting, the following commands MUST be
-# executed to create the fields in the database(s).
-#   frepplectl makemigrations
-#   frepplectl migrate     OR     frepplectl migrate --database DATABASE
-#
-# The commands will create migration files to keep track of the changes.
-# You MUST use the above commands and the generated migration scripts. Manually
-# changing the database schema will work in simple cases, but will get you
-# in trouble in the long run!
-# You'll need write permissions in the folder where these are stored.
-#
-# See https://docs.djangoproject.com/en/1.8/topics/migrations/ for the
-# details on the migration files. For complex changes to the attributes
-# an administrator may need to edit, delete or extend these files.
-#
-# Supported field types are 'string', 'boolean', 'number', 'integer',
-# 'date', 'datetime', 'duration' and 'time'.
-# Example:
-#  ATTRIBUTES = [
-#    ('freppledb.input.models.Item', [
-#      ('attribute1', ugettext('attribute_1'), 'string'),
-#      ('attribute2', ugettext('attribute_2'), 'boolean'),
-#      ('attribute3', ugettext('attribute_3'), 'date'),
-#      ('attribute4', ugettext('attribute_4'), 'datetime'),
-#      ('attribute5', ugettext('attribute_5'), 'number'),
-#      ]),
-#    ('freppledb.input.models.Operation', [
-#      ('attribute1', ugettext('attribute_1'), 'string'),
-#      ])
-#    ]
-ATTRIBUTES = []
-
-# Memory cache
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-    }
-}
 
 LOGGING = {
     "version": 1,
@@ -535,7 +425,3 @@ FTP_FOLDER = {
     "scenario2": None,
     "scenario3": None,
 }  # folder where the files should be uploaded on the remote server
-
-# Browser to test with selenium
-SELENIUM_TESTS = "chrome"
-SELENIUM_HEADLESS = True

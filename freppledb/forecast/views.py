@@ -55,7 +55,6 @@ from freppledb.common.report import (
     GridPivot,
     GridFieldText,
     GridFieldInteger,
-    getCurrency,
     GridFieldHierarchicalText,
     getCurrentDate,
 )
@@ -839,12 +838,12 @@ class OverviewReport(GridPivot):
                 {
                     "title": force_str(Forecast._meta.verbose_name) + " " + args[0],
                     "post_title": _("plan"),
-                    "currency": json.dumps(getCurrency()),
+                    "currency": json.dumps(settings.CURRENCY),
                     "active_tab": "plan",
                 }
             )
         else:
-            ctx.update({"currency": json.dumps(getCurrency())})
+            ctx.update({"currency": json.dumps(settings.CURRENCY)})
         return ctx
 
     @classmethod
@@ -2026,7 +2025,7 @@ class ForecastEditor:
         if customer:
             customer = unquote(customer)
 
-        currency = getCurrency()
+        currency = settings.CURRENCY
 
         # Use root objects when no specific node is specified.
         # If multiple root nodes exist, we pick the first one.

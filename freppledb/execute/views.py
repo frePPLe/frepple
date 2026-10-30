@@ -1243,7 +1243,7 @@ def scenario_add(request):
         elif error_code == 4:
             return HttpResponse("Invalid format of djangosettings.py file", status=401)
         else:
-            return HttpResponse("An unknown error occured", status=400)
+            return HttpResponse("Error dropping or creating the database", status=400)
     except Exception as e:
         logger.error("Error adding scenario: %s" % e)
         return HttpResponse(e, status=400)

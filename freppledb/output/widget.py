@@ -36,7 +36,7 @@ from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.common.models import Parameter
-from freppledb.common.report import GridReport, getCurrency, getCurrentDate
+from freppledb.common.report import GridReport, getCurrentDate
 from freppledb.input.models import (
     PurchaseOrder,
     DistributionOrder,
@@ -208,7 +208,7 @@ class ManufacturingOrderWidget(Widget):
     def render(cls, request):
         fence1 = int(request.GET.get("fence1", cls.fence1))
         fence2 = int(request.GET.get("fence2", cls.fence2))
-        currency = getCurrency()
+        currency = settings.CURRENCY
         current = getCurrentDate(request.database, lastplan=True)
         GridReport.getBuckets(request)
         cursor = connections[request.database].cursor()
@@ -535,7 +535,7 @@ class DistributionOrderWidget(Widget):
     def render(cls, request):
         fence1 = int(request.GET.get("fence1", cls.fence1))
         fence2 = int(request.GET.get("fence2", cls.fence2))
-        currency = getCurrency()
+        currency = settings.CURRENCY
         current = getCurrentDate(request.database, lastplan=True)
         GridReport.getBuckets(request)
         cursor = connections[request.database].cursor()
@@ -862,7 +862,7 @@ class PurchaseOrderWidget(Widget):
         fence1 = int(request.GET.get("fence1", cls.fence1))
         fence2 = int(request.GET.get("fence2", cls.fence2))
         supplier = request.GET.get("supplier", cls.supplier)
-        currency = getCurrency()
+        currency = settings.CURRENCY
         current = getCurrentDate(request.database, lastplan=True)
         GridReport.getBuckets(request)
         supplierfilter = "and supplier_id = %s" if supplier else ""

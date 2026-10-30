@@ -38,9 +38,112 @@ import pathlib
 
 from django.contrib import messages
 import django.contrib.admindocs
+from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 
-from freppledb import readDatabaseParameters
+
+def readDatabaseParameters(
+    apps,
+    database=None,
+    host=None,
+    port=None,
+    user=None,
+    password=None,
+):
+
+    # Default values
+    parameters = {
+        "CURRENCY": "$",
+        "DATE_STYLE": "year-month-day",
+        "DATE_STYLE_WITH_HOURS": True,
+        "SCENARIOS": 3,
+    }
+
+    connection = None
+    try:
+        import psycopg2
+
+        if not database:
+            return {}
+        conn_params = {"database": database}
+        if user:
+            conn_params["user"] = user
+        if password:
+            conn_params["password"] = password
+        if host:
+            conn_params["host"] = host
+        if port:
+            conn_params["port"] = port
+
+        connection = psycopg2.connect(**conn_params)
+        optional_apps = None
+
+        # Update defaults from the database
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                select
+                name, value
+                from common_parameter
+                where name in %s
+                """,
+                (
+                    (
+                        "scenarios",
+                        "optional_apps",
+                        "currency",
+                        "date_format",
+                        "display_time",
+                    ),
+                ),
+            )
+            for para, val in cursor:
+                if para == "date_format":
+                    if val.strip() in (
+                        "month-day-year",  # US format
+                        "day-month-year",  # European format
+                    ):
+                        parameters["DATE_STYLE"] = val.strip()
+                    # else: international format, default
+                elif para == "display_time":
+                    parameters["DATE_STYLE_WITH_HOURS"] = val.lower() != "false"
+                elif para == "currency":
+                    val = val.split(",", 2)
+                    if len(val) < 2:
+                        parameters["CURRENCY"] = ("", " %s" % escape(val[0]))
+                    else:
+                        parameters["CURRENCY"] = (
+                            "%s " % escape(val[0]),
+                            " %s" % escape(val[1]),
+                        )
+                elif para == "scenarios":
+                    try:
+                        parameters["SCENARIOS"] = int(val)
+                    except Exception:
+                        pass
+                elif para == "optional_apps" and val:
+                    optional_apps = val.split(",")
+    except Exception:
+        pass
+    finally:
+        if connection is not None:
+            connection.close()
+
+    # Build the list of installed apps
+    if not optional_apps:
+        optional_apps = [
+            a["name"] for a in apps if a["status"] == "optional_and_default"
+        ]
+    parameters["INSTALLED_APPS"] = [
+        a["name"]
+        for a in apps
+        if a["status"] == "required" or a["name"] in optional_apps
+    ]
+    parameters["INSTALLABLE_APPS"] = [
+        a["name"] for a in apps if a["status"] in ("optional_and_default", "optional")
+    ]
+    return parameters
+
 
 # FREPPLE_APP directory
 if "FREPPLE_APP" in os.environ:
@@ -164,6 +267,13 @@ DATE_STYLE_WITH_HOURS = (
     os.environ.get("FREPPLE_DATE_STYLE_WITH_HOURS", "false").lower() == "true"
 )
 
+# Memory cache
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
+}
+
 # We implement our own redirection logic for ending slashes in the MultiDBMiddleware class.
 # Do not activate this feature in Django.
 APPEND_SLASH = False
@@ -231,7 +341,9 @@ CSRF_FAILURE_VIEW = "freppledb.common.views.csrf_failure"
 MEDIA_URL = "/uploads/"  # Do not change this
 # This list of allowed extensions is what github.com allows.
 # Be VERY careful about security when enlarging this list!
-MEDIA_EXTENSIONS = ".gif,.jpeg,.jpg,.png,.docx,.gz,.log,.pdf,.pptx,.txt,.xlsx,.zip"
+MEDIA_EXTENSIONS = (
+    ".gif,.jpeg,.avif,.webp,.jpg,.png,.docx,.gz,.log,.pdf,.pptx,.txt,.xlsx,.zip"
+)
 # Number of seconds a browser can cache uploaded content
 MEDIA_MAX_AGE = 12 * 3600
 
@@ -503,6 +615,10 @@ FTP_FOLDER = None  # folder where the files should be uploaded
 
 SILENCED_SYSTEM_CHECKS = ["admin.E408"]
 
+# Browser to test with selenium
+SELENIUM_TESTS = "chrome"
+SELENIUM_HEADLESS = True
+
 # Override any of the above settings from a separate file
 if not os.access(os.path.join(FREPPLE_CONFIGDIR, "djangosettings.py"), os.R_OK):
     print("\nError: Can't locate djangosettings.py configuration file")
@@ -515,6 +631,44 @@ if os.access(os.path.join(FREPPLE_CONFIGDIR, "localsettings.py"), os.R_OK):
     with open(os.path.join(FREPPLE_CONFIGDIR, "localsettings.py")) as mysettingfile:
         exec(mysettingfile.read(), globals())
 
+DATABASES = {
+    "default" if i == 0 else f"scenario{i}": {
+        "ENGINE": "freppledb.common.postgresql",
+        # Database name
+        "NAME": f"{POSTGRES_DB_PREFIX}{i}",
+        "USER": POSTGRES_USER,
+        "PASSWORD": POSTGRES_PASSWORD,
+        "HOST": POSTGRES_HOST,
+        "PORT": POSTGRES_PORT,
+        "OPTIONS": {
+            "connect_timeout": 10,  # Timeout in seconds to establish a connection
+            "options": "-c lock_timeout=300000",  # Timeout (in milliseconds) to acquire a lock
+        },
+        "CONN_MAX_AGE": None,
+        "CONN_HEALTH_CHECKS": True,
+        "TEST": {
+            # Database name used when running the test suite.
+            "NAME": (f"{POSTGRES_DB_PREFIX}_test{i}"),
+            # Port for web service when running the test suite
+            "FREPPLE_PORT": f"127.0.0.1:{i+9002}",
+        },
+        # The FILEUPLOADFOLDER setting is used by the "import data files" task.
+        # By default all scenario databases use the same data folder on the server.
+        # By configuring this setting you can configure a dedicated data folder for each
+        # scenario database.
+        "FILEUPLOADFOLDER": os.path.normpath(
+            os.path.join(
+                FREPPLE_LOGDIR, "data", "default" if i == 0 else f"scenario{i}"
+            )
+        ),
+        "SQL_ROLE": POSTGRES_REPORTING_USER,
+        "SECRET_WEBTOKEN_KEY": SECRET_WEBTOKEN_KEY,
+        # Port for the frepple web service
+        "FREPPLE_PORT": f"127.0.0.1:{i+8002}",
+    }
+    for i in range(SCENARIOS)
+}
+
 # duplicate the entries in the DATABASES dict to create the SQL roles entries.
 for i in DATABASES.copy():
     if DATABASES[i].get("SQL_ROLE", "report_role"):
@@ -523,7 +677,6 @@ for i in DATABASES.copy():
             "USER": DATABASES[i].get("SQL_ROLE", "report_role"),
             "IS_REPORTING_DATABASE": True,
         }
-
 
 # We don't like some settings to be overriden
 MANAGERS = ADMINS
@@ -722,10 +875,15 @@ if "freppledb.wizard" in INSTALLED_APPS:
         },
     )
 
-# If a entry in INSTALLABLE_APPS points to a folder, we add this folder to the python path
+# If an entry in APPS points to a folder, we add this folder to the python path
 try:
-    for x in INSTALLABLE_APPS:
-        if isinstance(x, pathlib.Path) and x.exists() and x.is_dir():
+    for x in APPS:
+        if (
+            "path" in x
+            and isinstance(x["path"], pathlib.Path)
+            and x["path"].exists()
+            and x["path"].is_dir()
+        ):
             sys.path.append(str(x.resolve()))
 except NameError:
     pass

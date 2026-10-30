@@ -96,7 +96,6 @@ from .report import (
 from .report import (
     GridFieldDateTime,
     GridFieldInteger,
-    getCurrency,
     GridFieldChoice,
     GridFieldJSON,
 )
@@ -259,49 +258,28 @@ class AppsView(View):
             raise Exception("Can't install or uninstall this app")
 
         appname = app.rsplit(".", 1)[-1]
-        djangosettingsname = os.path.join(
-            settings.FREPPLE_CONFIGDIR, "djangosettings.py"
+
+        # Update installed_apps parameter
+        installed_apps_param = scenario_parameter = (
+            Parameter.objects.using(DEFAULT_DB_ALIAS)
+            .only("value")
+            .get_or_create(pk="extra_installed_apps")[0]
         )
-
-        # Read djangosettings
-        djangosettings = ""
-        with open(djangosettingsname, "rt") as f:
-            djangosettings = f.read()
-
+        print("before:", installed_apps_param.value)
         if action == "install":
             # Validate
             if app in settings.INSTALLED_APPS:
                 raise Exception("This app is already installed")
 
-            # Update djangosettings
-            with open("%s" % djangosettingsname, "wt+") as f:
-                status = 0
-                new_file = []
-                found = False
-                for l in djangosettings.splitlines():
-                    if status == 0 and "INSTALLED_APPS" in l:
-                        status = 1
-                    elif status == 1 and app in l:
-                        i = re.search(r"\S", l).start()
-                        l = '%s"%s",' % (l[:i], app)
-                        status = 2
-                        found = True
-                    elif status == 1 and (
-                        "END UPDATED BLOCK" in l or "INSTALLABLE_APPS" in l
-                    ):
-                        status = 3
-                    new_file.append(l)
-                if not found:
-                    idx = 0
-                    for l in new_file:
-                        if "freppledb.boot" in l:
-                            i = re.search(r"\S", l).start()
-                            l = '%s"%s",' % (l[:i], app)
-                            new_file.insert(idx + 1, l)
-                            break
-                        idx += 1
-                for l in new_file:
-                    print(l, file=f)
+            # Update djangosettings by saving the parameter
+            installed_apps_param.value = ",".join(
+                [
+                    a
+                    for a in settings.INSTALLABLE_APPS
+                    if a == app or a in settings.INSTALLED_APPS
+                ]
+            )
+            installed_apps_param.save(update_fields=["value"])
 
             # Migrate (after updating djangosettings)
             child = multiprocessing.get_context("spawn").Process(
@@ -318,17 +296,16 @@ class AppsView(View):
             # Unmigrate (before updating djangosettings)
             management.call_command("migrate", appname, "zero")
 
-            # Update djangosettings
-            with open("%s" % djangosettingsname, "wt+") as f:
-                status = 0
-                for l in djangosettings.splitlines():
-                    if status == 0 and "INSTALLED_APPS" in l:
-                        status = 1
-                    elif status == 1 and app in l:
-                        i = re.search(r"\S", l).start()
-                        l = '%s# "%s",' % (l[:i], app)
-                        status = 2
-                    print(l, file=f)
+            # Update djangosettings by updateing the parameter
+            installed_apps_param.value = ",".join(
+                [
+                    a
+                    for a in settings.INSTALLABLE_APPS
+                    if a != app and a in settings.INSTALLED_APPS
+                ]
+            )
+            installed_apps_param.save(update_fields=["value"])
+        print("after:", installed_apps_param.value)
 
         # Trigger reloading of the WSGI app
         forceWsgiReload()
@@ -359,7 +336,7 @@ def cockpit(request):
             "bucketnames": Bucket.objects.order_by("-level").values_list(
                 "name", flat=True
             ),
-            "currency": getCurrency(),
+            "currency": settings.CURRENCY,
         },
     )
 

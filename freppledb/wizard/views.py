@@ -37,7 +37,7 @@ from django.views import View
 from django.views.generic.base import TemplateView
 
 from freppledb import __version__
-from freppledb.common.report import getCurrency, getCurrentDate
+from freppledb.common.report import getCurrentDate
 from freppledb.common.models import Bucket, BucketDetail, Parameter
 from freppledb.common.utils import sendEmail
 from freppledb.input.models import (
@@ -1584,7 +1584,7 @@ def WizardLoad(request, mode=None):
         "currentstep": int(request.GET.get("currentstep", 0)),
         "title": title,
         "bucketnames": Bucket.objects.order_by("-level").values_list("name", flat=True),
-        "currency": getCurrency(),
+        "currency": settings.CURRENCY,
     }
     if steps:
         context.update(

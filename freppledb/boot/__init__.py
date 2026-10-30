@@ -484,10 +484,6 @@ def addAttributesFromDatabase():
 _first = True
 if _first:
     _first = False
-    # Scan attribute definitions from the settings
-    for model, attrlist in settings.ATTRIBUTES:
-        registerAttribute(model, attrlist)
-
     # Scan attribute definitions from the installed apps
     for app in reversed(settings.INSTALLED_APPS):
         try:

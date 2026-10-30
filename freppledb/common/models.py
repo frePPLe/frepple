@@ -57,11 +57,7 @@ from django.utils.text import capfirst
 
 from freppledb import runFunction
 from freppledb.boot import addAttributesFromDatabase
-from freppledb.common.utils import (
-    forceWsgiReload,
-    update_variable_in_file,
-    get_databases,
-)
+from freppledb.common.utils import forceWsgiReload, get_databases
 
 logger = logging.getLogger(__name__)
 
@@ -328,8 +324,14 @@ class Parameter(AuditModel):
         self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
         restart_webserver = False
-        if self.name in ["display_time", "date_format"]:
-            # a bit of security to prevent python injection in djangosettings
+        if self.name in [
+            "currency",
+            "display_time",
+            "date_format",
+            "scenarios",
+            "optional_apps",
+        ]:
+            # Validate the parameter first
             if self.name == "display_time" and self.value not in [
                 "true",
                 "false",
@@ -340,29 +342,30 @@ class Parameter(AuditModel):
                 "month-day-year",
                 "day-month-year",
                 "year-month-day",
-                "default",
             ]:
                 raise Exception(
                     'Allowed values for date_format are: "month-day-year", "day-month-year" or "year-month-day"'
                 )
+            if self.name == "scenarios":
+                try:
+                    if not (
+                        settings.MIN_NUMBER_OF_SCENARIOS
+                        <= int(self.value)
+                        <= settings.MAX_NUMBER_OF_SCENARIOS
+                    ):
+                        raise Exception
+                except Exception:
+                    raise Exception(
+                        "Must be an integer between "
+                        f"{settings.MIN_NUMBER_OF_SCENARIOS} "
+                        f"and {settings.MAX_NUMBER_OF_SCENARIOS}"
+                    )
 
-            # update djangosettings
-            if self.name == "display_time" and self.value != "default":
-                update_variable_in_file(
-                    os.path.join(settings.FREPPLE_CONFIGDIR, "djangosettings.py"),
-                    "DATE_STYLE_WITH_HOURS",
-                    True if (self.value == "true") else False,
-                )
-                restart_webserver = True
-            elif self.name == "date_format" and self.value != "default":
-                update_variable_in_file(
-                    os.path.join(settings.FREPPLE_CONFIGDIR, "djangosettings.py"),
-                    "DATE_STYLE",
-                    f'"{self.value}"',
-                )
+            # Restart the application server after the update
+            if self.name != "optional_apps":
                 restart_webserver = True
 
-            # update the parameter value in all scenarios
+            # Update the parameter value in all scenarios
             for sc in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(status="In use"):
                 # The current scenario is saved by this method
 

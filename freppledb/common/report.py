@@ -511,17 +511,6 @@ class GridFieldBoolNullable(GridFieldChoice):
         super().__init__(name, **kwargs)
 
 
-def getCurrency():
-    try:
-        cur = Parameter.getValue("currency").split(",")
-        if len(cur) < 2:
-            return ("", " %s" % escape(cur[0]))
-        else:
-            return ("%s " % escape(cur[0]), " %s" % escape(cur[1]))
-    except Exception:
-        return ("", " $")
-
-
 def getCurrentDate(database=DEFAULT_DB_ALIAS, lastplan=False):
     if lastplan:
         try:
@@ -549,9 +538,12 @@ class GridFieldCurrency(GridField):
     )
 
     def extra(self):
-        cur = getCurrency()
         return '"formatoptions":%s' % json.dumps(
-            {"prefix": cur[0], "suffix": cur[1], "defaultvalue": ""}
+            {
+                "prefix": settings.CURRENCY[0],
+                "suffix": settings.CURRENCY[1],
+                "defaultvalue": "",
+            }
         )
 
     width = 80

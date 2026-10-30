@@ -23,6 +23,7 @@
 
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.db import connections
 from django.db.models import F
@@ -34,7 +35,6 @@ from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.common.models import UserPreference
-from freppledb.common.report import getCurrency
 from freppledb.input.models import Item
 
 
@@ -58,7 +58,7 @@ class AnalysisDemandProblems(Widget):
     def render(cls, request=None):
         limit = int(request.GET.get("limit", cls.limit))
         orderby = request.GET.get("orderby", cls.orderby)
-        currency = getCurrency()
+        currency = settings.CURRENCY
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="text-center">%s</th>'

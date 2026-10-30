@@ -58,6 +58,7 @@ def readDatabaseParameters(
         "DATE_STYLE_WITH_HOURS": True,
         "SCENARIOS": 3,
     }
+    optional_apps = None
 
     connection = None
     try:
@@ -76,7 +77,6 @@ def readDatabaseParameters(
             conn_params["port"] = port
 
         connection = psycopg2.connect(**conn_params)
-        optional_apps = None
 
         # Update defaults from the database
         with connection.cursor() as cursor:

@@ -53,7 +53,7 @@ def readDatabaseParameters(
 
     # Default values
     parameters = {
-        "CURRENCY": "$",
+        "CURRENCY": ("", " $"),
         "DATE_STYLE": "year-month-day",
         "DATE_STYLE_WITH_HOURS": True,
         "SCENARIOS": 3,

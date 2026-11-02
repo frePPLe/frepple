@@ -166,7 +166,8 @@ else:
         TIME_ZONE = "Europe/Brussels"
 
 # Tests have to be done in UTC time zone to guarantuee portable results!
-if not hasattr(sys, "argv") or "test" in sys.argv or "FREPPLE_TEST" in os.environ:
+TESTING = not hasattr(sys, "argv") or "test" in sys.argv or "FREPPLE_TEST" in os.environ
+if TESTING:
     TIME_ZONE = "UTC"
 
 # Supported language codes, sorted by language code.
@@ -255,9 +256,18 @@ LOGGING = {
         #     "level": "DEBUG",
         #     "propagate": False,
         # },
-        "django": {"handlers": ["console"], "level": "INFO"},
-        "freppledb": {"handlers": ["console"], "level": "INFO"},
-        "freppleapps": {"handlers": ["console"], "level": "INFO"},
+        "django": {
+            "handlers": ["console"],
+            "level": "WARNING" if TESTING else "INFO",
+        },
+        "freppledb": {
+            "handlers": ["console"],
+            "level": "WARNING" if TESTING else "INFO",
+        },
+        "freppleapps": {
+            "handlers": ["console"],
+            "level": "WARNING" if TESTING else "INFO",
+        },
     },
 }
 

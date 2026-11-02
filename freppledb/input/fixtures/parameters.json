@@ -8,14 +8,6 @@
         }
     },
     {
-        "pk": "currency",
-        "model": "common.parameter",
-        "fields": {
-            "value": "$",
-            "description": "Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"
-        }
-    },
-    {
         "pk": "loading_time_units",
         "model": "common.parameter",
         "fields": {
@@ -96,14 +88,6 @@
         }
     },
     {
-        "pk": "currency",
-        "model": "common.parameter",
-        "fields": {
-            "value": "$",
-            "description": "Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"
-        }
-    },
-    {
         "model": "common.parameter",
         "fields": {
             "name": "plan.fixBrokenSupplyPath",
@@ -149,22 +133,6 @@
         "fields": {
             "value": "heuristic",
             "description": "Selects the solver to generate the plan. Possible choices are \"heuristic\" and \"heuristic_2\"."
-        }
-    },
-    {
-        "model": "common.parameter",
-        "fields": {
-            "name": "display_time",
-            "value": "default",
-            "description": "This parameter applies to ALL scenarios and controls if date time fields should display the time. Accepted values: true or false."
-        }
-    },
-    {
-        "model": "common.parameter",
-        "fields": {
-            "name": "date_format",
-            "value": "default",
-            "description": "This parameter applies to ALL scenarios. Accepted values: month-day-year, day-month-year, year-month-day."
         }
     },
     {

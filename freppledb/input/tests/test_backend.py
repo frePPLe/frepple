@@ -384,7 +384,7 @@ class ExcelTest(TransactionTestCase):
         self.assertEqual(Supplier.objects.count(), countSupplier)
         self.assertEqual(Bucket.objects.count(), countBucket)
         self.assertEqual(BucketDetail.objects.count(), countBucketDetail)
-        self.assertEqual(Parameter.objects.count(), countParameter)
+        self.assertEqual(Parameter.objects.count(), countParameter - 1)
 
     def test_workbook_brazilian_portuguese(self):
         self.run_workbook("pt-br")

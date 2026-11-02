@@ -4533,14 +4533,6 @@
     {
         "model": "common.parameter",
         "fields": {
-            "name": "currency",
-            "value": "$",
-            "description": "Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"
-        }
-    },
-    {
-        "model": "common.parameter",
-        "fields": {
             "name": "plan.loglevel",
             "value": "0",
             "description": "Controls the verbosity of the planning log file. Accepted values are 0 (silent - default), 1 and 2 (verbose)"
@@ -4600,22 +4592,6 @@
             "name": "NewStyleOrderEditing",
             "value": "false",
             "description": "Select whether to use the web service (false, historical default) for plan editing, or new Python code (true). Default is false for backward compatibility."
-        }
-    },
-    {
-        "model": "common.parameter",
-        "fields": {
-            "name": "display_time",
-            "value": "default",
-            "description": "This parameter applies to ALL scenarios and controls if date time fields should display the time. Accepted values: true or false."
-        }
-    },
-    {
-        "model": "common.parameter",
-        "fields": {
-            "name": "date_format",
-            "value": "default",
-            "description": "This parameter applies to ALL scenarios. Accepted values: month-day-year, day-month-year, year-month-day."
         }
     },
     {

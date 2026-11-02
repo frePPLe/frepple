@@ -35,6 +35,7 @@ except Exception:
 # Set to True to load the unminified javascript sources.
 # When enabled, the build also skips the minification of the javascript files.
 DEBUG_JS = False
+TESTING = not hasattr(sys, "argv") or "test" in sys.argv or "FREPPLE_TEST" in os.environ
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -100,7 +101,7 @@ APPS = (
 globals().update(
     readDatabaseParameters(
         APPS,
-        database=f"{POSTGRES_DB_PREFIX}0",
+        database=f"{POSTGRES_DB_PREFIX}{'_test' if TESTING else ''}0",
         host=POSTGRES_HOST,
         port=POSTGRES_PORT,
         user=POSTGRES_USER,
@@ -166,7 +167,6 @@ else:
         TIME_ZONE = "Europe/Brussels"
 
 # Tests have to be done in UTC time zone to guarantuee portable results!
-TESTING = not hasattr(sys, "argv") or "test" in sys.argv or "FREPPLE_TEST" in os.environ
 if TESTING:
     TIME_ZONE = "UTC"
 

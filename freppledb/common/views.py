@@ -260,26 +260,26 @@ class AppsView(View):
         appname = app.rsplit(".", 1)[-1]
 
         # Update installed_apps parameter
-        installed_apps_param = scenario_parameter = (
+        optional_apps_param = (
             Parameter.objects.using(DEFAULT_DB_ALIAS)
             .only("value")
-            .get_or_create(pk="extra_installed_apps")[0]
+            .get_or_create(pk="optional_apps")[0]
         )
-        print("before:", installed_apps_param.value)
         if action == "install":
             # Validate
             if app in settings.INSTALLED_APPS:
                 raise Exception("This app is already installed")
 
             # Update djangosettings by saving the parameter
-            installed_apps_param.value = ",".join(
+            optional_apps_param.value = ",".join(
                 [
-                    a
-                    for a in settings.INSTALLABLE_APPS
-                    if a == app or a in settings.INSTALLED_APPS
+                    a["name"]
+                    for a in settings.APPS
+                    if (a["name"] == app or a["name"] in settings.INSTALLED_APPS)
+                    and a["status"] in ("optional", "optional_and_default")
                 ]
             )
-            installed_apps_param.save(update_fields=["value"])
+            optional_apps_param.save(update_fields=["value"])
 
             # Migrate (after updating djangosettings)
             child = multiprocessing.get_context("spawn").Process(
@@ -287,6 +287,7 @@ class AppsView(View):
                 args=("migrate", appname),
             )
             child.start()
+            child.join()
 
         elif action == "uninstall":
             # Validate
@@ -296,16 +297,16 @@ class AppsView(View):
             # Unmigrate (before updating djangosettings)
             management.call_command("migrate", appname, "zero")
 
-            # Update djangosettings by updateing the parameter
-            installed_apps_param.value = ",".join(
+            # Update djangosettings by saving the parameter
+            optional_apps_param.value = ",".join(
                 [
-                    a
-                    for a in settings.INSTALLABLE_APPS
-                    if a != app and a in settings.INSTALLED_APPS
+                    a["name"]
+                    for a in settings.APPS
+                    if (a["name"] != app and a["name"] in settings.INSTALLED_APPS)
+                    and a["status"] in ("optional", "optional_and_default")
                 ]
             )
-            installed_apps_param.save(update_fields=["value"])
-        print("after:", installed_apps_param.value)
+            optional_apps_param.save(update_fields=["value"])
 
         # Trigger reloading of the WSGI app
         forceWsgiReload()
@@ -766,7 +767,9 @@ class GroupList(GridReport):
 
 class ParameterList(GridReport):
     title = _("parameters")
-    basequeryset = Parameter.objects.all()
+    basequeryset = Parameter.objects.all().exclude(
+        pk__in=["optional_apps", "Worker alive", "scenarios"]
+    )
     model = Parameter
     adminsite = "admin"
     frozenColumns = 1

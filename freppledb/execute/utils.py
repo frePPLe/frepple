@@ -121,7 +121,7 @@ def ReloadScheduler():
                 "restart",
                 "scheduler",
             ],
-            check=False,
+            start_new_session=True,
         )
     else:
         for proc in psutil.process_iter(["pid", "name"]):

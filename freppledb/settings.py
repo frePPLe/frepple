@@ -122,7 +122,7 @@ def readDatabaseParameters(
                     except Exception:
                         pass
                 elif para == "optional_apps" and val:
-                    optional_apps = val.split(",")
+                    optional_apps = [a.strip().lower() for a in val.split(",")]
     except Exception:
         pass
     finally:

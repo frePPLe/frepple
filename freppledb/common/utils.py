@@ -57,8 +57,8 @@ def getPostgresVersion():
 
 def forceWsgiReload():
     if os.environ.get("SUPERVISOR_ENABLED") and shutil.which("supervisorctl"):
-        # In a container: Ask supervisord to restart it instead.
-        subprocess.run(
+        # In a container: Asynchronously ask supervisord to restart gracefully
+        subprocess.Popen(
             [
                 "supervisorctl",
                 "-c",
@@ -66,7 +66,7 @@ def forceWsgiReload():
                 "restart",
                 "applicationserver",
             ],
-            check=False,
+            start_new_session=True,
         )
     else:
         # In development: trigger autoreload

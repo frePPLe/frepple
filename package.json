@@ -59,7 +59,7 @@
     "vite": "^6.4.4",
     "vite-plugin-vue-devtools": "^7.7.10",
     "vue-eslint-parser": "~10.0.0",
-    "vue-i18n": "^11.4.13",
+    "vue-i18n": "^11.4.14",
     "vue-i18n-extract": "^2.0.7"
   },
   "repository": {

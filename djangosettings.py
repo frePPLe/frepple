@@ -71,14 +71,14 @@ POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD") or "frepple"
 # permissions of the user specified above. Which can be handy, but is not secure.
 POSTGRES_REPORTING_USER = os.environ.get("POSTGRES_REPORTING_USER") or "report_role"
 
-APPS = (
+APPS = [
     {"name": "daphne", "status": "required"},
     {"name": "django.contrib.auth", "status": "required"},
     {"name": "django.contrib.contenttypes", "status": "required"},
     {"name": "django.contrib.messages", "status": "required"},
     {"name": "freppledb.boot", "status": "required"},
     # Project specific apps normally go here (or in the path below)
-    # {"path": pathlib.Path(os.path.join(FREPPLE_APP, "apps"))},
+    {"path": pathlib.Path(os.path.join(FREPPLE_APP, "freppleapps"))},
     {"name": "freppledb.wizard", "status": "optional_and_default"},
     {"name": "freppledb.input", "status": "required"},
     {"name": "freppledb.forecast", "status": "optional_and_default"},
@@ -96,7 +96,7 @@ APPS = (
     {"name": "freppledb.reportmanager", "status": "optional_and_default"},
     {"name": "django.contrib.staticfiles", "status": "required"},
     {"name": "freppledb.executesql", "status": "optional"},
-)
+]
 
 # Read database configurable settings
 globals().update(

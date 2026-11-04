@@ -35,6 +35,7 @@ import sys
 import importlib
 import freppledb
 import pathlib
+import pkgutil
 
 from django.contrib import messages
 import django.contrib.admindocs
@@ -50,6 +51,28 @@ def readDatabaseParameters(
     user=None,
     password=None,
 ):
+    # If an entry in APPS points to a folder, then
+    # - we add this folder to the python path
+    # - we replace the line with the apps we discover in that folder
+    expanded_apps = []
+    for app in apps:
+        if "path" not in app:
+            expanded_apps.append(app)
+            continue
+        path = pathlib.Path(app["path"])
+        if path.is_dir():
+            resolved_path = str(path.resolve())
+            if resolved_path not in sys.path:
+                sys.path.append(resolved_path)
+            expanded_apps.extend(
+                {"name": module.name, "status": app.get("status", "required")}
+                for module in sorted(
+                    pkgutil.iter_modules([resolved_path]),
+                    key=lambda module: module.name,
+                )
+                if module.ispkg
+            )
+    apps[:] = expanded_apps
 
     # Default values
     parameters = {
@@ -874,19 +897,6 @@ if "freppledb.wizard" in INSTALLED_APPS:
             ],
         },
     )
-
-# If an entry in APPS points to a folder, we add this folder to the python path
-try:
-    for x in APPS:
-        if (
-            "path" in x
-            and isinstance(x["path"], pathlib.Path)
-            and x["path"].exists()
-            and x["path"].is_dir()
-        ):
-            sys.path.append(str(x.resolve()))
-except NameError:
-    pass
 
 # Find the ERP connector module
 ERP_CONNECTOR = None

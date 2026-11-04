@@ -29,7 +29,7 @@
     "globals": "^16.5.0",
     "grunt-shell": "^4.0.0",
     "po2json": "^0.4.5",
-    "prettier": "3.5.3",
+    "prettier": "^3.9.9",
     "vite": "^6.4.4",
     "vite-plugin-vue-devtools": "^7.7.10"
   }

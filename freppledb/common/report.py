@@ -2202,10 +2202,19 @@ class GridReport(View):
                             comment = "Changed %s." % get_text_list(
                                 list(fields.keys()), "and"
                             )
+                            if callable(cls.basequeryset):
+                                objs = cls.basequeryset(request)
+                            elif cls.basequeryset is not None:
+                                objs = cls.basequeryset
+                            elif cls.model is not None:
+                                objs = cls.model.objects.all()
+                            else:
+                                raise ValueError(
+                                    "Bulk updates require a base queryset or model"
+                                )
+                            objs = objs.using(request.database)
                             if "pk" in data["update"]:
-                                cls.model.objects.all().using(request.database).filter(
-                                    pk__in=data["update"]["pk"]
-                                ).update(**fields)
+                                objs.filter(pk__in=data["update"]["pk"]).update(**fields)
                                 for o in data["update"]["pk"]:
                                     Comment(
                                         user_id=request.user.id,
@@ -2216,7 +2225,6 @@ class GridReport(View):
                                         comment=comment,
                                     ).save(using=request.database)
                             else:
-                                objs = cls.model.objects.all().using(request.database)
                                 flt = cls._get_q_filter(
                                     request, data["update"].get("filter", [])
                                 )

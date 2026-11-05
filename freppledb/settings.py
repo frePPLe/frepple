@@ -44,45 +44,20 @@ from django.utils.translation import gettext_lazy as _
 
 
 def readDatabaseParameters(
-    apps,
     database=None,
     host=None,
     port=None,
     user=None,
     password=None,
 ):
-    # If an entry in APPS points to a folder, then
-    # - we add this folder to the python path
-    # - we replace the line with the apps we discover in that folder
-    expanded_apps = []
-    for app in apps:
-        if "path" not in app:
-            expanded_apps.append(app)
-            continue
-        path = pathlib.Path(app["path"])
-        if path.is_dir():
-            resolved_path = str(path.resolve())
-            if resolved_path not in sys.path:
-                sys.path.append(resolved_path)
-            expanded_apps.extend(
-                {"name": module.name, "status": app.get("status", "required")}
-                for module in sorted(
-                    pkgutil.iter_modules([resolved_path]),
-                    key=lambda module: module.name,
-                )
-                if module.ispkg
-            )
-    apps[:] = expanded_apps
-
     # Default values
     parameters = {
         "CURRENCY": ("", " $"),
         "DATE_STYLE": "year-month-day",
         "DATE_STYLE_WITH_HOURS": True,
         "SCENARIOS": 3,
+        "APPS_FROM_DB": [],
     }
-    optional_apps = None
-
     connection = None
     try:
         import psycopg2
@@ -145,26 +120,12 @@ def readDatabaseParameters(
                     except Exception:
                         pass
                 elif para == "optional_apps" and val:
-                    optional_apps = [a.strip().lower() for a in val.split(",")]
+                    parameters["APPS_FROM_DB"]
     except Exception:
         pass
     finally:
         if connection is not None:
             connection.close()
-
-    # Build the list of installed apps
-    if not optional_apps:
-        optional_apps = [
-            a["name"] for a in apps if a["status"] == "optional_and_default"
-        ]
-    parameters["INSTALLED_APPS"] = [
-        a["name"]
-        for a in apps
-        if a["status"] == "required" or a["name"] in optional_apps
-    ]
-    parameters["INSTALLABLE_APPS"] = [
-        a["name"] for a in apps if a["status"] in ("optional_and_default", "optional")
-    ]
     return parameters
 
 
@@ -885,6 +846,40 @@ else:
         "%y.%m.%d %H:%M:%S",
         "%y.%m.%d %H:%M",
     ]
+
+# If an entry in APPS points to a folder, then
+# - we add this folder to the python path
+# - we replace the line with the apps we discover in that folder
+expanded_apps = []
+for app in APPS:
+    if "path" not in app:
+        expanded_apps.append(app)
+        continue
+    path = pathlib.Path(app["path"])
+    if path.is_dir():
+        resolved_path = str(path.resolve())
+        if resolved_path not in sys.path:
+            sys.path.append(resolved_path)
+        expanded_apps.extend(
+            {"name": module.name, "status": app.get("status", "required")}
+            for module in sorted(
+                pkgutil.iter_modules([resolved_path]),
+                key=lambda module: module.name,
+            )
+            if module.ispkg
+        )
+APPS = expanded_apps
+
+# Build the list of installed and installable apps
+if not APPS_FROM_DB:
+    APPS_FROM_DB = [a["name"] for a in APPS if a["status"] == "optional_and_default"]
+INSTALLED_APPS = [
+    a["name"] for a in APPS if a["status"] == "required" or a["name"] in APPS_FROM_DB
+]
+INSTALLABLE_APPS = [
+    a["name"] for a in APPS if a["status"] in ("optional_and_default", "optional")
+]
+del expanded_apps, APPS_FROM_DB
 
 # Change the default dashboard if the wizard is active
 if "freppledb.wizard" in INSTALLED_APPS:

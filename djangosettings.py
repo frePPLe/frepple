@@ -101,7 +101,6 @@ APPS = [
 # Read database configurable settings
 globals().update(
     readDatabaseParameters(
-        APPS,
         database=f"{POSTGRES_DB_PREFIX}{'_test' if TESTING else ''}0",
         host=POSTGRES_HOST,
         port=POSTGRES_PORT,

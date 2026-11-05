@@ -1,295 +1,263 @@
 ======================
-Advanced configuration
+Advanced Configuration
 ======================
 
-The installation guide covers a standard installation. But not all installations
-are standard. You may have specific requirements that require additional
-configuration to deploy frepple.
-
-This page captures some common additional configuration tasks.
-
-You have a topic you'd like to see covered on this page? Let us know on
-https://github.com/frePPLe/frepple/discussions or https://github.com/frePPLe/frepple/issues
-
-* :ref:`https`
-* :ref:`extra_scenarios`
-* :ref:`websocket`
-* :ref:`proxy`
-* :ref:`moveserver`
-* :ref:`external_authentication`
-
-
-.. _https:
-
-Enable https encryption for all web traffic
--------------------------------------------
-
-The standard installation uses unencrypted web traffic over HTTP. The IT policy
-of many companies requires encrypting all web traffic of all web applications
-over HTTPS.
-
-#. | Activate HTTPS encryption on your web server.
-   | FrePPLe uses a standard `Apache <https://httpd.apache.org/>`_ web server.
-     A google search will provide a lot of info on the required configuration steps.
-
-   .. code-block:: bash
-
-      a2enmod ssl       # Enable the ssl module
-      a2ensite default-ssl    # Configure the module. Adjust this step to use your own ssl certificate!
-
-   | You can also use a proxy server in front of frepple. Typically you will do
-     the HTTPS encryption on the proxy server then, and you can thus skip this first step.
-
-#. | Update the settings SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE to true. You do this
-     by editing the /etc/frepple/djangosettings.py file or by setting these variables in
-     a docker deployment.
-   | This step is required regardless of where the HTTPS encryption is done.
+This page covers scenarios, external authentication and startup customization.
+Complete :doc:`installation` first. The ordinary production requirements,
+including HTTPS and database configuration, are covered there.
 
 .. _extra_scenarios:
+.. _installation-scenarios:
 
-Add extra scenarios
--------------------
+Scenarios and multiple planning models
+--------------------------------------
 
-From v9.9 onwards, these steps can be done from the user interface, which obsoletes
-this section for the vast majority of users. The section is still relevant for
-businesses where a strict control on the number of scenarios is required.
+FrePPLe can host multiple planning models in one application:
 
-Frepple by default is configured for 3 (Community Editions)
-or 6 (Enterprise and Cloud Edition) scenario databases.
+* What-if scenarios let planners experiment in a copy of the production model.
+* Independent models can serve different factories, product lines or planning
+  processes, with separate data and permissions.
 
-You can change the configuration to include a different amount of database
-with the following steps:
+Each model uses a separate PostgreSQL database. The ``default`` database also
+stores shared information such as user identities and scenario configuration.
+Include it in every complete environment backup.
 
-#. | Update the DATABASES section of the /etc/frepple/djangosettings.py file.
-     Each scenario is identified by a unique key in this dictionary.
-   | Note that the first database MUST have 'default' as key.
-   | Normally all database are on the same PostgreSQL instance and the USER,
-     PASSWORD, HOST and PORT are the same for all scenarios. The database name
-     will be different for each scenario.
-   | The FREPPLE_PORT must be unique for each scenario database. It'll be
-     used in the next step.
+Manage scenario slots from the execution screen
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. | The apache configuration file /etc/apache2/sites-available/z_frepple.conf
-     needs a section as shown below for each scenario.
-   | Edit the file, and replace SCENARIO_KEY and FREPPLE_PORT with the values
-     you used in the /etc/frepple/djangosettings.py file.
+The standard configuration reads the number of scenario slots from the
+``scenarios`` parameter in the default database. It initially provides three
+slots in Community Edition, including ``default``. Use the *Add* and *Delete*
+actions in the execution screen to manage available slots, and *Copy* to
+populate a free slot.
 
-   .. code-block:: bash
+See :doc:`../user-interface/what-if-scenarios` for the workflow and permissions.
+Only delete or release a scenario after checking that its data is no longer
+needed.
 
-       Proxypass "/ws/SCENARIO_KEY/" "ws://localhost:FREPPLE_PORT>/ws/scenario2/" retry=0
-       Proxypass "/svc/SCENARIO_KEY/" "http://localhost:FREPPLE_PORT/" retry=0
+For example, to copy the main model into a free, configured slot:
 
-#. | A database administrator needs to create the database with the
-     `createddb command <https://www.postgresql.org/docs/current/app-createdb.html>`_
-     and assign the ownership to the database user configured in the first step.
-   | If the database user has permissions to create PostgreSQL databases you can
-     use the following command line as a convenient shortcut to create the scenario
-     databases.
+.. warning::
 
-   .. code-block:: bash
+   Scenario copying replaces the destination's data. Confirm the source and
+   destination and back up any data you need to retain.
 
-       frepplectl createdatabase SCENARIO_KEY
+.. code-block:: bash
 
-#. | Restart the apache web server for the changes take effect.
+   docker compose exec frepple frepplectl scenario_copy default scenario1
 
-#. | The new scenarios will be empty at the start. Use the scenario-copy command
-     to copy data in a database.
+After a copy, the user performing the copy and the superusers from the source
+have access to the destination. Review each scenario's active users and
+permissions before opening it to planners.
+
+Constrain the number of scenarios
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The supplied ``djangosettings.py`` limits the scenario count between
+``MIN_NUMBER_OF_SCENARIOS`` (2) and ``MAX_NUMBER_OF_SCENARIOS`` (30).
+An administrator can adjust these limits for a controlled deployment.
+These limits must be set in the main configuration before ``SCENARIOS`` is
+clamped to the permitted range.
+
+The current configuration derives database names and internal service ports
+from the prefix and scenario number. For example:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Application identifier
+     - Database with prefix ``frepple``
+     - Internal planning service
+   * - ``default``
+     - ``frepple0``
+     - ``127.0.0.1:8002``
+   * - ``scenario1``
+     - ``frepple1``
+     - ``127.0.0.1:8003``
+   * - ``scenario2``
+     - ``frepple2``
+     - ``127.0.0.1:8004``
+
+Don't copy the old native-installation instructions that replace ``DATABASES``
+with arbitrary names: the current settings build this dictionary after
+reading the deployment configuration. Custom names, separate database
+servers per model or a larger scenario range require coordinated changes to
+settings and nginx's ``/ws/`` and ``/svc/`` routing. Prefer separate Compose
+deployments when models need independent administration or isolation.
+
+After changing scenario configuration, recreate or restart the application
+as appropriate and verify scenario selection, copying and the plan editor.
 
 .. _websocket:
 
-Firewall issues with "plan editor" screen
------------------------------------------
+Planning web services and WebSockets
+------------------------------------
 
-The "plan editor" screen of the Enterprise Edition doesn't work in some corporate
-networks. The symptom is a message that the connection to the web service fails,
-while the web service is up and running correctly on the server.
+The Enterprise plan editor uses a per-scenario planning web service and
+WebSocket connections. Corporate firewalls and reverse proxies must allow
+the WebSocket protocol, even when ordinary application pages work.
 
-This can be caused by the firewall configuration on your network. This screen
-uses the `websocket protocol <https://en.wikipedia.org/wiki/WebSocket>`_ which might
-not be accepted by default on your firewall.
+The standard nginx configuration routes ``/ws/default/`` and
+``/ws/scenarioN/`` to the corresponding internal service, with matching
+``/svc/`` routes for HTTP requests. These internal ports don't need to be
+published on the Docker host.
 
-.. _proxy:
+To start selected planning web services automatically, set a space-separated
+list of scenario identifiers in Compose:
 
-Proxy server configuration
---------------------------
+.. code-block:: yaml
 
-Some companies deploy frepple behind a proxy server. The proxy server can take
-care of the https encryption, can facilitate monitoring, and can improve security on
-your network.
+   FREPPLE_AUTOSTART_WEBSERVICE: "default scenario1"
 
-Some additional configuration is needed to make the django (which is the
-web application framework used by frepple) run in this configuration.
-See https://stackoverflow.com/questions/70501974/django-returning-csrf-verification-failed-request-aborted-behind-nginx-prox
-for a thread discussing this topic.
+Only list configured scenarios with initialized data. To investigate a
+connection failure, check application logs, confirm the scenario's service
+is running, and check WebSocket upgrades through every proxy layer.
 
-The solution is to add the parameter
-`CSRF_TRUSTED_ORIGINS <https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins>`_
-to your /etc/frepple/djangosettings.py configuration file, or to configure
-the proxy to set some http headers.
+External authentication
+-----------------------
 
-.. _moveserver:
+FrePPLe includes
+`django-allauth <https://docs.allauth.org/en/latest/>`_ for integrating external
+identity providers. The bundled ``freppledb.external_auth`` package supplies
+frePPLe-specific authentication and account adapters.
 
-Move your frepple instance to a new server
-------------------------------------------
+The example below outlines an Auth0 OAuth2 integration. Microsoft and other
+providers require their corresponding allauth provider and settings. Verify
+the configuration against the allauth version bundled with your image.
 
-First install frepple on the new server. Next, bring across the
-following data elements from the old instance:
+#. Create an application at the identity provider. Register this callback,
+   replacing the hostname:
 
-- The postgres database of each scenario needs to be dumped and restored.
+   .. code-block:: text
 
-- | The folder /etc/frepple contains the configuration files.
-  | If the new server uses a different version of frepple, please don't copy
-    the djangosettings.py file. Instead, reapply all configuration changes done
-    in the old file to the file coming with the new release.
+      https://planning.example.com/accounts/auth0/login/callback/
 
-- The folder /var/log/frepple contains log files, data files,
-  and attachment files.
+   Record the client ID and keep the client secret in protected deployment
+   configuration.
 
-- If you have tailored the apache configuration, you may also include
-  the relevant files from the /etc/apache2 folder.
+#. In ``djangosettings.py``, add these entries to ``APPS`` before
+   ``readDatabaseParameters`` is called. Place them ahead of the other
+   project-specific applications:
 
-.. _external_authentication:
+   .. code-block:: python
 
-Integrate external authentication (Oauth2, Microsoft)
------------------------------------------------------
+      {"name": "freppledb.external_auth", "status": "required"},
+      {"name": "django.contrib.sites", "status": "required"},
+      {"name": "allauth", "status": "required"},
+      {"name": "allauth.account", "status": "required"},
+      {"name": "allauth.socialaccount", "status": "required"},
+      {"name": "allauth.socialaccount.providers.auth0", "status": "required"},
 
-Enterprises are moving towards authentication methods like OAuth, SAML,
-OpenID, ... with multi-factor authentication to protect data access,
-manage users and control their access rights.
+#. Add ``"allauth.account.middleware.AccountMiddleware"`` to ``MIDDLEWARE``
+   after Django's authentication middleware. Preserve the existing
+   middleware entries.
 
-Using the `django-allauth <https://docs.allauth.org/en/latest/>`_
-library frepple can be configured to authenticate using a large number of
-authentication protocols and social accounts.
+#. Configure the authentication backends and account adapters. These
+   settings can be placed in ``localsettings.py``:
 
-The steps to authenticate using OAuth2 are as follows. Other methods supported by
-django-allauth will have pretty similar instructions.
+   .. code-block:: python
 
-#. | Set up your Oauth provider.
-   | You will need its CLIENT_ID and the CLIENT_SECRET later on in this process.
-   | Assure that you have set the callback URL of the provider to
-     https://<DOMAIN-OF-YOUR-FREPPLE-INSTALL>/accounts/auth0/login/callback/
-
-#. | Install the django-allauth python package.
-   | Recent frepple releases (>=9.6) already include the package and you can skip
-     this step.
-   | In earlier versions you need to install it yourself in the frepple venv.
-
-   .. code-block:: bash
-
-      . /usr/share/frepple/venv/bin/activate
-      pip3 install django-allauth --no-dependencies
-
-#. | Update your /etc/frepple/djangosettings.py file.
-
-     .. code-block:: python
-
-        INSTALLED_APPS = (
-          ...
-          # Add these lines at the top of the section with project-apps
-          "freppledb.external_auth",
-          "django.contrib.sites",
-          "allauth",
-          "allauth.account",
-          "allauth.socialaccount",
-          "allauth.socialaccount.providers.auth0",          # For oauth
-          # "allauth.socialaccount.providers.mircrosoft",   # For Microsoft
-        )
-
-        MIDDLEWARE = (
-          ...
-          # Add or uncomment this line.
-          "allauth.account.middleware.AccountMiddleware",
-        )
-
-        AUTHENTICATION_BACKENDS = (
+      AUTHENTICATION_BACKENDS = (
           "freppledb.common.auth.MultiDBBackend",
-          # Add the the following line.
           "freppledb.external_auth.auth.CustomAuthenticationBackend",
-          )
+      )
+      SITE_ID = 1
+      LOGIN_URL = "/accounts/auth0/login/"
+      LOGIN_REDIRECT_URL = "/"
+      LOGOUT_REDIRECT_URL = "/accounts/logout/"
+      ACCOUNT_EMAIL_VERIFICATION = "none"
+      SOCIALACCOUNT_AUTO_SIGNUP = True
+      SOCIALACCOUNT_ADAPTER = (
+          "freppledb.external_auth.auth.CustomAccountAdapter"
+      )
+      ACCOUNT_ADAPTER = "freppledb.external_auth.auth.CustomAdapter"
+      SOCIALACCOUNT_PROVIDERS = {
+          "auth0": {"AUTH0_URL": "your-tenant.auth0.com"},
+      }
+      ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
+      DEFAULT_USER_GROUP = "Planner"
 
-        # Add new settings at the end of the file
-        SITE_ID = 1
-        LOGIN_URL = "/accounts/auth0/login/"  # For oauth
-        LOGIN_REDIRECT_URL = "/accounts/auth0/login/"  # For oauth
-        # LOGIN_URL = "/accounts/microsoft/login/"  # For Microsoft
-        # LOGIN_REDIRECT_URL = "/accounts/microsoft/login/"  # For Microsoft
-        LOGOUT_REDIRECT_URL = "/accounts/logout/"
-        ACCOUNT_LOGOUT_ON_GET = True
-        ACCOUNT_EMAIL_VERIFICATION = "none"
-        SOCIALACCOUNT_AUTO_SIGNUP = True
-        SOCIALACCOUNT_LOGIN_ON_GET = True
-        SOCIALACCOUNT_ADAPTER = 'freppledb.external_auth.auth.CustomAccountAdapter'
-        ACCOUNT_ADAPTER = 'freppledb.external_auth.auth.CustomAdapter'
-        SOCIALACCOUNT_PROVIDERS = {
-              # For oauth:
-              "auth0": {
-                  "AUTH0_URL": "<URL-OF-YOUR-OAUTH-PROVIDER>", # UPDATE!!!
-              },
-              # For Microsoft:
-              # "microsoft": {
-              #   "tenant": "<INSERT-YOUR-TENANT-ID>",
-              #   "client_id": "<INSERT-YOUR-CLIENT-ID>",
-              # },
-            }
-        DEFAULT_USER_GROUP = "Planner" # New users are automatically added to this group
+   Review account signup and linking policies for your organization. The
+   settings above are an example, not a complete identity-security policy.
 
-        # The following settings may be needed to satisfy the CORS
-        # requirements with the authentication provider.
-        # Don't copy these lines blindly but carefully review what is really needed.
-        CONTENT_SECURITY_POLICY = "frame-ancestors 'self' <URL-OF-EXTERNAL-APP>;"
-        X_FRAME_OPTIONS = None
-        SESSION_COOKIE_SAMESITE = "none"
-        CSRF_COOKIE_SAMESITE = "none"
-
-        # The following settings are needed when you use a HTTPS proxy.
-        # Don't copy these lines blindly but carefully review what is really needed.
-        SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-        ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
-
-#. Migrate the database structure for the new apps.
+#. Restart the application so it loads the new apps and applies their
+   migrations. Inspect the migration logs, or run the migration explicitly
+   in the maintenance window:
 
    .. code-block:: bash
 
-      frepplectl migrate
+      docker compose exec frepple frepplectl migrate --noinput
 
-#. | Configure the authentication.
-   | A few database records need to be created.
+#. In the administration screens, set the site with ID 1 to your public
+   hostname. Create a social application for the Auth0 provider, enter the
+   client ID and secret, and associate it with that site. Do not define the
+   same provider credentials both here and in allauth's settings-based
+   application configuration.
 
-   .. code-block:: bash
+#. Create the ``Planner`` group and assign the minimum permissions that new
+   users should receive. Do this before allowing external users to sign in.
+   The standard frePPLe configuration can grant superuser access to new
+   users when no effective default group is configured.
 
-      frepplectl dbshell
+#. Test with a non-administrator account. Verify login, logout, group
+   assignment and access to each scenario. Keep a tested administrative
+   recovery route while introducing external authentication.
 
-      sql> insert into django_site
-        (id, domain, name)
-        values(1, '<DOMAIN-OF-YOUR-FREPPLE-INSTALL>', '<DOMAIN-OF-YOUR-FREPPLE-INSTALL>')    -- UPDATE !!!
-        on conflict (id)
-        do update set domain=excluded.domain, name=excluded.name;
+Authentication establishes who the user is; authorization controls what
+that user can do. Provider-specific authorization rules may require a custom
+adapter in a derived image.
 
-      sql> insert into socialaccount_socialapp
-        (id, provider, provider_id, name, client_id, secret, key, settings)
-        values
-        (1, 'auth0', 'auth0' 'auth0',
-        '<OAUTH-CLIENT>',   -- UPDATE !!!
-        '<OAUTH-CLIENT-SECRET>', -- UPDATE !!!
-        'frepple2',
-        '{}'
-        );
+Use the HTTPS configuration in :ref:`installation-https`. Don't relax
+frame policies or same-site cookies simply because OAuth is enabled. If
+embedding frePPLe in another application requires cross-site cookies,
+review those settings explicitly and require secure cookies over HTTPS.
 
-      sql> insert into socialaccount_socialapp_sites
-        (socialapp_id, site_id)
-        values (1, 1);
+Startup customization
+---------------------
 
+The container entrypoint normally initializes the database and starts
+supervisor, which manages nginx, the application server and the scheduler.
 
-#. | Define which access rights you want to assign to newly added users.
-   | Use the "admin/groups" screen to define a group called "Planner", and
-     assign the correct permissions to the group.
-   | Hint: Define only a minimal set of permissions to the group. You can
-     always grant additional permissions later on to the handful of
-     super-users that need those.
+For additional startup actions, place executable scripts in
+``/etc/frepple/entrypoint.d``. The entrypoint executes them with
+``run-parts`` before supervisor starts.
 
-#. | Authorization is a different topic, closely related to authentication.
-   | Authentication determines whether users are who they claim to be.
-   | Authorization determines what users can and cannot access.
-   | Authorization can be handled externally or in frePPLe. The file
-     https://github.com/frePPLe/frepple/blob/master/freppledb/external_auth/auth.py
-     may need to be tailored to handle your requirements.
+* Use names accepted by ``run-parts``, for example ``10-custom-setup``
+  rather than ``10-custom-setup.sh``.
+* Scripts run as the unprivileged ``frepple`` user. They must be executable
+  and must not require root access.
+* Make scripts safe to run on every start. A failing script prevents normal
+  startup; report failures rather than silently ignoring them.
+* These hooks run after the built-in database initialization. They cannot
+  replace configuration needed for that initialization.
+
+Alternatively, pass a command to run instead of supervisor:
+
+.. warning::
+
+   A command passed to the container still goes through the normal entrypoint,
+   including database creation and migrations when a database connection is
+   configured. The custom startup hooks are skipped in this mode.
+
+   For a command that must bypass initialization, explicitly override the
+   entrypoint. For commands against an already-running installation, prefer
+   ``docker compose exec``.
+
+.. code-block:: bash
+
+   docker compose run --rm --no-deps frepple ls /etc/frepple
+
+Kubernetes and other orchestrators
+----------------------------------
+
+The same container can be deployed with an orchestrator, provided database
+initialization, persistent storage, credentials, ingress and the singleton
+scheduler are handled deliberately.
+
+The repository contains
+`example Kubernetes manifests <https://github.com/frePPLe/frepple/tree/master/contrib/kubernetes>`_.
+They are a starting point, not an equivalent production deployment guide:
+review their image tags, storage sizing, credentials and mounts against the
+current :doc:`reference`. In particular, legacy Apache mounts do not apply
+to the current nginx-based image. Don't apply these examples unchanged to a
+production cluster.

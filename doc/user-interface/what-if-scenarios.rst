@@ -44,9 +44,8 @@ Only scenarios to which you have access rights will be shown in the list.
 Scenario management
 -------------------
 
-During the installation a number of what-if slots (3 by default for on-premise installations,
-6 on Cloud Edition) are configured by the administrator. See :doc:`this page </installation-guide/multi-model>` for the
-details.
+The installation configures a number of scenarios slots by default. You control
+the use of these scenarios through the execution screen.
 
 The scenario's can have the following states:
 

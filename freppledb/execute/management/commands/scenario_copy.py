@@ -21,10 +21,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+from datetime import datetime
 import os
+from pathlib import Path
 import shutil
 import subprocess
-from datetime import datetime
 import time
 
 
@@ -791,12 +792,13 @@ class Command(BaseCommand):
             return None
 
         # Look for dump files in the log folder of production
-        dumps = []
-        for f in sorted(os.listdir(settings.FREPPLE_LOGDIR)):
-            if os.path.isfile(
-                os.path.join(settings.FREPPLE_LOGDIR, f)
-            ) and f.lower().endswith(".dump"):
-                dumps.append(f)
+        dumps = sorted(
+            [
+                f.name
+                for f in Path(settings.FREPPLE_LOGDIR).glob("*.dump")
+                if f.is_file()
+            ]
+        )
 
         return render_to_string(
             "commands/scenario_copy.html",

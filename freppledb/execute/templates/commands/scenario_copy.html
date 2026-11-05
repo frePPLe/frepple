@@ -111,7 +111,7 @@
 {% setting "MAX_NUMBER_OF_SCENARIOS" as max_scenarios %}
 <tr>
   <td colspan="{% if THEMES|length > 1 %}5{% else %}4{% endif %}" style="padding: 10px; text-align: left;">
-      <button id="addScenarioBtn" class="btn btn-sm btn-primary" 
+      <button id="addScenarioBtn" class="btn btn-sm btn-primary"
         data-bs-toggle="tooltip" data-bs-placement="right" data-bs-offset="0,5"
         data-bs-title="{% blocktranslate %}Add a new scenario (max {{ max_scenarios }}){% endblocktranslate %}">
         <i class="fa fa-plus"></i>
@@ -139,15 +139,15 @@ function handleScenarioAction(action) {
   $removeBtn.prop("disabled", true);
 
   $.ajax({
-    url: `/default/execute/scenario_${action}/`,
+    url: `{url_prefix}execute/scenario_${action}/`,
     type: "POST",
     success: function () {
       $("#scenariotoast span").text(`Launched ${action} scenario task`);
       bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0], { delay: 5000 }).show();
       // Reload the page. This can take while since the web server needs reloading.
       setTimeout(function () {
-        location.reload(); 
-      }, 1000); 
+        location.reload();
+      }, 1000);
     },
     error: function (xhr) {
       const errorMsg = xhr.responseText || `An error occurred while ${action}ing scenario`;
@@ -174,7 +174,7 @@ $(".scenariorelease").on("click", function(event) {
    success: function() {
      $("#scenariotoast span").text("Launched releasing task");
      bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0]).show();
-     if (target == url_prefix) window.location.href = "/"; 
+     if (target == url_prefix) window.location.href = "/";
    },
    fail: function() {
     console.log("FAILED");
@@ -222,7 +222,7 @@ $(".scenariocopy").on("click", function(event) {
 $(".scenariolabel").on("change", function(event) {
   event.preventDefault();
   $.ajax({
-   url: "/default/execute/launch/scenario_copy/",
+   url: `${url_prefix}/execute/launch/scenario_copy/`,
    type: 'POST',
    data: {
      update: 1,
@@ -235,7 +235,7 @@ $(".scenario_theme").click(function() {
   event.preventDefault();
   var b = $(this);
   $.ajax({
-   url: "/default/execute/launch/scenario_copy/",
+   url: `${url_prefix}/execute/launch/scenario_copy/`,
    type: 'POST',
    data: {
      scenario: b.closest("div").attr("data-bs-target"),

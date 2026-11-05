@@ -545,7 +545,7 @@ def preferences(request):
                     )
                     # Redirect to clear POST data and prevent validation errors on next submission
                     # update_session_auth_hash keeps the user logged in
-                    return HttpResponseRedirect(request.path)
+                    return HttpResponseRedirect(f"{request.prefix}{request.path}")
                 # Update the personalization
                 if newdata["personalization"]:
                     tmp = newdata["personalization"].split("-", 1)
@@ -585,7 +585,7 @@ def preferences(request):
             "THEMES": settings.THEMES,
             "LANGUAGE": LANGUAGE,
             "SCENARIOS": Scenario.objects.using(DEFAULT_DB_ALIAS)
-            .filter(status="In use")
+            .filter(status="In use", name__in=request.user.databases)
             .order_by("name"),
             "USERS": User.objects.using(DEFAULT_DB_ALIAS)
             .order_by("username")

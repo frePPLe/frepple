@@ -42,93 +42,6 @@ import django.contrib.admindocs
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 
-
-def readDatabaseParameters(
-    database=None,
-    host=None,
-    port=None,
-    user=None,
-    password=None,
-):
-    # Default values
-    parameters = {
-        "CURRENCY": ("", " $"),
-        "DATE_STYLE": "year-month-day",
-        "DATE_STYLE_WITH_HOURS": True,
-        "SCENARIOS": 3,
-        "APPS_FROM_DB": [],
-    }
-    connection = None
-    try:
-        import psycopg2
-
-        if not database:
-            return {}
-        conn_params = {"database": database}
-        if user:
-            conn_params["user"] = user
-        if password:
-            conn_params["password"] = password
-        if host:
-            conn_params["host"] = host
-        if port:
-            conn_params["port"] = port
-
-        connection = psycopg2.connect(**conn_params)
-
-        # Update defaults from the database
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
-                select
-                name, value
-                from common_parameter
-                where name in %s
-                """,
-                (
-                    (
-                        "scenarios",
-                        "optional_apps",
-                        "currency",
-                        "date_format",
-                        "display_time",
-                    ),
-                ),
-            )
-            for para, val in cursor:
-                if para == "date_format":
-                    if val.strip() in (
-                        "month-day-year",  # US format
-                        "day-month-year",  # European format
-                    ):
-                        parameters["DATE_STYLE"] = val.strip()
-                    # else: international format, default
-                elif para == "display_time":
-                    parameters["DATE_STYLE_WITH_HOURS"] = val.lower() != "false"
-                elif para == "currency":
-                    val = val.split(",", 2)
-                    if len(val) < 2:
-                        parameters["CURRENCY"] = ("", " %s" % escape(val[0]))
-                    else:
-                        parameters["CURRENCY"] = (
-                            "%s " % escape(val[0]),
-                            " %s" % escape(val[1]),
-                        )
-                elif para == "scenarios":
-                    try:
-                        parameters["SCENARIOS"] = int(val)
-                    except Exception:
-                        pass
-                elif para == "optional_apps" and val:
-                    parameters["APPS_FROM_DB"]
-    except Exception:
-        pass
-    finally:
-        if connection is not None:
-            connection.close()
-    return parameters
-
-
 # FREPPLE_APP directory
 if "FREPPLE_APP" in os.environ:
     FREPPLE_APP = os.environ["FREPPLE_APP"]
@@ -241,15 +154,30 @@ LANGUAGES = (
     ("uk", _("Ukrainian")),
 )
 
+# Default currency format
+# The value we read from the database overrides this default setting.
+CURRENCY = ("", " $")
+
 # We provide 3 options for formatting dates (and you always add your own).
 #  - month-day-year: US format
 #  - day-month-year: European format
 #  - year-month-day: international format. This is the default
 # As option you can choose to hide the hour, minutes and seconds.
-DATE_STYLE = os.environ.get("FREPPLE_DATE_STYLE", "year-month-day")
-DATE_STYLE_WITH_HOURS = (
-    os.environ.get("FREPPLE_DATE_STYLE_WITH_HOURS", "false").lower() == "true"
-)
+# The value we read from the database overrides this default setting.
+DATE_STYLE = "year-month-day"
+DATE_STYLE_WITH_HOURS = True
+
+# Minimum and maximum number of scenarios.
+MIN_NUMBER_OF_SCENARIOS = 2
+MAX_NUMBER_OF_SCENARIOS = 30
+
+# The default number of scenarios.
+# Once the database is initialized we read the setting from the database.
+SCENARIOS = 3
+
+# Scenario names based on the number of scenarios.
+# Keep the first scenario as "default".
+SCENARIO_NAMES = ["default" if i == 0 else f"scenario{i}" for i in range(MAX_NUMBER_OF_SCENARIOS)]
 
 # Memory cache
 CACHES = {
@@ -615,8 +543,82 @@ if os.access(os.path.join(FREPPLE_CONFIGDIR, "localsettings.py"), os.R_OK):
     with open(os.path.join(FREPPLE_CONFIGDIR, "localsettings.py")) as mysettingfile:
         exec(mysettingfile.read(), globals())
 
+# Read database configurable settings
+APPS_FROM_DB = []
+connection = None
+try:
+    import psycopg2
+
+    if POSTGRES_DB_PREFIX:
+        conn_params = {"database": f"{POSTGRES_DB_PREFIX}{'_test' if TESTING else ''}0"}
+        if POSTGRES_USER:
+            conn_params["user"] = POSTGRES_USER
+        if POSTGRES_PASSWORD:
+            conn_params["password"] = POSTGRES_PASSWORD
+        if POSTGRES_HOST:
+            conn_params["host"] = POSTGRES_HOST
+        if POSTGRES_PORT:
+            conn_params["port"] = POSTGRES_PORT
+        connection = psycopg2.connect(**conn_params)
+        del conn_params
+
+        # Update defaults from the database
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                select
+                name, value
+                from common_parameter
+                where name in %s
+                """,
+                (
+                    (
+                        "scenarios",
+                        "optional_apps",
+                        "currency",
+                        "date_format",
+                        "display_time",
+                    ),
+                ),
+            )
+            for para, val in cursor:
+                if para == "date_format":
+                    if val.strip() in (
+                        "month-day-year",  # US format
+                        "day-month-year",  # European format
+                    ):
+                        DATE_STYLE = val.strip()
+                    # else: international format, default
+                elif para == "display_time":
+                    DATE_STYLE_WITH_HOURS = val.lower() != "false"
+                elif para == "currency":
+                    val = val.split(",", 2)
+                    if len(val) < 2:
+                        CURRENCY = ("", " %s" % escape(val[0]))
+                    else:
+                        CURRENCY = (
+                            "%s " % escape(val[0]),
+                            " %s" % escape(val[1]),
+                        )
+                elif para == "scenarios":
+                    try:
+                        SCENARIOS = int(val)
+                    except Exception:
+                        pass
+                elif para == "optional_apps" and val:
+                    APPS_FROM_DB = val
+            del para, val
+except Exception:
+    pass
+finally:
+    if connection is not None:
+        connection.close()
+del connection
+
+SCENARIOS = max(MIN_NUMBER_OF_SCENARIOS, min(SCENARIOS, MAX_NUMBER_OF_SCENARIOS))
+
 DATABASES = {
-    "default" if i == 0 else f"scenario{i}": {
+    SCENARIO_NAMES[i]: {
         "ENGINE": "freppledb.common.postgresql",
         # Database name
         "NAME": f"{POSTGRES_DB_PREFIX}{i}",

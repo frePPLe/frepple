@@ -98,20 +98,17 @@ APPS = [
     {"name": "freppledb.executesql", "status": "optional"},
 ]
 
-# Read database configurable settings
-globals().update(
-    readDatabaseParameters(
-        database=f"{POSTGRES_DB_PREFIX}{'_test' if TESTING else ''}0",
-        host=POSTGRES_HOST,
-        port=POSTGRES_PORT,
-        user=POSTGRES_USER,
-        password=POSTGRES_PASSWORD,
-    )
-)
-
+# Minimum and maximum number of scenarios.
 MIN_NUMBER_OF_SCENARIOS = 2
 MAX_NUMBER_OF_SCENARIOS = 30
-SCENARIOS = max(MIN_NUMBER_OF_SCENARIOS, min(SCENARIOS, MAX_NUMBER_OF_SCENARIOS))
+
+# The default number of scenarios.
+# Once the database is initialized we read the setting from the database.
+SCENARIOS = 3
+
+# Scenario names.
+# Keep the first scenario as "default".
+SCENARIO_NAMES = ["default" if i == 0 else f"scenario{i}" for i in range(MAX_NUMBER_OF_SCENARIOS)]
 
 # Google analytics code to report usage statistics to.
 # The value None disables this feature.
@@ -121,33 +118,33 @@ GOOGLE_ANALYTICS = None
 # Configuring them here is more secure and eases automated deployments.
 ODOO_URL = {
     "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_URL", None)
-    for i in range(SCENARIOS)
+    for i in range(MAX_NUMBER_OF_SCENARIOS)
 }
 ODOO_DB = {
     "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_DB", None)
-    for i in range(SCENARIOS)
+    for i in range(MAX_NUMBER_OF_SCENARIOS)
 }
 ODOO_USER = {
     "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_USER", None)
-    for i in range(SCENARIOS)
+    for i in range(MAX_NUMBER_OF_SCENARIOS)
 }
 ODOO_COMPANY = {
     "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_COMPANY", None)
-    for i in range(SCENARIOS)
+    for i in range(MAX_NUMBER_OF_SCENARIOS)
 }
 ODOO_SINGLECOMPANY = {
     "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_SINGLECOMPANY", None)
-    for i in range(SCENARIOS)
+    for i in range(MAX_NUMBER_OF_SCENARIOS)
 }
 ODOO_PASSWORDS = {
     "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_PASSWORD", None)
-    for i in range(SCENARIOS)
+    for i in range(MAX_NUMBER_OF_SCENARIOS)
 }
 
 # If passwords are set in this file they will be used instead of the ones set in the database parameters table
 OPENBRAVO_PASSWORDS = {
     "default" if i == 0 else f"scenario{i}": os.environ.get("OPENBRAVO_PASSWORD", "")
-    for i in range(SCENARIOS)
+    for i in range(MAX_NUMBER_OF_SCENARIOS)
 }
 
 if "FREPPLE_TIME_ZONE" in os.environ:

@@ -2,68 +2,89 @@
 Installation
 ============
 
-Use the Compose configuration in :doc:`quick-start` as the starting point for
-a production deployment. This page describes the changes and checks needed
-before putting that installation into service.
+The instructions in the :doc:`quick-start` remain valid for a production deployment.
+This page provides some additional steps and considerations to make your installation
+secure and performant.
 
-The frePPLe container includes the planning engine, nginx, the application
-server and the task scheduler. PostgreSQL is a separate service. Keep one
-frePPLe application container per deployment unless you have designed and
-validated a different arrangement; adding replicas is not a substitute for
-sizing the planning engine and database.
+* :ref:`tune-postgresql`
+* :ref:`external-postgres`
+* :ref:`configure-https`
+* :ref:`persistent-data`
+* :ref:`configure_smtp`
+* :ref:`installation-enterprise`
+* :ref:`deploy_customizations`
+* :ref:`go_live_checklist`
 
-Prepare the deployment
-----------------------
 
-#. Check :doc:`pre-requisites` and size the host for your actual model.
-#. Select a specific frePPLe image version and a maintained PostgreSQL
-   version. Record the versions in your deployment configuration.
-#. Store ``compose.yml``, custom image sources and non-secret configuration
-   in version control. Keep ``.env``, license files, database dumps and
-   credentials out of version control.
-#. Decide which storage to use for PostgreSQL, ``/etc/frepple`` and
-   ``/var/log/frepple``. These must survive container replacement.
-#. Arrange a maintenance window, backups, monitoring and an HTTPS endpoint.
 
-Keep the Compose project name and deployment directory stable. A different
-project name can select a new set of named volumes, making an existing
-installation appear empty.
+.. _tune-postgresql:
 
-.. _installation-external-postgres:
+Tune PostgreSQL
+~~~~~~~~~~~~~~~
 
-Configure PostgreSQL
---------------------
+This is definitely your first step forward.
 
-For production, use a dedicated application role instead of connecting as a
-PostgreSQL superuser.
+The default PostgreSQL configuration is only suitable for small databases and
+simple queries. Any real-world frepple deployment will be need a database with
+4GB or 8GB of memory.
 
-For example, a database administrator can create the role as follows,
-substituting a strong password:
+Use `PGTune <https://pgtune.leopard.in.ua/>`_ to get the correct parameters for
+the memory size you allocate to the database. In pgtune, choose "data warehouse"
+as the workload type.
+
+If you run PostgreSQL locally, apply the recommendations from pgtune by editing
+the database configuration file ``postgresql.conf``.
+
+If you are running postgresql as a container, you implement the recommendations
+from pgtune in the compose file.
+
+.. code-block:: yaml
+
+   services:
+   db:
+      image: postgres:18
+      restart: always
+      shm_size: 4g  # Memory you give as available in pgtune
+      environment:
+         POSTGRES_PASSWORD: secretpassword
+      command: >
+         postgres
+         -c max_connections=200
+         -c shared_buffers=1GB
+         -c effective_cache_size=3GB
+         -c maintenance_work_mem=512MB
+         -c checkpoint_completion_target=0.9
+         -c wal_buffers=16MB
+         -c default_statistics_target=500
+         -c random_page_cost=1.1
+         -c effective_io_concurrency=200
+         -c work_mem=14198kB
+         -c min_wal_size=4GB
+         -c max_wal_size=16GB
+         -c huge_pages = off
+         -c wal_compression=lz4
+         -c io_method = io_uring
+
+
+.. _external-postgres:
+
+Run your own postgresql
+-----------------------
+
+Many administrators will prefer to run PostgreSQL locally on the host machine
+or as a managed database cloud service (like Amazon RDSor Microsoft Azure). It offers
+improved performance, monitoring and maintenance advantages over a deployment as
+a container.
+
+To make such a PostgreSQL database accessible to frepple, your need to create
+a database role.
 
 .. code-block:: sql
 
    CREATE ROLE frepple WITH LOGIN PASSWORD 'replace-with-a-random-password'
      CREATEDB CREATEROLE;
 
-FrePPLe creates the configured databases at startup if they don't already
-exist. The application role must own its databases and the objects in them,
-and must be able to create and configure the restricted reporting role
-(``report_role`` by default). Database migrations configure this role for
-custom SQL reports and SQL-file processing.
-
-Where your database service restricts role or database creation, have the
-database administrator provision the databases and reporting role and grant
-the required privileges. Validate migrations, scenario copying and custom
-reports before going live. Don't work around missing permissions by
-disabling the reporting role: that would allow custom SQL to run with the
-application's full database privileges.
-
-The default database names are ``frepple0``, ``frepple1`` and ``frepple2``.
-The application calls these ``default``, ``scenario1`` and ``scenario2``.
-``POSTGRES_DB_PREFIX`` changes the prefix; it doesn't name a single database.
-Extra scenario slots require extra databases.
-
-For an external database, change the frePPLe service's environment:
+You will need to pass the following environment variables to the frepple container:
 
 .. code-block:: yaml
 
@@ -73,34 +94,99 @@ For an external database, change the frePPLe service's environment:
      POSTGRES_USER: frepple
      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
      POSTGRES_DB_PREFIX: frepple
-     FREPPLE_TIME_ZONE: UTC
 
-Remove the ``depends_on`` entry for the bundled PostgreSQL service, and omit
-that service and its volume from the Compose file if they are no longer used.
+The frepple container automatically creates the configured databases
+at startup if they don't already exist. If they already exist, the frepple
+container takes also care of migrating to database schema to the release you
+are deploying.
 
-* Use the database service's DNS name, not ``localhost``: inside the
-  application container, ``localhost`` is the application container itself.
-* Restrict database access to the application network in the firewall and
-  PostgreSQL's ``pg_hba.conf``.
-* Use UTF-8 encoding. The connection timezone should match frePPLe's
-  ``TIME_ZONE``; the transaction isolation level is ``read committed``.
-* Configure database connection encryption as required by your database
-  service. See PostgreSQL's
-  `libpq SSL documentation <https://www.postgresql.org/docs/current/libpq-ssl.html>`_
-  for certificate verification and connection options.
+If you are using the docker compose file from the quick start guide, can now
+remove the postgres service from the file. It will looks as follows:
 
-Tune PostgreSQL
-~~~~~~~~~~~~~~~
+.. code-block:: yaml
 
-The default PostgreSQL configuration isn't tuned for planning workloads.
-Use `PGTune <https://pgtune.leopard.in.ua/>`_ with the data warehouse workload
-as a starting point, then validate with your model.
+   services:
+     frepple:
+       image: ghcr.io/frepple/frepple-{FREPPLE_EDITION:?Set FREPPLE_EDITION in .env}:${FREPPLE_VERSION:?Set FREPPLE_VERSION in .env}
+       restart: unless-stopped
+       ports:
+         - "127.0.0.1:9000:80"
+       environment:
+         POSTGRES_HOST: database.example.com
+         POSTGRES_PORT: "5432"
+         POSTGRES_USER: frepple
+         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+         POSTGRES_DB_PREFIX: frepple
+         FREPPLE_TIME_ZONE: UTC
+       volumes:
+         - frepple-config:/etc/frepple
+         - frepple-data:/var/log/frepple
+         - frepple-packages:/usr/share/frepple/python_packages
+       logging:
+         driver: json-file
+         options:
+           max-size: "10m"
+           max-file: "3"
 
-Budget memory for the database, the planning engine and concurrent tasks
-together. Review ``max_connections`` across all active scenarios and web
-workers; the old deployment guidance suggested around 400 rather than the
-default 100, but the appropriate value depends on workload and available
-memory.
+   volumes:
+     frepple-config:
+     frepple-data:
+     frepple-packages:
+
+If you postgres on the docker host, use the host's IP address, hostname or
+ "host.docker.internal" instead of ``localhost`` as the database host.
+
+We recommend using UTF-8 encoding for the database.
+
+
+.. _configure-https:
+
+Configure HTTPS
+---------------
+
+There is a mad world on the internet. Securing your network traffic
+is a must for any serious web application.
+
+To configure HTTPS on your frePPLe deployment, you have 2 options.
+Either you configure HTTPS directly in the frePPLe container, either
+you use a reverse proxy in front of the frePPLe container.
+
+If you want to configure HTTPS directly in the frePPLe container, you
+need to customize the configuration of the nginx web server that is
+included in the frepple container. You find the configuration file at
+``/etc/frepple/nginx.conf``. You'll find enough examples on the web
+for configuring HTTPS with nginx.
+
+Terminating HTTPS at a reverse proxy in front of the frePPLe container
+is the second approach. The frepple container then only handles
+unencrypted traffic from the proxy.
+Set these variables on the frePPLe service as shown below. Also edit
+the ``/etc/frepple/nginx.conf`` file and change the directive
+``proxy_set_header X-Forwarded-Proto $scheme;``
+to directive ``proxy_set_header X-Forwarded-Proto https;``.
+
+.. code-block:: yaml
+
+   FREPPLE_CSRF_TRUSTED_ORIGINS: "https://planning.example.com"
+   FREPPLE_SECURE_PROXY_SSL_HEADER: "HTTP_X_FORWARDED_PROTO https"
+   FREPPLE_SESSION_COOKIE_SECURE: "true"
+   FREPPLE_CSRF_COOKIE_SECURE: "true"
+
+
+
+
+
+
+
+
+
+
+
+REVIEWED UP TO HERE
+
+
+
+.. _persistent-data:
 
 Manage persistent configuration
 -------------------------------
@@ -151,58 +237,6 @@ not load a changed environment.
    entrypoint. Review these against the new image on every upgrade.
    Persisting configuration does not automatically merge new defaults.
 
-.. _https:
-.. _proxy:
-.. _installation-https:
-
-Configure HTTPS and a reverse proxy
------------------------------------
-
-Terminate HTTPS at a reverse proxy in front of the frePPLe container.
-When the proxy runs on the Docker host, the quick start's
-``127.0.0.1:9000:80`` mapping keeps the unencrypted backend local.
-When the proxy runs in another container, connect it to the application
-network and forward to ``frepple:80`` instead; its ``localhost`` is not
-the Docker host.
-
-Configure the proxy to:
-
-* Present a valid TLS certificate for the public hostname.
-* Preserve the original ``Host`` header.
-* Support WebSocket upgrades for ``/ws/`` paths and forward ``/svc/`` paths.
-* Allow the upload sizes and request timeouts needed by your planning process.
-* Set, rather than trust client-supplied, forwarded headers.
-
-Set these variables on the frePPLe service, substituting your public URL:
-
-.. code-block:: yaml
-
-   FREPPLE_CSRF_TRUSTED_ORIGINS: "https://planning.example.com"
-   FREPPLE_SECURE_PROXY_SSL_HEADER: "HTTP_X_FORWARDED_PROTO https"
-   FREPPLE_SESSION_COOKIE_SECURE: "true"
-   FREPPLE_CSRF_COOKIE_SECURE: "true"
-
-.. important::
-
-   The image's nginx configuration sets ``X-Forwarded-Proto`` to its own
-   connection scheme. With an external TLS terminator, that scheme is
-   normally HTTP. Setting the environment variables above alone isn't
-   sufficient.
-
-   In ``/etc/frepple/nginx.conf``, adapt the existing
-   ``proxy_set_header X-Forwarded-Proto $scheme;`` directive. For a backend
-   reachable only through an HTTPS endpoint, it can be set to
-   ``proxy_set_header X-Forwarded-Proto https;``. If you instead preserve
-   an incoming forwarded header, ensure only the trusted proxy can reach
-   the backend and that the proxy overwrites that header.
-
-   Test the configuration with
-   ``docker compose exec frepple nginx -t -c /etc/frepple/nginx.conf``
-   before restarting the container.
-
-Also restrict ``ALLOWED_HOSTS`` in ``localsettings.py``. Verify login, logout,
-uploads, generated links and the plan editor through the public HTTPS URL.
-Do not expose an alternate HTTP route that bypasses these controls.
 
 .. _installation-enterprise:
 
@@ -238,6 +272,15 @@ the license into a distributable image or commit it to source control.
 
 Recreate the service with ``docker compose up -d`` and check the edition and
 license information in *Help / About frePPLe*.
+
+.. _configure_smtp:
+
+Configure email server
+----------------------
+
+
+
+.. _deploy_customizations:
 
 Deploy custom applications
 --------------------------
@@ -289,6 +332,8 @@ Keep the application source, dependency pins, Dockerfile and non-secret
 configuration together in version control. A configuration volume from an
 older deployment hides configuration baked into the new image; apply the
 app registration to that volume as well.
+
+.. _go_live_checklist:
 
 Go-live checklist
 -----------------

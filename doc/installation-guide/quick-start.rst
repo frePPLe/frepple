@@ -56,7 +56,6 @@ Save the following as ``compose.yml``:
          POSTGRES_USER: frepple
          POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
          POSTGRES_DB_PREFIX: frepple
-         FREPPLE_TIME_ZONE: UTC
        volumes:
          - frepple-config:/etc/frepple
          - frepple-data:/var/log/frepple

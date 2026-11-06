@@ -139,7 +139,7 @@ function handleScenarioAction(action) {
   $removeBtn.prop("disabled", true);
 
   $.ajax({
-    url: `{url_prefix}execute/scenario_${action}/`,
+    url: `${url_prefix}execute/scenario_${action}/`,
     type: "POST",
     success: function () {
       $("#scenariotoast span").text(`Launched ${action} scenario task`);

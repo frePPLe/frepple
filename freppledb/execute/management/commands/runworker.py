@@ -322,7 +322,7 @@ class Command(BaseCommand):
         totallogs = 0
         filelist = []
         for x in os.listdir(settings.FREPPLE_LOGDIR):
-            if x.endswith((".log", ".dump")):
+            if x.endswith((".log", ".log.gz", ".dump")):
                 filename = os.path.join(settings.FREPPLE_LOGDIR, x)
                 # needs try/catch because log files may still be open or being used
                 try:

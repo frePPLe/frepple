@@ -25,6 +25,7 @@ import os
 import subprocess
 from datetime import datetime
 import importlib.metadata
+from pathlib import Path
 import platform
 
 from django.core.management.base import BaseCommand, CommandError
@@ -196,15 +197,13 @@ class Command(BaseCommand):
             task.save(using=database)
 
             # Delete backups older than a month
-            for f in os.listdir(settings.FREPPLE_LOGDIR):
-                if os.path.isfile(os.path.join(settings.FREPPLE_LOGDIR, f)):
+            for f in Path(settings.FREPPLE_LOGDIR).glob("*.dump"):
+                if f.is_file():
                     # Note this is NOT 100% correct on UNIX. st_ctime is not always the creation date...
-                    created = datetime.fromtimestamp(
-                        os.stat(os.path.join(settings.FREPPLE_LOGDIR, f)).st_ctime
-                    )
-                    if f.lower().endswith(".dump") and (now - created).days > 31:
+                    created = datetime.fromtimestamp(f.stat().st_ctime)
+                    if (now - created).days > 31:
                         try:
-                            os.remove(os.path.join(settings.FREPPLE_LOGDIR, f))
+                            f.unlink()
                         except Exception:
                             pass
 

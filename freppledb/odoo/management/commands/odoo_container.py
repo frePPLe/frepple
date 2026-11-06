@@ -208,7 +208,7 @@ class Command(BaseCommand):
             if options["odoo_db_port"]:
                 extraargs = extraargs + [
                     "-p",
-                    options["odoo_db_port"],
+                    str(options["odoo_db_port"]),
                 ]
             subprocess.run(
                 [

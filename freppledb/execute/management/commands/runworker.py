@@ -146,7 +146,9 @@ def runTask(task, database):
             for i in shlex.split(task.arguments or ""):
                 if "=" in i:
                     key, val = i.split("=")
-                    kwargs[key.strip("--").replace("-", "_")] = val
+                    param_name = key.strip("--").replace("-", "_")
+                    if param_name not in {"database", "user", "task"}:
+                        kwargs[param_name] = val
                 else:
                     args.append(i)
         child = multiprocessing.get_context("spawn").Process(

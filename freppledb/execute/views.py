@@ -706,7 +706,7 @@ def wrapTask(request, action):
         # Create a task
         arguments = []
         for arg, val in args.lists():
-            if arg != "csrfmiddlewaretoken":
+            if arg not in {"csrfmiddlewaretoken", "database", "user", "task"}:
                 arguments.append("--%s=%s" % (arg, shlex.quote(",".join(val))))
         task = Task(name=action, submitted=now, status="Waiting", user=request.user)
         if arguments:

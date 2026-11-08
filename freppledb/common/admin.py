@@ -214,6 +214,14 @@ class Comment_admin(MultiDBModelAdmin):
     model = Comment
     save_on_top = True
 
+    def get_urls(self):
+        # Hide the urls for the change and delete actions
+        return [
+            url
+            for url in super().get_urls()
+            if url.name not in {f"common_comment_change", f"common_comment_delete"}
+        ]
+
 
 @admin.register(Follower, site=data_site)
 class Follower_admin(MultiDBModelAdmin):

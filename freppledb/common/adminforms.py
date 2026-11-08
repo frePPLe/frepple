@@ -442,28 +442,24 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         return self._response_post_save(request, obj)
 
     def has_add_permission(self, request):
-        return (
-            super().has_add_permission(request)
-            or "add" not in self.opts.model._meta.default_permissions
-        )
+        if "add" not in self.opts.model._meta.default_permissions:
+            return False
+        return super().has_add_permission(request)
 
     def has_change_permission(self, request, obj=None):
-        return (
-            super().has_change_permission(request, obj)
-            or "change" not in self.opts.model._meta.default_permissions
-        )
+        if "change" not in self.opts.model._meta.default_permissions:
+            return False
+        return super().has_change_permission(request, obj)
 
     def has_delete_permission(self, request, obj=None):
-        return (
-            super().has_change_permission(request, obj)
-            or "delete" not in self.opts.model._meta.default_permissions
-        )
+        if "delete" not in self.opts.model._meta.default_permissions:
+            return False
+        return super().has_delete_permission(request, obj)
 
     def has_view_permission(self, request, obj=None):
-        return (
-            super().has_view_permission(request, obj)
-            or "view" not in self.opts.model._meta.default_permissions
-        )
+        if "view" not in self.opts.model._meta.default_permissions:
+            return False
+        return super().has_view_permission(request, obj)
 
     def response_change(self, request, obj):
         """

@@ -174,6 +174,9 @@ class Command(BaseCommand):
                 raise CommandError("Can't copy a schema on itself")
             if sourcescenario.status != "In use":
                 raise CommandError("Source scenario is not in use")
+            if destination == DEFAULT_DB_ALIAS and not promote:
+                raise CommandError("Use promote to copy to the production database")
+
             if destinationscenario.status != "Free" and not force and not promote:
                 # make sure destination scenario is properly built otherwise it is considered Free
                 scenario_is_free = False

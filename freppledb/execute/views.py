@@ -555,15 +555,22 @@ def wrapTask(request, action):
             if not request.user.has_perm("common.copy_scenario"):
                 raise Exception("Missing execution privileges")
             source = args.get("source", request.database)
+            if not source or source not in get_databases():
+                raise Exception(f"Invalid source scenario '{source}'")
+
             worker_database = source
             destination = args.get("destination", False)
+            if not destination or destination not in get_databases():
+                raise Exception(f"Invalid destination scenario '{destination}'")
+            if destination == DEFAULT_DB_ALIAS:
+                raise Exception("Use promote to copy to the production database")
+
             dumpfile = args.get("dumpfile")
             if destination and destination != DEFAULT_DB_ALIAS:
-                force = args.get("force", False)
-                arguments = "%s %s" % (source, destination)
+                arguments = f"{source} {destination}"
                 if dumpfile:
-                    arguments = "--dumpfile=%s %s" % (dumpfile, arguments)
-                if force:
+                    arguments = f"--dumpfile=%s %s" % (dumpfile, arguments)
+                if "force" in args:
                     arguments += " --force"
                 task = Task(
                     name="scenario_copy",

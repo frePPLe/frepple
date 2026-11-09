@@ -10,6 +10,7 @@ API keys make it easy to manage and control access to the frepple APIs.
 Field            Type              Description
 ================ ================= ===========================================================
 name             string            | Free text description of the use of this key.
+                                   | After creation, only this field can still be edited.
 
 created          datetime          | Read-only field with the creation date of this key.
 

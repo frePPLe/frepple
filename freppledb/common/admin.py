@@ -326,6 +326,9 @@ class APIKey_admin(MultiDBModelAdmin):
         }
     ]
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(user=request.user)
+
     def get_changeform_initial_data(self, request):
         max_life = getattr(settings, "APIKEY_MAX_LIFE", 10000)
         return (

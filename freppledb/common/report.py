@@ -1743,7 +1743,7 @@ class GridReport(View):
                 return HttpResponseNotFound("Files must have the same type.")
         else:
             # Saving after inline edits
-            return cls.parseJSONupload(request)
+            return cls.parseJSONupload(request, *args, **kwargs)
 
     @classmethod
     def _validate_crosses(cls, request, prefs):
@@ -2066,7 +2066,7 @@ class GridReport(View):
         raise Http404("This report doesn't support the calendar format")
 
     @classmethod
-    def parseJSONupload(cls, request):
+    def parseJSONupload(cls, request, *args, **kwargs):
         # Check permissions
         if not cls.model or not cls.editable:
             return HttpResponseForbidden(_("Permission denied"))
@@ -2080,6 +2080,15 @@ class GridReport(View):
         data = json.JSONDecoder().decode(
             request.read().decode(request.encoding or settings.DEFAULT_CHARSET)
         )
+        if callable(cls.basequeryset):
+            queryset = cls.basequeryset(request, *args, **kwargs)
+        elif cls.basequeryset is not None:
+            queryset = cls.basequeryset
+        elif cls.model is not None:
+            objs = cls.model.objects.all()
+        else:
+            raise ValueError("Bulk updates require a base queryset or model")
+        queryset = queryset.using(request.database)
         with transaction.atomic(using=request.database, savepoint=False):
             content_type_id = ContentType.objects.get_for_model(
                 cls.model, for_concrete_model=False
@@ -2202,19 +2211,11 @@ class GridReport(View):
                             comment = "Changed %s." % get_text_list(
                                 list(fields.keys()), "and"
                             )
-                            if callable(cls.basequeryset):
-                                objs = cls.basequeryset(request)
-                            elif cls.basequeryset is not None:
-                                objs = cls.basequeryset
-                            elif cls.model is not None:
-                                objs = cls.model.objects.all()
-                            else:
-                                raise ValueError(
-                                    "Bulk updates require a base queryset or model"
-                                )
-                            objs = objs.using(request.database)
+                            objs = queryset
                             if "pk" in data["update"]:
-                                objs.filter(pk__in=data["update"]["pk"]).update(**fields)
+                                objs.filter(pk__in=data["update"]["pk"]).update(
+                                    **fields
+                                )
                                 for o in data["update"]["pk"]:
                                     Comment(
                                         user_id=request.user.id,
@@ -2251,7 +2252,7 @@ class GridReport(View):
                     for key in rec["delete"]:
                         sid = transaction.savepoint(using=request.database)
                         try:
-                            obj = cls.model.objects.using(request.database).get(pk=key)
+                            obj = queryset.get(pk=key)
                             Comment(
                                 user_id=request.user.id,
                                 content_type_id=content_type_id,
@@ -2277,7 +2278,7 @@ class GridReport(View):
                     for key in rec["copy"]:
                         sid = transaction.savepoint(using=request.database)
                         try:
-                            obj = cls.model.objects.using(request.database).get(pk=key)
+                            obj = queryset.get(pk=key)
                             orig_repr = force_str(obj)
                             if isinstance(cls.model._meta.pk, CharField):
                                 # The primary key is a string
@@ -2328,9 +2329,7 @@ class GridReport(View):
                     pk = rec["id"]
                     sid = transaction.savepoint(using=request.database)
                     try:
-                        obj = cls.model.objects.using(request.database).get(
-                            pk=rec["id"]
-                        )
+                        obj = queryset.get(pk=rec["id"])
                         del rec["id"]
                         for i in rec:
                             if (

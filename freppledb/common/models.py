@@ -1939,6 +1939,10 @@ class APIKey(models.Model):
     created = models.DateTimeField(default=timezone.now, editable=False)
     hashed_key = models.CharField(max_length=150, editable=False, unique=True)
 
+    @classmethod
+    def getModelForm(cls, fields, database=DEFAULT_DB_ALIAS):
+        return modelform_factory(cls, fields=[f for f in fields if f == "name"])
+
     def save(self, *args, **kwargs):
         if not self.created:
             self.created = timezone.now()

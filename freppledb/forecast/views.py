@@ -1133,7 +1133,7 @@ class OverviewReport(GridPivot):
                     yield res
 
     @staticmethod
-    def parseJSONupload(request):
+    def parseJSONupload(request, *args, **kwargs):
         raise Exception("No longer used!!!")
 
 

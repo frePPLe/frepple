@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2025-11-05 17:33+0100\n"
+"PO-Revision-Date: 2026-11-09 13:34+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Poedit 3.10\n"
 
 #: common/static/js/frepple.js:201
 msgid "Connection failed"
@@ -2830,7 +2830,7 @@ msgstr "Importer une feuille de calcul"
 
 #: execute/management/commands/loaddata.py:53
 msgid "Load a dataset"
-msgstr "Charger un ensembe de données"
+msgstr "Charger un jeu de données"
 
 #: execute/management/commands/runplan.py:353 execute/widget.py:39
 msgid "Create a plan"
@@ -3140,7 +3140,7 @@ msgstr ""
 
 #: execute/templates/commands/loaddata.html:15
 msgid "Load one of the available datasets."
-msgstr "Charger un ensemble de données d'un fichier."
+msgstr "Charger un des jeux de données disponible."
 
 #: execute/templates/commands/loaddata.html:27
 msgid "Execute plan after loading is done"

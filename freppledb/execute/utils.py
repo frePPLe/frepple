@@ -75,10 +75,10 @@ def updateScenarioCount(addition=True):
             .only("value")
             .get_or_create(
                 pk="scenarios",
-                defaults={"value": str(len(get_databases()))},
+                defaults={"value": str(settings.SCENARIOS)},
             )[0]
         )
-        scenario_count = int(scenario_parameter.value)
+        scenario_count = int(scenario_parameter.value or settings.SCENARIOS)
     except Exception:
         return 4
 
@@ -106,7 +106,7 @@ def updateScenarioCount(addition=True):
 
     # Only update the parameter when all the above is successfull
     scenario_parameter.value = str(scenario_count)
-    scenario_parameter.save(update_fields=["value"])
+    scenario_parameter.save(using=DEFAULT_DB_ALIAS, update_fields=["value"])
     return 0
 
 

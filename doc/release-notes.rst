@@ -7,14 +7,33 @@ Release notes
 This release is scheduled for the end of 2026.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
-This release will bring some bigger and backward incompatible changes.
+For end user the upgrade to v10 will not be any different than
+the incremental changes between minor releases.
 
-- | The emerging next-generation of the planning algorithm is gradually getting
-    in shape. With v10 it will be ready to plan a wide variety of
-    Frepple configurations.
-  | The current solver algorithm will of course still be available.
+The biggest change is in the installation and customization. The
+v10 introduces some backward incompatible changes.
 
-- | Some long-deprecated features will be removed:
+.. rubric:: System administration
+
+- | Frepple is now distributed exclusively as a container image.
+  | The traditional Ubuntu installer is no longer available.
+  | This is a backward incompatible change.
+
+- | The internal structure of the frepple container has been changed
+    significantly to simply maintenance and configuration.
+  | This is a backward incompatible change. You will need to update
+    your dockerfile and container platform accordingly.
+
+- | The format of the djangosettings.py configuration file
+    has changed.
+  | This is a backward incompatible change. We suggest you start
+    from the standard file provided with the new release, and then
+    re-apply your custom modifications.
+
+.. rubric:: Production planning
+
+- | Some long-deprecated features are removed.
+  | This is a backward incompatible change.
 
    - | Transfer batching feature of the solver.
      | This isn't widely used and significantly complicates the solver code.
@@ -29,13 +48,15 @@ This release will bring some bigger and backward incompatible changes.
    - | Status field in the resource detail and inventory detail tables.
      | Only the status on purchase orders, manufacturing orders and distribution orders matters.
 
-- | We may rename some parameters to be more intuitive.
-
-- | December 31st 2030 is a magical date in Frepple that represents the infinite future.
-  | As that date approaches, we're extending the planning horizon so it's
-    no longer a hard limit.
+- | The emerging next-generation of the planning algorithm is gradually getting
+    in shape. With v10 it will be ready to plan a wide variety of
+    Frepple configurations.
+  | The current solver algorithm will of course still be available.
 
 .. rubric:: Data integration
+
+- | December 31st 2030 was a magical date in Frepple that represents the infinite future.
+  | As that date approaches, we've replaced this with December 31st 2100.
 
 - | Bug fix: Since 9.16 data imports dropped the tme component of input data when the parameter
     'display_time' is set to False. That was incorrect: input should still be accepted with time,
@@ -51,17 +72,9 @@ This release will bring some bigger and backward incompatible changes.
 
 .. rubric:: AI
 
-- | The AI MCP server is enriched with new capabilities regarding the forecast:
-  | Addition of the getForecast tool to retrieve forecast data from the AI MCP server.
-  | Addition of the setForecast tool to update forecast data using the AI MCP server.
+- | The AI MCP server is enriched with new capabilities: reading and overriding forecast,
+    displaying the inventory profile of items, displaying the capacity report of resources.
 
-.. rubric:: System administration
-
-- | Frepple is now distributed exclusively as a container image.
-  | The traditional Ubuntu installer is no longer available.
-
-- | The internal structure of the frepple container has been changed
-    significantly to simply maintenance and configuration.
 
 .. rubric:: Documentation
 

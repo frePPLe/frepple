@@ -1519,8 +1519,8 @@ class ExportResourcePlans(PlanTask):
             enddate = frepple.settings.current
         startdate = (startdate - timedelta(days=30)).date()
         enddate = (enddate + timedelta(days=30)).date()
-        if enddate > date(2030, 12, 30):  # This is the max frePPLe can represent.
-            enddate = date(2030, 12, 30)
+        if enddate > date(2100, 12, 30):  # This is the max frePPLe can represent.
+            enddate = date(2100, 12, 30)
         cursor.execute(
             """
             select startdate

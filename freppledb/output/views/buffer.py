@@ -845,7 +845,7 @@ class OverviewReport(GridPivot):
               (select value from calendarbucket
                where calendar_id = 'SS for ' || opplanmat.buffer
                and greatest(d.startdate,arguments.report_startdate) >= coalesce(startdate, '1971-01-01'::timestamp)
-               and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2030-12-31'::timestamp)
+               and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2100-12-31'::timestamp)
                order by priority limit 1),
               -- 2 default value of SS calendar
               (select defaultvalue from calendar where name = 'SS for ' || opplanmat.buffer),
@@ -860,7 +860,7 @@ class OverviewReport(GridPivot):
                  and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.opplan_batch)
                  )
                and greatest(d.startdate,arguments.report_startdate) >= coalesce(startdate, '1971-01-01'::timestamp)
-               and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2030-12-31'::timestamp)
+               and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2100-12-31'::timestamp)
                order by priority limit 1),
               -- 4 default value of minimum calendar
               (select defaultvalue

@@ -745,7 +745,6 @@ class Date {
 
   /* A constant representing the infinite future, i.e. the latest time which
    * we can represent.
-   * This value is currently set to 2030-12-31T00:00:00.
    */
   static const Date infiniteFuture;
 

@@ -99,7 +99,7 @@ class Calendar(AuditModel):
             if not b.startdate:
                 b.startdate = datetime(1971, 1, 1)
             if not b.enddate:
-                b.enddate = datetime(2030, 12, 31)
+                b.enddate = datetime(2100, 12, 31)
             if not b.starttime:
                 b.starttime = time.min
             if not b.endtime:
@@ -290,7 +290,7 @@ class CalendarBucket(AuditModel):
         _("start date"), null=True, blank=True, default=datetime(1971, 1, 1)
     )
     enddate = models.DateTimeField(
-        _("end date"), null=True, blank=True, default=datetime(2030, 12, 31)
+        _("end date"), null=True, blank=True, default=datetime(2100, 12, 31)
     )
     value = models.DecimalField(
         _("value"), default="0.00", blank=True, max_digits=20, decimal_places=8
@@ -315,7 +315,7 @@ class CalendarBucket(AuditModel):
             return self.get(
                 calendar=calendar,
                 startdate=startdate or datetime(1971, 1, 1),
-                enddate=enddate or datetime(2030, 12, 31),
+                enddate=enddate or datetime(2100, 12, 31),
                 priority=priority,
             )
 
@@ -323,7 +323,7 @@ class CalendarBucket(AuditModel):
         return (
             self.calendar,
             self.startdate or datetime(1971, 1, 1),
-            self.enddate or datetime(2030, 12, 31),
+            self.enddate or datetime(2100, 12, 31),
             self.priority,
         )
 
@@ -333,7 +333,7 @@ class CalendarBucket(AuditModel):
         if self.startdate is None:
             self.startdate = datetime(1971, 1, 1)
         if self.enddate is None:
-            self.enddate = datetime(2030, 12, 31)
+            self.enddate = datetime(2100, 12, 31)
         super().validate_unique(exclude=exclude)
 
     def __str__(self):

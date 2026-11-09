@@ -20,16 +20,16 @@ DEMAND	order A3	2016-07-31T00:00:00	10
 DEMAND	order A4	2016-07-31T00:00:00	40
 DEMAND	order B1	2016-01-01T00:00:00	40	later than 2015-12-01T00:00:00
 OPERATION	Purchase item A @ WH5 from Supplier 1	2016-06-01T00:00:00	2016-07-31T00:00:00	100
-PROBLEM	material shortage	Buffer 'item A @ DC1' has material shortage of 10	2016-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'item A @ DC2' has material shortage of 10	2016-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'item A @ WH1' has material shortage of 10	2016-07-31T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'item A @ WH2' has material shortage of 10	2016-07-31T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'item A @ WH3' has material shortage of 10	2016-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'item A @ WH4' has material shortage of 10	2016-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'item A @ WH6' has material shortage of 10	2016-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'item B @ DC1' has material shortage of 10	2016-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'item B @ DC2' has material shortage of 10	2016-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'item B @ WH3' has material shortage of 10	2016-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'item B @ WH4' has material shortage of 10	2016-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'item B @ WH6' has material shortage of 10	2016-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'item A @ DC1' has material shortage of 10	2016-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'item A @ DC2' has material shortage of 10	2016-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'item A @ WH1' has material shortage of 10	2016-07-31T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'item A @ WH2' has material shortage of 10	2016-07-31T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'item A @ WH3' has material shortage of 10	2016-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'item A @ WH4' has material shortage of 10	2016-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'item A @ WH6' has material shortage of 10	2016-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'item B @ DC1' has material shortage of 10	2016-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'item B @ DC2' has material shortage of 10	2016-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'item B @ WH3' has material shortage of 10	2016-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'item B @ WH4' has material shortage of 10	2016-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'item B @ WH6' has material shortage of 10	2016-01-01T00:00:00 / 2100-12-31T00:00:00
 DEMAND CONSTRAINT	order B1	Demand is overdue	2015-12-01T00:00:00 / 2016-01-01T00:00:00

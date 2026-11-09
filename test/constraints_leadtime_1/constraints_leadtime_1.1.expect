@@ -21,5 +21,5 @@ OPERATION	make end item	2009-01-03T00:00:00	2009-01-10T00:00:00	14
 OPERATION	make subassembly	2009-01-01T00:00:00	2009-01-03T00:00:00	2
 OPERATION	make subassembly	2009-01-01T00:00:00	2009-01-03T00:00:00	2
 OPERATION	make subassembly	2009-01-01T00:00:00	2009-01-03T00:00:00	2
-PROBLEM	invalid data	No replenishment defined for 'Raw material @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'Raw material @ factory'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
 DEMAND CONSTRAINT	order 1	Manufacturing lead time on 'make end item'	2008-12-26T00:00:00 / 2009-01-01T00:00:00

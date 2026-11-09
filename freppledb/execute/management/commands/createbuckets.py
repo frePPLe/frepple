@@ -168,7 +168,7 @@ class Command(BaseCommand):
 
             # Hardcoded horizon
             curdate = datetime(2017, 1, 1)
-            enddate = datetime(2030, 1, 1)
+            enddate = datetime(2040, 1, 1)
 
             with transaction.atomic(using=database, savepoint=False):
                 # Delete previous contents
@@ -308,7 +308,7 @@ class Command(BaseCommand):
                 "commands/createbuckets.html",
                 {
                     "startdate": datetime(2017, 1, 1),
-                    "enddate": datetime(2030, 12, 31),
+                    "enddate": datetime(2040, 12, 31),
                 },
                 request=request,
             )

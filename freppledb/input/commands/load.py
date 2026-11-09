@@ -721,7 +721,7 @@ class loadCalendarBuckets(LoadTask):
                         b = frepple.bucket(
                             calendar=cal,
                             start=i[1],
-                            end=i[2] if i[2] else datetime(2030, 12, 31),
+                            end=i[2] if i[2] else datetime(2100, 12, 31),
                             priority=i[3],
                             source=i[14],
                             value=i[4],
@@ -1022,7 +1022,7 @@ class loadOperations(LoadTask):
                             x.priority = i[17]
                         if i[18] and i[18] > datetime(1971, 1, 3):
                             x.effective_start = i[18]
-                        if i[19] and i[19] < datetime(2030, 12, 29):
+                        if i[19] and i[19] < datetime(2100, 12, 29):
                             x.effective_end = i[19]
                         if i[20]:
                             x.available = frepple.calendar(name=i[20])
@@ -1090,7 +1090,7 @@ class loadSuboperations(LoadTask):
                         )
                         if i[3] and i[3] > datetime(1971, 1, 3):
                             sub.effective_start = i[3]
-                        if i[4] and i[4] < datetime(2030, 12, 29):
+                        if i[4] and i[4] < datetime(2100, 12, 29):
                             sub.effective_end = i[4]
                     except Exception as e:
                         logger.error("**** %s ****" % e)
@@ -1292,7 +1292,7 @@ class loadItemSuppliers(LoadTask):
                             curitemsupplier.priority = i[7]
                         if i[8] and i[8] > datetime(1971, 1, 3):
                             curitemsupplier.effective_start = i[8]
-                        if i[9] and i[9] < datetime(2030, 12, 29):
+                        if i[9] and i[9] < datetime(2100, 12, 29):
                             curitemsupplier.effective_end = i[9]
                         if i[12]:
                             curitemsupplier.resource = frepple.resource(name=i[12])
@@ -1380,7 +1380,7 @@ class loadItemDistributions(LoadTask):
                             curitemdistribution.priority = i[7]
                         if i[8] and i[8] > datetime(1971, 1, 3):
                             curitemdistribution.effective_start = i[8]
-                        if i[9] and i[9] < datetime(2030, 12, 29):
+                        if i[9] and i[9] < datetime(2100, 12, 29):
                             curitemdistribution.effective_end = i[9]
                         if i[12]:
                             curitemdistribution.resource = frepple.resource(name=i[12])
@@ -1788,7 +1788,7 @@ class loadResourceSkills(LoadTask):
                         )
                         if i[2] and i[2] > datetime(1971, 1, 3):
                             cur.effective_start = i[2]
-                        if i[3] and i[3] < datetime(2030, 12, 29):
+                        if i[3] and i[3] < datetime(2100, 12, 29):
                             cur.effective_end = i[3]
                     except Exception as e:
                         logger.error("**** %s ****" % e)
@@ -1843,7 +1843,7 @@ class loadOperationMaterials(LoadTask):
                         )
                         if i[4] and i[4] > datetime(1971, 1, 3):
                             curflow.effective_start = i[4]
-                        if i[5] and i[5] < datetime(2030, 12, 29):
+                        if i[5] and i[5] < datetime(2100, 12, 29):
                             curflow.effective_end = i[5]
                         if i[6] and i[6] != "":
                             curflow.name = i[6]
@@ -1931,7 +1931,7 @@ class loadOperationResources(LoadTask):
                             curload.quantity = i[2]
                         if i[3] and i[3] > datetime(1971, 1, 3):
                             curload.effective_start = i[3]
-                        if i[4] and i[4] < datetime(2030, 12, 29):
+                        if i[4] and i[4] < datetime(2100, 12, 29):
                             curload.effective_end = i[4]
                         if i[5]:
                             curload.name = i[5]
@@ -2000,7 +2000,7 @@ class loadDemand(LoadTask):
                     break
                 fcst_start_date = i[0]
         if not fcst_start_date:
-            fcst_start_date = date(2030, 1, 1)
+            fcst_start_date = date(2100, 1, 1)
 
         with transaction.atomic(using=database):
             with connections[database].chunked_cursor() as cursor:
@@ -2166,8 +2166,8 @@ class loadOperationPlans(LoadTask):
                     WHERE operationplan.owner_id IS NULL
                     and operationplan.quantity >= 0 and operationplan.status <> 'closed'
                     {filter_and} {confirmed_filter} and operationplan.type in ('PO', 'MO', 'WO', 'DO', 'DLVR')
-                    and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
-                    and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
+                    and (operationplan.startdate is null or operationplan.startdate < '2100-12-31')
+                    and (operationplan.enddate is null or operationplan.enddate < '2100-12-31')
                     ORDER BY operationplan.reference ASC
                     """)
                 for i in cursor:
@@ -2343,8 +2343,8 @@ class loadOperationPlans(LoadTask):
                         )
                     )
                     {filter_and} and operationplan.type in ('MO', 'WO')
-                    and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
-                    and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
+                    and (operationplan.startdate is null or operationplan.startdate < '2100-12-31')
+                    and (operationplan.enddate is null or operationplan.enddate < '2100-12-31')
                     ORDER BY operationplan.reference ASC
                     """)
                 for i in cursor:

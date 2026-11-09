@@ -40,7 +40,7 @@ const Date Date::infinitePast("1971-01-01T00:00:00", true);
 
 /* This is the latest date that we can represent. This is not the absolute
  * limit of the internal representation, but more a convenient end date. */
-const Date Date::infiniteFuture("2030-12-31T00:00:00", true);
+const Date Date::infiniteFuture("2100-12-31T00:00:00", true);
 
 const Duration Duration::MAX(Date::infiniteFuture - Date::infinitePast);
 const Duration Duration::MIN(Date::infinitePast - Date::infiniteFuture);

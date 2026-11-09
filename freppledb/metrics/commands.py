@@ -66,7 +66,7 @@ class GetPlanMetrics(PlanTask):
                     )
                 except Exception:
                     print("Warning: invalid parameter 'metrics.demand_window'")
-                    window = datetime(2030, 12, 31)
+                    window = datetime(2100, 12, 31)
 
                 Item.createRootObject(database=database)
 

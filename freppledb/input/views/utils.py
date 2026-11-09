@@ -2709,7 +2709,7 @@ class OperationPlanDetail(View):
                             (select value from calendarbucket
                             where calendar_id = 'SS for ' || arguments.buffer
                             and greatest(d.startdate,arguments.report_startdate) >= coalesce(startdate, '1971-01-01'::timestamp)
-                            and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2030-12-31'::timestamp)
+                            and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2100-12-31'::timestamp)
                             order by priority limit 1),
                             (select defaultvalue from calendar where name = 'SS for ' || arguments.buffer)
                             ) as safetystock
@@ -2725,7 +2725,7 @@ class OperationPlanDetail(View):
                                 and (item.type is distinct from 'make to order' or buffer.batch is not distinct from arguments.batch)
                                 )
                             and greatest(d.startdate,arguments.report_startdate) >= coalesce(startdate, '1971-01-01'::timestamp)
-                            and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2030-12-31'::timestamp)
+                            and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2100-12-31'::timestamp)
                             order by priority limit 1),
                             (select defaultvalue
                             from calendar

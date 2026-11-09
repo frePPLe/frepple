@@ -171,7 +171,7 @@ class ItemSupplier(AuditModel):
         null=True,
         blank=True,
         help_text=_("Validity end date"),
-        default=datetime(2030, 12, 31),
+        default=datetime(2100, 12, 31),
     )
     resource = models.ForeignKey(
         Resource,

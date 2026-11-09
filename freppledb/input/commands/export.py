@@ -56,7 +56,7 @@ logger = logging.getLogger(__name__)
 
 # Default effectivity dates
 default_start = datetime(1971, 1, 1)
-default_end = datetime(2030, 12, 31)
+default_end = datetime(2100, 12, 31)
 
 map_search = {0: "PRIORITY", 1: "MINCOST", 2: "MINPENALTY", 3: "MINCOSTPENALTY"}
 

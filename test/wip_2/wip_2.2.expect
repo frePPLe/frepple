@@ -31,9 +31,9 @@ OPERATION	complex product step C	2022-01-07T00:00:00	2022-01-10T00:00:00	2	confi
 OPERATION	prod	2017-12-01T00:00:00	2017-12-08T00:00:00	1	confirmed
 OPERATION	prod	2023-01-01T00:00:00	2023-01-08T00:00:00	1	confirmed
 OPERATION	prod	2023-01-01T00:00:00	2023-01-08T00:00:00	1	confirmed
-PROBLEM	invalid data	No replenishment defined for 'comp A @ prod2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'comp A @ prod2' has material shortage of 2	2022-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'comp B @ prod2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'comp B @ prod2' has material shortage of 2	2022-01-04T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'comp C @ prod2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'comp C @ prod2' has material shortage of 2	2022-01-07T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'comp A @ prod2'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'comp A @ prod2' has material shortage of 2	2022-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'comp B @ prod2'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'comp B @ prod2' has material shortage of 2	2022-01-04T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'comp C @ prod2'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'comp C @ prod2' has material shortage of 2	2022-01-07T00:00:00 / 2100-12-31T00:00:00

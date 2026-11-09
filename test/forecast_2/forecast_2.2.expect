@@ -42,7 +42,7 @@ DEMAND	Forecast 1 - 2022-01-20	2022-01-20T00:00:00	20
 DEMAND	Forecast 1 - 2022-01-21	2022-01-21T00:00:00	20
 DEMAND	Forecast 1 - 2022-01-22	2022-01-25T00:00:00	140
 DEMAND	Order 1 for product 1	2022-01-10T00:00:00	20
-PROBLEM	invalid data	No replenishment defined for 'Product 1 @ Location 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'Product 1 @ Location 1' has material shortage of 540	2022-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'Product 1 @ Location 2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'Product 1 @ Location 2' has material shortage of 20	2022-01-09T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'Product 1 @ Location 1'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'Product 1 @ Location 1' has material shortage of 540	2022-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'Product 1 @ Location 2'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'Product 1 @ Location 2' has material shortage of 20	2022-01-09T00:00:00 / 2100-12-31T00:00:00

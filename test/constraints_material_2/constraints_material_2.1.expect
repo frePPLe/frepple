@@ -119,25 +119,25 @@ OPERATION	supply 4c	2009-01-21T00:00:00	2009-01-21T00:00:00	21	confirmed
 OPERATION	supply 5a	2009-01-01T00:00:00	2009-01-01T00:00:00	10	confirmed
 OPERATION	supply 5b	2009-01-01T00:00:00	2009-01-01T00:00:00	20	confirmed
 OPERATION	supply 6	2009-01-01T00:00:00	2009-01-01T00:00:00	50	confirmed
-PROBLEM	invalid data	No replenishment defined for 'constraint buffer 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'constraint buffer 2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'constraint buffer 3a'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'constraint buffer 3b'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'constraint buffer 3c'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'constraint buffer 4a'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'constraint buffer 4b'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'constraint buffer 4c'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'constraint buffer 5a'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'constraint buffer 5b'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'constraint buffer 6'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 1 for item 1	Buffer 'constraint buffer 1' has material shortage	2009-01-09T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 1 for item 2	Buffer 'constraint buffer 2' has material shortage	2009-01-09T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 1 for item 3	Buffer 'constraint buffer 3a' has material shortage	2009-01-09T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 1 for item 3	Buffer 'constraint buffer 3b' has material shortage	2009-01-09T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 1 for item 3	Buffer 'constraint buffer 3c' has material shortage	2009-01-20T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 1 for item 4	Buffer 'constraint buffer 4a' has material shortage	2009-01-09T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 1 for item 4	Buffer 'constraint buffer 4b' has material shortage	2009-01-09T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 1 for item 4	Buffer 'constraint buffer 4c' has material shortage	2009-01-20T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 1 for item 5	Buffer 'constraint buffer 5a' has material shortage	2009-01-09T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 1 for item 5	Buffer 'constraint buffer 5b' has material shortage	2009-01-09T00:00:00 / 2030-12-31T00:00:00
-DEMAND CONSTRAINT	order prio 1 for item 6	Buffer 'constraint buffer 6' has material shortage	2009-01-06T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 1'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 2'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 3a'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 3b'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 3c'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 4a'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 4b'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 4c'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 5a'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 5b'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 6'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 1 for item 1	Buffer 'constraint buffer 1' has material shortage	2009-01-09T00:00:00 / 2100-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 1 for item 2	Buffer 'constraint buffer 2' has material shortage	2009-01-09T00:00:00 / 2100-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 1 for item 3	Buffer 'constraint buffer 3a' has material shortage	2009-01-09T00:00:00 / 2100-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 1 for item 3	Buffer 'constraint buffer 3b' has material shortage	2009-01-09T00:00:00 / 2100-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 1 for item 3	Buffer 'constraint buffer 3c' has material shortage	2009-01-20T00:00:00 / 2100-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 1 for item 4	Buffer 'constraint buffer 4a' has material shortage	2009-01-09T00:00:00 / 2100-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 1 for item 4	Buffer 'constraint buffer 4b' has material shortage	2009-01-09T00:00:00 / 2100-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 1 for item 4	Buffer 'constraint buffer 4c' has material shortage	2009-01-20T00:00:00 / 2100-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 1 for item 5	Buffer 'constraint buffer 5a' has material shortage	2009-01-09T00:00:00 / 2100-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 1 for item 5	Buffer 'constraint buffer 5b' has material shortage	2009-01-09T00:00:00 / 2100-12-31T00:00:00
+DEMAND CONSTRAINT	order prio 1 for item 6	Buffer 'constraint buffer 6' has material shortage	2009-01-06T00:00:00 / 2100-12-31T00:00:00

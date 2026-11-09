@@ -647,7 +647,7 @@ class ResourceDetail(OperationPlanMixin):
                             .values("startdate")[:1]
                         )
                         bucketend = (
-                            r[0]["startdate"] if len(r) == 1 else datetime(2030, 12, 31)
+                            r[0]["startdate"] if len(r) == 1 else datetime(2100, 12, 31)
                         ).strftime(dateformat)
                         request.GET._mutable = True  # to make it editable
                         request.GET["operationplan__startdate__lt"] = bucketend

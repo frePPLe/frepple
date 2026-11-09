@@ -64,5 +64,5 @@ OPERATION	Purchase Component E @ warehouse from Supplier of component E	2014-12-
 OPERATION	Purchase Component E @ warehouse from Supplier of component E	2014-12-26T00:00:00	2015-01-16T00:00:00	100
 OPERATION	Purchase Component E @ warehouse from Supplier of component E	2015-01-06T00:00:00	2015-01-27T00:00:00	100
 OPERATION	Purchase Component E @ warehouse from Supplier of component E	2015-01-16T00:00:00	2015-02-06T00:00:00	100
-PROBLEM	invalid data	No replenishment defined for 'Component D @ warehouse'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'Component D @ warehouse' has material shortage of 190	2015-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'Component D @ warehouse'	1971-01-01T00:00:00 / 2100-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'Component D @ warehouse' has material shortage of 190	2015-01-01T00:00:00 / 2100-12-31T00:00:00

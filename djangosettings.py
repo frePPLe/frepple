@@ -78,7 +78,10 @@ APPS = [
     {"name": "django.contrib.messages", "status": "required"},
     {"name": "freppledb.boot", "status": "required"},
     # Project specific apps normally go here (or in the path below)
-    {"path": pathlib.Path(os.path.join(FREPPLE_APP, "freppleapps"))},
+    {
+        "path": pathlib.Path(os.path.join(FREPPLE_APP, "freppleapps")),
+        "status": "optional",
+    },
     {"name": "freppledb.wizard", "status": "optional_and_default"},
     {"name": "freppledb.input", "status": "required"},
     {"name": "freppledb.forecast", "status": "optional_and_default"},
@@ -108,7 +111,9 @@ SCENARIOS = 3
 
 # Scenario names.
 # Keep the first scenario as "default".
-SCENARIO_NAMES = ["default" if i == 0 else f"scenario{i}" for i in range(MAX_NUMBER_OF_SCENARIOS)]
+SCENARIO_NAMES = [
+    "default" if i == 0 else f"scenario{i}" for i in range(MAX_NUMBER_OF_SCENARIOS)
+]
 
 # Google analytics code to report usage statistics to.
 # The value None disables this feature.

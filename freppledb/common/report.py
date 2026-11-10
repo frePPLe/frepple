@@ -2850,7 +2850,7 @@ class GridReport(View):
         return cls._rowsByName[name]
 
     @staticmethod
-    def _filter_ne(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+    def _filter_ne(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
         if isinstance(
             reportrow, (GridFieldCurrency, GridFieldInteger, GridFieldNumber)
         ):
@@ -2865,6 +2865,15 @@ class GridReport(View):
                     return ~models.Q(**{"%s__iexact" % reportrow.field_name: c[0]})
             return ~models.Q(
                 **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
+            )
+        elif isinstance(reportrow, (GridFieldLocalDateTime, GridFieldLastModified)):
+            return ~models.Q(
+                **{
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}exact": parseLocalizedDateTime(
+                        data, hours_allowed=settings.DATE_STYLE_WITH_HOURS
+                    )
+                    - tzoffset
+                }
             )
         elif isinstance(reportrow, GridFieldDateTime):
             return ~models.Q(
@@ -2888,7 +2897,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_bn(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+    def _filter_bn(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
         if isinstance(reportrow, GridFieldChoice):
             # Comparison with the translated choices only
             accepted = []
@@ -2905,7 +2914,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_en(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+    def _filter_en(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
         if isinstance(reportrow, GridFieldChoice):
             # Comparison with the translated choices only
             accepted = []
@@ -2922,7 +2931,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_nc(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+    def _filter_nc(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
         if isinstance(
             reportrow, (GridFieldCurrency, GridFieldInteger, GridFieldNumber)
         ):
@@ -2945,7 +2954,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_ni(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+    def _filter_ni(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
         if isinstance(reportrow, GridFieldChoice):
             # Comparison also with the translated choices
             accepted = []
@@ -2966,7 +2975,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_in(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+    def _filter_in(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
         if isinstance(reportrow, GridFieldChoice):
             # Comparison also with the translated choices
             accepted = []
@@ -2987,7 +2996,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_eq(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+    def _filter_eq(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
         if isinstance(
             reportrow, (GridFieldCurrency, GridFieldInteger, GridFieldNumber)
         ):
@@ -3002,6 +3011,15 @@ class GridReport(View):
                     return models.Q(**{"%s__iexact" % reportrow.field_name: c[0]})
             return models.Q(
                 **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
+            )
+        elif isinstance(reportrow, (GridFieldLocalDateTime, GridFieldLastModified)):
+            return models.Q(
+                **{
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}exact": parseLocalizedDateTime(
+                        data, hours_allowed=settings.DATE_STYLE_WITH_HOURS
+                    )
+                    - tzoffset
+                }
             )
         elif isinstance(reportrow, GridFieldDateTime):
             return models.Q(
@@ -3023,7 +3041,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_bw(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+    def _filter_bw(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
         if isinstance(reportrow, GridFieldChoice):
             # Comparison with the translated choices only
             accepted = []
@@ -3040,8 +3058,17 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_gt(query, reportrow, data, database=DEFAULT_DB_ALIAS):
-        if isinstance(reportrow, GridFieldDateTime):
+    def _filter_gt(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
+        if isinstance(reportrow, (GridFieldLocalDateTime, GridFieldLastModified)):
+            return models.Q(
+                **{
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}gt": parseLocalizedDateTime(
+                        data, hours_allowed=settings.DATE_STYLE_WITH_HOURS
+                    )
+                    - tzoffset
+                }
+            )
+        elif isinstance(reportrow, GridFieldDateTime):
             return models.Q(
                 **{
                     f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}gt": parseLocalizedDateTime(
@@ -3056,8 +3083,17 @@ class GridReport(View):
         return models.Q(**{f"{reportrow.field_name}__gt": smart_str(data).strip()})
 
     @staticmethod
-    def _filter_gte(query, reportrow, data, database=DEFAULT_DB_ALIAS):
-        if isinstance(reportrow, GridFieldDateTime):
+    def _filter_gte(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
+        if isinstance(reportrow, (GridFieldLocalDateTime, GridFieldLastModified)):
+            return models.Q(
+                **{
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}gte": parseLocalizedDateTime(
+                        data, hours_allowed=settings.DATE_STYLE_WITH_HOURS
+                    )
+                    - tzoffset
+                }
+            )
+        elif isinstance(reportrow, GridFieldDateTime):
             return models.Q(
                 **{
                     f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}gte": parseLocalizedDateTime(
@@ -3072,8 +3108,17 @@ class GridReport(View):
         return models.Q(**{"%s__gte" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
-    def _filter_lt(query, reportrow, data, database=DEFAULT_DB_ALIAS):
-        if isinstance(reportrow, GridFieldDateTime):
+    def _filter_lt(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
+        if isinstance(reportrow, (GridFieldLocalDateTime, GridFieldLastModified)):
+            return models.Q(
+                **{
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}lt": parseLocalizedDateTime(
+                        data, hours_allowed=settings.DATE_STYLE_WITH_HOURS
+                    )
+                    - tzoffset
+                }
+            )
+        elif isinstance(reportrow, GridFieldDateTime):
             return models.Q(
                 **{
                     f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}lt": parseLocalizedDateTime(
@@ -3088,8 +3133,17 @@ class GridReport(View):
         return models.Q(**{"%s__lt" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
-    def _filter_lte(query, reportrow, data, database=DEFAULT_DB_ALIAS):
-        if isinstance(reportrow, GridFieldDateTime):
+    def _filter_lte(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
+        if isinstance(reportrow, (GridFieldLocalDateTime, GridFieldLastModified)):
+            return models.Q(
+                **{
+                    f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}lte": parseLocalizedDateTime(
+                        data, hours_allowed=settings.DATE_STYLE_WITH_HOURS
+                    )
+                    - tzoffset
+                }
+            )
+        elif isinstance(reportrow, GridFieldDateTime):
             return models.Q(
                 **{
                     f"{reportrow.field_name}__{"" if settings.DATE_STYLE_WITH_HOURS else "date__"}lte": parseLocalizedDateTime(
@@ -3104,7 +3158,7 @@ class GridReport(View):
         return models.Q(**{"%s__lte" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
-    def _filter_ew(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+    def _filter_ew(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
         if isinstance(reportrow, GridFieldChoice):
             # Comparison with the translated choices
             accepted = []
@@ -3121,7 +3175,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_cn(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+    def _filter_cn(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
         if isinstance(reportrow, GridFieldChoice):
             # Comparison with the translated choices
             accepted = []
@@ -3138,19 +3192,19 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_win(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+    def _filter_win(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
         limit = date.today() + timedelta(int(float(smart_str(data))))
         return models.Q(**{"%s__lte" % reportrow.field_name: limit})
 
     @staticmethod
-    def _filter_isnull(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+    def _filter_isnull(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
         if data.lower() in ["0", "false", force_str(_("false"))]:
             return models.Q(**{"%s__isnull" % reportrow.field_name: False})
         else:
             return models.Q(**{"%s__isnull" % reportrow.field_name: True})
 
     @staticmethod
-    def _filter_ico(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+    def _filter_ico(query, reportrow, data, database=DEFAULT_DB_ALIAS, tzoffset=0):
         # rebuild hierarchy
         if issubclass(reportrow.model, HierarchyModel):
             reportrow.model.rebuildHierarchy(database)
@@ -3261,7 +3315,11 @@ class GridReport(View):
                 else:
                     q_filters.append(
                         cls._filter_map_jqgrid_django[op](
-                            q_filters, reportrow, data, request.database
+                            q_filters,
+                            reportrow,
+                            data,
+                            request.database,
+                            GridReport.getTimezoneOffset(request),
                         )
                     )
             except Exception as e:

@@ -77,9 +77,10 @@ APPS = [
     {"name": "django.contrib.contenttypes", "status": "required"},
     {"name": "django.contrib.messages", "status": "required"},
     {"name": "freppledb.boot", "status": "required"},
-    # Project specific apps normally go here (or in the path below)
+    # Project specific apps are discovered from the next 2 folders
+    {"path": os.path.join(FREPPLE_APP, "freppleapps"), "status": "optional"},
     {
-        "path": pathlib.Path(os.path.join(FREPPLE_APP, "freppleapps")),
+        "path": "/usr/share/frepple/python_packages",
         "status": "optional",
     },
     {"name": "freppledb.wizard", "status": "optional_and_default"},

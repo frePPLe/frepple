@@ -177,7 +177,9 @@ SCENARIOS = 3
 
 # Scenario names based on the number of scenarios.
 # Keep the first scenario as "default".
-SCENARIO_NAMES = ["default" if i == 0 else f"scenario{i}" for i in range(MAX_NUMBER_OF_SCENARIOS)]
+SCENARIO_NAMES = [
+    "default" if i == 0 else f"scenario{i}" for i in range(MAX_NUMBER_OF_SCENARIOS)
+]
 
 # Memory cache
 CACHES = {
@@ -648,14 +650,14 @@ DATABASES = {
             )
         ),
         "SQL_ROLE": POSTGRES_REPORTING_USER,
-        "SECRET_WEBTOKEN_KEY": SECRET_WEBTOKEN_KEY,
+        "SECRET_WEBTOKEN_KEY": AUTH_SECRET_KEY,
         # Port for the frepple web service
         "FREPPLE_PORT": f"127.0.0.1:{i+8002}",
     }
     for i in range(SCENARIOS)
 }
 
-# duplicate the entries in the DATABASES dict to create the SQL roles entries.
+# Duplicate the entries in the DATABASES dict to create the SQL roles entries.
 for i in DATABASES.copy():
     if DATABASES[i].get("SQL_ROLE", "report_role"):
         DATABASES[f"{i}_report"] = {
@@ -851,25 +853,43 @@ else:
 
 # If an entry in APPS points to a folder, then
 # - we add this folder to the python path
-# - we replace the line with the apps we discover in that folder
+# - we discover packages and their immediate subpackages with frepple_app metadata
 expanded_apps = []
 for app in APPS:
     if "path" not in app:
-        expanded_apps.append(app)
+        if "name" in app:
+            expanded_apps.append(app)
         continue
     path = pathlib.Path(app["path"])
     if path.is_dir():
         resolved_path = str(path.resolve())
         if resolved_path not in sys.path:
             sys.path.append(resolved_path)
-        expanded_apps.extend(
-            {"name": module.name, "status": app.get("status", "required")}
-            for module in sorted(
-                pkgutil.iter_modules([resolved_path]),
-                key=lambda module: module.name,
-            )
-            if module.ispkg
-        )
+        for module in sorted(
+            pkgutil.iter_modules([resolved_path]), key=lambda module: module.name
+        ):
+            if module.ispkg:
+                package = importlib.import_module(module.name)
+                if hasattr(package, "frepple_app"):
+                    expanded_apps.append(
+                        {
+                            "name": module.name,
+                            "status": app.get("status", "required"),
+                        }
+                    )
+                for submodule in sorted(
+                    pkgutil.iter_modules(package.__path__, f"{module.name}."),
+                    key=lambda module: module.name,
+                ):
+                    if submodule.ispkg:
+                        subpackage = importlib.import_module(submodule.name)
+                        if hasattr(subpackage, "frepple_app"):
+                            expanded_apps.append(
+                                {
+                                    "name": f"{module.name}.{submodule.name}",
+                                    "status": app.get("status", "required"),
+                                }
+                            )
 APPS = expanded_apps
 
 # Build the list of installed and installable apps

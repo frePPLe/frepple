@@ -45,7 +45,7 @@ ADMINS = (
 SECRET_KEY = "%@mzit!i8b*$zc&6oev96=RANDOMSTRING"
 
 # Make this unique, and don't share it with anybody.
-SECRET_WEBTOKEN_KEY = SECRET_KEY
+AUTH_SECRET_KEY = SECRET_KEY
 
 # When using TCP sockets specify the hostname, the ip4 or ip6 addresshere.
 # Leave as an empty string to use Unix domain socket ("local" lines in pg_hba.conf).

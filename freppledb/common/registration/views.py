@@ -115,20 +115,24 @@ class PasswordResetConfirmView(FormView):
     success_url = "/"
     form_class = SetPasswordForm
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        UserModel = get_user_model()
+        try:
+            uid = urlsafe_base64_decode(self.kwargs["uidb64"])
+            kwargs["user"] = UserModel._default_manager.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
+            kwargs["user"] = None
+        return kwargs
+
     def post(self, request, uidb64=None, token=None, *arg, **kwargs):
         """
         View that checks the hash in a password reset link and presents a
         form for entering a new password.
         """
-        UserModel = get_user_model()
-        form = self.form_class(request.POST)
         assert uidb64 is not None and token is not None  # checked by URLconf
-        try:
-            uid = urlsafe_base64_decode(uidb64)
-            user = UserModel._default_manager.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
-            user = None
-
+        form = self.get_form()
+        user = form.user
         if user is not None and default_token_generator.check_token(user, token):
             if form.is_valid():
                 new_password = form.cleaned_data["new_password2"]

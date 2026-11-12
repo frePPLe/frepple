@@ -20,7 +20,10 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
+
 from django import forms
+from django.contrib.auth import password_validation
+from django.conf import settings
 
 
 class PasswordResetRequestForm(forms.Form):
@@ -34,10 +37,31 @@ class SetPasswordForm(forms.Form):
     """
 
     error_messages = {"password_mismatch": ("The two password fields didn't match.")}
-    new_password1 = forms.CharField(label=("New password"), widget=forms.PasswordInput)
+    new_password1 = forms.CharField(
+        label=("New password"),
+        help_text=password_validation.password_validators_help_text_html(
+            password_validation.get_password_validators(
+                settings.AUTH_PASSWORD_VALIDATORS
+            )
+        ),
+        widget=forms.PasswordInput,
+    )
     new_password2 = forms.CharField(
         label=("New password confirmation"), widget=forms.PasswordInput
     )
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_new_password1(self):
+        password1 = self.cleaned_data.get("new_password1")
+        if password1 and self.user:
+            try:
+                password_validation.validate_password(password1, self.user)
+            except forms.ValidationError as error:
+                raise forms.ValidationError(error.messages)
+        return password1
 
     def clean_new_password2(self):
         password1 = self.cleaned_data.get("new_password1")

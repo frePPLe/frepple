@@ -633,61 +633,61 @@ var grid = {
   selected: undefined,
 
   formatNumber: function (nData, maxdecimals = 6) {
-  // Number formatting function copied from free-jqgrid.
-  // Adapted to show a max number of decimal places.
-  if (typeof (nData) === 'undefined' || nData === '')
-    return '';
+    // Number formatting function copied from free-jqgrid.
+    // Adapted to show a max number of decimal places.
+    if (typeof (nData) === 'undefined' || nData === '')
+      return '';
 
-  const isNumber = nData !== '' && nData !== null && !isNaN(nData) && isFinite(nData);
+    const isNumber = nData !== '' && nData !== null && !isNaN(nData) && isFinite(nData);
 
 
-  if (isNumber) {
-    nData *= 1;
-    const bNegative = (nData < 0);
-    const absData = Math.abs(nData);
-    let sOutput = 0.0;
+    if (isNumber) {
+      nData *= 1;
+      const bNegative = (nData < 0);
+      const absData = Math.abs(nData);
+      let sOutput = 0.0;
 
-    if (absData > 100000 || maxdecimals <= 0)
-      sOutput = String(parseFloat(absData.toFixed()));
-    else if (absData > 10000 || maxdecimals <= 1)
-      sOutput = String(parseFloat(absData.toFixed(1)));
-    else if (absData > 1000 || maxdecimals <= 2)
-      sOutput = String(parseFloat(absData.toFixed(2)));
-    else if (absData > 100 || maxdecimals <= 3)
-      sOutput = String(parseFloat(absData.toFixed(3)));
-    else if (absData > 10 || maxdecimals <= 4)
-      sOutput = String(parseFloat(absData.toFixed(4)));
-    else if (absData > 1 || maxdecimals <= 5)
-      sOutput = String(parseFloat(absData.toFixed(5)));
-    else
-      sOutput = String(parseFloat(absData.toFixed(maxdecimals)));
+      if (absData > 100000 || maxdecimals <= 0)
+        sOutput = String(parseFloat(absData.toFixed()));
+      else if (absData > 10000 || maxdecimals <= 1)
+        sOutput = String(parseFloat(absData.toFixed(1)));
+      else if (absData > 1000 || maxdecimals <= 2)
+        sOutput = String(parseFloat(absData.toFixed(2)));
+      else if (absData > 100 || maxdecimals <= 3)
+        sOutput = String(parseFloat(absData.toFixed(3)));
+      else if (absData > 10 || maxdecimals <= 4)
+        sOutput = String(parseFloat(absData.toFixed(4)));
+      else if (absData > 1 || maxdecimals <= 5)
+        sOutput = String(parseFloat(absData.toFixed(5)));
+      else
+        sOutput = String(parseFloat(absData.toFixed(maxdecimals)));
 
-    sOutput = (bNegative ? "-" : "") + sOutput;
+      sOutput = (bNegative ? "-" : "") + sOutput;
 
-    const sDecimalSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator") || ".";
-    if (sDecimalSeparator !== ".")
-      // Replace the "."
-      sOutput = sOutput.replace(".", sDecimalSeparator);
-    const sThousandsSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.thousandsSeparator") || ",";
-    if (sThousandsSeparator && absData >= 1000) {
-      let nDotIndex = sOutput.lastIndexOf(sDecimalSeparator);
-      nDotIndex = (nDotIndex > -1) ? nDotIndex : sOutput.length;
-      // we cut the part after the point for integer numbers
-      // it will prevent storing/restoring of wrong numbers during inline editing
-      let sNewOutput = sDecimalSeparator === undefined ? "" : sOutput.substring(nDotIndex);
-      let nCount = -1, i;
-      for (i = nDotIndex; i > 0; i--) {
-        nCount++;
-        if ((nCount % 3 === 0) && (i !== nDotIndex) && (!bNegative || (i > 1))) {
-          sNewOutput = sThousandsSeparator + sNewOutput;
+      const sDecimalSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator") || ".";
+      if (sDecimalSeparator !== ".")
+        // Replace the "."
+        sOutput = sOutput.replace(".", sDecimalSeparator);
+      const sThousandsSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.thousandsSeparator") || ",";
+      if (sThousandsSeparator && absData >= 1000) {
+        let nDotIndex = sOutput.lastIndexOf(sDecimalSeparator);
+        nDotIndex = (nDotIndex > -1) ? nDotIndex : sOutput.length;
+        // we cut the part after the point for integer numbers
+        // it will prevent storing/restoring of wrong numbers during inline editing
+        let sNewOutput = sDecimalSeparator === undefined ? "" : sOutput.substring(nDotIndex);
+        let nCount = -1, i;
+        for (i = nDotIndex; i > 0; i--) {
+          nCount++;
+          if ((nCount % 3 === 0) && (i !== nDotIndex) && (!bNegative || (i > 1))) {
+            sNewOutput = sThousandsSeparator + sNewOutput;
+          }
+          sNewOutput = sOutput.charAt(i - 1) + sNewOutput;
         }
-        sNewOutput = sOutput.charAt(i - 1) + sNewOutput;
+        sOutput = sNewOutput;
       }
-      sOutput = sNewOutput;
+      return sOutput;
     }
-    return sOutput;
-  }
-  return (nData ? nData.toLocaleString() : null) || '0';
+    return (nData ? nData.toLocaleString() : null) || '0';
   },
 
   // Function used to summarize by returning the last value
@@ -1641,6 +1641,7 @@ var grid = {
   resetFilter: function () {
     var curfilter = $((typeof curfilterid !== 'undefined') ? curfilterid : "#curfilter");
     curfilter.html("");
+    $('#resetfilter').addClass('d-none');
     $("#grid").setGridParam({
       postData: { filters: '' },
       search: true
@@ -1695,6 +1696,7 @@ var grid = {
       search: true
     }).trigger('reloadGrid');
     grid.saveColumnConfiguration();
+    $('#resetfilter').removeClass('d-none');
     if (typeof extraSearchUpdate == 'function')
       extraSearchUpdate(c);
     grid.getFilterGroup($("#grid"), c, true, $("#curfilter"));
@@ -1997,7 +1999,14 @@ var grid = {
       }
     }
 
-    if (!first) thefilter.append("&nbsp;)");
+    if (first) {
+      if (grid.countFilters == 0)
+        $("#resetfilter").addClass('d-none');
+      else
+        $("#resetfilter").removeClass('d-none');
+    }
+    else
+      thefilter.append("&nbsp;)");
   },
 
   markSelectedRow: function (sel) {

@@ -356,19 +356,6 @@ them across scenarios. Configured credentials/settings can override the
 corresponding database parameters; see the connector documentation for
 scenario-specific configuration.
 
-Installation path overrides
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The application also recognizes ``FREPPLE_APP``, ``FREPPLE_HOME``,
-``FREPPLE_CONFIGDIR``, ``FREPPLE_LOGDIR`` and ``FREPPLE_STATIC``.
-These control code, engine, configuration, file-storage and static-asset
-locations. Normally leave them unset in the distributed container: nginx,
-supervisor and the entrypoint use the image's standard paths. Changing an
-application path alone does not update those other components.
-
-``FREPPLE_VERSION`` and ``POSTGRES_PASSWORD`` in the quick start's ``.env``
-are Compose interpolation inputs. ``FREPPLE_VERSION`` selects the image tag;
-it is not a frePPLe runtime setting.
 
 Settings without environment variables
 --------------------------------------

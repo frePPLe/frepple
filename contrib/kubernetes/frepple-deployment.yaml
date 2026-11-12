@@ -11,18 +11,6 @@ spec:
       storage: 100Mi
 status: {}
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: log-apache
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 50Mi
-status: {}
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -66,15 +54,10 @@ spec:
               cpu: 250m
               memory: "4294967296"
           volumeMounts:
-            - mountPath: /var/log/apache2
-              name: log-apache
             - mountPath: /var/log/frepple
               name: log-frepple
       restartPolicy: Always
       volumes:
-        - name: log-apache
-          persistentVolumeClaim:
-            claimName: log-apache
         - name: log-frepple
           persistentVolumeClaim:
             claimName: log-frepple

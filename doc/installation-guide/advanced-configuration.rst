@@ -2,116 +2,15 @@
 Advanced Configuration
 ======================
 
-This page covers scenarios, external authentication and startup customization.
-Complete :doc:`installation` first. The ordinary production requirements,
-including HTTPS and database configuration, are covered there.
+The :doc:`installation` page covers the key installation steps.
+On this page we cover some advanced configuration topics that only apply to
+specific deployments.
 
-.. _extra_scenarios:
-.. _installation-scenarios:
+* :ref:`external_auth`
+* :ref:`kubernetes`
 
-Scenarios and multiple planning models
---------------------------------------
 
-FrePPLe can host multiple planning models in one application:
-
-* What-if scenarios let planners experiment in a copy of the production model.
-* Independent models can serve different factories, product lines or planning
-  processes, with separate data and permissions.
-
-Each model uses a separate PostgreSQL database. The ``default`` database also
-stores shared information such as user identities and scenario configuration.
-Include it in every complete environment backup.
-
-Manage scenario slots from the execution screen
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The standard configuration reads the number of scenario slots from the
-``scenarios`` parameter in the default database. It initially provides three
-slots in Community Edition, including ``default``. Use the *Add* and *Delete*
-actions in the execution screen to manage available slots, and *Copy* to
-populate a free slot.
-
-See :doc:`../user-interface/what-if-scenarios` for the workflow and permissions.
-Only delete or release a scenario after checking that its data is no longer
-needed.
-
-For example, to copy the main model into a free, configured slot:
-
-.. warning::
-
-   Scenario copying replaces the destination's data. Confirm the source and
-   destination and back up any data you need to retain.
-
-.. code-block:: bash
-
-   docker compose exec frepple frepplectl scenario_copy default scenario1
-
-After a copy, the user performing the copy and the superusers from the source
-have access to the destination. Review each scenario's active users and
-permissions before opening it to planners.
-
-Constrain the number of scenarios
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The supplied ``djangosettings.py`` limits the scenario count between
-``MIN_NUMBER_OF_SCENARIOS`` (2) and ``MAX_NUMBER_OF_SCENARIOS`` (30).
-An administrator can adjust these limits for a controlled deployment.
-These limits must be set in the main configuration before ``SCENARIOS`` is
-clamped to the permitted range.
-
-The current configuration derives database names and internal service ports
-from the prefix and scenario number. For example:
-
-.. list-table::
-   :header-rows: 1
-
-   * - Application identifier
-     - Database with prefix ``frepple``
-     - Internal planning service
-   * - ``default``
-     - ``frepple0``
-     - ``127.0.0.1:8002``
-   * - ``scenario1``
-     - ``frepple1``
-     - ``127.0.0.1:8003``
-   * - ``scenario2``
-     - ``frepple2``
-     - ``127.0.0.1:8004``
-
-Don't copy the old native-installation instructions that replace ``DATABASES``
-with arbitrary names: the current settings build this dictionary after
-reading the deployment configuration. Custom names, separate database
-servers per model or a larger scenario range require coordinated changes to
-settings and nginx's ``/ws/`` and ``/svc/`` routing. Prefer separate Compose
-deployments when models need independent administration or isolation.
-
-After changing scenario configuration, recreate or restart the application
-as appropriate and verify scenario selection, copying and the plan editor.
-
-.. _websocket:
-
-Planning web services and WebSockets
-------------------------------------
-
-The Enterprise plan editor uses a per-scenario planning web service and
-WebSocket connections. Corporate firewalls and reverse proxies must allow
-the WebSocket protocol, even when ordinary application pages work.
-
-The standard nginx configuration routes ``/ws/default/`` and
-``/ws/scenarioN/`` to the corresponding internal service, with matching
-``/svc/`` routes for HTTP requests. These internal ports don't need to be
-published on the Docker host.
-
-To start selected planning web services automatically, set a space-separated
-list of scenario identifiers in Compose:
-
-.. code-block:: yaml
-
-   FREPPLE_AUTOSTART_WEBSERVICE: "default scenario1"
-
-Only list configured scenarios with initialized data. To investigate a
-connection failure, check application logs, confirm the scenario's service
-is running, and check WebSocket upgrades through every proxy layer.
+.. _external_auth:
 
 External authentication
 -----------------------
@@ -212,52 +111,17 @@ frame policies or same-site cookies simply because OAuth is enabled. If
 embedding frePPLe in another application requires cross-site cookies,
 review those settings explicitly and require secure cookies over HTTPS.
 
-Startup customization
----------------------
 
-The container entrypoint normally initializes the database and starts
-supervisor, which manages nginx, the application server and the scheduler.
-
-For additional startup actions, place executable scripts in
-``/etc/frepple/entrypoint.d``. The entrypoint executes them with
-``run-parts`` before supervisor starts.
-
-* Use names accepted by ``run-parts``, for example ``10-custom-setup``
-  rather than ``10-custom-setup.sh``.
-* Scripts run as the unprivileged ``frepple`` user. They must be executable
-  and must not require root access.
-* Make scripts safe to run on every start. A failing script prevents normal
-  startup; report failures rather than silently ignoring them.
-* These hooks run after the built-in database initialization. They cannot
-  replace configuration needed for that initialization.
-
-Alternatively, pass a command to run instead of supervisor:
-
-.. warning::
-
-   A command passed to the container still goes through the normal entrypoint,
-   including database creation and migrations when a database connection is
-   configured. The custom startup hooks are skipped in this mode.
-
-   For a command that must bypass initialization, explicitly override the
-   entrypoint. For commands against an already-running installation, prefer
-   ``docker compose exec``.
-
-.. code-block:: bash
-
-   docker compose run --rm --no-deps frepple ls /etc/frepple
+.. _kubernetes:
 
 Kubernetes and other orchestrators
 ----------------------------------
 
-The same container can be deployed with an orchestrator, provided database
-initialization, persistent storage, credentials, ingress and the singleton
-scheduler are handled deliberately.
+Throughout this guide we used docker compose to define and run the frePPLe container.
+Many companies use Kubernetes or other orchestrators to manage containerized
+applications at scale.
 
-The repository contains
+The frepple repository contains
 `example Kubernetes manifests <https://github.com/frePPLe/frepple/tree/master/contrib/kubernetes>`_.
-They are a starting point, not an equivalent production deployment guide:
-review their image tags, storage sizing, credentials and mounts against the
-current :doc:`reference`. In particular, legacy Apache mounts do not apply
-to the current nginx-based image. Don't apply these examples unchanged to a
-production cluster.
+This kubernete configuration is not actively maintained and is a bit dated. We'll be happy to
+include your contributions to improve it.

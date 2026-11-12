@@ -10,9 +10,10 @@ secure, performant and production-ready.
 * :ref:`tune-postgresql`
 * :ref:`external-postgres`
 * :ref:`configure-https`
-* :ref:`configure_smtp`
+* :ref:`configure-smtp`
 * :ref:`installation-enterprise`
-* :ref:`deploy_customizations`
+* :ref:`deploy-custom-addons`
+* :ref:`custom_image`
 
 
 .. _reset-admin-password:
@@ -180,7 +181,7 @@ Pass the extra environment variables on the frepple service as shown below.
    FREPPLE_CSRF_COOKIE_SECURE: "true"
 
 
-.. _configure_smtp:
+.. _configure-smtp:
 
 Configure email
 ---------------
@@ -231,27 +232,36 @@ command on once.
    docker cp license.xml <container_name_or_id>:/etc/frepple/license.xml
 
 
-.. _deploy_customizations:
+.. _deploy-custom-addons:
 
 Deploy custom addons
 --------------------
 
-There are 2 methods to deploy frepple with custom addons.
+Many customers use custom addons to extend frepple's functionality.
 
-The **first method** is to copy your custom addons into the container
-in the folder /usr/share/frepple/python_packages. Addons in this folder
+The development of custom addons involves creating Python packages that
+follow frepple's addon structure. This development is described in detail in the
+developer guide.
+
+You deploy such custom addon by copying them into the container
+folder /usr/share/frepple/python_packages. Addons in this folder
 are automatically detected, and can be installed from the *Admin / Apps* screen.
-For most addons, this is the preferred method.
 
 .. code-block:: bash
 
    docker cp myaddon/ <container_name_or_id>:/usr/share/frepple/python_packages/myaddon/
 
-The **second method** is to build a derived image that includes your custom addons.
-You create your own Dockerfile that starts from the frepple base image, and where
-you can install any additional ubuntu packages.
 
-Here is an example ``Dockerfile`` for this approach:
+.. _custom_image:
+
+Make your own derived image
+---------------------------
+
+If your deployment requires more complex customizations, the recommended approach is
+to build a derived image that includes your custom addons. You create your own Dockerfile
+that starts from the frepple base image, and then adds whatever you like.
+
+Here is an example ``Dockerfile``:
 
 .. code-block:: docker
 

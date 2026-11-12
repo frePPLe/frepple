@@ -38,7 +38,7 @@ PostgreSQL database
 -------------------
 
 Frepple uses a PostgreSQL relational database to store its data.
-Use PostgreSQL 18, 17, 16 or 15, in that order of preference.
+Use PostgreSQL 18, 17, 16 or 15 in this order of preference.
 
 You can either:
 

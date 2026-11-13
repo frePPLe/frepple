@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 from django.core.management import call_command
-from django.db import migrations
+from django.db import migrations, connections
 
 
 def loadParameters(apps, schema_editor):
@@ -37,15 +37,9 @@ def loadParameters(apps, schema_editor):
 
 
 def removeParameters(apps, schema_editor):
-    from django.core.management.commands.loaddata import Command
-
-    call_command(
-        Command(),
-        "parameters.json",
-        app_label="odoo",
-        verbosity=0,
-        database=schema_editor.connection.alias,
-    )
+    db = schema_editor.connection.alias
+    with connections[db].cursor() as cursor:
+        cursor.execute("delete from common_parameter where name like 'odoo.%'")
 
 
 class Migration(migrations.Migration):

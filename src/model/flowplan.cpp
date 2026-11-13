@@ -448,9 +448,12 @@ PyObject* FlowPlan::create(PyTypeObject*, PyObject*, PyObject* kwds) {
       Py_ssize_t pos = 0;
       while (PyDict_Next(kwds, &pos, &key, &value)) {
         PythonData field(value);
-        PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
-        DataKeyword attr(PyBytes_AsString(key_utf8));
-        Py_DECREF(key_utf8);
+        const char* key_utf8 = PyUnicode_AsUTF8(key);
+        if (!key_utf8) {
+          Py_DECREF(x);
+          return nullptr;
+        }
+        DataKeyword attr(key_utf8);
         if (!attr.isA(Tags::operationplan) && !attr.isA(Tags::item)) {
           const MetaFieldBase* fmeta = x->getType().findField(attr.getHash());
           if (!fmeta && x->getType().category)

@@ -299,13 +299,12 @@ PyObject* ForecastBucket::create(PyTypeObject*, PyObject*, PyObject* kwds) {
           Py_ssize_t pos = 0;
           while (PyDict_Next(kwds, &pos, &key, &value)) {
             PythonData field(value);
-            PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
-            DataKeyword attr(PyBytes_AsString(key_utf8));
-            Py_DECREF(key_utf8);
+            const char* key_utf8 = PyUnicode_AsUTF8(key);
+            if (!key_utf8) return nullptr;
+            DataKeyword attr(key_utf8);
             if (!attr.isA(ForecastBucket::tag_forecast) &&
                 !attr.isA(Tags::start) && !attr.isA(Tags::name) &&
                 !attr.isA(Tags::type) && !attr.isA(Tags::action)) {
-              logger << "   extra " << attr.getName() << '\n';
               const MetaFieldBase* fmeta =
                   fcstbckt->getType().findField(attr.getHash());
               if (!fmeta && fcstbckt->getType().category)

@@ -484,9 +484,12 @@ PyObject* LoadPlan::create(PyTypeObject*, PyObject*, PyObject* kwds) {
     Py_ssize_t pos = 0;
     while (PyDict_Next(kwds, &pos, &key, &value)) {
       PythonData field(value);
-      PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
-      DataKeyword attr(PyBytes_AsString(key_utf8));
-      Py_DECREF(key_utf8);
+      const char* key_utf8 = PyUnicode_AsUTF8(key);
+      if (!key_utf8) {
+        Py_DECREF(ldpln);
+        return nullptr;
+      }
+      DataKeyword attr(key_utf8);
       if (!attr.isA(Tags::operationplan) && !attr.isA(Tags::resource) &&
           !attr.isA(Tags::action) && !attr.isA(Tags::status)) {
         const MetaFieldBase* fmeta = ldpln->getType().findField(attr.getHash());

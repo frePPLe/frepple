@@ -71,13 +71,14 @@ const string ForecastBucket::DUEATMIDDLE = "middle";
 const string ForecastBucket::DUEATEND = "end";
 
 int Forecast::initialize() {
+  Calendar::registerDeleteCallback([](Calendar* calendar) noexcept {
+    if (calptr == calendar) calptr = nullptr;
+  });
+
   // Initialize the metadata
   metadata = MetaClass::registerClass<Forecast>("demand", "demand_forecast",
                                                 Object::create<Forecast>);
   registerFields<Forecast>(const_cast<MetaClass*>(metadata));
-
-  // Get notified when a calendar is deleted
-  FunctorStatic<Calendar, Forecast>::connect(SIG_REMOVE);
 
   // An extra global method
   PythonInterpreter::registerGlobalMethod(
@@ -476,14 +477,6 @@ void ForecastBucket::setOrdersAdjustment(double v) {
   auto data = getForecast()->getData();
   lock_guard<recursive_mutex> exclusive(data->lock);
   Measures::ordersadjustment->disaggregate(data->getBuckets()[bucketindex], v);
-}
-
-bool Forecast::callback(Calendar* l, const Signal) {
-  // This function is called when a calendar is about to be deleted.
-  // If that calendar happens to be the one defining calendar buckets, we
-  // reset the calendar pointer to null.
-  if (calptr == l) calptr = nullptr;
-  return true;
 }
 
 Forecast::~Forecast() {

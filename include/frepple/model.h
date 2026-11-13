@@ -371,6 +371,12 @@ class Calendar : public HasName<Calendar>, public HasSource<Calendar> {
    */
   ~Calendar() override;
 
+  using DeleteCallback = void (*)(Calendar*) noexcept;
+
+  static void registerDeleteCallback(DeleteCallback callback) {
+    if (callback) deleteCallbacks.push_back(callback);
+  }
+
   /* Returns the value on the specified date. */
   double getValue(const Date, bool forward = true) const;
 
@@ -504,6 +510,8 @@ class Calendar : public HasName<Calendar>, public HasSource<Calendar> {
   }
 
  private:
+  static vector<DeleteCallback> deleteCallbacks;
+
   /* A pointer to the first bucket. The buckets are stored in a doubly
    * linked list. */
   CalendarBucket* firstBucket = nullptr;

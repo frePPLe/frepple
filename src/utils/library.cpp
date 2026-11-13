@@ -383,19 +383,6 @@ Action MetaClass::decodeAction(const DataValueDict& atts) {
   return c ? decodeAction(c->getString().c_str()) : Action::ADD_CHANGE;
 }
 
-bool MetaClass::raiseEvent(Object* v, Signal a) const {
-  bool result(true);
-  for (auto i = subscribers[a].begin(); i != subscribers[a].end(); ++i)
-    // Note that we always call all subscribers, even if one or more
-    // already replied negatively. However, an exception thrown from a
-    // callback method will break the publishing chain.
-    if (!(*i)->callback(v, a)) result = false;
-
-  // Raise the event also on the category, if there is a valid one
-  return (category && category != this) ? (result && category->raiseEvent(v, a))
-                                        : result;
-}
-
 Object* MetaCategory::ControllerDefault(const MetaClass* cat,
                                         const DataValueDict& in,
                                         CommandManager* mgr) {
@@ -429,13 +416,6 @@ Object* MetaCategory::ControllerDefault(const MetaClass* cat,
       // Call the factory method
       assert(j->factoryMethod);
       Object* result = j->factoryMethod();
-
-      // Run the callback methods
-      if (!result->getType().raiseEvent(result, SIG_ADD)) {
-        // Creation denied
-        delete result;
-        throw DataException("Can't create object");
-      }
 
       // Report the creation to the manager
       if (mgr) mgr->add(new CommandCreateObject(result));

@@ -1673,10 +1673,6 @@ class Forecast : public Demand, public ForecastBase {
   /* Iterator over all forecasting buckets. */
   ForecastBucket::bucketiterator getBuckets() const;
 
-  /* Callback function, used for prevent a calendar from being deleted when it
-   * is used for an uninitialized forecast. */
-  static bool callback(Calendar*, const Signal);
-
  private:
   static PyObject* inspectPython(PyObject*, PyObject*);
   static PyObject* setValuePython(PyObject*, PyObject*, PyObject*);

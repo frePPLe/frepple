@@ -330,18 +330,9 @@ Object* OperationPlan::createOperationPlan(const MetaClass*,
   // Execute the proper action
   switch (action) {
     case Action::REMOVE:
-      if (opplan) {
-        // Send out the notification to subscribers
-        if (opplan->getType().raiseEvent(opplan, SIG_REMOVE))
-          // Delete it
-          delete opplan;
-        else {
-          // The callbacks disallowed the deletion!
-          ostringstream ch;
-          ch << "Can't delete operationplan with reference " << id;
-          throw DataException(ch.str());
-        }
-      } else {
+      if (opplan)
+        delete opplan;
+      else {
         ostringstream ch;
         ch << "Operationplan with reference " << id << " doesn't exist";
         throw DataException(ch.str());
@@ -701,10 +692,6 @@ Object* OperationPlan::createOperationPlan(const MetaClass*,
     opplan = static_cast<Operation*>(operval)->createOperationPlan(
         quantity, start, end, batch, nullptr, nullptr, 0, false, id,
         quantity_completed, status, &assigned_resources);
-    if (!opplan->getType().raiseEvent(opplan, SIG_ADD)) {
-      delete opplan;
-      throw DataException("Can't create operationplan");
-    }
   }
 
   // Special case: if the operation plan is locked, we need to

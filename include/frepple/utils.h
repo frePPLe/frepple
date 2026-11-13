@@ -1500,10 +1500,6 @@ class MetaCategory;
  */
 class MetaClass : public NonCopyable {
   friend class MetaCategory;
-  template <class T, class U>
-  friend class FunctorStatic;
-  template <class T, class U>
-  friend class FunctorInstance;
 
  public:
   /* Type definition for a factory method that calls the
@@ -1611,25 +1607,6 @@ class MetaClass : public NonCopyable {
    */
   bool operator!=(const MetaClass& b) const {
     return typetag->getHash() != b.typetag->getHash();
-  }
-
-  /* This method should be called whenever objects of this class are being
-   * created, updated or deleted. It will run the callback method of all
-   * subscribers.
-   * If the function returns true, all callback methods approved of the
-   * event. If false is returned, one of the callbacks disapproved it and
-   * the event action should be allowed to execute.
-   */
-  bool raiseEvent(Object* v, Signal a) const;
-
-  /* Connect a new subscriber to the class. */
-  void connect(Functor* c, Signal a) const {
-    const_cast<MetaClass*>(this)->subscribers[a].push_front(c);
-  }
-
-  /* Disconnect a subscriber from the class. */
-  void disconnect(Functor* c, Signal a) const {
-    const_cast<MetaClass*>(this)->subscribers[a].remove(c);
   }
 
   /* Print all registered factory methods to the standard output for
@@ -1820,16 +1797,6 @@ class MetaClass : public NonCopyable {
 
   /* Registry of all fields of the model. */
   fieldlist fields;
-
-  /* This is a list of objects that will receive a callback when the call
-   * method is being used.
-   * There is limited error checking in maintaining this list, and it is the
-   * user's responsability of calling the connect() and disconnect() methods
-   * correctly.
-   * This design garantuees maximum performance, but assumes a properly
-   * educated user.
-   */
-  list<Functor*> subscribers[4];
 };
 
 /* A MetaCategory instance represents metadata for a category of
@@ -1955,98 +1922,6 @@ class MetaCategory : public MetaClass {
 
   /* A map of all categories by their group name. */
   static CategoryMap categoriesByGroupTag;
-};
-
-/* This class represents a static subscription to a signal.
- *
- * When the signal callback is triggered the static method callback() on the
- * parameter class will be called.
- */
-template <class T, class U>
-class FunctorStatic : public Functor {
-  friend class MetaClass;
-
- public:
-  /* Add a signal subscriber. */
-  static void connect(const Signal a) {
-    T::metadata->connect(new FunctorStatic<T, U>(), a);
-  }
-
-  /* Remove a signal subscriber. */
-  static void disconnect(const Signal a) {
-    auto& t =
-        const_cast<MetaClass&>(static_cast<const MetaClass&>(*T::metadata));
-    // Loop through all subscriptions
-    for (auto i = t.subscribers[a].begin(); i != t.subscribers[a].end(); ++i) {
-      // Try casting the functor to the right type
-      auto* f = dynamic_cast<FunctorStatic<T, U>*>(*i);
-      if (f) {
-        // Casting was successfull. Delete the functor.
-        delete *i;
-        t.subscribers[a].erase(i);
-        return;
-      }
-    }
-    // Not found in the list of subscriptions
-    throw LogicException("Subscription doesn't exist");
-  }
-
- private:
-  /* This is the callback method. The functor will call the static callback
-   * method of the subscribing class.
-   */
-  bool callback(Object* v, const Signal a) const override {
-    return U::callback(static_cast<T*>(v), a);
-  }
-};
-
-/* This class represents an object subscribing to a signal.
- *
- * When the signal callback is triggered the method callback() on the
- * instance object will be called.
- */
-template <class T, class U>
-class FunctorInstance : public Functor {
- public:
-  /* Connect a new subscriber to a signal.
-   * It is the users' responsibility to call the disconnect method
-   * when the subscriber is being deleted. Otherwise the application
-   * will crash.
-   */
-  static void connect(U* u, const Signal a) {
-    if (u) T::metadata.connect(new FunctorInstance(u), a);
-  }
-
-  /* Disconnect from a signal. */
-  static void disconnect(U* u, const Signal a) {
-    auto& t =
-        const_cast<MetaClass&>(static_cast<const MetaClass&>(T::metadata));
-    // Loop through all subscriptions
-    for (auto i = t.subscribers[a].begin(); i != t.subscribers[a].end(); ++i) {
-      // Try casting the functor to the right type
-      auto* f = dynamic_cast<FunctorInstance<T, U>*>(*i);
-      if (f && f->instance == u) {
-        // Casting was successfull. Delete the functor.
-        delete *i;
-        t.subscribers[a].erase(i);
-        return;
-      }
-    }
-    // Not found in the list of subscriptions
-    throw LogicException("Subscription doesn't exist");
-  }
-
-  /* Constructor. */
-  FunctorInstance(U* u) : instance(u) {}
-
- private:
-  /* This is the callback method. */
-  bool callback(Object* v, const Signal a) const override {
-    return instance ? instance->callback(static_cast<T*>(v), a) : true;
-  }
-
-  /* The object whose callback method will be called. */
-  U* instance;
 };
 
 //
@@ -3972,10 +3847,7 @@ class Tree : public NonCopyable {
     // Erase all elements
     for (auto x = begin(); x != end(); x = begin()) {
       auto* o = dynamic_cast<Object*>(x);
-      if (o && o->getType().raiseEvent(o, SIG_REMOVE))
-        delete (x);  // The destructor calls the erase method
-      else
-        throw DataException("Can't delete object");
+      delete (x);
     }
   }
 
@@ -5117,14 +4989,8 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
       case Action::REMOVE:
         // Delete the entity
         if (found) {
-          // Send out the notification to subscribers
-          if (i->getType().raiseEvent(i, SIG_REMOVE)) {
-            // Delete the object
-            delete i;
-            return nullptr;
-          } else
-            // The callbacks disallowed the deletion!
-            throw DataException("Can't remove object '" + name + "'");
+          delete i;
+          return nullptr;
         } else
           // Not found
           throw DataException("Can't find object '" + name + "' for removal");
@@ -5161,17 +5027,6 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
 
     // Insert into the tree
     x->setName(name);
-
-    // Run creation callbacks
-    // During the callback there is no write lock set yet, since we can
-    // assume we are the only ones aware of this new object. We also want
-    // to make sure the 'add' signal comes before the 'before_change'
-    // callback that is part of the writelock.
-    if (!x->getType().raiseEvent(x, SIG_ADD)) {
-      // Creation isn't allowed
-      delete x;
-      throw DataException("Can't create object " + name);
-    }
 
     // Report the creation of the object with the manager
     if (mgr) mgr->add(new CommandCreateObject(x));
@@ -5976,13 +5831,6 @@ class Association {
         // Call the factory method
         assert(j->factoryMethod);
         Object* result = j->factoryMethod();
-
-        // Run the callback methods
-        if (!result->getType().raiseEvent(result, SIG_ADD)) {
-          // Creation denied
-          delete result;
-          throw DataException("Can't create object");
-        }
 
         // Report the object creation to the manager
         if (mgr) mgr->add(new CommandCreateObject(result));

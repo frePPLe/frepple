@@ -31,6 +31,7 @@ template <class Calendar>
 Tree utils::HasName<Calendar>::st;
 const MetaCategory* Calendar::metadata;
 const MetaCategory* Calendar::metadata_alias;
+vector<Calendar::DeleteCallback> Calendar::deleteCallbacks;
 const MetaClass* CalendarDefault::metadata;
 const MetaCategory* CalendarBucket::metacategory;
 const MetaClass* CalendarBucket::metadata;
@@ -141,6 +142,9 @@ Calendar::~Calendar() {
     if (o.getAvailable() == this) o.setAvailable(nullptr);
     if (o.getSizeMinimumCalendar() == this) o.setSizeMinimumCalendar(nullptr);
   }
+
+  // Call all registered delete callbacks
+  for (auto callback : deleteCallbacks) callback(this);
 }
 
 void Calendar::removeBucket(CalendarBucket* bkt, bool del) {

@@ -3845,10 +3845,7 @@ class Tree : public NonCopyable {
     if (empty()) return;
 
     // Erase all elements
-    for (auto x = begin(); x != end(); x = begin()) {
-      auto* o = dynamic_cast<Object*>(x);
-      delete (x);
-    }
+    for (auto x = begin(); x != end(); x = begin()) delete (x);
   }
 
   /* Remove a node from the tree. */

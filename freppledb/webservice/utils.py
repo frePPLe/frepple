@@ -131,7 +131,7 @@ def createSolvers(loglevel=2, database=DEFAULT_DB_ALIAS):
         constraint = parseConstraints(os.environ["FREPPLE_CONSTRAINT"])
     except Exception:
         constraint = 4 + 16 + 32  # Default is with all constraints enabled
-    clean_solver = frepple.solver_delete(loglevel=loglevel, constraint=constraint)
+    clean_solver = frepple.solver_delete(loglevel=loglevel)
     mrp_solver = frepple.solver_mrp(
         loglevel=loglevel,
         constraints=constraint,

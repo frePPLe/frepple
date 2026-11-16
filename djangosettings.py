@@ -111,7 +111,8 @@ MAX_NUMBER_OF_SCENARIOS = 30
 SCENARIOS = 3
 
 # Scenario names.
-# Keep the first scenario as "default".
+# Keep the first scenario always as "default".
+# If you change this setting, you also need to adjust /etc/frepple/nginx.conf
 SCENARIO_NAMES = [
     "default" if i == 0 else f"scenario{i}" for i in range(MAX_NUMBER_OF_SCENARIOS)
 ]

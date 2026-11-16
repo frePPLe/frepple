@@ -21,6 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+from asgiref.sync import sync_to_async
+import builtins
 import contextvars
 from datetime import timedelta, datetime
 import base64
@@ -406,7 +408,25 @@ class MultiDBMiddleware:
 
         # Request processing
         response = self.get_response(request)
-        if not response.streaming:
+        if response.streaming:
+            # Note: Streaming response get the request field cleared in the
+            # request_finished signal handler
+            if not response.is_async:
+                # Serve the sync streaming iterator async to the asgi server
+
+                async def _async_iter(sync_iterable):
+                    iterator = iter(sync_iterable)
+                    sentinel = object()
+                    while True:
+                        chunk = await sync_to_async(
+                            builtins.next, thread_sensitive=True
+                        )(iterator, sentinel)
+                        if chunk is sentinel:
+                            break
+                        yield chunk
+
+                response.streaming_content = _async_iter(response.streaming_content)
+        else:
             # Note: Streaming response get the request field cleared in the
             # request_finished signal handler
             _request_ctxvar.set(None)

@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+from asgiref.sync import async_to_sync
 import json
 from urllib.parse import quote
 from unittest import skipUnless
@@ -73,7 +74,7 @@ class ReportManagerTest(TransactionTestCaseWithReportDatabases):
             response = self.client.get("/reportmanager/%s/" % report.id)
             checkResponse(self, response)
             response = self.client.get("/reportmanager/%s/?format=json" % report.id)
-            self.assertContains(response, '"records":7,')
+            checkResponse(self, response, contains=b'"records":7,')
             response = self.client.get("/reportmanager/%s/?format=csv" % report.id)
             checkResponse(self, response)
             response = self.client.get(
@@ -96,14 +97,19 @@ class ReportManagerTest(TransactionTestCaseWithReportDatabases):
                 "/reportmanager/%s/?format=json&_search=true&filters=%s&searchField=&searchString=&searchOper="
                 % (report.id, fltr)
             )
-            self.assertContains(response, '"records":1,')
+            checkResponse(self, response, contains=b'"records":1,')
             response = self.client.get(
                 "/reportmanager/%s/?format=csv&name__cn=a" % (report.id)
             )
-            cnt = 0
-            for _ in response:
-                cnt += 1
-            self.assertEqual(cnt, 5)
+
+            @async_to_sync
+            async def count(response):
+                cnt = 0
+                async for _ in response:
+                    cnt += 1
+                return cnt
+
+            self.assertEqual(count(response), 5)
 
             # Edit report
             response = self.client.post(

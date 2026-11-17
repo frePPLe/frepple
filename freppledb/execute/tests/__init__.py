@@ -21,12 +21,14 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+from asgiref.sync import async_to_sync, sync_to_async
 import os
 
 from django.conf import settings
 from django.core import management
 from django.http.response import StreamingHttpResponse
-from django.test import TransactionTestCase
+from django.test import TransactionTestCase, client
+
 
 from freppledb.common.models import User, Notification
 import freppledb.input
@@ -44,7 +46,8 @@ class cookbooktest(TransactionTestCase):
         del os.environ["FREPPLE_TEST"]
         super().tearDown()
 
-    def loadExcel(self, *filepath, webservice=False):
+    @async_to_sync
+    async def loadExcel(self, *filepath, webservice=False):
         # Login
         if webservice:
             os.environ["FREPPLE_TEST"] = "webservice"
@@ -52,24 +55,28 @@ class cookbooktest(TransactionTestCase):
                 del os.environ["nowebservice"]
         else:
             os.environ["FREPPLE_TEST"] = "YES"
-        if not User.objects.filter(username="admin").count():
-            User.objects.create_superuser("admin", "your@company.com", "admin")
-        self.client.login(username="admin", password="admin")
+        if not await User.objects.filter(username="admin").aexists():
+            await User.objects.acreate_superuser("admin", "your@company.com", "admin")
+
+        client = self.async_client
+        await client.alogin(username="admin", password="admin")
         try:
             with open(os.path.join(*filepath), "rb") as myfile:
-                response = self.client.post(
+                response = await client.post(
                     "/execute/launch/importworkbook/", {"spreadsheet": myfile}
                 )
                 if not isinstance(response, StreamingHttpResponse):
                     raise Exception("expected a streaming response")
-                for rec in response.streaming_content:
+                async for rec in response.streaming_content:
                     rec
         except Exception as e:
             self.fail("Can't load excel file: %s" % e)
         self.assertEqual(response.status_code, 200)
-        self.client.logout()
+        await client.alogout()
         if webservice:
-            management.call_command("stopwebservice", wait=True, force=True)
+            await sync_to_async(management.call_command)(
+                "stopwebservice", wait=True, force=True
+            )
 
     def writeResults(self, resultpath, opplans):
         basename = resultpath[-1].replace(".expect", ".out")

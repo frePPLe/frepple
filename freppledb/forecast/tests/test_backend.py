@@ -430,14 +430,7 @@ class ReportTest(TransactionTestCase):
         response = self.client.get("/data/forecast/forecast/", follow=True)
         checkResponse(self, response)
         response = self.client.get("/data/forecast/forecast/?format=json", follow=True)
-        ok = False
-        for i in response.streaming_content:
-            if b'"records":' in i:
-                ok = True
-                break
-        if not ok:
-            self.fail("Invalid response")
-        checkResponse(self, response)
+        checkResponse(self, response, contains=b'"records":')
         response = self.client.get("/data/forecast/forecast/?format=csvlist")
         checkResponse(self, response)
         self.assertTrue(

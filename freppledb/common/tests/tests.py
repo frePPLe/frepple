@@ -22,6 +22,7 @@
 #
 
 import os
+from asgiref.sync import async_to_sync
 
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
@@ -29,10 +30,19 @@ from django.test import TestCase
 from freppledb.common.models import User, Scenario
 
 
-def checkResponse(testcase, response):
+@async_to_sync
+async def checkResponse(testcase, response, contains=None):
+    ok = False
     if isinstance(response, StreamingHttpResponse):
-        for rec in response.streaming_content:
-            rec
+
+        async for rec in response.streaming_content:
+            if contains and contains in rec:
+                ok = True
+    elif contains:
+        if contains in response.content:
+            ok = True
+    if contains and not ok:
+        testcase.fail(f"Response does not contain '{contains}'")
     testcase.assertEqual(response.status_code, 200)
 
 
@@ -45,10 +55,7 @@ class DataLoadTest(TestCase):
         response = self.client.get("/data/common/parameter/?format=json")
         if not isinstance(response, StreamingHttpResponse):
             raise Exception("expected a streaming response")
-        for i in response.streaming_content:
-            if b'"records":' in i:
-                return
-        self.fail("Didn't find expected number of parameters")
+        checkResponse(self, response, contains=b'"records":')
 
 
 class UserPreferenceTest(TestCase):

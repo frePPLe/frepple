@@ -36,8 +36,7 @@ class OutputTest(TestCase):
     # Buffer
     def test_output_buffer(self):
         response = self.client.get("/buffer/?format=json")
-        self.assertContains(response, '"records":0,')
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response, contains=b'"records":0,')
         response = self.client.get("/buffer/?format=csvtable")
         checkResponse(self, response)
         self.assertTrue(
@@ -61,8 +60,7 @@ class OutputTest(TestCase):
     # Resource
     def test_output_resource(self):
         response = self.client.get("/resource/?format=json")
-        self.assertContains(response, '"records":3,')
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response, contains=b'"records":3,')
         response = self.client.get("/resource/?format=csvtable")
         checkResponse(self, response)
         self.assertTrue(
@@ -81,8 +79,7 @@ class OutputTest(TestCase):
     # Demand
     def test_output_demand(self):
         response = self.client.get("/demand/")
-        self.assertContains(response, "Demand report")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response, contains=b"Demand report")
         response = self.client.get("/demand/?format=csvlist")
         checkResponse(self, response)
         self.assertTrue(
@@ -99,8 +96,7 @@ class OutputTest(TestCase):
     # Manufacturing orders
     def test_output_manufacturing_orders(self):
         response = self.client.get("/operation/?format=json")
-        self.assertContains(response, '"records":0,')
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response, contains=b'"records":0,')
         response = self.client.get("/operation/?format=csvtable")
         checkResponse(self, response)
         self.assertTrue(
@@ -117,8 +113,7 @@ class OutputTest(TestCase):
     # Purchase orders
     def test_output_purchase_orders(self):
         response = self.client.get("/purchase/?format=json")
-        self.assertContains(response, '"records":4,')
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response, contains=b'"records":4,')
         response = self.client.get("/purchase/?format=csvtable")
         checkResponse(self, response)
         self.assertTrue(
@@ -135,8 +130,7 @@ class OutputTest(TestCase):
     # Distribution orders
     def test_output_distribution_orders(self):
         response = self.client.get("/distribution/?format=json")
-        self.assertContains(response, '"records":0,')
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response, contains=b'"records":0,')
         response = self.client.get("/distribution/?format=csvtable")
         checkResponse(self, response)
         self.assertTrue(
@@ -153,8 +147,7 @@ class OutputTest(TestCase):
     # Problem
     def test_output_problem(self):
         response = self.client.get("/problem/?format=json")
-        self.assertContains(response, '"records":0,')
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response, contains=b'"records":0,')
         response = self.client.get("/problem/?format=csvlist")
         checkResponse(self, response)
         self.assertTrue(
@@ -171,14 +164,12 @@ class OutputTest(TestCase):
     # Pegging
     def test_output_pegging(self):
         response = self.client.get("/demandpegging/Demand%2001/?format=json")
-        self.assertContains(response, '"records":1,')
-        checkResponse(self, response)
+        checkResponse(self, response, contains=b'"records":1,')
 
     # Constraint
     def test_output_constraint(self):
         response = self.client.get("/constraint/?format=json")
-        self.assertContains(response, '"records":0,')
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response, contains=b'"records":0,')
         response = self.client.get("/constraint/?format=csvlist")
         checkResponse(self, response)
         self.assertTrue(

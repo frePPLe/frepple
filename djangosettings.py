@@ -41,10 +41,14 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
-# Make this unique, and don't share it with anybody.
+# ================= START UPDATED BLOCK =================
+# Make this unique, and keep it secret.
+# This key is used internally for cryptographic signing.
 SECRET_KEY = "%@mzit!i8b*$zc&6oev96=RANDOMSTRING"
 
-# Make this unique, and don't share it with anybody.
+# Make this unique.
+# This key is used for authentication purposes with other applications.
+# Only share this key with trusted applications.
 AUTH_SECRET_KEY = SECRET_KEY
 
 # When using TCP sockets specify the hostname, the ip4 or ip6 addresshere.

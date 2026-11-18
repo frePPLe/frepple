@@ -69,10 +69,11 @@ jobs:
         run: |
           export POSTGRES_HOST=localhost
           export POSTGRES_PORT=5432
-          export FREPPLE_DATE_STYLE="day-month-year"
+          grep -rl --include="*.json" '"year-month-day"' . | xargs sed -i 's/"year-month-day"/"day-month-year"/g'
           ./test/runtest.py
           ./frepplectl.py test freppledb --verbosity=2
-
+          grep -rl --include="*.json" '"day-month-year"' . | xargs sed -i 's/"day-month-year"/"year-month-day"/g'
+  
       - name: Test uninstalling apps
         working-directory: ${{github.workspace}}
         run: |

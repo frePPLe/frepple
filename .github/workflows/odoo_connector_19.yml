@@ -4,15 +4,23 @@ on:
   repository_dispatch:
     types: [odoo_connector_19]
   workflow_dispatch:
+    inputs:
+      odoo_connector_branch:
+        description: Odoo connector branch to test
+        required: true
+        type: choice
+        options:
+          - 19.0
+          - 19.0-dev
+        default: 19.0-dev
 
 permissions:
   contents: read
 
-env:
-  odoo_connector_branch: 19.0-dev
-
 jobs:
   build:
+    env:
+      odoo_connector_branch: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.message.branch || inputs.odoo_connector_branch || '19.0-dev' }}
     runs-on: ubuntu-24.04
     services:
       postgres:
@@ -62,7 +70,7 @@ jobs:
           # First make the checkout unshallow
           git -C freppledb/odoo/odoo_addon remote set-branches origin '*'
           git -C freppledb/odoo/odoo_addon fetch --all
-          git -C freppledb/odoo/odoo_addon checkout "remotes/origin/${{ env.odoo_connector_branch }}"
+          git -C freppledb/odoo/odoo_addon checkout "remotes/origin/${odoo_connector_branch}"
           sed -i 's/# "freppledb.odoo"/"freppledb.odoo"/g' djangosettings.py
           export POSTGRES_HOST=localhost
           export POSTGRES_PORT=5432

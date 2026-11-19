@@ -23,3 +23,4 @@ covers tasks on regular maintenance and advanced configuration.
    advanced-configuration
    maintenance
    reference
+   setting-disk-space-quotas

@@ -19,7 +19,7 @@ secure, performant and production-ready.
 .. _reset-admin-password:
 
 Reset the admin password
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 The default installation creates the "admin" user with the default password "admin".
 
@@ -30,7 +30,7 @@ in the top right corner). Change that password right away.
 .. _tune-postgresql:
 
 Tune PostgreSQL
-~~~~~~~~~~~~~~~
+---------------
 
 Start by tuning PostgreSQL for your deployment.
 

@@ -107,12 +107,12 @@ APPS = [
 ]
 
 # Minimum and maximum number of scenarios.
-MIN_NUMBER_OF_SCENARIOS = 2
-MAX_NUMBER_OF_SCENARIOS = 30
+MIN_NUMBER_OF_SCENARIOS = max(int(os.environ.get("MIN_NUMBER_OF_SCENARIOS", "2")), 2)
+MAX_NUMBER_OF_SCENARIOS = max(int(os.environ.get("MIN_NUMBER_OF_SCENARIOS", "30")), 30)
 
-# The default number of scenarios.
-# Once the database is initialized we read the setting from the database.
-SCENARIOS = 3
+# The default number of scenarios when we initialize a new environment.
+# After intialization we read the setting from the database.
+SCENARIOS = int(os.environ.get("MIN_NUMBER_OF_SCENARIOS", "3"))
 
 # Scenario names.
 # Keep the first scenario always as "default".
@@ -128,33 +128,33 @@ GOOGLE_ANALYTICS = None
 # Odoo connection parameters in this file they override the ones set in the database parameters table.
 # Configuring them here is more secure and eases automated deployments.
 ODOO_URL = {
-    "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_URL", None)
+    SCENARIO_NAMES[i]: os.environ.get("ODOO_URL", None)
     for i in range(MAX_NUMBER_OF_SCENARIOS)
 }
 ODOO_DB = {
-    "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_DB", None)
+    SCENARIO_NAMES[i]: os.environ.get("ODOO_DB", None)
     for i in range(MAX_NUMBER_OF_SCENARIOS)
 }
 ODOO_USER = {
-    "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_USER", None)
+    SCENARIO_NAMES[i]: os.environ.get("ODOO_USER", None)
     for i in range(MAX_NUMBER_OF_SCENARIOS)
 }
 ODOO_COMPANY = {
-    "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_COMPANY", None)
+    SCENARIO_NAMES[i]: os.environ.get("ODOO_COMPANY", None)
     for i in range(MAX_NUMBER_OF_SCENARIOS)
 }
 ODOO_SINGLECOMPANY = {
-    "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_SINGLECOMPANY", None)
+    SCENARIO_NAMES[i]: os.environ.get("ODOO_SINGLECOMPANY", None)
     for i in range(MAX_NUMBER_OF_SCENARIOS)
 }
 ODOO_PASSWORDS = {
-    "default" if i == 0 else f"scenario{i}": os.environ.get("ODOO_PASSWORD", None)
+    SCENARIO_NAMES[i]: os.environ.get("ODOO_PASSWORD", None)
     for i in range(MAX_NUMBER_OF_SCENARIOS)
 }
 
 # If passwords are set in this file they will be used instead of the ones set in the database parameters table
 OPENBRAVO_PASSWORDS = {
-    "default" if i == 0 else f"scenario{i}": os.environ.get("OPENBRAVO_PASSWORD", "")
+    SCENARIO_NAMES[i]: os.environ.get("OPENBRAVO_PASSWORD", "")
     for i in range(MAX_NUMBER_OF_SCENARIOS)
 }
 
@@ -279,10 +279,10 @@ LOGGING = {
     },
 }
 
-# Maximum allowed memory size for the planning engine. Only used on Linux!
+# Maximum allowed memory size for the planning engine.
 MAXMEMORYSIZE = None  # limit in MB, minimum around 230, use None for unlimited
 
-# Maximum allowed memory size for the planning engine. Only used on Linux!
+# Maximum allowed memory size for the planning engine.
 MAXCPUTIME = None  # limit in seconds, use None for unlimited
 
 # Maximum allowed storage.

@@ -8,6 +8,7 @@ specific deployments.
 
 * :ref:`external_auth`
 * :ref:`kubernetes`
+* :ref:`proxy`
 
 
 .. _external_auth:
@@ -125,3 +126,22 @@ The frepple repository contains
 `example Kubernetes manifests <https://github.com/frePPLe/frepple/tree/master/contrib/kubernetes>`_.
 This kubernete configuration is not actively maintained and is a bit dated. We'll be happy to
 include your contributions to improve it.
+
+
+.. _proxy:
+
+Proxy configuration
+-------------------
+
+Some companies deploy frepple behind a proxy server. The proxy server can take
+care of the https encryption, can facilitate monitoring, and can improve security on
+your network. 
+
+Some additional configuration may be needed to make the web application run in this configuration.
+See https://stackoverflow.com/questions/70501974/django-returning-csrf-verification-failed-request-aborted-behind-nginx-prox
+for a thread discussing this topic.
+
+The solution is to add the parameter
+`CSRF_TRUSTED_ORIGINS <https://docs.djangoproject.com/en/5.2/ref/settings/#csrf-trusted-origins>`_
+to your /etc/frepple/djangosettings.py configuration file, or to configure
+the proxy to set some http headers.

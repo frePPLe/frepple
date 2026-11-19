@@ -23,7 +23,7 @@ Start and stop
 Here are the commands to start and stop the application.
 
 .. code-block:: bash
-   
+
    # Stop without losing data
    docker compose stop
 
@@ -122,7 +122,9 @@ release, you cannot easily revert to a previous release. In the unfortunate even
 need to go back, please seek assistance from the frepple support team.
 
 #. Read the :doc:`../release-notes`, including required intermediate upgrades
+
 #. Backup the environment as shown above.
+
 #. Pull the selected new image without starting the application. For example,
    after updating ``FREPPLE_VERSION`` in ``.env``:
 
@@ -132,6 +134,7 @@ need to go back, please seek assistance from the frepple support team.
 
    For a custom image, rebuild and test it against the new base release,
    then update the image tag in Compose.
+
 #. Compare the new image's configuration with the persisted configuration.
    To extract the new defaults without running its entrypoint:
 
@@ -148,6 +151,7 @@ need to go back, please seek assistance from the frepple support team.
    ``entrypoint.sh``, ``nginx.conf`` and ``supervisord.conf``.
    Preserve the deployment's secret keys and license. Never blindly keep
    the entire old configuration or replace it without reviewing local edits.
+
 #. While the application is stopped, update the configuration volume and
    recreate the service:
 
@@ -156,7 +160,9 @@ need to go back, please seek assistance from the frepple support team.
       docker compose up -d --no-deps frepple
       docker compose logs -f frepple
 
-   The entrypoint runs migrations automatically. Review the output for errors.
+   The entrypoint automatically will upgrade the database schema to the new
+   release. Review the output for errors.
+
 #. The migration will finish in less than a minute.
 
 

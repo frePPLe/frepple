@@ -4,7 +4,7 @@ set -e
 # Configure /etc/frepple/djangosettings
 sed -i "s/SECRET_KEY.*mzit.*i8b.*6oev96=.*/SECRET_KEY = \"$(mktemp -u XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX)\"/g" /etc/frepple/djangosettings.py
 
-# Djangosettings must be writeable by the web server to support installing&uninstalling apps
+# Keep djangosettings.py writeable by application
 chmod g+w /etc/frepple/djangosettings.py
 
 # Commands executed only when a database connnection is configured

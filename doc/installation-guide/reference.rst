@@ -7,6 +7,7 @@ information for the frePPLe container and its settings.
 
 * :ref:`image-information`
 * :ref:`volumes`
+* :ref:`container_startup_behavior`
 * :ref:`environment-variables`
 
 
@@ -126,21 +127,48 @@ Volumes and their content
          packages.
 
 
+.. _container_startup_behavior:
+
+Container startup behavior
+--------------------------
+
+The entrypoint /etc/frepple/entrypoint.sh of the container goes through the following
+steps.
+
+#. On a first start, it replaces the shipped ``SECRET_KEY`` placeholder with a strong
+   unique value.
+#. If ``POSTGRES_USER``, ``POSTGRES_HOST`` or ``POSTGRES_PORT`` is set,
+   waits briefly for PostgreSQL to be ready.
+#. On a first start, it creates the configured database.
+#. All scenario databases are then migrated to the release of the container image.
+   This upgrades your database schema to the new release.
+#. On a first start, it loads 2 scenario database with demo data.
+#. Some use case require the frepple plan to be loaded in memory as a web service. The
+   web service start automatically when users log in. But you can use the environment
+   variable ``FREPPLE_AUTOSTART_WEBSERVICE`` to start some web services when the container
+   starts.
+#. If a command was passed to the container, it will be run at this point.
+   The following steps are then not executed any longer.
+#. Next, the container executes the scripts available in the folder /etc/frepple/entrypoint.d.
+   This is a place to add extra initialization steps.
+#. Finally, the container starts its main processes, managed by supervisord.
+
+
 .. _environment-variables:
 
-Environment variables
-----------------------
+Environment variables and settings
+----------------------------------
 
 These are variables that can be passed from the container environment.
-Alternative they can be edited manually in the /etc/frepple/djangosettings.py
-or /etc/frepple/localsettings.py file.
+They can be edited manually in the /etc/frepple/djangosettings.py
+or /etc/frepple/localsettings.py files.
 
 Database connection
 ~~~~~~~~~~~~~~~~~~~
 
 .. list-table::
    :header-rows: 1
-   :widths: 35 20 45
+   :widths: 40 20 40
 
    * - Variable
      - Default
@@ -160,35 +188,36 @@ Database connection
      - Application database password. Replace the default.
    * - ``POSTGRES_DB_PREFIX``
      - ``frepple``
-     - Prefix for numbered database names: ``frepple0``, ``frepple1``, etc.
+     - | Prefix for numbered database names: ``frepple0``, ``frepple1``, etc.
+       | Note that changing the database prefix does not rename or move existing databases.
    * - ``POSTGRES_DBNAME``
      - Unset
      - Old, deprecated variable. It is now a mere alias for the POSTGRES_DB_PREFIX.
    * - ``POSTGRES_REPORTING_USER``
      - ``report_role``
      - Restricted database login for custom SQL reports.
-
-The standard configuration uses the application password for the reporting
-connection as well. If you rotate passwords, coordinate the application and
-reporting roles.
-
-Changing the database prefix does not rename or move existing databases.
-With a new prefix, startup can create a new, empty environment instead of
-opening your existing data. Treat a prefix change as a database migration.
+   * - ``MIN_NUMBER_OF_SCENARIOS``
+     - Lower bound on the number of scenario databases.
+   * - ``MAX_NUMBER_OF_SCENARIOS``
+     - Upper bound on the number of scenario databases.
+   * - ``SCENARIOS``
+     - | Number of scenario databases to initialize.
+       | Once the database is initialized, we read the number of scenarios from the database.
 
 Web processes and presentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. list-table::
    :header-rows: 1
-   :widths: 35 20 45
+   :widths: 40 20 40
 
    * - Variable
      - Default
      - Meaning
    * - ``FREPPLE_WEBWORKERS``
      - ``4``
-     - Number of Uvicorn workers started by supervisor.
+     - Number of Uvicorn workers. Only environments with many concurrent users
+       may need extra workers.
    * - ``FREPPLE_AUTOSTART_WEBSERVICE``
      - Empty
      - Space-separated scenario identifiers whose planning web services
@@ -199,11 +228,12 @@ Web processes and presentation
        fails, the standard configuration falls back to ``Europe/Brussels``.
    * - ``FREPPLE_THEMES``
      - Bundled theme list
-     - Space-separated names. The supplied list is ``earth grass dark lemon
-       odoo openbravo orange snow strawberry water``.
+     - Space-separated list of browser themes users can chose from. The default list
+       is ``earth grass dark lemon odoo openbravo orange snow strawberry water``.
    * - ``FREPPLE_DEFAULT_THEME``
      - ``earth``
-     - Default theme. If not in the enabled list, its first entry is used.
+     - Default theme. If not in the enabled list, its first entry is used. User can
+       change the theme in their preferences screen.
 
 HTTPS, cookies and embedding
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -218,17 +248,12 @@ HTTPS, cookies and embedding
    * - ``FREPPLE_CSRF_TRUSTED_ORIGINS``
      - Empty
      - Space-separated trusted origins, including scheme.
-   * - ``FREPPLE_SECURE_PROXY_SSL_HEADER``
-     - Empty
-     - Header/value pair separated by whitespace, normally
-       ``HTTP_X_FORWARDED_PROTO https``. Requires trusted proxy handling
-       at both proxy layers; see :ref:`installation-https`.
    * - ``FREPPLE_SESSION_COOKIE_SECURE``
      - ``false``
-     - Restrict session cookies to HTTPS. Enable in production.
+     - Restrict session cookies to HTTPS.
    * - ``FREPPLE_CSRF_COOKIE_SECURE``
      - ``false``
-     - Restrict CSRF cookies to HTTPS. Enable in production.
+     - Restrict CSRF cookies to HTTPS.
    * - ``FREPPLE_SESSION_COOKIE_SAMESITE``
      - ``lax``
      - SameSite policy for session cookies.
@@ -242,9 +267,6 @@ HTTPS, cookies and embedding
      - ``SAMEORIGIN``
      - Additional framing restriction.
 
-Use Python settings for values that cannot be represented by these string
-variables, for example ``X_FRAME_OPTIONS = None``. Review the security impact
-before enabling cross-site framing or cookies.
 
 Email
 ~~~~~
@@ -283,12 +305,14 @@ Email
      - Set it to the to the public URL of your deployment.
        It is used to insert hyperlinks to frepple in emails.
 
-Report uploads
-~~~~~~~~~~~~~~
+Report FTP uploads
+~~~~~~~~~~~~~~~~~~
+
+These variables are used by the :ref:`Publish reports by FTP <uploadreport>` command.
 
 .. list-table::
    :header-rows: 1
-   :widths: 35 20 45
+   :widths: 40 20 40
 
    * - Variable
      - Default
@@ -309,14 +333,8 @@ Report uploads
      - Empty
      - Remote password.
 
-Set ``FTP_FOLDER`` in Python configuration, either as a common value or a
-dictionary keyed by scenario. For SFTP, provision the remote host's verified
-key in the container user's SSH ``known_hosts`` file and persist that
-configuration. Never disable host-key verification to bypass a connection
-failure.
-
-Connector credentials
-~~~~~~~~~~~~~~~~~~~~~
+Odoo connector credentials
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. list-table::
    :header-rows: 1
@@ -336,17 +354,15 @@ Connector credentials
      - Company selection.
    * - ``ODOO_SINGLECOMPANY``
      - Connector's single-company option.
-   * - ``OPENBRAVO_PASSWORD``
-     - Openbravo credential.
+   * - ``AUTH_SECRET_KEY``
+     - Secret key shared with odoo to allow secure single-signon.
 
 These variables are unset by default. The standard configuration applies
-them across scenarios. Configured credentials/settings can override the
-corresponding database parameters; see the connector documentation for
-scenario-specific configuration.
-
+them across scenarios. Configuring the odoo credentials is safer than configuring
+them as parameters in the user interface.
 
 Settings without environment variables
---------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Configure these in Python rather than inventing ``FREPPLE_`` variables:
 
@@ -357,46 +373,19 @@ Configure these in Python rather than inventing ``FREPPLE_`` variables:
    * - Setting
      - Purpose
    * - ``ALLOWED_HOSTS``
-     - Accepted hostnames. Restrict to the production hostname(s).
+     - Used to restrict access to specific IP-addresses.
    * - ``SECRET_KEY``
-     - Deployment secret. The entrypoint replaces the shipped placeholder
-       on first startup; preserve the resulting value across restarts
-       and recovery.
-   * - ``SECRET_WEBTOKEN_KEY``
-     - Key for planning-service tokens; defaults to ``SECRET_KEY``.
+     - This key is used internally for cryptographic purposes.
+       Keep it secret, long and unique.
    * - ``DEFAULT_USER_GROUP``
-     - Default permissions group for new users. Review carefully when
-       enabling external signup.
-   * - ``EMAIL_URL_PREFIX``
-     - Public base URL for email links.
+     - Default permissions group for new users. If no group is defined, a new
+       user is considered a superuser.
    * - ``MAXSTORAGE``
      - Application storage quota in MB; ``None`` means unlimited.
    * - ``MAXTOTALLOGFILESIZE``
      - Total task-log retention limit in MB, default 200.
    * - ``MAXMEMORYSIZE``
-     - Planning engine memory limit in MB; ``None`` means unlimited.
+     - Planning engine memory size limit in MB; ``None`` means unlimited.
    * - ``MAXCPUTIME``
      - Planning engine CPU-time limit in seconds; ``None`` means unlimited.
-   * - ``MIN_NUMBER_OF_SCENARIOS``, ``MAX_NUMBER_OF_SCENARIOS``
-     - Bounds on scenario count; see :ref:`installation-scenarios`.
 
-Startup behavior
-----------------
-
-The standard entrypoint:
-
-#. Replaces the shipped ``SECRET_KEY`` placeholder and makes the main
-   configuration group-writable.
-#. If ``POSTGRES_USER``, ``POSTGRES_HOST`` or ``POSTGRES_PORT`` is set,
-   waits briefly for PostgreSQL, creates missing configured databases,
-   and runs migrations for the default and active scenarios.
-#. On a fresh default database, creates distribution and manufacturing
-   demo scenarios and starts their initial planning runs.
-#. Starts planning web services named by ``FREPPLE_AUTOSTART_WEBSERVICE``.
-#. If a command was passed, executes it instead of supervisor. Otherwise,
-   runs startup hooks and starts supervisor.
-
-Database initialization isn't limited to the first container creation.
-Restarting or recreating a container can run migrations again, so schedule
-upgrades deliberately and inspect their output. A running container is not
-proof that all scenarios migrated successfully.

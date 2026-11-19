@@ -70,6 +70,8 @@ v10 introduces some backward incompatible changes.
 - | 18, 19, 20: Bug fix for partially completed and partially reserved materials on manufacturing orders.
   | The quantity showing in frepple didn't match what odoo still sees as remaining to consume.
 
+- | v19, v20: Fix excessive memory usage in odoo datasets with a lot of closed purchase orders.
+
 .. rubric:: AI
 
 - | The AI MCP server is enriched with new capabilities: reading and overriding forecast,

@@ -259,7 +259,7 @@ $(function() {
 	  </button>
   {% endif %}
   {% if reportclass.editable and haschangeperm %}
-	    <button class="btn btn-sm d-none d-md-inline-block btn-primary" onclick="import_show('', undefined, true)"
+	    <button class="btn btn-sm btn-primary" onclick="import_show('', undefined, true)"
         data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'Import CSV or Excel file'|capfirst|force_escape %}">
         <span id="csvimport" class="fa fa-arrow-up"></span>
 	    </button>

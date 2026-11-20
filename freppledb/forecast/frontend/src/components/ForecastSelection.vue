@@ -311,7 +311,7 @@ onUnmounted(() => {
           </span>
           <button
               type="button"
-              class="btn btn-sm d-none d-md-inline-block btn-primary me-1"
+              class="btn btn-sm btn-primary me-1"
               @click="showImportDialog"
               v-tooltip="ttt('Import CSV or Excel file')"
               data-bs-placement="top">

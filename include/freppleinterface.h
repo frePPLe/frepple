@@ -49,7 +49,7 @@ const char* FreppleVersion();
  * processing is finished. The method can throw exceptions, and the client
  * is responsible for defining the correct handlers for these.
  */
-void FreppleInitialize(bool = true);
+void FreppleInitialize();
 
 /* The character buffer pointed to by the first parameter contains data in
  * XML format that is passed on to frePPLe for processing.

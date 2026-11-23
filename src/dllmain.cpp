@@ -31,7 +31,7 @@ using namespace frepple;
 
 const char* FreppleVersion() { return PACKAGE_VERSION; }
 
-void FreppleInitialize(bool procesInitializationFiles) {
+void FreppleInitialize() {
   // Initialize only once
   static bool initialized = false;
   if (initialized) return;

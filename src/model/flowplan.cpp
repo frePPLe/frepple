@@ -247,7 +247,7 @@ pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,
     return make_pair(0.0, 0.0);
   }
 
-  double opplan_quantity;
+  double opplan_quantity = 0;
   bool less_than_fixed_qty =
       fabs(getFlow()->getQuantityFixed()) &&
       fabs(quantity) < fabs(getFlow()->getQuantityFixed()) + ROUNDING_ERROR;

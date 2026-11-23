@@ -32,7 +32,7 @@ from django.utils.autoreload import autoreload_started
 
 
 def watchDjangoSettings(sender, **kwargs):
-    for f in ["djangosettings.py", "localsettings.py", "wsgi.py"]:
+    for f in ["djangosettings.py", "localsettings.py", "asgi_webserver.py"]:
         sender.extra_files.add(Path(os.path.join(settings.FREPPLE_CONFIGDIR, f)))
 
 

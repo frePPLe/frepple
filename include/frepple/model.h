@@ -9392,7 +9392,10 @@ class CommandCreateOperationPlan : public Command {
   }
 
   ~CommandCreateOperationPlan() override {
-    if (opplan) delete opplan;
+    if (opplan) {
+      delete opplan;
+      opplan = nullptr;
+    }
   }
 
   OperationPlan* getOperationPlan() const { return opplan; }

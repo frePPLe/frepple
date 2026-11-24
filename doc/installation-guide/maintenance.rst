@@ -166,7 +166,7 @@ need to go back, please seek assistance from the frepple support team.
 #. The migration will finish in less than a minute.
 
 
-.. _upgrade_postgresql:
+.. _upgrade-postgresql:
 
 Upgrade PostgreSQL
 ~~~~~~~~~~~~~~~~~~
@@ -180,7 +180,7 @@ Don't forget to retune your PostgreSQL configuration after the upgrade with
 `PGTune <https://pgtune.leopard.in.ua/>`_.
 
 
-.. _contacting_support:
+.. _contacting-support:
 
 Contacting frepple support
 --------------------------

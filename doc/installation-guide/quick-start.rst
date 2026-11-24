@@ -14,7 +14,7 @@ to do that first.
 Create a deployment directory
 -----------------------------
 
-Create a folder where you will configura your deployment.
+Create a folder where you will configure your deployment.
 
 .. code-block:: bash
 
@@ -115,10 +115,12 @@ Run the commands below to start the frepple and postgresql containers:
 | The Community Edition does not require github authentication.
 
 On its first start, frepple performs a number of initialization tasks:
+
 - It creates its PostgreSQL databases
 - It initializes the tables in the database schema
 - It loads 2 example datasets
 - Finally, it starts the frepple web application
+
 Allow for some time for this initialization to finish.
 
 The last command in the above snippet follows the frepple logs in real time.
@@ -132,7 +134,7 @@ Point your browser to http://localhost:9000/ and log in with username ``admin`` 
 ``admin``. If you are able to log in successfully, the installation is verified.
 
 We recommend changing the default password immediately. Click on the user icon in the upper
-right corner to open a preferences screen.
+right corner to open the preferences screen where the password can be changed.
 
 Stop, restart and remove
 ------------------------

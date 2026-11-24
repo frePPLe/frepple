@@ -91,8 +91,7 @@ a database role.
 
 .. code-block:: sql
 
-   CREATE ROLE frepple WITH LOGIN PASSWORD 'replace-with-a-random-password'
-     CREATEDB CREATEROLE;
+   CREATE ROLE frepple WITH LOGIN PASSWORD 'replace-with-a-random-password' CREATEDB CREATEROLE;
 
 You will need to pass the following environment variables to the frepple container:
 
@@ -143,7 +142,7 @@ remove the PostgreSQL service from the file. It will look as follows:
      frepple-data:
      frepple-packages:
 
-If you postgres on the docker host, use the host's IP address, hostname or
+If you run PostgreSQL on the docker host, use the host's IP address, hostname or
  ``host.docker.internal`` instead of ``localhost`` as the database host. That's
  because ``localhost`` would refer to the container itself, not the host machine.
 
@@ -155,7 +154,7 @@ We highly recommend using UTF-8 encoding for the database.
 Configure HTTPS
 ---------------
 
-It's is a mad world on the internet. Securing your network traffic
+The internet is a mad world. Securing your network traffic
 is a must for any serious web application.
 
 To configure HTTPS on your frePPLe deployment, you have 2 options.
@@ -241,7 +240,7 @@ Many customers use custom addons to extend frepple's functionality.
 
 The development of custom addons involves creating Python packages that
 follow frepple's addon structure. This development is described in detail in the
-developer guide.
+`developer guide  <../developer-guide/index.html>`_.
 
 You deploy such custom addon by copying them into the container
 folder /usr/share/frepple/python_packages. Addons in this folder

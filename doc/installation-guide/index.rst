@@ -3,7 +3,7 @@ Installation guide
 ==================
 
 This chapter will guide you through the installation of frepple. We have you
-covered From your first steps discovering the software, all through the
+covered from your first steps discovering the software, all through the
 maintenance procedures for customized production deployments.
 
 Start with checking the :doc:`pre-requisites`, followed by the :doc:`quick-start`

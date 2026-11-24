@@ -141,7 +141,7 @@ class PasswordResetConfirmView(FormView):
                 messages.success(request, "Password has been reset.")
                 return self.form_valid(form)
             else:
-                messages.error(request, "Password reset has not been unsuccessful.")
+                messages.error(request, "Password reset has not been successful.")
                 return self.form_invalid(form)
         else:
             messages.error(request, "The reset password link is no longer valid.")

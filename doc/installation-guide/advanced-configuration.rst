@@ -6,12 +6,21 @@ The :doc:`installation` page covers the key installation steps.
 On this page we cover some advanced configuration topics that only apply to
 specific deployments.
 
+* :ref:`2fa`
 * :ref:`external_auth`
 * :ref:`kubernetes`
 * :ref:`proxy`
 
-Note: FrePPLe offers an optional `2FA App <https://frepple.com/docs/current/apps/two_factor_authentication.html>`_ 
-that enables mandatory two-factor authentication (2FA) for all users. This app is only available in the Enterprise Edition.
+.. _2fa:
+
+Two-Factor Authentication (2FA)
+-------------------------------
+
+Frepple offers an optional :doc:`2FA App <../apps/two_factor_authentication>`.
+that enables mandatory two-factor authentication (2FA) for all users.
+
+This app is only available in the Enterprise Edition.
+
 
 .. _external_auth:
 
@@ -137,7 +146,7 @@ Proxy configuration
 
 Some companies deploy frepple behind a proxy server. The proxy server can take
 care of the https encryption, can facilitate monitoring, and can improve security on
-your network. 
+your network.
 
 Some additional configuration may be needed to make the web application run in this configuration.
 See https://stackoverflow.com/questions/70501974/django-returning-csrf-verification-failed-request-aborted-behind-nginx-prox

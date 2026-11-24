@@ -9,7 +9,7 @@ equivalent backup and restore procedures.
 
 * :ref:`start-and-stop`
 * :ref:`check-status`
-* :ref:`shell`
+* :ref:`container-shell`
 * :ref:`backup`
 * :ref:`upgrade`
 * :ref:`upgrade-v10`
@@ -49,7 +49,7 @@ Wondering what the container is doing?
    docker compose logs -f frepple
 
 
-.. _shell:
+.. _container-shell:
 
 Running a command or shell in the container
 -------------------------------------------
@@ -67,7 +67,7 @@ Occasionally you may need to run a command or open a shell in the running contai
    docker compose exec frepple /bin/bash
 
 
-.. _backup:
+.. _maintenance-backup:
 
 Back up the environment
 -----------------------

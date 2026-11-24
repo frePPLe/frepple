@@ -94,7 +94,8 @@ Edition and licensing
 
 The Community Edition image is freely available at ghcr.io/frepple/frepple-community.
 
-| The Enterprise Edition image is available at ghcr.io/frepple/frepple-enterprise.
+| The `Enterprise Edition <https://frepple.com/editions/>`_ image is available at 
+  ghcr.io/frepple/frepple-enterprise for the Frepple customers.
 | To use it you will need to create a GitHub account and request access to the image
-  from the frepple team. The frepple team will also provide you a license key you
+  from the frepple team. The frepple team will also provide a license key file you
   will need to copy into your container.

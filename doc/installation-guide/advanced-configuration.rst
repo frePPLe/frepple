@@ -10,6 +10,8 @@ specific deployments.
 * :ref:`kubernetes`
 * :ref:`proxy`
 
+Note: FrePPLe offers an optional `2FA App <https://frepple.com/docs/current/apps/two_factor_authentication.html>`_ 
+that enables mandatory two-factor authentication (2FA) for all users. This app is only available in the Enterprise Edition.
 
 .. _external_auth:
 
@@ -53,7 +55,7 @@ the configuration against the allauth version bundled with your image.
    middleware entries.
 
 #. Configure the authentication backends and account adapters. These
-   settings can be placed in ``localsettings.py``:
+   settings can be placed in ``djangosettings.py``:
 
    .. code-block:: python
 

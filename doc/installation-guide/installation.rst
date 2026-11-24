@@ -7,8 +7,8 @@ This page provides some additional steps and considerations to make your install
 secure, performant and production-ready.
 
 * :ref:`reset-admin-password`
-* :ref:`tune-postgresql`
 * :ref:`external-postgres`
+* :ref:`tune-postgresql`
 * :ref:`configure-https`
 * :ref:`configure-smtp`
 * :ref:`installation-enterprise`
@@ -25,55 +25,6 @@ The default installation creates the "admin" user with the default password "adm
 
 Log in as the admin user, and open the preferences form (click on the user icon
 in the top right corner). Change that password right away.
-
-
-.. _tune-postgresql:
-
-Tune PostgreSQL
----------------
-
-Start by tuning PostgreSQL for your deployment.
-
-The default PostgreSQL configuration is only suitable for small databases and
-simple queries. Any real-world frepple deployment will need a more powerful
-database with 4GB to 8GB memory.
-
-Use `PGTune <https://pgtune.leopard.in.ua/>`_ to get the correct parameters for
-the memory size you give to the database. Choose "data warehouse" as the workload
-type in PGTune.
-
-If you run PostgreSQL locally, apply the recommendations from PGTune by editing
-the database configuration file ``postgresql.conf``.
-
-If you are running PostgreSQL as a container, you add the recommendations
-from PGTune in the compose file, as shown below.
-
-.. code-block:: yaml
-
-   services:
-   db:
-      image: postgres:18
-      restart: always
-      shm_size: 4g  # Memory you give as available in PGTune
-      environment:
-         POSTGRES_PASSWORD: secretpassword
-      command: >
-         postgres
-         -c max_connections=200
-         -c shared_buffers=1GB
-         -c effective_cache_size=3GB
-         -c maintenance_work_mem=512MB
-         -c checkpoint_completion_target=0.9
-         -c wal_buffers=16MB
-         -c default_statistics_target=500
-         -c random_page_cost=1.1
-         -c effective_io_concurrency=200
-         -c work_mem=14198kB
-         -c min_wal_size=4GB
-         -c max_wal_size=16GB
-         -c huge_pages = off
-         -c wal_compression=lz4
-         -c io_method = io_uring
 
 
 .. _external-postgres:
@@ -148,6 +99,54 @@ If you run PostgreSQL on the docker host, use the host's IP address, hostname or
 
 We highly recommend using UTF-8 encoding for the database.
 
+
+.. _tune-postgresql:
+
+Tune PostgreSQL
+---------------
+
+Start by tuning PostgreSQL for your deployment.
+
+The default PostgreSQL configuration is only suitable for small databases and
+simple queries. Any real-world frepple deployment will need a more powerful
+database with 4GB to 8GB memory.
+
+Use `PGTune <https://pgtune.leopard.in.ua/>`_ to get the correct parameters for
+the memory size you give to the database. Choose "data warehouse" as the workload
+type in PGTune.
+
+If you run PostgreSQL locally, apply the recommendations from PGTune by editing
+the database configuration file ``postgresql.conf``.
+
+If you are running PostgreSQL as a container, you add the recommendations
+from PGTune in the compose file, as shown below.
+
+.. code-block:: yaml
+
+   services:
+   db:
+      image: postgres:18
+      restart: always
+      shm_size: 4g  # Memory you give as available in PGTune
+      environment:
+         POSTGRES_PASSWORD: secretpassword
+      command: >
+         postgres
+         -c max_connections=200
+         -c shared_buffers=1GB
+         -c effective_cache_size=3GB
+         -c maintenance_work_mem=512MB
+         -c checkpoint_completion_target=0.9
+         -c wal_buffers=16MB
+         -c default_statistics_target=500
+         -c random_page_cost=1.1
+         -c effective_io_concurrency=200
+         -c work_mem=14198kB
+         -c min_wal_size=4GB
+         -c max_wal_size=16GB
+         -c huge_pages = off
+         -c wal_compression=lz4
+         -c io_method = io_uring
 
 .. _configure-https:
 

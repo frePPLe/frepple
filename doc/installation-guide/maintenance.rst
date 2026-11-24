@@ -12,6 +12,7 @@ equivalent backup and restore procedures.
 * :ref:`shell`
 * :ref:`backup`
 * :ref:`upgrade`
+* :ref:`upgrade-v10`
 * :ref:`upgrade-postgresql`
 * :ref:`contacting-support`
 
@@ -164,6 +165,43 @@ need to go back, please seek assistance from the frepple support team.
    release. Review the output for errors.
 
 #. The migration will finish in less than a minute.
+
+
+.. _upgrade-v10:
+
+Upgrade to frepple 10
+~~~~~~~~~~~~~~~~~~~~~
+
+With frepple 10, the upgrade process is slightly different from other upgrades.
+That's becasue the configuration files have been reorganized, and your setup needs to be upgraded.
+
+Here is the recommended procedure to upgrade to frepple 10:
+
+#. Create a backup your back of your database and the folders /etc/frepple and /var/log/frepple.
+
+#. Extract the default configuration files of the v10 release.
+
+   .. code-block:: bash
+
+   mkdir -p ./frepple-defaults
+   docker run --rm frepple-community:10.0.0 tar -cf - -C /etc/frepple . | tar -xf - -C ./frepple-defaults
+
+#. The files in ``./frepple-defaults`` now contain the default configuration for frepple 10.
+   The files nginx.conf, entrypoint.sh and supervisord.conf you can very likely copy straight into your
+   old configuration volume. Most implementation never needed to modify these files.
+
+#. The file djangosettings.py on the other hand needs to migrated. You'll start from the new default
+   content of the file and bring your modifications across from your old configuration.
+
+   In particular the following settings should be carefully reviewed and merged:
+
+   -  TODO
+
+#. With all configuration files now updated to the new format, the upgrade process
+   can proceed as usual. Restart the frepple container, and it will automatically upgrade
+   the database schema.
+
+#. If you're stuck or feel unsure about the upgrade process, reach out to the frepple team for assistance.
 
 
 .. _upgrade-postgresql:

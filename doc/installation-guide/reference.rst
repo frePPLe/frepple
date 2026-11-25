@@ -102,7 +102,7 @@ Volumes and their content
            running in the container.
 
    * - ``/var/log/frepple``
-       | This volume contains:
+     - | This volume contains:
 
        - | ``/var/log/frepple/*.log``
          | Log files from tasks run from the "execute screen".
@@ -197,10 +197,15 @@ Database connection
      - ``report_role``
      - Restricted database login for custom SQL reports.
    * - ``MIN_NUMBER_OF_SCENARIOS``
+     - 2
      - Lower bound on the number of scenario databases.
    * - ``MAX_NUMBER_OF_SCENARIOS``
-     - Upper bound on the number of scenario databases.
+     - 30
+     - | Upper bound on the number of scenario databases.
+       | A high number of scenarios will increase the number of open database connections.
+         Don't go overboard with this setting.
    * - ``SCENARIOS``
+     - 3
      - | Number of scenario databases to initialize.
        | Once the database is initialized, we read the number of scenarios from the database.
 

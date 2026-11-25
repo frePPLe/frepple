@@ -11,15 +11,15 @@ specific deployments.
 * :ref:`kubernetes`
 * :ref:`proxy`
 
+
 .. _2fa:
 
-Two-Factor Authentication (2FA)
--------------------------------
+Two-Factor Authentication
+-------------------------
 
-Frepple offers an optional :doc:`2FA App <../apps/two_factor_authentication>`.
-that enables mandatory two-factor authentication (2FA) for all users.
-
-This app is only available in the Enterprise Edition.
+The Enterprise Edition offers an optional app that enables mandatory two-factor
+authentication (2FA) for all users. Company policies may require enabling this
+feature.
 
 
 .. _external_auth:
@@ -118,7 +118,7 @@ Authentication establishes who the user is; authorization controls what
 that user can do. Provider-specific authorization rules may require a custom
 adapter in a derived image.
 
-Use the HTTPS configuration in :ref:`installation-https`. Don't relax
+Use the HTTPS configuration in :ref:`configure-https`. Don't relax
 frame policies or same-site cookies simply because OAuth is enabled. If
 embedding frePPLe in another application requires cross-site cookies,
 review those settings explicitly and require secure cookies over HTTPS.

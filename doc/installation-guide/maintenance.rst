@@ -224,4 +224,4 @@ Contacting frepple support
 --------------------------
 
 If you want to send a dataset to the frepple team for support or debugging, you can generate and
-download a database dump with the data. See :ref:`contacting support <contacting_support>`.
+download a database dump with the data. See :ref:`contacting support <backup>`.

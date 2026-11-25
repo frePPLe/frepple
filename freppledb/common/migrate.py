@@ -68,3 +68,47 @@ class AttributeMigration(migrations.Migration):
         state = super().unapply(project_state, schema_editor, collect_sql)
         self.app_label = self.real_app_label
         return state
+
+
+class AttributeAddField(migrations.AddField):
+    def __init__(
+        self, app_name, model_name, name, field, preserve_default=True
+    ):
+        self.app_name = app_name
+        super().__init__(model_name, name, field, preserve_default)
+
+    def deconstruct(self):
+        name, args, kwargs = super().deconstruct()
+        return name, (self.app_name, *args), kwargs
+
+    def state_forwards(self, app_label, state):
+        super().state_forwards(self.app_name, state)
+
+    def database_forwards(self, app_label, schema_editor, from_state, to_state):
+        super().database_forwards(self.app_name, schema_editor, from_state, to_state)
+
+    def database_backwards(self, app_label, schema_editor, from_state, to_state):
+        super().database_backwards(self.app_name, schema_editor, from_state, to_state)
+
+    def references_model(self, name, app_label):
+        return super().references_model(name, self.app_name)
+
+    def references_field(self, model_name, name, app_label):
+        return super().references_field(model_name, name, self.app_name)
+
+    def reduce(self, operation, app_label):
+        reduced = super().reduce(operation, self.app_name)
+        if isinstance(reduced, list):
+            return [
+                AttributeAddField(
+                    app_name=self.app_name,
+                    model_name=op.model_name,
+                    name=op.name,
+                    field=op.field,
+                    preserve_default=op.preserve_default,
+                )
+                if isinstance(op, migrations.AddField)
+                else op
+                for op in reduced
+            ]
+        return reduced

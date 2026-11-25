@@ -64,6 +64,7 @@ class ArchivedModel(models.Model):
         blank=False,
         null=False,
         on_delete=models.CASCADE,
+        db_constraint=False,
     )
 
     objects = MultiDBManager()  # The default manager.

@@ -43,7 +43,7 @@ Save the following as ``compose.yml``:
 
    services:
      frepple:
-       image: ghcr.io/frepple/frepple-{FREPPLE_EDITION:?Set FREPPLE_EDITION in .env}:${FREPPLE_VERSION:?Set FREPPLE_VERSION in .env}
+       image: ghcr.io/frepple/frepple-${FREPPLE_EDITION:?Set FREPPLE_EDITION in .env}:${FREPPLE_VERSION:?Set FREPPLE_VERSION in .env}
        restart: unless-stopped
        ports:
          - "127.0.0.1:9000:80"
@@ -74,7 +74,7 @@ Save the following as ``compose.yml``:
          POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
          POSTGRES_DB: postgres
        volumes:
-         - postgres-data:/var/lib/postgresql/data
+         - postgres-data:/var/lib/postgresql
        healthcheck:
          test: ["CMD-SHELL", "pg_isready -U frepple -d postgres"]
          interval: 5s

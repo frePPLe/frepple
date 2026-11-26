@@ -194,12 +194,17 @@ class OperationplanService(AsyncHttpConsumer):
                 ):
                     try:
                         for d in rec.get("delete", []):
-                            if self.scope["user"].has_perm(
-                                "input.delete_operationplan"
-                            ):
-                                opplan = frepple.operationplan(reference=d, action="C")
-                                if not opplan:
-                                    continue
+                            opplan = frepple.operationplan(reference=d, action="C")
+                            if not opplan:
+                                continue
+                            permission = {
+                                "PO": "input.delete_purchaseorder",
+                                "DO": "input.delete_distributionorder",
+                                "MO": "input.delete_manufacturingorder",
+                                "WO": "input.delete_manufacturingorder",  # We only delete at MO level
+                                "DLVR": "input.delete_deliveryorder",
+                            }.get(opplan.ordertype, None)
+                            if permission and self.scope["user"].has_perm(permission):
                                 if opplan.owner and isinstance(
                                     opplan.owner.operation, frepple.operation_routing
                                 ):
@@ -219,12 +224,17 @@ class OperationplanService(AsyncHttpConsumer):
                                 errors.append("permission denied")
 
                         for d in rec.get("split", []):
-                            if self.scope["user"].has_perm(
-                                "input.create_operationplan"
-                            ):
-                                opplan = frepple.operationplan(reference=d, action="C")
-                                if not opplan:
-                                    continue
+                            opplan = frepple.operationplan(reference=d, action="C")
+                            if not opplan:
+                                continue
+                            permission = {
+                                "PO": "input.create_purchaseorder",
+                                "DO": "input.create_distributionorder",
+                                "MO": "input.create_manufacturingorder",
+                                "WO": "input.create_manufacturingorder",  # We only create at MO level
+                                "DLVR": "input.create_deliveryorder",
+                            }.get(opplan.ordertype, None)
+                            if permission and self.scope["user"].has_perm(permission):
                                 if opplan.owner and isinstance(
                                     opplan.owner.operation, frepple.operation_routing
                                 ):
@@ -251,12 +261,17 @@ class OperationplanService(AsyncHttpConsumer):
                                 errors.append("permission denied")
 
                         for d in rec.get("copy", []):
-                            if self.scope["user"].has_perm(
-                                "input.create_operationplan"
-                            ):
-                                opplan = frepple.operationplan(reference=d, action="C")
-                                if not opplan:
-                                    continue
+                            opplan = frepple.operationplan(reference=d, action="C")
+                            if not opplan:
+                                continue
+                            permission = {
+                                "PO": "input.create_purchaseorder",
+                                "DO": "input.create_distributionorder",
+                                "MO": "input.create_manufacturingorder",
+                                "WO": "input.create_manufacturingorder",  # We only create at MO level
+                                "DLVR": "input.create_deliveryorder",
+                            }.get(opplan.ordertype, None)
+                            if permission and self.scope["user"].has_perm(permission):
                                 if opplan.owner and isinstance(
                                     opplan.owner.operation, frepple.operation_routing
                                 ):
@@ -285,121 +300,126 @@ class OperationplanService(AsyncHttpConsumer):
                             continue
                         changes["reference"] = ref
                         opplan = frepple.operationplan(reference=ref, action="C")
-                        changes["ordertype"] = opplan.ordertype
-                        if changes["ordertype"] == "PO":
-                            if "location" in rec:
-                                changes["location"] = frepple.location(
-                                    name=rec["location"], action="C"
+                        permission = {
+                            "PO": "input.change_purchaseorder",
+                            "DO": "input.change_distributionorder",
+                            "MO": "input.change_manufacturingorder",
+                            "WO": "input.change_workorder",
+                            "DLVR": "input.change_deliveryorder",
+                        }.get(opplan.ordertype, None)
+                        if permission and self.scope["user"].has_perm(permission):
+                            changes["ordertype"] = opplan.ordertype
+                            if changes["ordertype"] == "PO":
+                                if "location" in rec:
+                                    changes["location"] = frepple.location(
+                                        name=rec["location"], action="C"
+                                    )
+                                if "supplier" in rec:
+                                    changes["supplier"] = frepple.supplier(
+                                        name=rec["supplier"], action="C"
+                                    )
+                                if "item" in rec:
+                                    changes["item"] = frepple.item(
+                                        name=rec["item"], action="C"
+                                    )
+                            elif changes["ordertype"] == "DO":
+                                if "destination" in rec:
+                                    changes["location"] = frepple.location(
+                                        name=rec["destination"], action="C"
+                                    )
+                                if "origin" in rec:
+                                    changes["origin"] = frepple.location(
+                                        name=rec["origin"], action="C"
+                                    )
+                                if "item" in rec:
+                                    changes["item"] = frepple.item(
+                                        name=rec["item"], action="C"
+                                    )
+                            elif changes["ordertype"] == "MO":
+                                if "operation" in rec:
+                                    changes["operation"] = frepple.operation(
+                                        name=rec["operation"], action="C"
+                                    )
+                            if "operationplan__quantity" in rec:
+                                changes["quantity"] = float(
+                                    rec["operationplan__quantity"]
                                 )
-                            if "supplier" in rec:
-                                changes["supplier"] = frepple.supplier(
-                                    name=rec["supplier"], action="C"
+                            elif "quantity" in rec:
+                                changes["quantity"] = float(rec["quantity"])
+                            if "operationplan__quantity_completed" in rec:
+                                changes["quantity_completed"] = float(
+                                    rec["operationplan__quantity_completed"]
                                 )
-                            if "item" in rec:
-                                changes["item"] = frepple.item(
-                                    name=rec["item"], action="C"
+                            elif "quantity_completed" in rec:
+                                changes["quantity_completed"] = float(
+                                    rec["quantity_completed"]
                                 )
-                        elif changes["ordertype"] == "DO":
-                            if "destination" in rec:
-                                changes["location"] = frepple.location(
-                                    name=rec["destination"], action="C"
-                                )
-                            if "origin" in rec:
-                                changes["origin"] = frepple.location(
-                                    name=rec["origin"], action="C"
-                                )
-                            if "item" in rec:
-                                changes["item"] = frepple.item(
-                                    name=rec["item"], action="C"
-                                )
-                        elif changes["ordertype"] == "MO":
-                            if "operation" in rec:
-                                changes["operation"] = frepple.operation(
-                                    name=rec["operation"], action="C"
-                                )
-                        if "operationplan__quantity" in rec:
-                            changes["quantity"] = float(rec["operationplan__quantity"])
-                        elif "quantity" in rec:
-                            changes["quantity"] = float(rec["quantity"])
-                        if "operationplan__quantity_completed" in rec:
-                            changes["quantity_completed"] = float(
-                                rec["operationplan__quantity_completed"]
-                            )
-                        elif "quantity_completed" in rec:
-                            changes["quantity_completed"] = float(
-                                rec["quantity_completed"]
-                            )
-                        if "enddate" in rec and rec["enddate"] != "\xa0":
-                            changes["end"] = parseLocalizedDateTime(
-                                rec["enddate"]
-                            ).strftime("%Y-%m-%dT%H:%M:%S")
-                        elif (
-                            "operationplan__enddate" in rec
-                            and rec["operationplan__enddate"] != "\xa0"
-                        ):
-                            changes["end"] = parseLocalizedDateTime(
-                                rec["operationplan__enddate"]
-                            ).strftime("%Y-%m-%dT%H:%M:%S")
-                        if "startdate" in rec and rec["startdate"] != "\xa0":
-                            changes["start"] = parseLocalizedDateTime(
-                                rec["startdate"]
-                            ).strftime("%Y-%m-%dT%H:%M:%S")
-                        elif (
-                            "operationplan__startdate" in rec
-                            and rec["operationplan__startdate"] != "\xa0"
-                        ):
-                            changes["start"] = parseLocalizedDateTime(
-                                rec["operationplan__startdate"]
-                            ).strftime("%Y-%m-%dT%H:%M:%S")
-                        if "demand" in rec:
-                            changes["demand"] = rec["demand"]
-                        if "batch" in rec:
-                            changes["batch"] = rec["batch"]
-                        if "status" in rec:
-                            changes["status"] = rec["status"]
-                        elif "operationplan__status" in rec:
-                            changes["status"] = rec["operationplan__status"]
-                        rsrcs = rec.get("resources", rec.get("resource", None))
-                        if rsrcs:
-                            # Force deletion of existing loadplans (because the loadplan data isn't in delta mode)
-                            if isinstance(rsrcs, str):
-                                changes["resources"] = [rsrcs]
-                            else:
-                                rsrcs_by_ref = {}
-                                for l in rsrcs:
-                                    if l[2] in rsrcs_by_ref:
-                                        rsrcs_by_ref[l[2]].append(l[0])
-                                    else:
-                                        rsrcs_by_ref[l[2]] = [l[0]]
-                                if changes.get("reference", None) in rsrcs_by_ref:
-                                    changes["resources"] = rsrcs_by_ref[
-                                        changes["reference"]
-                                    ]
-                                    del rsrcs_by_ref[changes["reference"]]
-                        if "remark" in rec:
-                            changes["remark"] = rec["remark"]
-                        for attr in opplanAttributes:
-                            if attr[0] in rec and attr[3]:
-                                if attr[2] in ("integer", "number"):
-                                    changes[attr[0]] = float(rec[attr[0]])
-                                elif attr[2] == "datetime":
-                                    changes[attr[0]] = parseLocalizedDateTime(
-                                        rec[attr[0]]
-                                    ).strftime("%Y-%m-%dT%H:%M:%S")
-                                elif attr[2] == "date":
-                                    changes[attr[0]] = parseLocalizedDate(
-                                        rec[attr[0]]
-                                    ).strftime("%Y-%m-%d")
-                                else:
-                                    changes[attr[0]] = rec[attr[0]]
-
-                        # Update the engine
-                        if changes or rsrcs_by_ref:
-                            if self.scope["user"].has_perm(
-                                "input.change_operationplan"
-                                if ref
-                                else "input.add_operationplan"
+                            if "enddate" in rec and rec["enddate"] != "\xa0":
+                                changes["end"] = parseLocalizedDateTime(
+                                    rec["enddate"]
+                                ).strftime("%Y-%m-%dT%H:%M:%S")
+                            elif (
+                                "operationplan__enddate" in rec
+                                and rec["operationplan__enddate"] != "\xa0"
                             ):
+                                changes["end"] = parseLocalizedDateTime(
+                                    rec["operationplan__enddate"]
+                                ).strftime("%Y-%m-%dT%H:%M:%S")
+                            if "startdate" in rec and rec["startdate"] != "\xa0":
+                                changes["start"] = parseLocalizedDateTime(
+                                    rec["startdate"]
+                                ).strftime("%Y-%m-%dT%H:%M:%S")
+                            elif (
+                                "operationplan__startdate" in rec
+                                and rec["operationplan__startdate"] != "\xa0"
+                            ):
+                                changes["start"] = parseLocalizedDateTime(
+                                    rec["operationplan__startdate"]
+                                ).strftime("%Y-%m-%dT%H:%M:%S")
+                            if "demand" in rec:
+                                changes["demand"] = rec["demand"]
+                            if "batch" in rec:
+                                changes["batch"] = rec["batch"]
+                            if "status" in rec:
+                                changes["status"] = rec["status"]
+                            elif "operationplan__status" in rec:
+                                changes["status"] = rec["operationplan__status"]
+                            rsrcs = rec.get("resources", rec.get("resource", None))
+                            if rsrcs:
+                                # Force deletion of existing loadplans (because the loadplan data isn't in delta mode)
+                                if isinstance(rsrcs, str):
+                                    changes["resources"] = [rsrcs]
+                                else:
+                                    rsrcs_by_ref = {}
+                                    for l in rsrcs:
+                                        if l[2] in rsrcs_by_ref:
+                                            rsrcs_by_ref[l[2]].append(l[0])
+                                        else:
+                                            rsrcs_by_ref[l[2]] = [l[0]]
+                                    if changes.get("reference", None) in rsrcs_by_ref:
+                                        changes["resources"] = rsrcs_by_ref[
+                                            changes["reference"]
+                                        ]
+                                        del rsrcs_by_ref[changes["reference"]]
+                            if "remark" in rec:
+                                changes["remark"] = rec["remark"]
+                            for attr in opplanAttributes:
+                                if attr[0] in rec and attr[3]:
+                                    if attr[2] in ("integer", "number"):
+                                        changes[attr[0]] = float(rec[attr[0]])
+                                    elif attr[2] == "datetime":
+                                        changes[attr[0]] = parseLocalizedDateTime(
+                                            rec[attr[0]]
+                                        ).strftime("%Y-%m-%dT%H:%M:%S")
+                                    elif attr[2] == "date":
+                                        changes[attr[0]] = parseLocalizedDate(
+                                            rec[attr[0]]
+                                        ).strftime("%Y-%m-%d")
+                                    else:
+                                        changes[attr[0]] = rec[attr[0]]
+
+                            # Update the engine
+                            if changes or rsrcs_by_ref:
                                 if ref:
                                     # Original related objects
                                     opplans.append(opplan)
@@ -443,6 +463,7 @@ class OperationplanService(AsyncHttpConsumer):
                                     if "start" in changes:
                                         opplan.start_force = changes["start"]
                                 else:
+                                    # This code is currently unreachable
                                     opplan = frepple.operationplan(**changes)
                                     for fld, val in changes.items():
                                         if fld == "end":
@@ -460,8 +481,8 @@ class OperationplanService(AsyncHttpConsumer):
                                     related_buffers,
                                     related_demands,
                                 )
-                            elif "permission denied" not in errors:
-                                errors.append("permission denied")
+                        elif "permission denied" not in errors:
+                            errors.append("permission denied")
 
                     except Exception as e:
                         errors.append(str(e))

@@ -110,6 +110,13 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AlterField(
+            model_name="operation",
+            name="name",
+            field=models.CharField(
+                primary_key=True, serialize=False, verbose_name="name"
+            ),
+        ),
         migrations.CreateModel(
             name="OperationDependency",
             fields=[
@@ -122,7 +129,7 @@ class Migration(migrations.Migration):
                 (
                     "operation",
                     models.ForeignKey(
-                        help_text="Operation",
+                        help_text="operation",
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="dependencies",
                         to="input.operation",
@@ -132,7 +139,7 @@ class Migration(migrations.Migration):
                 (
                     "blockedby",
                     models.ForeignKey(
-                        help_text="Blocked by operation",
+                        help_text="blocked by operation",
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="dependents",
                         to="input.operation",
@@ -172,10 +179,7 @@ class Migration(migrations.Migration):
                 (
                     "source",
                     models.CharField(
-                        blank=True,
-                        db_index=True,
-                        null=True,
-                        verbose_name="source",
+                        blank=True, db_index=True, null=True, verbose_name="source"
                     ),
                 ),
                 (
@@ -282,10 +286,6 @@ class Migration(migrations.Migration):
                 null=True,
                 verbose_name="quantity",
             ),
-        ),
-        migrations.RunSQL(
-            sql="\n            insert into common_parameter (name, value, lastmodified, description)\n            values (\n              'plan.deliveryDuration', '0', now(),\n              'The duration (in working hours) for the final shipment of a sales order to the customer. Default: 0'\n              )\n            on conflict (name) do nothing\n            ",
-            reverse_sql="\n            delete from common_parameter where name = 'plan.deliveryDuration'\n            ",
         ),
         migrations.RunSQL(
             sql="drop materialized view if exists forecastreport_view",
@@ -846,13 +846,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name="operation",
-            name="name",
-            field=models.CharField(
-                primary_key=True, serialize=False, verbose_name="name"
-            ),
-        ),
-        migrations.AlterField(
-            model_name="operation",
             name="owner",
             field=models.ForeignKey(
                 blank=True,
@@ -930,35 +923,6 @@ class Migration(migrations.Migration):
             name="type",
             field=models.CharField(
                 blank=True, default="fixed_time", null=True, verbose_name="type"
-            ),
-        ),
-        migrations.AlterField(
-            model_name="operationdependency",
-            name="blockedby",
-            field=models.ForeignKey(
-                help_text="blocked by operation",
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="dependents",
-                to="input.operation",
-                verbose_name="blocked by operation",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="operationdependency",
-            name="operation",
-            field=models.ForeignKey(
-                help_text="operation",
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="dependencies",
-                to="input.operation",
-                verbose_name="operation",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="operationdependency",
-            name="source",
-            field=models.CharField(
-                blank=True, db_index=True, null=True, verbose_name="source"
             ),
         ),
         migrations.AlterField(
@@ -1541,14 +1505,6 @@ class Migration(migrations.Migration):
             code=recreateConstraintsCascade,
             reverse_code=migrations.RunPython.noop,
         ),
-        migrations.RunSQL(
-            sql="\n            insert into common_parameter (name, value, lastmodified, description)\n            values (\n              'plan.move_approved_early', '0', now(),\n              'Controls rescheduling approved orders early. Values: 0 (inactive, default), 1 (active preserving existing resource assignments, 2 (active replanning resource assignments)'\n              )\n            on conflict (name) do nothing\n            ",
-            reverse_sql="\n            delete from common_parameter where name = 'plan.move_approved_early'\n            ",
-        ),
-        migrations.RunSQL(
-            sql="\n            update operationplan set type = 'WO'\n            where type = 'MO' and exists\n            (select 1 from operation inner join operationplan opplan on opplan.operation_id = operation.name where operation.type = 'routing' and opplan.reference = operationplan.owner_id)\n            ",
-            reverse_sql="\n            update operationplan set type = 'MO' where type = 'WO'\n            ",
-        ),
         migrations.CreateModel(
             name="WorkOrder",
             fields=[],
@@ -1590,12 +1546,40 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.RunSQL(
-            sql="\n            insert into common_parameter (name, value, lastmodified, description)\n            values (\n              'pathreport_optimization', 'false', now(),\n              'Activates a fast version of the supply path report, suitable for deep bill of materials with many components. Default: false.'\n              )\n            on conflict (name) do nothing\n            ",
-            reverse_sql="\n            delete from common_parameter where name = 'pathreport_optimization'\n            ",
+            sql="""
+            insert into common_parameter (name, value, lastmodified, description)
+            values (
+              'plan.deliveryDuration', '0', now(),
+              'The duration (in working hours) for the final shipment of a sales order to the customer. Default: 0'
+            ), (
+              'plan.move_approved_early', '0', now(),
+              'Controls rescheduling approved orders early. Values: 0 (inactive, default), 1 (active preserving existing resource assignments, 2 (active replanning resource assignments)'
+            ), (
+              'pathreport_optimization', 'false', now(),
+              'Activates a fast version of the supply path report, suitable for deep bill of materials with many components. Default: false.'
+            ), (
+              'plan.solver', 'heuristic', now(),
+              'Selects the algorithm to use for generating the plan. Possible choices are "heuristic" (default), "heuristic_2" (an emerging evolution of the heuristic algorithm).'
+            )
+            on conflict (name) do nothing
+            """,
+            reverse_sql="""
+            delete from common_parameter
+            where name in (
+              'plan.deliveryDuration',
+              'plan.move_approved_early',
+              'pathreport_optimization',
+              'plan.solver'
+            )
+            """,
         ),
         migrations.RunSQL(
-            sql="\n            insert into common_parameter (name, value, lastmodified, description)\n            values (\n              'plan.solver', 'heuristic', now(),\n              'Selects the algorithm to use for generating the plan. Possible choices are \"heuristic\" (default), \"heuristic_2\" (an emerging evolution of the heuristic algorithm).'\n              )\n            on conflict (name) do nothing\n            ",
-            reverse_sql="\n            delete from common_parameter where name = 'plan.solver'\n            ",
+            sql="""
+            update operationplan set type = 'WO'
+            where type = 'MO' and exists
+            (select 1 from operation inner join operationplan opplan on opplan.operation_id = operation.name where operation.type = 'routing' and opplan.reference = operationplan.owner_id)
+            """,
+            reverse_sql="update operationplan set type = 'MO' where type = 'WO'",
         ),
         migrations.RemoveField(
             model_name="operationplanmaterial",

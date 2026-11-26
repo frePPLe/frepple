@@ -570,11 +570,10 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
     objects = Manager()
 
     def __str__(self):
-        return "%s %s %s %s" % (
+        return "%s %s %s" % (
             self.resource,
             self.operationplan.startdate,
-            self.operationplan.enddate,
-            self.status,
+            self.operationplan.enddate
         )
 
     class Meta:
@@ -633,12 +632,11 @@ class OperationPlanMaterial(AuditModel, OperationPlanRelatedMixin):
     objects = Manager()
 
     def __str__(self):
-        return "%s @ %s %s %s %s" % (
+        return "%s @ %s %s %s" % (
             self.item_id,
             self.location_id,
             self.flowdate,
             self.quantity,
-            self.status,
         )
 
     class Meta:

@@ -13,6 +13,11 @@ the incremental changes between minor releases.
 The biggest change is in the installation and customization. The
 v10 introduces some backward incompatible changes.
 
+Upgrading to v10 requires a bit more work and attention than the upgrades
+between other releases, especially if you didn't run frepple as container before.
+Some configuration files and settings also have changed.  Read the section
+:ref:`upgrade-v10` to go over the details of the upgrade process.
+
 .. rubric:: System administration
 
 - | Frepple is now distributed exclusively as a container image.

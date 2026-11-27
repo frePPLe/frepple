@@ -183,8 +183,8 @@ Here is the recommended procedure to upgrade to frepple 10:
 
    .. code-block:: bash
 
-   mkdir -p ./frepple-defaults
-   docker run --rm frepple-community:10.0.0 tar -cf - -C /etc/frepple . | tar -xf - -C ./frepple-defaults
+      mkdir -p ./frepple-defaults
+      docker run --rm frepple-community:10.0.0 tar -cf - -C /etc/frepple . | tar -xf - -C ./frepple-defaults
 
 #. The files in ``./frepple-defaults`` now contain the default configuration for frepple 10.
    The files nginx.conf, entrypoint.sh and supervisord.conf you can very likely copy straight into your
@@ -193,9 +193,71 @@ Here is the recommended procedure to upgrade to frepple 10:
 #. The file djangosettings.py on the other hand needs to migrated. You'll start from the new default
    content of the file and bring your modifications across from your old configuration.
 
+   You may be tempted to copy the entire old djangosettings.py file over, but this is not
+   recommended. Instead, carefully merge your custom settings into the new default file.
+
+   Many settings can be passed as environment variables from your docker deployment. It's a matter
+   of taste and personal preference whether you edit the file manually or use the environment variables.
+
    In particular the following settings should be carefully reviewed and merged:
 
-   -  TODO
+   - POSTGRES_HOST is the hostname of the PostgreSQL server. Copy from old configuration.
+
+   - POSTGRES_PORT is the port of the PostgreSQL server. Copy from old configuration.
+
+   - POSTGRES_DB_PREFIX define the name of the databases. Copy the POSTGRES_DB value from the old configuration.
+
+   - POSTGRES_USER is the username for the PostgreSQL server. Copy from the old configuration.
+
+   - POSTGRES_PASSWORD is the password for the PostgreSQL server. Copy from the old configuration.
+
+   - MIN_NUMBER_OF_SCENARIOS and MAX_NUMBER_OF_SCENARIOS define the minimum and maximum number of scenarios.
+     Copy from old configuration or leave as default.
+
+   - SCENARIOS defines the starting number of scenarios. Set this to the number of database
+     your current configuration has in use.
+
+   - The DATABASES setting from the old configuration is now gone. We build it up based
+     on the settings above. If you used customized database names, you will need to rename your
+     databases to match the POSTGRES_DB_PREFIX convention.
+
+   - APPS is the list of installed Django applications. In the old configuration this was in the
+     INSTALLED_APPS and INSTALL_APPS settings. You can choose to switch some apps from 'optional_and_default'
+     to 'optional' if you are not planning to use them. Leave the rest as is.
+
+   - ODOO_xxx are settings used by the Odoo integration. Copy from the old configuration if you
+     are using Odoo and have the connection details configured in the djangosettings.py file (rather than in
+     parameters).
+
+   - OPENBRAVO_PASSWORDS is used by the Openbravo and Etendo integration. Copy from the old configuration
+     if you are using Openbravo or Etendo and have the connection details configured in the djangosettings.py
+     file (rather than in parameters).
+
+   - LANGUAGE_CODE is the language code for the application. Copy from the old configuration
+     or leave as default.
+
+   - The old DATE_STYLE and DATE_STYLE_WITH_HOURS have been replaced by the database parameters.
+     Update your database parameters accordingly once your container is running.
+
+   - Copy the EMAIL_USE_TLS, DEFAULT_FROM_EMAIL, SERVER_EMAIL, EMAIL_HOST_USER,
+     EMAIL_HOST_PASSWORD, EMAIL_HOST, EMAIL_PORT, EMAIL_BACKEND, EMAIL_URL_PREFIX settings from
+     the old configuration. These are related to the sending of emails from frepple.
+
+   - CONTENT_SECURITY_POLICY, X_FRAME_OPTIONS, CSRF_COOKIE_SAMESITE, SESSION_COOKIE_SAMESITE,
+     SESSION_COOKIE_SECURE, CSRF_COOKIE_SECURE and CSRF_TRUSTED_ORIGINS are relevant if you embed
+     frepple in another application. Copy the settings from the old configuration if needed.
+
+   - SECURE_PROXY_SSL_HEADER is relevant if you are running frepple behind a reverse proxy
+     that handles SSL. Copy the setting from the old configuration if you had to tweak the old
+     configuration.
+
+   - FTP_xxx are settings related to the :ref:`publish reports by FTP <uploadreport>` task. Copy
+     the settings from the old configuration if you were using this feature.
+
+#. Asssure that custom frepples apps are copied to the /usr/share/frepple/pythonpackages folder
+   of the new container. In this location it will automatically be recognized as an optional app.
+   Once your container is running, activate the custom app from the
+   :doc:`../user-interface/getting-around/apps` screen.
 
 #. With all configuration files now updated to the new format, the upgrade process
    can proceed as usual. Restart the frepple container, and it will automatically upgrade

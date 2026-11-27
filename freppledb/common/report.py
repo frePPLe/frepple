@@ -2070,9 +2070,6 @@ class GridReport(View):
         # Check permissions
         if not cls.model or not cls.editable:
             return HttpResponseForbidden(_("Permission denied"))
-        permname = get_permission_codename("change", cls.model._meta)
-        if not request.user.has_perm("%s.%s" % (cls.model._meta.app_label, permname)):
-            return HttpResponseForbidden(_("Permission denied"))
 
         # Loop over the data records
         resp = HttpResponse()
@@ -2096,8 +2093,13 @@ class GridReport(View):
             for rec in data:
                 if "update" in rec:
                     # Bulk update
+                    permname = get_permission_codename("change", cls.model._meta)
+                    if not request.user.has_perm(
+                        "%s.%s" % (cls.model._meta.app_label, permname)
+                    ):
+                        return HttpResponseForbidden(_("Permission denied"))
                     fields = {}
-                    for f, v in data["update"].get("fields", {}).items():
+                    for f, v in rec["update"].get("fields", {}).items():
                         if v is not None:
                             v = v.strip()
                         r = cls._getRowByName(request, f)
@@ -2249,6 +2251,11 @@ class GridReport(View):
                             resp.write("<br>")
                 elif "delete" in rec:
                     # Deleting records
+                    permname = get_permission_codename("delete", cls.model._meta)
+                    if not request.user.has_perm(
+                        "%s.%s" % (cls.model._meta.app_label, permname)
+                    ):
+                        return HttpResponseForbidden(_("Permission denied"))
                     for key in rec["delete"]:
                         sid = transaction.savepoint(using=request.database)
                         try:
@@ -2275,6 +2282,11 @@ class GridReport(View):
                             resp.write("<br>")
                 elif "copy" in rec:
                     # Copying records
+                    permname = get_permission_codename("add", cls.model._meta)
+                    if not request.user.has_perm(
+                        "%s.%s" % (cls.model._meta.app_label, permname)
+                    ):
+                        return HttpResponseForbidden(_("Permission denied"))
                     for key in rec["copy"]:
                         sid = transaction.savepoint(using=request.database)
                         try:
@@ -2326,6 +2338,11 @@ class GridReport(View):
                             resp.write("<br>")
                 else:
                     # Editing records
+                    permname = get_permission_codename("change", cls.model._meta)
+                    if not request.user.has_perm(
+                        "%s.%s" % (cls.model._meta.app_label, permname)
+                    ):
+                        return HttpResponseForbidden(_("Permission denied"))
                     pk = rec["id"]
                     sid = transaction.savepoint(using=request.database)
                     try:

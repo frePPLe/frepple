@@ -132,6 +132,7 @@ class AttributeFilter(FilterSet):
         fields = {
             "model": ["exact", "in"],
             "name": ["exact", "in", "contains"],
+            "type": ["exact", "in", "contains"],
             "editable": [
                 "exact",
             ],
@@ -144,12 +145,17 @@ class AttributeFilter(FilterSet):
 
 
 class AttributeSerializer(BulkModelSerializer):
+    def validate_name(self, value):
+        models.Attribute.validate_name(value)
+        return value
+
     class Meta:
         model = models.Attribute
         fields = (
             "model",
             "name",
             "label",
+            "type",
             "editable",
             "initially_hidden",
             "source",

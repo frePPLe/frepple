@@ -1853,11 +1853,13 @@ class Attribute(AuditModel):
     def __str__(self):
         return "%s %s" % (self.model, self.name)
 
-    def clean(self):
-        if self.name and (
-            not self.name.replace("_", "").isalnum() or self.name[0].isdigit()
-        ):
+    @staticmethod
+    def validate_name(name):
+        if name and (not name.replace("_", "").isalnum() or name[0].isdigit()):
             raise ValidationError(_("Name can only be alphanumeric"))
+
+    def clean(self):
+        self.validate_name(self.name)
 
     def clean_fields(self, exclude=None):
         if self.name:
@@ -1865,6 +1867,8 @@ class Attribute(AuditModel):
         super().clean_fields(exclude=exclude)
 
     def save(self, *args, **kwargs):
+        self.validate_name(self.name)
+
         # Call the real save() method
         super().save(*args, **kwargs)
 

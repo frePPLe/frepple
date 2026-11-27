@@ -596,19 +596,6 @@ class Command(BaseCommand):
                     "Permission denied - you did't have access rights to the scenario that was backed up"
                 )
 
-            # Update the scenario table
-            destinationscenario.status = "In use"
-            if options["description"]:
-                destinationscenario.description = options["description"]
-                destinationscenario.save(
-                    update_fields=["status", "description"],
-                    using=DEFAULT_DB_ALIAS,
-                )
-            else:
-                destinationscenario.save(
-                    update_fields=["status"], using=DEFAULT_DB_ALIAS
-                )
-
             # Delete parameter that marks a running worker
             if destination != DEFAULT_DB_ALIAS:
                 try:
@@ -633,6 +620,9 @@ class Command(BaseCommand):
                 ]
                 if user and not user.is_superuser:
                     access_allowed.append(user.pk)
+                User.objects.using(destination).exclude(pk__in=access_allowed).update(
+                    is_active=False
+                )
                 with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
                     cursor.execute(
                         """
@@ -643,6 +633,19 @@ class Command(BaseCommand):
                         """,
                         (destination, destination, access_allowed),
                     )
+
+            # Update the scenario table
+            destinationscenario.status = "In use"
+            if options["description"]:
+                destinationscenario.description = options["description"]
+                destinationscenario.save(
+                    update_fields=["status", "description"],
+                    using=DEFAULT_DB_ALIAS,
+                )
+            else:
+                destinationscenario.save(
+                    update_fields=["status"], using=DEFAULT_DB_ALIAS
+                )
 
             # Delete data files present in the scenario folders
             if destination != DEFAULT_DB_ALIAS and get_databases()[destination][

@@ -1091,7 +1091,7 @@ class FileManager:
             )
 
         # Optionally generate export files before downloading from the export folder.
-        if "generate" in request.GET and foldercode == "1":
+        if "generate" in request.GET and foldercode == "1" and request.user.is_superuser:
             try:
                 kwargs = {
                     "database": request.database,

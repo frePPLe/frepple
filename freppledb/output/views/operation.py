@@ -66,6 +66,15 @@ class OverviewReport(GridPivot):
             extra='"role":"input/operation"',
         ),
         GridFieldText(
+            "owner",
+            title=_("owner"),
+            editable=False,
+            field_name="owner__name",
+            formatter="detail",
+            extra='"role":"input/operation"',
+            initially_hidden=True,
+        ),
+        GridFieldText(
             "location",
             title=_("location"),
             editable=False,
@@ -336,6 +345,7 @@ class OverviewReport(GridPivot):
         location.description, location.category, location.subcategory, location.available_id,
         location.lastmodified, item.description, item.category, item.subcategory, item.cost,
         item.volume, item.weight, item.uom, item.periodofcover, item.owner_id, item.source, item.lastmodified,
+        operation.owner_id,
         %s
         res.bucket, res.startdate, res.enddate,
         res.proposed_start, res.total_start, res.proposed_end, res.total_end, res.proposed_production, res.total_production
@@ -358,11 +368,11 @@ class OverviewReport(GridPivot):
            ), 0) total_start,
          coalesce(sum(
            case when operationplan.status = 'proposed'
-             and d.startdate <= operationplan.enddate and d.enddate >= operationplan.enddate
+             and d.startdate <= operationplan.enddate and d.enddate > operationplan.enddate
            then operationplan.quantity end
            ), 0) proposed_end,
          coalesce(sum(
-           case when d.startdate <= operationplan.enddate and d.enddate >= operationplan.enddate
+           case when d.startdate <= operationplan.enddate and d.enddate > operationplan.enddate
            then operationplan.quantity end
            ), 0) total_end,
          coalesce(sum(
@@ -425,7 +435,11 @@ class OverviewReport(GridPivot):
         -- Match overlapping operationplans
         left outer join operationplan
           on operationplan.operation_id = oper.name
-          and (operationplan.startdate, operationplan.enddate) overlaps (d.startdate, d.enddate)
+                    and (
+                        (operationplan.startdate, operationplan.enddate) overlaps (d.startdate, d.enddate)
+                        or operationplan.enddate = d.startdate
+                        or operationplan.startdate = d.enddate
+                    )
         group by oper.name, d.bucket, d.startdate, d.enddate
       ) res
       on res.operation_id = operation.name
@@ -487,6 +501,7 @@ class OverviewReport(GridPivot):
                         "item__owner": row[34],
                         "item__source": row[35],
                         "item__lastmodified": row[36],
+                        "owner": row[37],
                         "bucket": row[numfields - 9],
                         "startdate": row[numfields - 8].date(),
                         "enddate": row[numfields - 7].date(),
@@ -497,7 +512,7 @@ class OverviewReport(GridPivot):
                         "production_proposed": row[numfields - 2],
                         "production_total": row[numfields - 1],
                     }
-                    idx = 37
+                    idx = 38
                     for f in operationattributefields:
                         result["operation__%s" % f.field_name] = row[idx]
                         idx += 1

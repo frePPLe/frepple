@@ -49,7 +49,7 @@ class ManufacturingOrderWidget(Widget):
     name = "manufacturing_orders"
     title = _("manufacturing orders")
     tooltip = _("Shows manufacturing orders by start date")
-    permissions = (("view_manufacturingorder", "Can view manufacturing orders"),)
+    permissions = ("input.view_manufacturingorder",)
     asynchronous = True
     size = "lg"
     url = "/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&status__in=proposed,confirmed,approved"
@@ -370,7 +370,7 @@ class DistributionOrderWidget(Widget):
     name = "distribution_orders"
     title = _("distribution orders")
     tooltip = _("Shows distribution orders by start date")
-    permissions = (("view_distributionorder", "Can view distribution orders"),)
+    permissions = ("input.view_distributionorder",)
     asynchronous = True
     size = "lg"
     url = "/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&status__in=proposed,confirmed"
@@ -692,7 +692,7 @@ class PurchaseOrderWidget(Widget):
     name = "purchase_orders"
     title = _("purchase orders")
     tooltip = _("Shows purchase orders by ordering date")
-    permissions = (("view_purchaseorder", "Can view purchase orders"),)
+    permissions = ("input.view_purchaseorder",)
     asynchronous = True
     size = "lg"
     url = "/data/input/purchaseorder/?sord=asc&sidx=startdate&status__in=proposed,confirmed,approved"
@@ -1093,7 +1093,7 @@ class PurchaseQueueWidget(Widget):
     name = "purchase_queue"
     title = _("purchase queue")
     tooltip = _("Display a list of new purchase orders")
-    permissions = (("view_purchaseorder", "Can view purchase orders"),)
+    permissions = ("input.view_purchaseorder",)
     asynchronous = True
     size = "lg"
     url = "/data/input/purchaseorder/?noautofilter&status=proposed&sidx=startdate&sord=asc"
@@ -1156,7 +1156,7 @@ class DistributionQueueWidget(Widget):
     name = "distribution_queue"
     title = _("distribution queue")
     tooltip = _("Display a list of new distribution orders")
-    permissions = (("view_distributionorder", "Can view distribution order"),)
+    permissions = ("input.view_distributionorder",)
     asynchronous = True
     size = "lg"
     url = "/data/input/distributionorder/?noautofilter&status=proposed&sidx=startdate&sord=asc"
@@ -1363,7 +1363,7 @@ class PurchaseAnalysisWidget(Widget):
     name = "purchase_order_analysis"
     title = _("purchase order analysis")
     tooltip = _("Analyse the urgency of existing purchase orders")
-    permissions = (("view_purchaseorder", "Can view purchase orders"),)
+    permissions = ("input.view_purchaseorder",)
     asynchronous = True
     size = "lg"
     url = "/data/input/purchaseorder/?noautofilter&status=confirmed&sidx=color&sord=asc"

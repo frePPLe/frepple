@@ -110,6 +110,8 @@ class Dashboard:
             if widget.__module__.startswith(app):
                 # Loop over all permissions of the widget class
                 for k in widget.permissions:
+                    if isinstance(k, str):
+                        continue
                     if content_type is None:
                         # Create a dummy contenttype in the app
                         content_type = ContentType.objects.get_or_create(
@@ -138,6 +140,8 @@ class Widget:
         Such widgets are rendered in 2 steps: initially the dashboard displays a
         loading icon, and next an ajax request is launched to populate the widget
         content.
+      - Class attribute 'permissions' contains either (codename, name) pairs for
+        widget permissions, or "app_label.codename" strings for existing permissions.
       - Class method render(request) is called to render the widget to the
         client browser.
         It returns a string for synchronous widgets.
@@ -175,7 +179,9 @@ class Widget:
     @classmethod
     def has_permission(cls, user, database):
         for perm in cls.permissions:
-            if not user.has_perm("auth.%s" % perm[0]):
+            if not user.has_perm(
+                perm if isinstance(perm, str) else "auth.%s" % perm[0]
+            ):
                 return False
         return True
 
